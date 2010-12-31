@@ -126,7 +126,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetAVTransportURI must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetAVTransportURI()
+        protected void EnableActionSetAVTransportURI()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetAVTransportURI");
             List<String> allowedValues = new List<String>();
@@ -142,7 +142,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetNextAVTransportURI must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetNextAVTransportURI()
+        protected void EnableActionSetNextAVTransportURI()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetNextAVTransportURI");
             List<String> allowedValues = new List<String>();
@@ -158,7 +158,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetMediaInfo must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetMediaInfo()
+        protected void EnableActionGetMediaInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetMediaInfo");
             List<String> allowedValues = new List<String>();
@@ -181,7 +181,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetMediaInfo_Ext must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetMediaInfo_Ext()
+        protected void EnableActionGetMediaInfo_Ext()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetMediaInfo_Ext");
             List<String> allowedValues = new List<String>();
@@ -209,7 +209,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetTransportInfo must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetTransportInfo()
+        protected void EnableActionGetTransportInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetTransportInfo");
             List<String> allowedValues = new List<String>();
@@ -234,7 +234,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetPositionInfo must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetPositionInfo()
+        protected void EnableActionGetPositionInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetPositionInfo");
             List<String> allowedValues = new List<String>();
@@ -256,7 +256,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetDeviceCapabilities must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetDeviceCapabilities()
+        protected void EnableActionGetDeviceCapabilities()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetDeviceCapabilities");
             List<String> allowedValues = new List<String>();
@@ -273,7 +273,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetTransportSettings must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetTransportSettings()
+        protected void EnableActionGetTransportSettings()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetTransportSettings");
             List<String> allowedValues = new List<String>();
@@ -291,7 +291,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStop must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStop()
+        protected void EnableActionStop()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Stop");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -304,7 +304,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPlay must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPlay()
+        protected void EnableActionPlay()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Play");
             List<String> allowedValues = new List<String>();
@@ -321,7 +321,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPause must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPause()
+        protected void EnableActionPause()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Pause");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -334,7 +334,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoRecord must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionRecord()
+        protected void EnableActionRecord()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Record");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -347,7 +347,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeek must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeek()
+        protected void EnableActionSeek()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Seek");
             List<String> allowedValues = new List<String>();
@@ -365,7 +365,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoNext must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionNext()
+        protected void EnableActionNext()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Next");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -378,7 +378,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPrevious must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPrevious()
+        protected void EnableActionPrevious()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Previous");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -391,7 +391,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetPlayMode must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetPlayMode()
+        protected void EnableActionSetPlayMode()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetPlayMode");
             List<String> allowedValues = new List<String>();
@@ -408,7 +408,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetRecordQualityMode must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetRecordQualityMode()
+        protected void EnableActionSetRecordQualityMode()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRecordQualityMode");
             List<String> allowedValues = new List<String>();
@@ -423,7 +423,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetCurrentTransportActions must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetCurrentTransportActions()
+        protected void EnableActionGetCurrentTransportActions()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetCurrentTransportActions");
             List<String> allowedValues = new List<String>();
@@ -438,7 +438,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetDRMState must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetDRMState()
+        protected void EnableActionGetDRMState()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetDRMState");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -452,7 +452,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetStateVariables must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetStateVariables()
+        protected void EnableActionGetStateVariables()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetStateVariables");
             List<String> allowedValues = new List<String>();
@@ -468,7 +468,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStateVariables must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStateVariables()
+        protected void EnableActionSetStateVariables()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStateVariables");
             List<String> allowedValues = new List<String>();
@@ -829,7 +829,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoSetAVTransportURI(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetAVTransportURI(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -873,7 +873,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetNextAVTransportURI(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetNextAVTransportURI(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -917,7 +917,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetMediaInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetMediaInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -975,7 +975,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetMediaInfo_Ext(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetMediaInfo_Ext(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1035,7 +1035,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetTransportInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetTransportInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1081,7 +1081,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetPositionInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetPositionInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1137,7 +1137,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetDeviceCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetDeviceCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1183,7 +1183,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetTransportSettings(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetTransportSettings(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1227,7 +1227,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStop(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStop(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1267,7 +1267,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoPlay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1309,7 +1309,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoPause(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPause(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1349,7 +1349,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoRecord(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoRecord(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1389,7 +1389,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSeek(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeek(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1433,7 +1433,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoNext(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoNext(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1473,7 +1473,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoPrevious(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPrevious(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1513,7 +1513,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetPlayMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetPlayMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1555,7 +1555,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetRecordQualityMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRecordQualityMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1597,7 +1597,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetCurrentTransportActions(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetCurrentTransportActions(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1639,7 +1639,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetDRMState(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetDRMState(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1681,7 +1681,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetStateVariables(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetStateVariables(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
@@ -1725,7 +1725,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetStateVariables(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetStateVariables(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;

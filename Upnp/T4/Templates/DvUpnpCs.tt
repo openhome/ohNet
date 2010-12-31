@@ -43,7 +43,6 @@
     fileName += type;
     fileName += version;
     string className = "DvProvider" + fileName;
-    string dllName = "Dv" + fileName;
 
     Initialise();
 
@@ -146,7 +145,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// Do<#=a.name#> must be overridden if this is called.</remarks>
-        protected unsafe void EnableAction<#=a.name#>()
+        protected void EnableAction<#=a.name#>()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("<#=a.name#>");<#=DeclareAllowedValuesForMethod(a)#>
 <#      foreach (Argument i in a.inargs) #>
@@ -224,7 +223,7 @@ namespace Zapp.Device.Providers
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-        private static unsafe int Do<#=a.name#>(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int Do<#=a.name#>(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             <#=className#> self = (<#=className#>)gch.Target;

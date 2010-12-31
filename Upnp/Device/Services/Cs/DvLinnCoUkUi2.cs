@@ -452,7 +452,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayTestPattern must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayTestPattern()
+        protected void EnableActionDisplayTestPattern()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayTestPattern");
             action.AddInputParameter(new ParameterInt("aTestPattern", 0, 6));
@@ -465,7 +465,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayFill must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayFill()
+        protected void EnableActionDisplayFill()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayFill");
             iDelegateDisplayFill = new ActionDelegate(DoDisplayFill);
@@ -477,7 +477,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayClear must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayClear()
+        protected void EnableActionDisplayClear()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayClear");
             iDelegateDisplayClear = new ActionDelegate(DoDisplayClear);
@@ -489,7 +489,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetTestModeEnabled must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetTestModeEnabled()
+        protected void EnableActionSetTestModeEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetTestModeEnabled");
             action.AddInputParameter(new ParameterBool("aEnabled"));
@@ -502,7 +502,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSimulateInfraredInput must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSimulateInfraredInput()
+        protected void EnableActionSimulateInfraredInput()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SimulateInfraredInput");
             action.AddInputParameter(new ParameterRelated("aCode", iPropertyTerminalInputCode));
@@ -515,7 +515,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSimulateButtonInput must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSimulateButtonInput()
+        protected void EnableActionSimulateButtonInput()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SimulateButtonInput");
             action.AddInputParameter(new ParameterRelated("aCode", iPropertyTerminalInputCode));
@@ -528,7 +528,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSimulateLightSensor must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSimulateLightSensor()
+        protected void EnableActionSimulateLightSensor()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SimulateLightSensor");
             action.AddInputParameter(new ParameterUint("aLightLevel"));
@@ -541,7 +541,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetLightSensorData must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetLightSensorData()
+        protected void EnableActionGetLightSensorData()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetLightSensorData");
             action.AddOutputParameter(new ParameterUint("aLightLevel"));
@@ -554,7 +554,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDisplayBrightness must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDisplayBrightness()
+        protected void EnableActionSetDisplayBrightness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayBrightness");
             action.AddInputParameter(new ParameterRelated("aBrightness", iPropertyDisplayBrightness));
@@ -567,7 +567,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDisplayBrightnessAuto must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDisplayBrightnessAuto()
+        protected void EnableActionSetDisplayBrightnessAuto()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayBrightnessAuto");
             action.AddInputParameter(new ParameterRelated("aBrightnessAuto", iPropertyDisplayBrightnessAuto));
@@ -580,7 +580,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetInfraredCommands must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetInfraredCommands()
+        protected void EnableActionSetInfraredCommands()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetInfraredCommands");
             action.AddInputParameter(new ParameterRelated("aCommands", iPropertyInfraredCommands));
@@ -593,7 +593,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoInfraredCommands must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionInfraredCommands()
+        protected void EnableActionInfraredCommands()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("InfraredCommands");
             action.AddOutputParameter(new ParameterRelated("aCommands", iPropertyInfraredCommands));
@@ -606,7 +606,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetInfraredTerminalCommands must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetInfraredTerminalCommands()
+        protected void EnableActionSetInfraredTerminalCommands()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetInfraredTerminalCommands");
             action.AddInputParameter(new ParameterRelated("aCommands", iPropertyInfraredTerminalCommands));
@@ -619,7 +619,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoInfraredTerminalCommands must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionInfraredTerminalCommands()
+        protected void EnableActionInfraredTerminalCommands()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("InfraredTerminalCommands");
             action.AddOutputParameter(new ParameterRelated("aCommands", iPropertyInfraredTerminalCommands));
@@ -632,7 +632,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayBrightness must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayBrightness()
+        protected void EnableActionDisplayBrightness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayBrightness");
             action.AddOutputParameter(new ParameterRelated("aBrightness", iPropertyDisplayBrightness));
@@ -645,7 +645,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayBrightnessAuto must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayBrightnessAuto()
+        protected void EnableActionDisplayBrightnessAuto()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayBrightnessAuto");
             action.AddOutputParameter(new ParameterRelated("aBrightnessAuto", iPropertyDisplayBrightnessAuto));
@@ -658,7 +658,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayUpsideDown must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayUpsideDown()
+        protected void EnableActionDisplayUpsideDown()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayUpsideDown");
             action.AddOutputParameter(new ParameterRelated("aUpsideDown", iPropertyDisplayUpsideDown));
@@ -671,7 +671,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDisplayUpsideDown must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDisplayUpsideDown()
+        protected void EnableActionSetDisplayUpsideDown()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayUpsideDown");
             action.AddInputParameter(new ParameterRelated("aUpsideDown", iPropertyDisplayUpsideDown));
@@ -684,7 +684,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDisplayScrollText must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDisplayScrollText()
+        protected void EnableActionSetDisplayScrollText()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayScrollText");
             action.AddInputParameter(new ParameterRelated("aDisplayScrollText", iPropertyDisplayScrollText));
@@ -697,7 +697,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayScrollText must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayScrollText()
+        protected void EnableActionDisplayScrollText()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayScrollText");
             action.AddOutputParameter(new ParameterRelated("aDisplayScrollTextEnabled", iPropertyDisplayScrollText));
@@ -710,7 +710,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDisplaySleep must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDisplaySleep()
+        protected void EnableActionSetDisplaySleep()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDisplaySleep");
             action.AddInputParameter(new ParameterRelated("aEnabled", iPropertyDisplaySleep));
@@ -723,7 +723,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplaySleep must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplaySleep()
+        protected void EnableActionDisplaySleep()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplaySleep");
             action.AddOutputParameter(new ParameterRelated("aEnabled", iPropertyDisplaySleep));
@@ -736,7 +736,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDisplayLedOff must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDisplayLedOff()
+        protected void EnableActionSetDisplayLedOff()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayLedOff");
             action.AddInputParameter(new ParameterRelated("aOff", iPropertyDisplayLedOff));
@@ -749,7 +749,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayLedOff must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayLedOff()
+        protected void EnableActionDisplayLedOff()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayLedOff");
             action.AddOutputParameter(new ParameterRelated("aOff", iPropertyDisplayLedOff));
@@ -1091,7 +1091,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoDisplayTestPattern(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisplayTestPattern(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1131,7 +1131,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDisplayFill(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisplayFill(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1169,7 +1169,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDisplayClear(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisplayClear(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1207,7 +1207,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetTestModeEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetTestModeEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1247,7 +1247,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSimulateInfraredInput(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSimulateInfraredInput(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1287,7 +1287,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSimulateButtonInput(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSimulateButtonInput(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1327,7 +1327,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSimulateLightSensor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSimulateLightSensor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1367,7 +1367,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetLightSensorData(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetLightSensorData(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1407,7 +1407,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetDisplayBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetDisplayBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1447,7 +1447,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetDisplayBrightnessAuto(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetDisplayBrightnessAuto(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1487,7 +1487,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetInfraredCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetInfraredCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1527,7 +1527,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoInfraredCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoInfraredCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1567,7 +1567,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetInfraredTerminalCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetInfraredTerminalCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1607,7 +1607,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoInfraredTerminalCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoInfraredTerminalCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1647,7 +1647,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDisplayBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisplayBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1687,7 +1687,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDisplayBrightnessAuto(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisplayBrightnessAuto(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1727,7 +1727,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDisplayUpsideDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisplayUpsideDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1767,7 +1767,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetDisplayUpsideDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetDisplayUpsideDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1807,7 +1807,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetDisplayScrollText(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetDisplayScrollText(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1847,7 +1847,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDisplayScrollText(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisplayScrollText(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1887,7 +1887,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetDisplaySleep(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetDisplaySleep(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1927,7 +1927,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDisplaySleep(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisplaySleep(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -1967,7 +1967,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetDisplayLedOff(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetDisplayLedOff(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
@@ -2007,7 +2007,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDisplayLedOff(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisplayLedOff(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;

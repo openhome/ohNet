@@ -189,7 +189,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoAmplifierEnabled must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionAmplifierEnabled()
+        protected void EnableActionAmplifierEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("AmplifierEnabled");
             action.AddOutputParameter(new ParameterRelated("aEnabled", iPropertyAmplifierEnabled));
@@ -202,7 +202,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetAmplifierEnabled must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetAmplifierEnabled()
+        protected void EnableActionSetAmplifierEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetAmplifierEnabled");
             action.AddInputParameter(new ParameterRelated("aEnabled", iPropertyAmplifierEnabled));
@@ -215,7 +215,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoAmplifierAttenuation must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionAmplifierAttenuation()
+        protected void EnableActionAmplifierAttenuation()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("AmplifierAttenuation");
             action.AddOutputParameter(new ParameterRelated("aAttenuation", iPropertyAmplifierAttenuation));
@@ -228,7 +228,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetAmplifierAttenuation must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetAmplifierAttenuation()
+        protected void EnableActionSetAmplifierAttenuation()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetAmplifierAttenuation");
             action.AddInputParameter(new ParameterRelated("aAttenuation", iPropertyAmplifierAttenuation));
@@ -241,7 +241,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetVolumeControlEnabled must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetVolumeControlEnabled()
+        protected void EnableActionSetVolumeControlEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetVolumeControlEnabled");
             action.AddInputParameter(new ParameterRelated("aEnabled", iPropertyVolumeControlEnabled));
@@ -254,7 +254,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoVolumeControlEnabled must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionVolumeControlEnabled()
+        protected void EnableActionVolumeControlEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("VolumeControlEnabled");
             action.AddOutputParameter(new ParameterRelated("aEnabled", iPropertyVolumeControlEnabled));
@@ -267,7 +267,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDigitalAudioOutputRaw must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDigitalAudioOutputRaw()
+        protected void EnableActionSetDigitalAudioOutputRaw()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDigitalAudioOutputRaw");
             action.AddInputParameter(new ParameterRelated("aRaw", iPropertyDigitalAudioOutputRaw));
@@ -280,7 +280,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDigitalAudioOutputRaw must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDigitalAudioOutputRaw()
+        protected void EnableActionDigitalAudioOutputRaw()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DigitalAudioOutputRaw");
             action.AddOutputParameter(new ParameterRelated("aRaw", iPropertyDigitalAudioOutputRaw));
@@ -293,7 +293,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoAmplifierOverTemperature must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionAmplifierOverTemperature()
+        protected void EnableActionAmplifierOverTemperature()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("AmplifierOverTemperature");
             action.AddOutputParameter(new ParameterBool("aOverTemperature"));
@@ -306,7 +306,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoEthernetLinkConnected must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionEthernetLinkConnected()
+        protected void EnableActionEthernetLinkConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("EthernetLinkConnected");
             action.AddOutputParameter(new ParameterBool("aLinkConnected"));
@@ -319,7 +319,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoLocate must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionLocate()
+        protected void EnableActionLocate()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Locate");
             iDelegateLocate = new ActionDelegate(DoLocate);
@@ -479,7 +479,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoAmplifierEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoAmplifierEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
@@ -519,7 +519,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetAmplifierEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetAmplifierEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
@@ -559,7 +559,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoAmplifierAttenuation(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoAmplifierAttenuation(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
@@ -599,7 +599,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetAmplifierAttenuation(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetAmplifierAttenuation(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
@@ -639,7 +639,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetVolumeControlEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetVolumeControlEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
@@ -679,7 +679,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoVolumeControlEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoVolumeControlEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
@@ -719,7 +719,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetDigitalAudioOutputRaw(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetDigitalAudioOutputRaw(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
@@ -759,7 +759,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDigitalAudioOutputRaw(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDigitalAudioOutputRaw(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
@@ -799,7 +799,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoAmplifierOverTemperature(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoAmplifierOverTemperature(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
@@ -839,7 +839,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoEthernetLinkConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoEthernetLinkConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
@@ -879,7 +879,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoLocate(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoLocate(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;

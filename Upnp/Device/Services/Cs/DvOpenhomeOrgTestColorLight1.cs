@@ -36,7 +36,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetName must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetName()
+        protected void EnableActionGetName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetName");
             List<String> allowedValues = new List<String>();
@@ -50,7 +50,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetColor must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetColor()
+        protected void EnableActionSetColor()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetColor");
             action.AddInputParameter(new ParameterUint("Red"));
@@ -65,7 +65,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetColor must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetColor()
+        protected void EnableActionGetColor()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetColor");
             action.AddOutputParameter(new ParameterUint("Red"));
@@ -80,7 +80,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetMaxColors must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetMaxColors()
+        protected void EnableActionGetMaxColors()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetMaxColors");
             action.AddOutputParameter(new ParameterUint("Red"));
@@ -152,7 +152,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoGetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestColorLight1 self = (DvProviderOpenhomeOrgTestColorLight1)gch.Target;
@@ -192,7 +192,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestColorLight1 self = (DvProviderOpenhomeOrgTestColorLight1)gch.Target;
@@ -236,7 +236,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestColorLight1 self = (DvProviderOpenhomeOrgTestColorLight1)gch.Target;
@@ -280,7 +280,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetMaxColors(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetMaxColors(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderOpenhomeOrgTestColorLight1 self = (DvProviderOpenhomeOrgTestColorLight1)gch.Target;

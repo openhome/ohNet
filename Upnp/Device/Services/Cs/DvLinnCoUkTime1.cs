@@ -138,7 +138,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoTime must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionTime()
+        protected void EnableActionTime()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Time");
             action.AddOutputParameter(new ParameterRelated("aTrackCount", iPropertyTrackCount));
@@ -164,7 +164,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoTime(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTime(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkTime1 self = (DvProviderLinnCoUkTime1)gch.Target;

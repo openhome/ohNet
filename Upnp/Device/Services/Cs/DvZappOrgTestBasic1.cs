@@ -227,7 +227,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoIncrement must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionIncrement()
+        protected void EnableActionIncrement()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Increment");
             action.AddInputParameter(new ParameterUint("Value"));
@@ -241,7 +241,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDecrement must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDecrement()
+        protected void EnableActionDecrement()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Decrement");
             action.AddInputParameter(new ParameterInt("Value"));
@@ -255,7 +255,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoToggle must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionToggle()
+        protected void EnableActionToggle()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Toggle");
             action.AddInputParameter(new ParameterBool("Value"));
@@ -269,7 +269,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoEchoString must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionEchoString()
+        protected void EnableActionEchoString()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("EchoString");
             List<String> allowedValues = new List<String>();
@@ -284,7 +284,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoEchoBinary must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionEchoBinary()
+        protected void EnableActionEchoBinary()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("EchoBinary");
             action.AddInputParameter(new ParameterBinary("Value"));
@@ -298,7 +298,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetUint must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetUint()
+        protected void EnableActionSetUint()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetUint");
             action.AddInputParameter(new ParameterRelated("ValueUint", iPropertyVarUint));
@@ -311,7 +311,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetUint must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetUint()
+        protected void EnableActionGetUint()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetUint");
             action.AddOutputParameter(new ParameterRelated("ValueUint", iPropertyVarUint));
@@ -324,7 +324,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetInt must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetInt()
+        protected void EnableActionSetInt()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetInt");
             action.AddInputParameter(new ParameterRelated("ValueInt", iPropertyVarInt));
@@ -337,7 +337,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetInt must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetInt()
+        protected void EnableActionGetInt()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetInt");
             action.AddOutputParameter(new ParameterRelated("ValueInt", iPropertyVarInt));
@@ -350,7 +350,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetBool must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetBool()
+        protected void EnableActionSetBool()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBool");
             action.AddInputParameter(new ParameterRelated("ValueBool", iPropertyVarBool));
@@ -363,7 +363,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetBool must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetBool()
+        protected void EnableActionGetBool()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetBool");
             action.AddOutputParameter(new ParameterRelated("ValueBool", iPropertyVarBool));
@@ -376,7 +376,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetMultiple must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetMultiple()
+        protected void EnableActionSetMultiple()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetMultiple");
             action.AddInputParameter(new ParameterRelated("ValueUint", iPropertyVarUint));
@@ -391,7 +391,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetString must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetString()
+        protected void EnableActionSetString()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetString");
             action.AddInputParameter(new ParameterRelated("ValueStr", iPropertyVarStr));
@@ -404,7 +404,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetString must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetString()
+        protected void EnableActionGetString()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetString");
             action.AddOutputParameter(new ParameterRelated("ValueStr", iPropertyVarStr));
@@ -417,7 +417,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetBinary must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetBinary()
+        protected void EnableActionSetBinary()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBinary");
             action.AddInputParameter(new ParameterRelated("ValueBin", iPropertyVarBin));
@@ -430,7 +430,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetBinary must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetBinary()
+        protected void EnableActionGetBinary()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetBinary");
             action.AddOutputParameter(new ParameterRelated("ValueBin", iPropertyVarBin));
@@ -443,7 +443,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoToggleBool must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionToggleBool()
+        protected void EnableActionToggleBool()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ToggleBool");
             iDelegateToggleBool = new ActionDelegate(DoToggleBool);
@@ -455,7 +455,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoWriteFile must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionWriteFile()
+        protected void EnableActionWriteFile()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("WriteFile");
             List<String> allowedValues = new List<String>();
@@ -470,7 +470,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoShutdown must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionShutdown()
+        protected void EnableActionShutdown()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Shutdown");
             iDelegateShutdown = new ActionDelegate(DoShutdown);
@@ -749,7 +749,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoIncrement(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoIncrement(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -791,7 +791,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDecrement(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDecrement(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -833,7 +833,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoToggle(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoToggle(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -875,7 +875,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoEchoString(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoEchoString(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -917,7 +917,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoEchoBinary(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoEchoBinary(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -959,7 +959,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetUint(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetUint(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -999,7 +999,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetUint(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetUint(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -1039,7 +1039,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetInt(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetInt(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -1079,7 +1079,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetInt(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetInt(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -1119,7 +1119,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetBool(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBool(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -1159,7 +1159,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetBool(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetBool(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -1199,7 +1199,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetMultiple(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetMultiple(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -1243,7 +1243,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetString(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetString(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -1283,7 +1283,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetString(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetString(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -1323,7 +1323,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetBinary(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBinary(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -1363,7 +1363,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetBinary(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetBinary(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -1403,7 +1403,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoToggleBool(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoToggleBool(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -1441,7 +1441,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoWriteFile(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoWriteFile(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
@@ -1483,7 +1483,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoShutdown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoShutdown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;

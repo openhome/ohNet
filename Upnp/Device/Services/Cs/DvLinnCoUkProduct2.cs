@@ -185,7 +185,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoType must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionType()
+        protected void EnableActionType()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Type");
             List<String> allowedValues = new List<String>();
@@ -199,7 +199,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoModel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionModel()
+        protected void EnableActionModel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Model");
             List<String> allowedValues = new List<String>();
@@ -213,7 +213,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoName must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionName()
+        protected void EnableActionName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Name");
             action.AddOutputParameter(new ParameterRelated("aName", iPropertyProductName));
@@ -226,7 +226,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetName must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetName()
+        protected void EnableActionSetName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetName");
             action.AddInputParameter(new ParameterRelated("aName", iPropertyProductName));
@@ -239,7 +239,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoRoom must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionRoom()
+        protected void EnableActionRoom()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Room");
             action.AddOutputParameter(new ParameterRelated("aRoom", iPropertyProductRoom));
@@ -252,7 +252,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetRoom must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetRoom()
+        protected void EnableActionSetRoom()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRoom");
             action.AddInputParameter(new ParameterRelated("aRoom", iPropertyProductRoom));
@@ -265,7 +265,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStandby must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStandby()
+        protected void EnableActionStandby()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Standby");
             action.AddOutputParameter(new ParameterRelated("aStandby", iPropertyProductStandby));
@@ -278,7 +278,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStandby must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStandby()
+        protected void EnableActionSetStandby()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStandby");
             action.AddInputParameter(new ParameterRelated("aStandby", iPropertyProductStandby));
@@ -291,7 +291,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSourceCount must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSourceCount()
+        protected void EnableActionSourceCount()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SourceCount");
             action.AddOutputParameter(new ParameterRelated("aSourceCount", iPropertyProductSourceIndex));
@@ -304,7 +304,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSourceIndex must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSourceIndex()
+        protected void EnableActionSourceIndex()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SourceIndex");
             action.AddOutputParameter(new ParameterRelated("aSourceIndex", iPropertyProductSourceIndex));
@@ -317,7 +317,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetSourceIndex must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetSourceIndex()
+        protected void EnableActionSetSourceIndex()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetSourceIndex");
             action.AddInputParameter(new ParameterRelated("aSourceIndex", iPropertyProductSourceIndex));
@@ -330,7 +330,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSourceType must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSourceType()
+        protected void EnableActionSourceType()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SourceType");
             List<String> allowedValues = new List<String>();
@@ -509,7 +509,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoType(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoType(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
@@ -549,7 +549,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoModel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoModel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
@@ -589,7 +589,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
@@ -629,7 +629,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
@@ -669,7 +669,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
@@ -709,7 +709,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
@@ -749,7 +749,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
@@ -789,7 +789,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
@@ -829,7 +829,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSourceCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSourceCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
@@ -869,7 +869,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSourceIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSourceIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
@@ -909,7 +909,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetSourceIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetSourceIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
@@ -949,7 +949,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSourceType(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSourceType(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;

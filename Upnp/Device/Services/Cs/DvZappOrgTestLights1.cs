@@ -39,7 +39,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetCount must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetCount()
+        protected void EnableActionGetCount()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetCount");
             action.AddOutputParameter(new ParameterUint("Count"));
@@ -52,7 +52,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetRoom must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetRoom()
+        protected void EnableActionGetRoom()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRoom");
             List<String> allowedValues = new List<String>();
@@ -67,7 +67,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetName must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetName()
+        protected void EnableActionGetName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetName");
             List<String> allowedValues = new List<String>();
@@ -82,7 +82,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetPosition must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetPosition()
+        protected void EnableActionGetPosition()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetPosition");
             action.AddInputParameter(new ParameterUint("Index"));
@@ -98,7 +98,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetColor must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetColor()
+        protected void EnableActionSetColor()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetColor");
             action.AddInputParameter(new ParameterUint("Index"));
@@ -112,7 +112,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetColor must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetColor()
+        protected void EnableActionGetColor()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetColor");
             action.AddInputParameter(new ParameterUint("Index"));
@@ -126,7 +126,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetColorComponents must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetColorComponents()
+        protected void EnableActionGetColorComponents()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetColorComponents");
             action.AddInputParameter(new ParameterUint("Color"));
@@ -247,7 +247,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoGetCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
@@ -287,7 +287,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
@@ -329,7 +329,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
@@ -371,7 +371,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetPosition(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetPosition(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
@@ -417,7 +417,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
@@ -459,7 +459,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
@@ -501,7 +501,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetColorComponents(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetColorComponents(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;

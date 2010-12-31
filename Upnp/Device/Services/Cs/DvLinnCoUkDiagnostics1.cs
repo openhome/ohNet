@@ -80,7 +80,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoEcho must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionEcho()
+        protected void EnableActionEcho()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Echo");
             List<String> allowedValues = new List<String>();
@@ -95,7 +95,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoElfFile must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionElfFile()
+        protected void EnableActionElfFile()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ElfFile");
             List<String> allowedValues = new List<String>();
@@ -109,7 +109,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoElfFingerprint must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionElfFingerprint()
+        protected void EnableActionElfFingerprint()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ElfFingerprint");
             List<String> allowedValues = new List<String>();
@@ -123,7 +123,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoCrashDataStatus must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionCrashDataStatus()
+        protected void EnableActionCrashDataStatus()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CrashDataStatus");
             List<String> allowedValues = new List<String>();
@@ -137,7 +137,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoCrashDataFetch must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionCrashDataFetch()
+        protected void EnableActionCrashDataFetch()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CrashDataFetch");
             action.AddOutputParameter(new ParameterBinary("aCrashData"));
@@ -150,7 +150,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoCrashDataClear must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionCrashDataClear()
+        protected void EnableActionCrashDataClear()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CrashDataClear");
             iDelegateCrashDataClear = new ActionDelegate(DoCrashDataClear);
@@ -162,7 +162,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSysLog must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSysLog()
+        protected void EnableActionSysLog()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SysLog");
             action.AddOutputParameter(new ParameterBinary("aSysLog"));
@@ -175,7 +175,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDiagnostic must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDiagnostic()
+        protected void EnableActionDiagnostic()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Diagnostic");
             List<String> allowedValues = new List<String>();
@@ -190,7 +190,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStateVariable must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStateVariable()
+        protected void EnableActionStateVariable()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StateVariable");
             action.AddOutputParameter(new ParameterRelated("aStateVariable", iPropertyaStateVariable));
@@ -203,7 +203,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStateVariable must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStateVariable()
+        protected void EnableActionSetStateVariable()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStateVariable");
             action.AddInputParameter(new ParameterRelated("aStateVariable", iPropertyaStateVariable));
@@ -216,7 +216,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStateVariablePeriod must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStateVariablePeriod()
+        protected void EnableActionStateVariablePeriod()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StateVariablePeriod");
             action.AddOutputParameter(new ParameterUint("aPeriod"));
@@ -229,7 +229,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStateVariablePeriod must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStateVariablePeriod()
+        protected void EnableActionSetStateVariablePeriod()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStateVariablePeriod");
             action.AddInputParameter(new ParameterUint("aPeriod"));
@@ -242,7 +242,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoReboot must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionReboot()
+        protected void EnableActionReboot()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Reboot");
             action.AddInputParameter(new ParameterUint("aDelay"));
@@ -433,7 +433,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoEcho(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoEcho(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
@@ -475,7 +475,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoElfFile(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoElfFile(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
@@ -515,7 +515,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoElfFingerprint(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoElfFingerprint(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
@@ -555,7 +555,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoCrashDataStatus(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCrashDataStatus(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
@@ -595,7 +595,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoCrashDataFetch(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCrashDataFetch(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
@@ -635,7 +635,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoCrashDataClear(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCrashDataClear(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
@@ -673,7 +673,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSysLog(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSysLog(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
@@ -713,7 +713,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDiagnostic(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDiagnostic(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
@@ -755,7 +755,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStateVariable(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStateVariable(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
@@ -795,7 +795,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetStateVariable(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetStateVariable(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
@@ -835,7 +835,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStateVariablePeriod(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStateVariablePeriod(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
@@ -875,7 +875,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetStateVariablePeriod(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetStateVariablePeriod(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
@@ -915,7 +915,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoReboot(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoReboot(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;

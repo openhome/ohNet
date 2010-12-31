@@ -70,7 +70,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetTarget must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetTarget()
+        protected void EnableActionSetTarget()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetTarget");
             action.AddInputParameter(new ParameterBool("newTargetValue"));
@@ -83,7 +83,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetTarget must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetTarget()
+        protected void EnableActionGetTarget()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetTarget");
             action.AddOutputParameter(new ParameterBool("RetTargetValue"));
@@ -96,7 +96,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetStatus must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetStatus()
+        protected void EnableActionGetStatus()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetStatus");
             action.AddOutputParameter(new ParameterRelated("ResultStatus", iPropertyStatus));
@@ -146,7 +146,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoSetTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgSwitchPower1 self = (DvProviderUpnpOrgSwitchPower1)gch.Target;
@@ -186,7 +186,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgSwitchPower1 self = (DvProviderUpnpOrgSwitchPower1)gch.Target;
@@ -226,7 +226,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetStatus(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetStatus(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgSwitchPower1 self = (DvProviderUpnpOrgSwitchPower1)gch.Target;

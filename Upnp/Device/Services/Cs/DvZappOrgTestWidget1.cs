@@ -314,7 +314,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetReadWriteRegister must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetReadWriteRegister()
+        protected void EnableActionSetReadWriteRegister()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetReadWriteRegister");
             action.AddInputParameter(new ParameterUint("RegisterIndex"));
@@ -328,7 +328,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetWidgetClass must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetWidgetClass()
+        protected void EnableActionGetWidgetClass()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetWidgetClass");
             action.AddOutputParameter(new ParameterUint("WidgetClass"));
@@ -365,7 +365,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoSetReadWriteRegister(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetReadWriteRegister(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidget1 self = (DvProviderZappOrgTestWidget1)gch.Target;
@@ -407,7 +407,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetWidgetClass(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetWidgetClass(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidget1 self = (DvProviderZappOrgTestWidget1)gch.Target;

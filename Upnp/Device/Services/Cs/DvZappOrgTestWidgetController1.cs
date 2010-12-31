@@ -36,7 +36,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoCreateWidget must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionCreateWidget()
+        protected void EnableActionCreateWidget()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CreateWidget");
             List<String> allowedValues = new List<String>();
@@ -51,7 +51,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoRemoveWidget must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionRemoveWidget()
+        protected void EnableActionRemoveWidget()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("RemoveWidget");
             List<String> allowedValues = new List<String>();
@@ -65,7 +65,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetWidgetRegister must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetWidgetRegister()
+        protected void EnableActionSetWidgetRegister()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetWidgetRegister");
             List<String> allowedValues = new List<String>();
@@ -81,7 +81,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetWidgetRegister must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetWidgetRegister()
+        protected void EnableActionGetWidgetRegister()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetWidgetRegister");
             List<String> allowedValues = new List<String>();
@@ -153,7 +153,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoCreateWidget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCreateWidget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
@@ -195,7 +195,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoRemoveWidget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoRemoveWidget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
@@ -235,7 +235,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetWidgetRegister(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetWidgetRegister(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
@@ -279,7 +279,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetWidgetRegister(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetWidgetRegister(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;

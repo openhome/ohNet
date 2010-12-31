@@ -68,7 +68,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeconds must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeconds()
+        protected void EnableActionSeconds()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Seconds");
             action.AddOutputParameter(new ParameterRelated("aSeconds", iPropertySeconds));
@@ -90,7 +90,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoSeconds(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeconds(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkMediaTime1 self = (DvProviderLinnCoUkMediaTime1)gch.Target;

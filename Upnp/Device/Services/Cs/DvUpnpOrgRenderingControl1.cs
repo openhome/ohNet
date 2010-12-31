@@ -103,7 +103,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoListPresets must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionListPresets()
+        protected void EnableActionListPresets()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ListPresets");
             List<String> allowedValues = new List<String>();
@@ -118,7 +118,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSelectPreset must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSelectPreset()
+        protected void EnableActionSelectPreset()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SelectPreset");
             List<String> allowedValues = new List<String>();
@@ -135,7 +135,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetBrightness must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetBrightness()
+        protected void EnableActionGetBrightness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetBrightness");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -149,7 +149,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetBrightness must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetBrightness()
+        protected void EnableActionSetBrightness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBrightness");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -163,7 +163,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetContrast must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetContrast()
+        protected void EnableActionGetContrast()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetContrast");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -177,7 +177,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetContrast must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetContrast()
+        protected void EnableActionSetContrast()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetContrast");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -191,7 +191,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetSharpness must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetSharpness()
+        protected void EnableActionGetSharpness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetSharpness");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -205,7 +205,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetSharpness must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetSharpness()
+        protected void EnableActionSetSharpness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetSharpness");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -219,7 +219,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetRedVideoGain must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetRedVideoGain()
+        protected void EnableActionGetRedVideoGain()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRedVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -233,7 +233,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetRedVideoGain must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetRedVideoGain()
+        protected void EnableActionSetRedVideoGain()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRedVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -247,7 +247,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetGreenVideoGain must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetGreenVideoGain()
+        protected void EnableActionGetGreenVideoGain()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetGreenVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -261,7 +261,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetGreenVideoGain must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetGreenVideoGain()
+        protected void EnableActionSetGreenVideoGain()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetGreenVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -275,7 +275,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetBlueVideoGain must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetBlueVideoGain()
+        protected void EnableActionGetBlueVideoGain()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetBlueVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -289,7 +289,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetBlueVideoGain must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetBlueVideoGain()
+        protected void EnableActionSetBlueVideoGain()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBlueVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -303,7 +303,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetRedVideoBlackLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetRedVideoBlackLevel()
+        protected void EnableActionGetRedVideoBlackLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRedVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -317,7 +317,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetRedVideoBlackLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetRedVideoBlackLevel()
+        protected void EnableActionSetRedVideoBlackLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRedVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -331,7 +331,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetGreenVideoBlackLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetGreenVideoBlackLevel()
+        protected void EnableActionGetGreenVideoBlackLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetGreenVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -345,7 +345,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetGreenVideoBlackLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetGreenVideoBlackLevel()
+        protected void EnableActionSetGreenVideoBlackLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetGreenVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -359,7 +359,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetBlueVideoBlackLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetBlueVideoBlackLevel()
+        protected void EnableActionGetBlueVideoBlackLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetBlueVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -373,7 +373,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetBlueVideoBlackLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetBlueVideoBlackLevel()
+        protected void EnableActionSetBlueVideoBlackLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBlueVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -387,7 +387,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetColorTemperature must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetColorTemperature()
+        protected void EnableActionGetColorTemperature()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetColorTemperature");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -401,7 +401,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetColorTemperature must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetColorTemperature()
+        protected void EnableActionSetColorTemperature()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetColorTemperature");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -415,7 +415,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetHorizontalKeystone must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetHorizontalKeystone()
+        protected void EnableActionGetHorizontalKeystone()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetHorizontalKeystone");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -429,7 +429,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetHorizontalKeystone must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetHorizontalKeystone()
+        protected void EnableActionSetHorizontalKeystone()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetHorizontalKeystone");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -443,7 +443,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetVerticalKeystone must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetVerticalKeystone()
+        protected void EnableActionGetVerticalKeystone()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetVerticalKeystone");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -457,7 +457,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetVerticalKeystone must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetVerticalKeystone()
+        protected void EnableActionSetVerticalKeystone()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetVerticalKeystone");
             action.AddInputParameter(new ParameterUint("InstanceID"));
@@ -471,7 +471,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetMute must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetMute()
+        protected void EnableActionGetMute()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetMute");
             List<String> allowedValues = new List<String>();
@@ -489,7 +489,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetMute must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetMute()
+        protected void EnableActionSetMute()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetMute");
             List<String> allowedValues = new List<String>();
@@ -507,7 +507,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetVolume must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetVolume()
+        protected void EnableActionGetVolume()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetVolume");
             List<String> allowedValues = new List<String>();
@@ -525,7 +525,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetVolume must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetVolume()
+        protected void EnableActionSetVolume()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetVolume");
             List<String> allowedValues = new List<String>();
@@ -543,7 +543,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetVolumeDB must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetVolumeDB()
+        protected void EnableActionGetVolumeDB()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetVolumeDB");
             List<String> allowedValues = new List<String>();
@@ -561,7 +561,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetVolumeDB must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetVolumeDB()
+        protected void EnableActionSetVolumeDB()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetVolumeDB");
             List<String> allowedValues = new List<String>();
@@ -579,7 +579,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetVolumeDBRange must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetVolumeDBRange()
+        protected void EnableActionGetVolumeDBRange()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetVolumeDBRange");
             List<String> allowedValues = new List<String>();
@@ -598,7 +598,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetLoudness must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetLoudness()
+        protected void EnableActionGetLoudness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetLoudness");
             List<String> allowedValues = new List<String>();
@@ -616,7 +616,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetLoudness must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetLoudness()
+        protected void EnableActionSetLoudness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetLoudness");
             List<String> allowedValues = new List<String>();
@@ -1164,7 +1164,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoListPresets(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoListPresets(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1206,7 +1206,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSelectPreset(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSelectPreset(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1248,7 +1248,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1290,7 +1290,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1332,7 +1332,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetContrast(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetContrast(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1374,7 +1374,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetContrast(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetContrast(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1416,7 +1416,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetSharpness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSharpness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1458,7 +1458,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetSharpness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetSharpness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1500,7 +1500,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetRedVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRedVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1542,7 +1542,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetRedVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRedVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1584,7 +1584,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetGreenVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetGreenVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1626,7 +1626,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetGreenVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetGreenVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1668,7 +1668,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetBlueVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetBlueVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1710,7 +1710,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetBlueVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBlueVideoGain(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1752,7 +1752,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetRedVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRedVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1794,7 +1794,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetRedVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRedVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1836,7 +1836,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetGreenVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetGreenVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1878,7 +1878,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetGreenVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetGreenVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1920,7 +1920,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetBlueVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetBlueVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -1962,7 +1962,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetBlueVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBlueVideoBlackLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2004,7 +2004,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetColorTemperature(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetColorTemperature(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2046,7 +2046,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetColorTemperature(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetColorTemperature(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2088,7 +2088,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetHorizontalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetHorizontalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2130,7 +2130,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetHorizontalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetHorizontalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2172,7 +2172,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetVerticalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetVerticalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2214,7 +2214,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetVerticalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetVerticalKeystone(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2256,7 +2256,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2300,7 +2300,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2344,7 +2344,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2388,7 +2388,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2432,7 +2432,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetVolumeDB(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetVolumeDB(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2476,7 +2476,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetVolumeDB(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetVolumeDB(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2520,7 +2520,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetVolumeDBRange(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetVolumeDBRange(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2566,7 +2566,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetLoudness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetLoudness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
@@ -2610,7 +2610,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetLoudness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetLoudness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;

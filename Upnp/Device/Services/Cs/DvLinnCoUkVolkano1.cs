@@ -43,7 +43,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoReboot must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionReboot()
+        protected void EnableActionReboot()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Reboot");
             iDelegateReboot = new ActionDelegate(DoReboot);
@@ -55,7 +55,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoBootMode must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionBootMode()
+        protected void EnableActionBootMode()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("BootMode");
             List<String> allowedValues = new List<String>();
@@ -73,7 +73,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetBootMode must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetBootMode()
+        protected void EnableActionSetBootMode()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBootMode");
             List<String> allowedValues = new List<String>();
@@ -90,7 +90,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoBspType must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionBspType()
+        protected void EnableActionBspType()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("BspType");
             List<String> allowedValues = new List<String>();
@@ -104,7 +104,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoUglyName must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionUglyName()
+        protected void EnableActionUglyName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("UglyName");
             List<String> allowedValues = new List<String>();
@@ -118,7 +118,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoMacAddress must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionMacAddress()
+        protected void EnableActionMacAddress()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("MacAddress");
             List<String> allowedValues = new List<String>();
@@ -132,7 +132,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoProductId must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionProductId()
+        protected void EnableActionProductId()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ProductId");
             List<String> allowedValues = new List<String>();
@@ -146,7 +146,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoBoardId must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionBoardId()
+        protected void EnableActionBoardId()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("BoardId");
             List<String> allowedValues = new List<String>();
@@ -161,7 +161,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoBoardType must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionBoardType()
+        protected void EnableActionBoardType()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("BoardType");
             List<String> allowedValues = new List<String>();
@@ -176,7 +176,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoMaxBoards must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionMaxBoards()
+        protected void EnableActionMaxBoards()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("MaxBoards");
             action.AddOutputParameter(new ParameterUint("aMaxBoards"));
@@ -189,7 +189,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSoftwareVersion must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSoftwareVersion()
+        protected void EnableActionSoftwareVersion()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SoftwareVersion");
             List<String> allowedValues = new List<String>();
@@ -353,7 +353,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoReboot(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoReboot(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
@@ -391,7 +391,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoBootMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBootMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
@@ -431,7 +431,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetBootMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBootMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
@@ -471,7 +471,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoBspType(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBspType(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
@@ -511,7 +511,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoUglyName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoUglyName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
@@ -551,7 +551,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoMacAddress(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoMacAddress(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
@@ -591,7 +591,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoProductId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoProductId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
@@ -631,7 +631,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoBoardId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBoardId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
@@ -673,7 +673,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoBoardType(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBoardType(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
@@ -715,7 +715,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoMaxBoards(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoMaxBoards(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
@@ -755,7 +755,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSoftwareVersion(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSoftwareVersion(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;

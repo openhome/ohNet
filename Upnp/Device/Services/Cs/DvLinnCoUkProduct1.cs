@@ -107,7 +107,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoRoom must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionRoom()
+        protected void EnableActionRoom()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Room");
             action.AddOutputParameter(new ParameterRelated("aRoom", iPropertyRoom));
@@ -120,7 +120,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetRoom must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetRoom()
+        protected void EnableActionSetRoom()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRoom");
             action.AddInputParameter(new ParameterRelated("aRoom", iPropertyRoom));
@@ -133,7 +133,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStandby must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStandby()
+        protected void EnableActionStandby()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Standby");
             action.AddOutputParameter(new ParameterRelated("aStandby", iPropertyStandby));
@@ -146,7 +146,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStandby must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStandby()
+        protected void EnableActionSetStandby()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStandby");
             action.AddInputParameter(new ParameterRelated("aStandby", iPropertyStandby));
@@ -210,7 +210,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
@@ -250,7 +250,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
@@ -290,7 +290,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
@@ -330,7 +330,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;

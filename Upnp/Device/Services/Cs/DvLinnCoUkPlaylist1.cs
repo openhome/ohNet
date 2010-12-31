@@ -184,7 +184,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoRead must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionRead()
+        protected void EnableActionRead()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Read");
             List<String> allowedValues = new List<String>();
@@ -200,7 +200,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoReadList must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionReadList()
+        protected void EnableActionReadList()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ReadList");
             List<String> allowedValues = new List<String>();
@@ -215,7 +215,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoInsert must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionInsert()
+        protected void EnableActionInsert()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Insert");
             List<String> allowedValues = new List<String>();
@@ -232,7 +232,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDelete must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDelete()
+        protected void EnableActionDelete()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Delete");
             action.AddInputParameter(new ParameterUint("aId"));
@@ -245,7 +245,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDeleteAll must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDeleteAll()
+        protected void EnableActionDeleteAll()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DeleteAll");
             iDelegateDeleteAll = new ActionDelegate(DoDeleteAll);
@@ -257,7 +257,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetRepeat must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetRepeat()
+        protected void EnableActionSetRepeat()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRepeat");
             action.AddInputParameter(new ParameterRelated("aRepeat", iPropertyRepeat));
@@ -270,7 +270,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoRepeat must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionRepeat()
+        protected void EnableActionRepeat()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Repeat");
             action.AddOutputParameter(new ParameterRelated("aRepeat", iPropertyRepeat));
@@ -283,7 +283,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetShuffle must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetShuffle()
+        protected void EnableActionSetShuffle()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetShuffle");
             action.AddInputParameter(new ParameterRelated("aShuffle", iPropertyShuffle));
@@ -296,7 +296,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoShuffle must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionShuffle()
+        protected void EnableActionShuffle()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Shuffle");
             action.AddOutputParameter(new ParameterRelated("aShuffle", iPropertyShuffle));
@@ -309,7 +309,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoTracksMax must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionTracksMax()
+        protected void EnableActionTracksMax()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("TracksMax");
             action.AddOutputParameter(new ParameterRelated("aTracksMax", iPropertyTracksMax));
@@ -322,7 +322,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoIdArray must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionIdArray()
+        protected void EnableActionIdArray()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("IdArray");
             action.AddOutputParameter(new ParameterUint("aIdArrayToken"));
@@ -336,7 +336,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoIdArrayChanged must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionIdArrayChanged()
+        protected void EnableActionIdArrayChanged()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("IdArrayChanged");
             action.AddInputParameter(new ParameterUint("aIdArrayToken"));
@@ -520,7 +520,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoRead(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoRead(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
@@ -564,7 +564,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoReadList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoReadList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
@@ -606,7 +606,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoInsert(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoInsert(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
@@ -652,7 +652,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDelete(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDelete(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
@@ -692,7 +692,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDeleteAll(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDeleteAll(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
@@ -730,7 +730,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetRepeat(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRepeat(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
@@ -770,7 +770,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoRepeat(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoRepeat(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
@@ -810,7 +810,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetShuffle(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetShuffle(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
@@ -850,7 +850,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoShuffle(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoShuffle(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
@@ -890,7 +890,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoTracksMax(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTracksMax(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
@@ -930,7 +930,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoIdArray(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoIdArray(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
@@ -972,7 +972,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoIdArrayChanged(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoIdArrayChanged(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;

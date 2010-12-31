@@ -35,7 +35,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDebugLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDebugLevel()
+        protected void EnableActionSetDebugLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDebugLevel");
             action.AddInputParameter(new ParameterUint("aDebugLevel"));
@@ -48,7 +48,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDebugLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDebugLevel()
+        protected void EnableActionDebugLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DebugLevel");
             action.AddOutputParameter(new ParameterUint("aDebugLevel"));
@@ -61,7 +61,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoMemWrite must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionMemWrite()
+        protected void EnableActionMemWrite()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("MemWrite");
             action.AddInputParameter(new ParameterUint("aMemAddress"));
@@ -113,7 +113,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoSetDebugLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetDebugLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
@@ -153,7 +153,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDebugLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDebugLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
@@ -193,7 +193,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoMemWrite(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoMemWrite(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;

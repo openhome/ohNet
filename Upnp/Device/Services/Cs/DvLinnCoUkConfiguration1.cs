@@ -106,7 +106,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoConfigurationXml must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionConfigurationXml()
+        protected void EnableActionConfigurationXml()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ConfigurationXml");
             action.AddOutputParameter(new ParameterRelated("aConfigurationXml", iPropertyConfigurationXml));
@@ -119,7 +119,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoParameterXml must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionParameterXml()
+        protected void EnableActionParameterXml()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ParameterXml");
             action.AddOutputParameter(new ParameterRelated("aParameterXml", iPropertyParameterXml));
@@ -132,7 +132,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetParameter must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetParameter()
+        protected void EnableActionSetParameter()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetParameter");
             List<String> allowedValues = new List<String>();
@@ -187,7 +187,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoConfigurationXml(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoConfigurationXml(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkConfiguration1 self = (DvProviderLinnCoUkConfiguration1)gch.Target;
@@ -227,7 +227,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoParameterXml(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoParameterXml(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkConfiguration1 self = (DvProviderLinnCoUkConfiguration1)gch.Target;
@@ -267,7 +267,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetParameter(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetParameter(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkConfiguration1 self = (DvProviderLinnCoUkConfiguration1)gch.Target;

@@ -228,7 +228,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetLoadLevelTarget must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetLoadLevelTarget()
+        protected void EnableActionSetLoadLevelTarget()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetLoadLevelTarget");
             action.AddInputParameter(new ParameterUint("newLoadlevelTarget", 0, 100));
@@ -241,7 +241,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetLoadLevelTarget must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetLoadLevelTarget()
+        protected void EnableActionGetLoadLevelTarget()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetLoadLevelTarget");
             action.AddOutputParameter(new ParameterUint("GetLoadlevelTarget", 0, 100));
@@ -254,7 +254,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetLoadLevelStatus must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetLoadLevelStatus()
+        protected void EnableActionGetLoadLevelStatus()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetLoadLevelStatus");
             action.AddOutputParameter(new ParameterRelated("retLoadlevelStatus", iPropertyLoadLevelStatus));
@@ -267,7 +267,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetOnEffectLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetOnEffectLevel()
+        protected void EnableActionSetOnEffectLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetOnEffectLevel");
             action.AddInputParameter(new ParameterUint("newOnEffectLevel", 0, 100));
@@ -280,7 +280,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetOnEffect must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetOnEffect()
+        protected void EnableActionSetOnEffect()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetOnEffect");
             List<String> allowedValues = new List<String>();
@@ -298,7 +298,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetOnEffectParameters must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetOnEffectParameters()
+        protected void EnableActionGetOnEffectParameters()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetOnEffectParameters");
             List<String> allowedValues = new List<String>();
@@ -317,7 +317,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStepUp must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStepUp()
+        protected void EnableActionStepUp()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StepUp");
             iDelegateStepUp = new ActionDelegate(DoStepUp);
@@ -329,7 +329,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStepDown must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStepDown()
+        protected void EnableActionStepDown()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StepDown");
             iDelegateStepDown = new ActionDelegate(DoStepDown);
@@ -341,7 +341,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStartRampUp must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStartRampUp()
+        protected void EnableActionStartRampUp()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StartRampUp");
             iDelegateStartRampUp = new ActionDelegate(DoStartRampUp);
@@ -353,7 +353,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStartRampDown must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStartRampDown()
+        protected void EnableActionStartRampDown()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StartRampDown");
             iDelegateStartRampDown = new ActionDelegate(DoStartRampDown);
@@ -365,7 +365,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStopRamp must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStopRamp()
+        protected void EnableActionStopRamp()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StopRamp");
             iDelegateStopRamp = new ActionDelegate(DoStopRamp);
@@ -377,7 +377,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStartRampToLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStartRampToLevel()
+        protected void EnableActionStartRampToLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StartRampToLevel");
             action.AddInputParameter(new ParameterUint("newLoadLevelTarget", 0, 100));
@@ -391,7 +391,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStepDelta must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStepDelta()
+        protected void EnableActionSetStepDelta()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStepDelta");
             action.AddInputParameter(new ParameterRelated("newStepDelta", iPropertyStepDelta));
@@ -404,7 +404,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetStepDelta must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetStepDelta()
+        protected void EnableActionGetStepDelta()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetStepDelta");
             action.AddOutputParameter(new ParameterRelated("retStepDelta", iPropertyStepDelta));
@@ -417,7 +417,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetRampRate must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetRampRate()
+        protected void EnableActionSetRampRate()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRampRate");
             action.AddInputParameter(new ParameterRelated("newRampRate", iPropertyRampRate));
@@ -430,7 +430,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetRampRate must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetRampRate()
+        protected void EnableActionGetRampRate()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRampRate");
             action.AddOutputParameter(new ParameterRelated("retRampRate", iPropertyRampRate));
@@ -443,7 +443,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPauseRamp must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPauseRamp()
+        protected void EnableActionPauseRamp()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PauseRamp");
             iDelegatePauseRamp = new ActionDelegate(DoPauseRamp);
@@ -455,7 +455,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoResumeRamp must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionResumeRamp()
+        protected void EnableActionResumeRamp()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ResumeRamp");
             iDelegateResumeRamp = new ActionDelegate(DoResumeRamp);
@@ -467,7 +467,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetIsRamping must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetIsRamping()
+        protected void EnableActionGetIsRamping()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetIsRamping");
             action.AddOutputParameter(new ParameterRelated("retIsRamping", iPropertyIsRamping));
@@ -480,7 +480,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetRampPaused must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetRampPaused()
+        protected void EnableActionGetRampPaused()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRampPaused");
             action.AddOutputParameter(new ParameterRelated("retRampPaused", iPropertyRampPaused));
@@ -493,7 +493,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetRampTime must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetRampTime()
+        protected void EnableActionGetRampTime()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRampTime");
             action.AddOutputParameter(new ParameterUint("retRampTime"));
@@ -790,7 +790,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoSetLoadLevelTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetLoadLevelTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -830,7 +830,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetLoadLevelTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetLoadLevelTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -870,7 +870,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetLoadLevelStatus(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetLoadLevelStatus(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -910,7 +910,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetOnEffectLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetOnEffectLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -950,7 +950,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetOnEffect(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetOnEffect(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -990,7 +990,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetOnEffectParameters(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetOnEffectParameters(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1032,7 +1032,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStepUp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStepUp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1070,7 +1070,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStepDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStepDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1108,7 +1108,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStartRampUp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStartRampUp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1146,7 +1146,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStartRampDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStartRampDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1184,7 +1184,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStopRamp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStopRamp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1222,7 +1222,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStartRampToLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStartRampToLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1264,7 +1264,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetStepDelta(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetStepDelta(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1304,7 +1304,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetStepDelta(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetStepDelta(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1344,7 +1344,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetRampRate(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetRampRate(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1384,7 +1384,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetRampRate(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRampRate(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1424,7 +1424,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoPauseRamp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPauseRamp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1462,7 +1462,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoResumeRamp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoResumeRamp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1500,7 +1500,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetIsRamping(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetIsRamping(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1540,7 +1540,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetRampPaused(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRampPaused(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
@@ -1580,7 +1580,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetRampTime(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRampTime(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;

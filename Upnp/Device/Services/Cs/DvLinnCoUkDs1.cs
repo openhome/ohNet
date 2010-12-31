@@ -363,7 +363,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPlay must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPlay()
+        protected void EnableActionPlay()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Play");
             iDelegatePlay = new ActionDelegate(DoPlay);
@@ -375,7 +375,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPause must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPause()
+        protected void EnableActionPause()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Pause");
             iDelegatePause = new ActionDelegate(DoPause);
@@ -387,7 +387,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStop must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStop()
+        protected void EnableActionStop()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Stop");
             iDelegateStop = new ActionDelegate(DoStop);
@@ -399,7 +399,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeekSecondAbsolute must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeekSecondAbsolute()
+        protected void EnableActionSeekSecondAbsolute()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SeekSecondAbsolute");
             action.AddInputParameter(new ParameterUint("aSecond"));
@@ -412,7 +412,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeekSecondRelative must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeekSecondRelative()
+        protected void EnableActionSeekSecondRelative()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SeekSecondRelative");
             action.AddInputParameter(new ParameterInt("aSecond"));
@@ -425,7 +425,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeekTrackId must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeekTrackId()
+        protected void EnableActionSeekTrackId()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SeekTrackId");
             action.AddInputParameter(new ParameterRelated("aTrackId", iPropertyTrackId));
@@ -438,7 +438,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeekTrackAbsolute must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeekTrackAbsolute()
+        protected void EnableActionSeekTrackAbsolute()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SeekTrackAbsolute");
             action.AddInputParameter(new ParameterUint("aTrack"));
@@ -451,7 +451,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeekTrackRelative must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeekTrackRelative()
+        protected void EnableActionSeekTrackRelative()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SeekTrackRelative");
             action.AddInputParameter(new ParameterInt("aTrack"));
@@ -464,7 +464,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoState must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionState()
+        protected void EnableActionState()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("State");
             action.AddOutputParameter(new ParameterRelated("aTransportState", iPropertyTransportState));
@@ -484,7 +484,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoProtocolInfo must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionProtocolInfo()
+        protected void EnableActionProtocolInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ProtocolInfo");
             action.AddOutputParameter(new ParameterRelated("aSupportedProtocols", iPropertySupportedProtocols));
@@ -636,7 +636,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoPlay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
@@ -674,7 +674,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoPause(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPause(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
@@ -712,7 +712,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStop(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStop(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
@@ -750,7 +750,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSeekSecondAbsolute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeekSecondAbsolute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
@@ -790,7 +790,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSeekSecondRelative(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeekSecondRelative(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
@@ -830,7 +830,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSeekTrackId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeekTrackId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
@@ -870,7 +870,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSeekTrackAbsolute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeekTrackAbsolute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
@@ -910,7 +910,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSeekTrackRelative(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSeekTrackRelative(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
@@ -950,7 +950,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoState(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoState(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
@@ -1004,7 +1004,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoProtocolInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoProtocolInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;

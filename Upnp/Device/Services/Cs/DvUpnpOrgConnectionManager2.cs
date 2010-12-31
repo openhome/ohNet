@@ -143,7 +143,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetProtocolInfo must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetProtocolInfo()
+        protected void EnableActionGetProtocolInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetProtocolInfo");
             action.AddOutputParameter(new ParameterRelated("Source", iPropertySourceProtocolInfo));
@@ -157,7 +157,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPrepareForConnection must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPrepareForConnection()
+        protected void EnableActionPrepareForConnection()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PrepareForConnection");
             List<String> allowedValues = new List<String>();
@@ -180,7 +180,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoConnectionComplete must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionConnectionComplete()
+        protected void EnableActionConnectionComplete()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ConnectionComplete");
             action.AddInputParameter(new ParameterInt("ConnectionID"));
@@ -193,7 +193,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetCurrentConnectionIDs must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetCurrentConnectionIDs()
+        protected void EnableActionGetCurrentConnectionIDs()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetCurrentConnectionIDs");
             action.AddOutputParameter(new ParameterRelated("ConnectionIDs", iPropertyCurrentConnectionIDs));
@@ -206,7 +206,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetCurrentConnectionInfo must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetCurrentConnectionInfo()
+        protected void EnableActionGetCurrentConnectionInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetCurrentConnectionInfo");
             List<String> allowedValues = new List<String>();
@@ -315,7 +315,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoGetProtocolInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetProtocolInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
@@ -357,7 +357,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoPrepareForConnection(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPrepareForConnection(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
@@ -409,7 +409,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoConnectionComplete(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoConnectionComplete(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
@@ -449,7 +449,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetCurrentConnectionIDs(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetCurrentConnectionIDs(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
@@ -489,7 +489,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetCurrentConnectionInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetCurrentConnectionInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;

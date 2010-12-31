@@ -35,7 +35,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoTestComPort must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionTestComPort()
+        protected void EnableActionTestComPort()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("TestComPort");
             action.AddInputParameter(new ParameterUint("aPort"));
@@ -49,7 +49,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoLedsOn must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionLedsOn()
+        protected void EnableActionLedsOn()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("LedsOn");
             iDelegateLedsOn = new ActionDelegate(DoLedsOn);
@@ -61,7 +61,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoLedsOff must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionLedsOff()
+        protected void EnableActionLedsOff()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("LedsOff");
             iDelegateLedsOff = new ActionDelegate(DoLedsOff);
@@ -109,7 +109,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoTestComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTestComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPtest1 self = (DvProviderLinnCoUkPtest1)gch.Target;
@@ -151,7 +151,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoLedsOn(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoLedsOn(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPtest1 self = (DvProviderLinnCoUkPtest1)gch.Target;
@@ -189,7 +189,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoLedsOff(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoLedsOff(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPtest1 self = (DvProviderLinnCoUkPtest1)gch.Target;

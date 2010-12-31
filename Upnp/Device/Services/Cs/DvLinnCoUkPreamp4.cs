@@ -256,7 +256,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoVolumeInc must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionVolumeInc()
+        protected void EnableActionVolumeInc()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("VolumeInc");
             iDelegateVolumeInc = new ActionDelegate(DoVolumeInc);
@@ -268,7 +268,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoVolumeDec must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionVolumeDec()
+        protected void EnableActionVolumeDec()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("VolumeDec");
             iDelegateVolumeDec = new ActionDelegate(DoVolumeDec);
@@ -280,7 +280,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetVolume must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetVolume()
+        protected void EnableActionSetVolume()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetVolume");
             action.AddInputParameter(new ParameterUint("aVolume"));
@@ -293,7 +293,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoVolume must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionVolume()
+        protected void EnableActionVolume()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Volume");
             action.AddOutputParameter(new ParameterUint("aVolume"));
@@ -306,7 +306,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetMute must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetMute()
+        protected void EnableActionSetMute()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetMute");
             action.AddInputParameter(new ParameterBool("aMute"));
@@ -319,7 +319,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoMute must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionMute()
+        protected void EnableActionMute()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Mute");
             action.AddOutputParameter(new ParameterBool("aMute"));
@@ -332,7 +332,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetBalance must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetBalance()
+        protected void EnableActionSetBalance()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBalance");
             action.AddInputParameter(new ParameterInt("aBalance"));
@@ -345,7 +345,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoBalance must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionBalance()
+        protected void EnableActionBalance()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Balance");
             action.AddOutputParameter(new ParameterInt("aBalance"));
@@ -358,7 +358,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetVolumeLimit must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetVolumeLimit()
+        protected void EnableActionSetVolumeLimit()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetVolumeLimit");
             action.AddInputParameter(new ParameterUint("aVolumeLimit"));
@@ -371,7 +371,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoVolumeLimit must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionVolumeLimit()
+        protected void EnableActionVolumeLimit()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("VolumeLimit");
             action.AddOutputParameter(new ParameterUint("aVolumeLimit"));
@@ -384,7 +384,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStartupVolume must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStartupVolume()
+        protected void EnableActionSetStartupVolume()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStartupVolume");
             action.AddInputParameter(new ParameterUint("aStartupVolume"));
@@ -397,7 +397,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStartupVolume must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStartupVolume()
+        protected void EnableActionStartupVolume()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StartupVolume");
             action.AddOutputParameter(new ParameterUint("aStartupVolume"));
@@ -410,7 +410,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStartupVolumeEnabled must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStartupVolumeEnabled()
+        protected void EnableActionSetStartupVolumeEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStartupVolumeEnabled");
             action.AddInputParameter(new ParameterBool("aStartupVolumeEnabled"));
@@ -423,7 +423,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStartupVolumeEnabled must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStartupVolumeEnabled()
+        protected void EnableActionStartupVolumeEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StartupVolumeEnabled");
             action.AddOutputParameter(new ParameterBool("aStartupVolumeEnabled"));
@@ -625,7 +625,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoVolumeInc(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoVolumeInc(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
@@ -663,7 +663,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoVolumeDec(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoVolumeDec(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
@@ -701,7 +701,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
@@ -741,7 +741,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
@@ -781,7 +781,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
@@ -821,7 +821,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
@@ -861,7 +861,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetBalance(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetBalance(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
@@ -901,7 +901,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoBalance(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBalance(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
@@ -941,7 +941,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetVolumeLimit(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetVolumeLimit(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
@@ -981,7 +981,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoVolumeLimit(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoVolumeLimit(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
@@ -1021,7 +1021,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetStartupVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetStartupVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
@@ -1061,7 +1061,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStartupVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStartupVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
@@ -1101,7 +1101,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetStartupVolumeEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetStartupVolumeEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
@@ -1141,7 +1141,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStartupVolumeEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStartupVolumeEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;

@@ -457,7 +457,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoCounters must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionCounters()
+        protected void EnableActionCounters()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Counters");
             action.AddOutputParameter(new ParameterRelated("aTrackCount", iPropertyTrackCount));
@@ -472,7 +472,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoTrack must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionTrack()
+        protected void EnableActionTrack()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Track");
             action.AddOutputParameter(new ParameterRelated("aUri", iPropertyUri));
@@ -486,7 +486,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDetails must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDetails()
+        protected void EnableActionDetails()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Details");
             action.AddOutputParameter(new ParameterRelated("aDuration", iPropertyDuration));
@@ -504,7 +504,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoMetatext must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionMetatext()
+        protected void EnableActionMetatext()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Metatext");
             action.AddOutputParameter(new ParameterRelated("aMetatext", iPropertyMetatext));
@@ -576,7 +576,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoCounters(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCounters(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
@@ -620,7 +620,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoTrack(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTrack(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
@@ -662,7 +662,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDetails(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDetails(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
@@ -712,7 +712,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoMetatext(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoMetatext(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;

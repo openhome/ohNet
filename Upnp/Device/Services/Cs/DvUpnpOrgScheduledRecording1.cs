@@ -86,7 +86,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetSortCapabilities must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetSortCapabilities()
+        protected void EnableActionGetSortCapabilities()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetSortCapabilities");
             List<String> allowedValues = new List<String>();
@@ -101,7 +101,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetPropertyList must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetPropertyList()
+        protected void EnableActionGetPropertyList()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetPropertyList");
             List<String> allowedValues = new List<String>();
@@ -120,7 +120,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetAllowedValues must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetAllowedValues()
+        protected void EnableActionGetAllowedValues()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetAllowedValues");
             List<String> allowedValues = new List<String>();
@@ -140,7 +140,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetStateUpdateID must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetStateUpdateID()
+        protected void EnableActionGetStateUpdateID()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetStateUpdateID");
             action.AddOutputParameter(new ParameterUint("Id"));
@@ -153,7 +153,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoBrowseRecordSchedules must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionBrowseRecordSchedules()
+        protected void EnableActionBrowseRecordSchedules()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("BrowseRecordSchedules");
             List<String> allowedValues = new List<String>();
@@ -174,7 +174,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoBrowseRecordTasks must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionBrowseRecordTasks()
+        protected void EnableActionBrowseRecordTasks()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("BrowseRecordTasks");
             List<String> allowedValues = new List<String>();
@@ -196,7 +196,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoCreateRecordSchedule must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionCreateRecordSchedule()
+        protected void EnableActionCreateRecordSchedule()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CreateRecordSchedule");
             List<String> allowedValues = new List<String>();
@@ -213,7 +213,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDeleteRecordSchedule must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDeleteRecordSchedule()
+        protected void EnableActionDeleteRecordSchedule()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DeleteRecordSchedule");
             List<String> allowedValues = new List<String>();
@@ -227,7 +227,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetRecordSchedule must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetRecordSchedule()
+        protected void EnableActionGetRecordSchedule()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRecordSchedule");
             List<String> allowedValues = new List<String>();
@@ -244,7 +244,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoEnableRecordSchedule must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionEnableRecordSchedule()
+        protected void EnableActionEnableRecordSchedule()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("EnableRecordSchedule");
             List<String> allowedValues = new List<String>();
@@ -258,7 +258,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisableRecordSchedule must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisableRecordSchedule()
+        protected void EnableActionDisableRecordSchedule()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisableRecordSchedule");
             List<String> allowedValues = new List<String>();
@@ -272,7 +272,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDeleteRecordTask must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDeleteRecordTask()
+        protected void EnableActionDeleteRecordTask()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DeleteRecordTask");
             List<String> allowedValues = new List<String>();
@@ -286,7 +286,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetRecordTask must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetRecordTask()
+        protected void EnableActionGetRecordTask()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRecordTask");
             List<String> allowedValues = new List<String>();
@@ -303,7 +303,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoEnableRecordTask must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionEnableRecordTask()
+        protected void EnableActionEnableRecordTask()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("EnableRecordTask");
             List<String> allowedValues = new List<String>();
@@ -317,7 +317,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisableRecordTask must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisableRecordTask()
+        protected void EnableActionDisableRecordTask()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisableRecordTask");
             List<String> allowedValues = new List<String>();
@@ -331,7 +331,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoResetRecordTask must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionResetRecordTask()
+        protected void EnableActionResetRecordTask()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ResetRecordTask");
             List<String> allowedValues = new List<String>();
@@ -345,7 +345,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetRecordScheduleConflicts must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetRecordScheduleConflicts()
+        protected void EnableActionGetRecordScheduleConflicts()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRecordScheduleConflicts");
             List<String> allowedValues = new List<String>();
@@ -361,7 +361,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetRecordTaskConflicts must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetRecordTaskConflicts()
+        protected void EnableActionGetRecordTaskConflicts()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRecordTaskConflicts");
             List<String> allowedValues = new List<String>();
@@ -656,7 +656,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoGetSortCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSortCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -698,7 +698,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetPropertyList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetPropertyList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -740,7 +740,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetAllowedValues(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetAllowedValues(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -784,7 +784,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetStateUpdateID(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetStateUpdateID(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -824,7 +824,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoBrowseRecordSchedules(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBrowseRecordSchedules(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -878,7 +878,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoBrowseRecordTasks(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBrowseRecordTasks(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -934,7 +934,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoCreateRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCreateRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -980,7 +980,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDeleteRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDeleteRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1020,7 +1020,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1066,7 +1066,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoEnableRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoEnableRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1106,7 +1106,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDisableRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisableRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1146,7 +1146,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDeleteRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDeleteRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1186,7 +1186,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1232,7 +1232,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoEnableRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoEnableRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1272,7 +1272,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDisableRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDisableRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1312,7 +1312,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoResetRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoResetRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1352,7 +1352,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetRecordScheduleConflicts(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRecordScheduleConflicts(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
@@ -1396,7 +1396,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetRecordTaskConflicts(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetRecordTaskConflicts(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;

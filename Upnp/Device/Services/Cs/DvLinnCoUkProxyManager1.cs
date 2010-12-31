@@ -205,7 +205,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoKontrolProductConnected must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionKontrolProductConnected()
+        protected void EnableActionKontrolProductConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("KontrolProductConnected");
             action.AddOutputParameter(new ParameterRelated("aConnected", iPropertyKontrolProductConnected));
@@ -218,7 +218,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetKontrolProductConnected must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetKontrolProductConnected()
+        protected void EnableActionSetKontrolProductConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetKontrolProductConnected");
             action.AddInputParameter(new ParameterRelated("aConnected", iPropertyKontrolProductConnected));
@@ -231,7 +231,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoKontrolProductComPort must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionKontrolProductComPort()
+        protected void EnableActionKontrolProductComPort()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("KontrolProductComPort");
             action.AddOutputParameter(new ParameterRelated("aPort", iPropertyKontrolProductComPort));
@@ -244,7 +244,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetKontrolProductComPort must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetKontrolProductComPort()
+        protected void EnableActionSetKontrolProductComPort()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetKontrolProductComPort");
             action.AddInputParameter(new ParameterRelated("aConnected", iPropertyKontrolProductComPort));
@@ -257,7 +257,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDiscPlayerConnected must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDiscPlayerConnected()
+        protected void EnableActionDiscPlayerConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DiscPlayerConnected");
             action.AddOutputParameter(new ParameterRelated("aConnected", iPropertyDiscPlayerConnected));
@@ -270,7 +270,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDiscPlayerConnected must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDiscPlayerConnected()
+        protected void EnableActionSetDiscPlayerConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDiscPlayerConnected");
             action.AddInputParameter(new ParameterRelated("aConnected", iPropertyDiscPlayerConnected));
@@ -283,7 +283,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDiscPlayerComPort must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDiscPlayerComPort()
+        protected void EnableActionDiscPlayerComPort()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DiscPlayerComPort");
             action.AddOutputParameter(new ParameterRelated("aPort", iPropertyDiscPlayerComPort));
@@ -296,7 +296,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDiscPlayerComPort must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDiscPlayerComPort()
+        protected void EnableActionSetDiscPlayerComPort()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDiscPlayerComPort");
             action.AddInputParameter(new ParameterRelated("aConnected", iPropertyDiscPlayerComPort));
@@ -309,7 +309,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoTestKontrolProductConnection must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionTestKontrolProductConnection()
+        protected void EnableActionTestKontrolProductConnection()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("TestKontrolProductConnection");
             action.AddOutputParameter(new ParameterBool("aResult"));
@@ -322,7 +322,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoTestDiscPlayerConnection must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionTestDiscPlayerConnection()
+        protected void EnableActionTestDiscPlayerConnection()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("TestDiscPlayerConnection");
             action.AddOutputParameter(new ParameterBool("aResult"));
@@ -470,7 +470,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoKontrolProductConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoKontrolProductConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
@@ -510,7 +510,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetKontrolProductConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetKontrolProductConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
@@ -550,7 +550,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoKontrolProductComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoKontrolProductComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
@@ -590,7 +590,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetKontrolProductComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetKontrolProductComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
@@ -630,7 +630,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDiscPlayerConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDiscPlayerConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
@@ -670,7 +670,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetDiscPlayerConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetDiscPlayerConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
@@ -710,7 +710,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDiscPlayerComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDiscPlayerComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
@@ -750,7 +750,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetDiscPlayerComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetDiscPlayerComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
@@ -790,7 +790,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoTestKontrolProductConnection(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTestKontrolProductConnection(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
@@ -830,7 +830,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoTestDiscPlayerConnection(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoTestDiscPlayerConnection(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;

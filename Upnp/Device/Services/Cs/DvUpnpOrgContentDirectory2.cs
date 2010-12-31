@@ -155,7 +155,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetSearchCapabilities must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetSearchCapabilities()
+        protected void EnableActionGetSearchCapabilities()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetSearchCapabilities");
             List<String> allowedValues = new List<String>();
@@ -169,7 +169,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetSortCapabilities must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetSortCapabilities()
+        protected void EnableActionGetSortCapabilities()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetSortCapabilities");
             List<String> allowedValues = new List<String>();
@@ -183,7 +183,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetSortExtensionCapabilities must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetSortExtensionCapabilities()
+        protected void EnableActionGetSortExtensionCapabilities()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetSortExtensionCapabilities");
             List<String> allowedValues = new List<String>();
@@ -197,7 +197,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetFeatureList must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetFeatureList()
+        protected void EnableActionGetFeatureList()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetFeatureList");
             List<String> allowedValues = new List<String>();
@@ -211,7 +211,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetSystemUpdateID must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetSystemUpdateID()
+        protected void EnableActionGetSystemUpdateID()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetSystemUpdateID");
             action.AddOutputParameter(new ParameterRelated("Id", iPropertySystemUpdateID));
@@ -224,7 +224,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoBrowse must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionBrowse()
+        protected void EnableActionBrowse()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Browse");
             List<String> allowedValues = new List<String>();
@@ -250,7 +250,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSearch must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSearch()
+        protected void EnableActionSearch()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Search");
             List<String> allowedValues = new List<String>();
@@ -273,7 +273,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoCreateObject must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionCreateObject()
+        protected void EnableActionCreateObject()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CreateObject");
             List<String> allowedValues = new List<String>();
@@ -290,7 +290,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDestroyObject must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDestroyObject()
+        protected void EnableActionDestroyObject()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DestroyObject");
             List<String> allowedValues = new List<String>();
@@ -304,7 +304,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoUpdateObject must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionUpdateObject()
+        protected void EnableActionUpdateObject()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("UpdateObject");
             List<String> allowedValues = new List<String>();
@@ -320,7 +320,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoMoveObject must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionMoveObject()
+        protected void EnableActionMoveObject()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("MoveObject");
             List<String> allowedValues = new List<String>();
@@ -336,7 +336,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoImportResource must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionImportResource()
+        protected void EnableActionImportResource()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ImportResource");
             List<String> allowedValues = new List<String>();
@@ -352,7 +352,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoExportResource must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionExportResource()
+        protected void EnableActionExportResource()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ExportResource");
             List<String> allowedValues = new List<String>();
@@ -368,7 +368,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDeleteResource must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDeleteResource()
+        protected void EnableActionDeleteResource()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DeleteResource");
             List<String> allowedValues = new List<String>();
@@ -382,7 +382,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStopTransferResource must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStopTransferResource()
+        protected void EnableActionStopTransferResource()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StopTransferResource");
             action.AddInputParameter(new ParameterUint("TransferID"));
@@ -395,7 +395,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetTransferProgress must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetTransferProgress()
+        protected void EnableActionGetTransferProgress()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetTransferProgress");
             List<String> allowedValues = new List<String>();
@@ -417,7 +417,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoCreateReference must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionCreateReference()
+        protected void EnableActionCreateReference()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CreateReference");
             List<String> allowedValues = new List<String>();
@@ -700,7 +700,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoGetSearchCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSearchCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -740,7 +740,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetSortCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSortCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -780,7 +780,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetSortExtensionCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSortExtensionCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -820,7 +820,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetFeatureList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetFeatureList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -860,7 +860,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetSystemUpdateID(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetSystemUpdateID(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -900,7 +900,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoBrowse(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoBrowse(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -958,7 +958,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSearch(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSearch(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -1016,7 +1016,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoCreateObject(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCreateObject(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -1062,7 +1062,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDestroyObject(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDestroyObject(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -1102,7 +1102,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoUpdateObject(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoUpdateObject(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -1146,7 +1146,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoMoveObject(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoMoveObject(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -1190,7 +1190,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoImportResource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoImportResource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -1234,7 +1234,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoExportResource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoExportResource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -1278,7 +1278,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDeleteResource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDeleteResource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -1318,7 +1318,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoStopTransferResource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoStopTransferResource(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -1358,7 +1358,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoGetTransferProgress(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetTransferProgress(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
@@ -1404,7 +1404,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoCreateReference(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCreateReference(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;

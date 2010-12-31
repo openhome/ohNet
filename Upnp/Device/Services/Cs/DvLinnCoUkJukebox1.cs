@@ -146,7 +146,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetPresetPrefix must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetPresetPrefix()
+        protected void EnableActionSetPresetPrefix()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetPresetPrefix");
             action.AddInputParameter(new ParameterRelated("aUri", iPropertyPresetPrefix));
@@ -159,7 +159,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPresetPrefix must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPresetPrefix()
+        protected void EnableActionPresetPrefix()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PresetPrefix");
             action.AddOutputParameter(new ParameterRelated("aUri", iPropertyPresetPrefix));
@@ -172,7 +172,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetAlbumArtFileName must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetAlbumArtFileName()
+        protected void EnableActionSetAlbumArtFileName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetAlbumArtFileName");
             action.AddInputParameter(new ParameterRelated("aName", iPropertyAlbumArtFileName));
@@ -185,7 +185,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoAlbumArtFileName must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionAlbumArtFileName()
+        protected void EnableActionAlbumArtFileName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("AlbumArtFileName");
             action.AddOutputParameter(new ParameterRelated("aName", iPropertyAlbumArtFileName));
@@ -198,7 +198,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetCurrentPreset must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetCurrentPreset()
+        protected void EnableActionSetCurrentPreset()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetCurrentPreset");
             action.AddInputParameter(new ParameterRelated("aPreset", iPropertyCurrentPreset));
@@ -211,7 +211,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoCurrentPreset must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionCurrentPreset()
+        protected void EnableActionCurrentPreset()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CurrentPreset");
             action.AddOutputParameter(new ParameterRelated("aPreset", iPropertyCurrentPreset));
@@ -224,7 +224,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPresetMetaData must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPresetMetaData()
+        protected void EnableActionPresetMetaData()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PresetMetaData");
             List<String> allowedValues = new List<String>();
@@ -239,7 +239,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoLoadManifest must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionLoadManifest()
+        protected void EnableActionLoadManifest()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("LoadManifest");
             action.AddOutputParameter(new ParameterRelated("aTotalPresets", iPropertyCurrentPreset));
@@ -360,7 +360,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoSetPresetPrefix(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetPresetPrefix(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
@@ -400,7 +400,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoPresetPrefix(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPresetPrefix(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
@@ -440,7 +440,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetAlbumArtFileName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetAlbumArtFileName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
@@ -480,7 +480,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoAlbumArtFileName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoAlbumArtFileName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
@@ -520,7 +520,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetCurrentPreset(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetCurrentPreset(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
@@ -560,7 +560,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoCurrentPreset(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoCurrentPreset(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
@@ -600,7 +600,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoPresetMetaData(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPresetMetaData(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
@@ -642,7 +642,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoLoadManifest(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoLoadManifest(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;

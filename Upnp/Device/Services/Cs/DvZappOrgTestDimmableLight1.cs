@@ -69,7 +69,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetLevel()
+        protected void EnableActionGetLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetLevel");
             action.AddOutputParameter(new ParameterRelated("Level", iPropertyA_ARG_Level));
@@ -82,7 +82,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetLevel()
+        protected void EnableActionSetLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetLevel");
             action.AddInputParameter(new ParameterRelated("Level", iPropertyA_ARG_Level));
@@ -118,7 +118,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoGetLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestDimmableLight1 self = (DvProviderZappOrgTestDimmableLight1)gch.Target;
@@ -158,7 +158,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestDimmableLight1 self = (DvProviderZappOrgTestDimmableLight1)gch.Target;

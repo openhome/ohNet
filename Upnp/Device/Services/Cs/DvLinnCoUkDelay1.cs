@@ -112,7 +112,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPresetXml must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPresetXml()
+        protected void EnableActionPresetXml()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PresetXml");
             action.AddOutputParameter(new ParameterRelated("aPresetXml", iPropertyPresetXml));
@@ -125,7 +125,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPresetIndex must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPresetIndex()
+        protected void EnableActionPresetIndex()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PresetIndex");
             action.AddOutputParameter(new ParameterRelated("aIndex", iPropertyPresetIndex));
@@ -138,7 +138,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetPresetIndex must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetPresetIndex()
+        protected void EnableActionSetPresetIndex()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetPresetIndex");
             action.AddInputParameter(new ParameterRelated("aIndex", iPropertyPresetIndex));
@@ -151,7 +151,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetPresetDelay must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetPresetDelay()
+        protected void EnableActionSetPresetDelay()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetPresetDelay");
             action.AddInputParameter(new ParameterUint("aIndex"));
@@ -165,7 +165,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetPresetVisible must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetPresetVisible()
+        protected void EnableActionSetPresetVisible()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetPresetVisible");
             action.AddInputParameter(new ParameterUint("aIndex"));
@@ -179,7 +179,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetPresetName must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetPresetName()
+        protected void EnableActionSetPresetName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetPresetName");
             List<String> allowedValues = new List<String>();
@@ -194,7 +194,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDelayMinimum must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDelayMinimum()
+        protected void EnableActionDelayMinimum()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DelayMinimum");
             action.AddOutputParameter(new ParameterUint("aDelay"));
@@ -207,7 +207,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDelayMaximum must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDelayMaximum()
+        protected void EnableActionDelayMaximum()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DelayMaximum");
             action.AddOutputParameter(new ParameterUint("aDelay"));
@@ -220,7 +220,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPresetCount must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPresetCount()
+        protected void EnableActionPresetCount()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PresetCount");
             action.AddOutputParameter(new ParameterUint("aCount"));
@@ -357,7 +357,7 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoPresetXml(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPresetXml(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
@@ -397,7 +397,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoPresetIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPresetIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
@@ -437,7 +437,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetPresetIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetPresetIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
@@ -477,7 +477,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetPresetDelay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetPresetDelay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
@@ -519,7 +519,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetPresetVisible(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetPresetVisible(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
@@ -561,7 +561,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoSetPresetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoSetPresetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
@@ -603,7 +603,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDelayMinimum(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDelayMinimum(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
@@ -643,7 +643,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoDelayMaximum(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoDelayMaximum(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
@@ -683,7 +683,7 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-        private static unsafe int DoPresetCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPresetCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
