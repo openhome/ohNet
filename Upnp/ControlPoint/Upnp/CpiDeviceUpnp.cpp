@@ -465,7 +465,7 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
     }
 
     if (current == NULL) {
-        iInterface = NULL;
+        iInterface = 0;
         RemoveAll();
         iLock.Signal();
         return;

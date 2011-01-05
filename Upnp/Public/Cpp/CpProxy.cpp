@@ -78,7 +78,7 @@ void CpProxy::ReportEvent(Functor aFunctor)
     if (iCpSubscriptionStatus == eSubscribing) {
         iCpSubscriptionStatus = eSubscribed;
     }
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && aFunctor != NULL) {
+    if (iCpSubscriptionStatus == CpProxy::eSubscribed && aFunctor != 0) {
         aFunctor();
     }
     iLock->Signal();
