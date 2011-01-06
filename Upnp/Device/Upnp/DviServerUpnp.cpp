@@ -358,9 +358,7 @@ void DviSessionUpnp::Run()
         }
     }
     catch (HttpError&) {
-        if (iReaderRequest->MethodNotAllowed()) {
-            Error(HttpStatus::kMethodNotAllowed);
-        }
+        iErrorStatus = &HttpStatus::kMethodNotAllowed;
     }
     catch (ReaderError&) {
         iErrorStatus = &HttpStatus::kBadRequest;

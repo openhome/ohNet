@@ -1,4 +1,4 @@
-#include <Core/DvUpnpOrgConnectionManager2.h>
+#include "DvUpnpOrgConnectionManager2.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -39,12 +39,12 @@ void DvProviderUpnpOrgConnectionManager2::GetPropertyCurrentConnectionIDs(Brhz& 
 DvProviderUpnpOrgConnectionManager2::DvProviderUpnpOrgConnectionManager2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ConnectionManager", 2)
 {
-    Functor empty;
-    iPropertySourceProtocolInfo = new PropertyString(new ParameterString("SourceProtocolInfo"), empty);
+    
+    iPropertySourceProtocolInfo = new PropertyString(new ParameterString("SourceProtocolInfo"));
     iService->AddProperty(iPropertySourceProtocolInfo); // passes ownership
-    iPropertySinkProtocolInfo = new PropertyString(new ParameterString("SinkProtocolInfo"), empty);
+    iPropertySinkProtocolInfo = new PropertyString(new ParameterString("SinkProtocolInfo"));
     iService->AddProperty(iPropertySinkProtocolInfo); // passes ownership
-    iPropertyCurrentConnectionIDs = new PropertyString(new ParameterString("CurrentConnectionIDs"), empty);
+    iPropertyCurrentConnectionIDs = new PropertyString(new ParameterString("CurrentConnectionIDs"));
     iService->AddProperty(iPropertyCurrentConnectionIDs); // passes ownership
 }
 

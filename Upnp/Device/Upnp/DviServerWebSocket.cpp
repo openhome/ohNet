@@ -408,7 +408,7 @@ void DviSessionWebSocket::Handshake()
     }
     Bws<1024> location;
     location.Append("ws://");
-    iEndpoint.GetEndpoint(location);
+    location.Append(iHeaderHost.Host());
     location.Append(iReaderRequest->Uri());
     iWriterResponse->WriteHeader(WebSocket::kHeaderLocation, location);
     writer.WriteNewline();

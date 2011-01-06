@@ -1,4 +1,4 @@
-#include <Std/DvZappOrgTestDimmableLight1.h>
+#include "DvZappOrgTestDimmableLight1.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -19,8 +19,8 @@ void DvProviderZappOrgTestDimmableLight1Cpp::GetPropertyA_ARG_Level(uint32_t& aV
 DvProviderZappOrgTestDimmableLight1Cpp::DvProviderZappOrgTestDimmableLight1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "zapp.org", "TestDimmableLight", 1)
 {
-    Functor empty;
-    iPropertyA_ARG_Level = new PropertyUint(new ParameterUint("A_ARG_Level"), empty);
+    
+    iPropertyA_ARG_Level = new PropertyUint(new ParameterUint("A_ARG_Level"));
     iService->AddProperty(iPropertyA_ARG_Level); // passes ownership
 }
 

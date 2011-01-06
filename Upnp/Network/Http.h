@@ -337,11 +337,13 @@ class HttpHeaderHost : public HttpHeader
 {
 public:
     Zapp::Endpoint& Endpoint();
+    const Brx& Host() const;
 private:
     virtual TBool Recognise(const Brx& aHeader);
     virtual void Process(const Brx& aValue);
 private:
     Zapp::Endpoint iEndpoint;
+    Brh iHost;
 };
 
 class HttpHeaderContentLength : public HttpHeader
@@ -416,7 +418,7 @@ public:
 class ReaderHttpChunked
 {
 public:
-    ReaderHttpChunked(IReader& aReader);
+    ReaderHttpChunked(IReader& aReader); // IReader must allow reads at least 4k
     void Read();
     void TransferTo(Bwh& aBuf);
 private:

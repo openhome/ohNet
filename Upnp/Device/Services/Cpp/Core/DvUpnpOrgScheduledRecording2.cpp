@@ -1,4 +1,4 @@
-#include <Core/DvUpnpOrgScheduledRecording2.h>
+#include "DvUpnpOrgScheduledRecording2.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -19,8 +19,8 @@ void DvProviderUpnpOrgScheduledRecording2::GetPropertyLastChange(Brhz& aValue)
 DvProviderUpnpOrgScheduledRecording2::DvProviderUpnpOrgScheduledRecording2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ScheduledRecording", 2)
 {
-    Functor empty;
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"), empty);
+    
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 

@@ -1,4 +1,4 @@
-#include <Core/DvLinnCoUkInfo1.h>
+#include "DvLinnCoUkInfo1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -129,30 +129,30 @@ void DvProviderLinnCoUkInfo1::GetPropertyMetatext(Brhz& aValue)
 DvProviderLinnCoUkInfo1::DvProviderLinnCoUkInfo1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Info", 1)
 {
-    Functor empty;
-    iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"), empty);
+    
+    iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
     iService->AddProperty(iPropertyTrackCount); // passes ownership
-    iPropertyDetailsCount = new PropertyUint(new ParameterUint("DetailsCount"), empty);
+    iPropertyDetailsCount = new PropertyUint(new ParameterUint("DetailsCount"));
     iService->AddProperty(iPropertyDetailsCount); // passes ownership
-    iPropertyMetatextCount = new PropertyUint(new ParameterUint("MetatextCount"), empty);
+    iPropertyMetatextCount = new PropertyUint(new ParameterUint("MetatextCount"));
     iService->AddProperty(iPropertyMetatextCount); // passes ownership
-    iPropertyUri = new PropertyString(new ParameterString("Uri"), empty);
+    iPropertyUri = new PropertyString(new ParameterString("Uri"));
     iService->AddProperty(iPropertyUri); // passes ownership
-    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"), empty);
+    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
-    iPropertyDuration = new PropertyUint(new ParameterUint("Duration"), empty);
+    iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
     iService->AddProperty(iPropertyDuration); // passes ownership
-    iPropertyBitRate = new PropertyUint(new ParameterUint("BitRate"), empty);
+    iPropertyBitRate = new PropertyUint(new ParameterUint("BitRate"));
     iService->AddProperty(iPropertyBitRate); // passes ownership
-    iPropertyBitDepth = new PropertyUint(new ParameterUint("BitDepth"), empty);
+    iPropertyBitDepth = new PropertyUint(new ParameterUint("BitDepth"));
     iService->AddProperty(iPropertyBitDepth); // passes ownership
-    iPropertySampleRate = new PropertyUint(new ParameterUint("SampleRate"), empty);
+    iPropertySampleRate = new PropertyUint(new ParameterUint("SampleRate"));
     iService->AddProperty(iPropertySampleRate); // passes ownership
-    iPropertyLossless = new PropertyBool(new ParameterBool("Lossless"), empty);
+    iPropertyLossless = new PropertyBool(new ParameterBool("Lossless"));
     iService->AddProperty(iPropertyLossless); // passes ownership
-    iPropertyCodecName = new PropertyString(new ParameterString("CodecName"), empty);
+    iPropertyCodecName = new PropertyString(new ParameterString("CodecName"));
     iService->AddProperty(iPropertyCodecName); // passes ownership
-    iPropertyMetatext = new PropertyString(new ParameterString("Metatext"), empty);
+    iPropertyMetatext = new PropertyString(new ParameterString("Metatext"));
     iService->AddProperty(iPropertyMetatext); // passes ownership
 }
 

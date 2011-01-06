@@ -1,16 +1,22 @@
-#include <C/DvUpnpOrgAVTransport1.h>
-#include <Core/DvUpnpOrgAVTransport1.h>
+#include "DvUpnpOrgAVTransport1.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
+#include <DvProvider.h>
 #include <C/Zapp.h>
+#include <ZappTypes.h>
+#include <Core/DvInvocationResponse.h>
+#include <Service.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-class DvProviderUpnpOrgAVTransport1C : public DvProviderUpnpOrgAVTransport1
+class DvProviderUpnpOrgAVTransport1C : public DvProvider
 {
 public:
-    DvProviderUpnpOrgAVTransport1C(DvDevice& aDevice);
+    DvProviderUpnpOrgAVTransport1C(DvDeviceC aDevice);
+    TBool SetPropertyLastChange(const Brx& aValue);
+    void GetPropertyLastChange(Brhz& aValue);
     void EnableActionSetAVTransportURI(CallbackAVTransport1SetAVTransportURI aCallback, void* aPtr);
     void EnableActionSetNextAVTransportURI(CallbackAVTransport1SetNextAVTransportURI aCallback, void* aPtr);
     void EnableActionGetMediaInfo(CallbackAVTransport1GetMediaInfo aCallback, void* aPtr);
@@ -29,23 +35,23 @@ public:
     void EnableActionSetRecordQualityMode(CallbackAVTransport1SetRecordQualityMode aCallback, void* aPtr);
     void EnableActionGetCurrentTransportActions(CallbackAVTransport1GetCurrentTransportActions aCallback, void* aPtr);
 private:
-    void SetAVTransportURI(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aCurrentURI, const Brx& aCurrentURIMetaData);
-    void SetNextAVTransportURI(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aNextURI, const Brx& aNextURIMetaData);
-    void GetMediaInfo(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aNrTracks, IInvocationResponseString& aMediaDuration, IInvocationResponseString& aCurrentURI, IInvocationResponseString& aCurrentURIMetaData, IInvocationResponseString& aNextURI, IInvocationResponseString& aNextURIMetaData, IInvocationResponseString& aPlayMedium, IInvocationResponseString& aRecordMedium, IInvocationResponseString& aWriteStatus);
-    void GetTransportInfo(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aCurrentTransportState, IInvocationResponseString& aCurrentTransportStatus, IInvocationResponseString& aCurrentSpeed);
-    void GetPositionInfo(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aTrack, IInvocationResponseString& aTrackDuration, IInvocationResponseString& aTrackMetaData, IInvocationResponseString& aTrackURI, IInvocationResponseString& aRelTime, IInvocationResponseString& aAbsTime, IInvocationResponseInt& aRelCount, IInvocationResponseInt& aAbsCount);
-    void GetDeviceCapabilities(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aPlayMedia, IInvocationResponseString& aRecMedia, IInvocationResponseString& aRecQualityModes);
-    void GetTransportSettings(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aPlayMode, IInvocationResponseString& aRecQualityMode);
-    void Stop(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID);
-    void Play(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aSpeed);
-    void Pause(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID);
-    void Record(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID);
-    void Seek(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aUnit, const Brx& aTarget);
-    void Next(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID);
-    void Previous(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID);
-    void SetPlayMode(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aNewPlayMode);
-    void SetRecordQualityMode(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aNewRecordQualityMode);
-    void GetCurrentTransportActions(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aActions);
+    void DoSetAVTransportURI(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetNextAVTransportURI(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetMediaInfo(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetTransportInfo(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetPositionInfo(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetDeviceCapabilities(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetTransportSettings(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStop(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlay(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPause(IDviInvocation& aInvocation, TUint aVersion);
+    void DoRecord(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSeek(IDviInvocation& aInvocation, TUint aVersion);
+    void DoNext(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPrevious(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetPlayMode(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetRecordQualityMode(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetCurrentTransportActions(IDviInvocation& aInvocation, TUint aVersion);
 private:
     CallbackAVTransport1SetAVTransportURI iCallbackSetAVTransportURI;
     void* iPtrSetAVTransportURI;
@@ -81,156 +87,316 @@ private:
     void* iPtrSetRecordQualityMode;
     CallbackAVTransport1GetCurrentTransportActions iCallbackGetCurrentTransportActions;
     void* iPtrGetCurrentTransportActions;
+    PropertyString* iPropertyLastChange;
 };
 
-DvProviderUpnpOrgAVTransport1C::DvProviderUpnpOrgAVTransport1C(DvDevice& aDevice)
-    : DvProviderUpnpOrgAVTransport1(aDevice)
+DvProviderUpnpOrgAVTransport1C::DvProviderUpnpOrgAVTransport1C(DvDeviceC aDevice)
+    : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "upnp.org", "AVTransport", 1)
 {
+    
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
+    iService->AddProperty(iPropertyLastChange); // passes ownership
+}
+
+TBool DvProviderUpnpOrgAVTransport1C::SetPropertyLastChange(const Brx& aValue)
+{
+    return SetPropertyString(*iPropertyLastChange, aValue);
+}
+
+void DvProviderUpnpOrgAVTransport1C::GetPropertyLastChange(Brhz& aValue)
+{
+    aValue.Set(iPropertyLastChange->Value());
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionSetAVTransportURI(CallbackAVTransport1SetAVTransportURI aCallback, void* aPtr)
 {
     iCallbackSetAVTransportURI = aCallback;
     iPtrSetAVTransportURI = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionSetAVTransportURI();
+    Zapp::Action* action = new Zapp::Action("SetAVTransportURI");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterString("CurrentURI"));
+    action->AddInputParameter(new ParameterString("CurrentURIMetaData"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoSetAVTransportURI);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionSetNextAVTransportURI(CallbackAVTransport1SetNextAVTransportURI aCallback, void* aPtr)
 {
     iCallbackSetNextAVTransportURI = aCallback;
     iPtrSetNextAVTransportURI = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionSetNextAVTransportURI();
+    Zapp::Action* action = new Zapp::Action("SetNextAVTransportURI");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterString("NextURI"));
+    action->AddInputParameter(new ParameterString("NextURIMetaData"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoSetNextAVTransportURI);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionGetMediaInfo(CallbackAVTransport1GetMediaInfo aCallback, void* aPtr)
 {
     iCallbackGetMediaInfo = aCallback;
     iPtrGetMediaInfo = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionGetMediaInfo();
+    Zapp::Action* action = new Zapp::Action("GetMediaInfo");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterUint("NrTracks", 0, 0));
+    action->AddOutputParameter(new ParameterString("MediaDuration"));
+    action->AddOutputParameter(new ParameterString("CurrentURI"));
+    action->AddOutputParameter(new ParameterString("CurrentURIMetaData"));
+    action->AddOutputParameter(new ParameterString("NextURI"));
+    action->AddOutputParameter(new ParameterString("NextURIMetaData"));
+    action->AddOutputParameter(new ParameterString("PlayMedium"));
+    action->AddOutputParameter(new ParameterString("RecordMedium"));
+    action->AddOutputParameter(new ParameterString("WriteStatus"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoGetMediaInfo);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionGetTransportInfo(CallbackAVTransport1GetTransportInfo aCallback, void* aPtr)
 {
     iCallbackGetTransportInfo = aCallback;
     iPtrGetTransportInfo = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionGetTransportInfo();
+    Zapp::Action* action = new Zapp::Action("GetTransportInfo");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[2];
+    allowedValues[index++] = (TChar*)"STOPPED";
+    allowedValues[index++] = (TChar*)"PLAYING";
+    action->AddOutputParameter(new ParameterString("CurrentTransportState", allowedValues, 2));
+    delete[] allowedValues;
+    index = 0;
+    allowedValues = new TChar*[2];
+    allowedValues[index++] = (TChar*)"OK";
+    allowedValues[index++] = (TChar*)"ERROR_OCCURRED";
+    action->AddOutputParameter(new ParameterString("CurrentTransportStatus", allowedValues, 2));
+    delete[] allowedValues;
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"1";
+    action->AddOutputParameter(new ParameterString("CurrentSpeed", allowedValues, 1));
+    delete[] allowedValues;
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoGetTransportInfo);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionGetPositionInfo(CallbackAVTransport1GetPositionInfo aCallback, void* aPtr)
 {
     iCallbackGetPositionInfo = aCallback;
     iPtrGetPositionInfo = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionGetPositionInfo();
+    Zapp::Action* action = new Zapp::Action("GetPositionInfo");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterUint("Track", 0, 0, 1));
+    action->AddOutputParameter(new ParameterString("TrackDuration"));
+    action->AddOutputParameter(new ParameterString("TrackMetaData"));
+    action->AddOutputParameter(new ParameterString("TrackURI"));
+    action->AddOutputParameter(new ParameterString("RelTime"));
+    action->AddOutputParameter(new ParameterString("AbsTime"));
+    action->AddOutputParameter(new ParameterInt("RelCount"));
+    action->AddOutputParameter(new ParameterInt("AbsCount"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoGetPositionInfo);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionGetDeviceCapabilities(CallbackAVTransport1GetDeviceCapabilities aCallback, void* aPtr)
 {
     iCallbackGetDeviceCapabilities = aCallback;
     iPtrGetDeviceCapabilities = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionGetDeviceCapabilities();
+    Zapp::Action* action = new Zapp::Action("GetDeviceCapabilities");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterString("PlayMedia"));
+    action->AddOutputParameter(new ParameterString("RecMedia"));
+    action->AddOutputParameter(new ParameterString("RecQualityModes"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoGetDeviceCapabilities);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionGetTransportSettings(CallbackAVTransport1GetTransportSettings aCallback, void* aPtr)
 {
     iCallbackGetTransportSettings = aCallback;
     iPtrGetTransportSettings = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionGetTransportSettings();
+    Zapp::Action* action = new Zapp::Action("GetTransportSettings");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"NORMAL";
+    action->AddOutputParameter(new ParameterString("PlayMode", allowedValues, 1));
+    delete[] allowedValues;
+    action->AddOutputParameter(new ParameterString("RecQualityMode"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoGetTransportSettings);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionStop(CallbackAVTransport1Stop aCallback, void* aPtr)
 {
     iCallbackStop = aCallback;
     iPtrStop = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionStop();
+    Zapp::Action* action = new Zapp::Action("Stop");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoStop);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionPlay(CallbackAVTransport1Play aCallback, void* aPtr)
 {
     iCallbackPlay = aCallback;
     iPtrPlay = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionPlay();
+    Zapp::Action* action = new Zapp::Action("Play");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"1";
+    action->AddInputParameter(new ParameterString("Speed", allowedValues, 1));
+    delete[] allowedValues;
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoPlay);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionPause(CallbackAVTransport1Pause aCallback, void* aPtr)
 {
     iCallbackPause = aCallback;
     iPtrPause = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionPause();
+    Zapp::Action* action = new Zapp::Action("Pause");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoPause);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionRecord(CallbackAVTransport1Record aCallback, void* aPtr)
 {
     iCallbackRecord = aCallback;
     iPtrRecord = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionRecord();
+    Zapp::Action* action = new Zapp::Action("Record");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoRecord);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionSeek(CallbackAVTransport1Seek aCallback, void* aPtr)
 {
     iCallbackSeek = aCallback;
     iPtrSeek = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionSeek();
+    Zapp::Action* action = new Zapp::Action("Seek");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"TRACK_NR";
+    action->AddInputParameter(new ParameterString("Unit", allowedValues, 1));
+    delete[] allowedValues;
+    action->AddInputParameter(new ParameterString("Target"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoSeek);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionNext(CallbackAVTransport1Next aCallback, void* aPtr)
 {
     iCallbackNext = aCallback;
     iPtrNext = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionNext();
+    Zapp::Action* action = new Zapp::Action("Next");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoNext);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionPrevious(CallbackAVTransport1Previous aCallback, void* aPtr)
 {
     iCallbackPrevious = aCallback;
     iPtrPrevious = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionPrevious();
+    Zapp::Action* action = new Zapp::Action("Previous");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoPrevious);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionSetPlayMode(CallbackAVTransport1SetPlayMode aCallback, void* aPtr)
 {
     iCallbackSetPlayMode = aCallback;
     iPtrSetPlayMode = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionSetPlayMode();
+    Zapp::Action* action = new Zapp::Action("SetPlayMode");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"NORMAL";
+    action->AddInputParameter(new ParameterString("NewPlayMode", allowedValues, 1));
+    delete[] allowedValues;
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoSetPlayMode);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionSetRecordQualityMode(CallbackAVTransport1SetRecordQualityMode aCallback, void* aPtr)
 {
     iCallbackSetRecordQualityMode = aCallback;
     iPtrSetRecordQualityMode = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionSetRecordQualityMode();
+    Zapp::Action* action = new Zapp::Action("SetRecordQualityMode");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterString("NewRecordQualityMode"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoSetRecordQualityMode);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgAVTransport1C::EnableActionGetCurrentTransportActions(CallbackAVTransport1GetCurrentTransportActions aCallback, void* aPtr)
 {
     iCallbackGetCurrentTransportActions = aCallback;
     iPtrGetCurrentTransportActions = aPtr;
-    DvProviderUpnpOrgAVTransport1::EnableActionGetCurrentTransportActions();
+    Zapp::Action* action = new Zapp::Action("GetCurrentTransportActions");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterString("Actions"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1C::DoGetCurrentTransportActions);
+    iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgAVTransport1C::SetAVTransportURI(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aCurrentURI, const Brx& aCurrentURIMetaData)
+void DvProviderUpnpOrgAVTransport1C::DoSetAVTransportURI(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz CurrentURI;
+    aInvocation.InvocationReadString("CurrentURI", CurrentURI);
+    Brhz CurrentURIMetaData;
+    aInvocation.InvocationReadString("CurrentURIMetaData", CurrentURIMetaData);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetAVTransportURI != NULL);
-    if (0 != iCallbackSetAVTransportURI(iPtrSetAVTransportURI, aVersion, aInstanceID, (const char*)aCurrentURI.Ptr(), (const char*)aCurrentURIMetaData.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetAVTransportURI(iPtrSetAVTransportURI, aVersion, InstanceID, (const char*)CurrentURI.Ptr(), (const char*)CurrentURIMetaData.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::SetNextAVTransportURI(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aNextURI, const Brx& aNextURIMetaData)
+void DvProviderUpnpOrgAVTransport1C::DoSetNextAVTransportURI(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz NextURI;
+    aInvocation.InvocationReadString("NextURI", NextURI);
+    Brhz NextURIMetaData;
+    aInvocation.InvocationReadString("NextURIMetaData", NextURIMetaData);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetNextAVTransportURI != NULL);
-    if (0 != iCallbackSetNextAVTransportURI(iPtrSetNextAVTransportURI, aVersion, aInstanceID, (const char*)aNextURI.Ptr(), (const char*)aNextURIMetaData.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetNextAVTransportURI(iPtrSetNextAVTransportURI, aVersion, InstanceID, (const char*)NextURI.Ptr(), (const char*)NextURIMetaData.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::GetMediaInfo(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aNrTracks, IInvocationResponseString& aMediaDuration, IInvocationResponseString& aCurrentURI, IInvocationResponseString& aCurrentURIMetaData, IInvocationResponseString& aNextURI, IInvocationResponseString& aNextURIMetaData, IInvocationResponseString& aPlayMedium, IInvocationResponseString& aRecordMedium, IInvocationResponseString& aWriteStatus)
+void DvProviderUpnpOrgAVTransport1C::DoGetMediaInfo(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t NrTracks;
     char* MediaDuration;
     char* CurrentURI;
@@ -241,75 +407,95 @@ void DvProviderUpnpOrgAVTransport1C::GetMediaInfo(IInvocationResponse& aResponse
     char* RecordMedium;
     char* WriteStatus;
     ASSERT(iCallbackGetMediaInfo != NULL);
-    if (0 != iCallbackGetMediaInfo(iPtrGetMediaInfo, aVersion, aInstanceID, &NrTracks, &MediaDuration, &CurrentURI, &CurrentURIMetaData, &NextURI, &NextURIMetaData, &PlayMedium, &RecordMedium, &WriteStatus)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetMediaInfo(iPtrGetMediaInfo, aVersion, InstanceID, &NrTracks, &MediaDuration, &CurrentURI, &CurrentURIMetaData, &NextURI, &NextURIMetaData, &PlayMedium, &RecordMedium, &WriteStatus)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aNrTracks.Write(NrTracks);
+    InvocationResponseUint respNrTracks(aInvocation, "NrTracks");
+    InvocationResponseString respMediaDuration(aInvocation, "MediaDuration");
+    InvocationResponseString respCurrentURI(aInvocation, "CurrentURI");
+    InvocationResponseString respCurrentURIMetaData(aInvocation, "CurrentURIMetaData");
+    InvocationResponseString respNextURI(aInvocation, "NextURI");
+    InvocationResponseString respNextURIMetaData(aInvocation, "NextURIMetaData");
+    InvocationResponseString respPlayMedium(aInvocation, "PlayMedium");
+    InvocationResponseString respRecordMedium(aInvocation, "RecordMedium");
+    InvocationResponseString respWriteStatus(aInvocation, "WriteStatus");
+    resp.Start();
+    respNrTracks.Write(NrTracks);
     Brhz bufMediaDuration((const TChar*)MediaDuration);
     ZappFreeExternal(MediaDuration);
-    aMediaDuration.Write(bufMediaDuration);
-    aMediaDuration.WriteFlush();
+    respMediaDuration.Write(bufMediaDuration);
+    respMediaDuration.WriteFlush();
     Brhz bufCurrentURI((const TChar*)CurrentURI);
     ZappFreeExternal(CurrentURI);
-    aCurrentURI.Write(bufCurrentURI);
-    aCurrentURI.WriteFlush();
+    respCurrentURI.Write(bufCurrentURI);
+    respCurrentURI.WriteFlush();
     Brhz bufCurrentURIMetaData((const TChar*)CurrentURIMetaData);
     ZappFreeExternal(CurrentURIMetaData);
-    aCurrentURIMetaData.Write(bufCurrentURIMetaData);
-    aCurrentURIMetaData.WriteFlush();
+    respCurrentURIMetaData.Write(bufCurrentURIMetaData);
+    respCurrentURIMetaData.WriteFlush();
     Brhz bufNextURI((const TChar*)NextURI);
     ZappFreeExternal(NextURI);
-    aNextURI.Write(bufNextURI);
-    aNextURI.WriteFlush();
+    respNextURI.Write(bufNextURI);
+    respNextURI.WriteFlush();
     Brhz bufNextURIMetaData((const TChar*)NextURIMetaData);
     ZappFreeExternal(NextURIMetaData);
-    aNextURIMetaData.Write(bufNextURIMetaData);
-    aNextURIMetaData.WriteFlush();
+    respNextURIMetaData.Write(bufNextURIMetaData);
+    respNextURIMetaData.WriteFlush();
     Brhz bufPlayMedium((const TChar*)PlayMedium);
     ZappFreeExternal(PlayMedium);
-    aPlayMedium.Write(bufPlayMedium);
-    aPlayMedium.WriteFlush();
+    respPlayMedium.Write(bufPlayMedium);
+    respPlayMedium.WriteFlush();
     Brhz bufRecordMedium((const TChar*)RecordMedium);
     ZappFreeExternal(RecordMedium);
-    aRecordMedium.Write(bufRecordMedium);
-    aRecordMedium.WriteFlush();
+    respRecordMedium.Write(bufRecordMedium);
+    respRecordMedium.WriteFlush();
     Brhz bufWriteStatus((const TChar*)WriteStatus);
     ZappFreeExternal(WriteStatus);
-    aWriteStatus.Write(bufWriteStatus);
-    aWriteStatus.WriteFlush();
-    aResponse.End();
+    respWriteStatus.Write(bufWriteStatus);
+    respWriteStatus.WriteFlush();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::GetTransportInfo(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aCurrentTransportState, IInvocationResponseString& aCurrentTransportStatus, IInvocationResponseString& aCurrentSpeed)
+void DvProviderUpnpOrgAVTransport1C::DoGetTransportInfo(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* CurrentTransportState;
     char* CurrentTransportStatus;
     char* CurrentSpeed;
     ASSERT(iCallbackGetTransportInfo != NULL);
-    if (0 != iCallbackGetTransportInfo(iPtrGetTransportInfo, aVersion, aInstanceID, &CurrentTransportState, &CurrentTransportStatus, &CurrentSpeed)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetTransportInfo(iPtrGetTransportInfo, aVersion, InstanceID, &CurrentTransportState, &CurrentTransportStatus, &CurrentSpeed)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respCurrentTransportState(aInvocation, "CurrentTransportState");
+    InvocationResponseString respCurrentTransportStatus(aInvocation, "CurrentTransportStatus");
+    InvocationResponseString respCurrentSpeed(aInvocation, "CurrentSpeed");
+    resp.Start();
     Brhz bufCurrentTransportState((const TChar*)CurrentTransportState);
     ZappFreeExternal(CurrentTransportState);
-    aCurrentTransportState.Write(bufCurrentTransportState);
-    aCurrentTransportState.WriteFlush();
+    respCurrentTransportState.Write(bufCurrentTransportState);
+    respCurrentTransportState.WriteFlush();
     Brhz bufCurrentTransportStatus((const TChar*)CurrentTransportStatus);
     ZappFreeExternal(CurrentTransportStatus);
-    aCurrentTransportStatus.Write(bufCurrentTransportStatus);
-    aCurrentTransportStatus.WriteFlush();
+    respCurrentTransportStatus.Write(bufCurrentTransportStatus);
+    respCurrentTransportStatus.WriteFlush();
     Brhz bufCurrentSpeed((const TChar*)CurrentSpeed);
     ZappFreeExternal(CurrentSpeed);
-    aCurrentSpeed.Write(bufCurrentSpeed);
-    aCurrentSpeed.WriteFlush();
-    aResponse.End();
+    respCurrentSpeed.Write(bufCurrentSpeed);
+    respCurrentSpeed.WriteFlush();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::GetPositionInfo(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aTrack, IInvocationResponseString& aTrackDuration, IInvocationResponseString& aTrackMetaData, IInvocationResponseString& aTrackURI, IInvocationResponseString& aRelTime, IInvocationResponseString& aAbsTime, IInvocationResponseInt& aRelCount, IInvocationResponseInt& aAbsCount)
+void DvProviderUpnpOrgAVTransport1C::DoGetPositionInfo(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t Track;
     char* TrackDuration;
     char* TrackMetaData;
@@ -319,204 +505,276 @@ void DvProviderUpnpOrgAVTransport1C::GetPositionInfo(IInvocationResponse& aRespo
     int32_t RelCount;
     int32_t AbsCount;
     ASSERT(iCallbackGetPositionInfo != NULL);
-    if (0 != iCallbackGetPositionInfo(iPtrGetPositionInfo, aVersion, aInstanceID, &Track, &TrackDuration, &TrackMetaData, &TrackURI, &RelTime, &AbsTime, &RelCount, &AbsCount)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetPositionInfo(iPtrGetPositionInfo, aVersion, InstanceID, &Track, &TrackDuration, &TrackMetaData, &TrackURI, &RelTime, &AbsTime, &RelCount, &AbsCount)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aTrack.Write(Track);
+    InvocationResponseUint respTrack(aInvocation, "Track");
+    InvocationResponseString respTrackDuration(aInvocation, "TrackDuration");
+    InvocationResponseString respTrackMetaData(aInvocation, "TrackMetaData");
+    InvocationResponseString respTrackURI(aInvocation, "TrackURI");
+    InvocationResponseString respRelTime(aInvocation, "RelTime");
+    InvocationResponseString respAbsTime(aInvocation, "AbsTime");
+    InvocationResponseInt respRelCount(aInvocation, "RelCount");
+    InvocationResponseInt respAbsCount(aInvocation, "AbsCount");
+    resp.Start();
+    respTrack.Write(Track);
     Brhz bufTrackDuration((const TChar*)TrackDuration);
     ZappFreeExternal(TrackDuration);
-    aTrackDuration.Write(bufTrackDuration);
-    aTrackDuration.WriteFlush();
+    respTrackDuration.Write(bufTrackDuration);
+    respTrackDuration.WriteFlush();
     Brhz bufTrackMetaData((const TChar*)TrackMetaData);
     ZappFreeExternal(TrackMetaData);
-    aTrackMetaData.Write(bufTrackMetaData);
-    aTrackMetaData.WriteFlush();
+    respTrackMetaData.Write(bufTrackMetaData);
+    respTrackMetaData.WriteFlush();
     Brhz bufTrackURI((const TChar*)TrackURI);
     ZappFreeExternal(TrackURI);
-    aTrackURI.Write(bufTrackURI);
-    aTrackURI.WriteFlush();
+    respTrackURI.Write(bufTrackURI);
+    respTrackURI.WriteFlush();
     Brhz bufRelTime((const TChar*)RelTime);
     ZappFreeExternal(RelTime);
-    aRelTime.Write(bufRelTime);
-    aRelTime.WriteFlush();
+    respRelTime.Write(bufRelTime);
+    respRelTime.WriteFlush();
     Brhz bufAbsTime((const TChar*)AbsTime);
     ZappFreeExternal(AbsTime);
-    aAbsTime.Write(bufAbsTime);
-    aAbsTime.WriteFlush();
-    aRelCount.Write(RelCount);
-    aAbsCount.Write(AbsCount);
-    aResponse.End();
+    respAbsTime.Write(bufAbsTime);
+    respAbsTime.WriteFlush();
+    respRelCount.Write(RelCount);
+    respAbsCount.Write(AbsCount);
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::GetDeviceCapabilities(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aPlayMedia, IInvocationResponseString& aRecMedia, IInvocationResponseString& aRecQualityModes)
+void DvProviderUpnpOrgAVTransport1C::DoGetDeviceCapabilities(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* PlayMedia;
     char* RecMedia;
     char* RecQualityModes;
     ASSERT(iCallbackGetDeviceCapabilities != NULL);
-    if (0 != iCallbackGetDeviceCapabilities(iPtrGetDeviceCapabilities, aVersion, aInstanceID, &PlayMedia, &RecMedia, &RecQualityModes)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetDeviceCapabilities(iPtrGetDeviceCapabilities, aVersion, InstanceID, &PlayMedia, &RecMedia, &RecQualityModes)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respPlayMedia(aInvocation, "PlayMedia");
+    InvocationResponseString respRecMedia(aInvocation, "RecMedia");
+    InvocationResponseString respRecQualityModes(aInvocation, "RecQualityModes");
+    resp.Start();
     Brhz bufPlayMedia((const TChar*)PlayMedia);
     ZappFreeExternal(PlayMedia);
-    aPlayMedia.Write(bufPlayMedia);
-    aPlayMedia.WriteFlush();
+    respPlayMedia.Write(bufPlayMedia);
+    respPlayMedia.WriteFlush();
     Brhz bufRecMedia((const TChar*)RecMedia);
     ZappFreeExternal(RecMedia);
-    aRecMedia.Write(bufRecMedia);
-    aRecMedia.WriteFlush();
+    respRecMedia.Write(bufRecMedia);
+    respRecMedia.WriteFlush();
     Brhz bufRecQualityModes((const TChar*)RecQualityModes);
     ZappFreeExternal(RecQualityModes);
-    aRecQualityModes.Write(bufRecQualityModes);
-    aRecQualityModes.WriteFlush();
-    aResponse.End();
+    respRecQualityModes.Write(bufRecQualityModes);
+    respRecQualityModes.WriteFlush();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::GetTransportSettings(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aPlayMode, IInvocationResponseString& aRecQualityMode)
+void DvProviderUpnpOrgAVTransport1C::DoGetTransportSettings(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* PlayMode;
     char* RecQualityMode;
     ASSERT(iCallbackGetTransportSettings != NULL);
-    if (0 != iCallbackGetTransportSettings(iPtrGetTransportSettings, aVersion, aInstanceID, &PlayMode, &RecQualityMode)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetTransportSettings(iPtrGetTransportSettings, aVersion, InstanceID, &PlayMode, &RecQualityMode)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respPlayMode(aInvocation, "PlayMode");
+    InvocationResponseString respRecQualityMode(aInvocation, "RecQualityMode");
+    resp.Start();
     Brhz bufPlayMode((const TChar*)PlayMode);
     ZappFreeExternal(PlayMode);
-    aPlayMode.Write(bufPlayMode);
-    aPlayMode.WriteFlush();
+    respPlayMode.Write(bufPlayMode);
+    respPlayMode.WriteFlush();
     Brhz bufRecQualityMode((const TChar*)RecQualityMode);
     ZappFreeExternal(RecQualityMode);
-    aRecQualityMode.Write(bufRecQualityMode);
-    aRecQualityMode.WriteFlush();
-    aResponse.End();
+    respRecQualityMode.Write(bufRecQualityMode);
+    respRecQualityMode.WriteFlush();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::Stop(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID)
+void DvProviderUpnpOrgAVTransport1C::DoStop(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackStop != NULL);
-    if (0 != iCallbackStop(iPtrStop, aVersion, aInstanceID)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackStop(iPtrStop, aVersion, InstanceID)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::Play(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aSpeed)
+void DvProviderUpnpOrgAVTransport1C::DoPlay(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz Speed;
+    aInvocation.InvocationReadString("Speed", Speed);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackPlay != NULL);
-    if (0 != iCallbackPlay(iPtrPlay, aVersion, aInstanceID, (const char*)aSpeed.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackPlay(iPtrPlay, aVersion, InstanceID, (const char*)Speed.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::Pause(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID)
+void DvProviderUpnpOrgAVTransport1C::DoPause(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackPause != NULL);
-    if (0 != iCallbackPause(iPtrPause, aVersion, aInstanceID)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackPause(iPtrPause, aVersion, InstanceID)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::Record(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID)
+void DvProviderUpnpOrgAVTransport1C::DoRecord(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackRecord != NULL);
-    if (0 != iCallbackRecord(iPtrRecord, aVersion, aInstanceID)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackRecord(iPtrRecord, aVersion, InstanceID)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::Seek(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aUnit, const Brx& aTarget)
+void DvProviderUpnpOrgAVTransport1C::DoSeek(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz Unit;
+    aInvocation.InvocationReadString("Unit", Unit);
+    Brhz Target;
+    aInvocation.InvocationReadString("Target", Target);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSeek != NULL);
-    if (0 != iCallbackSeek(iPtrSeek, aVersion, aInstanceID, (const char*)aUnit.Ptr(), (const char*)aTarget.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSeek(iPtrSeek, aVersion, InstanceID, (const char*)Unit.Ptr(), (const char*)Target.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::Next(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID)
+void DvProviderUpnpOrgAVTransport1C::DoNext(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackNext != NULL);
-    if (0 != iCallbackNext(iPtrNext, aVersion, aInstanceID)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackNext(iPtrNext, aVersion, InstanceID)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::Previous(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID)
+void DvProviderUpnpOrgAVTransport1C::DoPrevious(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackPrevious != NULL);
-    if (0 != iCallbackPrevious(iPtrPrevious, aVersion, aInstanceID)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackPrevious(iPtrPrevious, aVersion, InstanceID)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::SetPlayMode(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aNewPlayMode)
+void DvProviderUpnpOrgAVTransport1C::DoSetPlayMode(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz NewPlayMode;
+    aInvocation.InvocationReadString("NewPlayMode", NewPlayMode);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetPlayMode != NULL);
-    if (0 != iCallbackSetPlayMode(iPtrSetPlayMode, aVersion, aInstanceID, (const char*)aNewPlayMode.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetPlayMode(iPtrSetPlayMode, aVersion, InstanceID, (const char*)NewPlayMode.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::SetRecordQualityMode(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aNewRecordQualityMode)
+void DvProviderUpnpOrgAVTransport1C::DoSetRecordQualityMode(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz NewRecordQualityMode;
+    aInvocation.InvocationReadString("NewRecordQualityMode", NewRecordQualityMode);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetRecordQualityMode != NULL);
-    if (0 != iCallbackSetRecordQualityMode(iPtrSetRecordQualityMode, aVersion, aInstanceID, (const char*)aNewRecordQualityMode.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetRecordQualityMode(iPtrSetRecordQualityMode, aVersion, InstanceID, (const char*)NewRecordQualityMode.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgAVTransport1C::GetCurrentTransportActions(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aActions)
+void DvProviderUpnpOrgAVTransport1C::DoGetCurrentTransportActions(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* Actions;
     ASSERT(iCallbackGetCurrentTransportActions != NULL);
-    if (0 != iCallbackGetCurrentTransportActions(iPtrGetCurrentTransportActions, aVersion, aInstanceID, &Actions)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetCurrentTransportActions(iPtrGetCurrentTransportActions, aVersion, InstanceID, &Actions)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respActions(aInvocation, "Actions");
+    resp.Start();
     Brhz bufActions((const TChar*)Actions);
     ZappFreeExternal(Actions);
-    aActions.Write(bufActions);
-    aActions.WriteFlush();
-    aResponse.End();
+    respActions.Write(bufActions);
+    respActions.WriteFlush();
+    resp.End();
 }
 
 
 
 THandle DvProviderUpnpOrgAVTransport1Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgAVTransport1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderUpnpOrgAVTransport1C(aDevice);
 }
 
 void DvProviderUpnpOrgAVTransport1Destroy(THandle aProvider)

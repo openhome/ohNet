@@ -1,4 +1,4 @@
-#include <Std/DvLinnCoUkDs1.h>
+#include "DvLinnCoUkDs1.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -105,24 +105,24 @@ void DvProviderLinnCoUkDs1Cpp::GetPropertyTransportState(std::string& aValue)
 DvProviderLinnCoUkDs1Cpp::DvProviderLinnCoUkDs1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Ds", 1)
 {
-    Functor empty;
+    
     TChar** allowedValues;
     TUint index;
-    iPropertySupportedProtocols = new PropertyString(new ParameterString("SupportedProtocols"), empty);
+    iPropertySupportedProtocols = new PropertyString(new ParameterString("SupportedProtocols"));
     iService->AddProperty(iPropertySupportedProtocols); // passes ownership
-    iPropertyTrackDuration = new PropertyUint(new ParameterUint("TrackDuration"), empty);
+    iPropertyTrackDuration = new PropertyUint(new ParameterUint("TrackDuration"));
     iService->AddProperty(iPropertyTrackDuration); // passes ownership
-    iPropertyTrackBitRate = new PropertyUint(new ParameterUint("TrackBitRate"), empty);
+    iPropertyTrackBitRate = new PropertyUint(new ParameterUint("TrackBitRate"));
     iService->AddProperty(iPropertyTrackBitRate); // passes ownership
-    iPropertyTrackLossless = new PropertyBool(new ParameterBool("TrackLossless"), empty);
+    iPropertyTrackLossless = new PropertyBool(new ParameterBool("TrackLossless"));
     iService->AddProperty(iPropertyTrackLossless); // passes ownership
-    iPropertyTrackBitDepth = new PropertyUint(new ParameterUint("TrackBitDepth"), empty);
+    iPropertyTrackBitDepth = new PropertyUint(new ParameterUint("TrackBitDepth"));
     iService->AddProperty(iPropertyTrackBitDepth); // passes ownership
-    iPropertyTrackSampleRate = new PropertyUint(new ParameterUint("TrackSampleRate"), empty);
+    iPropertyTrackSampleRate = new PropertyUint(new ParameterUint("TrackSampleRate"));
     iService->AddProperty(iPropertyTrackSampleRate); // passes ownership
-    iPropertyTrackCodecName = new PropertyString(new ParameterString("TrackCodecName"), empty);
+    iPropertyTrackCodecName = new PropertyString(new ParameterString("TrackCodecName"));
     iService->AddProperty(iPropertyTrackCodecName); // passes ownership
-    iPropertyTrackId = new PropertyUint(new ParameterUint("TrackId"), empty);
+    iPropertyTrackId = new PropertyUint(new ParameterUint("TrackId"));
     iService->AddProperty(iPropertyTrackId); // passes ownership
     index = 0;
     allowedValues = new TChar*[4];
@@ -130,7 +130,7 @@ DvProviderLinnCoUkDs1Cpp::DvProviderLinnCoUkDs1Cpp(DvDeviceStd& aDevice)
     allowedValues[index++] = (TChar*)"Paused";
     allowedValues[index++] = (TChar*)"Stopped";
     allowedValues[index++] = (TChar*)"Buffering";
-    iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues, 4), empty);
+    iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues, 4));
     delete[] allowedValues;
     iService->AddProperty(iPropertyTransportState); // passes ownership
 }

@@ -13,7 +13,7 @@ namespace Zapp
             Core.Library lib = new Core.Library();
             lib.Initialise(ref initParams);
             lib.StartCp();
-            new Runner();
+            new Runner(initParams.MsearchTimeSecs());
             lib.Close();
         }
     }
@@ -32,7 +32,7 @@ namespace Zapp
         private const uint kDevicePollMs = 1000;
         private const uint kDevicePollSecs = 1;
 
-        public Runner()
+        public Runner(int aMsearchTimeSecs)
         {
             iListFrozen = false;
             iDeviceList = new List<ControlPoint.CpDevice>();
@@ -41,7 +41,7 @@ namespace Zapp
             ControlPoint.CpDeviceListUpnpServiceType list = new ControlPoint.CpDeviceListUpnpServiceType("upnp.org", "ConnectionManager", 1, added, removed);
             //CpDeviceListUpnpUuid list = new CpDeviceListUpnpUuid("896659847466-a4badbeaacbc-737837", added, removed);
             Semaphore sem = new Semaphore(0, 1);
-            sem.WaitOne(6000);
+            sem.WaitOne(aMsearchTimeSecs * 1000);
             iListFrozen = true;
             
             InvokeSync();
@@ -73,6 +73,13 @@ namespace Zapp
             Console.Write("\n" + iSubscriptionCount + " subscriptions on " + count + " devices (avg " + avgSubscriptions + ") in " + secs + " seconds\n\n");
 
             list.Dispose();
+            lock (this)
+            {
+                for (int i = 0; i < iDeviceList.Count; i++)
+                {
+                    iDeviceList[i].RemoveRef();
+                }
+            }
             Console.Write("Tests completed\n");
         }
 
@@ -118,7 +125,10 @@ namespace Zapp
                 iActionPollStop.WaitOne();
                 Console.Write("    " + (iActionCount - countBefore) + "\n");
                 iConnMgr.Dispose();
-                iExpectedSink = null;
+                lock (this)
+                {
+                    iExpectedSink = null;
+                }
             }
         }
 
@@ -159,37 +169,40 @@ namespace Zapp
             iActionPollStop.Release();
         }
 
-        private void GetProtocolInfoComplete(uint aAsyncHandle)
+        private void GetProtocolInfoComplete(IntPtr aAsyncHandle)
         {
-            if (DateTime.Now >= iActionPollStopTime)
+            lock (this)
             {
-                return;
-            }
-            iConnMgr.BeginGetProtocolInfo(GetProtocolInfoComplete);
+                if (DateTime.Now >= iActionPollStopTime)
+                {
+                    return;
+                }
+                iConnMgr.BeginGetProtocolInfo(GetProtocolInfoComplete);
 
-            try
-            {
-                string source;
-                string sink;
-                iConnMgr.EndGetProtocolInfo(aAsyncHandle, out source, out sink);
-                iActionCount++;
-                if (sink == null && iExpectedSink != null)
+                try
                 {
-                    throw (new Exception());
-                }
-                else
-                {
-                    if (iExpectedSink == null)
+                    string source;
+                    string sink;
+                    iConnMgr.EndGetProtocolInfo(aAsyncHandle, out source, out sink);
+                    iActionCount++;
+                    if (sink == null && iExpectedSink != null)
                     {
-                        iExpectedSink = sink;
+                        Console.Write("Expected " + iExpectedSink + "\n...got (null)\n");
                     }
-                    else if (sink != iExpectedSink)
+                    else
                     {
-                        Console.Write("Expected " + iExpectedSink + "\n...got " + sink + "\n");
+                        if (iExpectedSink == null)
+                        {
+                            iExpectedSink = sink;
+                        }
+                        else if (sink != iExpectedSink)
+                        {
+                            Console.Write("Expected " + iExpectedSink + "\n...got " + sink + "\n");
+                        }
                     }
                 }
+                catch (ControlPoint.ProxyError) { }
             }
-            catch (ControlPoint.ProxyError) { }
         }
 
         private void PropertyChanged()

@@ -1,4 +1,4 @@
-#include <Std/DvLinnCoUkPreamp4.h>
+#include "DvLinnCoUkPreamp4.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -69,18 +69,18 @@ void DvProviderLinnCoUkPreamp4Cpp::GetPropertyStartupVolumeEnabled(bool& aValue)
 DvProviderLinnCoUkPreamp4Cpp::DvProviderLinnCoUkPreamp4Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Preamp", 4)
 {
-    Functor empty;
-    iPropertyVolume = new PropertyUint(new ParameterUint("Volume"), empty);
+    
+    iPropertyVolume = new PropertyUint(new ParameterUint("Volume"));
     iService->AddProperty(iPropertyVolume); // passes ownership
-    iPropertyMute = new PropertyBool(new ParameterBool("Mute"), empty);
+    iPropertyMute = new PropertyBool(new ParameterBool("Mute"));
     iService->AddProperty(iPropertyMute); // passes ownership
-    iPropertyBalance = new PropertyInt(new ParameterInt("Balance"), empty);
+    iPropertyBalance = new PropertyInt(new ParameterInt("Balance"));
     iService->AddProperty(iPropertyBalance); // passes ownership
-    iPropertyVolumeLimit = new PropertyUint(new ParameterUint("VolumeLimit"), empty);
+    iPropertyVolumeLimit = new PropertyUint(new ParameterUint("VolumeLimit"));
     iService->AddProperty(iPropertyVolumeLimit); // passes ownership
-    iPropertyStartupVolume = new PropertyUint(new ParameterUint("StartupVolume"), empty);
+    iPropertyStartupVolume = new PropertyUint(new ParameterUint("StartupVolume"));
     iService->AddProperty(iPropertyStartupVolume); // passes ownership
-    iPropertyStartupVolumeEnabled = new PropertyBool(new ParameterBool("StartupVolumeEnabled"), empty);
+    iPropertyStartupVolumeEnabled = new PropertyBool(new ParameterBool("StartupVolumeEnabled"));
     iService->AddProperty(iPropertyStartupVolumeEnabled); // passes ownership
 }
 

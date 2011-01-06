@@ -1,4 +1,4 @@
-#include <Core/CpLinnCoUkPtest1.h>
+#include "CpLinnCoUkPtest1.h"
 #include <CpProxy.h>
 #include <CpiService.h>
 #include <Thread.h>

@@ -1,4 +1,4 @@
-#include <Core/DvZappOrgTestBasic1.h>
+#include "DvZappOrgTestBasic1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -59,16 +59,16 @@ void DvProviderZappOrgTestBasic1::GetPropertyVarBin(Brh& aValue)
 DvProviderZappOrgTestBasic1::DvProviderZappOrgTestBasic1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "zapp.org", "TestBasic", 1)
 {
-    Functor empty;
-    iPropertyVarUint = new PropertyUint(new ParameterUint("VarUint"), empty);
+    
+    iPropertyVarUint = new PropertyUint(new ParameterUint("VarUint"));
     iService->AddProperty(iPropertyVarUint); // passes ownership
-    iPropertyVarInt = new PropertyInt(new ParameterInt("VarInt"), empty);
+    iPropertyVarInt = new PropertyInt(new ParameterInt("VarInt"));
     iService->AddProperty(iPropertyVarInt); // passes ownership
-    iPropertyVarBool = new PropertyBool(new ParameterBool("VarBool"), empty);
+    iPropertyVarBool = new PropertyBool(new ParameterBool("VarBool"));
     iService->AddProperty(iPropertyVarBool); // passes ownership
-    iPropertyVarStr = new PropertyString(new ParameterString("VarStr"), empty);
+    iPropertyVarStr = new PropertyString(new ParameterString("VarStr"));
     iService->AddProperty(iPropertyVarStr); // passes ownership
-    iPropertyVarBin = new PropertyBinary(new ParameterBinary("VarBin"), empty);
+    iPropertyVarBin = new PropertyBinary(new ParameterBinary("VarBin"));
     iService->AddProperty(iPropertyVarBin); // passes ownership
 }
 

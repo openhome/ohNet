@@ -32,7 +32,7 @@ private:
     // IInterruptHandler
     void Interrupt();
 private:
-    static const TUint kMaxReadBytes = 1024;
+    static const TUint kMaxReadBytes = 4096;
     Invocation& iInvocation;
     SocketTcpClient iSocket;
     Srs<kMaxReadBytes> iReadBuffer;

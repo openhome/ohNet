@@ -1,4 +1,4 @@
-#include <Core/DvLinnCoUkDebug2.h>
+#include "DvLinnCoUkDebug2.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -9,7 +9,7 @@ using namespace Zapp;
 DvProviderLinnCoUkDebug2::DvProviderLinnCoUkDebug2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Debug", 2)
 {
-    Functor empty;
+    
 }
 
 void DvProviderLinnCoUkDebug2::EnableActionSetDebugLevel()

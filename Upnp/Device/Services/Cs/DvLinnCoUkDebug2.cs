@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -14,35 +15,18 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkDebug2 : DvProvider, IDisposable, IDvProviderLinnCoUkDebug2
     {
-        [DllImport("DvLinnCoUkDebug2")]
-        static extern uint DvProviderLinnCoUkDebug2Create(uint aDeviceHandle);
-        [DllImport("DvLinnCoUkDebug2")]
-        static extern void DvProviderLinnCoUkDebug2Destroy(uint aHandle);
-        [DllImport("DvLinnCoUkDebug2")]
-        static extern void DvProviderLinnCoUkDebug2EnableActionSetDebugLevel(uint aHandle, CallbackSetDebugLevel aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDebug2")]
-        static extern void DvProviderLinnCoUkDebug2EnableActionDebugLevel(uint aHandle, CallbackDebugLevel aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDebug2")]
-        static extern void DvProviderLinnCoUkDebug2EnableActionMemWrite(uint aHandle, CallbackMemWrite aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackSetDebugLevel(IntPtr aPtr, uint aVersion, uint aaDebugLevel);
-        private unsafe delegate int CallbackDebugLevel(IntPtr aPtr, uint aVersion, uint* aaDebugLevel);
-        private unsafe delegate int CallbackMemWrite(IntPtr aPtr, uint aVersion, uint aaMemAddress, char* aaMemData, int aaMemDataLen);
-
         private GCHandle iGch;
-        private CallbackSetDebugLevel iCallbackSetDebugLevel;
-        private CallbackDebugLevel iCallbackDebugLevel;
-        private CallbackMemWrite iCallbackMemWrite;
+        private ActionDelegate iDelegateSetDebugLevel;
+        private ActionDelegate iDelegateDebugLevel;
+        private ActionDelegate iDelegateMemWrite;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkDebug2(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "Debug", 2)
         {
-            iHandle = DvProviderLinnCoUkDebug2Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -51,11 +35,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDebugLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDebugLevel()
+        protected void EnableActionSetDebugLevel()
         {
-            iCallbackSetDebugLevel = new CallbackSetDebugLevel(DoSetDebugLevel);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDebug2EnableActionSetDebugLevel(iHandle, iCallbackSetDebugLevel, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDebugLevel");
+            action.AddInputParameter(new ParameterUint("aDebugLevel"));
+            iDelegateSetDebugLevel = new ActionDelegate(DoSetDebugLevel);
+            EnableAction(action, iDelegateSetDebugLevel, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -63,11 +48,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDebugLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDebugLevel()
+        protected void EnableActionDebugLevel()
         {
-            iCallbackDebugLevel = new CallbackDebugLevel(DoDebugLevel);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDebug2EnableActionDebugLevel(iHandle, iCallbackDebugLevel, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DebugLevel");
+            action.AddOutputParameter(new ParameterUint("aDebugLevel"));
+            iDelegateDebugLevel = new ActionDelegate(DoDebugLevel);
+            EnableAction(action, iDelegateDebugLevel, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -75,11 +61,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoMemWrite must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionMemWrite()
+        protected void EnableActionMemWrite()
         {
-            iCallbackMemWrite = new CallbackMemWrite(DoMemWrite);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDebug2EnableActionMemWrite(iHandle, iCallbackMemWrite, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("MemWrite");
+            action.AddInputParameter(new ParameterUint("aMemAddress"));
+            action.AddInputParameter(new ParameterBinary("aMemData"));
+            iDelegateMemWrite = new ActionDelegate(DoMemWrite);
+            EnableAction(action, iDelegateMemWrite, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -125,30 +113,125 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoSetDebugLevel(IntPtr aPtr, uint aVersion, uint aaDebugLevel)
+        private static int DoSetDebugLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
-            self.SetDebugLevel(aVersion, aaDebugLevel);
-            return 0;
-        }
-
-        private static unsafe int DoDebugLevel(IntPtr aPtr, uint aVersion, uint* aaDebugLevel)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aDebugLevel;
-            self.DebugLevel(aVersion, out aDebugLevel);
-            *aaDebugLevel = aDebugLevel;
+            try
+            {
+                invocation.ReadStart();
+                aDebugLevel = invocation.ReadUint("aDebugLevel");
+                invocation.ReadEnd();
+                self.SetDebugLevel(aVersion, aDebugLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoMemWrite(IntPtr aPtr, uint aVersion, uint aaMemAddress, char* aaMemData, int aaMemDataLen)
+        private static int DoDebugLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
-            string aMemData = Marshal.PtrToStringAnsi((IntPtr)aaMemData, aaMemDataLen);
-            self.MemWrite(aVersion, aaMemAddress, aMemData);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aDebugLevel;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.DebugLevel(aVersion, out aDebugLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("aDebugLevel", aDebugLevel);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoMemWrite(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aMemAddress;
+            string aMemData;
+            try
+            {
+                invocation.ReadStart();
+                aMemAddress = invocation.ReadUint("aMemAddress");
+                aMemData = invocation.ReadBinary("aMemData");
+                invocation.ReadEnd();
+                self.MemWrite(aVersion, aMemAddress, aMemData);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -168,21 +251,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkDebug2Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

@@ -1,4 +1,4 @@
-#include <Core/DvLinnCoUkMediaTime1.h>
+#include "DvLinnCoUkMediaTime1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -19,8 +19,8 @@ void DvProviderLinnCoUkMediaTime1::GetPropertySeconds(TUint& aValue)
 DvProviderLinnCoUkMediaTime1::DvProviderLinnCoUkMediaTime1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "MediaTime", 1)
 {
-    Functor empty;
-    iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"), empty);
+    
+    iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"));
     iService->AddProperty(iPropertySeconds); // passes ownership
 }
 

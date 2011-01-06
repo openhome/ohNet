@@ -1,23 +1,27 @@
-#include <C/DvLinnCoUkDebug2.h>
-#include <Core/DvLinnCoUkDebug2.h>
+#include "DvLinnCoUkDebug2.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
+#include <DvProvider.h>
 #include <C/Zapp.h>
+#include <ZappTypes.h>
+#include <Core/DvInvocationResponse.h>
+#include <Service.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-class DvProviderLinnCoUkDebug2C : public DvProviderLinnCoUkDebug2
+class DvProviderLinnCoUkDebug2C : public DvProvider
 {
 public:
-    DvProviderLinnCoUkDebug2C(DvDevice& aDevice);
+    DvProviderLinnCoUkDebug2C(DvDeviceC aDevice);
     void EnableActionSetDebugLevel(CallbackDebug2SetDebugLevel aCallback, void* aPtr);
     void EnableActionDebugLevel(CallbackDebug2DebugLevel aCallback, void* aPtr);
     void EnableActionMemWrite(CallbackDebug2MemWrite aCallback, void* aPtr);
 private:
-    void SetDebugLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aaDebugLevel);
-    void DebugLevel(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaDebugLevel);
-    void MemWrite(IInvocationResponse& aResponse, TUint aVersion, TUint aaMemAddress, const Brx& aaMemData);
+    void DoSetDebugLevel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDebugLevel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoMemWrite(IDviInvocation& aInvocation, TUint aVersion);
 private:
     CallbackDebug2SetDebugLevel iCallbackSetDebugLevel;
     void* iPtrSetDebugLevel;
@@ -27,72 +31,97 @@ private:
     void* iPtrMemWrite;
 };
 
-DvProviderLinnCoUkDebug2C::DvProviderLinnCoUkDebug2C(DvDevice& aDevice)
-    : DvProviderLinnCoUkDebug2(aDevice)
+DvProviderLinnCoUkDebug2C::DvProviderLinnCoUkDebug2C(DvDeviceC aDevice)
+    : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "linn.co.uk", "Debug", 2)
 {
+    
 }
 
 void DvProviderLinnCoUkDebug2C::EnableActionSetDebugLevel(CallbackDebug2SetDebugLevel aCallback, void* aPtr)
 {
     iCallbackSetDebugLevel = aCallback;
     iPtrSetDebugLevel = aPtr;
-    DvProviderLinnCoUkDebug2::EnableActionSetDebugLevel();
+    Zapp::Action* action = new Zapp::Action("SetDebugLevel");
+    action->AddInputParameter(new ParameterUint("aDebugLevel"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDebug2C::DoSetDebugLevel);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkDebug2C::EnableActionDebugLevel(CallbackDebug2DebugLevel aCallback, void* aPtr)
 {
     iCallbackDebugLevel = aCallback;
     iPtrDebugLevel = aPtr;
-    DvProviderLinnCoUkDebug2::EnableActionDebugLevel();
+    Zapp::Action* action = new Zapp::Action("DebugLevel");
+    action->AddOutputParameter(new ParameterUint("aDebugLevel"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDebug2C::DoDebugLevel);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkDebug2C::EnableActionMemWrite(CallbackDebug2MemWrite aCallback, void* aPtr)
 {
     iCallbackMemWrite = aCallback;
     iPtrMemWrite = aPtr;
-    DvProviderLinnCoUkDebug2::EnableActionMemWrite();
+    Zapp::Action* action = new Zapp::Action("MemWrite");
+    action->AddInputParameter(new ParameterUint("aMemAddress"));
+    action->AddInputParameter(new ParameterBinary("aMemData"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDebug2C::DoMemWrite);
+    iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkDebug2C::SetDebugLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aaDebugLevel)
+void DvProviderLinnCoUkDebug2C::DoSetDebugLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aDebugLevel = aInvocation.InvocationReadUint("aDebugLevel");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetDebugLevel != NULL);
-    if (0 != iCallbackSetDebugLevel(iPtrSetDebugLevel, aVersion, aaDebugLevel)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetDebugLevel(iPtrSetDebugLevel, aVersion, aDebugLevel)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkDebug2C::DebugLevel(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaDebugLevel)
+void DvProviderLinnCoUkDebug2C::DoDebugLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aDebugLevel;
     ASSERT(iCallbackDebugLevel != NULL);
     if (0 != iCallbackDebugLevel(iPtrDebugLevel, aVersion, &aDebugLevel)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaDebugLevel.Write(aDebugLevel);
-    aResponse.End();
+    InvocationResponseUint respaDebugLevel(aInvocation, "aDebugLevel");
+    resp.Start();
+    respaDebugLevel.Write(aDebugLevel);
+    resp.End();
 }
 
-void DvProviderLinnCoUkDebug2C::MemWrite(IInvocationResponse& aResponse, TUint aVersion, TUint aaMemAddress, const Brx& aaMemData)
+void DvProviderLinnCoUkDebug2C::DoMemWrite(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aMemAddress = aInvocation.InvocationReadUint("aMemAddress");
+    Brh aMemData;
+    aInvocation.InvocationReadBinary("aMemData", aMemData);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackMemWrite != NULL);
-    if (0 != iCallbackMemWrite(iPtrMemWrite, aVersion, aaMemAddress, (const char*)aaMemData.Ptr(), aaMemData.Bytes())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackMemWrite(iPtrMemWrite, aVersion, aMemAddress, (const char*)aMemData.Ptr(), aMemData.Bytes())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
 
 
 THandle DvProviderLinnCoUkDebug2Create(DvDeviceC aDevice)
 {
-	return new DvProviderLinnCoUkDebug2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkDebug2C(aDevice);
 }
 
 void DvProviderLinnCoUkDebug2Destroy(THandle aProvider)

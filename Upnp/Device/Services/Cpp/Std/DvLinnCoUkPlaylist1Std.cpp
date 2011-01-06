@@ -1,4 +1,4 @@
-#include <Std/DvLinnCoUkPlaylist1.h>
+#include "DvLinnCoUkPlaylist1.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -51,14 +51,14 @@ void DvProviderLinnCoUkPlaylist1Cpp::GetPropertyTracksMax(uint32_t& aValue)
 DvProviderLinnCoUkPlaylist1Cpp::DvProviderLinnCoUkPlaylist1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Playlist", 1)
 {
-    Functor empty;
-    iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"), empty);
+    
+    iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
     iService->AddProperty(iPropertyIdArray); // passes ownership
-    iPropertyRepeat = new PropertyBool(new ParameterBool("Repeat"), empty);
+    iPropertyRepeat = new PropertyBool(new ParameterBool("Repeat"));
     iService->AddProperty(iPropertyRepeat); // passes ownership
-    iPropertyShuffle = new PropertyBool(new ParameterBool("Shuffle"), empty);
+    iPropertyShuffle = new PropertyBool(new ParameterBool("Shuffle"));
     iService->AddProperty(iPropertyShuffle); // passes ownership
-    iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"), empty);
+    iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"));
     iService->AddProperty(iPropertyTracksMax); // passes ownership
 }
 

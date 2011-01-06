@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
@@ -9,83 +11,192 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncGetCount(out uint aCount);
         void BeginGetCount(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetCount(uint aAsyncHandle, out uint aCount);
-        void SyncGetRoom(uint aIndex, out string aRoomName);
+        void EndGetCount(IntPtr aAsyncHandle, out uint aCount);
+        void SyncGetRoom(uint aIndex, out String aRoomName);
         void BeginGetRoom(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetRoom(uint aAsyncHandle, out string aRoomName);
-        void SyncGetName(uint aIndex, out string aFriendlyName);
+        void EndGetRoom(IntPtr aAsyncHandle, out String aRoomName);
+        void SyncGetName(uint aIndex, out String aFriendlyName);
         void BeginGetName(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetName(uint aAsyncHandle, out string aFriendlyName);
+        void EndGetName(IntPtr aAsyncHandle, out String aFriendlyName);
         void SyncGetPosition(uint aIndex, out uint aX, out uint aY, out uint aZ);
         void BeginGetPosition(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetPosition(uint aAsyncHandle, out uint aX, out uint aY, out uint aZ);
+        void EndGetPosition(IntPtr aAsyncHandle, out uint aX, out uint aY, out uint aZ);
         void SyncSetColor(uint aIndex, uint aColor);
         void BeginSetColor(uint aIndex, uint aColor, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetColor(uint aAsyncHandle);
+        void EndSetColor(IntPtr aAsyncHandle);
         void SyncGetColor(uint aIndex, out uint aColor);
         void BeginGetColor(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetColor(uint aAsyncHandle, out uint aColor);
+        void EndGetColor(IntPtr aAsyncHandle, out uint aColor);
         void SyncGetColorComponents(uint aColor, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue);
         void BeginGetColorComponents(uint aColor, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetColorComponents(uint aAsyncHandle, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue);
-
+        void EndGetColorComponents(IntPtr aAsyncHandle, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue);
     }
+
+    internal class SyncGetCountZappOrgTestLights1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestLights1 iService;
+        private uint iCount;
+
+        public SyncGetCountZappOrgTestLights1(CpProxyZappOrgTestLights1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Count()
+        {
+            return iCount;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetCount(aAsyncHandle, out iCount);
+        }
+    };
+
+    internal class SyncGetRoomZappOrgTestLights1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestLights1 iService;
+        private String iRoomName;
+
+        public SyncGetRoomZappOrgTestLights1(CpProxyZappOrgTestLights1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String RoomName()
+        {
+            return iRoomName;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetRoom(aAsyncHandle, out iRoomName);
+        }
+    };
+
+    internal class SyncGetNameZappOrgTestLights1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestLights1 iService;
+        private String iFriendlyName;
+
+        public SyncGetNameZappOrgTestLights1(CpProxyZappOrgTestLights1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String FriendlyName()
+        {
+            return iFriendlyName;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetName(aAsyncHandle, out iFriendlyName);
+        }
+    };
+
+    internal class SyncGetPositionZappOrgTestLights1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestLights1 iService;
+        private uint iX;
+        private uint iY;
+        private uint iZ;
+
+        public SyncGetPositionZappOrgTestLights1(CpProxyZappOrgTestLights1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint X()
+        {
+            return iX;
+        }
+        public uint Y()
+        {
+            return iY;
+        }
+        public uint Z()
+        {
+            return iZ;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetPosition(aAsyncHandle, out iX, out iY, out iZ);
+        }
+    };
+
+    internal class SyncSetColorZappOrgTestLights1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestLights1 iService;
+
+        public SyncSetColorZappOrgTestLights1(CpProxyZappOrgTestLights1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetColor(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetColorZappOrgTestLights1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestLights1 iService;
+        private uint iColor;
+
+        public SyncGetColorZappOrgTestLights1(CpProxyZappOrgTestLights1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Color()
+        {
+            return iColor;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetColor(aAsyncHandle, out iColor);
+        }
+    };
+
+    internal class SyncGetColorComponentsZappOrgTestLights1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestLights1 iService;
+        private uint iBrightness;
+        private uint iRed;
+        private uint iGreen;
+        private uint iBlue;
+
+        public SyncGetColorComponentsZappOrgTestLights1(CpProxyZappOrgTestLights1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Brightness()
+        {
+            return iBrightness;
+        }
+        public uint Red()
+        {
+            return iRed;
+        }
+        public uint Green()
+        {
+            return iGreen;
+        }
+        public uint Blue()
+        {
+            return iBlue;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetColorComponents(aAsyncHandle, out iBrightness, out iRed, out iGreen, out iBlue);
+        }
+    };
 
     /// <summary>
     /// Proxy for the zapp.org:TestLights:1 UPnP service
     /// </summary>
     public class CpProxyZappOrgTestLights1 : CpProxy, IDisposable, ICpProxyZappOrgTestLights1
     {
-        [DllImport("CpZappOrgTestLights1")]
-        static extern uint CpProxyZappOrgTestLights1Create(uint aDeviceHandle);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern void CpProxyZappOrgTestLights1Destroy(uint aHandle);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncGetCount(uint aHandle, uint* aCount);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginGetCount(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndGetCount(uint aHandle, uint aAsync, uint* aCount);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncGetRoom(uint aHandle, uint aIndex, char** aRoomName);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginGetRoom(uint aHandle, uint aIndex, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndGetRoom(uint aHandle, uint aAsync, char** aRoomName);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncGetName(uint aHandle, uint aIndex, char** aFriendlyName);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginGetName(uint aHandle, uint aIndex, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndGetName(uint aHandle, uint aAsync, char** aFriendlyName);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncGetPosition(uint aHandle, uint aIndex, uint* aX, uint* aY, uint* aZ);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginGetPosition(uint aHandle, uint aIndex, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndGetPosition(uint aHandle, uint aAsync, uint* aX, uint* aY, uint* aZ);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncSetColor(uint aHandle, uint aIndex, uint aColor);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginSetColor(uint aHandle, uint aIndex, uint aColor, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndSetColor(uint aHandle, uint aAsync);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncGetColor(uint aHandle, uint aIndex, uint* aColor);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginGetColor(uint aHandle, uint aIndex, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndGetColor(uint aHandle, uint aAsync, uint* aColor);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncGetColorComponents(uint aHandle, uint aColor, uint* aBrightness, uint* aRed, uint* aGreen, uint* aBlue);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginGetColorComponents(uint aHandle, uint aColor, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndGetColorComponents(uint aHandle, uint aAsync, uint* aBrightness, uint* aRed, uint* aGreen, uint* aBlue);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionGetCount;
+        private Zapp.Core.Action iActionGetRoom;
+        private Zapp.Core.Action iActionGetName;
+        private Zapp.Core.Action iActionGetPosition;
+        private Zapp.Core.Action iActionSetColor;
+        private Zapp.Core.Action iActionGetColor;
+        private Zapp.Core.Action iActionGetColorComponents;
 
         /// <summary>
         /// Constructor
@@ -93,9 +204,60 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyZappOrgTestLights1(CpDevice aDevice)
+            : base("zapp-org", "TestLights", 1, aDevice)
         {
-            iHandle = CpProxyZappOrgTestLights1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionGetCount = new Zapp.Core.Action("GetCount");
+            param = new ParameterUint("Count");
+            iActionGetCount.AddOutputParameter(param);
+
+            iActionGetRoom = new Zapp.Core.Action("GetRoom");
+            param = new ParameterUint("Index");
+            iActionGetRoom.AddInputParameter(param);
+            param = new ParameterString("RoomName", allowedValues);
+            iActionGetRoom.AddOutputParameter(param);
+
+            iActionGetName = new Zapp.Core.Action("GetName");
+            param = new ParameterUint("Index");
+            iActionGetName.AddInputParameter(param);
+            param = new ParameterString("FriendlyName", allowedValues);
+            iActionGetName.AddOutputParameter(param);
+
+            iActionGetPosition = new Zapp.Core.Action("GetPosition");
+            param = new ParameterUint("Index");
+            iActionGetPosition.AddInputParameter(param);
+            param = new ParameterUint("X");
+            iActionGetPosition.AddOutputParameter(param);
+            param = new ParameterUint("Y");
+            iActionGetPosition.AddOutputParameter(param);
+            param = new ParameterUint("Z");
+            iActionGetPosition.AddOutputParameter(param);
+
+            iActionSetColor = new Zapp.Core.Action("SetColor");
+            param = new ParameterUint("Index");
+            iActionSetColor.AddInputParameter(param);
+            param = new ParameterUint("Color");
+            iActionSetColor.AddInputParameter(param);
+
+            iActionGetColor = new Zapp.Core.Action("GetColor");
+            param = new ParameterUint("Index");
+            iActionGetColor.AddInputParameter(param);
+            param = new ParameterUint("Color");
+            iActionGetColor.AddOutputParameter(param);
+
+            iActionGetColorComponents = new Zapp.Core.Action("GetColorComponents");
+            param = new ParameterUint("Color");
+            iActionGetColorComponents.AddInputParameter(param);
+            param = new ParameterUint("Brightness");
+            iActionGetColorComponents.AddOutputParameter(param);
+            param = new ParameterUint("Red");
+            iActionGetColorComponents.AddOutputParameter(param);
+            param = new ParameterUint("Green");
+            iActionGetColorComponents.AddOutputParameter(param);
+            param = new ParameterUint("Blue");
+            iActionGetColorComponents.AddOutputParameter(param);
         }
 
         /// <summary>
@@ -104,12 +266,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aCount"></param>
-        public unsafe void SyncGetCount(out uint aCount)
+        public void SyncGetCount(out uint aCount)
         {
-            fixed (uint* count = &aCount)
-            {
-                CpProxyZappOrgTestLights1SyncGetCount(iHandle, count);
-            }
+            SyncGetCountZappOrgTestLights1 sync = new SyncGetCountZappOrgTestLights1(this);
+            BeginGetCount(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCount = sync.Count();
         }
 
         /// <summary>
@@ -120,11 +283,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetCount().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetCount(CallbackAsyncComplete aCallback)
+        public void BeginGetCount(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestLights1BeginGetCount(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetCount, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetCount.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -133,15 +297,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCount"></param>
-        public unsafe void EndGetCount(uint aAsyncHandle, out uint aCount)
+        public void EndGetCount(IntPtr aAsyncHandle, out uint aCount)
         {
-            fixed (uint* count = &aCount)
-            {
-                if (0 != CpProxyZappOrgTestLights1EndGetCount(iHandle, aAsyncHandle, count))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCount = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -151,14 +310,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aIndex"></param>
         /// <param name="aRoomName"></param>
-        public unsafe void SyncGetRoom(uint aIndex, out string aRoomName)
+        public void SyncGetRoom(uint aIndex, out String aRoomName)
         {
-            char* roomName;
-            {
-                CpProxyZappOrgTestLights1SyncGetRoom(iHandle, aIndex, &roomName);
-            }
-            aRoomName = Marshal.PtrToStringAnsi((IntPtr)roomName);
-            ZappFree(roomName);
+            SyncGetRoomZappOrgTestLights1 sync = new SyncGetRoomZappOrgTestLights1(this);
+            BeginGetRoom(aIndex, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aRoomName = sync.RoomName();
         }
 
         /// <summary>
@@ -170,11 +328,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIndex"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetRoom(uint aIndex, CallbackAsyncComplete aCallback)
+        public void BeginGetRoom(uint aIndex, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestLights1BeginGetRoom(iHandle, aIndex, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetRoom, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetRoom.InputParameter(inIndex++), aIndex));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetRoom.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -183,17 +344,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aRoomName"></param>
-        public unsafe void EndGetRoom(uint aAsyncHandle, out string aRoomName)
+        public void EndGetRoom(IntPtr aAsyncHandle, out String aRoomName)
         {
-            char* roomName;
-            {
-                if (0 != CpProxyZappOrgTestLights1EndGetRoom(iHandle, aAsyncHandle, &roomName))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aRoomName = Marshal.PtrToStringAnsi((IntPtr)roomName);
-            ZappFree(roomName);
+            uint index = 0;
+            aRoomName = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -203,14 +357,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aIndex"></param>
         /// <param name="aFriendlyName"></param>
-        public unsafe void SyncGetName(uint aIndex, out string aFriendlyName)
+        public void SyncGetName(uint aIndex, out String aFriendlyName)
         {
-            char* friendlyName;
-            {
-                CpProxyZappOrgTestLights1SyncGetName(iHandle, aIndex, &friendlyName);
-            }
-            aFriendlyName = Marshal.PtrToStringAnsi((IntPtr)friendlyName);
-            ZappFree(friendlyName);
+            SyncGetNameZappOrgTestLights1 sync = new SyncGetNameZappOrgTestLights1(this);
+            BeginGetName(aIndex, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aFriendlyName = sync.FriendlyName();
         }
 
         /// <summary>
@@ -222,11 +375,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIndex"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetName(uint aIndex, CallbackAsyncComplete aCallback)
+        public void BeginGetName(uint aIndex, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestLights1BeginGetName(iHandle, aIndex, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetName, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetName.InputParameter(inIndex++), aIndex));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetName.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -235,17 +391,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aFriendlyName"></param>
-        public unsafe void EndGetName(uint aAsyncHandle, out string aFriendlyName)
+        public void EndGetName(IntPtr aAsyncHandle, out String aFriendlyName)
         {
-            char* friendlyName;
-            {
-                if (0 != CpProxyZappOrgTestLights1EndGetName(iHandle, aAsyncHandle, &friendlyName))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aFriendlyName = Marshal.PtrToStringAnsi((IntPtr)friendlyName);
-            ZappFree(friendlyName);
+            uint index = 0;
+            aFriendlyName = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -257,14 +406,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aX"></param>
         /// <param name="aY"></param>
         /// <param name="aZ"></param>
-        public unsafe void SyncGetPosition(uint aIndex, out uint aX, out uint aY, out uint aZ)
+        public void SyncGetPosition(uint aIndex, out uint aX, out uint aY, out uint aZ)
         {
-            fixed (uint* x = &aX)
-            fixed (uint* y = &aY)
-            fixed (uint* z = &aZ)
-            {
-                CpProxyZappOrgTestLights1SyncGetPosition(iHandle, aIndex, x, y, z);
-            }
+            SyncGetPositionZappOrgTestLights1 sync = new SyncGetPositionZappOrgTestLights1(this);
+            BeginGetPosition(aIndex, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aX = sync.X();
+            aY = sync.Y();
+            aZ = sync.Z();
         }
 
         /// <summary>
@@ -276,11 +426,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIndex"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetPosition(uint aIndex, CallbackAsyncComplete aCallback)
+        public void BeginGetPosition(uint aIndex, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestLights1BeginGetPosition(iHandle, aIndex, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetPosition, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetPosition.InputParameter(inIndex++), aIndex));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetPosition.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetPosition.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetPosition.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -291,17 +446,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aX"></param>
         /// <param name="aY"></param>
         /// <param name="aZ"></param>
-        public unsafe void EndGetPosition(uint aAsyncHandle, out uint aX, out uint aY, out uint aZ)
+        public void EndGetPosition(IntPtr aAsyncHandle, out uint aX, out uint aY, out uint aZ)
         {
-            fixed (uint* x = &aX)
-            fixed (uint* y = &aY)
-            fixed (uint* z = &aZ)
-            {
-                if (0 != CpProxyZappOrgTestLights1EndGetPosition(iHandle, aAsyncHandle, x, y, z))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aX = Invocation.OutputUint(aAsyncHandle, index++);
+            aY = Invocation.OutputUint(aAsyncHandle, index++);
+            aZ = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -311,11 +461,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aIndex"></param>
         /// <param name="aColor"></param>
-        public unsafe void SyncSetColor(uint aIndex, uint aColor)
+        public void SyncSetColor(uint aIndex, uint aColor)
         {
-            {
-                CpProxyZappOrgTestLights1SyncSetColor(iHandle, aIndex, aColor);
-            }
+            SyncSetColorZappOrgTestLights1 sync = new SyncSetColorZappOrgTestLights1(this);
+            BeginSetColor(aIndex, aColor, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -328,11 +479,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aColor"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetColor(uint aIndex, uint aColor, CallbackAsyncComplete aCallback)
+        public void BeginSetColor(uint aIndex, uint aColor, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestLights1BeginSetColor(iHandle, aIndex, aColor, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetColor, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetColor.InputParameter(inIndex++), aIndex));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetColor.InputParameter(inIndex++), aColor));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -340,14 +493,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetColor(uint aAsyncHandle)
+        public void EndSetColor(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestLights1EndSetColor(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -357,12 +504,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aIndex"></param>
         /// <param name="aColor"></param>
-        public unsafe void SyncGetColor(uint aIndex, out uint aColor)
+        public void SyncGetColor(uint aIndex, out uint aColor)
         {
-            fixed (uint* color = &aColor)
-            {
-                CpProxyZappOrgTestLights1SyncGetColor(iHandle, aIndex, color);
-            }
+            SyncGetColorZappOrgTestLights1 sync = new SyncGetColorZappOrgTestLights1(this);
+            BeginGetColor(aIndex, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aColor = sync.Color();
         }
 
         /// <summary>
@@ -374,11 +522,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIndex"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetColor(uint aIndex, CallbackAsyncComplete aCallback)
+        public void BeginGetColor(uint aIndex, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestLights1BeginGetColor(iHandle, aIndex, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetColor, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetColor.InputParameter(inIndex++), aIndex));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetColor.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -387,15 +538,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aColor"></param>
-        public unsafe void EndGetColor(uint aAsyncHandle, out uint aColor)
+        public void EndGetColor(IntPtr aAsyncHandle, out uint aColor)
         {
-            fixed (uint* color = &aColor)
-            {
-                if (0 != CpProxyZappOrgTestLights1EndGetColor(iHandle, aAsyncHandle, color))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aColor = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -408,15 +554,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRed"></param>
         /// <param name="aGreen"></param>
         /// <param name="aBlue"></param>
-        public unsafe void SyncGetColorComponents(uint aColor, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
+        public void SyncGetColorComponents(uint aColor, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
         {
-            fixed (uint* brightness = &aBrightness)
-            fixed (uint* red = &aRed)
-            fixed (uint* green = &aGreen)
-            fixed (uint* blue = &aBlue)
-            {
-                CpProxyZappOrgTestLights1SyncGetColorComponents(iHandle, aColor, brightness, red, green, blue);
-            }
+            SyncGetColorComponentsZappOrgTestLights1 sync = new SyncGetColorComponentsZappOrgTestLights1(this);
+            BeginGetColorComponents(aColor, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aBrightness = sync.Brightness();
+            aRed = sync.Red();
+            aGreen = sync.Green();
+            aBlue = sync.Blue();
         }
 
         /// <summary>
@@ -428,11 +575,17 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aColor"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetColorComponents(uint aColor, CallbackAsyncComplete aCallback)
+        public void BeginGetColorComponents(uint aColor, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestLights1BeginGetColorComponents(iHandle, aColor, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetColorComponents, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetColorComponents.InputParameter(inIndex++), aColor));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetColorComponents.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetColorComponents.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetColorComponents.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetColorComponents.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -444,18 +597,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRed"></param>
         /// <param name="aGreen"></param>
         /// <param name="aBlue"></param>
-        public unsafe void EndGetColorComponents(uint aAsyncHandle, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
+        public void EndGetColorComponents(IntPtr aAsyncHandle, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
         {
-            fixed (uint* brightness = &aBrightness)
-            fixed (uint* red = &aRed)
-            fixed (uint* green = &aGreen)
-            fixed (uint* blue = &aBlue)
-            {
-                if (0 != CpProxyZappOrgTestLights1EndGetColorComponents(iHandle, aAsyncHandle, brightness, red, green, blue))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aBrightness = Invocation.OutputUint(aAsyncHandle, index++);
+            aRed = Invocation.OutputUint(aAsyncHandle, index++);
+            aGreen = Invocation.OutputUint(aAsyncHandle, index++);
+            aBlue = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -475,21 +623,23 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                CpProxyZappOrgTestLights1Destroy(iHandle);
-                iHandle = 0;
+                DisposeProxy();
+                iHandle = IntPtr.Zero;
+                iActionGetCount.Dispose();
+                iActionGetRoom.Dispose();
+                iActionGetName.Dispose();
+                iActionGetPosition.Dispose();
+                iActionSetColor.Dispose();
+                iActionGetColor.Dispose();
+                iActionGetColorComponents.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

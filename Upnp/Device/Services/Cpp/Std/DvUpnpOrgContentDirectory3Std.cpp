@@ -1,4 +1,4 @@
-#include <Std/DvUpnpOrgContentDirectory3.h>
+#include "DvUpnpOrgContentDirectory3.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -55,14 +55,14 @@ void DvProviderUpnpOrgContentDirectory3Cpp::GetPropertyTransferIDs(std::string& 
 DvProviderUpnpOrgContentDirectory3Cpp::DvProviderUpnpOrgContentDirectory3Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ContentDirectory", 3)
 {
-    Functor empty;
-    iPropertySystemUpdateID = new PropertyUint(new ParameterUint("SystemUpdateID"), empty);
+    
+    iPropertySystemUpdateID = new PropertyUint(new ParameterUint("SystemUpdateID"));
     iService->AddProperty(iPropertySystemUpdateID); // passes ownership
-    iPropertyContainerUpdateIDs = new PropertyString(new ParameterString("ContainerUpdateIDs"), empty);
+    iPropertyContainerUpdateIDs = new PropertyString(new ParameterString("ContainerUpdateIDs"));
     iService->AddProperty(iPropertyContainerUpdateIDs); // passes ownership
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"), empty);
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
-    iPropertyTransferIDs = new PropertyString(new ParameterString("TransferIDs"), empty);
+    iPropertyTransferIDs = new PropertyString(new ParameterString("TransferIDs"));
     iService->AddProperty(iPropertyTransferIDs); // passes ownership
 }
 

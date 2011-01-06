@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the aStateVariable property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyaStateVariable(out uint aValue);
+        uint PropertyaStateVariable();
         
     }
     /// <summary>
@@ -27,80 +28,32 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkDiagnostics1 : DvProvider, IDisposable, IDvProviderLinnCoUkDiagnostics1
     {
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern uint DvProviderLinnCoUkDiagnostics1Create(uint aDeviceHandle);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1Destroy(uint aHandle);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern unsafe int DvProviderLinnCoUkDiagnostics1SetPropertyaStateVariable(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern unsafe void DvProviderLinnCoUkDiagnostics1GetPropertyaStateVariable(uint aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionEcho(uint aHandle, CallbackEcho aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionElfFile(uint aHandle, CallbackElfFile aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionElfFingerprint(uint aHandle, CallbackElfFingerprint aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataStatus(uint aHandle, CallbackCrashDataStatus aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataFetch(uint aHandle, CallbackCrashDataFetch aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataClear(uint aHandle, CallbackCrashDataClear aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionSysLog(uint aHandle, CallbackSysLog aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionDiagnostic(uint aHandle, CallbackDiagnostic aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionStateVariable(uint aHandle, CallbackStateVariable aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariable(uint aHandle, CallbackSetStateVariable aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionStateVariablePeriod(uint aHandle, CallbackStateVariablePeriod aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(uint aHandle, CallbackSetStateVariablePeriod aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionReboot(uint aHandle, CallbackReboot aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackEcho(IntPtr aPtr, uint aVersion, char* aaIn, char** aaOut);
-        private unsafe delegate int CallbackElfFile(IntPtr aPtr, uint aVersion, char** aaElfFile);
-        private unsafe delegate int CallbackElfFingerprint(IntPtr aPtr, uint aVersion, char** aaElfFileFingerprint);
-        private unsafe delegate int CallbackCrashDataStatus(IntPtr aPtr, uint aVersion, char** aaCrashDataStatus);
-        private unsafe delegate int CallbackCrashDataFetch(IntPtr aPtr, uint aVersion, char** aaCrashData, int* aaCrashDataLen);
-        private unsafe delegate int CallbackCrashDataClear(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackSysLog(IntPtr aPtr, uint aVersion, char** aaSysLog, int* aaSysLogLen);
-        private unsafe delegate int CallbackDiagnostic(IntPtr aPtr, uint aVersion, char* aaDiagnosticType, char** aaDiagnosticInfo);
-        private unsafe delegate int CallbackStateVariable(IntPtr aPtr, uint aVersion, uint* aaStateVariable);
-        private unsafe delegate int CallbackSetStateVariable(IntPtr aPtr, uint aVersion, uint aaStateVariable);
-        private unsafe delegate int CallbackStateVariablePeriod(IntPtr aPtr, uint aVersion, uint* aaPeriod);
-        private unsafe delegate int CallbackSetStateVariablePeriod(IntPtr aPtr, uint aVersion, uint aaPeriod);
-        private unsafe delegate int CallbackReboot(IntPtr aPtr, uint aVersion, uint aaDelay);
-
         private GCHandle iGch;
-        private CallbackEcho iCallbackEcho;
-        private CallbackElfFile iCallbackElfFile;
-        private CallbackElfFingerprint iCallbackElfFingerprint;
-        private CallbackCrashDataStatus iCallbackCrashDataStatus;
-        private CallbackCrashDataFetch iCallbackCrashDataFetch;
-        private CallbackCrashDataClear iCallbackCrashDataClear;
-        private CallbackSysLog iCallbackSysLog;
-        private CallbackDiagnostic iCallbackDiagnostic;
-        private CallbackStateVariable iCallbackStateVariable;
-        private CallbackSetStateVariable iCallbackSetStateVariable;
-        private CallbackStateVariablePeriod iCallbackStateVariablePeriod;
-        private CallbackSetStateVariablePeriod iCallbackSetStateVariablePeriod;
-        private CallbackReboot iCallbackReboot;
+        private ActionDelegate iDelegateEcho;
+        private ActionDelegate iDelegateElfFile;
+        private ActionDelegate iDelegateElfFingerprint;
+        private ActionDelegate iDelegateCrashDataStatus;
+        private ActionDelegate iDelegateCrashDataFetch;
+        private ActionDelegate iDelegateCrashDataClear;
+        private ActionDelegate iDelegateSysLog;
+        private ActionDelegate iDelegateDiagnostic;
+        private ActionDelegate iDelegateStateVariable;
+        private ActionDelegate iDelegateSetStateVariable;
+        private ActionDelegate iDelegateStateVariablePeriod;
+        private ActionDelegate iDelegateSetStateVariablePeriod;
+        private ActionDelegate iDelegateReboot;
+        private PropertyUint iPropertyaStateVariable;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkDiagnostics1(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "Diagnostics", 1)
         {
-            iHandle = DvProviderLinnCoUkDiagnostics1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            iPropertyaStateVariable = new PropertyUint(new ParameterUint("aStateVariable"));
+            AddProperty(iPropertyaStateVariable);
         }
 
         /// <summary>
@@ -108,26 +61,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyaStateVariable(uint aValue)
+        public bool SetPropertyaStateVariable(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkDiagnostics1SetPropertyaStateVariable(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyaStateVariable, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the aStateVariable property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyaStateVariable(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyaStateVariable()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkDiagnostics1GetPropertyaStateVariable(iHandle, value);
-            }
+            return iPropertyaStateVariable.Value();
         }
 
         /// <summary>
@@ -135,11 +80,14 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoEcho must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionEcho()
+        protected void EnableActionEcho()
         {
-            iCallbackEcho = new CallbackEcho(DoEcho);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDiagnostics1EnableActionEcho(iHandle, iCallbackEcho, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Echo");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("aIn", allowedValues));
+            action.AddOutputParameter(new ParameterString("aOut", allowedValues));
+            iDelegateEcho = new ActionDelegate(DoEcho);
+            EnableAction(action, iDelegateEcho, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -147,11 +95,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoElfFile must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionElfFile()
+        protected void EnableActionElfFile()
         {
-            iCallbackElfFile = new CallbackElfFile(DoElfFile);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDiagnostics1EnableActionElfFile(iHandle, iCallbackElfFile, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("ElfFile");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterString("aElfFile", allowedValues));
+            iDelegateElfFile = new ActionDelegate(DoElfFile);
+            EnableAction(action, iDelegateElfFile, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -159,11 +109,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoElfFingerprint must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionElfFingerprint()
+        protected void EnableActionElfFingerprint()
         {
-            iCallbackElfFingerprint = new CallbackElfFingerprint(DoElfFingerprint);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDiagnostics1EnableActionElfFingerprint(iHandle, iCallbackElfFingerprint, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("ElfFingerprint");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterString("aElfFileFingerprint", allowedValues));
+            iDelegateElfFingerprint = new ActionDelegate(DoElfFingerprint);
+            EnableAction(action, iDelegateElfFingerprint, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -171,11 +123,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoCrashDataStatus must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionCrashDataStatus()
+        protected void EnableActionCrashDataStatus()
         {
-            iCallbackCrashDataStatus = new CallbackCrashDataStatus(DoCrashDataStatus);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDiagnostics1EnableActionCrashDataStatus(iHandle, iCallbackCrashDataStatus, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("CrashDataStatus");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterString("aCrashDataStatus", allowedValues));
+            iDelegateCrashDataStatus = new ActionDelegate(DoCrashDataStatus);
+            EnableAction(action, iDelegateCrashDataStatus, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -183,11 +137,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoCrashDataFetch must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionCrashDataFetch()
+        protected void EnableActionCrashDataFetch()
         {
-            iCallbackCrashDataFetch = new CallbackCrashDataFetch(DoCrashDataFetch);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDiagnostics1EnableActionCrashDataFetch(iHandle, iCallbackCrashDataFetch, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("CrashDataFetch");
+            action.AddOutputParameter(new ParameterBinary("aCrashData"));
+            iDelegateCrashDataFetch = new ActionDelegate(DoCrashDataFetch);
+            EnableAction(action, iDelegateCrashDataFetch, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -195,11 +150,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoCrashDataClear must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionCrashDataClear()
+        protected void EnableActionCrashDataClear()
         {
-            iCallbackCrashDataClear = new CallbackCrashDataClear(DoCrashDataClear);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDiagnostics1EnableActionCrashDataClear(iHandle, iCallbackCrashDataClear, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("CrashDataClear");
+            iDelegateCrashDataClear = new ActionDelegate(DoCrashDataClear);
+            EnableAction(action, iDelegateCrashDataClear, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -207,11 +162,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSysLog must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSysLog()
+        protected void EnableActionSysLog()
         {
-            iCallbackSysLog = new CallbackSysLog(DoSysLog);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDiagnostics1EnableActionSysLog(iHandle, iCallbackSysLog, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SysLog");
+            action.AddOutputParameter(new ParameterBinary("aSysLog"));
+            iDelegateSysLog = new ActionDelegate(DoSysLog);
+            EnableAction(action, iDelegateSysLog, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -219,11 +175,14 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDiagnostic must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDiagnostic()
+        protected void EnableActionDiagnostic()
         {
-            iCallbackDiagnostic = new CallbackDiagnostic(DoDiagnostic);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDiagnostics1EnableActionDiagnostic(iHandle, iCallbackDiagnostic, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Diagnostic");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("aDiagnosticType", allowedValues));
+            action.AddOutputParameter(new ParameterString("aDiagnosticInfo", allowedValues));
+            iDelegateDiagnostic = new ActionDelegate(DoDiagnostic);
+            EnableAction(action, iDelegateDiagnostic, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -231,11 +190,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStateVariable must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStateVariable()
+        protected void EnableActionStateVariable()
         {
-            iCallbackStateVariable = new CallbackStateVariable(DoStateVariable);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDiagnostics1EnableActionStateVariable(iHandle, iCallbackStateVariable, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("StateVariable");
+            action.AddOutputParameter(new ParameterRelated("aStateVariable", iPropertyaStateVariable));
+            iDelegateStateVariable = new ActionDelegate(DoStateVariable);
+            EnableAction(action, iDelegateStateVariable, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -243,11 +203,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStateVariable must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStateVariable()
+        protected void EnableActionSetStateVariable()
         {
-            iCallbackSetStateVariable = new CallbackSetStateVariable(DoSetStateVariable);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariable(iHandle, iCallbackSetStateVariable, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetStateVariable");
+            action.AddInputParameter(new ParameterRelated("aStateVariable", iPropertyaStateVariable));
+            iDelegateSetStateVariable = new ActionDelegate(DoSetStateVariable);
+            EnableAction(action, iDelegateSetStateVariable, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -255,11 +216,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStateVariablePeriod must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStateVariablePeriod()
+        protected void EnableActionStateVariablePeriod()
         {
-            iCallbackStateVariablePeriod = new CallbackStateVariablePeriod(DoStateVariablePeriod);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDiagnostics1EnableActionStateVariablePeriod(iHandle, iCallbackStateVariablePeriod, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("StateVariablePeriod");
+            action.AddOutputParameter(new ParameterUint("aPeriod"));
+            iDelegateStateVariablePeriod = new ActionDelegate(DoStateVariablePeriod);
+            EnableAction(action, iDelegateStateVariablePeriod, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -267,11 +229,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStateVariablePeriod must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStateVariablePeriod()
+        protected void EnableActionSetStateVariablePeriod()
         {
-            iCallbackSetStateVariablePeriod = new CallbackSetStateVariablePeriod(DoSetStateVariablePeriod);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(iHandle, iCallbackSetStateVariablePeriod, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetStateVariablePeriod");
+            action.AddInputParameter(new ParameterUint("aPeriod"));
+            iDelegateSetStateVariablePeriod = new ActionDelegate(DoSetStateVariablePeriod);
+            EnableAction(action, iDelegateSetStateVariablePeriod, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -279,11 +242,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoReboot must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionReboot()
+        protected void EnableActionReboot()
         {
-            iCallbackReboot = new CallbackReboot(DoReboot);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDiagnostics1EnableActionReboot(iHandle, iCallbackReboot, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Reboot");
+            action.AddInputParameter(new ParameterUint("aDelay"));
+            iDelegateReboot = new ActionDelegate(DoReboot);
+            EnableAction(action, iDelegateReboot, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -469,129 +433,525 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoEcho(IntPtr aPtr, uint aVersion, char* aaIn, char** aaOut)
+        private static int DoEcho(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
-            string aIn = Marshal.PtrToStringAnsi((IntPtr)aaIn);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aIn;
             string aOut;
-            self.Echo(aVersion, aIn, out aOut);
-            *aaOut = (char*)Marshal.StringToHGlobalAnsi(aOut).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                aIn = invocation.ReadString("aIn");
+                invocation.ReadEnd();
+                self.Echo(aVersion, aIn, out aOut);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("aOut", aOut);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoElfFile(IntPtr aPtr, uint aVersion, char** aaElfFile)
+        private static int DoElfFile(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aElfFile;
-            self.ElfFile(aVersion, out aElfFile);
-            *aaElfFile = (char*)Marshal.StringToHGlobalAnsi(aElfFile).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.ElfFile(aVersion, out aElfFile);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("aElfFile", aElfFile);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoElfFingerprint(IntPtr aPtr, uint aVersion, char** aaElfFileFingerprint)
+        private static int DoElfFingerprint(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aElfFileFingerprint;
-            self.ElfFingerprint(aVersion, out aElfFileFingerprint);
-            *aaElfFileFingerprint = (char*)Marshal.StringToHGlobalAnsi(aElfFileFingerprint).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.ElfFingerprint(aVersion, out aElfFileFingerprint);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("aElfFileFingerprint", aElfFileFingerprint);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoCrashDataStatus(IntPtr aPtr, uint aVersion, char** aaCrashDataStatus)
+        private static int DoCrashDataStatus(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aCrashDataStatus;
-            self.CrashDataStatus(aVersion, out aCrashDataStatus);
-            *aaCrashDataStatus = (char*)Marshal.StringToHGlobalAnsi(aCrashDataStatus).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.CrashDataStatus(aVersion, out aCrashDataStatus);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("aCrashDataStatus", aCrashDataStatus);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoCrashDataFetch(IntPtr aPtr, uint aVersion, char** aaCrashData, int* aaCrashDataLen)
+        private static int DoCrashDataFetch(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aCrashData;
-            self.CrashDataFetch(aVersion, out aCrashData);
-            *aaCrashData = (char*)Marshal.StringToHGlobalAnsi(aCrashData).ToPointer();
-            *aaCrashDataLen = aCrashData.Length;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.CrashDataFetch(aVersion, out aCrashData);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBinary("aCrashData", aCrashData);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoCrashDataClear(IntPtr aPtr, uint aVersion)
+        private static int DoCrashDataClear(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
-            self.CrashDataClear(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.CrashDataClear(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSysLog(IntPtr aPtr, uint aVersion, char** aaSysLog, int* aaSysLogLen)
+        private static int DoSysLog(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aSysLog;
-            self.SysLog(aVersion, out aSysLog);
-            *aaSysLog = (char*)Marshal.StringToHGlobalAnsi(aSysLog).ToPointer();
-            *aaSysLogLen = aSysLog.Length;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.SysLog(aVersion, out aSysLog);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBinary("aSysLog", aSysLog);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoDiagnostic(IntPtr aPtr, uint aVersion, char* aaDiagnosticType, char** aaDiagnosticInfo)
+        private static int DoDiagnostic(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
-            string aDiagnosticType = Marshal.PtrToStringAnsi((IntPtr)aaDiagnosticType);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aDiagnosticType;
             string aDiagnosticInfo;
-            self.Diagnostic(aVersion, aDiagnosticType, out aDiagnosticInfo);
-            *aaDiagnosticInfo = (char*)Marshal.StringToHGlobalAnsi(aDiagnosticInfo).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                aDiagnosticType = invocation.ReadString("aDiagnosticType");
+                invocation.ReadEnd();
+                self.Diagnostic(aVersion, aDiagnosticType, out aDiagnosticInfo);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("aDiagnosticInfo", aDiagnosticInfo);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoStateVariable(IntPtr aPtr, uint aVersion, uint* aaStateVariable)
+        private static int DoStateVariable(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aStateVariable;
-            self.StateVariable(aVersion, out aStateVariable);
-            *aaStateVariable = aStateVariable;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.StateVariable(aVersion, out aStateVariable);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("aStateVariable", aStateVariable);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetStateVariable(IntPtr aPtr, uint aVersion, uint aaStateVariable)
+        private static int DoSetStateVariable(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
-            self.SetStateVariable(aVersion, aaStateVariable);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aStateVariable;
+            try
+            {
+                invocation.ReadStart();
+                aStateVariable = invocation.ReadUint("aStateVariable");
+                invocation.ReadEnd();
+                self.SetStateVariable(aVersion, aStateVariable);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoStateVariablePeriod(IntPtr aPtr, uint aVersion, uint* aaPeriod)
+        private static int DoStateVariablePeriod(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aPeriod;
-            self.StateVariablePeriod(aVersion, out aPeriod);
-            *aaPeriod = aPeriod;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.StateVariablePeriod(aVersion, out aPeriod);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("aPeriod", aPeriod);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetStateVariablePeriod(IntPtr aPtr, uint aVersion, uint aaPeriod)
+        private static int DoSetStateVariablePeriod(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
-            self.SetStateVariablePeriod(aVersion, aaPeriod);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aPeriod;
+            try
+            {
+                invocation.ReadStart();
+                aPeriod = invocation.ReadUint("aPeriod");
+                invocation.ReadEnd();
+                self.SetStateVariablePeriod(aVersion, aPeriod);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoReboot(IntPtr aPtr, uint aVersion, uint aaDelay)
+        private static int DoReboot(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
-            self.Reboot(aVersion, aaDelay);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aDelay;
+            try
+            {
+                invocation.ReadStart();
+                aDelay = invocation.ReadUint("aDelay");
+                invocation.ReadEnd();
+                self.Reboot(aVersion, aDelay);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -611,21 +971,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkDiagnostics1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

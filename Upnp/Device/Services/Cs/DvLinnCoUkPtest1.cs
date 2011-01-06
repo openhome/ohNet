@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -14,35 +15,18 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkPtest1 : DvProvider, IDisposable, IDvProviderLinnCoUkPtest1
     {
-        [DllImport("DvLinnCoUkPtest1")]
-        static extern uint DvProviderLinnCoUkPtest1Create(uint aDeviceHandle);
-        [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvProviderLinnCoUkPtest1Destroy(uint aHandle);
-        [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvProviderLinnCoUkPtest1EnableActionTestComPort(uint aHandle, CallbackTestComPort aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvProviderLinnCoUkPtest1EnableActionLedsOn(uint aHandle, CallbackLedsOn aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvProviderLinnCoUkPtest1EnableActionLedsOff(uint aHandle, CallbackLedsOff aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackTestComPort(IntPtr aPtr, uint aVersion, uint aaPort, int* aaResult);
-        private unsafe delegate int CallbackLedsOn(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackLedsOff(IntPtr aPtr, uint aVersion);
-
         private GCHandle iGch;
-        private CallbackTestComPort iCallbackTestComPort;
-        private CallbackLedsOn iCallbackLedsOn;
-        private CallbackLedsOff iCallbackLedsOff;
+        private ActionDelegate iDelegateTestComPort;
+        private ActionDelegate iDelegateLedsOn;
+        private ActionDelegate iDelegateLedsOff;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkPtest1(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "Ptest", 1)
         {
-            iHandle = DvProviderLinnCoUkPtest1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -51,11 +35,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoTestComPort must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionTestComPort()
+        protected void EnableActionTestComPort()
         {
-            iCallbackTestComPort = new CallbackTestComPort(DoTestComPort);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPtest1EnableActionTestComPort(iHandle, iCallbackTestComPort, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("TestComPort");
+            action.AddInputParameter(new ParameterUint("aPort"));
+            action.AddOutputParameter(new ParameterBool("aResult"));
+            iDelegateTestComPort = new ActionDelegate(DoTestComPort);
+            EnableAction(action, iDelegateTestComPort, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -63,11 +49,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoLedsOn must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionLedsOn()
+        protected void EnableActionLedsOn()
         {
-            iCallbackLedsOn = new CallbackLedsOn(DoLedsOn);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPtest1EnableActionLedsOn(iHandle, iCallbackLedsOn, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("LedsOn");
+            iDelegateLedsOn = new ActionDelegate(DoLedsOn);
+            EnableAction(action, iDelegateLedsOn, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -75,11 +61,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoLedsOff must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionLedsOff()
+        protected void EnableActionLedsOff()
         {
-            iCallbackLedsOff = new CallbackLedsOff(DoLedsOff);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPtest1EnableActionLedsOff(iHandle, iCallbackLedsOff, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("LedsOff");
+            iDelegateLedsOff = new ActionDelegate(DoLedsOff);
+            EnableAction(action, iDelegateLedsOff, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -123,29 +109,121 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoTestComPort(IntPtr aPtr, uint aVersion, uint aaPort, int* aaResult)
+        private static int DoTestComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPtest1 self = (DvProviderLinnCoUkPtest1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aPort;
             bool aResult;
-            self.TestComPort(aVersion, aaPort, out aResult);
-            *aaResult = (aResult ? 1 : 0);
+            try
+            {
+                invocation.ReadStart();
+                aPort = invocation.ReadUint("aPort");
+                invocation.ReadEnd();
+                self.TestComPort(aVersion, aPort, out aResult);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBool("aResult", aResult);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoLedsOn(IntPtr aPtr, uint aVersion)
+        private static int DoLedsOn(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPtest1 self = (DvProviderLinnCoUkPtest1)gch.Target;
-            self.LedsOn(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.LedsOn(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoLedsOff(IntPtr aPtr, uint aVersion)
+        private static int DoLedsOff(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPtest1 self = (DvProviderLinnCoUkPtest1)gch.Target;
-            self.LedsOff(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.LedsOff(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -165,21 +243,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkPtest1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

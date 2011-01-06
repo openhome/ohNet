@@ -1,4 +1,4 @@
-#include <Std/CpLinnCoUkProduct2.h>
+#include "CpLinnCoUkProduct2.h"
 #include <CpProxy.h>
 #include <CpiService.h>
 #include <Thread.h>

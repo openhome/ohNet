@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the A_ARG_Level property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyA_ARG_Level(out uint aValue);
+        uint PropertyA_ARG_Level();
         
     }
     /// <summary>
@@ -27,36 +28,21 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderZappOrgTestDimmableLight1 : DvProvider, IDisposable, IDvProviderZappOrgTestDimmableLight1
     {
-        [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern uint DvProviderZappOrgTestDimmableLight1Create(uint aDeviceHandle);
-        [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern void DvProviderZappOrgTestDimmableLight1Destroy(uint aHandle);
-        [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern unsafe int DvProviderZappOrgTestDimmableLight1SetPropertyA_ARG_Level(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern unsafe void DvProviderZappOrgTestDimmableLight1GetPropertyA_ARG_Level(uint aHandle, uint* aValue);
-        [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern void DvProviderZappOrgTestDimmableLight1EnableActionGetLevel(uint aHandle, CallbackGetLevel aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern void DvProviderZappOrgTestDimmableLight1EnableActionSetLevel(uint aHandle, CallbackSetLevel aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackGetLevel(IntPtr aPtr, uint aVersion, uint* aLevel);
-        private unsafe delegate int CallbackSetLevel(IntPtr aPtr, uint aVersion, uint aLevel);
-
         private GCHandle iGch;
-        private CallbackGetLevel iCallbackGetLevel;
-        private CallbackSetLevel iCallbackSetLevel;
+        private ActionDelegate iDelegateGetLevel;
+        private ActionDelegate iDelegateSetLevel;
+        private PropertyUint iPropertyA_ARG_Level;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderZappOrgTestDimmableLight1(DvDevice aDevice)
+            : base(aDevice, "zapp-org", "TestDimmableLight", 1)
         {
-            iHandle = DvProviderZappOrgTestDimmableLight1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            iPropertyA_ARG_Level = new PropertyUint(new ParameterUint("A_ARG_Level"));
+            AddProperty(iPropertyA_ARG_Level);
         }
 
         /// <summary>
@@ -64,26 +50,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyA_ARG_Level(uint aValue)
+        public bool SetPropertyA_ARG_Level(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderZappOrgTestDimmableLight1SetPropertyA_ARG_Level(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyA_ARG_Level, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the A_ARG_Level property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyA_ARG_Level(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyA_ARG_Level()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderZappOrgTestDimmableLight1GetPropertyA_ARG_Level(iHandle, value);
-            }
+            return iPropertyA_ARG_Level.Value();
         }
 
         /// <summary>
@@ -91,11 +69,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetLevel()
+        protected void EnableActionGetLevel()
         {
-            iCallbackGetLevel = new CallbackGetLevel(DoGetLevel);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestDimmableLight1EnableActionGetLevel(iHandle, iCallbackGetLevel, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetLevel");
+            action.AddOutputParameter(new ParameterRelated("Level", iPropertyA_ARG_Level));
+            iDelegateGetLevel = new ActionDelegate(DoGetLevel);
+            EnableAction(action, iDelegateGetLevel, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -103,11 +82,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetLevel()
+        protected void EnableActionSetLevel()
         {
-            iCallbackSetLevel = new CallbackSetLevel(DoSetLevel);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestDimmableLight1EnableActionSetLevel(iHandle, iCallbackSetLevel, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetLevel");
+            action.AddInputParameter(new ParameterRelated("Level", iPropertyA_ARG_Level));
+            iDelegateSetLevel = new ActionDelegate(DoSetLevel);
+            EnableAction(action, iDelegateSetLevel, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -138,21 +118,83 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoGetLevel(IntPtr aPtr, uint aVersion, uint* aLevel)
+        private static int DoGetLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestDimmableLight1 self = (DvProviderZappOrgTestDimmableLight1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint level;
-            self.GetLevel(aVersion, out level);
-            *aLevel = level;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.GetLevel(aVersion, out level);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("Level", level);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetLevel(IntPtr aPtr, uint aVersion, uint aLevel)
+        private static int DoSetLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestDimmableLight1 self = (DvProviderZappOrgTestDimmableLight1)gch.Target;
-            self.SetLevel(aVersion, aLevel);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint level;
+            try
+            {
+                invocation.ReadStart();
+                level = invocation.ReadUint("Level");
+                invocation.ReadEnd();
+                self.SetLevel(aVersion, level);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -172,21 +214,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            DvProviderZappOrgTestDimmableLight1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

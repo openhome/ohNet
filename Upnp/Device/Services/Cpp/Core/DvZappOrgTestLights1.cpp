@@ -1,4 +1,4 @@
-#include <Core/DvZappOrgTestLights1.h>
+#include "DvZappOrgTestLights1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -9,7 +9,7 @@ using namespace Zapp;
 DvProviderZappOrgTestLights1::DvProviderZappOrgTestLights1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "zapp.org", "TestLights", 1)
 {
-    Functor empty;
+    
 }
 
 void DvProviderZappOrgTestLights1::EnableActionGetCount()

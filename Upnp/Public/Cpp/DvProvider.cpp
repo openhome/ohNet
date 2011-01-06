@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <DviDevice.h>
-
+#include <Printer.h>
 
 using namespace Zapp;
 

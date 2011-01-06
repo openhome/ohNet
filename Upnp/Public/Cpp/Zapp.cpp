@@ -14,6 +14,12 @@ NetworkInterface::NetworkInterface(TIpAddress aAddress, TIpAddress aNetMask, con
     , iNetMask(aNetMask)
     , iName(aName)
 {
+    Stack::AddObject(this, "NetworkInterface");
+}
+
+NetworkInterface::~NetworkInterface()
+{
+    Stack::RemoveObject(this, "NetworkInterface");
 }
 
 NetworkInterface* NetworkInterface::Clone() const

@@ -1,4 +1,4 @@
-#include <Core/DvLinnCoUkProduct1.h>
+#include "DvLinnCoUkProduct1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -29,10 +29,10 @@ void DvProviderLinnCoUkProduct1::GetPropertyStandby(TBool& aValue)
 DvProviderLinnCoUkProduct1::DvProviderLinnCoUkProduct1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Product", 1)
 {
-    Functor empty;
-    iPropertyRoom = new PropertyString(new ParameterString("Room"), empty);
+    
+    iPropertyRoom = new PropertyString(new ParameterString("Room"));
     iService->AddProperty(iPropertyRoom); // passes ownership
-    iPropertyStandby = new PropertyBool(new ParameterBool("Standby"), empty);
+    iPropertyStandby = new PropertyBool(new ParameterBool("Standby"));
     iService->AddProperty(iPropertyStandby); // passes ownership
 }
 

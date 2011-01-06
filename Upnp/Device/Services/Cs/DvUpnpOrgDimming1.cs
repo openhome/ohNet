@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the LoadLevelStatus property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyLoadLevelStatus(out uint aValue);
+        uint PropertyLoadLevelStatus();
 
         /// <summary>
         /// Set the value of the StepDelta property
@@ -32,7 +33,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the StepDelta property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyStepDelta(out uint aValue);
+        uint PropertyStepDelta();
 
         /// <summary>
         /// Set the value of the RampRate property
@@ -45,7 +46,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the RampRate property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyRampRate(out uint aValue);
+        uint PropertyRampRate();
 
         /// <summary>
         /// Set the value of the IsRamping property
@@ -58,7 +59,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the IsRamping property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyIsRamping(out bool aValue);
+        bool PropertyIsRamping();
 
         /// <summary>
         /// Set the value of the RampPaused property
@@ -71,7 +72,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the RampPaused property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyRampPaused(out bool aValue);
+        bool PropertyRampPaused();
         
     }
     /// <summary>
@@ -79,128 +80,52 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderUpnpOrgDimming1 : DvProvider, IDisposable, IDvProviderUpnpOrgDimming1
     {
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern uint DvProviderUpnpOrgDimming1Create(uint aDeviceHandle);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1Destroy(uint aHandle);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyLoadLevelStatus(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyLoadLevelStatus(uint aHandle, uint* aValue);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyStepDelta(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyStepDelta(uint aHandle, uint* aValue);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyRampRate(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyRampRate(uint aHandle, uint* aValue);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyIsRamping(uint aHandle, int aValue, uint* aChanged);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyIsRamping(uint aHandle, int* aValue);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyRampPaused(uint aHandle, int aValue, uint* aChanged);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyRampPaused(uint aHandle, int* aValue);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionSetLoadLevelTarget(uint aHandle, CallbackSetLoadLevelTarget aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetLoadLevelTarget(uint aHandle, CallbackGetLoadLevelTarget aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetLoadLevelStatus(uint aHandle, CallbackGetLoadLevelStatus aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionSetOnEffectLevel(uint aHandle, CallbackSetOnEffectLevel aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionSetOnEffect(uint aHandle, CallbackSetOnEffect aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetOnEffectParameters(uint aHandle, CallbackGetOnEffectParameters aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionStepUp(uint aHandle, CallbackStepUp aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionStepDown(uint aHandle, CallbackStepDown aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionStartRampUp(uint aHandle, CallbackStartRampUp aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionStartRampDown(uint aHandle, CallbackStartRampDown aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionStopRamp(uint aHandle, CallbackStopRamp aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionStartRampToLevel(uint aHandle, CallbackStartRampToLevel aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionSetStepDelta(uint aHandle, CallbackSetStepDelta aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetStepDelta(uint aHandle, CallbackGetStepDelta aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionSetRampRate(uint aHandle, CallbackSetRampRate aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetRampRate(uint aHandle, CallbackGetRampRate aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionPauseRamp(uint aHandle, CallbackPauseRamp aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionResumeRamp(uint aHandle, CallbackResumeRamp aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetIsRamping(uint aHandle, CallbackGetIsRamping aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetRampPaused(uint aHandle, CallbackGetRampPaused aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetRampTime(uint aHandle, CallbackGetRampTime aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackSetLoadLevelTarget(IntPtr aPtr, uint aVersion, uint anewLoadlevelTarget);
-        private unsafe delegate int CallbackGetLoadLevelTarget(IntPtr aPtr, uint aVersion, uint* aGetLoadlevelTarget);
-        private unsafe delegate int CallbackGetLoadLevelStatus(IntPtr aPtr, uint aVersion, uint* aretLoadlevelStatus);
-        private unsafe delegate int CallbackSetOnEffectLevel(IntPtr aPtr, uint aVersion, uint anewOnEffectLevel);
-        private unsafe delegate int CallbackSetOnEffect(IntPtr aPtr, uint aVersion, char* anewOnEffect);
-        private unsafe delegate int CallbackGetOnEffectParameters(IntPtr aPtr, uint aVersion, char** aretOnEffect, uint* aretOnEffectLevel);
-        private unsafe delegate int CallbackStepUp(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackStepDown(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackStartRampUp(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackStartRampDown(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackStopRamp(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackStartRampToLevel(IntPtr aPtr, uint aVersion, uint anewLoadLevelTarget, uint anewRampTime);
-        private unsafe delegate int CallbackSetStepDelta(IntPtr aPtr, uint aVersion, uint anewStepDelta);
-        private unsafe delegate int CallbackGetStepDelta(IntPtr aPtr, uint aVersion, uint* aretStepDelta);
-        private unsafe delegate int CallbackSetRampRate(IntPtr aPtr, uint aVersion, uint anewRampRate);
-        private unsafe delegate int CallbackGetRampRate(IntPtr aPtr, uint aVersion, uint* aretRampRate);
-        private unsafe delegate int CallbackPauseRamp(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackResumeRamp(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackGetIsRamping(IntPtr aPtr, uint aVersion, int* aretIsRamping);
-        private unsafe delegate int CallbackGetRampPaused(IntPtr aPtr, uint aVersion, int* aretRampPaused);
-        private unsafe delegate int CallbackGetRampTime(IntPtr aPtr, uint aVersion, uint* aretRampTime);
-
         private GCHandle iGch;
-        private CallbackSetLoadLevelTarget iCallbackSetLoadLevelTarget;
-        private CallbackGetLoadLevelTarget iCallbackGetLoadLevelTarget;
-        private CallbackGetLoadLevelStatus iCallbackGetLoadLevelStatus;
-        private CallbackSetOnEffectLevel iCallbackSetOnEffectLevel;
-        private CallbackSetOnEffect iCallbackSetOnEffect;
-        private CallbackGetOnEffectParameters iCallbackGetOnEffectParameters;
-        private CallbackStepUp iCallbackStepUp;
-        private CallbackStepDown iCallbackStepDown;
-        private CallbackStartRampUp iCallbackStartRampUp;
-        private CallbackStartRampDown iCallbackStartRampDown;
-        private CallbackStopRamp iCallbackStopRamp;
-        private CallbackStartRampToLevel iCallbackStartRampToLevel;
-        private CallbackSetStepDelta iCallbackSetStepDelta;
-        private CallbackGetStepDelta iCallbackGetStepDelta;
-        private CallbackSetRampRate iCallbackSetRampRate;
-        private CallbackGetRampRate iCallbackGetRampRate;
-        private CallbackPauseRamp iCallbackPauseRamp;
-        private CallbackResumeRamp iCallbackResumeRamp;
-        private CallbackGetIsRamping iCallbackGetIsRamping;
-        private CallbackGetRampPaused iCallbackGetRampPaused;
-        private CallbackGetRampTime iCallbackGetRampTime;
+        private ActionDelegate iDelegateSetLoadLevelTarget;
+        private ActionDelegate iDelegateGetLoadLevelTarget;
+        private ActionDelegate iDelegateGetLoadLevelStatus;
+        private ActionDelegate iDelegateSetOnEffectLevel;
+        private ActionDelegate iDelegateSetOnEffect;
+        private ActionDelegate iDelegateGetOnEffectParameters;
+        private ActionDelegate iDelegateStepUp;
+        private ActionDelegate iDelegateStepDown;
+        private ActionDelegate iDelegateStartRampUp;
+        private ActionDelegate iDelegateStartRampDown;
+        private ActionDelegate iDelegateStopRamp;
+        private ActionDelegate iDelegateStartRampToLevel;
+        private ActionDelegate iDelegateSetStepDelta;
+        private ActionDelegate iDelegateGetStepDelta;
+        private ActionDelegate iDelegateSetRampRate;
+        private ActionDelegate iDelegateGetRampRate;
+        private ActionDelegate iDelegatePauseRamp;
+        private ActionDelegate iDelegateResumeRamp;
+        private ActionDelegate iDelegateGetIsRamping;
+        private ActionDelegate iDelegateGetRampPaused;
+        private ActionDelegate iDelegateGetRampTime;
+        private PropertyUint iPropertyLoadLevelStatus;
+        private PropertyUint iPropertyStepDelta;
+        private PropertyUint iPropertyRampRate;
+        private PropertyBool iPropertyIsRamping;
+        private PropertyBool iPropertyRampPaused;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderUpnpOrgDimming1(DvDevice aDevice)
+            : base(aDevice, "schemas-upnp-org", "Dimming", 1)
         {
-            iHandle = DvProviderUpnpOrgDimming1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            iPropertyLoadLevelStatus = new PropertyUint(new ParameterUint("LoadLevelStatus", 0, 100));
+            AddProperty(iPropertyLoadLevelStatus);
+            iPropertyStepDelta = new PropertyUint(new ParameterUint("StepDelta", 1, 100));
+            AddProperty(iPropertyStepDelta);
+            iPropertyRampRate = new PropertyUint(new ParameterUint("RampRate", 0, 100));
+            AddProperty(iPropertyRampRate);
+            iPropertyIsRamping = new PropertyBool(new ParameterBool("IsRamping"));
+            AddProperty(iPropertyIsRamping);
+            iPropertyRampPaused = new PropertyBool(new ParameterBool("RampPaused"));
+            AddProperty(iPropertyRampPaused);
         }
 
         /// <summary>
@@ -208,26 +133,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyLoadLevelStatus(uint aValue)
+        public bool SetPropertyLoadLevelStatus(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderUpnpOrgDimming1SetPropertyLoadLevelStatus(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyLoadLevelStatus, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the LoadLevelStatus property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyLoadLevelStatus(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyLoadLevelStatus()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderUpnpOrgDimming1GetPropertyLoadLevelStatus(iHandle, value);
-            }
+            return iPropertyLoadLevelStatus.Value();
         }
 
         /// <summary>
@@ -235,26 +152,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyStepDelta(uint aValue)
+        public bool SetPropertyStepDelta(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderUpnpOrgDimming1SetPropertyStepDelta(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyStepDelta, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the StepDelta property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyStepDelta(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyStepDelta()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderUpnpOrgDimming1GetPropertyStepDelta(iHandle, value);
-            }
+            return iPropertyStepDelta.Value();
         }
 
         /// <summary>
@@ -262,26 +171,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyRampRate(uint aValue)
+        public bool SetPropertyRampRate(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderUpnpOrgDimming1SetPropertyRampRate(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyRampRate, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the RampRate property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyRampRate(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyRampRate()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderUpnpOrgDimming1GetPropertyRampRate(iHandle, value);
-            }
+            return iPropertyRampRate.Value();
         }
 
         /// <summary>
@@ -289,26 +190,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyIsRamping(bool aValue)
+        public bool SetPropertyIsRamping(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderUpnpOrgDimming1SetPropertyIsRamping(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyIsRamping, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the IsRamping property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyIsRamping(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyIsRamping()
         {
-            int value;
-            DvProviderUpnpOrgDimming1GetPropertyIsRamping(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyIsRamping.Value();
         }
 
         /// <summary>
@@ -316,26 +209,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyRampPaused(bool aValue)
+        public bool SetPropertyRampPaused(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderUpnpOrgDimming1SetPropertyRampPaused(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyRampPaused, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the RampPaused property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyRampPaused(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyRampPaused()
         {
-            int value;
-            DvProviderUpnpOrgDimming1GetPropertyRampPaused(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyRampPaused.Value();
         }
 
         /// <summary>
@@ -343,11 +228,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetLoadLevelTarget must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetLoadLevelTarget()
+        protected void EnableActionSetLoadLevelTarget()
         {
-            iCallbackSetLoadLevelTarget = new CallbackSetLoadLevelTarget(DoSetLoadLevelTarget);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionSetLoadLevelTarget(iHandle, iCallbackSetLoadLevelTarget, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetLoadLevelTarget");
+            action.AddInputParameter(new ParameterUint("newLoadlevelTarget", 0, 100));
+            iDelegateSetLoadLevelTarget = new ActionDelegate(DoSetLoadLevelTarget);
+            EnableAction(action, iDelegateSetLoadLevelTarget, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -355,11 +241,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetLoadLevelTarget must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetLoadLevelTarget()
+        protected void EnableActionGetLoadLevelTarget()
         {
-            iCallbackGetLoadLevelTarget = new CallbackGetLoadLevelTarget(DoGetLoadLevelTarget);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionGetLoadLevelTarget(iHandle, iCallbackGetLoadLevelTarget, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetLoadLevelTarget");
+            action.AddOutputParameter(new ParameterUint("GetLoadlevelTarget", 0, 100));
+            iDelegateGetLoadLevelTarget = new ActionDelegate(DoGetLoadLevelTarget);
+            EnableAction(action, iDelegateGetLoadLevelTarget, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -367,11 +254,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetLoadLevelStatus must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetLoadLevelStatus()
+        protected void EnableActionGetLoadLevelStatus()
         {
-            iCallbackGetLoadLevelStatus = new CallbackGetLoadLevelStatus(DoGetLoadLevelStatus);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionGetLoadLevelStatus(iHandle, iCallbackGetLoadLevelStatus, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetLoadLevelStatus");
+            action.AddOutputParameter(new ParameterRelated("retLoadlevelStatus", iPropertyLoadLevelStatus));
+            iDelegateGetLoadLevelStatus = new ActionDelegate(DoGetLoadLevelStatus);
+            EnableAction(action, iDelegateGetLoadLevelStatus, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -379,11 +267,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetOnEffectLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetOnEffectLevel()
+        protected void EnableActionSetOnEffectLevel()
         {
-            iCallbackSetOnEffectLevel = new CallbackSetOnEffectLevel(DoSetOnEffectLevel);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionSetOnEffectLevel(iHandle, iCallbackSetOnEffectLevel, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetOnEffectLevel");
+            action.AddInputParameter(new ParameterUint("newOnEffectLevel", 0, 100));
+            iDelegateSetOnEffectLevel = new ActionDelegate(DoSetOnEffectLevel);
+            EnableAction(action, iDelegateSetOnEffectLevel, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -391,11 +280,17 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetOnEffect must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetOnEffect()
+        protected void EnableActionSetOnEffect()
         {
-            iCallbackSetOnEffect = new CallbackSetOnEffect(DoSetOnEffect);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionSetOnEffect(iHandle, iCallbackSetOnEffect, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetOnEffect");
+            List<String> allowedValues = new List<String>();
+            allowedValues.Add("OnEffectLevel");
+            allowedValues.Add("LastSetting");
+            allowedValues.Add("Default");
+            action.AddInputParameter(new ParameterString("newOnEffect", allowedValues));
+            allowedValues.Clear();
+            iDelegateSetOnEffect = new ActionDelegate(DoSetOnEffect);
+            EnableAction(action, iDelegateSetOnEffect, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -403,11 +298,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetOnEffectParameters must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetOnEffectParameters()
+        protected void EnableActionGetOnEffectParameters()
         {
-            iCallbackGetOnEffectParameters = new CallbackGetOnEffectParameters(DoGetOnEffectParameters);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionGetOnEffectParameters(iHandle, iCallbackGetOnEffectParameters, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetOnEffectParameters");
+            List<String> allowedValues = new List<String>();
+            allowedValues.Add("OnEffectLevel");
+            allowedValues.Add("LastSetting");
+            allowedValues.Add("Default");
+            action.AddOutputParameter(new ParameterString("retOnEffect", allowedValues));
+            allowedValues.Clear();
+            action.AddOutputParameter(new ParameterUint("retOnEffectLevel", 0, 100));
+            iDelegateGetOnEffectParameters = new ActionDelegate(DoGetOnEffectParameters);
+            EnableAction(action, iDelegateGetOnEffectParameters, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -415,11 +317,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStepUp must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStepUp()
+        protected void EnableActionStepUp()
         {
-            iCallbackStepUp = new CallbackStepUp(DoStepUp);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionStepUp(iHandle, iCallbackStepUp, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("StepUp");
+            iDelegateStepUp = new ActionDelegate(DoStepUp);
+            EnableAction(action, iDelegateStepUp, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -427,11 +329,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStepDown must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStepDown()
+        protected void EnableActionStepDown()
         {
-            iCallbackStepDown = new CallbackStepDown(DoStepDown);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionStepDown(iHandle, iCallbackStepDown, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("StepDown");
+            iDelegateStepDown = new ActionDelegate(DoStepDown);
+            EnableAction(action, iDelegateStepDown, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -439,11 +341,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStartRampUp must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStartRampUp()
+        protected void EnableActionStartRampUp()
         {
-            iCallbackStartRampUp = new CallbackStartRampUp(DoStartRampUp);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionStartRampUp(iHandle, iCallbackStartRampUp, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("StartRampUp");
+            iDelegateStartRampUp = new ActionDelegate(DoStartRampUp);
+            EnableAction(action, iDelegateStartRampUp, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -451,11 +353,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStartRampDown must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStartRampDown()
+        protected void EnableActionStartRampDown()
         {
-            iCallbackStartRampDown = new CallbackStartRampDown(DoStartRampDown);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionStartRampDown(iHandle, iCallbackStartRampDown, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("StartRampDown");
+            iDelegateStartRampDown = new ActionDelegate(DoStartRampDown);
+            EnableAction(action, iDelegateStartRampDown, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -463,11 +365,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStopRamp must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStopRamp()
+        protected void EnableActionStopRamp()
         {
-            iCallbackStopRamp = new CallbackStopRamp(DoStopRamp);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionStopRamp(iHandle, iCallbackStopRamp, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("StopRamp");
+            iDelegateStopRamp = new ActionDelegate(DoStopRamp);
+            EnableAction(action, iDelegateStopRamp, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -475,11 +377,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStartRampToLevel must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStartRampToLevel()
+        protected void EnableActionStartRampToLevel()
         {
-            iCallbackStartRampToLevel = new CallbackStartRampToLevel(DoStartRampToLevel);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionStartRampToLevel(iHandle, iCallbackStartRampToLevel, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("StartRampToLevel");
+            action.AddInputParameter(new ParameterUint("newLoadLevelTarget", 0, 100));
+            action.AddInputParameter(new ParameterUint("newRampTime"));
+            iDelegateStartRampToLevel = new ActionDelegate(DoStartRampToLevel);
+            EnableAction(action, iDelegateStartRampToLevel, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -487,11 +391,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStepDelta must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStepDelta()
+        protected void EnableActionSetStepDelta()
         {
-            iCallbackSetStepDelta = new CallbackSetStepDelta(DoSetStepDelta);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionSetStepDelta(iHandle, iCallbackSetStepDelta, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetStepDelta");
+            action.AddInputParameter(new ParameterRelated("newStepDelta", iPropertyStepDelta));
+            iDelegateSetStepDelta = new ActionDelegate(DoSetStepDelta);
+            EnableAction(action, iDelegateSetStepDelta, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -499,11 +404,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetStepDelta must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetStepDelta()
+        protected void EnableActionGetStepDelta()
         {
-            iCallbackGetStepDelta = new CallbackGetStepDelta(DoGetStepDelta);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionGetStepDelta(iHandle, iCallbackGetStepDelta, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetStepDelta");
+            action.AddOutputParameter(new ParameterRelated("retStepDelta", iPropertyStepDelta));
+            iDelegateGetStepDelta = new ActionDelegate(DoGetStepDelta);
+            EnableAction(action, iDelegateGetStepDelta, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -511,11 +417,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetRampRate must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetRampRate()
+        protected void EnableActionSetRampRate()
         {
-            iCallbackSetRampRate = new CallbackSetRampRate(DoSetRampRate);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionSetRampRate(iHandle, iCallbackSetRampRate, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetRampRate");
+            action.AddInputParameter(new ParameterRelated("newRampRate", iPropertyRampRate));
+            iDelegateSetRampRate = new ActionDelegate(DoSetRampRate);
+            EnableAction(action, iDelegateSetRampRate, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -523,11 +430,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetRampRate must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetRampRate()
+        protected void EnableActionGetRampRate()
         {
-            iCallbackGetRampRate = new CallbackGetRampRate(DoGetRampRate);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionGetRampRate(iHandle, iCallbackGetRampRate, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetRampRate");
+            action.AddOutputParameter(new ParameterRelated("retRampRate", iPropertyRampRate));
+            iDelegateGetRampRate = new ActionDelegate(DoGetRampRate);
+            EnableAction(action, iDelegateGetRampRate, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -535,11 +443,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPauseRamp must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPauseRamp()
+        protected void EnableActionPauseRamp()
         {
-            iCallbackPauseRamp = new CallbackPauseRamp(DoPauseRamp);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionPauseRamp(iHandle, iCallbackPauseRamp, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("PauseRamp");
+            iDelegatePauseRamp = new ActionDelegate(DoPauseRamp);
+            EnableAction(action, iDelegatePauseRamp, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -547,11 +455,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoResumeRamp must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionResumeRamp()
+        protected void EnableActionResumeRamp()
         {
-            iCallbackResumeRamp = new CallbackResumeRamp(DoResumeRamp);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionResumeRamp(iHandle, iCallbackResumeRamp, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("ResumeRamp");
+            iDelegateResumeRamp = new ActionDelegate(DoResumeRamp);
+            EnableAction(action, iDelegateResumeRamp, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -559,11 +467,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetIsRamping must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetIsRamping()
+        protected void EnableActionGetIsRamping()
         {
-            iCallbackGetIsRamping = new CallbackGetIsRamping(DoGetIsRamping);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionGetIsRamping(iHandle, iCallbackGetIsRamping, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetIsRamping");
+            action.AddOutputParameter(new ParameterRelated("retIsRamping", iPropertyIsRamping));
+            iDelegateGetIsRamping = new ActionDelegate(DoGetIsRamping);
+            EnableAction(action, iDelegateGetIsRamping, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -571,11 +480,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetRampPaused must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetRampPaused()
+        protected void EnableActionGetRampPaused()
         {
-            iCallbackGetRampPaused = new CallbackGetRampPaused(DoGetRampPaused);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionGetRampPaused(iHandle, iCallbackGetRampPaused, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetRampPaused");
+            action.AddOutputParameter(new ParameterRelated("retRampPaused", iPropertyRampPaused));
+            iDelegateGetRampPaused = new ActionDelegate(DoGetRampPaused);
+            EnableAction(action, iDelegateGetRampPaused, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -583,11 +493,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetRampTime must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetRampTime()
+        protected void EnableActionGetRampTime()
         {
-            iCallbackGetRampTime = new CallbackGetRampTime(DoGetRampTime);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgDimming1EnableActionGetRampTime(iHandle, iCallbackGetRampTime, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetRampTime");
+            action.AddOutputParameter(new ParameterUint("retRampTime"));
+            iDelegateGetRampTime = new ActionDelegate(DoGetRampTime);
+            EnableAction(action, iDelegateGetRampTime, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -879,190 +790,833 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoSetLoadLevelTarget(IntPtr aPtr, uint aVersion, uint anewLoadlevelTarget)
+        private static int DoSetLoadLevelTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
-            self.SetLoadLevelTarget(aVersion, anewLoadlevelTarget);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint newLoadlevelTarget;
+            try
+            {
+                invocation.ReadStart();
+                newLoadlevelTarget = invocation.ReadUint("newLoadlevelTarget");
+                invocation.ReadEnd();
+                self.SetLoadLevelTarget(aVersion, newLoadlevelTarget);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetLoadLevelTarget(IntPtr aPtr, uint aVersion, uint* aGetLoadlevelTarget)
+        private static int DoGetLoadLevelTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint getLoadlevelTarget;
-            self.GetLoadLevelTarget(aVersion, out getLoadlevelTarget);
-            *aGetLoadlevelTarget = getLoadlevelTarget;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.GetLoadLevelTarget(aVersion, out getLoadlevelTarget);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("GetLoadlevelTarget", getLoadlevelTarget);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetLoadLevelStatus(IntPtr aPtr, uint aVersion, uint* aretLoadlevelStatus)
+        private static int DoGetLoadLevelStatus(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint retLoadlevelStatus;
-            self.GetLoadLevelStatus(aVersion, out retLoadlevelStatus);
-            *aretLoadlevelStatus = retLoadlevelStatus;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.GetLoadLevelStatus(aVersion, out retLoadlevelStatus);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("retLoadlevelStatus", retLoadlevelStatus);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetOnEffectLevel(IntPtr aPtr, uint aVersion, uint anewOnEffectLevel)
+        private static int DoSetOnEffectLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
-            self.SetOnEffectLevel(aVersion, anewOnEffectLevel);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint newOnEffectLevel;
+            try
+            {
+                invocation.ReadStart();
+                newOnEffectLevel = invocation.ReadUint("newOnEffectLevel");
+                invocation.ReadEnd();
+                self.SetOnEffectLevel(aVersion, newOnEffectLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetOnEffect(IntPtr aPtr, uint aVersion, char* anewOnEffect)
+        private static int DoSetOnEffect(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
-            string newOnEffect = Marshal.PtrToStringAnsi((IntPtr)anewOnEffect);
-            self.SetOnEffect(aVersion, newOnEffect);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string newOnEffect;
+            try
+            {
+                invocation.ReadStart();
+                newOnEffect = invocation.ReadString("newOnEffect");
+                invocation.ReadEnd();
+                self.SetOnEffect(aVersion, newOnEffect);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetOnEffectParameters(IntPtr aPtr, uint aVersion, char** aretOnEffect, uint* aretOnEffectLevel)
+        private static int DoGetOnEffectParameters(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string retOnEffect;
             uint retOnEffectLevel;
-            self.GetOnEffectParameters(aVersion, out retOnEffect, out retOnEffectLevel);
-            *aretOnEffect = (char*)Marshal.StringToHGlobalAnsi(retOnEffect).ToPointer();
-            *aretOnEffectLevel = retOnEffectLevel;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.GetOnEffectParameters(aVersion, out retOnEffect, out retOnEffectLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("retOnEffect", retOnEffect);
+                invocation.WriteUint("retOnEffectLevel", retOnEffectLevel);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoStepUp(IntPtr aPtr, uint aVersion)
+        private static int DoStepUp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
-            self.StepUp(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.StepUp(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoStepDown(IntPtr aPtr, uint aVersion)
+        private static int DoStepDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
-            self.StepDown(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.StepDown(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoStartRampUp(IntPtr aPtr, uint aVersion)
+        private static int DoStartRampUp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
-            self.StartRampUp(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.StartRampUp(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoStartRampDown(IntPtr aPtr, uint aVersion)
+        private static int DoStartRampDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
-            self.StartRampDown(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.StartRampDown(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoStopRamp(IntPtr aPtr, uint aVersion)
+        private static int DoStopRamp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
-            self.StopRamp(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.StopRamp(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoStartRampToLevel(IntPtr aPtr, uint aVersion, uint anewLoadLevelTarget, uint anewRampTime)
+        private static int DoStartRampToLevel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
-            self.StartRampToLevel(aVersion, anewLoadLevelTarget, anewRampTime);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint newLoadLevelTarget;
+            uint newRampTime;
+            try
+            {
+                invocation.ReadStart();
+                newLoadLevelTarget = invocation.ReadUint("newLoadLevelTarget");
+                newRampTime = invocation.ReadUint("newRampTime");
+                invocation.ReadEnd();
+                self.StartRampToLevel(aVersion, newLoadLevelTarget, newRampTime);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetStepDelta(IntPtr aPtr, uint aVersion, uint anewStepDelta)
+        private static int DoSetStepDelta(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
-            self.SetStepDelta(aVersion, anewStepDelta);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint newStepDelta;
+            try
+            {
+                invocation.ReadStart();
+                newStepDelta = invocation.ReadUint("newStepDelta");
+                invocation.ReadEnd();
+                self.SetStepDelta(aVersion, newStepDelta);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetStepDelta(IntPtr aPtr, uint aVersion, uint* aretStepDelta)
+        private static int DoGetStepDelta(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint retStepDelta;
-            self.GetStepDelta(aVersion, out retStepDelta);
-            *aretStepDelta = retStepDelta;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.GetStepDelta(aVersion, out retStepDelta);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("retStepDelta", retStepDelta);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetRampRate(IntPtr aPtr, uint aVersion, uint anewRampRate)
+        private static int DoSetRampRate(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
-            self.SetRampRate(aVersion, anewRampRate);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint newRampRate;
+            try
+            {
+                invocation.ReadStart();
+                newRampRate = invocation.ReadUint("newRampRate");
+                invocation.ReadEnd();
+                self.SetRampRate(aVersion, newRampRate);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetRampRate(IntPtr aPtr, uint aVersion, uint* aretRampRate)
+        private static int DoGetRampRate(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint retRampRate;
-            self.GetRampRate(aVersion, out retRampRate);
-            *aretRampRate = retRampRate;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.GetRampRate(aVersion, out retRampRate);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("retRampRate", retRampRate);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoPauseRamp(IntPtr aPtr, uint aVersion)
+        private static int DoPauseRamp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
-            self.PauseRamp(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.PauseRamp(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoResumeRamp(IntPtr aPtr, uint aVersion)
+        private static int DoResumeRamp(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
-            self.ResumeRamp(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.ResumeRamp(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetIsRamping(IntPtr aPtr, uint aVersion, int* aretIsRamping)
+        private static int DoGetIsRamping(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool retIsRamping;
-            self.GetIsRamping(aVersion, out retIsRamping);
-            *aretIsRamping = (retIsRamping ? 1 : 0);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.GetIsRamping(aVersion, out retIsRamping);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBool("retIsRamping", retIsRamping);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetRampPaused(IntPtr aPtr, uint aVersion, int* aretRampPaused)
+        private static int DoGetRampPaused(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool retRampPaused;
-            self.GetRampPaused(aVersion, out retRampPaused);
-            *aretRampPaused = (retRampPaused ? 1 : 0);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.GetRampPaused(aVersion, out retRampPaused);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBool("retRampPaused", retRampPaused);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetRampTime(IntPtr aPtr, uint aVersion, uint* aretRampTime)
+        private static int DoGetRampTime(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint retRampTime;
-            self.GetRampTime(aVersion, out retRampTime);
-            *aretRampTime = retRampTime;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.GetRampTime(aVersion, out retRampTime);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("retRampTime", retRampTime);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1082,21 +1636,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            DvProviderUpnpOrgDimming1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

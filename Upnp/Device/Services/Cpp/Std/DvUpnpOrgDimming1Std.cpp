@@ -1,4 +1,4 @@
-#include <Std/DvUpnpOrgDimming1.h>
+#include "DvUpnpOrgDimming1.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -59,16 +59,16 @@ void DvProviderUpnpOrgDimming1Cpp::GetPropertyRampPaused(bool& aValue)
 DvProviderUpnpOrgDimming1Cpp::DvProviderUpnpOrgDimming1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "Dimming", 1)
 {
-    Functor empty;
-    iPropertyLoadLevelStatus = new PropertyUint(new ParameterUint("LoadLevelStatus", 0, 100), empty);
+    
+    iPropertyLoadLevelStatus = new PropertyUint(new ParameterUint("LoadLevelStatus", 0, 100));
     iService->AddProperty(iPropertyLoadLevelStatus); // passes ownership
-    iPropertyStepDelta = new PropertyUint(new ParameterUint("StepDelta", 1, 100), empty);
+    iPropertyStepDelta = new PropertyUint(new ParameterUint("StepDelta", 1, 100));
     iService->AddProperty(iPropertyStepDelta); // passes ownership
-    iPropertyRampRate = new PropertyUint(new ParameterUint("RampRate", 0, 100), empty);
+    iPropertyRampRate = new PropertyUint(new ParameterUint("RampRate", 0, 100));
     iService->AddProperty(iPropertyRampRate); // passes ownership
-    iPropertyIsRamping = new PropertyBool(new ParameterBool("IsRamping"), empty);
+    iPropertyIsRamping = new PropertyBool(new ParameterBool("IsRamping"));
     iService->AddProperty(iPropertyIsRamping); // passes ownership
-    iPropertyRampPaused = new PropertyBool(new ParameterBool("RampPaused"), empty);
+    iPropertyRampPaused = new PropertyBool(new ParameterBool("RampPaused"));
     iService->AddProperty(iPropertyRampPaused); // passes ownership
 }
 

@@ -1,4 +1,4 @@
-#include <Core/DvLinnCoUkProduct2.h>
+#include "DvLinnCoUkProduct2.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -49,14 +49,14 @@ void DvProviderLinnCoUkProduct2::GetPropertyProductSourceIndex(TUint& aValue)
 DvProviderLinnCoUkProduct2::DvProviderLinnCoUkProduct2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Product", 2)
 {
-    Functor empty;
-    iPropertyProductName = new PropertyString(new ParameterString("ProductName"), empty);
+    
+    iPropertyProductName = new PropertyString(new ParameterString("ProductName"));
     iService->AddProperty(iPropertyProductName); // passes ownership
-    iPropertyProductRoom = new PropertyString(new ParameterString("ProductRoom"), empty);
+    iPropertyProductRoom = new PropertyString(new ParameterString("ProductRoom"));
     iService->AddProperty(iPropertyProductRoom); // passes ownership
-    iPropertyProductStandby = new PropertyBool(new ParameterBool("ProductStandby"), empty);
+    iPropertyProductStandby = new PropertyBool(new ParameterBool("ProductStandby"));
     iService->AddProperty(iPropertyProductStandby); // passes ownership
-    iPropertyProductSourceIndex = new PropertyUint(new ParameterUint("ProductSourceIndex"), empty);
+    iPropertyProductSourceIndex = new PropertyUint(new ParameterUint("ProductSourceIndex"));
     iService->AddProperty(iPropertyProductSourceIndex); // passes ownership
 }
 

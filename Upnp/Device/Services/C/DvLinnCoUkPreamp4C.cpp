@@ -1,16 +1,32 @@
-#include <C/DvLinnCoUkPreamp4.h>
-#include <Core/DvLinnCoUkPreamp4.h>
+#include "DvLinnCoUkPreamp4.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
+#include <DvProvider.h>
 #include <C/Zapp.h>
+#include <ZappTypes.h>
+#include <Core/DvInvocationResponse.h>
+#include <Service.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-class DvProviderLinnCoUkPreamp4C : public DvProviderLinnCoUkPreamp4
+class DvProviderLinnCoUkPreamp4C : public DvProvider
 {
 public:
-    DvProviderLinnCoUkPreamp4C(DvDevice& aDevice);
+    DvProviderLinnCoUkPreamp4C(DvDeviceC aDevice);
+    TBool SetPropertyVolume(TUint aValue);
+    void GetPropertyVolume(TUint& aValue);
+    TBool SetPropertyMute(TBool aValue);
+    void GetPropertyMute(TBool& aValue);
+    TBool SetPropertyBalance(TInt aValue);
+    void GetPropertyBalance(TInt& aValue);
+    TBool SetPropertyVolumeLimit(TUint aValue);
+    void GetPropertyVolumeLimit(TUint& aValue);
+    TBool SetPropertyStartupVolume(TUint aValue);
+    void GetPropertyStartupVolume(TUint& aValue);
+    TBool SetPropertyStartupVolumeEnabled(TBool aValue);
+    void GetPropertyStartupVolumeEnabled(TBool& aValue);
     void EnableActionVolumeInc(CallbackPreamp4VolumeInc aCallback, void* aPtr);
     void EnableActionVolumeDec(CallbackPreamp4VolumeDec aCallback, void* aPtr);
     void EnableActionSetVolume(CallbackPreamp4SetVolume aCallback, void* aPtr);
@@ -26,20 +42,20 @@ public:
     void EnableActionSetStartupVolumeEnabled(CallbackPreamp4SetStartupVolumeEnabled aCallback, void* aPtr);
     void EnableActionStartupVolumeEnabled(CallbackPreamp4StartupVolumeEnabled aCallback, void* aPtr);
 private:
-    void VolumeInc(IInvocationResponse& aResponse, TUint aVersion);
-    void VolumeDec(IInvocationResponse& aResponse, TUint aVersion);
-    void SetVolume(IInvocationResponse& aResponse, TUint aVersion, TUint aaVolume);
-    void Volume(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaVolume);
-    void SetMute(IInvocationResponse& aResponse, TUint aVersion, TBool aaMute);
-    void Mute(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaMute);
-    void SetBalance(IInvocationResponse& aResponse, TUint aVersion, TInt aaBalance);
-    void Balance(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseInt& aaBalance);
-    void SetVolumeLimit(IInvocationResponse& aResponse, TUint aVersion, TUint aaVolumeLimit);
-    void VolumeLimit(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaVolumeLimit);
-    void SetStartupVolume(IInvocationResponse& aResponse, TUint aVersion, TUint aaStartupVolume);
-    void StartupVolume(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaStartupVolume);
-    void SetStartupVolumeEnabled(IInvocationResponse& aResponse, TUint aVersion, TBool aaStartupVolumeEnabled);
-    void StartupVolumeEnabled(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaStartupVolumeEnabled);
+    void DoVolumeInc(IDviInvocation& aInvocation, TUint aVersion);
+    void DoVolumeDec(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetVolume(IDviInvocation& aInvocation, TUint aVersion);
+    void DoVolume(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetMute(IDviInvocation& aInvocation, TUint aVersion);
+    void DoMute(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetBalance(IDviInvocation& aInvocation, TUint aVersion);
+    void DoBalance(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetVolumeLimit(IDviInvocation& aInvocation, TUint aVersion);
+    void DoVolumeLimit(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStartupVolume(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStartupVolume(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStartupVolumeEnabled(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStartupVolumeEnabled(IDviInvocation& aInvocation, TUint aVersion);
 private:
     CallbackPreamp4VolumeInc iCallbackVolumeInc;
     void* iPtrVolumeInc;
@@ -69,282 +85,455 @@ private:
     void* iPtrSetStartupVolumeEnabled;
     CallbackPreamp4StartupVolumeEnabled iCallbackStartupVolumeEnabled;
     void* iPtrStartupVolumeEnabled;
+    PropertyUint* iPropertyVolume;
+    PropertyBool* iPropertyMute;
+    PropertyInt* iPropertyBalance;
+    PropertyUint* iPropertyVolumeLimit;
+    PropertyUint* iPropertyStartupVolume;
+    PropertyBool* iPropertyStartupVolumeEnabled;
 };
 
-DvProviderLinnCoUkPreamp4C::DvProviderLinnCoUkPreamp4C(DvDevice& aDevice)
-    : DvProviderLinnCoUkPreamp4(aDevice)
+DvProviderLinnCoUkPreamp4C::DvProviderLinnCoUkPreamp4C(DvDeviceC aDevice)
+    : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "linn.co.uk", "Preamp", 4)
 {
+    
+    iPropertyVolume = new PropertyUint(new ParameterUint("Volume"));
+    iService->AddProperty(iPropertyVolume); // passes ownership
+    iPropertyMute = new PropertyBool(new ParameterBool("Mute"));
+    iService->AddProperty(iPropertyMute); // passes ownership
+    iPropertyBalance = new PropertyInt(new ParameterInt("Balance"));
+    iService->AddProperty(iPropertyBalance); // passes ownership
+    iPropertyVolumeLimit = new PropertyUint(new ParameterUint("VolumeLimit"));
+    iService->AddProperty(iPropertyVolumeLimit); // passes ownership
+    iPropertyStartupVolume = new PropertyUint(new ParameterUint("StartupVolume"));
+    iService->AddProperty(iPropertyStartupVolume); // passes ownership
+    iPropertyStartupVolumeEnabled = new PropertyBool(new ParameterBool("StartupVolumeEnabled"));
+    iService->AddProperty(iPropertyStartupVolumeEnabled); // passes ownership
+}
+
+TBool DvProviderLinnCoUkPreamp4C::SetPropertyVolume(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyVolume, aValue);
+}
+
+void DvProviderLinnCoUkPreamp4C::GetPropertyVolume(TUint& aValue)
+{
+    aValue = iPropertyVolume->Value();
+}
+
+TBool DvProviderLinnCoUkPreamp4C::SetPropertyMute(TBool aValue)
+{
+    return SetPropertyBool(*iPropertyMute, aValue);
+}
+
+void DvProviderLinnCoUkPreamp4C::GetPropertyMute(TBool& aValue)
+{
+    aValue = iPropertyMute->Value();
+}
+
+TBool DvProviderLinnCoUkPreamp4C::SetPropertyBalance(TInt aValue)
+{
+    return SetPropertyInt(*iPropertyBalance, aValue);
+}
+
+void DvProviderLinnCoUkPreamp4C::GetPropertyBalance(TInt& aValue)
+{
+    aValue = iPropertyBalance->Value();
+}
+
+TBool DvProviderLinnCoUkPreamp4C::SetPropertyVolumeLimit(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyVolumeLimit, aValue);
+}
+
+void DvProviderLinnCoUkPreamp4C::GetPropertyVolumeLimit(TUint& aValue)
+{
+    aValue = iPropertyVolumeLimit->Value();
+}
+
+TBool DvProviderLinnCoUkPreamp4C::SetPropertyStartupVolume(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyStartupVolume, aValue);
+}
+
+void DvProviderLinnCoUkPreamp4C::GetPropertyStartupVolume(TUint& aValue)
+{
+    aValue = iPropertyStartupVolume->Value();
+}
+
+TBool DvProviderLinnCoUkPreamp4C::SetPropertyStartupVolumeEnabled(TBool aValue)
+{
+    return SetPropertyBool(*iPropertyStartupVolumeEnabled, aValue);
+}
+
+void DvProviderLinnCoUkPreamp4C::GetPropertyStartupVolumeEnabled(TBool& aValue)
+{
+    aValue = iPropertyStartupVolumeEnabled->Value();
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionVolumeInc(CallbackPreamp4VolumeInc aCallback, void* aPtr)
 {
     iCallbackVolumeInc = aCallback;
     iPtrVolumeInc = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionVolumeInc();
+    Zapp::Action* action = new Zapp::Action("VolumeInc");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoVolumeInc);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionVolumeDec(CallbackPreamp4VolumeDec aCallback, void* aPtr)
 {
     iCallbackVolumeDec = aCallback;
     iPtrVolumeDec = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionVolumeDec();
+    Zapp::Action* action = new Zapp::Action("VolumeDec");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoVolumeDec);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionSetVolume(CallbackPreamp4SetVolume aCallback, void* aPtr)
 {
     iCallbackSetVolume = aCallback;
     iPtrSetVolume = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionSetVolume();
+    Zapp::Action* action = new Zapp::Action("SetVolume");
+    action->AddInputParameter(new ParameterUint("aVolume"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoSetVolume);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionVolume(CallbackPreamp4Volume aCallback, void* aPtr)
 {
     iCallbackVolume = aCallback;
     iPtrVolume = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionVolume();
+    Zapp::Action* action = new Zapp::Action("Volume");
+    action->AddOutputParameter(new ParameterUint("aVolume"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoVolume);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionSetMute(CallbackPreamp4SetMute aCallback, void* aPtr)
 {
     iCallbackSetMute = aCallback;
     iPtrSetMute = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionSetMute();
+    Zapp::Action* action = new Zapp::Action("SetMute");
+    action->AddInputParameter(new ParameterBool("aMute"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoSetMute);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionMute(CallbackPreamp4Mute aCallback, void* aPtr)
 {
     iCallbackMute = aCallback;
     iPtrMute = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionMute();
+    Zapp::Action* action = new Zapp::Action("Mute");
+    action->AddOutputParameter(new ParameterBool("aMute"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoMute);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionSetBalance(CallbackPreamp4SetBalance aCallback, void* aPtr)
 {
     iCallbackSetBalance = aCallback;
     iPtrSetBalance = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionSetBalance();
+    Zapp::Action* action = new Zapp::Action("SetBalance");
+    action->AddInputParameter(new ParameterInt("aBalance"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoSetBalance);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionBalance(CallbackPreamp4Balance aCallback, void* aPtr)
 {
     iCallbackBalance = aCallback;
     iPtrBalance = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionBalance();
+    Zapp::Action* action = new Zapp::Action("Balance");
+    action->AddOutputParameter(new ParameterInt("aBalance"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoBalance);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionSetVolumeLimit(CallbackPreamp4SetVolumeLimit aCallback, void* aPtr)
 {
     iCallbackSetVolumeLimit = aCallback;
     iPtrSetVolumeLimit = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionSetVolumeLimit();
+    Zapp::Action* action = new Zapp::Action("SetVolumeLimit");
+    action->AddInputParameter(new ParameterUint("aVolumeLimit"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoSetVolumeLimit);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionVolumeLimit(CallbackPreamp4VolumeLimit aCallback, void* aPtr)
 {
     iCallbackVolumeLimit = aCallback;
     iPtrVolumeLimit = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionVolumeLimit();
+    Zapp::Action* action = new Zapp::Action("VolumeLimit");
+    action->AddOutputParameter(new ParameterUint("aVolumeLimit"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoVolumeLimit);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionSetStartupVolume(CallbackPreamp4SetStartupVolume aCallback, void* aPtr)
 {
     iCallbackSetStartupVolume = aCallback;
     iPtrSetStartupVolume = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionSetStartupVolume();
+    Zapp::Action* action = new Zapp::Action("SetStartupVolume");
+    action->AddInputParameter(new ParameterUint("aStartupVolume"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoSetStartupVolume);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionStartupVolume(CallbackPreamp4StartupVolume aCallback, void* aPtr)
 {
     iCallbackStartupVolume = aCallback;
     iPtrStartupVolume = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionStartupVolume();
+    Zapp::Action* action = new Zapp::Action("StartupVolume");
+    action->AddOutputParameter(new ParameterUint("aStartupVolume"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoStartupVolume);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionSetStartupVolumeEnabled(CallbackPreamp4SetStartupVolumeEnabled aCallback, void* aPtr)
 {
     iCallbackSetStartupVolumeEnabled = aCallback;
     iPtrSetStartupVolumeEnabled = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionSetStartupVolumeEnabled();
+    Zapp::Action* action = new Zapp::Action("SetStartupVolumeEnabled");
+    action->AddInputParameter(new ParameterBool("aStartupVolumeEnabled"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoSetStartupVolumeEnabled);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPreamp4C::EnableActionStartupVolumeEnabled(CallbackPreamp4StartupVolumeEnabled aCallback, void* aPtr)
 {
     iCallbackStartupVolumeEnabled = aCallback;
     iPtrStartupVolumeEnabled = aPtr;
-    DvProviderLinnCoUkPreamp4::EnableActionStartupVolumeEnabled();
+    Zapp::Action* action = new Zapp::Action("StartupVolumeEnabled");
+    action->AddOutputParameter(new ParameterBool("aStartupVolumeEnabled"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPreamp4C::DoStartupVolumeEnabled);
+    iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkPreamp4C::VolumeInc(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderLinnCoUkPreamp4C::DoVolumeInc(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackVolumeInc != NULL);
     if (0 != iCallbackVolumeInc(iPtrVolumeInc, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkPreamp4C::VolumeDec(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderLinnCoUkPreamp4C::DoVolumeDec(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackVolumeDec != NULL);
     if (0 != iCallbackVolumeDec(iPtrVolumeDec, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkPreamp4C::SetVolume(IInvocationResponse& aResponse, TUint aVersion, TUint aaVolume)
+void DvProviderLinnCoUkPreamp4C::DoSetVolume(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aVolume = aInvocation.InvocationReadUint("aVolume");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetVolume != NULL);
-    if (0 != iCallbackSetVolume(iPtrSetVolume, aVersion, aaVolume)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetVolume(iPtrSetVolume, aVersion, aVolume)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkPreamp4C::Volume(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaVolume)
+void DvProviderLinnCoUkPreamp4C::DoVolume(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aVolume;
     ASSERT(iCallbackVolume != NULL);
     if (0 != iCallbackVolume(iPtrVolume, aVersion, &aVolume)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaVolume.Write(aVolume);
-    aResponse.End();
+    InvocationResponseUint respaVolume(aInvocation, "aVolume");
+    resp.Start();
+    respaVolume.Write(aVolume);
+    resp.End();
 }
 
-void DvProviderLinnCoUkPreamp4C::SetMute(IInvocationResponse& aResponse, TUint aVersion, TBool aaMute)
+void DvProviderLinnCoUkPreamp4C::DoSetMute(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TBool aMute = aInvocation.InvocationReadBool("aMute");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetMute != NULL);
-    if (0 != iCallbackSetMute(iPtrSetMute, aVersion, aaMute)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetMute(iPtrSetMute, aVersion, aMute)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkPreamp4C::Mute(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaMute)
+void DvProviderLinnCoUkPreamp4C::DoMute(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aMute;
     ASSERT(iCallbackMute != NULL);
     if (0 != iCallbackMute(iPtrMute, aVersion, &aMute)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaMute.Write((aMute!=0));
-    aResponse.End();
+    InvocationResponseBool respaMute(aInvocation, "aMute");
+    resp.Start();
+    respaMute.Write((aMute!=0));
+    resp.End();
 }
 
-void DvProviderLinnCoUkPreamp4C::SetBalance(IInvocationResponse& aResponse, TUint aVersion, TInt aaBalance)
+void DvProviderLinnCoUkPreamp4C::DoSetBalance(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TInt aBalance = aInvocation.InvocationReadInt("aBalance");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetBalance != NULL);
-    if (0 != iCallbackSetBalance(iPtrSetBalance, aVersion, aaBalance)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetBalance(iPtrSetBalance, aVersion, aBalance)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkPreamp4C::Balance(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseInt& aaBalance)
+void DvProviderLinnCoUkPreamp4C::DoBalance(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     int32_t aBalance;
     ASSERT(iCallbackBalance != NULL);
     if (0 != iCallbackBalance(iPtrBalance, aVersion, &aBalance)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaBalance.Write(aBalance);
-    aResponse.End();
+    InvocationResponseInt respaBalance(aInvocation, "aBalance");
+    resp.Start();
+    respaBalance.Write(aBalance);
+    resp.End();
 }
 
-void DvProviderLinnCoUkPreamp4C::SetVolumeLimit(IInvocationResponse& aResponse, TUint aVersion, TUint aaVolumeLimit)
+void DvProviderLinnCoUkPreamp4C::DoSetVolumeLimit(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aVolumeLimit = aInvocation.InvocationReadUint("aVolumeLimit");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetVolumeLimit != NULL);
-    if (0 != iCallbackSetVolumeLimit(iPtrSetVolumeLimit, aVersion, aaVolumeLimit)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetVolumeLimit(iPtrSetVolumeLimit, aVersion, aVolumeLimit)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkPreamp4C::VolumeLimit(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaVolumeLimit)
+void DvProviderLinnCoUkPreamp4C::DoVolumeLimit(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aVolumeLimit;
     ASSERT(iCallbackVolumeLimit != NULL);
     if (0 != iCallbackVolumeLimit(iPtrVolumeLimit, aVersion, &aVolumeLimit)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaVolumeLimit.Write(aVolumeLimit);
-    aResponse.End();
+    InvocationResponseUint respaVolumeLimit(aInvocation, "aVolumeLimit");
+    resp.Start();
+    respaVolumeLimit.Write(aVolumeLimit);
+    resp.End();
 }
 
-void DvProviderLinnCoUkPreamp4C::SetStartupVolume(IInvocationResponse& aResponse, TUint aVersion, TUint aaStartupVolume)
+void DvProviderLinnCoUkPreamp4C::DoSetStartupVolume(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aStartupVolume = aInvocation.InvocationReadUint("aStartupVolume");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetStartupVolume != NULL);
-    if (0 != iCallbackSetStartupVolume(iPtrSetStartupVolume, aVersion, aaStartupVolume)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetStartupVolume(iPtrSetStartupVolume, aVersion, aStartupVolume)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkPreamp4C::StartupVolume(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaStartupVolume)
+void DvProviderLinnCoUkPreamp4C::DoStartupVolume(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aStartupVolume;
     ASSERT(iCallbackStartupVolume != NULL);
     if (0 != iCallbackStartupVolume(iPtrStartupVolume, aVersion, &aStartupVolume)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaStartupVolume.Write(aStartupVolume);
-    aResponse.End();
+    InvocationResponseUint respaStartupVolume(aInvocation, "aStartupVolume");
+    resp.Start();
+    respaStartupVolume.Write(aStartupVolume);
+    resp.End();
 }
 
-void DvProviderLinnCoUkPreamp4C::SetStartupVolumeEnabled(IInvocationResponse& aResponse, TUint aVersion, TBool aaStartupVolumeEnabled)
+void DvProviderLinnCoUkPreamp4C::DoSetStartupVolumeEnabled(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TBool aStartupVolumeEnabled = aInvocation.InvocationReadBool("aStartupVolumeEnabled");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetStartupVolumeEnabled != NULL);
-    if (0 != iCallbackSetStartupVolumeEnabled(iPtrSetStartupVolumeEnabled, aVersion, aaStartupVolumeEnabled)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetStartupVolumeEnabled(iPtrSetStartupVolumeEnabled, aVersion, aStartupVolumeEnabled)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkPreamp4C::StartupVolumeEnabled(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaStartupVolumeEnabled)
+void DvProviderLinnCoUkPreamp4C::DoStartupVolumeEnabled(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aStartupVolumeEnabled;
     ASSERT(iCallbackStartupVolumeEnabled != NULL);
     if (0 != iCallbackStartupVolumeEnabled(iPtrStartupVolumeEnabled, aVersion, &aStartupVolumeEnabled)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaStartupVolumeEnabled.Write((aStartupVolumeEnabled!=0));
-    aResponse.End();
+    InvocationResponseBool respaStartupVolumeEnabled(aInvocation, "aStartupVolumeEnabled");
+    resp.Start();
+    respaStartupVolumeEnabled.Write((aStartupVolumeEnabled!=0));
+    resp.End();
 }
 
 
 
 THandle DvProviderLinnCoUkPreamp4Create(DvDeviceC aDevice)
 {
-	return new DvProviderLinnCoUkPreamp4C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkPreamp4C(aDevice);
 }
 
 void DvProviderLinnCoUkPreamp4Destroy(THandle aProvider)

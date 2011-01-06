@@ -95,8 +95,7 @@ namespace Zapp
             Console.Write("    Uint...\n");
             proxy.SyncSetUint(1);
             iUpdatesComplete.WaitOne();
-            uint propUint;
-            proxy.PropertyVarUint(out propUint);
+            uint propUint = proxy.PropertyVarUint();
             Debug.Assert(propUint == 1);
             uint valUint;
             proxy.SyncGetUint(out valUint);
@@ -105,8 +104,7 @@ namespace Zapp
             Console.Write("    Int...\n");
             proxy.SyncSetInt(-99);
             iUpdatesComplete.WaitOne();
-            int propInt;
-            proxy.PropertyVarInt(out propInt);
+            int propInt = proxy.PropertyVarInt();
             Debug.Assert(propInt == -99);
             int valInt;
             proxy.SyncGetInt(out valInt);
@@ -115,8 +113,7 @@ namespace Zapp
             Console.Write("    Bool...\n");
             proxy.SyncSetBool(true);
             iUpdatesComplete.WaitOne();
-            bool propBool;
-            proxy.PropertyVarBool(out propBool);
+            bool propBool = proxy.PropertyVarBool();
             Debug.Assert(propBool);
             bool valBool;
             proxy.SyncGetBool(out valBool);
@@ -126,11 +123,10 @@ namespace Zapp
             string str = "<&'tag\">";
             proxy.SyncSetString(str);
             iUpdatesComplete.WaitOne();
-            string propStr;
-            proxy.PropertyVarStr(out propStr);
+            string propStr = proxy.PropertyVarStr();
             Debug.Assert(propStr == str);
             // test again to check that PropertyVarStr didn't TransferTo the property
-            proxy.PropertyVarStr(out propStr);
+            propStr = proxy.PropertyVarStr();
             Debug.Assert(propStr == str);
             string valStr;
             GC.Collect();
@@ -146,11 +142,10 @@ namespace Zapp
             string bufBin = new string(bin);
             proxy.SyncSetBinary(bufBin);
             iUpdatesComplete.WaitOne();
-            string propBin;
-            proxy.PropertyVarBin(out propBin);
+            string propBin = proxy.PropertyVarBin();
             Debug.Assert(propBin == bufBin);
             // test again to check that PropertyVarBin didn't TransferTo the property
-            proxy.PropertyVarBin(out propBin);
+            propBin = proxy.PropertyVarBin();
             Debug.Assert(propBin == bufBin);
             string valBin;
             proxy.SyncGetBinary(out valBin);
@@ -159,15 +154,15 @@ namespace Zapp
             Console.Write("    Multiple...\n");
             proxy.SyncSetMultiple(15, 658, false);
             iUpdatesComplete.WaitOne();
-            proxy.PropertyVarUint(out propUint);
+            propUint = proxy.PropertyVarUint();
             Debug.Assert(propUint == 15);
             proxy.SyncGetUint(out valUint);
             Debug.Assert(propUint == valUint);
-            proxy.PropertyVarInt(out propInt);
+            propInt = proxy.PropertyVarInt();
             Debug.Assert(propInt == 658);
             proxy.SyncGetInt(out valInt);
             Debug.Assert(propInt == valInt);
-            proxy.PropertyVarBool(out propBool);
+            propBool = proxy.PropertyVarBool();
             Debug.Assert(!propBool);
             proxy.SyncGetBool(out valBool);
             Debug.Assert(!valBool);

@@ -1,4 +1,4 @@
-#include <Core/DvLinnCoUkRadio1.h>
+#include "DvLinnCoUkRadio1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -79,12 +79,12 @@ void DvProviderLinnCoUkRadio1::GetPropertyIdsMax(TUint& aValue)
 DvProviderLinnCoUkRadio1::DvProviderLinnCoUkRadio1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Radio", 1)
 {
-    Functor empty;
+    
     TChar** allowedValues;
     TUint index;
-    iPropertyChannelUri = new PropertyString(new ParameterString("ChannelUri"), empty);
+    iPropertyChannelUri = new PropertyString(new ParameterString("ChannelUri"));
     iService->AddProperty(iPropertyChannelUri); // passes ownership
-    iPropertyChannelMetadata = new PropertyString(new ParameterString("ChannelMetadata"), empty);
+    iPropertyChannelMetadata = new PropertyString(new ParameterString("ChannelMetadata"));
     iService->AddProperty(iPropertyChannelMetadata); // passes ownership
     index = 0;
     allowedValues = new TChar*[4];
@@ -92,16 +92,16 @@ DvProviderLinnCoUkRadio1::DvProviderLinnCoUkRadio1(DvDevice& aDevice)
     allowedValues[index++] = (TChar*)"Playing";
     allowedValues[index++] = (TChar*)"Paused";
     allowedValues[index++] = (TChar*)"Buffering";
-    iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues, 4), empty);
+    iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues, 4));
     delete[] allowedValues;
     iService->AddProperty(iPropertyTransportState); // passes ownership
-    iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo"), empty);
+    iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo"));
     iService->AddProperty(iPropertyProtocolInfo); // passes ownership
-    iPropertyId = new PropertyUint(new ParameterUint("Id"), empty);
+    iPropertyId = new PropertyUint(new ParameterUint("Id"));
     iService->AddProperty(iPropertyId); // passes ownership
-    iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"), empty);
+    iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
     iService->AddProperty(iPropertyIdArray); // passes ownership
-    iPropertyIdsMax = new PropertyUint(new ParameterUint("IdsMax"), empty);
+    iPropertyIdsMax = new PropertyUint(new ParameterUint("IdsMax"));
     iService->AddProperty(iPropertyIdsMax); // passes ownership
 }
 

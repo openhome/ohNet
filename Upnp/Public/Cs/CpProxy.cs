@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using System.Threading;
 
 namespace Zapp.ControlPoint
 {
@@ -45,21 +46,29 @@ namespace Zapp.ControlPoint
     public class CpProxy : ICpProxy
     {
         [DllImport("ZappUpnp")]
-        static extern void CpProxyCSubscribe(uint aHandle);
+        static extern unsafe IntPtr CpProxyCreate(char* aDomain, char* aName, uint aVersion, IntPtr aDevice);
         [DllImport("ZappUpnp")]
-        static extern void CpProxyCUnsubscribe(uint aHandle);
+        static extern void CpProxyDestroy(IntPtr Proxy);
         [DllImport("ZappUpnp")]
-        static extern void CpProxyCSetPropertyChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern IntPtr CpProxyService(IntPtr aProxy);
         [DllImport("ZappUpnp")]
-        static extern void CpProxyCSetPropertyInitialEvent(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxySubscribe(IntPtr aHandle);
+        [DllImport("ZappUpnp")]
+        static extern void CpProxyUnsubscribe(IntPtr aHandle);
+        [DllImport("ZappUpnp")]
+        static extern void CpProxySetPropertyChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
+        [DllImport("ZappUpnp")]
+        static extern void CpProxySetPropertyInitialEvent(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
+        [DllImport("ZappUpnp")]
+        static extern void CpProxyAddProperty(IntPtr aHandle, IntPtr aProperty);
 
         public delegate void CallbackPropertyChanged();
-        public delegate void CallbackAsyncComplete(uint aAsyncHandle);
-        protected delegate void CallbackActionComplete(IntPtr aPtr, uint aAsyncHandle);
-        protected delegate void Callback(IntPtr aPtr);
+        public delegate void CallbackAsyncComplete(IntPtr aAsyncHandle);
+        public delegate void CallbackActionComplete(IntPtr aPtr, IntPtr aAsyncHandle);
+        public delegate void Callback(IntPtr aPtr);
         
-        protected uint iHandle;
-        protected CallbackActionComplete iActionComplete;
+        protected IntPtr iHandle;
+        protected CpService iService;
         private GCHandle iGchProxy;
         private CallbackPropertyChanged iPropertyChanged;
         private Callback iCallbackPropertyChanged;
@@ -68,12 +77,12 @@ namespace Zapp.ControlPoint
 
         public void Subscribe()
         {
-            CpProxyCSubscribe(iHandle);
+            CpProxySubscribe(iHandle);
         }
 
         public void Unsubscribe()
         {
-            CpProxyCUnsubscribe(iHandle);
+            CpProxyUnsubscribe(iHandle);
         }
 
         public void SetPropertyChanged(CallbackPropertyChanged aPropertyChanged)
@@ -81,7 +90,7 @@ namespace Zapp.ControlPoint
             iPropertyChanged = aPropertyChanged;
             iCallbackPropertyChanged = new Callback(PropertyChanged);
             IntPtr ptr = GCHandle.ToIntPtr(iGchProxy);
-            CpProxyCSetPropertyChanged(iHandle, iCallbackPropertyChanged, ptr);
+            CpProxySetPropertyChanged(iHandle, iCallbackPropertyChanged, ptr);
         }
 
         public void SetPropertyInitialEvent(CallbackPropertyChanged aInitialEvent)
@@ -89,16 +98,27 @@ namespace Zapp.ControlPoint
             iInitialEvent = aInitialEvent;
             iCallbackInitialEvent = new Callback(InitialEvent);
             IntPtr ptr = GCHandle.ToIntPtr(iGchProxy);
-            CpProxyCSetPropertyInitialEvent(iHandle, iCallbackInitialEvent, ptr);
+            CpProxySetPropertyInitialEvent(iHandle, iCallbackInitialEvent, ptr);
         }
 
-        protected CpProxy()
+        protected unsafe CpProxy(String aDomain, String aName, uint aVersion, CpDevice aDevice)
         {
+            char* domain = (char*)Marshal.StringToHGlobalAnsi(aDomain);
+            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            iHandle = CpProxyCreate(domain, name, aVersion, aDevice.Handle());
+            Marshal.FreeHGlobal((IntPtr)domain);
+            Marshal.FreeHGlobal((IntPtr)name);
+            IntPtr serviceHandle = CpProxyService(iHandle);
+            iService = new CpService(serviceHandle);
             iGchProxy = GCHandle.Alloc(this);
-            iActionComplete = new CallbackActionComplete(ActionComplete);
+        }
+
+        protected void AddProperty(Property aProperty)
+        {
+            CpProxyAddProperty(iHandle, aProperty.Handle());
         }
         
-        protected void ActionComplete(IntPtr aPtr, uint aAsyncHandle)
+        protected void ActionComplete(IntPtr aPtr, IntPtr aAsyncHandle)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             CallbackAsyncComplete cb = (CallbackAsyncComplete)gch.Target;
@@ -120,15 +140,57 @@ namespace Zapp.ControlPoint
             self.iInitialEvent();
         }
 
-        ~CpProxy()
-        {
-            DisposeProxy();
-        }
-
         protected void DisposeProxy()
         {
             if(iGchProxy.IsAllocated)
                 iGchProxy.Free();
+            CpProxyDestroy(iHandle);
         }
     }
+
+    public abstract class SyncProxyAction
+    {
+        private CpProxy.CallbackAsyncComplete iAsyncComplete;
+        private Semaphore iSem;
+        private bool iError;
+
+        public CpProxy.CallbackAsyncComplete AsyncComplete()
+        {
+            return iAsyncComplete;
+        }
+
+        public void Wait()
+        {
+            iSem.WaitOne();
+        }
+
+        public void ReportError()
+        {
+            if (iError)
+            {
+                throw new ProxyError();
+            }
+        }
+
+        protected SyncProxyAction()
+        {
+            iAsyncComplete = new CpProxy.CallbackAsyncComplete(CallbackAsyncComplete);
+            iSem = new Semaphore(0, 1);
+        }
+
+        protected abstract void CompleteRequest(IntPtr aAsyncHandle);
+
+        private void CallbackAsyncComplete(IntPtr aAsyncHandle)
+        {
+            try
+            {
+                CompleteRequest(aAsyncHandle);
+            }
+            catch (ProxyError)
+            {
+                iError = true;
+            }
+            iSem.Release();
+        }
+    };
 }

@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
@@ -9,206 +11,375 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncPlay();
         void BeginPlay(CpProxy.CallbackAsyncComplete aCallback);
-        void EndPlay(uint aAsyncHandle);
+        void EndPlay(IntPtr aAsyncHandle);
         void SyncPause();
         void BeginPause(CpProxy.CallbackAsyncComplete aCallback);
-        void EndPause(uint aAsyncHandle);
+        void EndPause(IntPtr aAsyncHandle);
         void SyncStop();
         void BeginStop(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStop(uint aAsyncHandle);
-        void SyncSeekSecondAbsolute(uint aaSecond);
-        void BeginSeekSecondAbsolute(uint aaSecond, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeekSecondAbsolute(uint aAsyncHandle);
-        void SyncSeekSecondRelative(int aaSecond);
-        void BeginSeekSecondRelative(int aaSecond, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeekSecondRelative(uint aAsyncHandle);
-        void SyncChannel(out string aaUri, out string aaMetadata);
+        void EndStop(IntPtr aAsyncHandle);
+        void SyncSeekSecondAbsolute(uint aSecond);
+        void BeginSeekSecondAbsolute(uint aSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekSecondAbsolute(IntPtr aAsyncHandle);
+        void SyncSeekSecondRelative(int aSecond);
+        void BeginSeekSecondRelative(int aSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekSecondRelative(IntPtr aAsyncHandle);
+        void SyncChannel(out String aUri, out String aMetadata);
         void BeginChannel(CpProxy.CallbackAsyncComplete aCallback);
-        void EndChannel(uint aAsyncHandle, out string aaUri, out string aaMetadata);
-        void SyncSetChannel(string aaUri, string aaMetadata);
-        void BeginSetChannel(string aaUri, string aaMetadata, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetChannel(uint aAsyncHandle);
-        void SyncProtocolInfo(out string aaInfo);
+        void EndChannel(IntPtr aAsyncHandle, out String aUri, out String aMetadata);
+        void SyncSetChannel(String aUri, String aMetadata);
+        void BeginSetChannel(String aUri, String aMetadata, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetChannel(IntPtr aAsyncHandle);
+        void SyncProtocolInfo(out String aInfo);
         void BeginProtocolInfo(CpProxy.CallbackAsyncComplete aCallback);
-        void EndProtocolInfo(uint aAsyncHandle, out string aaInfo);
-        void SyncTransportState(out string aaState);
+        void EndProtocolInfo(IntPtr aAsyncHandle, out String aInfo);
+        void SyncTransportState(out String aState);
         void BeginTransportState(CpProxy.CallbackAsyncComplete aCallback);
-        void EndTransportState(uint aAsyncHandle, out string aaState);
-        void SyncId(out uint aaId);
+        void EndTransportState(IntPtr aAsyncHandle, out String aState);
+        void SyncId(out uint aId);
         void BeginId(CpProxy.CallbackAsyncComplete aCallback);
-        void EndId(uint aAsyncHandle, out uint aaId);
-        void SyncSetId(uint aaId, string aaUri);
-        void BeginSetId(uint aaId, string aaUri, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetId(uint aAsyncHandle);
-        void SyncRead(uint aaId, out string aaMetadata);
-        void BeginRead(uint aaId, CpProxy.CallbackAsyncComplete aCallback);
-        void EndRead(uint aAsyncHandle, out string aaMetadata);
-        void SyncReadList(string aaIdList, out string aaMetadataList);
-        void BeginReadList(string aaIdList, CpProxy.CallbackAsyncComplete aCallback);
-        void EndReadList(uint aAsyncHandle, out string aaMetadataList);
-        void SyncIdArray(out uint aaIdArrayToken, out string aaIdArray);
+        void EndId(IntPtr aAsyncHandle, out uint aId);
+        void SyncSetId(uint aId, String aUri);
+        void BeginSetId(uint aId, String aUri, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetId(IntPtr aAsyncHandle);
+        void SyncRead(uint aId, out String aMetadata);
+        void BeginRead(uint aId, CpProxy.CallbackAsyncComplete aCallback);
+        void EndRead(IntPtr aAsyncHandle, out String aMetadata);
+        void SyncReadList(String aIdList, out String aMetadataList);
+        void BeginReadList(String aIdList, CpProxy.CallbackAsyncComplete aCallback);
+        void EndReadList(IntPtr aAsyncHandle, out String aMetadataList);
+        void SyncIdArray(out uint aIdArrayToken, out String aIdArray);
         void BeginIdArray(CpProxy.CallbackAsyncComplete aCallback);
-        void EndIdArray(uint aAsyncHandle, out uint aaIdArrayToken, out string aaIdArray);
-        void SyncIdArrayChanged(uint aaIdArrayToken, out bool aaIdArrayChanged);
-        void BeginIdArrayChanged(uint aaIdArrayToken, CpProxy.CallbackAsyncComplete aCallback);
-        void EndIdArrayChanged(uint aAsyncHandle, out bool aaIdArrayChanged);
-        void SyncIdsMax(out uint aaIdsMax);
+        void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out String aIdArray);
+        void SyncIdArrayChanged(uint aIdArrayToken, out bool aIdArrayChanged);
+        void BeginIdArrayChanged(uint aIdArrayToken, CpProxy.CallbackAsyncComplete aCallback);
+        void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aIdArrayChanged);
+        void SyncIdsMax(out uint aIdsMax);
         void BeginIdsMax(CpProxy.CallbackAsyncComplete aCallback);
-        void EndIdsMax(uint aAsyncHandle, out uint aaIdsMax);
-
+        void EndIdsMax(IntPtr aAsyncHandle, out uint aIdsMax);
         void SetPropertyChannelUriChanged(CpProxy.CallbackPropertyChanged aChannelUriChanged);
-        void PropertyChannelUri(out string aChannelUri);
+        String PropertyChannelUri();
         void SetPropertyChannelMetadataChanged(CpProxy.CallbackPropertyChanged aChannelMetadataChanged);
-        void PropertyChannelMetadata(out string aChannelMetadata);
+        String PropertyChannelMetadata();
         void SetPropertyTransportStateChanged(CpProxy.CallbackPropertyChanged aTransportStateChanged);
-        void PropertyTransportState(out string aTransportState);
+        String PropertyTransportState();
         void SetPropertyProtocolInfoChanged(CpProxy.CallbackPropertyChanged aProtocolInfoChanged);
-        void PropertyProtocolInfo(out string aProtocolInfo);
+        String PropertyProtocolInfo();
         void SetPropertyIdChanged(CpProxy.CallbackPropertyChanged aIdChanged);
-        void PropertyId(out uint aId);
+        uint PropertyId();
         void SetPropertyIdArrayChanged(CpProxy.CallbackPropertyChanged aIdArrayChanged);
-        void PropertyIdArray(out string aIdArray);
+        String PropertyIdArray();
         void SetPropertyIdsMaxChanged(CpProxy.CallbackPropertyChanged aIdsMaxChanged);
-        void PropertyIdsMax(out uint aIdsMax);
+        uint PropertyIdsMax();
     }
+
+    internal class SyncPlayLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+
+        public SyncPlayLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndPlay(aAsyncHandle);
+        }
+    };
+
+    internal class SyncPauseLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+
+        public SyncPauseLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndPause(aAsyncHandle);
+        }
+    };
+
+    internal class SyncStopLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+
+        public SyncStopLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndStop(aAsyncHandle);
+        }
+    };
+
+    internal class SyncSeekSecondAbsoluteLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+
+        public SyncSeekSecondAbsoluteLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSeekSecondAbsolute(aAsyncHandle);
+        }
+    };
+
+    internal class SyncSeekSecondRelativeLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+
+        public SyncSeekSecondRelativeLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSeekSecondRelative(aAsyncHandle);
+        }
+    };
+
+    internal class SyncChannelLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+        private String iUri;
+        private String iMetadata;
+
+        public SyncChannelLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Uri()
+        {
+            return iUri;
+        }
+        public String Metadata()
+        {
+            return iMetadata;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndChannel(aAsyncHandle, out iUri, out iMetadata);
+        }
+    };
+
+    internal class SyncSetChannelLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+
+        public SyncSetChannelLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetChannel(aAsyncHandle);
+        }
+    };
+
+    internal class SyncProtocolInfoLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+        private String iInfo;
+
+        public SyncProtocolInfoLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Info()
+        {
+            return iInfo;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndProtocolInfo(aAsyncHandle, out iInfo);
+        }
+    };
+
+    internal class SyncTransportStateLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+        private String iState;
+
+        public SyncTransportStateLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String State()
+        {
+            return iState;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndTransportState(aAsyncHandle, out iState);
+        }
+    };
+
+    internal class SyncIdLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+        private uint iId;
+
+        public SyncIdLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Id()
+        {
+            return iId;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndId(aAsyncHandle, out iId);
+        }
+    };
+
+    internal class SyncSetIdLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+
+        public SyncSetIdLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetId(aAsyncHandle);
+        }
+    };
+
+    internal class SyncReadLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+        private String iMetadata;
+
+        public SyncReadLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Metadata()
+        {
+            return iMetadata;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndRead(aAsyncHandle, out iMetadata);
+        }
+    };
+
+    internal class SyncReadListLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+        private String iMetadataList;
+
+        public SyncReadListLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String MetadataList()
+        {
+            return iMetadataList;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndReadList(aAsyncHandle, out iMetadataList);
+        }
+    };
+
+    internal class SyncIdArrayLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+        private uint iIdArrayToken;
+        private String iIdArray;
+
+        public SyncIdArrayLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint IdArrayToken()
+        {
+            return iIdArrayToken;
+        }
+        public String IdArray()
+        {
+            return iIdArray;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndIdArray(aAsyncHandle, out iIdArrayToken, out iIdArray);
+        }
+    };
+
+    internal class SyncIdArrayChangedLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+        private bool iIdArrayChanged;
+
+        public SyncIdArrayChangedLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public bool IdArrayChanged()
+        {
+            return iIdArrayChanged;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndIdArrayChanged(aAsyncHandle, out iIdArrayChanged);
+        }
+    };
+
+    internal class SyncIdsMaxLinnCoUkRadio1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkRadio1 iService;
+        private uint iIdsMax;
+
+        public SyncIdsMaxLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint IdsMax()
+        {
+            return iIdsMax;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndIdsMax(aAsyncHandle, out iIdsMax);
+        }
+    };
 
     /// <summary>
     /// Proxy for the linn.co.uk:Radio:1 UPnP service
     /// </summary>
     public class CpProxyLinnCoUkRadio1 : CpProxy, IDisposable, ICpProxyLinnCoUkRadio1
     {
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern uint CpProxyLinnCoUkRadio1Create(uint aDeviceHandle);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1Destroy(uint aHandle);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncPlay(uint aHandle);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginPlay(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndPlay(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncPause(uint aHandle);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginPause(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndPause(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncStop(uint aHandle);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginStop(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndStop(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncSeekSecondAbsolute(uint aHandle, uint aaSecond);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginSeekSecondAbsolute(uint aHandle, uint aaSecond, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndSeekSecondAbsolute(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncSeekSecondRelative(uint aHandle, int aaSecond);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginSeekSecondRelative(uint aHandle, int aaSecond, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndSeekSecondRelative(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncChannel(uint aHandle, char** aaUri, char** aaMetadata);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginChannel(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndChannel(uint aHandle, uint aAsync, char** aaUri, char** aaMetadata);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncSetChannel(uint aHandle, char* aaUri, char* aaMetadata);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginSetChannel(uint aHandle, char* aaUri, char* aaMetadata, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndSetChannel(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncProtocolInfo(uint aHandle, char** aaInfo);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginProtocolInfo(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndProtocolInfo(uint aHandle, uint aAsync, char** aaInfo);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncTransportState(uint aHandle, char** aaState);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginTransportState(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndTransportState(uint aHandle, uint aAsync, char** aaState);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncId(uint aHandle, uint* aaId);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginId(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndId(uint aHandle, uint aAsync, uint* aaId);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncSetId(uint aHandle, uint aaId, char* aaUri);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginSetId(uint aHandle, uint aaId, char* aaUri, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndSetId(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncRead(uint aHandle, uint aaId, char** aaMetadata);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginRead(uint aHandle, uint aaId, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndRead(uint aHandle, uint aAsync, char** aaMetadata);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncReadList(uint aHandle, char* aaIdList, char** aaMetadataList);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginReadList(uint aHandle, char* aaIdList, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndReadList(uint aHandle, uint aAsync, char** aaMetadataList);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncIdArray(uint aHandle, uint* aaIdArrayToken, char** aaIdArray, uint* aaIdArrayLen);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginIdArray(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndIdArray(uint aHandle, uint aAsync, uint* aaIdArrayToken, char** aaIdArray, uint* aaIdArrayLen);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncIdArrayChanged(uint aHandle, uint aaIdArrayToken, uint* aaIdArrayChanged);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginIdArrayChanged(uint aHandle, uint aaIdArrayToken, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndIdArrayChanged(uint aHandle, uint aAsync, uint* aaIdArrayChanged);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncIdsMax(uint aHandle, uint* aaIdsMax);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginIdsMax(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndIdsMax(uint aHandle, uint aAsync, uint* aaIdsMax);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyChannelUriChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyChannelMetadataChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyTransportStateChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyProtocolInfoChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyIdChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyIdArrayChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyIdsMaxChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyChannelUri(uint aHandle, char** aChannelUri);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyChannelMetadata(uint aHandle, char** aChannelMetadata);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyTransportState(uint aHandle, char** aTransportState);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyProtocolInfo(uint aHandle, char** aProtocolInfo);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyId(uint aHandle, uint* aId);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyIdArray(uint aHandle, char** aIdArray, uint* aLen);
-        [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyIdsMax(uint aHandle, uint* aIdsMax);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionPlay;
+        private Zapp.Core.Action iActionPause;
+        private Zapp.Core.Action iActionStop;
+        private Zapp.Core.Action iActionSeekSecondAbsolute;
+        private Zapp.Core.Action iActionSeekSecondRelative;
+        private Zapp.Core.Action iActionChannel;
+        private Zapp.Core.Action iActionSetChannel;
+        private Zapp.Core.Action iActionProtocolInfo;
+        private Zapp.Core.Action iActionTransportState;
+        private Zapp.Core.Action iActionId;
+        private Zapp.Core.Action iActionSetId;
+        private Zapp.Core.Action iActionRead;
+        private Zapp.Core.Action iActionReadList;
+        private Zapp.Core.Action iActionIdArray;
+        private Zapp.Core.Action iActionIdArrayChanged;
+        private Zapp.Core.Action iActionIdsMax;
+        private PropertyString iChannelUri;
+        private PropertyString iChannelMetadata;
+        private PropertyString iTransportState;
+        private PropertyString iProtocolInfo;
+        private PropertyUint iId;
+        private PropertyBinary iIdArray;
+        private PropertyUint iIdsMax;
         private CallbackPropertyChanged iChannelUriChanged;
         private CallbackPropertyChanged iChannelMetadataChanged;
         private CallbackPropertyChanged iTransportStateChanged;
@@ -216,13 +387,6 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iIdChanged;
         private CallbackPropertyChanged iIdArrayChanged;
         private CallbackPropertyChanged iIdsMaxChanged;
-        private Callback iCallbackChannelUriChanged;
-        private Callback iCallbackChannelMetadataChanged;
-        private Callback iCallbackTransportStateChanged;
-        private Callback iCallbackProtocolInfoChanged;
-        private Callback iCallbackIdChanged;
-        private Callback iCallbackIdArrayChanged;
-        private Callback iCallbackIdsMaxChanged;
 
         /// <summary>
         /// Constructor
@@ -230,9 +394,102 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkRadio1(CpDevice aDevice)
+            : base("linn-co-uk", "Radio", 1, aDevice)
         {
-            iHandle = CpProxyLinnCoUkRadio1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionPlay = new Zapp.Core.Action("Play");
+
+            iActionPause = new Zapp.Core.Action("Pause");
+
+            iActionStop = new Zapp.Core.Action("Stop");
+
+            iActionSeekSecondAbsolute = new Zapp.Core.Action("SeekSecondAbsolute");
+            param = new ParameterUint("aSecond");
+            iActionSeekSecondAbsolute.AddInputParameter(param);
+
+            iActionSeekSecondRelative = new Zapp.Core.Action("SeekSecondRelative");
+            param = new ParameterInt("aSecond");
+            iActionSeekSecondRelative.AddInputParameter(param);
+
+            iActionChannel = new Zapp.Core.Action("Channel");
+            param = new ParameterString("aUri", allowedValues);
+            iActionChannel.AddOutputParameter(param);
+            param = new ParameterString("aMetadata", allowedValues);
+            iActionChannel.AddOutputParameter(param);
+
+            iActionSetChannel = new Zapp.Core.Action("SetChannel");
+            param = new ParameterString("aUri", allowedValues);
+            iActionSetChannel.AddInputParameter(param);
+            param = new ParameterString("aMetadata", allowedValues);
+            iActionSetChannel.AddInputParameter(param);
+
+            iActionProtocolInfo = new Zapp.Core.Action("ProtocolInfo");
+            param = new ParameterString("aInfo", allowedValues);
+            iActionProtocolInfo.AddOutputParameter(param);
+
+            iActionTransportState = new Zapp.Core.Action("TransportState");
+            allowedValues.Add("Stopped");
+            allowedValues.Add("Playing");
+            allowedValues.Add("Paused");
+            allowedValues.Add("Buffering");
+            param = new ParameterString("aState", allowedValues);
+            iActionTransportState.AddOutputParameter(param);
+            allowedValues.Clear();
+
+            iActionId = new Zapp.Core.Action("Id");
+            param = new ParameterUint("aId");
+            iActionId.AddOutputParameter(param);
+
+            iActionSetId = new Zapp.Core.Action("SetId");
+            param = new ParameterUint("aId");
+            iActionSetId.AddInputParameter(param);
+            param = new ParameterString("aUri", allowedValues);
+            iActionSetId.AddInputParameter(param);
+
+            iActionRead = new Zapp.Core.Action("Read");
+            param = new ParameterUint("aId");
+            iActionRead.AddInputParameter(param);
+            param = new ParameterString("aMetadata", allowedValues);
+            iActionRead.AddOutputParameter(param);
+
+            iActionReadList = new Zapp.Core.Action("ReadList");
+            param = new ParameterString("aIdList", allowedValues);
+            iActionReadList.AddInputParameter(param);
+            param = new ParameterString("aMetadataList", allowedValues);
+            iActionReadList.AddOutputParameter(param);
+
+            iActionIdArray = new Zapp.Core.Action("IdArray");
+            param = new ParameterUint("aIdArrayToken");
+            iActionIdArray.AddOutputParameter(param);
+            param = new ParameterBinary("aIdArray");
+            iActionIdArray.AddOutputParameter(param);
+
+            iActionIdArrayChanged = new Zapp.Core.Action("IdArrayChanged");
+            param = new ParameterUint("aIdArrayToken");
+            iActionIdArrayChanged.AddInputParameter(param);
+            param = new ParameterBool("aIdArrayChanged");
+            iActionIdArrayChanged.AddOutputParameter(param);
+
+            iActionIdsMax = new Zapp.Core.Action("IdsMax");
+            param = new ParameterUint("aIdsMax");
+            iActionIdsMax.AddOutputParameter(param);
+
+            iChannelUri = new PropertyString("ChannelUri", ChannelUriPropertyChanged);
+            AddProperty(iChannelUri);
+            iChannelMetadata = new PropertyString("ChannelMetadata", ChannelMetadataPropertyChanged);
+            AddProperty(iChannelMetadata);
+            iTransportState = new PropertyString("TransportState", TransportStatePropertyChanged);
+            AddProperty(iTransportState);
+            iProtocolInfo = new PropertyString("ProtocolInfo", ProtocolInfoPropertyChanged);
+            AddProperty(iProtocolInfo);
+            iId = new PropertyUint("Id", IdPropertyChanged);
+            AddProperty(iId);
+            iIdArray = new PropertyBinary("IdArray", IdArrayPropertyChanged);
+            AddProperty(iIdArray);
+            iIdsMax = new PropertyUint("IdsMax", IdsMaxPropertyChanged);
+            AddProperty(iIdsMax);
         }
 
         /// <summary>
@@ -240,11 +497,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncPlay()
+        public void SyncPlay()
         {
-            {
-                CpProxyLinnCoUkRadio1SyncPlay(iHandle);
-            }
+            SyncPlayLinnCoUkRadio1 sync = new SyncPlayLinnCoUkRadio1(this);
+            BeginPlay(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -255,11 +513,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndPlay().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginPlay(CallbackAsyncComplete aCallback)
+        public void BeginPlay(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginPlay(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionPlay, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -267,14 +524,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndPlay(uint aAsyncHandle)
+        public void EndPlay(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndPlay(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -282,11 +533,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncPause()
+        public void SyncPause()
         {
-            {
-                CpProxyLinnCoUkRadio1SyncPause(iHandle);
-            }
+            SyncPauseLinnCoUkRadio1 sync = new SyncPauseLinnCoUkRadio1(this);
+            BeginPause(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -297,11 +549,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndPause().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginPause(CallbackAsyncComplete aCallback)
+        public void BeginPause(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginPause(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionPause, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -309,14 +560,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndPause(uint aAsyncHandle)
+        public void EndPause(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndPause(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -324,11 +569,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncStop()
+        public void SyncStop()
         {
-            {
-                CpProxyLinnCoUkRadio1SyncStop(iHandle);
-            }
+            SyncStopLinnCoUkRadio1 sync = new SyncStopLinnCoUkRadio1(this);
+            BeginStop(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -339,11 +585,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndStop().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginStop(CallbackAsyncComplete aCallback)
+        public void BeginStop(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginStop(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionStop, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -351,14 +596,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndStop(uint aAsyncHandle)
+        public void EndStop(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndStop(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -367,11 +606,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSecond"></param>
-        public unsafe void SyncSeekSecondAbsolute(uint aaSecond)
+        public void SyncSeekSecondAbsolute(uint aSecond)
         {
-            {
-                CpProxyLinnCoUkRadio1SyncSeekSecondAbsolute(iHandle, aaSecond);
-            }
+            SyncSeekSecondAbsoluteLinnCoUkRadio1 sync = new SyncSeekSecondAbsoluteLinnCoUkRadio1(this);
+            BeginSeekSecondAbsolute(aSecond, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -383,11 +623,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSecond"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSeekSecondAbsolute(uint aaSecond, CallbackAsyncComplete aCallback)
+        public void BeginSeekSecondAbsolute(uint aSecond, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginSeekSecondAbsolute(iHandle, aaSecond, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSeekSecondAbsolute, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSeekSecondAbsolute.InputParameter(inIndex++), aSecond));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -395,14 +636,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSeekSecondAbsolute(uint aAsyncHandle)
+        public void EndSeekSecondAbsolute(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndSeekSecondAbsolute(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -411,11 +646,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSecond"></param>
-        public unsafe void SyncSeekSecondRelative(int aaSecond)
+        public void SyncSeekSecondRelative(int aSecond)
         {
-            {
-                CpProxyLinnCoUkRadio1SyncSeekSecondRelative(iHandle, aaSecond);
-            }
+            SyncSeekSecondRelativeLinnCoUkRadio1 sync = new SyncSeekSecondRelativeLinnCoUkRadio1(this);
+            BeginSeekSecondRelative(aSecond, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -427,11 +663,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSecond"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSeekSecondRelative(int aaSecond, CallbackAsyncComplete aCallback)
+        public void BeginSeekSecondRelative(int aSecond, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginSeekSecondRelative(iHandle, aaSecond, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSeekSecondRelative, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentInt((ParameterInt)iActionSeekSecondRelative.InputParameter(inIndex++), aSecond));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -439,14 +676,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSeekSecondRelative(uint aAsyncHandle)
+        public void EndSeekSecondRelative(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndSeekSecondRelative(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -456,17 +687,14 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUri"></param>
         /// <param name="aaMetadata"></param>
-        public unsafe void SyncChannel(out string aaUri, out string aaMetadata)
+        public void SyncChannel(out String aUri, out String aMetadata)
         {
-            char* aUri;
-            char* aMetadata;
-            {
-                CpProxyLinnCoUkRadio1SyncChannel(iHandle, &aUri, &aMetadata);
-            }
-            aaUri = Marshal.PtrToStringAnsi((IntPtr)aUri);
-            ZappFree(aUri);
-            aaMetadata = Marshal.PtrToStringAnsi((IntPtr)aMetadata);
-            ZappFree(aMetadata);
+            SyncChannelLinnCoUkRadio1 sync = new SyncChannelLinnCoUkRadio1(this);
+            BeginChannel(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aUri = sync.Uri();
+            aMetadata = sync.Metadata();
         }
 
         /// <summary>
@@ -477,11 +705,13 @@ namespace Zapp.ControlPoint.Proxies
         /// EndChannel().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginChannel(CallbackAsyncComplete aCallback)
+        public void BeginChannel(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginChannel(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionChannel, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionChannel.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionChannel.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -491,20 +721,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaUri"></param>
         /// <param name="aaMetadata"></param>
-        public unsafe void EndChannel(uint aAsyncHandle, out string aaUri, out string aaMetadata)
+        public void EndChannel(IntPtr aAsyncHandle, out String aUri, out String aMetadata)
         {
-            char* aUri;
-            char* aMetadata;
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndChannel(iHandle, aAsyncHandle, &aUri, &aMetadata))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaUri = Marshal.PtrToStringAnsi((IntPtr)aUri);
-            ZappFree(aUri);
-            aaMetadata = Marshal.PtrToStringAnsi((IntPtr)aMetadata);
-            ZappFree(aMetadata);
+            uint index = 0;
+            aUri = Invocation.OutputString(aAsyncHandle, index++);
+            aMetadata = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -514,15 +735,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUri"></param>
         /// <param name="aaMetadata"></param>
-        public unsafe void SyncSetChannel(string aaUri, string aaMetadata)
+        public void SyncSetChannel(String aUri, String aMetadata)
         {
-            char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
-            char* aMetadata = (char*)Marshal.StringToHGlobalAnsi(aaMetadata);
-            {
-                CpProxyLinnCoUkRadio1SyncSetChannel(iHandle, aUri, aMetadata);
-            }
-            Marshal.FreeHGlobal((IntPtr)aUri);
-            Marshal.FreeHGlobal((IntPtr)aMetadata);
+            SyncSetChannelLinnCoUkRadio1 sync = new SyncSetChannelLinnCoUkRadio1(this);
+            BeginSetChannel(aUri, aMetadata, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -535,15 +753,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetadata"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetChannel(string aaUri, string aaMetadata, CallbackAsyncComplete aCallback)
+        public void BeginSetChannel(String aUri, String aMetadata, CallbackAsyncComplete aCallback)
         {
-            char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
-            char* aMetadata = (char*)Marshal.StringToHGlobalAnsi(aaMetadata);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginSetChannel(iHandle, aUri, aMetadata, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)aUri);
-            Marshal.FreeHGlobal((IntPtr)aMetadata);
+            Invocation invocation = iService.Invocation(iActionSetChannel, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetChannel.InputParameter(inIndex++), aUri));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetChannel.InputParameter(inIndex++), aMetadata));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -551,14 +767,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetChannel(uint aAsyncHandle)
+        public void EndSetChannel(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndSetChannel(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -567,14 +777,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaInfo"></param>
-        public unsafe void SyncProtocolInfo(out string aaInfo)
+        public void SyncProtocolInfo(out String aInfo)
         {
-            char* aInfo;
-            {
-                CpProxyLinnCoUkRadio1SyncProtocolInfo(iHandle, &aInfo);
-            }
-            aaInfo = Marshal.PtrToStringAnsi((IntPtr)aInfo);
-            ZappFree(aInfo);
+            SyncProtocolInfoLinnCoUkRadio1 sync = new SyncProtocolInfoLinnCoUkRadio1(this);
+            BeginProtocolInfo(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aInfo = sync.Info();
         }
 
         /// <summary>
@@ -585,11 +794,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndProtocolInfo().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginProtocolInfo(CallbackAsyncComplete aCallback)
+        public void BeginProtocolInfo(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginProtocolInfo(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionProtocolInfo, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionProtocolInfo.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -598,17 +808,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaInfo"></param>
-        public unsafe void EndProtocolInfo(uint aAsyncHandle, out string aaInfo)
+        public void EndProtocolInfo(IntPtr aAsyncHandle, out String aInfo)
         {
-            char* aInfo;
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndProtocolInfo(iHandle, aAsyncHandle, &aInfo))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaInfo = Marshal.PtrToStringAnsi((IntPtr)aInfo);
-            ZappFree(aInfo);
+            uint index = 0;
+            aInfo = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -617,14 +820,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaState"></param>
-        public unsafe void SyncTransportState(out string aaState)
+        public void SyncTransportState(out String aState)
         {
-            char* aState;
-            {
-                CpProxyLinnCoUkRadio1SyncTransportState(iHandle, &aState);
-            }
-            aaState = Marshal.PtrToStringAnsi((IntPtr)aState);
-            ZappFree(aState);
+            SyncTransportStateLinnCoUkRadio1 sync = new SyncTransportStateLinnCoUkRadio1(this);
+            BeginTransportState(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aState = sync.State();
         }
 
         /// <summary>
@@ -635,11 +837,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndTransportState().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginTransportState(CallbackAsyncComplete aCallback)
+        public void BeginTransportState(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginTransportState(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionTransportState, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionTransportState.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -648,17 +851,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaState"></param>
-        public unsafe void EndTransportState(uint aAsyncHandle, out string aaState)
+        public void EndTransportState(IntPtr aAsyncHandle, out String aState)
         {
-            char* aState;
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndTransportState(iHandle, aAsyncHandle, &aState))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaState = Marshal.PtrToStringAnsi((IntPtr)aState);
-            ZappFree(aState);
+            uint index = 0;
+            aState = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -667,12 +863,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaId"></param>
-        public unsafe void SyncId(out uint aaId)
+        public void SyncId(out uint aId)
         {
-            fixed (uint* aId = &aaId)
-            {
-                CpProxyLinnCoUkRadio1SyncId(iHandle, aId);
-            }
+            SyncIdLinnCoUkRadio1 sync = new SyncIdLinnCoUkRadio1(this);
+            BeginId(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aId = sync.Id();
         }
 
         /// <summary>
@@ -683,11 +880,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndId().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginId(CallbackAsyncComplete aCallback)
+        public void BeginId(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginId(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionId, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionId.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -696,15 +894,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaId"></param>
-        public unsafe void EndId(uint aAsyncHandle, out uint aaId)
+        public void EndId(IntPtr aAsyncHandle, out uint aId)
         {
-            fixed (uint* aId = &aaId)
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndId(iHandle, aAsyncHandle, aId))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aId = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -714,13 +907,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaId"></param>
         /// <param name="aaUri"></param>
-        public unsafe void SyncSetId(uint aaId, string aaUri)
+        public void SyncSetId(uint aId, String aUri)
         {
-            char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
-            {
-                CpProxyLinnCoUkRadio1SyncSetId(iHandle, aaId, aUri);
-            }
-            Marshal.FreeHGlobal((IntPtr)aUri);
+            SyncSetIdLinnCoUkRadio1 sync = new SyncSetIdLinnCoUkRadio1(this);
+            BeginSetId(aId, aUri, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -733,13 +925,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUri"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetId(uint aaId, string aaUri, CallbackAsyncComplete aCallback)
+        public void BeginSetId(uint aId, String aUri, CallbackAsyncComplete aCallback)
         {
-            char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginSetId(iHandle, aaId, aUri, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)aUri);
+            Invocation invocation = iService.Invocation(iActionSetId, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetId.InputParameter(inIndex++), aId));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetId.InputParameter(inIndex++), aUri));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -747,14 +939,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetId(uint aAsyncHandle)
+        public void EndSetId(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndSetId(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -764,14 +950,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaId"></param>
         /// <param name="aaMetadata"></param>
-        public unsafe void SyncRead(uint aaId, out string aaMetadata)
+        public void SyncRead(uint aId, out String aMetadata)
         {
-            char* aMetadata;
-            {
-                CpProxyLinnCoUkRadio1SyncRead(iHandle, aaId, &aMetadata);
-            }
-            aaMetadata = Marshal.PtrToStringAnsi((IntPtr)aMetadata);
-            ZappFree(aMetadata);
+            SyncReadLinnCoUkRadio1 sync = new SyncReadLinnCoUkRadio1(this);
+            BeginRead(aId, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aMetadata = sync.Metadata();
         }
 
         /// <summary>
@@ -783,11 +968,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaId"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginRead(uint aaId, CallbackAsyncComplete aCallback)
+        public void BeginRead(uint aId, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginRead(iHandle, aaId, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionRead, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionRead.InputParameter(inIndex++), aId));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionRead.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -796,17 +984,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMetadata"></param>
-        public unsafe void EndRead(uint aAsyncHandle, out string aaMetadata)
+        public void EndRead(IntPtr aAsyncHandle, out String aMetadata)
         {
-            char* aMetadata;
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndRead(iHandle, aAsyncHandle, &aMetadata))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaMetadata = Marshal.PtrToStringAnsi((IntPtr)aMetadata);
-            ZappFree(aMetadata);
+            uint index = 0;
+            aMetadata = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -816,16 +997,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIdList"></param>
         /// <param name="aaMetadataList"></param>
-        public unsafe void SyncReadList(string aaIdList, out string aaMetadataList)
+        public void SyncReadList(String aIdList, out String aMetadataList)
         {
-            char* aIdList = (char*)Marshal.StringToHGlobalAnsi(aaIdList);
-            char* aMetadataList;
-            {
-                CpProxyLinnCoUkRadio1SyncReadList(iHandle, aIdList, &aMetadataList);
-            }
-            Marshal.FreeHGlobal((IntPtr)aIdList);
-            aaMetadataList = Marshal.PtrToStringAnsi((IntPtr)aMetadataList);
-            ZappFree(aMetadataList);
+            SyncReadListLinnCoUkRadio1 sync = new SyncReadListLinnCoUkRadio1(this);
+            BeginReadList(aIdList, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aMetadataList = sync.MetadataList();
         }
 
         /// <summary>
@@ -837,13 +1015,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIdList"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginReadList(string aaIdList, CallbackAsyncComplete aCallback)
+        public void BeginReadList(String aIdList, CallbackAsyncComplete aCallback)
         {
-            char* aIdList = (char*)Marshal.StringToHGlobalAnsi(aaIdList);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginReadList(iHandle, aIdList, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)aIdList);
+            Invocation invocation = iService.Invocation(iActionReadList, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionReadList.InputParameter(inIndex++), aIdList));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionReadList.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -852,17 +1031,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMetadataList"></param>
-        public unsafe void EndReadList(uint aAsyncHandle, out string aaMetadataList)
+        public void EndReadList(IntPtr aAsyncHandle, out String aMetadataList)
         {
-            char* aMetadataList;
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndReadList(iHandle, aAsyncHandle, &aMetadataList))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaMetadataList = Marshal.PtrToStringAnsi((IntPtr)aMetadataList);
-            ZappFree(aMetadataList);
+            uint index = 0;
+            aMetadataList = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -872,16 +1044,14 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArray"></param>
-        public unsafe void SyncIdArray(out uint aaIdArrayToken, out string aaIdArray)
+        public void SyncIdArray(out uint aIdArrayToken, out String aIdArray)
         {
-            char* aIdArray;
-            uint aIdArrayLen;
-            fixed (uint* aIdArrayToken = &aaIdArrayToken)
-            {
-                CpProxyLinnCoUkRadio1SyncIdArray(iHandle, aIdArrayToken, &aIdArray, &aIdArrayLen);
-            }
-            aaIdArray = Marshal.PtrToStringAnsi((IntPtr)aIdArray, (int)aIdArrayLen);
-            ZappFree(aIdArray);
+            SyncIdArrayLinnCoUkRadio1 sync = new SyncIdArrayLinnCoUkRadio1(this);
+            BeginIdArray(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aIdArrayToken = sync.IdArrayToken();
+            aIdArray = sync.IdArray();
         }
 
         /// <summary>
@@ -892,11 +1062,13 @@ namespace Zapp.ControlPoint.Proxies
         /// EndIdArray().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginIdArray(CallbackAsyncComplete aCallback)
+        public void BeginIdArray(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginIdArray(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionIdArray, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionIdArray.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentBinary((ParameterBinary)iActionIdArray.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -906,19 +1078,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArray"></param>
-        public unsafe void EndIdArray(uint aAsyncHandle, out uint aaIdArrayToken, out string aaIdArray)
+        public void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out String aIdArray)
         {
-            char* aIdArray;
-            uint aIdArrayLen;
-            fixed (uint* aIdArrayToken = &aaIdArrayToken)
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndIdArray(iHandle, aAsyncHandle, aIdArrayToken, &aIdArray, &aIdArrayLen))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaIdArray = Marshal.PtrToStringAnsi((IntPtr)aIdArray, (int)aIdArrayLen);
-            ZappFree(aIdArray);
+            uint index = 0;
+            aIdArrayToken = Invocation.OutputUint(aAsyncHandle, index++);
+            aIdArray = Invocation.OutputBinary(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -928,13 +1092,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArrayChanged"></param>
-        public unsafe void SyncIdArrayChanged(uint aaIdArrayToken, out bool aaIdArrayChanged)
+        public void SyncIdArrayChanged(uint aIdArrayToken, out bool aIdArrayChanged)
         {
-            uint aIdArrayChanged;
-            {
-                CpProxyLinnCoUkRadio1SyncIdArrayChanged(iHandle, aaIdArrayToken, &aIdArrayChanged);
-            }
-            aaIdArrayChanged = (aIdArrayChanged != 0);
+            SyncIdArrayChangedLinnCoUkRadio1 sync = new SyncIdArrayChangedLinnCoUkRadio1(this);
+            BeginIdArrayChanged(aIdArrayToken, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aIdArrayChanged = sync.IdArrayChanged();
         }
 
         /// <summary>
@@ -946,11 +1110,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginIdArrayChanged(uint aaIdArrayToken, CallbackAsyncComplete aCallback)
+        public void BeginIdArrayChanged(uint aIdArrayToken, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginIdArrayChanged(iHandle, aaIdArrayToken, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionIdArrayChanged, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionIdArrayChanged.InputParameter(inIndex++), aIdArrayToken));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentBool((ParameterBool)iActionIdArrayChanged.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -959,16 +1126,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaIdArrayChanged"></param>
-        public unsafe void EndIdArrayChanged(uint aAsyncHandle, out bool aaIdArrayChanged)
+        public void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aIdArrayChanged)
         {
-            uint aIdArrayChanged;
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndIdArrayChanged(iHandle, aAsyncHandle, &aIdArrayChanged))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaIdArrayChanged = (aIdArrayChanged != 0);
+            uint index = 0;
+            aIdArrayChanged = Invocation.OutputBool(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -977,12 +1138,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIdsMax"></param>
-        public unsafe void SyncIdsMax(out uint aaIdsMax)
+        public void SyncIdsMax(out uint aIdsMax)
         {
-            fixed (uint* aIdsMax = &aaIdsMax)
-            {
-                CpProxyLinnCoUkRadio1SyncIdsMax(iHandle, aIdsMax);
-            }
+            SyncIdsMaxLinnCoUkRadio1 sync = new SyncIdsMaxLinnCoUkRadio1(this);
+            BeginIdsMax(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aIdsMax = sync.IdsMax();
         }
 
         /// <summary>
@@ -993,11 +1155,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndIdsMax().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginIdsMax(CallbackAsyncComplete aCallback)
+        public void BeginIdsMax(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkRadio1BeginIdsMax(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionIdsMax, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionIdsMax.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1006,15 +1169,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaIdsMax"></param>
-        public unsafe void EndIdsMax(uint aAsyncHandle, out uint aaIdsMax)
+        public void EndIdsMax(IntPtr aAsyncHandle, out uint aIdsMax)
         {
-            fixed (uint* aIdsMax = &aaIdsMax)
-            {
-                if (0 != CpProxyLinnCoUkRadio1EndIdsMax(iHandle, aAsyncHandle, aIdsMax))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aIdsMax = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1025,17 +1183,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aChannelUriChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyChannelUriChanged(CallbackPropertyChanged aChannelUriChanged)
         {
-            iChannelUriChanged = aChannelUriChanged;
-            iCallbackChannelUriChanged = new Callback(PropertyChannelUriChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkRadio1SetPropertyChannelUriChanged(iHandle, iCallbackChannelUriChanged, ptr);
+            lock (this)
+            {
+                iChannelUriChanged = aChannelUriChanged;
+            }
         }
 
-        private void PropertyChannelUriChanged(IntPtr aPtr)
+        private void ChannelUriPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkRadio1 self = (CpProxyLinnCoUkRadio1)gch.Target;
-            self.iChannelUriChanged();
+            lock (this)
+            {
+                if (iChannelUriChanged != null)
+                {
+                    iChannelUriChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1046,17 +1208,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aChannelMetadataChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyChannelMetadataChanged(CallbackPropertyChanged aChannelMetadataChanged)
         {
-            iChannelMetadataChanged = aChannelMetadataChanged;
-            iCallbackChannelMetadataChanged = new Callback(PropertyChannelMetadataChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkRadio1SetPropertyChannelMetadataChanged(iHandle, iCallbackChannelMetadataChanged, ptr);
+            lock (this)
+            {
+                iChannelMetadataChanged = aChannelMetadataChanged;
+            }
         }
 
-        private void PropertyChannelMetadataChanged(IntPtr aPtr)
+        private void ChannelMetadataPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkRadio1 self = (CpProxyLinnCoUkRadio1)gch.Target;
-            self.iChannelMetadataChanged();
+            lock (this)
+            {
+                if (iChannelMetadataChanged != null)
+                {
+                    iChannelMetadataChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1067,17 +1233,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransportStateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTransportStateChanged(CallbackPropertyChanged aTransportStateChanged)
         {
-            iTransportStateChanged = aTransportStateChanged;
-            iCallbackTransportStateChanged = new Callback(PropertyTransportStateChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkRadio1SetPropertyTransportStateChanged(iHandle, iCallbackTransportStateChanged, ptr);
+            lock (this)
+            {
+                iTransportStateChanged = aTransportStateChanged;
+            }
         }
 
-        private void PropertyTransportStateChanged(IntPtr aPtr)
+        private void TransportStatePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkRadio1 self = (CpProxyLinnCoUkRadio1)gch.Target;
-            self.iTransportStateChanged();
+            lock (this)
+            {
+                if (iTransportStateChanged != null)
+                {
+                    iTransportStateChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1088,17 +1258,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProtocolInfoChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProtocolInfoChanged(CallbackPropertyChanged aProtocolInfoChanged)
         {
-            iProtocolInfoChanged = aProtocolInfoChanged;
-            iCallbackProtocolInfoChanged = new Callback(PropertyProtocolInfoChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkRadio1SetPropertyProtocolInfoChanged(iHandle, iCallbackProtocolInfoChanged, ptr);
+            lock (this)
+            {
+                iProtocolInfoChanged = aProtocolInfoChanged;
+            }
         }
 
-        private void PropertyProtocolInfoChanged(IntPtr aPtr)
+        private void ProtocolInfoPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkRadio1 self = (CpProxyLinnCoUkRadio1)gch.Target;
-            self.iProtocolInfoChanged();
+            lock (this)
+            {
+                if (iProtocolInfoChanged != null)
+                {
+                    iProtocolInfoChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1109,17 +1283,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIdChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyIdChanged(CallbackPropertyChanged aIdChanged)
         {
-            iIdChanged = aIdChanged;
-            iCallbackIdChanged = new Callback(PropertyIdChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkRadio1SetPropertyIdChanged(iHandle, iCallbackIdChanged, ptr);
+            lock (this)
+            {
+                iIdChanged = aIdChanged;
+            }
         }
 
-        private void PropertyIdChanged(IntPtr aPtr)
+        private void IdPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkRadio1 self = (CpProxyLinnCoUkRadio1)gch.Target;
-            self.iIdChanged();
+            lock (this)
+            {
+                if (iIdChanged != null)
+                {
+                    iIdChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1130,17 +1308,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIdArrayChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyIdArrayChanged(CallbackPropertyChanged aIdArrayChanged)
         {
-            iIdArrayChanged = aIdArrayChanged;
-            iCallbackIdArrayChanged = new Callback(PropertyIdArrayChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkRadio1SetPropertyIdArrayChanged(iHandle, iCallbackIdArrayChanged, ptr);
+            lock (this)
+            {
+                iIdArrayChanged = aIdArrayChanged;
+            }
         }
 
-        private void PropertyIdArrayChanged(IntPtr aPtr)
+        private void IdArrayPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkRadio1 self = (CpProxyLinnCoUkRadio1)gch.Target;
-            self.iIdArrayChanged();
+            lock (this)
+            {
+                if (iIdArrayChanged != null)
+                {
+                    iIdArrayChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1151,17 +1333,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIdsMaxChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyIdsMaxChanged(CallbackPropertyChanged aIdsMaxChanged)
         {
-            iIdsMaxChanged = aIdsMaxChanged;
-            iCallbackIdsMaxChanged = new Callback(PropertyIdsMaxChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkRadio1SetPropertyIdsMaxChanged(iHandle, iCallbackIdsMaxChanged, ptr);
+            lock (this)
+            {
+                iIdsMaxChanged = aIdsMaxChanged;
+            }
         }
 
-        private void PropertyIdsMaxChanged(IntPtr aPtr)
+        private void IdsMaxPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkRadio1 self = (CpProxyLinnCoUkRadio1)gch.Target;
-            self.iIdsMaxChanged();
+            lock (this)
+            {
+                if (iIdsMaxChanged != null)
+                {
+                    iIdsMaxChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1171,12 +1357,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aChannelUri">Will be set to the value of the property</param>
-        public unsafe void PropertyChannelUri(out string aChannelUri)
+        public String PropertyChannelUri()
         {
-            char* ptr;
-            CpProxyLinnCoUkRadio1PropertyChannelUri(iHandle, &ptr);
-            aChannelUri = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iChannelUri.Value();
         }
 
         /// <summary>
@@ -1186,12 +1369,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aChannelMetadata">Will be set to the value of the property</param>
-        public unsafe void PropertyChannelMetadata(out string aChannelMetadata)
+        public String PropertyChannelMetadata()
         {
-            char* ptr;
-            CpProxyLinnCoUkRadio1PropertyChannelMetadata(iHandle, &ptr);
-            aChannelMetadata = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iChannelMetadata.Value();
         }
 
         /// <summary>
@@ -1201,12 +1381,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aTransportState">Will be set to the value of the property</param>
-        public unsafe void PropertyTransportState(out string aTransportState)
+        public String PropertyTransportState()
         {
-            char* ptr;
-            CpProxyLinnCoUkRadio1PropertyTransportState(iHandle, &ptr);
-            aTransportState = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iTransportState.Value();
         }
 
         /// <summary>
@@ -1216,12 +1393,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aProtocolInfo">Will be set to the value of the property</param>
-        public unsafe void PropertyProtocolInfo(out string aProtocolInfo)
+        public String PropertyProtocolInfo()
         {
-            char* ptr;
-            CpProxyLinnCoUkRadio1PropertyProtocolInfo(iHandle, &ptr);
-            aProtocolInfo = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iProtocolInfo.Value();
         }
 
         /// <summary>
@@ -1231,12 +1405,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aId">Will be set to the value of the property</param>
-        public unsafe void PropertyId(out uint aId)
+        public uint PropertyId()
         {
-            fixed (uint* id = &aId)
-            {
-                CpProxyLinnCoUkRadio1PropertyId(iHandle, id);
-            }
+            return iId.Value();
         }
 
         /// <summary>
@@ -1246,13 +1417,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aIdArray">Will be set to the value of the property</param>
-        public unsafe void PropertyIdArray(out string aIdArray)
+        public String PropertyIdArray()
         {
-            char* ptr;
-            uint len;
-            CpProxyLinnCoUkRadio1PropertyIdArray(iHandle, &ptr, &len);
-            aIdArray = Marshal.PtrToStringAnsi((IntPtr)ptr, (int)len);
-            ZappFree(ptr);
+            return iIdArray.Value();
         }
 
         /// <summary>
@@ -1262,12 +1429,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aIdsMax">Will be set to the value of the property</param>
-        public unsafe void PropertyIdsMax(out uint aIdsMax)
+        public uint PropertyIdsMax()
         {
-            fixed (uint* idsMax = &aIdsMax)
-            {
-                CpProxyLinnCoUkRadio1PropertyIdsMax(iHandle, idsMax);
-            }
+            return iIdsMax.Value();
         }
 
         /// <summary>
@@ -1287,21 +1451,39 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                CpProxyLinnCoUkRadio1Destroy(iHandle);
-                iHandle = 0;
+                DisposeProxy();
+                iHandle = IntPtr.Zero;
+                iActionPlay.Dispose();
+                iActionPause.Dispose();
+                iActionStop.Dispose();
+                iActionSeekSecondAbsolute.Dispose();
+                iActionSeekSecondRelative.Dispose();
+                iActionChannel.Dispose();
+                iActionSetChannel.Dispose();
+                iActionProtocolInfo.Dispose();
+                iActionTransportState.Dispose();
+                iActionId.Dispose();
+                iActionSetId.Dispose();
+                iActionRead.Dispose();
+                iActionReadList.Dispose();
+                iActionIdArray.Dispose();
+                iActionIdArrayChanged.Dispose();
+                iActionIdsMax.Dispose();
+                iChannelUri.Dispose();
+                iChannelMetadata.Dispose();
+                iTransportState.Dispose();
+                iProtocolInfo.Dispose();
+                iId.Dispose();
+                iIdArray.Dispose();
+                iIdsMax.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

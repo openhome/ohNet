@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the SupportedProtocols property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertySupportedProtocols(out string aValue);
+        string PropertySupportedProtocols();
 
         /// <summary>
         /// Set the value of the TrackDuration property
@@ -32,7 +33,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TrackDuration property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTrackDuration(out uint aValue);
+        uint PropertyTrackDuration();
 
         /// <summary>
         /// Set the value of the TrackBitRate property
@@ -45,7 +46,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TrackBitRate property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTrackBitRate(out uint aValue);
+        uint PropertyTrackBitRate();
 
         /// <summary>
         /// Set the value of the TrackLossless property
@@ -58,7 +59,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TrackLossless property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTrackLossless(out bool aValue);
+        bool PropertyTrackLossless();
 
         /// <summary>
         /// Set the value of the TrackBitDepth property
@@ -71,7 +72,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TrackBitDepth property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTrackBitDepth(out uint aValue);
+        uint PropertyTrackBitDepth();
 
         /// <summary>
         /// Set the value of the TrackSampleRate property
@@ -84,7 +85,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TrackSampleRate property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTrackSampleRate(out uint aValue);
+        uint PropertyTrackSampleRate();
 
         /// <summary>
         /// Set the value of the TrackCodecName property
@@ -97,7 +98,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TrackCodecName property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTrackCodecName(out string aValue);
+        string PropertyTrackCodecName();
 
         /// <summary>
         /// Set the value of the TrackId property
@@ -110,7 +111,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TrackId property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTrackId(out uint aValue);
+        uint PropertyTrackId();
 
         /// <summary>
         /// Set the value of the TransportState property
@@ -123,7 +124,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TransportState property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTransportState(out string aValue);
+        string PropertyTransportState();
         
     }
     /// <summary>
@@ -131,100 +132,59 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkDs1 : DvProvider, IDisposable, IDvProviderLinnCoUkDs1
     {
-        [DllImport("DvLinnCoUkDs1")]
-        static extern uint DvProviderLinnCoUkDs1Create(uint aDeviceHandle);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern void DvProviderLinnCoUkDs1Destroy(uint aHandle);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvProviderLinnCoUkDs1SetPropertySupportedProtocols(uint aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvProviderLinnCoUkDs1GetPropertySupportedProtocols(uint aHandle, char** aValue);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackDuration(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackDuration(uint aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackBitRate(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackBitRate(uint aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackLossless(uint aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackLossless(uint aHandle, int* aValue);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackBitDepth(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackBitDepth(uint aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackSampleRate(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackSampleRate(uint aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackCodecName(uint aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackCodecName(uint aHandle, char** aValue);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackId(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackId(uint aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTransportState(uint aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTransportState(uint aHandle, char** aValue);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern void DvProviderLinnCoUkDs1EnableActionPlay(uint aHandle, CallbackPlay aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern void DvProviderLinnCoUkDs1EnableActionPause(uint aHandle, CallbackPause aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern void DvProviderLinnCoUkDs1EnableActionStop(uint aHandle, CallbackStop aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern void DvProviderLinnCoUkDs1EnableActionSeekSecondAbsolute(uint aHandle, CallbackSeekSecondAbsolute aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern void DvProviderLinnCoUkDs1EnableActionSeekSecondRelative(uint aHandle, CallbackSeekSecondRelative aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern void DvProviderLinnCoUkDs1EnableActionSeekTrackId(uint aHandle, CallbackSeekTrackId aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern void DvProviderLinnCoUkDs1EnableActionSeekTrackAbsolute(uint aHandle, CallbackSeekTrackAbsolute aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern void DvProviderLinnCoUkDs1EnableActionSeekTrackRelative(uint aHandle, CallbackSeekTrackRelative aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern void DvProviderLinnCoUkDs1EnableActionState(uint aHandle, CallbackState aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDs1")]
-        static extern void DvProviderLinnCoUkDs1EnableActionProtocolInfo(uint aHandle, CallbackProtocolInfo aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackPlay(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackPause(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackStop(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackSeekSecondAbsolute(IntPtr aPtr, uint aVersion, uint aaSecond);
-        private unsafe delegate int CallbackSeekSecondRelative(IntPtr aPtr, uint aVersion, int aaSecond);
-        private unsafe delegate int CallbackSeekTrackId(IntPtr aPtr, uint aVersion, uint aaTrackId);
-        private unsafe delegate int CallbackSeekTrackAbsolute(IntPtr aPtr, uint aVersion, uint aaTrack);
-        private unsafe delegate int CallbackSeekTrackRelative(IntPtr aPtr, uint aVersion, int aaTrack);
-        private unsafe delegate int CallbackState(IntPtr aPtr, uint aVersion, char** aaTransportState, uint* aaTrackDuration, uint* aaTrackBitRate, int* aaTrackLossless, uint* aaTrackBitDepth, uint* aaTrackSampleRate, char** aaTrackCodecName, uint* aaTrackId);
-        private unsafe delegate int CallbackProtocolInfo(IntPtr aPtr, uint aVersion, char** aaSupportedProtocols);
-
         private GCHandle iGch;
-        private CallbackPlay iCallbackPlay;
-        private CallbackPause iCallbackPause;
-        private CallbackStop iCallbackStop;
-        private CallbackSeekSecondAbsolute iCallbackSeekSecondAbsolute;
-        private CallbackSeekSecondRelative iCallbackSeekSecondRelative;
-        private CallbackSeekTrackId iCallbackSeekTrackId;
-        private CallbackSeekTrackAbsolute iCallbackSeekTrackAbsolute;
-        private CallbackSeekTrackRelative iCallbackSeekTrackRelative;
-        private CallbackState iCallbackState;
-        private CallbackProtocolInfo iCallbackProtocolInfo;
+        private ActionDelegate iDelegatePlay;
+        private ActionDelegate iDelegatePause;
+        private ActionDelegate iDelegateStop;
+        private ActionDelegate iDelegateSeekSecondAbsolute;
+        private ActionDelegate iDelegateSeekSecondRelative;
+        private ActionDelegate iDelegateSeekTrackId;
+        private ActionDelegate iDelegateSeekTrackAbsolute;
+        private ActionDelegate iDelegateSeekTrackRelative;
+        private ActionDelegate iDelegateState;
+        private ActionDelegate iDelegateProtocolInfo;
+        private PropertyString iPropertySupportedProtocols;
+        private PropertyUint iPropertyTrackDuration;
+        private PropertyUint iPropertyTrackBitRate;
+        private PropertyBool iPropertyTrackLossless;
+        private PropertyUint iPropertyTrackBitDepth;
+        private PropertyUint iPropertyTrackSampleRate;
+        private PropertyString iPropertyTrackCodecName;
+        private PropertyUint iPropertyTrackId;
+        private PropertyString iPropertyTransportState;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkDs1(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "Ds", 1)
         {
-            iHandle = DvProviderLinnCoUkDs1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            List<String> allowedValues = new List<String>();
+            iPropertySupportedProtocols = new PropertyString(new ParameterString("SupportedProtocols", allowedValues));
+            AddProperty(iPropertySupportedProtocols);
+            iPropertyTrackDuration = new PropertyUint(new ParameterUint("TrackDuration"));
+            AddProperty(iPropertyTrackDuration);
+            iPropertyTrackBitRate = new PropertyUint(new ParameterUint("TrackBitRate"));
+            AddProperty(iPropertyTrackBitRate);
+            iPropertyTrackLossless = new PropertyBool(new ParameterBool("TrackLossless"));
+            AddProperty(iPropertyTrackLossless);
+            iPropertyTrackBitDepth = new PropertyUint(new ParameterUint("TrackBitDepth"));
+            AddProperty(iPropertyTrackBitDepth);
+            iPropertyTrackSampleRate = new PropertyUint(new ParameterUint("TrackSampleRate"));
+            AddProperty(iPropertyTrackSampleRate);
+            iPropertyTrackCodecName = new PropertyString(new ParameterString("TrackCodecName", allowedValues));
+            AddProperty(iPropertyTrackCodecName);
+            iPropertyTrackId = new PropertyUint(new ParameterUint("TrackId"));
+            AddProperty(iPropertyTrackId);
+            allowedValues.Add("Playing");
+            allowedValues.Add("Paused");
+            allowedValues.Add("Stopped");
+            allowedValues.Add("Buffering");
+            iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues));
+            AddProperty(iPropertyTransportState);
+            allowedValues.Clear();
         }
 
         /// <summary>
@@ -232,29 +192,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertySupportedProtocols(string aValue)
+        public bool SetPropertySupportedProtocols(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkDs1SetPropertySupportedProtocols(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertySupportedProtocols, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the SupportedProtocols property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertySupportedProtocols(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertySupportedProtocols()
         {
-            char* value;
-            DvProviderLinnCoUkDs1GetPropertySupportedProtocols(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertySupportedProtocols.Value();
         }
 
         /// <summary>
@@ -262,26 +211,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTrackDuration(uint aValue)
+        public bool SetPropertyTrackDuration(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkDs1SetPropertyTrackDuration(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyTrackDuration, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TrackDuration property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTrackDuration(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyTrackDuration()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkDs1GetPropertyTrackDuration(iHandle, value);
-            }
+            return iPropertyTrackDuration.Value();
         }
 
         /// <summary>
@@ -289,26 +230,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTrackBitRate(uint aValue)
+        public bool SetPropertyTrackBitRate(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkDs1SetPropertyTrackBitRate(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyTrackBitRate, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TrackBitRate property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTrackBitRate(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyTrackBitRate()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkDs1GetPropertyTrackBitRate(iHandle, value);
-            }
+            return iPropertyTrackBitRate.Value();
         }
 
         /// <summary>
@@ -316,26 +249,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTrackLossless(bool aValue)
+        public bool SetPropertyTrackLossless(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkDs1SetPropertyTrackLossless(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyTrackLossless, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TrackLossless property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTrackLossless(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyTrackLossless()
         {
-            int value;
-            DvProviderLinnCoUkDs1GetPropertyTrackLossless(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyTrackLossless.Value();
         }
 
         /// <summary>
@@ -343,26 +268,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTrackBitDepth(uint aValue)
+        public bool SetPropertyTrackBitDepth(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkDs1SetPropertyTrackBitDepth(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyTrackBitDepth, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TrackBitDepth property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTrackBitDepth(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyTrackBitDepth()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkDs1GetPropertyTrackBitDepth(iHandle, value);
-            }
+            return iPropertyTrackBitDepth.Value();
         }
 
         /// <summary>
@@ -370,26 +287,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTrackSampleRate(uint aValue)
+        public bool SetPropertyTrackSampleRate(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkDs1SetPropertyTrackSampleRate(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyTrackSampleRate, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TrackSampleRate property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTrackSampleRate(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyTrackSampleRate()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkDs1GetPropertyTrackSampleRate(iHandle, value);
-            }
+            return iPropertyTrackSampleRate.Value();
         }
 
         /// <summary>
@@ -397,29 +306,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTrackCodecName(string aValue)
+        public bool SetPropertyTrackCodecName(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkDs1SetPropertyTrackCodecName(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyTrackCodecName, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TrackCodecName property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTrackCodecName(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyTrackCodecName()
         {
-            char* value;
-            DvProviderLinnCoUkDs1GetPropertyTrackCodecName(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyTrackCodecName.Value();
         }
 
         /// <summary>
@@ -427,26 +325,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTrackId(uint aValue)
+        public bool SetPropertyTrackId(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkDs1SetPropertyTrackId(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyTrackId, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TrackId property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTrackId(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyTrackId()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkDs1GetPropertyTrackId(iHandle, value);
-            }
+            return iPropertyTrackId.Value();
         }
 
         /// <summary>
@@ -454,29 +344,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTransportState(string aValue)
+        public bool SetPropertyTransportState(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkDs1SetPropertyTransportState(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyTransportState, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TransportState property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTransportState(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyTransportState()
         {
-            char* value;
-            DvProviderLinnCoUkDs1GetPropertyTransportState(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyTransportState.Value();
         }
 
         /// <summary>
@@ -484,11 +363,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPlay must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPlay()
+        protected void EnableActionPlay()
         {
-            iCallbackPlay = new CallbackPlay(DoPlay);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDs1EnableActionPlay(iHandle, iCallbackPlay, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Play");
+            iDelegatePlay = new ActionDelegate(DoPlay);
+            EnableAction(action, iDelegatePlay, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -496,11 +375,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPause must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPause()
+        protected void EnableActionPause()
         {
-            iCallbackPause = new CallbackPause(DoPause);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDs1EnableActionPause(iHandle, iCallbackPause, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Pause");
+            iDelegatePause = new ActionDelegate(DoPause);
+            EnableAction(action, iDelegatePause, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -508,11 +387,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStop must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStop()
+        protected void EnableActionStop()
         {
-            iCallbackStop = new CallbackStop(DoStop);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDs1EnableActionStop(iHandle, iCallbackStop, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Stop");
+            iDelegateStop = new ActionDelegate(DoStop);
+            EnableAction(action, iDelegateStop, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -520,11 +399,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeekSecondAbsolute must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeekSecondAbsolute()
+        protected void EnableActionSeekSecondAbsolute()
         {
-            iCallbackSeekSecondAbsolute = new CallbackSeekSecondAbsolute(DoSeekSecondAbsolute);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDs1EnableActionSeekSecondAbsolute(iHandle, iCallbackSeekSecondAbsolute, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SeekSecondAbsolute");
+            action.AddInputParameter(new ParameterUint("aSecond"));
+            iDelegateSeekSecondAbsolute = new ActionDelegate(DoSeekSecondAbsolute);
+            EnableAction(action, iDelegateSeekSecondAbsolute, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -532,11 +412,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeekSecondRelative must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeekSecondRelative()
+        protected void EnableActionSeekSecondRelative()
         {
-            iCallbackSeekSecondRelative = new CallbackSeekSecondRelative(DoSeekSecondRelative);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDs1EnableActionSeekSecondRelative(iHandle, iCallbackSeekSecondRelative, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SeekSecondRelative");
+            action.AddInputParameter(new ParameterInt("aSecond"));
+            iDelegateSeekSecondRelative = new ActionDelegate(DoSeekSecondRelative);
+            EnableAction(action, iDelegateSeekSecondRelative, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -544,11 +425,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeekTrackId must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeekTrackId()
+        protected void EnableActionSeekTrackId()
         {
-            iCallbackSeekTrackId = new CallbackSeekTrackId(DoSeekTrackId);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDs1EnableActionSeekTrackId(iHandle, iCallbackSeekTrackId, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SeekTrackId");
+            action.AddInputParameter(new ParameterRelated("aTrackId", iPropertyTrackId));
+            iDelegateSeekTrackId = new ActionDelegate(DoSeekTrackId);
+            EnableAction(action, iDelegateSeekTrackId, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -556,11 +438,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeekTrackAbsolute must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeekTrackAbsolute()
+        protected void EnableActionSeekTrackAbsolute()
         {
-            iCallbackSeekTrackAbsolute = new CallbackSeekTrackAbsolute(DoSeekTrackAbsolute);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDs1EnableActionSeekTrackAbsolute(iHandle, iCallbackSeekTrackAbsolute, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SeekTrackAbsolute");
+            action.AddInputParameter(new ParameterUint("aTrack"));
+            iDelegateSeekTrackAbsolute = new ActionDelegate(DoSeekTrackAbsolute);
+            EnableAction(action, iDelegateSeekTrackAbsolute, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -568,11 +451,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeekTrackRelative must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeekTrackRelative()
+        protected void EnableActionSeekTrackRelative()
         {
-            iCallbackSeekTrackRelative = new CallbackSeekTrackRelative(DoSeekTrackRelative);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDs1EnableActionSeekTrackRelative(iHandle, iCallbackSeekTrackRelative, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SeekTrackRelative");
+            action.AddInputParameter(new ParameterInt("aTrack"));
+            iDelegateSeekTrackRelative = new ActionDelegate(DoSeekTrackRelative);
+            EnableAction(action, iDelegateSeekTrackRelative, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -580,11 +464,19 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoState must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionState()
+        protected void EnableActionState()
         {
-            iCallbackState = new CallbackState(DoState);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDs1EnableActionState(iHandle, iCallbackState, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("State");
+            action.AddOutputParameter(new ParameterRelated("aTransportState", iPropertyTransportState));
+            action.AddOutputParameter(new ParameterRelated("aTrackDuration", iPropertyTrackDuration));
+            action.AddOutputParameter(new ParameterRelated("aTrackBitRate", iPropertyTrackBitRate));
+            action.AddOutputParameter(new ParameterRelated("aTrackLossless", iPropertyTrackLossless));
+            action.AddOutputParameter(new ParameterRelated("aTrackBitDepth", iPropertyTrackBitDepth));
+            action.AddOutputParameter(new ParameterRelated("aTrackSampleRate", iPropertyTrackSampleRate));
+            action.AddOutputParameter(new ParameterRelated("aTrackCodecName", iPropertyTrackCodecName));
+            action.AddOutputParameter(new ParameterRelated("aTrackId", iPropertyTrackId));
+            iDelegateState = new ActionDelegate(DoState);
+            EnableAction(action, iDelegateState, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -592,11 +484,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoProtocolInfo must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionProtocolInfo()
+        protected void EnableActionProtocolInfo()
         {
-            iCallbackProtocolInfo = new CallbackProtocolInfo(DoProtocolInfo);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDs1EnableActionProtocolInfo(iHandle, iCallbackProtocolInfo, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("ProtocolInfo");
+            action.AddOutputParameter(new ParameterRelated("aSupportedProtocols", iPropertySupportedProtocols));
+            iDelegateProtocolInfo = new ActionDelegate(DoProtocolInfo);
+            EnableAction(action, iDelegateProtocolInfo, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -743,74 +636,325 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoPlay(IntPtr aPtr, uint aVersion)
+        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
-            self.Play(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.Play(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoPause(IntPtr aPtr, uint aVersion)
+        private static int DoPause(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
-            self.Pause(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.Pause(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoStop(IntPtr aPtr, uint aVersion)
+        private static int DoStop(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
-            self.Stop(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.Stop(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSeekSecondAbsolute(IntPtr aPtr, uint aVersion, uint aaSecond)
+        private static int DoSeekSecondAbsolute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
-            self.SeekSecondAbsolute(aVersion, aaSecond);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aSecond;
+            try
+            {
+                invocation.ReadStart();
+                aSecond = invocation.ReadUint("aSecond");
+                invocation.ReadEnd();
+                self.SeekSecondAbsolute(aVersion, aSecond);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSeekSecondRelative(IntPtr aPtr, uint aVersion, int aaSecond)
+        private static int DoSeekSecondRelative(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
-            self.SeekSecondRelative(aVersion, aaSecond);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            int aSecond;
+            try
+            {
+                invocation.ReadStart();
+                aSecond = invocation.ReadInt("aSecond");
+                invocation.ReadEnd();
+                self.SeekSecondRelative(aVersion, aSecond);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSeekTrackId(IntPtr aPtr, uint aVersion, uint aaTrackId)
+        private static int DoSeekTrackId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
-            self.SeekTrackId(aVersion, aaTrackId);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aTrackId;
+            try
+            {
+                invocation.ReadStart();
+                aTrackId = invocation.ReadUint("aTrackId");
+                invocation.ReadEnd();
+                self.SeekTrackId(aVersion, aTrackId);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSeekTrackAbsolute(IntPtr aPtr, uint aVersion, uint aaTrack)
+        private static int DoSeekTrackAbsolute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
-            self.SeekTrackAbsolute(aVersion, aaTrack);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aTrack;
+            try
+            {
+                invocation.ReadStart();
+                aTrack = invocation.ReadUint("aTrack");
+                invocation.ReadEnd();
+                self.SeekTrackAbsolute(aVersion, aTrack);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSeekTrackRelative(IntPtr aPtr, uint aVersion, int aaTrack)
+        private static int DoSeekTrackRelative(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
-            self.SeekTrackRelative(aVersion, aaTrack);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            int aTrack;
+            try
+            {
+                invocation.ReadStart();
+                aTrack = invocation.ReadInt("aTrack");
+                invocation.ReadEnd();
+                self.SeekTrackRelative(aVersion, aTrack);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoState(IntPtr aPtr, uint aVersion, char** aaTransportState, uint* aaTrackDuration, uint* aaTrackBitRate, int* aaTrackLossless, uint* aaTrackBitDepth, uint* aaTrackSampleRate, char** aaTrackCodecName, uint* aaTrackId)
+        private static int DoState(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aTransportState;
             uint aTrackDuration;
             uint aTrackBitRate;
@@ -819,25 +963,84 @@ namespace Zapp.Device.Providers
             uint aTrackSampleRate;
             string aTrackCodecName;
             uint aTrackId;
-            self.State(aVersion, out aTransportState, out aTrackDuration, out aTrackBitRate, out aTrackLossless, out aTrackBitDepth, out aTrackSampleRate, out aTrackCodecName, out aTrackId);
-            *aaTransportState = (char*)Marshal.StringToHGlobalAnsi(aTransportState).ToPointer();
-            *aaTrackDuration = aTrackDuration;
-            *aaTrackBitRate = aTrackBitRate;
-            *aaTrackLossless = (aTrackLossless ? 1 : 0);
-            *aaTrackBitDepth = aTrackBitDepth;
-            *aaTrackSampleRate = aTrackSampleRate;
-            *aaTrackCodecName = (char*)Marshal.StringToHGlobalAnsi(aTrackCodecName).ToPointer();
-            *aaTrackId = aTrackId;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.State(aVersion, out aTransportState, out aTrackDuration, out aTrackBitRate, out aTrackLossless, out aTrackBitDepth, out aTrackSampleRate, out aTrackCodecName, out aTrackId);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("aTransportState", aTransportState);
+                invocation.WriteUint("aTrackDuration", aTrackDuration);
+                invocation.WriteUint("aTrackBitRate", aTrackBitRate);
+                invocation.WriteBool("aTrackLossless", aTrackLossless);
+                invocation.WriteUint("aTrackBitDepth", aTrackBitDepth);
+                invocation.WriteUint("aTrackSampleRate", aTrackSampleRate);
+                invocation.WriteString("aTrackCodecName", aTrackCodecName);
+                invocation.WriteUint("aTrackId", aTrackId);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoProtocolInfo(IntPtr aPtr, uint aVersion, char** aaSupportedProtocols)
+        private static int DoProtocolInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aSupportedProtocols;
-            self.ProtocolInfo(aVersion, out aSupportedProtocols);
-            *aaSupportedProtocols = (char*)Marshal.StringToHGlobalAnsi(aSupportedProtocols).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.ProtocolInfo(aVersion, out aSupportedProtocols);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("aSupportedProtocols", aSupportedProtocols);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -857,21 +1060,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkDs1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

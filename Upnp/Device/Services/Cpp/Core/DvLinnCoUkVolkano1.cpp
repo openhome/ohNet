@@ -1,4 +1,4 @@
-#include <Core/DvLinnCoUkVolkano1.h>
+#include "DvLinnCoUkVolkano1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -9,7 +9,7 @@ using namespace Zapp;
 DvProviderLinnCoUkVolkano1::DvProviderLinnCoUkVolkano1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Volkano", 1)
 {
-    Functor empty;
+    
 }
 
 void DvProviderLinnCoUkVolkano1::EnableActionReboot()

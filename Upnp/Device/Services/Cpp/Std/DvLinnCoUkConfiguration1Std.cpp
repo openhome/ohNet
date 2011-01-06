@@ -1,4 +1,4 @@
-#include <Std/DvLinnCoUkConfiguration1.h>
+#include "DvLinnCoUkConfiguration1.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -33,10 +33,10 @@ void DvProviderLinnCoUkConfiguration1Cpp::GetPropertyParameterXml(std::string& a
 DvProviderLinnCoUkConfiguration1Cpp::DvProviderLinnCoUkConfiguration1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Configuration", 1)
 {
-    Functor empty;
-    iPropertyConfigurationXml = new PropertyString(new ParameterString("ConfigurationXml"), empty);
+    
+    iPropertyConfigurationXml = new PropertyString(new ParameterString("ConfigurationXml"));
     iService->AddProperty(iPropertyConfigurationXml); // passes ownership
-    iPropertyParameterXml = new PropertyString(new ParameterString("ParameterXml"), empty);
+    iPropertyParameterXml = new PropertyString(new ParameterString("ParameterXml"));
     iService->AddProperty(iPropertyParameterXml); // passes ownership
 }
 

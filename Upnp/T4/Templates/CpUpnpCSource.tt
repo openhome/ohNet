@@ -43,16 +43,25 @@
     fileName += type;
     fileName += version;
     string className = "CpProxy" + fileName;
+    string syncClassSuffix = fileName + "C";
 
     Initialise();
 
     Document u = new Document(TemplateArgument("xml"));
 #>
-#include <C/Cp<#=fileName#>.h>
-#include <Core/Cp<#=fileName#>.h>
+#include "Cp<#=fileName#>.h"
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
+#include <ZappTypes.h>
+#include <Buffer.h>
+#include <Exception.h>
+#include <Functor.h>
+#include <CpProxy.h>
+#include <CpiService.h>
+#include <Thread.h>
+#include <AsyncPrivate.h>
+#include <Core/CpDevice.h>
 
 using namespace Zapp;
 
@@ -60,14 +69,242 @@ class <#=className#>C : public CpProxyC
 {
 public:
     <#=className#>C(CpDeviceC aDevice);
-    <#=className#>* Proxy() { return static_cast<<#=className#>*>(iProxy); }
+    ~<#=className#>C();
+    //<#=className#>* Proxy() { return static_cast<<#=className#>*>(iProxy); }
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+    void Sync<#=a.name#>(<#=ArgStringCpp(a)#>);
+    void Begin<#=a.name#>(<#=InStringCppTrailingComma(a)#>FunctorAsync& aFunctor);
+    void End<#=a.name#>(<#=OutputArgStringCppPrefix("IAsync& aAsync", a)#>);
+<#  } #>
+
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    void SetProperty<#=s.name#>Changed(Functor& aFunctor);
+<#  } #>
+
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    void Property<#=s.name#>(<#=propArgType[s.type]#> a<#=s.name#>) const;
+<#  } #>
+private:
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    void <#=s.name#>PropertyChanged();
+<#  } #>
+private:
+    Mutex iLock;
+    mutable Mutex iPropertyLock;
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+    Action* iAction<#=a.name#>;
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    <#=propType[s.type]#>* i<#=s.name#>;
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    Functor i<#=s.name#>Changed;
+<#  } #>
+};
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+
+class Sync<#=a.name#><#=syncClassSuffix#> : public SyncProxyAction
+{
+public:
+    Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>C& aProxy<#=OutArgTypesAndNamesCommaPrefix(a)#>);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    <#=className#>C& iService;
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+    <#=outArgTypeCpp[o.variable.type]#> i<#=o.name#>;
+<#      } #>
 };
 
-<#=className#>C::<#=className#>C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
+Sync<#=a.name#><#=syncClassSuffix#>::Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>C& aProxy<#=OutArgTypesAndNamesCommaPrefix(a)#>)
+    : iService(aProxy)
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+    , i<#=o.name#>(a<#=o.name#>)
+<#      } #>
 {
-    iProxy = new <#=className#>(*iDevice);
 }
+
+void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
+{
+    iService.End<#=a.name#>(<#=PrefixedOutputArgNames("aAsync", a, "i")#>);
+}
+<#  } #>
+
+<#=className#>C::<#=className#>C(CpDeviceC aDevice)
+    : CpProxyC("<#=upnpdomain#>", "<#=type#>", <#=version#>, *reinterpret_cast<CpiDevice*>(aDevice))
+    , iLock("MPCS")
+    , iPropertyLock("MPCP")
+{
+    <#=DeclareConstructLocalVars(u)#>
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+    iAction<#=a.name#> = new Action("<#=a.name#>");
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+<#          if (i.variable.values.Count > 0) #>
+<#          { #>
+    index = 0;
+    allowedValues = new TChar*[<#=i.variable.values.Count#>];
+<#              foreach (string val in i.variable.values) #>
+<#              { #>
+    allowedValues[index++] = (TChar*)"<#=val#>";
+<#              } #>
+<#          } #>
+    param = new Zapp::<#=paramClass[i.variable.type]#>("<#=i.name#>"<#=ParameterAllowedValues(i)#>);
+    iAction<#=a.name#>->AddInputParameter(param);
+<#          if (i.variable.values.Count > 0) #>
+<#          { #>
+    delete[] allowedValues;
+<#          } #>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (o.variable.values.Count > 0) #>
+<#          { #>
+    index = 0;
+    allowedValues = new TChar*[<#=o.variable.values.Count#>];
+<#              foreach (string val in o.variable.values) #>
+<#              { #>
+    allowedValues[index++] = (TChar*)"<#=val#>";
+<#              } #>
+<#          } #>
+    param = new Zapp::<#=paramClass[o.variable.type]#>("<#=o.name#>"<#=ParameterAllowedValues(o)#>);
+    iAction<#=a.name#>->AddOutputParameter(param);
+<#          if (o.variable.values.Count > 0) #>
+<#          { #>
+    delete[] allowedValues;
+<#          } #>
+<#      } #>
+<#  } #>
+<#  if (u.evented.Count > 0) #>
+<#  { #>
+
+    Functor functor;
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    functor = MakeFunctor(*this, &<#=className#>C::<#=s.name#>PropertyChanged);
+    i<#=s.name#> = new <#=propType[s.type]#>("<#=s.name#>", functor);
+    AddProperty(i<#=s.name#>);
+<#  } #>
+}
+
+<#=className#>C::~<#=className#>C()
+{
+    DestroyService();
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+    delete iAction<#=a.name#>;
+<#  } #>
+}
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+void <#=className#>C::Sync<#=a.name#>(<#=ArgStringCpp(a)#>)
+{
+    Sync<#=a.name#><#=syncClassSuffix#> sync(<#=PrefixedOutputArgNames("*this", a, "a")#>);
+    Begin<#=a.name#>(<#=InNamesCppTrailingComma(a)#>sync.Functor());
+    sync.Wait();
+}
+
+void <#=className#>C::Begin<#=a.name#>(<#=InTypesAndNamesCppTrailingComma(a)#>FunctorAsync& aFunctor)
+{
+    Invocation* invocation = Service()->Invocation(*iAction<#=a.name#>, aFunctor);
+<#      if (a.inargs.Count > 0) #>
+<#      { #>
+    TUint inIndex = 0;
+    const Action::VectorParameters& inParams = iAction<#=a.name#>->InputParameters();
+<#          foreach (Argument i in a.inargs) #>
+<#          { #>
+    invocation->AddInput(new <#=argClass[i.variable.type]#>(*inParams[inIndex++], a<#=i.name#>));
+<#          } #>
+<#      } #>
+<#      if (a.outargs.Count > 0) #>
+<#      { #>
+    TUint outIndex = 0;
+    const Action::VectorParameters& outParams = iAction<#=a.name#>->OutputParameters();
+<#          foreach (Argument o in a.outargs) #>
+<#          { #>
+    invocation->AddOutput(new <#=argClass[o.variable.type]#>(*outParams[outIndex++]));
+<#          } #>
+<#      } #>
+    Invocable().InvokeAction(*invocation);
+}
+
+void <#=className#>C::End<#=a.name#>(<#=PrefixedOutArgTypesAndNamesCpp("IAsync& aAsync", a)#>)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("<#=a.name#>"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
+    }
+<#      if (a.outargs.Count > 0) #>
+<#      { #>
+    TUint index = 0;
+<#          foreach (Argument o in a.outargs) #>
+<#          { #>
+<#          if (o.variable.type=="string" || o.variable.type=="bin.base64" || o.variable.type=="uri") #>
+<#              { #>
+    ((<#=argClass[o.variable.type]#>*)invocation.OutputArguments()[index++])->TransferTo(a<#=o.name#>);
+<#              } #>
+<#              else #>
+<#              { #>
+    a<#=o.name#> = ((<#=argClass[o.variable.type]#>*)invocation.OutputArguments()[index++])->Value();
+<#              } #>
+<#          } #>
+<#      } #>
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void <#=className#>C::SetProperty<#=s.name#>Changed(Functor& aFunctor)
+{
+    iLock.Wait();
+    i<#=s.name#>Changed = aFunctor;
+    iLock.Signal();
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void <#=className#>C::Property<#=s.name#>(<#=propArgType[s.type]#> a<#=s.name#>) const
+{
+    iPropertyLock.Wait();
+    ASSERT(IsSubscribed());
+<#      if (s.type=="string" || s.type=="bin.base64" || s.type=="uri") #>
+<#      { #>
+    a<#=s.name#>.Set(i<#=s.name#>->Value());
+<#      } #>
+<#      else #>
+<#      { #>
+    a<#=s.name#> = i<#=s.name#>->Value();
+<#      } #>
+    iPropertyLock.Signal();
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void <#=className#>C::<#=s.name#>PropertyChanged()
+{
+    ReportEvent(i<#=s.name#>Changed);
+}
+<#  } #>
 
 
 THandle <#=className#>Create(CpDeviceC aDevice)
@@ -112,11 +349,11 @@ void <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
 <#  } #>
 <#  if (a.outargs.Count == 0) #>
 <#  { #>
-    proxyC->Proxy()->Sync<#=a.name#>(<#=InNames(a)#>);
+    proxyC->Sync<#=a.name#>(<#=InNames(a)#>);
 <#  } #>
 <#  else #>
 <#  { #>
-    proxyC->Proxy()->Sync<#=a.name#>(<#=InNamesTrailingComma(a)#><#=OutArgNames(a)#>);
+    proxyC->Sync<#=a.name#>(<#=InNamesTrailingComma(a)#><#=OutArgNames(a)#>);
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
 <#          if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
@@ -148,7 +385,7 @@ void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InTypesAndNamesTrailingC
 <#      } #>
 <#  } #>
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
-    proxyC->Proxy()->Begin<#=a.name#>(<#=InNamesTrailingComma(a)#>functor);
+    proxyC->Begin<#=a.name#>(<#=InNamesTrailingComma(a)#>functor);
 }
 
 int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=PrefixedOutArgTypesAndNames("ZappHandleAsync aAsync", a)#>)
@@ -175,7 +412,7 @@ int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=PrefixedOutArgTypesAndN
 <#      } #>
 <#  } #>
     try {
-        proxyC->Proxy()->End<#=a.name#>(<#=PrefixedOutputArgNames("*async", a)#>);
+        proxyC->End<#=a.name#>(<#=PrefixedOutputArgNames("*async", a)#>);
 <#  foreach (Argument o in a.outargs) #>
 <#  { #>
 <#      if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
@@ -202,7 +439,7 @@ void <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, ZappCallback a
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
-    proxyC->Proxy()->SetProperty<#=s.name#>Changed(functor);
+    proxyC->SetProperty<#=s.name#>Changed(functor);
 }
 <#  } #>
 <#  foreach (Variable s in u.evented) #>
@@ -215,7 +452,7 @@ void <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>)
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_a<#=s.name#>;
-    proxyC->Proxy()->Property<#=s.name#>(buf_a<#=s.name#>);
+    proxyC->Property<#=s.name#>(buf_a<#=s.name#>);
     *a<#=s.name#> = buf_a<#=s.name#>.Transfer();
 }
 <#      } #>
@@ -226,7 +463,7 @@ void <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>, uin
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_a<#=s.name#>;
-    proxyC->Proxy()->Property<#=s.name#>(buf_a<#=s.name#>);
+    proxyC->Property<#=s.name#>(buf_a<#=s.name#>);
     *aLen = buf_a<#=s.name#>.Bytes();
     *a<#=s.name#> = buf_a<#=s.name#>.Extract();
 }
@@ -238,7 +475,7 @@ void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> 
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
     *a<#=s.name#> = false;
-    proxyC->Proxy()->Property<#=s.name#>(*(TBool*)a<#=s.name#>);
+    proxyC->Property<#=s.name#>(*(TBool*)a<#=s.name#>);
 }
 <#      } #>
 <#      else #>
@@ -247,7 +484,7 @@ void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> 
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
-    proxyC->Proxy()->Property<#=s.name#>(*a<#=s.name#>);
+    proxyC->Property<#=s.name#>(*a<#=s.name#>);
 }
 <#      } #>
 <#  } #>
@@ -255,6 +492,12 @@ void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> 
 <#+
 Dictionary<string,string> inargtype = new Dictionary<string,string>();
 Dictionary<string,string> outargtype = new Dictionary<string,string>();
+Dictionary<string,string> inArgTypeCpp = new Dictionary<string,string>();
+Dictionary<string,string> outArgTypeCpp = new Dictionary<string,string>();
+Dictionary<string,string> propArgType = new Dictionary<string,string>();
+Dictionary<string,string> propType = new Dictionary<string,string>();
+Dictionary<string,string> argClass = new Dictionary<string,string>();
+Dictionary<string,string> paramClass = new Dictionary<string,string>();
 
 void Initialise()
 {
@@ -279,6 +522,72 @@ void Initialise()
     outargtype.Add("i4", "int32_t*");
     outargtype.Add("bin.base64", "char**");
     outargtype.Add("uri", "char**");
+
+    inArgTypeCpp.Add("ui1", "TUint");
+    inArgTypeCpp.Add("ui2", "TUint");
+    inArgTypeCpp.Add("ui4", "TUint");
+    inArgTypeCpp.Add("boolean", "TBool");
+    inArgTypeCpp.Add("i1", "TInt");
+    inArgTypeCpp.Add("i2", "TInt");
+    inArgTypeCpp.Add("i4", "TInt");
+    inArgTypeCpp.Add("string", "const Brx&");
+    inArgTypeCpp.Add("bin.base64", "const Brx&");
+    inArgTypeCpp.Add("uri", "const Brx&");
+
+    outArgTypeCpp.Add("string", "Brh&");
+    outArgTypeCpp.Add("ui1", "TUint&");
+    outArgTypeCpp.Add("ui2", "TUint&");
+    outArgTypeCpp.Add("ui4", "TUint&");
+    outArgTypeCpp.Add("boolean", "TBool&");
+    outArgTypeCpp.Add("i1", "TInt&");
+    outArgTypeCpp.Add("i2", "TInt&");
+    outArgTypeCpp.Add("i4", "TInt&");
+    outArgTypeCpp.Add("bin.base64", "Brh&");
+    outArgTypeCpp.Add("uri", "Brh&");
+
+    propArgType.Add("ui1", "TUint&");
+    propArgType.Add("ui2", "TUint&");
+    propArgType.Add("ui4", "TUint&");
+    propArgType.Add("boolean", "TBool&");
+    propArgType.Add("i1", "TInt&");
+    propArgType.Add("i2", "TInt&");
+    propArgType.Add("i4", "TInt&");
+    propArgType.Add("string", "Brhz&");
+    propArgType.Add("bin.base64", "Brh&");
+    propArgType.Add("uri", "Brhz&");
+
+    propType.Add("ui1", "PropertyUint");
+    propType.Add("ui2", "PropertyUint");
+    propType.Add("ui4", "PropertyUint");
+    propType.Add("boolean", "PropertyBool");
+    propType.Add("i1", "PropertyInt");
+    propType.Add("i2", "PropertyInt");
+    propType.Add("i4", "PropertyInt");
+    propType.Add("string", "PropertyString");
+    propType.Add("bin.base64", "PropertyBinary");
+    propType.Add("uri", "PropertyString");
+
+    argClass.Add("string", "ArgumentString");
+    argClass.Add("ui1", "ArgumentUint");
+    argClass.Add("ui2", "ArgumentUint");
+    argClass.Add("ui4", "ArgumentUint");
+    argClass.Add("boolean", "ArgumentBool");
+    argClass.Add("i1", "ArgumentInt");
+    argClass.Add("i2", "ArgumentInt");
+    argClass.Add("i4", "ArgumentInt");
+    argClass.Add("bin.base64", "ArgumentBinary");
+    argClass.Add("uri", "ArgumentString");
+
+    paramClass.Add("string", "ParameterString");
+    paramClass.Add("ui1", "ParameterUint");
+    paramClass.Add("ui2", "ParameterUint");
+    paramClass.Add("ui4", "ParameterUint");
+    paramClass.Add("boolean", "ParameterBool");
+    paramClass.Add("i1", "ParameterInt");
+    paramClass.Add("i2", "ParameterInt");
+    paramClass.Add("i4", "ParameterInt");
+    paramClass.Add("bin.base64", "ParameterBinary");
+    paramClass.Add("uri", "ParameterString");
 }
 
 string InString(Method a)
@@ -301,6 +610,35 @@ string InString(Method a)
         }
     }
 
+    return(result);
+}
+
+string InStringCpp(Method a)
+{
+    string result = "";
+    
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        
+        result += inArgTypeCpp[i.variable.type];
+        result += " ";
+        result += "a" + i.name;
+    }
+    
+    return(result);
+}
+
+string InStringCppTrailingComma(Method a)
+{
+    string result = InStringCpp(a);
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
     return(result);
 }
 
@@ -327,6 +665,22 @@ string InNames(Method a)
             }
             result += "a"+i.name;
         }
+    }
+
+    return(result);
+}
+
+string InNamesCpp(Method a)
+{
+    string result = "";
+
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += "a"+i.name;
     }
 
     return(result);
@@ -396,10 +750,51 @@ string PrefixedOutputArgNames(string prefix, Method a)
     return(result);
 }
 
+string OutArgNames(Method a, string argprefix)
+{
+    string result = "";
+
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        result += argprefix + o.name;
+    }
+
+    return(result);
+}
+
+string PrefixedOutputArgNames(string prefix, Method a, string argprefix)
+{
+    string args = OutArgNames(a, argprefix);
+    string result = prefix;
+    if (args.Length > 0)
+    {
+        result += ", ";
+        result += args;
+    }
+    return(result);
+}
+
 string PrefixedOutArgTypesAndNames(string prefix, Method a)
 {
     string result = prefix;
     string outargs = OutArgTypesAndNames(a);
+    if (prefix.Length > 0 && outargs.Length > 0)
+    {
+        result += ", ";
+    }
+    result += outargs;
+    return(result);
+}
+
+string PrefixedOutArgTypesAndNamesCpp(string prefix, Method a)
+{
+    string result = prefix;
+    string outargs = OutArgTypesAndNamesCpp(a);
     if (prefix.Length > 0 && outargs.Length > 0)
     {
         result += ", ";
@@ -418,9 +813,29 @@ string InTypesAndNamesTrailingComma(Method a)
     return(result);
 }
 
+string InTypesAndNamesCppTrailingComma(Method a)
+{
+    string result = InStringCpp(a);
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
+    return(result);
+}
+
 string InNamesTrailingComma(Method a)
 {
     string result = InNames(a);
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
+    return(result);
+}
+
+string InNamesCppTrailingComma(Method a)
+{
+    string result = InNamesCpp(a);
     if (result.Length > 0)
     {
         result += ", ";
@@ -440,6 +855,125 @@ string ArgString(Method a)
     if (result.Length > 0)
     {
         result = ", " + result;
+    }
+    return(result);
+}
+
+string OutputArgStringCppPrefix(string prefix, Method a)
+{
+    string result = prefix;
+
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += outArgTypeCpp[o.variable.type];
+        result += " ";
+        result += "a" + o.name;
+    }
+
+    return(result);
+}
+
+string OutputArgStringCpp(Method a)
+{
+    return OutputArgStringCppPrefix("", a);
+}
+
+string ArgStringCpp(Method a)
+{
+    string result = InStringCpp(a);
+    string outargs = OutputArgStringCpp(a);
+    if (result.Length > 0 && outargs.Length > 0)
+    {
+        result += ", ";
+    }
+    result += outargs;
+
+    return(result);
+}
+
+string OutArgTypesAndNamesCpp(Method a)
+{
+    string result = "";
+
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        result += outArgTypeCpp[o.variable.type];
+        result += " ";
+        result += "a"+o.name;
+    }
+
+    return(result);
+}
+
+string OutArgTypesAndNamesCommaPrefix(Method a)
+{
+    string str = OutArgTypesAndNamesCpp(a);
+    if (str.Length > 0)
+    {
+        str = ", " + str;
+    }
+    return str;
+}
+
+string DeclareConstructLocalVars(Document u)
+{
+    string result = "";
+    if (u.methods.Count > 0)
+    {
+        result += "Zapp::Parameter* param;";
+    }
+
+    foreach (Method a in u.methods)
+    {
+        foreach (Argument i in a.inargs)
+        {
+            if (i.variable.values.Count > 0)
+            {
+                result += "\n    TChar** allowedValues;\n    TUint index;";
+                return(result);
+            }
+        }
+        foreach (Argument o in a.outargs)
+        {
+            if (o.variable.values.Count > 0)
+            {
+                result += "\n    TChar** allowedValues;\n    TUint index;";
+                return(result);
+            }
+        }
+    }
+    return(result);
+}
+
+string ParameterAllowedValues(Argument a)
+{
+    string result = "";
+    Variable v = a.variable;
+    if (v.values.Count > 0)
+    {
+        result += ", allowedValues, ";
+        result += v.values.Count;
+    }
+    else if (v.minspecified)
+    {
+        result += ", ";
+        result += v.min;
+        result += ", ";
+        result += v.max;
+        if (v.stepspecified)
+        {
+            result += ", ";
+            result += v.step;
+        }
     }
     return(result);
 }

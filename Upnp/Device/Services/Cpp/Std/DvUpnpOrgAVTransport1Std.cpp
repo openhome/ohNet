@@ -1,4 +1,4 @@
-#include <Std/DvUpnpOrgAVTransport1.h>
+#include "DvUpnpOrgAVTransport1.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -21,8 +21,8 @@ void DvProviderUpnpOrgAVTransport1Cpp::GetPropertyLastChange(std::string& aValue
 DvProviderUpnpOrgAVTransport1Cpp::DvProviderUpnpOrgAVTransport1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "AVTransport", 1)
 {
-    Functor empty;
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"), empty);
+    
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 

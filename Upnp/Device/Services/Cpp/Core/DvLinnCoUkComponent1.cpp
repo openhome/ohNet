@@ -1,4 +1,4 @@
-#include <Core/DvLinnCoUkComponent1.h>
+#include "DvLinnCoUkComponent1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -49,10 +49,10 @@ void DvProviderLinnCoUkComponent1::GetPropertyDigitalAudioOutputRaw(TBool& aValu
 DvProviderLinnCoUkComponent1::DvProviderLinnCoUkComponent1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Component", 1)
 {
-    Functor empty;
+    
     TChar** allowedValues;
     TUint index;
-    iPropertyAmplifierEnabled = new PropertyBool(new ParameterBool("AmplifierEnabled"), empty);
+    iPropertyAmplifierEnabled = new PropertyBool(new ParameterBool("AmplifierEnabled"));
     iService->AddProperty(iPropertyAmplifierEnabled); // passes ownership
     index = 0;
     allowedValues = new TChar*[4];
@@ -60,12 +60,12 @@ DvProviderLinnCoUkComponent1::DvProviderLinnCoUkComponent1(DvDevice& aDevice)
     allowedValues[index++] = (TChar*)"-9dB";
     allowedValues[index++] = (TChar*)"-6dB";
     allowedValues[index++] = (TChar*)"0dB";
-    iPropertyAmplifierAttenuation = new PropertyString(new ParameterString("AmplifierAttenuation", allowedValues, 4), empty);
+    iPropertyAmplifierAttenuation = new PropertyString(new ParameterString("AmplifierAttenuation", allowedValues, 4));
     delete[] allowedValues;
     iService->AddProperty(iPropertyAmplifierAttenuation); // passes ownership
-    iPropertyVolumeControlEnabled = new PropertyBool(new ParameterBool("VolumeControlEnabled"), empty);
+    iPropertyVolumeControlEnabled = new PropertyBool(new ParameterBool("VolumeControlEnabled"));
     iService->AddProperty(iPropertyVolumeControlEnabled); // passes ownership
-    iPropertyDigitalAudioOutputRaw = new PropertyBool(new ParameterBool("DigitalAudioOutputRaw"), empty);
+    iPropertyDigitalAudioOutputRaw = new PropertyBool(new ParameterBool("DigitalAudioOutputRaw"));
     iService->AddProperty(iPropertyDigitalAudioOutputRaw); // passes ownership
 }
 

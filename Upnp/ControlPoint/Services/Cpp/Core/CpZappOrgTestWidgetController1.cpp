@@ -1,4 +1,4 @@
-#include <Core/CpZappOrgTestWidgetController1.h>
+#include "CpZappOrgTestWidgetController1.h"
 #include <CpProxy.h>
 #include <CpiService.h>
 #include <Thread.h>

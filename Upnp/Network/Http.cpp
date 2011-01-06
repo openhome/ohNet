@@ -658,6 +658,11 @@ Zapp::Endpoint& HttpHeaderHost::Endpoint()
     return iEndpoint;
 }
 
+const Brx& HttpHeaderHost::Host() const
+{
+    return iHost;
+}
+
 TBool HttpHeaderHost::Recognise(const Brx& aHeader)
 {
     return (Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderHost));
@@ -667,6 +672,7 @@ void HttpHeaderHost::Process(const Brx& aValue)
 {
     Zapp::Endpoint defaultEndpoint;
     iEndpoint = defaultEndpoint;
+    iHost.Set(aValue);
     SetReceived();
     try {
         TUint index = Ascii::IndexOf(aValue, ':');
@@ -860,7 +866,11 @@ void ReaderHttpChunked::Read()
             break;
         }
         iEntity.Grow(iEntity.Bytes() + chunkSize);
-        iEntity.Append(iReader.Read(chunkSize));
+        while (chunkSize > 0) {
+            TUint bytes = (chunkSize<4096? chunkSize : 4096);
+            iEntity.Append(iReader.Read(bytes));
+            chunkSize -= bytes;
+        }
     }
 }
 

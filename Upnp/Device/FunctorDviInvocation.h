@@ -5,8 +5,8 @@
 
 namespace Zapp {
 
-typedef void (*ZappFunctorDviInvocation)(void* aPtr, void* aInvocation, TUint aVersion);
 class IDviInvocation;
+typedef void (*ZappFunctorDviInvocation)(void* aPtr, IDviInvocation* aInvocation, TUint aVersion);
 
 class FunctorDviInvocation
 {
@@ -57,12 +57,29 @@ public:
     }
 };
 
+class FunctionTranslatorDviInvocation : public FunctorDviInvocation
+{
+public:
+    FunctionTranslatorDviInvocation(void* aPtr, ZappFunctorDviInvocation aCallback) :
+        FunctorDviInvocation(Thunk,aPtr,aCallback) {}
+    static void Thunk(const FunctorDviInvocation& aFb, IDviInvocation& aInvocation, TUint aVersion)
+    {
+        ((ZappFunctorDviInvocation)aFb.iCallback)(aFb.iObject, &aInvocation, aVersion);
+    }
+};
+
 template<class Object, class CallType>
 inline MemberTranslatorDviInvocation<Object,void (CallType::*)(IDviInvocation&, TUint)>
 MakeFunctorDviInvocation(Object& aC, void(CallType::* const &aF)(IDviInvocation&, TUint))
     {
     typedef void(CallType::*MemFunc)(IDviInvocation&, TUint);
     return MemberTranslatorDviInvocation<Object,MemFunc>(aC,aF);
+    }
+
+inline FunctionTranslatorDviInvocation
+MakeFunctorDviInvocation(void* aPtr, ZappFunctorDviInvocation aCallback)
+    {
+    return FunctionTranslatorDviInvocation(aPtr, aCallback);
     }
 
 } // namespace Zapp

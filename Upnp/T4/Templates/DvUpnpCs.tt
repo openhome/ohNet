@@ -43,7 +43,6 @@
     fileName += type;
     fileName += version;
     string className = "DvProvider" + fileName;
-    string dllName = "Dv" + fileName;
 
     Initialise();
 
@@ -52,7 +51,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -72,7 +72,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the <#=s.name#> property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetProperty<#=s.name#>(out <#=argtype[s.type]#> aValue);
+        <#=argtype[s.type]#> Property<#=s.name#>();
 <#  } #>        
     }
     /// <summary>
@@ -80,44 +80,14 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class <#=className#> : DvProvider, IDisposable, I<#=className#>
     {
-        [DllImport("<#=dllName#>")]
-        static extern uint <#=className#>Create(uint aDeviceHandle);
-        [DllImport("<#=dllName#>")]
-        static extern void <#=className#>Destroy(uint aHandle);
-<#  foreach (Variable s in u.evented) #>
-<#  { #>
-<#      if (s.type == "bin.base64") #>
-<#      { #>
-        [DllImport("<#=dllName#>")]
-        static extern unsafe int <#=className#>SetProperty<#=s.name#>(uint aHandle, <#=inargctype[s.type]#> aValue, int aValueLen, uint* aChanged);
-        [DllImport("<#=dllName#>")]
-        static extern unsafe void <#=className#>GetProperty<#=s.name#>(uint aHandle, <#=outargctype[s.type]#> aValue, int* aValueLen);
-<#      } #>
-<#      else #>
-<#      { #>
-        [DllImport("<#=dllName#>")]
-        static extern unsafe int <#=className#>SetProperty<#=s.name#>(uint aHandle, <#=inargctype[s.type]#> aValue, uint* aChanged);
-        [DllImport("<#=dllName#>")]
-        static extern unsafe void <#=className#>GetProperty<#=s.name#>(uint aHandle, <#=outargctype[s.type]#> aValue);
-<#      } #>
-<#  } #>
-<#  foreach (Method a in u.methods) #>
-<#  { #>
-        [DllImport("<#=dllName#>")]
-        static extern void <#=className#>EnableAction<#=a.name#>(uint aHandle, Callback<#=a.name#> aCallback, IntPtr aPtr);
-<#  } #>
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-<#  foreach (Method a in u.methods) #>
-<#  { #>
-        private unsafe delegate int Callback<#=a.name#>(IntPtr aPtr, uint aVersion<#=ArgsCFull(a)#>);
-<#  } #>
-
         private GCHandle iGch;
 <#  foreach (Method a in u.methods) #>
 <#  { #>
-        private Callback<#=a.name#> iCallback<#=a.name#>;
+        private ActionDelegate iDelegate<#=a.name#>;
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+        private <#=propertyType[s.type]#> iProperty<#=s.name#>;
 <#  } #>
 
         /// <summary>
@@ -125,9 +95,25 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected <#=className#>(DvDevice aDevice)
+            : base(aDevice, "<#=upnpdomain#>", "<#=type#>", <#=version#>)
         {
-            iHandle = <#=className#>Create(aDevice.Handle()); 
-            iGch = GCHandle.Alloc(this);
+            iGch = GCHandle.Alloc(this);<#=DeclareAllowedValuesForProperties(u)#>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+<#      if (s.values.Count > 0) #>
+<#      { #>
+<#          foreach (string val in s.values) #>
+<#          { #>
+            allowedValues.Add("<#=val#>");
+<#          } #>
+<#      } #>
+            iProperty<#=s.name#> = new <#=propertyType[s.type]#>(new <#=paramType[s.type]#>("<#=s.name#>"<#=ParameterAllowedValues(s)#>));
+            AddProperty(iProperty<#=s.name#>);
+<#      if (s.values.Count > 0) #>
+<#      { #>
+            allowedValues.Clear();
+<#      } #>
+<#  } #>
         }
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
@@ -137,73 +123,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetProperty<#=s.name#>(<#=argtype[s.type]#> aValue)
+        public bool SetProperty<#=s.name#>(<#=argtype[s.type]#> aValue)
         {
-            uint changed;
-<#      if (s.type == "boolean") #>
-<#      { #>
-            int value = (aValue ? 1 : 0);
-            if (0 != <#=className#>SetProperty<#=s.name#>(iHandle, value, &changed))
-<#      } #>
-<#      else if (s.type == "string" || s.type == "uri") #>
-<#      { #>
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = <#=className#>SetProperty<#=s.name#>(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-<#      } #>
-<#      else if (s.type == "bin.base64") #>
-<#      { #>
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int valueLen = aValue.Length;
-            int err = <#=className#>SetProperty<#=s.name#>(iHandle, value, valueLen, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-<#      } #>
-<#      else #>
-<#      { #>
-            if (0 != <#=className#>SetProperty<#=s.name#>(iHandle, aValue, &changed))
-<#      } #>
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return <#=propertySetter[s.type]#>(iProperty<#=s.name#>, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the <#=s.name#> property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetProperty<#=s.name#>(out <#=argtype[s.type]#> aValue)
+        /// <returns>The value of the property</returns>
+        public <#=argtype[s.type]#> Property<#=s.name#>()
         {
-<#      if (s.type == "boolean") #>
-<#      { #>
-            int value;
-            <#=className#>GetProperty<#=s.name#>(iHandle, &value);
-            aValue = (value != 0);
-<#      } #>
-<#      else if (s.type == "string" || s.type == "uri") #>
-<#      { #>
-            char* value;
-            <#=className#>GetProperty<#=s.name#>(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
-<#      } #>
-<#      else if (s.type == "bin.base64") #>
-<#      { #>
-            char* value;
-            int valueLen;
-             <#=className#>GetProperty<#=s.name#>(iHandle, &value, &valueLen);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value, valueLen);
-            ZappFree(value);
-<#      } #>
-<#      else #>
-<#      { #>
-            fixed (<#=argtype[s.type]#>* value = &aValue)
-            {
-                <#=className#>GetProperty<#=s.name#>(iHandle, value);
-            }
-<#      } #>
+            return iProperty<#=s.name#>.Value();
         }
 <#  } #>
 <#  foreach (Method a in u.methods) #>
@@ -214,11 +145,55 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// Do<#=a.name#> must be overridden if this is called.</remarks>
-        protected unsafe void EnableAction<#=a.name#>()
+        protected void EnableAction<#=a.name#>()
         {
-            iCallback<#=a.name#> = new Callback<#=a.name#>(Do<#=a.name#>);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            <#=className#>EnableAction<#=a.name#>(iHandle, iCallback<#=a.name#>, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("<#=a.name#>");<#=DeclareAllowedValuesForMethod(a)#>
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+<#          if (RelatedVariableIsEvented(i, u)) #>
+<#          { #>
+            action.AddInputParameter(new ParameterRelated("<#=i.name#>", iProperty<#=i.variable.name#>));
+<#          } #>
+<#          else #>
+<#          { #>
+<#              if (i.variable.values.Count > 0) #>
+<#              { #>
+<#                  foreach (string val in i.variable.values) #>
+<#                  { #>
+            allowedValues.Add("<#=val#>");
+<#                  } #>
+<#              } #>
+            action.AddInputParameter(new <#=paramType[i.variable.type]#>("<#=i.name#>"<#=ParameterAllowedValues(i.variable)#>));
+<#              if (i.variable.values.Count > 0) #>
+<#              { #>
+            allowedValues.Clear();
+<#              } #>
+<#          } #>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (RelatedVariableIsEvented(o, u)) #>
+<#          { #>
+            action.AddOutputParameter(new ParameterRelated("<#=o.name#>", iProperty<#=o.variable.name#>));
+<#          } #>
+<#          else #>
+<#          { #>
+<#              if (o.variable.values.Count > 0) #>
+<#              { #>
+<#                  foreach (string val in o.variable.values) #>
+<#                  { #>
+            allowedValues.Add("<#=val#>");
+<#                  } #>
+<#              } #>
+            action.AddOutputParameter(new <#=paramType[o.variable.type]#>("<#=o.name#>"<#=ParameterAllowedValues(o.variable)#>));
+<#              if (o.variable.values.Count > 0) #>
+<#              { #>
+            allowedValues.Clear();
+<#              } #>
+<#          } #>
+<#      } #>
+            iDelegate<#=a.name#> = new ActionDelegate(Do<#=a.name#>);
+            EnableAction(action, iDelegate<#=a.name#>, GCHandle.ToIntPtr(iGch));
         }
 <#  } #>
 <#  foreach (Method a in u.methods) #>
@@ -248,50 +223,57 @@ namespace Zapp.Device.Providers
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-        private static unsafe int Do<#=a.name#>(IntPtr aPtr, uint aVersion<#=ArgsCFull(a)#>)
+        private static int Do<#=a.name#>(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             <#=className#> self = (<#=className#>)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
-<#          if (i.variable.type == "boolean") #>
-<#          { #>
-            bool <#=ArgNameLocal(i.name)#> = (a<#=i.name#> != 0);
-<#          } #>
-<#          else if (i.variable.type == "string" || i.variable.type == "uri") #>
-<#          { #>
-            string <#=ArgNameLocal(i.name)#> = Marshal.PtrToStringAnsi((IntPtr)a<#=i.name#>);
-<#          } #>
-<#          else if (i.variable.type == "bin.base64") #>
-<#          { #>
-            string <#=ArgNameLocal(i.name)#> = Marshal.PtrToStringAnsi((IntPtr)a<#=i.name#>, a<#=i.name#>Len);
-<#          } #>
+            <#=argtype[i.variable.type]#> <#=ArgNameLocal(i.name)#>;
 <#      } #>
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
             <#=argtype[o.variable.type]#> <#=ArgNameLocal(o.name)#>;
 <#      } #>
-            self.<#=a.name#>(aVersion<#=ArgNames(a)#>);
+            try
+            {
+                invocation.ReadStart();
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+                <#=ArgNameLocal(i.name)#> = invocation.<#=invocationReader[i.variable.type]#>("<#=i.name#>");
+<#      } #>
+                invocation.ReadEnd();
+                self.<#=a.name#>(aVersion<#=ArgNames(a)#>);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
-<#          if (o.variable.type == "boolean") #>
-<#          { #>
-            *a<#=o.name#> = (<#=ArgNameLocal(o.name)#> ? 1 : 0);
-<#          } #>
-<#          else if (o.variable.type == "string" || o.variable.type == "uri") #>
-<#          { #>
-            *a<#=o.name#> = (char*)Marshal.StringToHGlobalAnsi(<#=ArgNameLocal(o.name)#>).ToPointer();
-<#          } #>
-<#          else if (o.variable.type == "bin.base64") #>
-<#          { #>
-            *a<#=o.name#> = (char*)Marshal.StringToHGlobalAnsi(<#=ArgNameLocal(o.name)#>).ToPointer();
-            *a<#=o.name#>Len = <#=ArgNameLocal(o.name)#>.Length;
-<#          } #>
-<#          else #>
-<#          { #>
-            *a<#=o.name#> = <#=ArgNameLocal(o.name)#>;
-<#          } #>
+                invocation.<#=invocationWriter[o.variable.type]#>("<#=o.name#>", <#=ArgNameLocal(o.name)#>);
 <#      } #>
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 <#  } #>
@@ -312,29 +294,28 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            <#=className#>Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }
 
 <#+
+
 Dictionary<string,string> argtype = new Dictionary<string,string>();
-Dictionary<string,string> inargctype = new Dictionary<string,string>();
-Dictionary<string,string> outargctype = new Dictionary<string,string>();
+Dictionary<string,string> paramType = new Dictionary<string,string>();
+Dictionary<string,string> propertyType = new Dictionary<string,string>();
+Dictionary<string,string> propertySetter = new Dictionary<string,string>();
+Dictionary<string,string> invocationReader = new Dictionary<string,string>();
+Dictionary<string,string> invocationWriter = new Dictionary<string,string>();
 
 void Initialise()
 {
@@ -349,92 +330,118 @@ void Initialise()
     argtype.Add("bin.base64", "string");
     argtype.Add("uri", "string");
 
-    inargctype.Add("ui1", "uint");
-    inargctype.Add("ui2", "uint");
-    inargctype.Add("ui4", "uint");
-    inargctype.Add("boolean", "int");
-    inargctype.Add("i1", "int");
-    inargctype.Add("i2", "int");
-    inargctype.Add("i4", "int");
-    inargctype.Add("string", "char*");
-    inargctype.Add("bin.base64", "char*");
-    inargctype.Add("uri", "char*");
+    paramType.Add("ui1", "ParameterUint");
+    paramType.Add("ui2", "ParameterUint");
+    paramType.Add("ui4", "ParameterUint");
+    paramType.Add("boolean", "ParameterBool");
+    paramType.Add("i1", "ParameterInt");
+    paramType.Add("i2", "ParameterInt");
+    paramType.Add("i4", "ParameterInt");
+    paramType.Add("string", "ParameterString");
+    paramType.Add("bin.base64", "ParameterBinary");
+    paramType.Add("uri", "ParameterString");
 
-    outargctype.Add("ui1", "uint*");
-    outargctype.Add("ui2", "uint*");
-    outargctype.Add("ui4", "uint*");
-    outargctype.Add("boolean", "int*");
-    outargctype.Add("i1", "int*");
-    outargctype.Add("i2", "int*");
-    outargctype.Add("i4", "int*");
-    outargctype.Add("string", "char**");
-    outargctype.Add("bin.base64", "char**");
-    outargctype.Add("uri", "char**");
+    propertyType.Add("ui1", "PropertyUint");
+    propertyType.Add("ui2", "PropertyUint");
+    propertyType.Add("ui4", "PropertyUint");
+    propertyType.Add("boolean", "PropertyBool");
+    propertyType.Add("i1", "PropertyInt");
+    propertyType.Add("i2", "PropertyInt");
+    propertyType.Add("i4", "PropertyInt");
+    propertyType.Add("string", "PropertyString");
+    propertyType.Add("bin.base64", "PropertyBinary");
+    propertyType.Add("uri", "PropertyString");
+
+    propertySetter.Add("ui1", "SetPropertyUint");
+    propertySetter.Add("ui2", "SetPropertyUint");
+    propertySetter.Add("ui4", "SetPropertyUint");
+    propertySetter.Add("boolean", "SetPropertyBool");
+    propertySetter.Add("i1", "SetPropertyInt");
+    propertySetter.Add("i2", "SetPropertyInt");
+    propertySetter.Add("i4", "SetPropertyInt");
+    propertySetter.Add("string", "SetPropertyString");
+    propertySetter.Add("bin.base64", "SetPropertyBinary");
+    propertySetter.Add("uri", "SetPropertyString");
+
+    invocationReader.Add("ui1", "ReadUint");
+    invocationReader.Add("ui2", "ReadUint");
+    invocationReader.Add("ui4", "ReadUint");
+    invocationReader.Add("boolean", "ReadBool");
+    invocationReader.Add("i1", "ReadInt");
+    invocationReader.Add("i2", "ReadInt");
+    invocationReader.Add("i4", "ReadInt");
+    invocationReader.Add("string", "ReadString");
+    invocationReader.Add("bin.base64", "ReadBinary");
+    invocationReader.Add("uri", "ReadString");
+
+    invocationWriter.Add("ui1", "WriteUint");
+    invocationWriter.Add("ui2", "WriteUint");
+    invocationWriter.Add("ui4", "WriteUint");
+    invocationWriter.Add("boolean", "WriteBool");
+    invocationWriter.Add("i1", "WriteInt");
+    invocationWriter.Add("i2", "WriteInt");
+    invocationWriter.Add("i4", "WriteInt");
+    invocationWriter.Add("string", "WriteString");
+    invocationWriter.Add("bin.base64", "WriteBinary");
+    invocationWriter.Add("uri", "WriteString");
 }
 
-string InArgsCFull(Method a)
+string DeclareAllowedValues()
 {
-    string result = "";
-    
+    return "\n            List<String> allowedValues = new List<String>();";
+}
+
+string DeclareAllowedValuesForProperties(Document u)
+{
+    foreach (Variable s in u.evented)
+    {
+        if (s.type == "string" || s.type == "uri")
+        {
+            return DeclareAllowedValues();
+        }
+    }
+    return "";
+}
+
+string DeclareAllowedValuesForMethod(Method a)
+{
     foreach (Argument i in a.inargs)
     {
-        if (result.Length > 0)
+        if (!i.variable.evented && (i.variable.type == "string" || i.variable.type == "uri"))
         {
-            result += ", ";
-        }
-        
-        result += inargctype[i.variable.type];
-        result += " ";
-        result += "a" + i.name;
-        if (i.variable.type == "bin.base64")
-        {
-            result += ", int a" + i.name + "Len";
+            return DeclareAllowedValues();
         }
     }
-    
-    return result;
-}
-
-string OutArgsCFull(Method a)
-{
-    string result = "";
-    
     foreach (Argument o in a.outargs)
     {
-        if (result.Length > 0)
+        if (!o.variable.evented && (o.variable.type == "string" || o.variable.type == "uri"))
         {
-            result += ", ";
-        }
-        
-        result += outargctype[o.variable.type];
-        result += " ";
-        result += "a" + o.name;
-        if (o.variable.type == "bin.base64")
-        {
-            result += ", int* a" + o.name + "Len";
+            return DeclareAllowedValues();
         }
     }
-    
-    return result;
+    return "";
 }
 
-string ArgsCFull(Method a)
+string ParameterAllowedValues(Variable v)
 {
-    string result = InArgsCFull(a);
-    string outArgs = OutArgsCFull(a);
-    if (outArgs.Length > 0)
+    string result = "";
+    if (v.type == "string" || v.type == "uri")
     {
-        if (result.Length > 0)
+        result += ", allowedValues";
+    }
+    else if (v.minspecified)
+    {
+        result += ", ";
+        result += v.min;
+        result += ", ";
+        result += v.max;
+        if (v.stepspecified)
         {
             result += ", ";
+            result += v.step;
         }
-        result += outArgs;
     }
-    if (result.Length > 0)
-    {
-        result = ", " + result;
-    }
-    return result;
+    return(result);
 }
 
 string InArgsFull(Method a)
@@ -514,14 +521,7 @@ string ArgNames(Method a)
         {
             result += ", ";
         }
-        if (i.variable.type == "boolean" || i.variable.type == "string" || i.variable.type == "bin.base64" || i.variable.type == "uri")
-        {
-            result += ArgNameLocal(i.name);
-        }
-        else
-        {
-            result += "a" + i.name;
-        }
+        result += ArgNameLocal(i.name);
     }
     foreach (Argument o in a.outargs)
     {
@@ -536,6 +536,18 @@ string ArgNames(Method a)
         result = ", " + result;
     }
     return result;
+}
+
+bool RelatedVariableIsEvented(Argument arg, Document u)
+{
+    foreach (Variable v in u.evented)
+    {
+        if (v.name == arg.related)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 string TemplateArgument(string aName)

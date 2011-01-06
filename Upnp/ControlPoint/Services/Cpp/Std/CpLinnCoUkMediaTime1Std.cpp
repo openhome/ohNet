@@ -1,4 +1,4 @@
-#include <Std/CpLinnCoUkMediaTime1.h>
+#include "CpLinnCoUkMediaTime1.h"
 #include <CpProxy.h>
 #include <CpiService.h>
 #include <Thread.h>

@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplayBrightness property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplayBrightness(out uint aValue);
+        uint PropertyDisplayBrightness();
 
         /// <summary>
         /// Set the value of the DisplayBrightnessAuto property
@@ -32,7 +33,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplayBrightnessAuto property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplayBrightnessAuto(out bool aValue);
+        bool PropertyDisplayBrightnessAuto();
 
         /// <summary>
         /// Set the value of the InfraredCommands property
@@ -45,7 +46,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the InfraredCommands property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyInfraredCommands(out string aValue);
+        string PropertyInfraredCommands();
 
         /// <summary>
         /// Set the value of the InfraredTerminalCommands property
@@ -58,7 +59,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the InfraredTerminalCommands property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyInfraredTerminalCommands(out string aValue);
+        string PropertyInfraredTerminalCommands();
 
         /// <summary>
         /// Set the value of the DisplayUpsideDown property
@@ -71,7 +72,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplayUpsideDown property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplayUpsideDown(out bool aValue);
+        bool PropertyDisplayUpsideDown();
 
         /// <summary>
         /// Set the value of the DisplayScrollText property
@@ -84,7 +85,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplayScrollText property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplayScrollText(out bool aValue);
+        bool PropertyDisplayScrollText();
 
         /// <summary>
         /// Set the value of the DisplaySleep property
@@ -97,7 +98,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplaySleep property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplaySleep(out bool aValue);
+        bool PropertyDisplaySleep();
 
         /// <summary>
         /// Set the value of the DisplayLedOff property
@@ -110,7 +111,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplayLedOff property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplayLedOff(out bool aValue);
+        bool PropertyDisplayLedOff();
 
         /// <summary>
         /// Set the value of the TerminalInputCode property
@@ -123,7 +124,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TerminalInputCode property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTerminalInputCode(out uint aValue);
+        uint PropertyTerminalInputCode();
 
         /// <summary>
         /// Set the value of the TerminalInputName property
@@ -136,7 +137,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TerminalInputName property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTerminalInputName(out string aValue);
+        string PropertyTerminalInputName();
 
         /// <summary>
         /// Set the value of the DisplayPixels property
@@ -149,7 +150,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplayPixels property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplayPixels(out string aValue);
+        string PropertyDisplayPixels();
         
     }
     /// <summary>
@@ -157,164 +158,84 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkUi2 : DvProvider, IDisposable, IDvProviderLinnCoUkUi2
     {
-        [DllImport("DvLinnCoUkUi2")]
-        static extern uint DvProviderLinnCoUkUi2Create(uint aDeviceHandle);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2Destroy(uint aHandle);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayBrightness(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayBrightness(uint aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayBrightnessAuto(uint aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayBrightnessAuto(uint aHandle, int* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyInfraredCommands(uint aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyInfraredCommands(uint aHandle, char** aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyInfraredTerminalCommands(uint aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyInfraredTerminalCommands(uint aHandle, char** aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayUpsideDown(uint aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayUpsideDown(uint aHandle, int* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayScrollText(uint aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayScrollText(uint aHandle, int* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplaySleep(uint aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplaySleep(uint aHandle, int* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayLedOff(uint aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayLedOff(uint aHandle, int* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyTerminalInputCode(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyTerminalInputCode(uint aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyTerminalInputName(uint aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyTerminalInputName(uint aHandle, char** aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayPixels(uint aHandle, char* aValue, int aValueLen, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayPixels(uint aHandle, char** aValue, int* aValueLen);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayTestPattern(uint aHandle, CallbackDisplayTestPattern aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayFill(uint aHandle, CallbackDisplayFill aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayClear(uint aHandle, CallbackDisplayClear aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetTestModeEnabled(uint aHandle, CallbackSetTestModeEnabled aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSimulateInfraredInput(uint aHandle, CallbackSimulateInfraredInput aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSimulateButtonInput(uint aHandle, CallbackSimulateButtonInput aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSimulateLightSensor(uint aHandle, CallbackSimulateLightSensor aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionGetLightSensorData(uint aHandle, CallbackGetLightSensorData aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayBrightness(uint aHandle, CallbackSetDisplayBrightness aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayBrightnessAuto(uint aHandle, CallbackSetDisplayBrightnessAuto aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetInfraredCommands(uint aHandle, CallbackSetInfraredCommands aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionInfraredCommands(uint aHandle, CallbackInfraredCommands aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetInfraredTerminalCommands(uint aHandle, CallbackSetInfraredTerminalCommands aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionInfraredTerminalCommands(uint aHandle, CallbackInfraredTerminalCommands aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayBrightness(uint aHandle, CallbackDisplayBrightness aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayBrightnessAuto(uint aHandle, CallbackDisplayBrightnessAuto aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayUpsideDown(uint aHandle, CallbackDisplayUpsideDown aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayUpsideDown(uint aHandle, CallbackSetDisplayUpsideDown aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayScrollText(uint aHandle, CallbackSetDisplayScrollText aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayScrollText(uint aHandle, CallbackDisplayScrollText aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplaySleep(uint aHandle, CallbackSetDisplaySleep aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplaySleep(uint aHandle, CallbackDisplaySleep aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayLedOff(uint aHandle, CallbackSetDisplayLedOff aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayLedOff(uint aHandle, CallbackDisplayLedOff aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackDisplayTestPattern(IntPtr aPtr, uint aVersion, int aaTestPattern);
-        private unsafe delegate int CallbackDisplayFill(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackDisplayClear(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackSetTestModeEnabled(IntPtr aPtr, uint aVersion, int aaEnabled);
-        private unsafe delegate int CallbackSimulateInfraredInput(IntPtr aPtr, uint aVersion, uint aaCode);
-        private unsafe delegate int CallbackSimulateButtonInput(IntPtr aPtr, uint aVersion, uint aaCode);
-        private unsafe delegate int CallbackSimulateLightSensor(IntPtr aPtr, uint aVersion, uint aaLightLevel);
-        private unsafe delegate int CallbackGetLightSensorData(IntPtr aPtr, uint aVersion, uint* aaLightLevel);
-        private unsafe delegate int CallbackSetDisplayBrightness(IntPtr aPtr, uint aVersion, uint aaBrightness);
-        private unsafe delegate int CallbackSetDisplayBrightnessAuto(IntPtr aPtr, uint aVersion, int aaBrightnessAuto);
-        private unsafe delegate int CallbackSetInfraredCommands(IntPtr aPtr, uint aVersion, char* aaCommands);
-        private unsafe delegate int CallbackInfraredCommands(IntPtr aPtr, uint aVersion, char** aaCommands);
-        private unsafe delegate int CallbackSetInfraredTerminalCommands(IntPtr aPtr, uint aVersion, char* aaCommands);
-        private unsafe delegate int CallbackInfraredTerminalCommands(IntPtr aPtr, uint aVersion, char** aaCommands);
-        private unsafe delegate int CallbackDisplayBrightness(IntPtr aPtr, uint aVersion, uint* aaBrightness);
-        private unsafe delegate int CallbackDisplayBrightnessAuto(IntPtr aPtr, uint aVersion, int* aaBrightnessAuto);
-        private unsafe delegate int CallbackDisplayUpsideDown(IntPtr aPtr, uint aVersion, int* aaUpsideDown);
-        private unsafe delegate int CallbackSetDisplayUpsideDown(IntPtr aPtr, uint aVersion, int aaUpsideDown);
-        private unsafe delegate int CallbackSetDisplayScrollText(IntPtr aPtr, uint aVersion, int aaDisplayScrollText);
-        private unsafe delegate int CallbackDisplayScrollText(IntPtr aPtr, uint aVersion, int* aaDisplayScrollTextEnabled);
-        private unsafe delegate int CallbackSetDisplaySleep(IntPtr aPtr, uint aVersion, int aaEnabled);
-        private unsafe delegate int CallbackDisplaySleep(IntPtr aPtr, uint aVersion, int* aaEnabled);
-        private unsafe delegate int CallbackSetDisplayLedOff(IntPtr aPtr, uint aVersion, int aaOff);
-        private unsafe delegate int CallbackDisplayLedOff(IntPtr aPtr, uint aVersion, int* aaOff);
-
         private GCHandle iGch;
-        private CallbackDisplayTestPattern iCallbackDisplayTestPattern;
-        private CallbackDisplayFill iCallbackDisplayFill;
-        private CallbackDisplayClear iCallbackDisplayClear;
-        private CallbackSetTestModeEnabled iCallbackSetTestModeEnabled;
-        private CallbackSimulateInfraredInput iCallbackSimulateInfraredInput;
-        private CallbackSimulateButtonInput iCallbackSimulateButtonInput;
-        private CallbackSimulateLightSensor iCallbackSimulateLightSensor;
-        private CallbackGetLightSensorData iCallbackGetLightSensorData;
-        private CallbackSetDisplayBrightness iCallbackSetDisplayBrightness;
-        private CallbackSetDisplayBrightnessAuto iCallbackSetDisplayBrightnessAuto;
-        private CallbackSetInfraredCommands iCallbackSetInfraredCommands;
-        private CallbackInfraredCommands iCallbackInfraredCommands;
-        private CallbackSetInfraredTerminalCommands iCallbackSetInfraredTerminalCommands;
-        private CallbackInfraredTerminalCommands iCallbackInfraredTerminalCommands;
-        private CallbackDisplayBrightness iCallbackDisplayBrightness;
-        private CallbackDisplayBrightnessAuto iCallbackDisplayBrightnessAuto;
-        private CallbackDisplayUpsideDown iCallbackDisplayUpsideDown;
-        private CallbackSetDisplayUpsideDown iCallbackSetDisplayUpsideDown;
-        private CallbackSetDisplayScrollText iCallbackSetDisplayScrollText;
-        private CallbackDisplayScrollText iCallbackDisplayScrollText;
-        private CallbackSetDisplaySleep iCallbackSetDisplaySleep;
-        private CallbackDisplaySleep iCallbackDisplaySleep;
-        private CallbackSetDisplayLedOff iCallbackSetDisplayLedOff;
-        private CallbackDisplayLedOff iCallbackDisplayLedOff;
+        private ActionDelegate iDelegateDisplayTestPattern;
+        private ActionDelegate iDelegateDisplayFill;
+        private ActionDelegate iDelegateDisplayClear;
+        private ActionDelegate iDelegateSetTestModeEnabled;
+        private ActionDelegate iDelegateSimulateInfraredInput;
+        private ActionDelegate iDelegateSimulateButtonInput;
+        private ActionDelegate iDelegateSimulateLightSensor;
+        private ActionDelegate iDelegateGetLightSensorData;
+        private ActionDelegate iDelegateSetDisplayBrightness;
+        private ActionDelegate iDelegateSetDisplayBrightnessAuto;
+        private ActionDelegate iDelegateSetInfraredCommands;
+        private ActionDelegate iDelegateInfraredCommands;
+        private ActionDelegate iDelegateSetInfraredTerminalCommands;
+        private ActionDelegate iDelegateInfraredTerminalCommands;
+        private ActionDelegate iDelegateDisplayBrightness;
+        private ActionDelegate iDelegateDisplayBrightnessAuto;
+        private ActionDelegate iDelegateDisplayUpsideDown;
+        private ActionDelegate iDelegateSetDisplayUpsideDown;
+        private ActionDelegate iDelegateSetDisplayScrollText;
+        private ActionDelegate iDelegateDisplayScrollText;
+        private ActionDelegate iDelegateSetDisplaySleep;
+        private ActionDelegate iDelegateDisplaySleep;
+        private ActionDelegate iDelegateSetDisplayLedOff;
+        private ActionDelegate iDelegateDisplayLedOff;
+        private PropertyUint iPropertyDisplayBrightness;
+        private PropertyBool iPropertyDisplayBrightnessAuto;
+        private PropertyString iPropertyInfraredCommands;
+        private PropertyString iPropertyInfraredTerminalCommands;
+        private PropertyBool iPropertyDisplayUpsideDown;
+        private PropertyBool iPropertyDisplayScrollText;
+        private PropertyBool iPropertyDisplaySleep;
+        private PropertyBool iPropertyDisplayLedOff;
+        private PropertyUint iPropertyTerminalInputCode;
+        private PropertyString iPropertyTerminalInputName;
+        private PropertyBinary iPropertyDisplayPixels;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkUi2(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "Ui", 2)
         {
-            iHandle = DvProviderLinnCoUkUi2Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            List<String> allowedValues = new List<String>();
+            iPropertyDisplayBrightness = new PropertyUint(new ParameterUint("DisplayBrightness"));
+            AddProperty(iPropertyDisplayBrightness);
+            iPropertyDisplayBrightnessAuto = new PropertyBool(new ParameterBool("DisplayBrightnessAuto"));
+            AddProperty(iPropertyDisplayBrightnessAuto);
+            allowedValues.Add("None");
+            allowedValues.Add("All");
+            allowedValues.Add("Cd");
+            allowedValues.Add("Dvd");
+            iPropertyInfraredCommands = new PropertyString(new ParameterString("InfraredCommands", allowedValues));
+            AddProperty(iPropertyInfraredCommands);
+            allowedValues.Clear();
+            allowedValues.Add("None");
+            allowedValues.Add("All");
+            allowedValues.Add("Cd");
+            allowedValues.Add("Dvd");
+            iPropertyInfraredTerminalCommands = new PropertyString(new ParameterString("InfraredTerminalCommands", allowedValues));
+            AddProperty(iPropertyInfraredTerminalCommands);
+            allowedValues.Clear();
+            iPropertyDisplayUpsideDown = new PropertyBool(new ParameterBool("DisplayUpsideDown"));
+            AddProperty(iPropertyDisplayUpsideDown);
+            iPropertyDisplayScrollText = new PropertyBool(new ParameterBool("DisplayScrollText"));
+            AddProperty(iPropertyDisplayScrollText);
+            iPropertyDisplaySleep = new PropertyBool(new ParameterBool("DisplaySleep"));
+            AddProperty(iPropertyDisplaySleep);
+            iPropertyDisplayLedOff = new PropertyBool(new ParameterBool("DisplayLedOff"));
+            AddProperty(iPropertyDisplayLedOff);
+            iPropertyTerminalInputCode = new PropertyUint(new ParameterUint("TerminalInputCode"));
+            AddProperty(iPropertyTerminalInputCode);
+            iPropertyTerminalInputName = new PropertyString(new ParameterString("TerminalInputName", allowedValues));
+            AddProperty(iPropertyTerminalInputName);
+            iPropertyDisplayPixels = new PropertyBinary(new ParameterBinary("DisplayPixels"));
+            AddProperty(iPropertyDisplayPixels);
         }
 
         /// <summary>
@@ -322,26 +243,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplayBrightness(uint aValue)
+        public bool SetPropertyDisplayBrightness(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayBrightness(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyDisplayBrightness, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplayBrightness property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplayBrightness(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyDisplayBrightness()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkUi2GetPropertyDisplayBrightness(iHandle, value);
-            }
+            return iPropertyDisplayBrightness.Value();
         }
 
         /// <summary>
@@ -349,26 +262,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplayBrightnessAuto(bool aValue)
+        public bool SetPropertyDisplayBrightnessAuto(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayBrightnessAuto(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyDisplayBrightnessAuto, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplayBrightnessAuto property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplayBrightnessAuto(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyDisplayBrightnessAuto()
         {
-            int value;
-            DvProviderLinnCoUkUi2GetPropertyDisplayBrightnessAuto(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyDisplayBrightnessAuto.Value();
         }
 
         /// <summary>
@@ -376,29 +281,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyInfraredCommands(string aValue)
+        public bool SetPropertyInfraredCommands(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkUi2SetPropertyInfraredCommands(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyInfraredCommands, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the InfraredCommands property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyInfraredCommands(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyInfraredCommands()
         {
-            char* value;
-            DvProviderLinnCoUkUi2GetPropertyInfraredCommands(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyInfraredCommands.Value();
         }
 
         /// <summary>
@@ -406,29 +300,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyInfraredTerminalCommands(string aValue)
+        public bool SetPropertyInfraredTerminalCommands(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkUi2SetPropertyInfraredTerminalCommands(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyInfraredTerminalCommands, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the InfraredTerminalCommands property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyInfraredTerminalCommands(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyInfraredTerminalCommands()
         {
-            char* value;
-            DvProviderLinnCoUkUi2GetPropertyInfraredTerminalCommands(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyInfraredTerminalCommands.Value();
         }
 
         /// <summary>
@@ -436,26 +319,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplayUpsideDown(bool aValue)
+        public bool SetPropertyDisplayUpsideDown(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayUpsideDown(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyDisplayUpsideDown, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplayUpsideDown property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplayUpsideDown(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyDisplayUpsideDown()
         {
-            int value;
-            DvProviderLinnCoUkUi2GetPropertyDisplayUpsideDown(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyDisplayUpsideDown.Value();
         }
 
         /// <summary>
@@ -463,26 +338,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplayScrollText(bool aValue)
+        public bool SetPropertyDisplayScrollText(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayScrollText(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyDisplayScrollText, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplayScrollText property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplayScrollText(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyDisplayScrollText()
         {
-            int value;
-            DvProviderLinnCoUkUi2GetPropertyDisplayScrollText(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyDisplayScrollText.Value();
         }
 
         /// <summary>
@@ -490,26 +357,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplaySleep(bool aValue)
+        public bool SetPropertyDisplaySleep(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplaySleep(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyDisplaySleep, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplaySleep property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplaySleep(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyDisplaySleep()
         {
-            int value;
-            DvProviderLinnCoUkUi2GetPropertyDisplaySleep(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyDisplaySleep.Value();
         }
 
         /// <summary>
@@ -517,26 +376,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplayLedOff(bool aValue)
+        public bool SetPropertyDisplayLedOff(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayLedOff(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyDisplayLedOff, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplayLedOff property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplayLedOff(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyDisplayLedOff()
         {
-            int value;
-            DvProviderLinnCoUkUi2GetPropertyDisplayLedOff(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyDisplayLedOff.Value();
         }
 
         /// <summary>
@@ -544,26 +395,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTerminalInputCode(uint aValue)
+        public bool SetPropertyTerminalInputCode(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkUi2SetPropertyTerminalInputCode(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyTerminalInputCode, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TerminalInputCode property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTerminalInputCode(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyTerminalInputCode()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkUi2GetPropertyTerminalInputCode(iHandle, value);
-            }
+            return iPropertyTerminalInputCode.Value();
         }
 
         /// <summary>
@@ -571,29 +414,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTerminalInputName(string aValue)
+        public bool SetPropertyTerminalInputName(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkUi2SetPropertyTerminalInputName(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyTerminalInputName, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TerminalInputName property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTerminalInputName(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyTerminalInputName()
         {
-            char* value;
-            DvProviderLinnCoUkUi2GetPropertyTerminalInputName(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyTerminalInputName.Value();
         }
 
         /// <summary>
@@ -601,31 +433,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplayPixels(string aValue)
+        public bool SetPropertyDisplayPixels(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int valueLen = aValue.Length;
-            int err = DvProviderLinnCoUkUi2SetPropertyDisplayPixels(iHandle, value, valueLen, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBinary(iPropertyDisplayPixels, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplayPixels property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplayPixels(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyDisplayPixels()
         {
-            char* value;
-            int valueLen;
-             DvProviderLinnCoUkUi2GetPropertyDisplayPixels(iHandle, &value, &valueLen);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value, valueLen);
-            ZappFree(value);
+            return iPropertyDisplayPixels.Value();
         }
 
         /// <summary>
@@ -633,11 +452,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayTestPattern must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayTestPattern()
+        protected void EnableActionDisplayTestPattern()
         {
-            iCallbackDisplayTestPattern = new CallbackDisplayTestPattern(DoDisplayTestPattern);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayTestPattern(iHandle, iCallbackDisplayTestPattern, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayTestPattern");
+            action.AddInputParameter(new ParameterInt("aTestPattern", 0, 6));
+            iDelegateDisplayTestPattern = new ActionDelegate(DoDisplayTestPattern);
+            EnableAction(action, iDelegateDisplayTestPattern, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -645,11 +465,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayFill must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayFill()
+        protected void EnableActionDisplayFill()
         {
-            iCallbackDisplayFill = new CallbackDisplayFill(DoDisplayFill);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayFill(iHandle, iCallbackDisplayFill, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayFill");
+            iDelegateDisplayFill = new ActionDelegate(DoDisplayFill);
+            EnableAction(action, iDelegateDisplayFill, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -657,11 +477,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayClear must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayClear()
+        protected void EnableActionDisplayClear()
         {
-            iCallbackDisplayClear = new CallbackDisplayClear(DoDisplayClear);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayClear(iHandle, iCallbackDisplayClear, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayClear");
+            iDelegateDisplayClear = new ActionDelegate(DoDisplayClear);
+            EnableAction(action, iDelegateDisplayClear, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -669,11 +489,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetTestModeEnabled must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetTestModeEnabled()
+        protected void EnableActionSetTestModeEnabled()
         {
-            iCallbackSetTestModeEnabled = new CallbackSetTestModeEnabled(DoSetTestModeEnabled);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetTestModeEnabled(iHandle, iCallbackSetTestModeEnabled, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetTestModeEnabled");
+            action.AddInputParameter(new ParameterBool("aEnabled"));
+            iDelegateSetTestModeEnabled = new ActionDelegate(DoSetTestModeEnabled);
+            EnableAction(action, iDelegateSetTestModeEnabled, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -681,11 +502,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSimulateInfraredInput must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSimulateInfraredInput()
+        protected void EnableActionSimulateInfraredInput()
         {
-            iCallbackSimulateInfraredInput = new CallbackSimulateInfraredInput(DoSimulateInfraredInput);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSimulateInfraredInput(iHandle, iCallbackSimulateInfraredInput, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SimulateInfraredInput");
+            action.AddInputParameter(new ParameterRelated("aCode", iPropertyTerminalInputCode));
+            iDelegateSimulateInfraredInput = new ActionDelegate(DoSimulateInfraredInput);
+            EnableAction(action, iDelegateSimulateInfraredInput, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -693,11 +515,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSimulateButtonInput must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSimulateButtonInput()
+        protected void EnableActionSimulateButtonInput()
         {
-            iCallbackSimulateButtonInput = new CallbackSimulateButtonInput(DoSimulateButtonInput);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSimulateButtonInput(iHandle, iCallbackSimulateButtonInput, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SimulateButtonInput");
+            action.AddInputParameter(new ParameterRelated("aCode", iPropertyTerminalInputCode));
+            iDelegateSimulateButtonInput = new ActionDelegate(DoSimulateButtonInput);
+            EnableAction(action, iDelegateSimulateButtonInput, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -705,11 +528,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSimulateLightSensor must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSimulateLightSensor()
+        protected void EnableActionSimulateLightSensor()
         {
-            iCallbackSimulateLightSensor = new CallbackSimulateLightSensor(DoSimulateLightSensor);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSimulateLightSensor(iHandle, iCallbackSimulateLightSensor, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SimulateLightSensor");
+            action.AddInputParameter(new ParameterUint("aLightLevel"));
+            iDelegateSimulateLightSensor = new ActionDelegate(DoSimulateLightSensor);
+            EnableAction(action, iDelegateSimulateLightSensor, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -717,11 +541,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetLightSensorData must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetLightSensorData()
+        protected void EnableActionGetLightSensorData()
         {
-            iCallbackGetLightSensorData = new CallbackGetLightSensorData(DoGetLightSensorData);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionGetLightSensorData(iHandle, iCallbackGetLightSensorData, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetLightSensorData");
+            action.AddOutputParameter(new ParameterUint("aLightLevel"));
+            iDelegateGetLightSensorData = new ActionDelegate(DoGetLightSensorData);
+            EnableAction(action, iDelegateGetLightSensorData, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -729,11 +554,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDisplayBrightness must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDisplayBrightness()
+        protected void EnableActionSetDisplayBrightness()
         {
-            iCallbackSetDisplayBrightness = new CallbackSetDisplayBrightness(DoSetDisplayBrightness);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetDisplayBrightness(iHandle, iCallbackSetDisplayBrightness, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayBrightness");
+            action.AddInputParameter(new ParameterRelated("aBrightness", iPropertyDisplayBrightness));
+            iDelegateSetDisplayBrightness = new ActionDelegate(DoSetDisplayBrightness);
+            EnableAction(action, iDelegateSetDisplayBrightness, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -741,11 +567,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDisplayBrightnessAuto must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDisplayBrightnessAuto()
+        protected void EnableActionSetDisplayBrightnessAuto()
         {
-            iCallbackSetDisplayBrightnessAuto = new CallbackSetDisplayBrightnessAuto(DoSetDisplayBrightnessAuto);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetDisplayBrightnessAuto(iHandle, iCallbackSetDisplayBrightnessAuto, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayBrightnessAuto");
+            action.AddInputParameter(new ParameterRelated("aBrightnessAuto", iPropertyDisplayBrightnessAuto));
+            iDelegateSetDisplayBrightnessAuto = new ActionDelegate(DoSetDisplayBrightnessAuto);
+            EnableAction(action, iDelegateSetDisplayBrightnessAuto, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -753,11 +580,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetInfraredCommands must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetInfraredCommands()
+        protected void EnableActionSetInfraredCommands()
         {
-            iCallbackSetInfraredCommands = new CallbackSetInfraredCommands(DoSetInfraredCommands);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetInfraredCommands(iHandle, iCallbackSetInfraredCommands, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetInfraredCommands");
+            action.AddInputParameter(new ParameterRelated("aCommands", iPropertyInfraredCommands));
+            iDelegateSetInfraredCommands = new ActionDelegate(DoSetInfraredCommands);
+            EnableAction(action, iDelegateSetInfraredCommands, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -765,11 +593,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoInfraredCommands must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionInfraredCommands()
+        protected void EnableActionInfraredCommands()
         {
-            iCallbackInfraredCommands = new CallbackInfraredCommands(DoInfraredCommands);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionInfraredCommands(iHandle, iCallbackInfraredCommands, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("InfraredCommands");
+            action.AddOutputParameter(new ParameterRelated("aCommands", iPropertyInfraredCommands));
+            iDelegateInfraredCommands = new ActionDelegate(DoInfraredCommands);
+            EnableAction(action, iDelegateInfraredCommands, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -777,11 +606,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetInfraredTerminalCommands must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetInfraredTerminalCommands()
+        protected void EnableActionSetInfraredTerminalCommands()
         {
-            iCallbackSetInfraredTerminalCommands = new CallbackSetInfraredTerminalCommands(DoSetInfraredTerminalCommands);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetInfraredTerminalCommands(iHandle, iCallbackSetInfraredTerminalCommands, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetInfraredTerminalCommands");
+            action.AddInputParameter(new ParameterRelated("aCommands", iPropertyInfraredTerminalCommands));
+            iDelegateSetInfraredTerminalCommands = new ActionDelegate(DoSetInfraredTerminalCommands);
+            EnableAction(action, iDelegateSetInfraredTerminalCommands, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -789,11 +619,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoInfraredTerminalCommands must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionInfraredTerminalCommands()
+        protected void EnableActionInfraredTerminalCommands()
         {
-            iCallbackInfraredTerminalCommands = new CallbackInfraredTerminalCommands(DoInfraredTerminalCommands);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionInfraredTerminalCommands(iHandle, iCallbackInfraredTerminalCommands, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("InfraredTerminalCommands");
+            action.AddOutputParameter(new ParameterRelated("aCommands", iPropertyInfraredTerminalCommands));
+            iDelegateInfraredTerminalCommands = new ActionDelegate(DoInfraredTerminalCommands);
+            EnableAction(action, iDelegateInfraredTerminalCommands, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -801,11 +632,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayBrightness must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayBrightness()
+        protected void EnableActionDisplayBrightness()
         {
-            iCallbackDisplayBrightness = new CallbackDisplayBrightness(DoDisplayBrightness);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayBrightness(iHandle, iCallbackDisplayBrightness, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayBrightness");
+            action.AddOutputParameter(new ParameterRelated("aBrightness", iPropertyDisplayBrightness));
+            iDelegateDisplayBrightness = new ActionDelegate(DoDisplayBrightness);
+            EnableAction(action, iDelegateDisplayBrightness, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -813,11 +645,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayBrightnessAuto must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayBrightnessAuto()
+        protected void EnableActionDisplayBrightnessAuto()
         {
-            iCallbackDisplayBrightnessAuto = new CallbackDisplayBrightnessAuto(DoDisplayBrightnessAuto);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayBrightnessAuto(iHandle, iCallbackDisplayBrightnessAuto, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayBrightnessAuto");
+            action.AddOutputParameter(new ParameterRelated("aBrightnessAuto", iPropertyDisplayBrightnessAuto));
+            iDelegateDisplayBrightnessAuto = new ActionDelegate(DoDisplayBrightnessAuto);
+            EnableAction(action, iDelegateDisplayBrightnessAuto, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -825,11 +658,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayUpsideDown must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayUpsideDown()
+        protected void EnableActionDisplayUpsideDown()
         {
-            iCallbackDisplayUpsideDown = new CallbackDisplayUpsideDown(DoDisplayUpsideDown);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayUpsideDown(iHandle, iCallbackDisplayUpsideDown, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayUpsideDown");
+            action.AddOutputParameter(new ParameterRelated("aUpsideDown", iPropertyDisplayUpsideDown));
+            iDelegateDisplayUpsideDown = new ActionDelegate(DoDisplayUpsideDown);
+            EnableAction(action, iDelegateDisplayUpsideDown, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -837,11 +671,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDisplayUpsideDown must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDisplayUpsideDown()
+        protected void EnableActionSetDisplayUpsideDown()
         {
-            iCallbackSetDisplayUpsideDown = new CallbackSetDisplayUpsideDown(DoSetDisplayUpsideDown);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetDisplayUpsideDown(iHandle, iCallbackSetDisplayUpsideDown, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayUpsideDown");
+            action.AddInputParameter(new ParameterRelated("aUpsideDown", iPropertyDisplayUpsideDown));
+            iDelegateSetDisplayUpsideDown = new ActionDelegate(DoSetDisplayUpsideDown);
+            EnableAction(action, iDelegateSetDisplayUpsideDown, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -849,11 +684,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDisplayScrollText must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDisplayScrollText()
+        protected void EnableActionSetDisplayScrollText()
         {
-            iCallbackSetDisplayScrollText = new CallbackSetDisplayScrollText(DoSetDisplayScrollText);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetDisplayScrollText(iHandle, iCallbackSetDisplayScrollText, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayScrollText");
+            action.AddInputParameter(new ParameterRelated("aDisplayScrollText", iPropertyDisplayScrollText));
+            iDelegateSetDisplayScrollText = new ActionDelegate(DoSetDisplayScrollText);
+            EnableAction(action, iDelegateSetDisplayScrollText, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -861,11 +697,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayScrollText must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayScrollText()
+        protected void EnableActionDisplayScrollText()
         {
-            iCallbackDisplayScrollText = new CallbackDisplayScrollText(DoDisplayScrollText);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayScrollText(iHandle, iCallbackDisplayScrollText, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayScrollText");
+            action.AddOutputParameter(new ParameterRelated("aDisplayScrollTextEnabled", iPropertyDisplayScrollText));
+            iDelegateDisplayScrollText = new ActionDelegate(DoDisplayScrollText);
+            EnableAction(action, iDelegateDisplayScrollText, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -873,11 +710,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDisplaySleep must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDisplaySleep()
+        protected void EnableActionSetDisplaySleep()
         {
-            iCallbackSetDisplaySleep = new CallbackSetDisplaySleep(DoSetDisplaySleep);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetDisplaySleep(iHandle, iCallbackSetDisplaySleep, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDisplaySleep");
+            action.AddInputParameter(new ParameterRelated("aEnabled", iPropertyDisplaySleep));
+            iDelegateSetDisplaySleep = new ActionDelegate(DoSetDisplaySleep);
+            EnableAction(action, iDelegateSetDisplaySleep, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -885,11 +723,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplaySleep must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplaySleep()
+        protected void EnableActionDisplaySleep()
         {
-            iCallbackDisplaySleep = new CallbackDisplaySleep(DoDisplaySleep);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplaySleep(iHandle, iCallbackDisplaySleep, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplaySleep");
+            action.AddOutputParameter(new ParameterRelated("aEnabled", iPropertyDisplaySleep));
+            iDelegateDisplaySleep = new ActionDelegate(DoDisplaySleep);
+            EnableAction(action, iDelegateDisplaySleep, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -897,11 +736,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetDisplayLedOff must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetDisplayLedOff()
+        protected void EnableActionSetDisplayLedOff()
         {
-            iCallbackSetDisplayLedOff = new CallbackSetDisplayLedOff(DoSetDisplayLedOff);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetDisplayLedOff(iHandle, iCallbackSetDisplayLedOff, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayLedOff");
+            action.AddInputParameter(new ParameterRelated("aOff", iPropertyDisplayLedOff));
+            iDelegateSetDisplayLedOff = new ActionDelegate(DoSetDisplayLedOff);
+            EnableAction(action, iDelegateSetDisplayLedOff, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -909,11 +749,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDisplayLedOff must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDisplayLedOff()
+        protected void EnableActionDisplayLedOff()
         {
-            iCallbackDisplayLedOff = new CallbackDisplayLedOff(DoDisplayLedOff);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayLedOff(iHandle, iCallbackDisplayLedOff, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayLedOff");
+            action.AddOutputParameter(new ParameterRelated("aOff", iPropertyDisplayLedOff));
+            iDelegateDisplayLedOff = new ActionDelegate(DoDisplayLedOff);
+            EnableAction(action, iDelegateDisplayLedOff, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -1250,221 +1091,959 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoDisplayTestPattern(IntPtr aPtr, uint aVersion, int aaTestPattern)
+        private static int DoDisplayTestPattern(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            self.DisplayTestPattern(aVersion, aaTestPattern);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            int aTestPattern;
+            try
+            {
+                invocation.ReadStart();
+                aTestPattern = invocation.ReadInt("aTestPattern");
+                invocation.ReadEnd();
+                self.DisplayTestPattern(aVersion, aTestPattern);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoDisplayFill(IntPtr aPtr, uint aVersion)
+        private static int DoDisplayFill(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            self.DisplayFill(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.DisplayFill(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoDisplayClear(IntPtr aPtr, uint aVersion)
+        private static int DoDisplayClear(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            self.DisplayClear(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.DisplayClear(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetTestModeEnabled(IntPtr aPtr, uint aVersion, int aaEnabled)
+        private static int DoSetTestModeEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aEnabled = (aaEnabled != 0);
-            self.SetTestModeEnabled(aVersion, aEnabled);
-            return 0;
-        }
-
-        private static unsafe int DoSimulateInfraredInput(IntPtr aPtr, uint aVersion, uint aaCode)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            self.SimulateInfraredInput(aVersion, aaCode);
-            return 0;
-        }
-
-        private static unsafe int DoSimulateButtonInput(IntPtr aPtr, uint aVersion, uint aaCode)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            self.SimulateButtonInput(aVersion, aaCode);
-            return 0;
-        }
-
-        private static unsafe int DoSimulateLightSensor(IntPtr aPtr, uint aVersion, uint aaLightLevel)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            self.SimulateLightSensor(aVersion, aaLightLevel);
-            return 0;
-        }
-
-        private static unsafe int DoGetLightSensorData(IntPtr aPtr, uint aVersion, uint* aaLightLevel)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            uint aLightLevel;
-            self.GetLightSensorData(aVersion, out aLightLevel);
-            *aaLightLevel = aLightLevel;
-            return 0;
-        }
-
-        private static unsafe int DoSetDisplayBrightness(IntPtr aPtr, uint aVersion, uint aaBrightness)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            self.SetDisplayBrightness(aVersion, aaBrightness);
-            return 0;
-        }
-
-        private static unsafe int DoSetDisplayBrightnessAuto(IntPtr aPtr, uint aVersion, int aaBrightnessAuto)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aBrightnessAuto = (aaBrightnessAuto != 0);
-            self.SetDisplayBrightnessAuto(aVersion, aBrightnessAuto);
-            return 0;
-        }
-
-        private static unsafe int DoSetInfraredCommands(IntPtr aPtr, uint aVersion, char* aaCommands)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            string aCommands = Marshal.PtrToStringAnsi((IntPtr)aaCommands);
-            self.SetInfraredCommands(aVersion, aCommands);
-            return 0;
-        }
-
-        private static unsafe int DoInfraredCommands(IntPtr aPtr, uint aVersion, char** aaCommands)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            string aCommands;
-            self.InfraredCommands(aVersion, out aCommands);
-            *aaCommands = (char*)Marshal.StringToHGlobalAnsi(aCommands).ToPointer();
-            return 0;
-        }
-
-        private static unsafe int DoSetInfraredTerminalCommands(IntPtr aPtr, uint aVersion, char* aaCommands)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            string aCommands = Marshal.PtrToStringAnsi((IntPtr)aaCommands);
-            self.SetInfraredTerminalCommands(aVersion, aCommands);
-            return 0;
-        }
-
-        private static unsafe int DoInfraredTerminalCommands(IntPtr aPtr, uint aVersion, char** aaCommands)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            string aCommands;
-            self.InfraredTerminalCommands(aVersion, out aCommands);
-            *aaCommands = (char*)Marshal.StringToHGlobalAnsi(aCommands).ToPointer();
-            return 0;
-        }
-
-        private static unsafe int DoDisplayBrightness(IntPtr aPtr, uint aVersion, uint* aaBrightness)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            uint aBrightness;
-            self.DisplayBrightness(aVersion, out aBrightness);
-            *aaBrightness = aBrightness;
-            return 0;
-        }
-
-        private static unsafe int DoDisplayBrightnessAuto(IntPtr aPtr, uint aVersion, int* aaBrightnessAuto)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aBrightnessAuto;
-            self.DisplayBrightnessAuto(aVersion, out aBrightnessAuto);
-            *aaBrightnessAuto = (aBrightnessAuto ? 1 : 0);
-            return 0;
-        }
-
-        private static unsafe int DoDisplayUpsideDown(IntPtr aPtr, uint aVersion, int* aaUpsideDown)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aUpsideDown;
-            self.DisplayUpsideDown(aVersion, out aUpsideDown);
-            *aaUpsideDown = (aUpsideDown ? 1 : 0);
-            return 0;
-        }
-
-        private static unsafe int DoSetDisplayUpsideDown(IntPtr aPtr, uint aVersion, int aaUpsideDown)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aUpsideDown = (aaUpsideDown != 0);
-            self.SetDisplayUpsideDown(aVersion, aUpsideDown);
-            return 0;
-        }
-
-        private static unsafe int DoSetDisplayScrollText(IntPtr aPtr, uint aVersion, int aaDisplayScrollText)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aDisplayScrollText = (aaDisplayScrollText != 0);
-            self.SetDisplayScrollText(aVersion, aDisplayScrollText);
-            return 0;
-        }
-
-        private static unsafe int DoDisplayScrollText(IntPtr aPtr, uint aVersion, int* aaDisplayScrollTextEnabled)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aDisplayScrollTextEnabled;
-            self.DisplayScrollText(aVersion, out aDisplayScrollTextEnabled);
-            *aaDisplayScrollTextEnabled = (aDisplayScrollTextEnabled ? 1 : 0);
-            return 0;
-        }
-
-        private static unsafe int DoSetDisplaySleep(IntPtr aPtr, uint aVersion, int aaEnabled)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aEnabled = (aaEnabled != 0);
-            self.SetDisplaySleep(aVersion, aEnabled);
-            return 0;
-        }
-
-        private static unsafe int DoDisplaySleep(IntPtr aPtr, uint aVersion, int* aaEnabled)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aEnabled;
-            self.DisplaySleep(aVersion, out aEnabled);
-            *aaEnabled = (aEnabled ? 1 : 0);
+            try
+            {
+                invocation.ReadStart();
+                aEnabled = invocation.ReadBool("aEnabled");
+                invocation.ReadEnd();
+                self.SetTestModeEnabled(aVersion, aEnabled);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetDisplayLedOff(IntPtr aPtr, uint aVersion, int aaOff)
+        private static int DoSimulateInfraredInput(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aOff = (aaOff != 0);
-            self.SetDisplayLedOff(aVersion, aOff);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aCode;
+            try
+            {
+                invocation.ReadStart();
+                aCode = invocation.ReadUint("aCode");
+                invocation.ReadEnd();
+                self.SimulateInfraredInput(aVersion, aCode);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoDisplayLedOff(IntPtr aPtr, uint aVersion, int* aaOff)
+        private static int DoSimulateButtonInput(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aCode;
+            try
+            {
+                invocation.ReadStart();
+                aCode = invocation.ReadUint("aCode");
+                invocation.ReadEnd();
+                self.SimulateButtonInput(aVersion, aCode);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoSimulateLightSensor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aLightLevel;
+            try
+            {
+                invocation.ReadStart();
+                aLightLevel = invocation.ReadUint("aLightLevel");
+                invocation.ReadEnd();
+                self.SimulateLightSensor(aVersion, aLightLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoGetLightSensorData(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aLightLevel;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.GetLightSensorData(aVersion, out aLightLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("aLightLevel", aLightLevel);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoSetDisplayBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aBrightness;
+            try
+            {
+                invocation.ReadStart();
+                aBrightness = invocation.ReadUint("aBrightness");
+                invocation.ReadEnd();
+                self.SetDisplayBrightness(aVersion, aBrightness);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoSetDisplayBrightnessAuto(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aBrightnessAuto;
+            try
+            {
+                invocation.ReadStart();
+                aBrightnessAuto = invocation.ReadBool("aBrightnessAuto");
+                invocation.ReadEnd();
+                self.SetDisplayBrightnessAuto(aVersion, aBrightnessAuto);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoSetInfraredCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aCommands;
+            try
+            {
+                invocation.ReadStart();
+                aCommands = invocation.ReadString("aCommands");
+                invocation.ReadEnd();
+                self.SetInfraredCommands(aVersion, aCommands);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoInfraredCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aCommands;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.InfraredCommands(aVersion, out aCommands);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("aCommands", aCommands);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoSetInfraredTerminalCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aCommands;
+            try
+            {
+                invocation.ReadStart();
+                aCommands = invocation.ReadString("aCommands");
+                invocation.ReadEnd();
+                self.SetInfraredTerminalCommands(aVersion, aCommands);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoInfraredTerminalCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aCommands;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.InfraredTerminalCommands(aVersion, out aCommands);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("aCommands", aCommands);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoDisplayBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aBrightness;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.DisplayBrightness(aVersion, out aBrightness);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("aBrightness", aBrightness);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoDisplayBrightnessAuto(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aBrightnessAuto;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.DisplayBrightnessAuto(aVersion, out aBrightnessAuto);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBool("aBrightnessAuto", aBrightnessAuto);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoDisplayUpsideDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aUpsideDown;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.DisplayUpsideDown(aVersion, out aUpsideDown);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBool("aUpsideDown", aUpsideDown);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoSetDisplayUpsideDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aUpsideDown;
+            try
+            {
+                invocation.ReadStart();
+                aUpsideDown = invocation.ReadBool("aUpsideDown");
+                invocation.ReadEnd();
+                self.SetDisplayUpsideDown(aVersion, aUpsideDown);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoSetDisplayScrollText(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aDisplayScrollText;
+            try
+            {
+                invocation.ReadStart();
+                aDisplayScrollText = invocation.ReadBool("aDisplayScrollText");
+                invocation.ReadEnd();
+                self.SetDisplayScrollText(aVersion, aDisplayScrollText);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoDisplayScrollText(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aDisplayScrollTextEnabled;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.DisplayScrollText(aVersion, out aDisplayScrollTextEnabled);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBool("aDisplayScrollTextEnabled", aDisplayScrollTextEnabled);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoSetDisplaySleep(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aEnabled;
+            try
+            {
+                invocation.ReadStart();
+                aEnabled = invocation.ReadBool("aEnabled");
+                invocation.ReadEnd();
+                self.SetDisplaySleep(aVersion, aEnabled);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoDisplaySleep(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aEnabled;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.DisplaySleep(aVersion, out aEnabled);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBool("aEnabled", aEnabled);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoSetDisplayLedOff(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aOff;
-            self.DisplayLedOff(aVersion, out aOff);
-            *aaOff = (aOff ? 1 : 0);
+            try
+            {
+                invocation.ReadStart();
+                aOff = invocation.ReadBool("aOff");
+                invocation.ReadEnd();
+                self.SetDisplayLedOff(aVersion, aOff);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoDisplayLedOff(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aOff;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.DisplayLedOff(aVersion, out aOff);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBool("aOff", aOff);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1484,21 +2063,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkUi2Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

@@ -1,64 +1,98 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyZappOrgTestWidgetController1 : ICpProxy, IDisposable
     {
-        void SyncCreateWidget(string aWidgetUdn, uint aWidgetClass);
-        void BeginCreateWidget(string aWidgetUdn, uint aWidgetClass, CpProxy.CallbackAsyncComplete aCallback);
-        void EndCreateWidget(uint aAsyncHandle);
-        void SyncRemoveWidget(string aWidgetUdn);
-        void BeginRemoveWidget(string aWidgetUdn, CpProxy.CallbackAsyncComplete aCallback);
-        void EndRemoveWidget(uint aAsyncHandle);
-        void SyncSetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue);
-        void BeginSetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetWidgetRegister(uint aAsyncHandle);
-        void SyncGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, out uint aRegisterValue);
-        void BeginGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetWidgetRegister(uint aAsyncHandle, out uint aRegisterValue);
-
+        void SyncCreateWidget(String aWidgetUdn, uint aWidgetClass);
+        void BeginCreateWidget(String aWidgetUdn, uint aWidgetClass, CpProxy.CallbackAsyncComplete aCallback);
+        void EndCreateWidget(IntPtr aAsyncHandle);
+        void SyncRemoveWidget(String aWidgetUdn);
+        void BeginRemoveWidget(String aWidgetUdn, CpProxy.CallbackAsyncComplete aCallback);
+        void EndRemoveWidget(IntPtr aAsyncHandle);
+        void SyncSetWidgetRegister(String aWidgetUdn, uint aRegisterIndex, uint aRegisterValue);
+        void BeginSetWidgetRegister(String aWidgetUdn, uint aRegisterIndex, uint aRegisterValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetWidgetRegister(IntPtr aAsyncHandle);
+        void SyncGetWidgetRegister(String aWidgetUdn, uint aRegisterIndex, out uint aRegisterValue);
+        void BeginGetWidgetRegister(String aWidgetUdn, uint aRegisterIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetWidgetRegister(IntPtr aAsyncHandle, out uint aRegisterValue);
     }
+
+    internal class SyncCreateWidgetZappOrgTestWidgetController1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestWidgetController1 iService;
+
+        public SyncCreateWidgetZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndCreateWidget(aAsyncHandle);
+        }
+    };
+
+    internal class SyncRemoveWidgetZappOrgTestWidgetController1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestWidgetController1 iService;
+
+        public SyncRemoveWidgetZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndRemoveWidget(aAsyncHandle);
+        }
+    };
+
+    internal class SyncSetWidgetRegisterZappOrgTestWidgetController1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestWidgetController1 iService;
+
+        public SyncSetWidgetRegisterZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetWidgetRegister(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetWidgetRegisterZappOrgTestWidgetController1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestWidgetController1 iService;
+        private uint iRegisterValue;
+
+        public SyncGetWidgetRegisterZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint RegisterValue()
+        {
+            return iRegisterValue;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetWidgetRegister(aAsyncHandle, out iRegisterValue);
+        }
+    };
 
     /// <summary>
     /// Proxy for the zapp.org:TestWidgetController:1 UPnP service
     /// </summary>
     public class CpProxyZappOrgTestWidgetController1 : CpProxy, IDisposable, ICpProxyZappOrgTestWidgetController1
     {
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern uint CpProxyZappOrgTestWidgetController1Create(uint aDeviceHandle);
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern void CpProxyZappOrgTestWidgetController1Destroy(uint aHandle);
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe void CpProxyZappOrgTestWidgetController1SyncCreateWidget(uint aHandle, char* aWidgetUdn, uint aWidgetClass);
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe void CpProxyZappOrgTestWidgetController1BeginCreateWidget(uint aHandle, char* aWidgetUdn, uint aWidgetClass, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe int CpProxyZappOrgTestWidgetController1EndCreateWidget(uint aHandle, uint aAsync);
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe void CpProxyZappOrgTestWidgetController1SyncRemoveWidget(uint aHandle, char* aWidgetUdn);
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe void CpProxyZappOrgTestWidgetController1BeginRemoveWidget(uint aHandle, char* aWidgetUdn, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe int CpProxyZappOrgTestWidgetController1EndRemoveWidget(uint aHandle, uint aAsync);
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe void CpProxyZappOrgTestWidgetController1SyncSetWidgetRegister(uint aHandle, char* aWidgetUdn, uint aRegisterIndex, uint aRegisterValue);
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe void CpProxyZappOrgTestWidgetController1BeginSetWidgetRegister(uint aHandle, char* aWidgetUdn, uint aRegisterIndex, uint aRegisterValue, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe int CpProxyZappOrgTestWidgetController1EndSetWidgetRegister(uint aHandle, uint aAsync);
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe void CpProxyZappOrgTestWidgetController1SyncGetWidgetRegister(uint aHandle, char* aWidgetUdn, uint aRegisterIndex, uint* aRegisterValue);
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe void CpProxyZappOrgTestWidgetController1BeginGetWidgetRegister(uint aHandle, char* aWidgetUdn, uint aRegisterIndex, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe int CpProxyZappOrgTestWidgetController1EndGetWidgetRegister(uint aHandle, uint aAsync, uint* aRegisterValue);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionCreateWidget;
+        private Zapp.Core.Action iActionRemoveWidget;
+        private Zapp.Core.Action iActionSetWidgetRegister;
+        private Zapp.Core.Action iActionGetWidgetRegister;
 
         /// <summary>
         /// Constructor
@@ -66,9 +100,36 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyZappOrgTestWidgetController1(CpDevice aDevice)
+            : base("zapp-org", "TestWidgetController", 1, aDevice)
         {
-            iHandle = CpProxyZappOrgTestWidgetController1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionCreateWidget = new Zapp.Core.Action("CreateWidget");
+            param = new ParameterString("WidgetUdn", allowedValues);
+            iActionCreateWidget.AddInputParameter(param);
+            param = new ParameterUint("WidgetClass");
+            iActionCreateWidget.AddInputParameter(param);
+
+            iActionRemoveWidget = new Zapp.Core.Action("RemoveWidget");
+            param = new ParameterString("WidgetUdn", allowedValues);
+            iActionRemoveWidget.AddInputParameter(param);
+
+            iActionSetWidgetRegister = new Zapp.Core.Action("SetWidgetRegister");
+            param = new ParameterString("WidgetUdn", allowedValues);
+            iActionSetWidgetRegister.AddInputParameter(param);
+            param = new ParameterUint("RegisterIndex");
+            iActionSetWidgetRegister.AddInputParameter(param);
+            param = new ParameterUint("RegisterValue");
+            iActionSetWidgetRegister.AddInputParameter(param);
+
+            iActionGetWidgetRegister = new Zapp.Core.Action("GetWidgetRegister");
+            param = new ParameterString("WidgetUdn", allowedValues);
+            iActionGetWidgetRegister.AddInputParameter(param);
+            param = new ParameterUint("RegisterIndex");
+            iActionGetWidgetRegister.AddInputParameter(param);
+            param = new ParameterUint("RegisterValue");
+            iActionGetWidgetRegister.AddOutputParameter(param);
         }
 
         /// <summary>
@@ -78,13 +139,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aWidgetUdn"></param>
         /// <param name="aWidgetClass"></param>
-        public unsafe void SyncCreateWidget(string aWidgetUdn, uint aWidgetClass)
+        public void SyncCreateWidget(String aWidgetUdn, uint aWidgetClass)
         {
-            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
-            {
-                CpProxyZappOrgTestWidgetController1SyncCreateWidget(iHandle, widgetUdn, aWidgetClass);
-            }
-            Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            SyncCreateWidgetZappOrgTestWidgetController1 sync = new SyncCreateWidgetZappOrgTestWidgetController1(this);
+            BeginCreateWidget(aWidgetUdn, aWidgetClass, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -97,13 +157,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aWidgetClass"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginCreateWidget(string aWidgetUdn, uint aWidgetClass, CallbackAsyncComplete aCallback)
+        public void BeginCreateWidget(String aWidgetUdn, uint aWidgetClass, CallbackAsyncComplete aCallback)
         {
-            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestWidgetController1BeginCreateWidget(iHandle, widgetUdn, aWidgetClass, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            Invocation invocation = iService.Invocation(iActionCreateWidget, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionCreateWidget.InputParameter(inIndex++), aWidgetUdn));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionCreateWidget.InputParameter(inIndex++), aWidgetClass));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -111,14 +171,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndCreateWidget(uint aAsyncHandle)
+        public void EndCreateWidget(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestWidgetController1EndCreateWidget(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -127,13 +181,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aWidgetUdn"></param>
-        public unsafe void SyncRemoveWidget(string aWidgetUdn)
+        public void SyncRemoveWidget(String aWidgetUdn)
         {
-            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
-            {
-                CpProxyZappOrgTestWidgetController1SyncRemoveWidget(iHandle, widgetUdn);
-            }
-            Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            SyncRemoveWidgetZappOrgTestWidgetController1 sync = new SyncRemoveWidgetZappOrgTestWidgetController1(this);
+            BeginRemoveWidget(aWidgetUdn, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -145,13 +198,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aWidgetUdn"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginRemoveWidget(string aWidgetUdn, CallbackAsyncComplete aCallback)
+        public void BeginRemoveWidget(String aWidgetUdn, CallbackAsyncComplete aCallback)
         {
-            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestWidgetController1BeginRemoveWidget(iHandle, widgetUdn, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            Invocation invocation = iService.Invocation(iActionRemoveWidget, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionRemoveWidget.InputParameter(inIndex++), aWidgetUdn));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -159,14 +211,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndRemoveWidget(uint aAsyncHandle)
+        public void EndRemoveWidget(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestWidgetController1EndRemoveWidget(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -177,13 +223,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aWidgetUdn"></param>
         /// <param name="aRegisterIndex"></param>
         /// <param name="aRegisterValue"></param>
-        public unsafe void SyncSetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue)
+        public void SyncSetWidgetRegister(String aWidgetUdn, uint aRegisterIndex, uint aRegisterValue)
         {
-            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
-            {
-                CpProxyZappOrgTestWidgetController1SyncSetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, aRegisterValue);
-            }
-            Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            SyncSetWidgetRegisterZappOrgTestWidgetController1 sync = new SyncSetWidgetRegisterZappOrgTestWidgetController1(this);
+            BeginSetWidgetRegister(aWidgetUdn, aRegisterIndex, aRegisterValue, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -197,13 +242,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRegisterValue"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue, CallbackAsyncComplete aCallback)
+        public void BeginSetWidgetRegister(String aWidgetUdn, uint aRegisterIndex, uint aRegisterValue, CallbackAsyncComplete aCallback)
         {
-            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestWidgetController1BeginSetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, aRegisterValue, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            Invocation invocation = iService.Invocation(iActionSetWidgetRegister, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetWidgetRegister.InputParameter(inIndex++), aWidgetUdn));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetWidgetRegister.InputParameter(inIndex++), aRegisterIndex));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetWidgetRegister.InputParameter(inIndex++), aRegisterValue));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -211,14 +257,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetWidgetRegister(uint aAsyncHandle)
+        public void EndSetWidgetRegister(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestWidgetController1EndSetWidgetRegister(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -229,14 +269,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aWidgetUdn"></param>
         /// <param name="aRegisterIndex"></param>
         /// <param name="aRegisterValue"></param>
-        public unsafe void SyncGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, out uint aRegisterValue)
+        public void SyncGetWidgetRegister(String aWidgetUdn, uint aRegisterIndex, out uint aRegisterValue)
         {
-            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
-            fixed (uint* registerValue = &aRegisterValue)
-            {
-                CpProxyZappOrgTestWidgetController1SyncGetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, registerValue);
-            }
-            Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            SyncGetWidgetRegisterZappOrgTestWidgetController1 sync = new SyncGetWidgetRegisterZappOrgTestWidgetController1(this);
+            BeginGetWidgetRegister(aWidgetUdn, aRegisterIndex, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aRegisterValue = sync.RegisterValue();
         }
 
         /// <summary>
@@ -249,13 +288,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRegisterIndex"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, CallbackAsyncComplete aCallback)
+        public void BeginGetWidgetRegister(String aWidgetUdn, uint aRegisterIndex, CallbackAsyncComplete aCallback)
         {
-            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestWidgetController1BeginGetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            Invocation invocation = iService.Invocation(iActionGetWidgetRegister, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetWidgetRegister.InputParameter(inIndex++), aWidgetUdn));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetWidgetRegister.InputParameter(inIndex++), aRegisterIndex));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetWidgetRegister.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -264,15 +305,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aRegisterValue"></param>
-        public unsafe void EndGetWidgetRegister(uint aAsyncHandle, out uint aRegisterValue)
+        public void EndGetWidgetRegister(IntPtr aAsyncHandle, out uint aRegisterValue)
         {
-            fixed (uint* registerValue = &aRegisterValue)
-            {
-                if (0 != CpProxyZappOrgTestWidgetController1EndGetWidgetRegister(iHandle, aAsyncHandle, registerValue))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aRegisterValue = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -292,21 +328,20 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                CpProxyZappOrgTestWidgetController1Destroy(iHandle);
-                iHandle = 0;
+                DisposeProxy();
+                iHandle = IntPtr.Zero;
+                iActionCreateWidget.Dispose();
+                iActionRemoveWidget.Dispose();
+                iActionSetWidgetRegister.Dispose();
+                iActionGetWidgetRegister.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

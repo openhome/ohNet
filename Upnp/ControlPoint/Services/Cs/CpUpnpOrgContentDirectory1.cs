@@ -1,178 +1,380 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgContentDirectory1 : ICpProxy, IDisposable
     {
-        void SyncGetSearchCapabilities(out string aSearchCaps);
+        void SyncGetSearchCapabilities(out String aSearchCaps);
         void BeginGetSearchCapabilities(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetSearchCapabilities(uint aAsyncHandle, out string aSearchCaps);
-        void SyncGetSortCapabilities(out string aSortCaps);
+        void EndGetSearchCapabilities(IntPtr aAsyncHandle, out String aSearchCaps);
+        void SyncGetSortCapabilities(out String aSortCaps);
         void BeginGetSortCapabilities(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetSortCapabilities(uint aAsyncHandle, out string aSortCaps);
+        void EndGetSortCapabilities(IntPtr aAsyncHandle, out String aSortCaps);
         void SyncGetSystemUpdateID(out uint aId);
         void BeginGetSystemUpdateID(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetSystemUpdateID(uint aAsyncHandle, out uint aId);
-        void SyncBrowse(string aObjectID, string aBrowseFlag, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
-        void BeginBrowse(string aObjectID, string aBrowseFlag, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
-        void EndBrowse(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
-        void SyncSearch(string aContainerID, string aSearchCriteria, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
-        void BeginSearch(string aContainerID, string aSearchCriteria, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSearch(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
-        void SyncCreateObject(string aContainerID, string aElements, out string aObjectID, out string aResult);
-        void BeginCreateObject(string aContainerID, string aElements, CpProxy.CallbackAsyncComplete aCallback);
-        void EndCreateObject(uint aAsyncHandle, out string aObjectID, out string aResult);
-        void SyncDestroyObject(string aObjectID);
-        void BeginDestroyObject(string aObjectID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndDestroyObject(uint aAsyncHandle);
-        void SyncUpdateObject(string aObjectID, string aCurrentTagValue, string aNewTagValue);
-        void BeginUpdateObject(string aObjectID, string aCurrentTagValue, string aNewTagValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndUpdateObject(uint aAsyncHandle);
-        void SyncImportResource(string aSourceURI, string aDestinationURI, out uint aTransferID);
-        void BeginImportResource(string aSourceURI, string aDestinationURI, CpProxy.CallbackAsyncComplete aCallback);
-        void EndImportResource(uint aAsyncHandle, out uint aTransferID);
-        void SyncExportResource(string aSourceURI, string aDestinationURI, out uint aTransferID);
-        void BeginExportResource(string aSourceURI, string aDestinationURI, CpProxy.CallbackAsyncComplete aCallback);
-        void EndExportResource(uint aAsyncHandle, out uint aTransferID);
+        void EndGetSystemUpdateID(IntPtr aAsyncHandle, out uint aId);
+        void SyncBrowse(String aObjectID, String aBrowseFlag, String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void BeginBrowse(String aObjectID, String aBrowseFlag, String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
+        void EndBrowse(IntPtr aAsyncHandle, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void SyncSearch(String aContainerID, String aSearchCriteria, String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void BeginSearch(String aContainerID, String aSearchCriteria, String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSearch(IntPtr aAsyncHandle, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void SyncCreateObject(String aContainerID, String aElements, out String aObjectID, out String aResult);
+        void BeginCreateObject(String aContainerID, String aElements, CpProxy.CallbackAsyncComplete aCallback);
+        void EndCreateObject(IntPtr aAsyncHandle, out String aObjectID, out String aResult);
+        void SyncDestroyObject(String aObjectID);
+        void BeginDestroyObject(String aObjectID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDestroyObject(IntPtr aAsyncHandle);
+        void SyncUpdateObject(String aObjectID, String aCurrentTagValue, String aNewTagValue);
+        void BeginUpdateObject(String aObjectID, String aCurrentTagValue, String aNewTagValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndUpdateObject(IntPtr aAsyncHandle);
+        void SyncImportResource(String aSourceURI, String aDestinationURI, out uint aTransferID);
+        void BeginImportResource(String aSourceURI, String aDestinationURI, CpProxy.CallbackAsyncComplete aCallback);
+        void EndImportResource(IntPtr aAsyncHandle, out uint aTransferID);
+        void SyncExportResource(String aSourceURI, String aDestinationURI, out uint aTransferID);
+        void BeginExportResource(String aSourceURI, String aDestinationURI, CpProxy.CallbackAsyncComplete aCallback);
+        void EndExportResource(IntPtr aAsyncHandle, out uint aTransferID);
         void SyncStopTransferResource(uint aTransferID);
         void BeginStopTransferResource(uint aTransferID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndStopTransferResource(uint aAsyncHandle);
-        void SyncGetTransferProgress(uint aTransferID, out string aTransferStatus, out string aTransferLength, out string aTransferTotal);
+        void EndStopTransferResource(IntPtr aAsyncHandle);
+        void SyncGetTransferProgress(uint aTransferID, out String aTransferStatus, out String aTransferLength, out String aTransferTotal);
         void BeginGetTransferProgress(uint aTransferID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetTransferProgress(uint aAsyncHandle, out string aTransferStatus, out string aTransferLength, out string aTransferTotal);
-        void SyncDeleteResource(string aResourceURI);
-        void BeginDeleteResource(string aResourceURI, CpProxy.CallbackAsyncComplete aCallback);
-        void EndDeleteResource(uint aAsyncHandle);
-        void SyncCreateReference(string aContainerID, string aObjectID, out string aNewID);
-        void BeginCreateReference(string aContainerID, string aObjectID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndCreateReference(uint aAsyncHandle, out string aNewID);
-
+        void EndGetTransferProgress(IntPtr aAsyncHandle, out String aTransferStatus, out String aTransferLength, out String aTransferTotal);
+        void SyncDeleteResource(String aResourceURI);
+        void BeginDeleteResource(String aResourceURI, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDeleteResource(IntPtr aAsyncHandle);
+        void SyncCreateReference(String aContainerID, String aObjectID, out String aNewID);
+        void BeginCreateReference(String aContainerID, String aObjectID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndCreateReference(IntPtr aAsyncHandle, out String aNewID);
         void SetPropertyTransferIDsChanged(CpProxy.CallbackPropertyChanged aTransferIDsChanged);
-        void PropertyTransferIDs(out string aTransferIDs);
+        String PropertyTransferIDs();
         void SetPropertySystemUpdateIDChanged(CpProxy.CallbackPropertyChanged aSystemUpdateIDChanged);
-        void PropertySystemUpdateID(out uint aSystemUpdateID);
+        uint PropertySystemUpdateID();
         void SetPropertyContainerUpdateIDsChanged(CpProxy.CallbackPropertyChanged aContainerUpdateIDsChanged);
-        void PropertyContainerUpdateIDs(out string aContainerUpdateIDs);
+        String PropertyContainerUpdateIDs();
     }
+
+    internal class SyncGetSearchCapabilitiesUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+        private String iSearchCaps;
+
+        public SyncGetSearchCapabilitiesUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String SearchCaps()
+        {
+            return iSearchCaps;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetSearchCapabilities(aAsyncHandle, out iSearchCaps);
+        }
+    };
+
+    internal class SyncGetSortCapabilitiesUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+        private String iSortCaps;
+
+        public SyncGetSortCapabilitiesUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String SortCaps()
+        {
+            return iSortCaps;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetSortCapabilities(aAsyncHandle, out iSortCaps);
+        }
+    };
+
+    internal class SyncGetSystemUpdateIDUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+        private uint iId;
+
+        public SyncGetSystemUpdateIDUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Id()
+        {
+            return iId;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetSystemUpdateID(aAsyncHandle, out iId);
+        }
+    };
+
+    internal class SyncBrowseUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+        private String iResult;
+        private uint iNumberReturned;
+        private uint iTotalMatches;
+        private uint iUpdateID;
+
+        public SyncBrowseUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Result()
+        {
+            return iResult;
+        }
+        public uint NumberReturned()
+        {
+            return iNumberReturned;
+        }
+        public uint TotalMatches()
+        {
+            return iTotalMatches;
+        }
+        public uint UpdateID()
+        {
+            return iUpdateID;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndBrowse(aAsyncHandle, out iResult, out iNumberReturned, out iTotalMatches, out iUpdateID);
+        }
+    };
+
+    internal class SyncSearchUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+        private String iResult;
+        private uint iNumberReturned;
+        private uint iTotalMatches;
+        private uint iUpdateID;
+
+        public SyncSearchUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Result()
+        {
+            return iResult;
+        }
+        public uint NumberReturned()
+        {
+            return iNumberReturned;
+        }
+        public uint TotalMatches()
+        {
+            return iTotalMatches;
+        }
+        public uint UpdateID()
+        {
+            return iUpdateID;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSearch(aAsyncHandle, out iResult, out iNumberReturned, out iTotalMatches, out iUpdateID);
+        }
+    };
+
+    internal class SyncCreateObjectUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+        private String iObjectID;
+        private String iResult;
+
+        public SyncCreateObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String ObjectID()
+        {
+            return iObjectID;
+        }
+        public String Result()
+        {
+            return iResult;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndCreateObject(aAsyncHandle, out iObjectID, out iResult);
+        }
+    };
+
+    internal class SyncDestroyObjectUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+
+        public SyncDestroyObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndDestroyObject(aAsyncHandle);
+        }
+    };
+
+    internal class SyncUpdateObjectUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+
+        public SyncUpdateObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndUpdateObject(aAsyncHandle);
+        }
+    };
+
+    internal class SyncImportResourceUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+        private uint iTransferID;
+
+        public SyncImportResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint TransferID()
+        {
+            return iTransferID;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndImportResource(aAsyncHandle, out iTransferID);
+        }
+    };
+
+    internal class SyncExportResourceUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+        private uint iTransferID;
+
+        public SyncExportResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint TransferID()
+        {
+            return iTransferID;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndExportResource(aAsyncHandle, out iTransferID);
+        }
+    };
+
+    internal class SyncStopTransferResourceUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+
+        public SyncStopTransferResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndStopTransferResource(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetTransferProgressUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+        private String iTransferStatus;
+        private String iTransferLength;
+        private String iTransferTotal;
+
+        public SyncGetTransferProgressUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String TransferStatus()
+        {
+            return iTransferStatus;
+        }
+        public String TransferLength()
+        {
+            return iTransferLength;
+        }
+        public String TransferTotal()
+        {
+            return iTransferTotal;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetTransferProgress(aAsyncHandle, out iTransferStatus, out iTransferLength, out iTransferTotal);
+        }
+    };
+
+    internal class SyncDeleteResourceUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+
+        public SyncDeleteResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndDeleteResource(aAsyncHandle);
+        }
+    };
+
+    internal class SyncCreateReferenceUpnpOrgContentDirectory1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgContentDirectory1 iService;
+        private String iNewID;
+
+        public SyncCreateReferenceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String NewID()
+        {
+            return iNewID;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndCreateReference(aAsyncHandle, out iNewID);
+        }
+    };
 
     /// <summary>
     /// Proxy for the upnp.org:ContentDirectory:1 UPnP service
     /// </summary>
     public class CpProxyUpnpOrgContentDirectory1 : CpProxy, IDisposable, ICpProxyUpnpOrgContentDirectory1
     {
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern uint CpProxyUpnpOrgContentDirectory1Create(uint aDeviceHandle);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern void CpProxyUpnpOrgContentDirectory1Destroy(uint aHandle);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncGetSearchCapabilities(uint aHandle, char** aSearchCaps);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginGetSearchCapabilities(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndGetSearchCapabilities(uint aHandle, uint aAsync, char** aSearchCaps);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncGetSortCapabilities(uint aHandle, char** aSortCaps);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginGetSortCapabilities(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndGetSortCapabilities(uint aHandle, uint aAsync, char** aSortCaps);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncGetSystemUpdateID(uint aHandle, uint* aId);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginGetSystemUpdateID(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndGetSystemUpdateID(uint aHandle, uint aAsync, uint* aId);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncBrowse(uint aHandle, char* aObjectID, char* aBrowseFlag, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginBrowse(uint aHandle, char* aObjectID, char* aBrowseFlag, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndBrowse(uint aHandle, uint aAsync, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncSearch(uint aHandle, char* aContainerID, char* aSearchCriteria, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginSearch(uint aHandle, char* aContainerID, char* aSearchCriteria, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndSearch(uint aHandle, uint aAsync, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncCreateObject(uint aHandle, char* aContainerID, char* aElements, char** aObjectID, char** aResult);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginCreateObject(uint aHandle, char* aContainerID, char* aElements, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndCreateObject(uint aHandle, uint aAsync, char** aObjectID, char** aResult);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncDestroyObject(uint aHandle, char* aObjectID);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginDestroyObject(uint aHandle, char* aObjectID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndDestroyObject(uint aHandle, uint aAsync);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncUpdateObject(uint aHandle, char* aObjectID, char* aCurrentTagValue, char* aNewTagValue);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginUpdateObject(uint aHandle, char* aObjectID, char* aCurrentTagValue, char* aNewTagValue, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndUpdateObject(uint aHandle, uint aAsync);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncImportResource(uint aHandle, char* aSourceURI, char* aDestinationURI, uint* aTransferID);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginImportResource(uint aHandle, char* aSourceURI, char* aDestinationURI, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndImportResource(uint aHandle, uint aAsync, uint* aTransferID);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncExportResource(uint aHandle, char* aSourceURI, char* aDestinationURI, uint* aTransferID);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginExportResource(uint aHandle, char* aSourceURI, char* aDestinationURI, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndExportResource(uint aHandle, uint aAsync, uint* aTransferID);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncStopTransferResource(uint aHandle, uint aTransferID);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginStopTransferResource(uint aHandle, uint aTransferID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndStopTransferResource(uint aHandle, uint aAsync);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncGetTransferProgress(uint aHandle, uint aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginGetTransferProgress(uint aHandle, uint aTransferID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndGetTransferProgress(uint aHandle, uint aAsync, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncDeleteResource(uint aHandle, char* aResourceURI);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginDeleteResource(uint aHandle, char* aResourceURI, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndDeleteResource(uint aHandle, uint aAsync);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1SyncCreateReference(uint aHandle, char* aContainerID, char* aObjectID, char** aNewID);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1BeginCreateReference(uint aHandle, char* aContainerID, char* aObjectID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory1EndCreateReference(uint aHandle, uint aAsync, char** aNewID);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern void CpProxyUpnpOrgContentDirectory1SetPropertyTransferIDsChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern void CpProxyUpnpOrgContentDirectory1SetPropertySystemUpdateIDChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern void CpProxyUpnpOrgContentDirectory1SetPropertyContainerUpdateIDsChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1PropertyTransferIDs(uint aHandle, char** aTransferIDs);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1PropertySystemUpdateID(uint aHandle, uint* aSystemUpdateID);
-        [DllImport("CpUpnpOrgContentDirectory1")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory1PropertyContainerUpdateIDs(uint aHandle, char** aContainerUpdateIDs);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionGetSearchCapabilities;
+        private Zapp.Core.Action iActionGetSortCapabilities;
+        private Zapp.Core.Action iActionGetSystemUpdateID;
+        private Zapp.Core.Action iActionBrowse;
+        private Zapp.Core.Action iActionSearch;
+        private Zapp.Core.Action iActionCreateObject;
+        private Zapp.Core.Action iActionDestroyObject;
+        private Zapp.Core.Action iActionUpdateObject;
+        private Zapp.Core.Action iActionImportResource;
+        private Zapp.Core.Action iActionExportResource;
+        private Zapp.Core.Action iActionStopTransferResource;
+        private Zapp.Core.Action iActionGetTransferProgress;
+        private Zapp.Core.Action iActionDeleteResource;
+        private Zapp.Core.Action iActionCreateReference;
+        private PropertyString iTransferIDs;
+        private PropertyUint iSystemUpdateID;
+        private PropertyString iContainerUpdateIDs;
         private CallbackPropertyChanged iTransferIDsChanged;
         private CallbackPropertyChanged iSystemUpdateIDChanged;
         private CallbackPropertyChanged iContainerUpdateIDsChanged;
-        private Callback iCallbackTransferIDsChanged;
-        private Callback iCallbackSystemUpdateIDChanged;
-        private Callback iCallbackContainerUpdateIDsChanged;
 
         /// <summary>
         /// Constructor
@@ -180,9 +382,145 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyUpnpOrgContentDirectory1(CpDevice aDevice)
+            : base("schemas-upnp-org", "ContentDirectory", 1, aDevice)
         {
-            iHandle = CpProxyUpnpOrgContentDirectory1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionGetSearchCapabilities = new Zapp.Core.Action("GetSearchCapabilities");
+            param = new ParameterString("SearchCaps", allowedValues);
+            iActionGetSearchCapabilities.AddOutputParameter(param);
+
+            iActionGetSortCapabilities = new Zapp.Core.Action("GetSortCapabilities");
+            param = new ParameterString("SortCaps", allowedValues);
+            iActionGetSortCapabilities.AddOutputParameter(param);
+
+            iActionGetSystemUpdateID = new Zapp.Core.Action("GetSystemUpdateID");
+            param = new ParameterUint("Id");
+            iActionGetSystemUpdateID.AddOutputParameter(param);
+
+            iActionBrowse = new Zapp.Core.Action("Browse");
+            param = new ParameterString("ObjectID", allowedValues);
+            iActionBrowse.AddInputParameter(param);
+            allowedValues.Add("BrowseMetadata");
+            allowedValues.Add("BrowseDirectChildren");
+            param = new ParameterString("BrowseFlag", allowedValues);
+            iActionBrowse.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterString("Filter", allowedValues);
+            iActionBrowse.AddInputParameter(param);
+            param = new ParameterUint("StartingIndex");
+            iActionBrowse.AddInputParameter(param);
+            param = new ParameterUint("RequestedCount");
+            iActionBrowse.AddInputParameter(param);
+            param = new ParameterString("SortCriteria", allowedValues);
+            iActionBrowse.AddInputParameter(param);
+            param = new ParameterString("Result", allowedValues);
+            iActionBrowse.AddOutputParameter(param);
+            param = new ParameterUint("NumberReturned");
+            iActionBrowse.AddOutputParameter(param);
+            param = new ParameterUint("TotalMatches");
+            iActionBrowse.AddOutputParameter(param);
+            param = new ParameterUint("UpdateID");
+            iActionBrowse.AddOutputParameter(param);
+
+            iActionSearch = new Zapp.Core.Action("Search");
+            param = new ParameterString("ContainerID", allowedValues);
+            iActionSearch.AddInputParameter(param);
+            param = new ParameterString("SearchCriteria", allowedValues);
+            iActionSearch.AddInputParameter(param);
+            param = new ParameterString("Filter", allowedValues);
+            iActionSearch.AddInputParameter(param);
+            param = new ParameterUint("StartingIndex");
+            iActionSearch.AddInputParameter(param);
+            param = new ParameterUint("RequestedCount");
+            iActionSearch.AddInputParameter(param);
+            param = new ParameterString("SortCriteria", allowedValues);
+            iActionSearch.AddInputParameter(param);
+            param = new ParameterString("Result", allowedValues);
+            iActionSearch.AddOutputParameter(param);
+            param = new ParameterUint("NumberReturned");
+            iActionSearch.AddOutputParameter(param);
+            param = new ParameterUint("TotalMatches");
+            iActionSearch.AddOutputParameter(param);
+            param = new ParameterUint("UpdateID");
+            iActionSearch.AddOutputParameter(param);
+
+            iActionCreateObject = new Zapp.Core.Action("CreateObject");
+            param = new ParameterString("ContainerID", allowedValues);
+            iActionCreateObject.AddInputParameter(param);
+            param = new ParameterString("Elements", allowedValues);
+            iActionCreateObject.AddInputParameter(param);
+            param = new ParameterString("ObjectID", allowedValues);
+            iActionCreateObject.AddOutputParameter(param);
+            param = new ParameterString("Result", allowedValues);
+            iActionCreateObject.AddOutputParameter(param);
+
+            iActionDestroyObject = new Zapp.Core.Action("DestroyObject");
+            param = new ParameterString("ObjectID", allowedValues);
+            iActionDestroyObject.AddInputParameter(param);
+
+            iActionUpdateObject = new Zapp.Core.Action("UpdateObject");
+            param = new ParameterString("ObjectID", allowedValues);
+            iActionUpdateObject.AddInputParameter(param);
+            param = new ParameterString("CurrentTagValue", allowedValues);
+            iActionUpdateObject.AddInputParameter(param);
+            param = new ParameterString("NewTagValue", allowedValues);
+            iActionUpdateObject.AddInputParameter(param);
+
+            iActionImportResource = new Zapp.Core.Action("ImportResource");
+            param = new ParameterString("SourceURI", allowedValues);
+            iActionImportResource.AddInputParameter(param);
+            param = new ParameterString("DestinationURI", allowedValues);
+            iActionImportResource.AddInputParameter(param);
+            param = new ParameterUint("TransferID");
+            iActionImportResource.AddOutputParameter(param);
+
+            iActionExportResource = new Zapp.Core.Action("ExportResource");
+            param = new ParameterString("SourceURI", allowedValues);
+            iActionExportResource.AddInputParameter(param);
+            param = new ParameterString("DestinationURI", allowedValues);
+            iActionExportResource.AddInputParameter(param);
+            param = new ParameterUint("TransferID");
+            iActionExportResource.AddOutputParameter(param);
+
+            iActionStopTransferResource = new Zapp.Core.Action("StopTransferResource");
+            param = new ParameterUint("TransferID");
+            iActionStopTransferResource.AddInputParameter(param);
+
+            iActionGetTransferProgress = new Zapp.Core.Action("GetTransferProgress");
+            param = new ParameterUint("TransferID");
+            iActionGetTransferProgress.AddInputParameter(param);
+            allowedValues.Add("COMPLETED");
+            allowedValues.Add("ERROR");
+            allowedValues.Add("IN_PROGRESS");
+            allowedValues.Add("STOPPED");
+            param = new ParameterString("TransferStatus", allowedValues);
+            iActionGetTransferProgress.AddOutputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterString("TransferLength", allowedValues);
+            iActionGetTransferProgress.AddOutputParameter(param);
+            param = new ParameterString("TransferTotal", allowedValues);
+            iActionGetTransferProgress.AddOutputParameter(param);
+
+            iActionDeleteResource = new Zapp.Core.Action("DeleteResource");
+            param = new ParameterString("ResourceURI", allowedValues);
+            iActionDeleteResource.AddInputParameter(param);
+
+            iActionCreateReference = new Zapp.Core.Action("CreateReference");
+            param = new ParameterString("ContainerID", allowedValues);
+            iActionCreateReference.AddInputParameter(param);
+            param = new ParameterString("ObjectID", allowedValues);
+            iActionCreateReference.AddInputParameter(param);
+            param = new ParameterString("NewID", allowedValues);
+            iActionCreateReference.AddOutputParameter(param);
+
+            iTransferIDs = new PropertyString("TransferIDs", TransferIDsPropertyChanged);
+            AddProperty(iTransferIDs);
+            iSystemUpdateID = new PropertyUint("SystemUpdateID", SystemUpdateIDPropertyChanged);
+            AddProperty(iSystemUpdateID);
+            iContainerUpdateIDs = new PropertyString("ContainerUpdateIDs", ContainerUpdateIDsPropertyChanged);
+            AddProperty(iContainerUpdateIDs);
         }
 
         /// <summary>
@@ -191,14 +529,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aSearchCaps"></param>
-        public unsafe void SyncGetSearchCapabilities(out string aSearchCaps)
+        public void SyncGetSearchCapabilities(out String aSearchCaps)
         {
-            char* searchCaps;
-            {
-                CpProxyUpnpOrgContentDirectory1SyncGetSearchCapabilities(iHandle, &searchCaps);
-            }
-            aSearchCaps = Marshal.PtrToStringAnsi((IntPtr)searchCaps);
-            ZappFree(searchCaps);
+            SyncGetSearchCapabilitiesUpnpOrgContentDirectory1 sync = new SyncGetSearchCapabilitiesUpnpOrgContentDirectory1(this);
+            BeginGetSearchCapabilities(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aSearchCaps = sync.SearchCaps();
         }
 
         /// <summary>
@@ -209,11 +546,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetSearchCapabilities().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetSearchCapabilities(CallbackAsyncComplete aCallback)
+        public void BeginGetSearchCapabilities(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginGetSearchCapabilities(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetSearchCapabilities, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetSearchCapabilities.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -222,17 +560,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aSearchCaps"></param>
-        public unsafe void EndGetSearchCapabilities(uint aAsyncHandle, out string aSearchCaps)
+        public void EndGetSearchCapabilities(IntPtr aAsyncHandle, out String aSearchCaps)
         {
-            char* searchCaps;
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndGetSearchCapabilities(iHandle, aAsyncHandle, &searchCaps))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aSearchCaps = Marshal.PtrToStringAnsi((IntPtr)searchCaps);
-            ZappFree(searchCaps);
+            uint index = 0;
+            aSearchCaps = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -241,14 +572,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aSortCaps"></param>
-        public unsafe void SyncGetSortCapabilities(out string aSortCaps)
+        public void SyncGetSortCapabilities(out String aSortCaps)
         {
-            char* sortCaps;
-            {
-                CpProxyUpnpOrgContentDirectory1SyncGetSortCapabilities(iHandle, &sortCaps);
-            }
-            aSortCaps = Marshal.PtrToStringAnsi((IntPtr)sortCaps);
-            ZappFree(sortCaps);
+            SyncGetSortCapabilitiesUpnpOrgContentDirectory1 sync = new SyncGetSortCapabilitiesUpnpOrgContentDirectory1(this);
+            BeginGetSortCapabilities(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aSortCaps = sync.SortCaps();
         }
 
         /// <summary>
@@ -259,11 +589,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetSortCapabilities().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetSortCapabilities(CallbackAsyncComplete aCallback)
+        public void BeginGetSortCapabilities(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginGetSortCapabilities(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetSortCapabilities, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetSortCapabilities.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -272,17 +603,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aSortCaps"></param>
-        public unsafe void EndGetSortCapabilities(uint aAsyncHandle, out string aSortCaps)
+        public void EndGetSortCapabilities(IntPtr aAsyncHandle, out String aSortCaps)
         {
-            char* sortCaps;
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndGetSortCapabilities(iHandle, aAsyncHandle, &sortCaps))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aSortCaps = Marshal.PtrToStringAnsi((IntPtr)sortCaps);
-            ZappFree(sortCaps);
+            uint index = 0;
+            aSortCaps = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -291,12 +615,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aId"></param>
-        public unsafe void SyncGetSystemUpdateID(out uint aId)
+        public void SyncGetSystemUpdateID(out uint aId)
         {
-            fixed (uint* id = &aId)
-            {
-                CpProxyUpnpOrgContentDirectory1SyncGetSystemUpdateID(iHandle, id);
-            }
+            SyncGetSystemUpdateIDUpnpOrgContentDirectory1 sync = new SyncGetSystemUpdateIDUpnpOrgContentDirectory1(this);
+            BeginGetSystemUpdateID(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aId = sync.Id();
         }
 
         /// <summary>
@@ -307,11 +632,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetSystemUpdateID().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetSystemUpdateID(CallbackAsyncComplete aCallback)
+        public void BeginGetSystemUpdateID(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginGetSystemUpdateID(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetSystemUpdateID, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetSystemUpdateID.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -320,15 +646,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aId"></param>
-        public unsafe void EndGetSystemUpdateID(uint aAsyncHandle, out uint aId)
+        public void EndGetSystemUpdateID(IntPtr aAsyncHandle, out uint aId)
         {
-            fixed (uint* id = &aId)
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndGetSystemUpdateID(iHandle, aAsyncHandle, id))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aId = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -346,25 +667,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNumberReturned"></param>
         /// <param name="aTotalMatches"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void SyncBrowse(string aObjectID, string aBrowseFlag, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        public void SyncBrowse(String aObjectID, String aBrowseFlag, String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-            char* browseFlag = (char*)Marshal.StringToHGlobalAnsi(aBrowseFlag);
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
-            char* result;
-            fixed (uint* numberReturned = &aNumberReturned)
-            fixed (uint* totalMatches = &aTotalMatches)
-            fixed (uint* updateID = &aUpdateID)
-            {
-                CpProxyUpnpOrgContentDirectory1SyncBrowse(iHandle, objectID, browseFlag, filter, aStartingIndex, aRequestedCount, sortCriteria, &result, numberReturned, totalMatches, updateID);
-            }
-            Marshal.FreeHGlobal((IntPtr)objectID);
-            Marshal.FreeHGlobal((IntPtr)browseFlag);
-            Marshal.FreeHGlobal((IntPtr)filter);
-            Marshal.FreeHGlobal((IntPtr)sortCriteria);
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            SyncBrowseUpnpOrgContentDirectory1 sync = new SyncBrowseUpnpOrgContentDirectory1(this);
+            BeginBrowse(aObjectID, aBrowseFlag, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
+            aNumberReturned = sync.NumberReturned();
+            aTotalMatches = sync.TotalMatches();
+            aUpdateID = sync.UpdateID();
         }
 
         /// <summary>
@@ -381,19 +693,22 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSortCriteria"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginBrowse(string aObjectID, string aBrowseFlag, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CallbackAsyncComplete aCallback)
+        public void BeginBrowse(String aObjectID, String aBrowseFlag, String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, CallbackAsyncComplete aCallback)
         {
-            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-            char* browseFlag = (char*)Marshal.StringToHGlobalAnsi(aBrowseFlag);
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginBrowse(iHandle, objectID, browseFlag, filter, aStartingIndex, aRequestedCount, sortCriteria, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)objectID);
-            Marshal.FreeHGlobal((IntPtr)browseFlag);
-            Marshal.FreeHGlobal((IntPtr)filter);
-            Marshal.FreeHGlobal((IntPtr)sortCriteria);
+            Invocation invocation = iService.Invocation(iActionBrowse, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionBrowse.InputParameter(inIndex++), aObjectID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionBrowse.InputParameter(inIndex++), aBrowseFlag));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionBrowse.InputParameter(inIndex++), aFilter));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionBrowse.InputParameter(inIndex++), aStartingIndex));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionBrowse.InputParameter(inIndex++), aRequestedCount));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionBrowse.InputParameter(inIndex++), aSortCriteria));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionBrowse.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionBrowse.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionBrowse.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionBrowse.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -405,20 +720,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNumberReturned"></param>
         /// <param name="aTotalMatches"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void EndBrowse(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        public void EndBrowse(IntPtr aAsyncHandle, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-            char* result;
-            fixed (uint* numberReturned = &aNumberReturned)
-            fixed (uint* totalMatches = &aTotalMatches)
-            fixed (uint* updateID = &aUpdateID)
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndBrowse(iHandle, aAsyncHandle, &result, numberReturned, totalMatches, updateID))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            uint index = 0;
+            aResult = Invocation.OutputString(aAsyncHandle, index++);
+            aNumberReturned = Invocation.OutputUint(aAsyncHandle, index++);
+            aTotalMatches = Invocation.OutputUint(aAsyncHandle, index++);
+            aUpdateID = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -436,25 +744,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNumberReturned"></param>
         /// <param name="aTotalMatches"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void SyncSearch(string aContainerID, string aSearchCriteria, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        public void SyncSearch(String aContainerID, String aSearchCriteria, String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-            char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
-            char* searchCriteria = (char*)Marshal.StringToHGlobalAnsi(aSearchCriteria);
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
-            char* result;
-            fixed (uint* numberReturned = &aNumberReturned)
-            fixed (uint* totalMatches = &aTotalMatches)
-            fixed (uint* updateID = &aUpdateID)
-            {
-                CpProxyUpnpOrgContentDirectory1SyncSearch(iHandle, containerID, searchCriteria, filter, aStartingIndex, aRequestedCount, sortCriteria, &result, numberReturned, totalMatches, updateID);
-            }
-            Marshal.FreeHGlobal((IntPtr)containerID);
-            Marshal.FreeHGlobal((IntPtr)searchCriteria);
-            Marshal.FreeHGlobal((IntPtr)filter);
-            Marshal.FreeHGlobal((IntPtr)sortCriteria);
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            SyncSearchUpnpOrgContentDirectory1 sync = new SyncSearchUpnpOrgContentDirectory1(this);
+            BeginSearch(aContainerID, aSearchCriteria, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
+            aNumberReturned = sync.NumberReturned();
+            aTotalMatches = sync.TotalMatches();
+            aUpdateID = sync.UpdateID();
         }
 
         /// <summary>
@@ -471,19 +770,22 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSortCriteria"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSearch(string aContainerID, string aSearchCriteria, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CallbackAsyncComplete aCallback)
+        public void BeginSearch(String aContainerID, String aSearchCriteria, String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, CallbackAsyncComplete aCallback)
         {
-            char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
-            char* searchCriteria = (char*)Marshal.StringToHGlobalAnsi(aSearchCriteria);
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginSearch(iHandle, containerID, searchCriteria, filter, aStartingIndex, aRequestedCount, sortCriteria, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)containerID);
-            Marshal.FreeHGlobal((IntPtr)searchCriteria);
-            Marshal.FreeHGlobal((IntPtr)filter);
-            Marshal.FreeHGlobal((IntPtr)sortCriteria);
+            Invocation invocation = iService.Invocation(iActionSearch, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSearch.InputParameter(inIndex++), aContainerID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSearch.InputParameter(inIndex++), aSearchCriteria));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSearch.InputParameter(inIndex++), aFilter));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSearch.InputParameter(inIndex++), aStartingIndex));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSearch.InputParameter(inIndex++), aRequestedCount));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSearch.InputParameter(inIndex++), aSortCriteria));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionSearch.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionSearch.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionSearch.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionSearch.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -495,20 +797,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNumberReturned"></param>
         /// <param name="aTotalMatches"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void EndSearch(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        public void EndSearch(IntPtr aAsyncHandle, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-            char* result;
-            fixed (uint* numberReturned = &aNumberReturned)
-            fixed (uint* totalMatches = &aTotalMatches)
-            fixed (uint* updateID = &aUpdateID)
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndSearch(iHandle, aAsyncHandle, &result, numberReturned, totalMatches, updateID))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            uint index = 0;
+            aResult = Invocation.OutputString(aAsyncHandle, index++);
+            aNumberReturned = Invocation.OutputUint(aAsyncHandle, index++);
+            aTotalMatches = Invocation.OutputUint(aAsyncHandle, index++);
+            aUpdateID = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -520,21 +815,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aElements"></param>
         /// <param name="aObjectID"></param>
         /// <param name="aResult"></param>
-        public unsafe void SyncCreateObject(string aContainerID, string aElements, out string aObjectID, out string aResult)
+        public void SyncCreateObject(String aContainerID, String aElements, out String aObjectID, out String aResult)
         {
-            char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
-            char* elements = (char*)Marshal.StringToHGlobalAnsi(aElements);
-            char* objectID;
-            char* result;
-            {
-                CpProxyUpnpOrgContentDirectory1SyncCreateObject(iHandle, containerID, elements, &objectID, &result);
-            }
-            Marshal.FreeHGlobal((IntPtr)containerID);
-            Marshal.FreeHGlobal((IntPtr)elements);
-            aObjectID = Marshal.PtrToStringAnsi((IntPtr)objectID);
-            ZappFree(objectID);
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            SyncCreateObjectUpnpOrgContentDirectory1 sync = new SyncCreateObjectUpnpOrgContentDirectory1(this);
+            BeginCreateObject(aContainerID, aElements, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aObjectID = sync.ObjectID();
+            aResult = sync.Result();
         }
 
         /// <summary>
@@ -547,15 +835,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aElements"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginCreateObject(string aContainerID, string aElements, CallbackAsyncComplete aCallback)
+        public void BeginCreateObject(String aContainerID, String aElements, CallbackAsyncComplete aCallback)
         {
-            char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
-            char* elements = (char*)Marshal.StringToHGlobalAnsi(aElements);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginCreateObject(iHandle, containerID, elements, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)containerID);
-            Marshal.FreeHGlobal((IntPtr)elements);
+            Invocation invocation = iService.Invocation(iActionCreateObject, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionCreateObject.InputParameter(inIndex++), aContainerID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionCreateObject.InputParameter(inIndex++), aElements));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionCreateObject.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionCreateObject.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -565,20 +854,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aObjectID"></param>
         /// <param name="aResult"></param>
-        public unsafe void EndCreateObject(uint aAsyncHandle, out string aObjectID, out string aResult)
+        public void EndCreateObject(IntPtr aAsyncHandle, out String aObjectID, out String aResult)
         {
-            char* objectID;
-            char* result;
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndCreateObject(iHandle, aAsyncHandle, &objectID, &result))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aObjectID = Marshal.PtrToStringAnsi((IntPtr)objectID);
-            ZappFree(objectID);
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            uint index = 0;
+            aObjectID = Invocation.OutputString(aAsyncHandle, index++);
+            aResult = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -587,13 +867,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aObjectID"></param>
-        public unsafe void SyncDestroyObject(string aObjectID)
+        public void SyncDestroyObject(String aObjectID)
         {
-            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-            {
-                CpProxyUpnpOrgContentDirectory1SyncDestroyObject(iHandle, objectID);
-            }
-            Marshal.FreeHGlobal((IntPtr)objectID);
+            SyncDestroyObjectUpnpOrgContentDirectory1 sync = new SyncDestroyObjectUpnpOrgContentDirectory1(this);
+            BeginDestroyObject(aObjectID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -605,13 +884,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aObjectID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginDestroyObject(string aObjectID, CallbackAsyncComplete aCallback)
+        public void BeginDestroyObject(String aObjectID, CallbackAsyncComplete aCallback)
         {
-            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginDestroyObject(iHandle, objectID, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)objectID);
+            Invocation invocation = iService.Invocation(iActionDestroyObject, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionDestroyObject.InputParameter(inIndex++), aObjectID));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -619,14 +897,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndDestroyObject(uint aAsyncHandle)
+        public void EndDestroyObject(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndDestroyObject(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -637,17 +909,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aObjectID"></param>
         /// <param name="aCurrentTagValue"></param>
         /// <param name="aNewTagValue"></param>
-        public unsafe void SyncUpdateObject(string aObjectID, string aCurrentTagValue, string aNewTagValue)
+        public void SyncUpdateObject(String aObjectID, String aCurrentTagValue, String aNewTagValue)
         {
-            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-            char* currentTagValue = (char*)Marshal.StringToHGlobalAnsi(aCurrentTagValue);
-            char* newTagValue = (char*)Marshal.StringToHGlobalAnsi(aNewTagValue);
-            {
-                CpProxyUpnpOrgContentDirectory1SyncUpdateObject(iHandle, objectID, currentTagValue, newTagValue);
-            }
-            Marshal.FreeHGlobal((IntPtr)objectID);
-            Marshal.FreeHGlobal((IntPtr)currentTagValue);
-            Marshal.FreeHGlobal((IntPtr)newTagValue);
+            SyncUpdateObjectUpnpOrgContentDirectory1 sync = new SyncUpdateObjectUpnpOrgContentDirectory1(this);
+            BeginUpdateObject(aObjectID, aCurrentTagValue, aNewTagValue, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -661,17 +928,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNewTagValue"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginUpdateObject(string aObjectID, string aCurrentTagValue, string aNewTagValue, CallbackAsyncComplete aCallback)
+        public void BeginUpdateObject(String aObjectID, String aCurrentTagValue, String aNewTagValue, CallbackAsyncComplete aCallback)
         {
-            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-            char* currentTagValue = (char*)Marshal.StringToHGlobalAnsi(aCurrentTagValue);
-            char* newTagValue = (char*)Marshal.StringToHGlobalAnsi(aNewTagValue);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginUpdateObject(iHandle, objectID, currentTagValue, newTagValue, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)objectID);
-            Marshal.FreeHGlobal((IntPtr)currentTagValue);
-            Marshal.FreeHGlobal((IntPtr)newTagValue);
+            Invocation invocation = iService.Invocation(iActionUpdateObject, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionUpdateObject.InputParameter(inIndex++), aObjectID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionUpdateObject.InputParameter(inIndex++), aCurrentTagValue));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionUpdateObject.InputParameter(inIndex++), aNewTagValue));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -679,14 +943,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndUpdateObject(uint aAsyncHandle)
+        public void EndUpdateObject(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndUpdateObject(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -697,16 +955,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSourceURI"></param>
         /// <param name="aDestinationURI"></param>
         /// <param name="aTransferID"></param>
-        public unsafe void SyncImportResource(string aSourceURI, string aDestinationURI, out uint aTransferID)
+        public void SyncImportResource(String aSourceURI, String aDestinationURI, out uint aTransferID)
         {
-            char* sourceURI = (char*)Marshal.StringToHGlobalAnsi(aSourceURI);
-            char* destinationURI = (char*)Marshal.StringToHGlobalAnsi(aDestinationURI);
-            fixed (uint* transferID = &aTransferID)
-            {
-                CpProxyUpnpOrgContentDirectory1SyncImportResource(iHandle, sourceURI, destinationURI, transferID);
-            }
-            Marshal.FreeHGlobal((IntPtr)sourceURI);
-            Marshal.FreeHGlobal((IntPtr)destinationURI);
+            SyncImportResourceUpnpOrgContentDirectory1 sync = new SyncImportResourceUpnpOrgContentDirectory1(this);
+            BeginImportResource(aSourceURI, aDestinationURI, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aTransferID = sync.TransferID();
         }
 
         /// <summary>
@@ -719,15 +974,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDestinationURI"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginImportResource(string aSourceURI, string aDestinationURI, CallbackAsyncComplete aCallback)
+        public void BeginImportResource(String aSourceURI, String aDestinationURI, CallbackAsyncComplete aCallback)
         {
-            char* sourceURI = (char*)Marshal.StringToHGlobalAnsi(aSourceURI);
-            char* destinationURI = (char*)Marshal.StringToHGlobalAnsi(aDestinationURI);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginImportResource(iHandle, sourceURI, destinationURI, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)sourceURI);
-            Marshal.FreeHGlobal((IntPtr)destinationURI);
+            Invocation invocation = iService.Invocation(iActionImportResource, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionImportResource.InputParameter(inIndex++), aSourceURI));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionImportResource.InputParameter(inIndex++), aDestinationURI));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionImportResource.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -736,15 +991,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aTransferID"></param>
-        public unsafe void EndImportResource(uint aAsyncHandle, out uint aTransferID)
+        public void EndImportResource(IntPtr aAsyncHandle, out uint aTransferID)
         {
-            fixed (uint* transferID = &aTransferID)
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndImportResource(iHandle, aAsyncHandle, transferID))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aTransferID = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -755,16 +1005,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSourceURI"></param>
         /// <param name="aDestinationURI"></param>
         /// <param name="aTransferID"></param>
-        public unsafe void SyncExportResource(string aSourceURI, string aDestinationURI, out uint aTransferID)
+        public void SyncExportResource(String aSourceURI, String aDestinationURI, out uint aTransferID)
         {
-            char* sourceURI = (char*)Marshal.StringToHGlobalAnsi(aSourceURI);
-            char* destinationURI = (char*)Marshal.StringToHGlobalAnsi(aDestinationURI);
-            fixed (uint* transferID = &aTransferID)
-            {
-                CpProxyUpnpOrgContentDirectory1SyncExportResource(iHandle, sourceURI, destinationURI, transferID);
-            }
-            Marshal.FreeHGlobal((IntPtr)sourceURI);
-            Marshal.FreeHGlobal((IntPtr)destinationURI);
+            SyncExportResourceUpnpOrgContentDirectory1 sync = new SyncExportResourceUpnpOrgContentDirectory1(this);
+            BeginExportResource(aSourceURI, aDestinationURI, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aTransferID = sync.TransferID();
         }
 
         /// <summary>
@@ -777,15 +1024,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDestinationURI"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginExportResource(string aSourceURI, string aDestinationURI, CallbackAsyncComplete aCallback)
+        public void BeginExportResource(String aSourceURI, String aDestinationURI, CallbackAsyncComplete aCallback)
         {
-            char* sourceURI = (char*)Marshal.StringToHGlobalAnsi(aSourceURI);
-            char* destinationURI = (char*)Marshal.StringToHGlobalAnsi(aDestinationURI);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginExportResource(iHandle, sourceURI, destinationURI, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)sourceURI);
-            Marshal.FreeHGlobal((IntPtr)destinationURI);
+            Invocation invocation = iService.Invocation(iActionExportResource, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionExportResource.InputParameter(inIndex++), aSourceURI));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionExportResource.InputParameter(inIndex++), aDestinationURI));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionExportResource.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -794,15 +1041,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aTransferID"></param>
-        public unsafe void EndExportResource(uint aAsyncHandle, out uint aTransferID)
+        public void EndExportResource(IntPtr aAsyncHandle, out uint aTransferID)
         {
-            fixed (uint* transferID = &aTransferID)
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndExportResource(iHandle, aAsyncHandle, transferID))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aTransferID = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -811,11 +1053,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aTransferID"></param>
-        public unsafe void SyncStopTransferResource(uint aTransferID)
+        public void SyncStopTransferResource(uint aTransferID)
         {
-            {
-                CpProxyUpnpOrgContentDirectory1SyncStopTransferResource(iHandle, aTransferID);
-            }
+            SyncStopTransferResourceUpnpOrgContentDirectory1 sync = new SyncStopTransferResourceUpnpOrgContentDirectory1(this);
+            BeginStopTransferResource(aTransferID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -827,11 +1070,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginStopTransferResource(uint aTransferID, CallbackAsyncComplete aCallback)
+        public void BeginStopTransferResource(uint aTransferID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginStopTransferResource(iHandle, aTransferID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionStopTransferResource, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionStopTransferResource.InputParameter(inIndex++), aTransferID));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -839,14 +1083,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndStopTransferResource(uint aAsyncHandle)
+        public void EndStopTransferResource(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndStopTransferResource(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -858,20 +1096,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferStatus"></param>
         /// <param name="aTransferLength"></param>
         /// <param name="aTransferTotal"></param>
-        public unsafe void SyncGetTransferProgress(uint aTransferID, out string aTransferStatus, out string aTransferLength, out string aTransferTotal)
+        public void SyncGetTransferProgress(uint aTransferID, out String aTransferStatus, out String aTransferLength, out String aTransferTotal)
         {
-            char* transferStatus;
-            char* transferLength;
-            char* transferTotal;
-            {
-                CpProxyUpnpOrgContentDirectory1SyncGetTransferProgress(iHandle, aTransferID, &transferStatus, &transferLength, &transferTotal);
-            }
-            aTransferStatus = Marshal.PtrToStringAnsi((IntPtr)transferStatus);
-            ZappFree(transferStatus);
-            aTransferLength = Marshal.PtrToStringAnsi((IntPtr)transferLength);
-            ZappFree(transferLength);
-            aTransferTotal = Marshal.PtrToStringAnsi((IntPtr)transferTotal);
-            ZappFree(transferTotal);
+            SyncGetTransferProgressUpnpOrgContentDirectory1 sync = new SyncGetTransferProgressUpnpOrgContentDirectory1(this);
+            BeginGetTransferProgress(aTransferID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aTransferStatus = sync.TransferStatus();
+            aTransferLength = sync.TransferLength();
+            aTransferTotal = sync.TransferTotal();
         }
 
         /// <summary>
@@ -883,11 +1116,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetTransferProgress(uint aTransferID, CallbackAsyncComplete aCallback)
+        public void BeginGetTransferProgress(uint aTransferID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginGetTransferProgress(iHandle, aTransferID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetTransferProgress, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetTransferProgress.InputParameter(inIndex++), aTransferID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetTransferProgress.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetTransferProgress.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetTransferProgress.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -898,23 +1136,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferStatus"></param>
         /// <param name="aTransferLength"></param>
         /// <param name="aTransferTotal"></param>
-        public unsafe void EndGetTransferProgress(uint aAsyncHandle, out string aTransferStatus, out string aTransferLength, out string aTransferTotal)
+        public void EndGetTransferProgress(IntPtr aAsyncHandle, out String aTransferStatus, out String aTransferLength, out String aTransferTotal)
         {
-            char* transferStatus;
-            char* transferLength;
-            char* transferTotal;
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndGetTransferProgress(iHandle, aAsyncHandle, &transferStatus, &transferLength, &transferTotal))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aTransferStatus = Marshal.PtrToStringAnsi((IntPtr)transferStatus);
-            ZappFree(transferStatus);
-            aTransferLength = Marshal.PtrToStringAnsi((IntPtr)transferLength);
-            ZappFree(transferLength);
-            aTransferTotal = Marshal.PtrToStringAnsi((IntPtr)transferTotal);
-            ZappFree(transferTotal);
+            uint index = 0;
+            aTransferStatus = Invocation.OutputString(aAsyncHandle, index++);
+            aTransferLength = Invocation.OutputString(aAsyncHandle, index++);
+            aTransferTotal = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -923,13 +1150,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aResourceURI"></param>
-        public unsafe void SyncDeleteResource(string aResourceURI)
+        public void SyncDeleteResource(String aResourceURI)
         {
-            char* resourceURI = (char*)Marshal.StringToHGlobalAnsi(aResourceURI);
-            {
-                CpProxyUpnpOrgContentDirectory1SyncDeleteResource(iHandle, resourceURI);
-            }
-            Marshal.FreeHGlobal((IntPtr)resourceURI);
+            SyncDeleteResourceUpnpOrgContentDirectory1 sync = new SyncDeleteResourceUpnpOrgContentDirectory1(this);
+            BeginDeleteResource(aResourceURI, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -941,13 +1167,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aResourceURI"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginDeleteResource(string aResourceURI, CallbackAsyncComplete aCallback)
+        public void BeginDeleteResource(String aResourceURI, CallbackAsyncComplete aCallback)
         {
-            char* resourceURI = (char*)Marshal.StringToHGlobalAnsi(aResourceURI);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginDeleteResource(iHandle, resourceURI, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)resourceURI);
+            Invocation invocation = iService.Invocation(iActionDeleteResource, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionDeleteResource.InputParameter(inIndex++), aResourceURI));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -955,14 +1180,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndDeleteResource(uint aAsyncHandle)
+        public void EndDeleteResource(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndDeleteResource(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -973,18 +1192,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aContainerID"></param>
         /// <param name="aObjectID"></param>
         /// <param name="aNewID"></param>
-        public unsafe void SyncCreateReference(string aContainerID, string aObjectID, out string aNewID)
+        public void SyncCreateReference(String aContainerID, String aObjectID, out String aNewID)
         {
-            char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
-            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-            char* newID;
-            {
-                CpProxyUpnpOrgContentDirectory1SyncCreateReference(iHandle, containerID, objectID, &newID);
-            }
-            Marshal.FreeHGlobal((IntPtr)containerID);
-            Marshal.FreeHGlobal((IntPtr)objectID);
-            aNewID = Marshal.PtrToStringAnsi((IntPtr)newID);
-            ZappFree(newID);
+            SyncCreateReferenceUpnpOrgContentDirectory1 sync = new SyncCreateReferenceUpnpOrgContentDirectory1(this);
+            BeginCreateReference(aContainerID, aObjectID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aNewID = sync.NewID();
         }
 
         /// <summary>
@@ -997,15 +1211,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aObjectID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginCreateReference(string aContainerID, string aObjectID, CallbackAsyncComplete aCallback)
+        public void BeginCreateReference(String aContainerID, String aObjectID, CallbackAsyncComplete aCallback)
         {
-            char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
-            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgContentDirectory1BeginCreateReference(iHandle, containerID, objectID, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)containerID);
-            Marshal.FreeHGlobal((IntPtr)objectID);
+            Invocation invocation = iService.Invocation(iActionCreateReference, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionCreateReference.InputParameter(inIndex++), aContainerID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionCreateReference.InputParameter(inIndex++), aObjectID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionCreateReference.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1014,17 +1228,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aNewID"></param>
-        public unsafe void EndCreateReference(uint aAsyncHandle, out string aNewID)
+        public void EndCreateReference(IntPtr aAsyncHandle, out String aNewID)
         {
-            char* newID;
-            {
-                if (0 != CpProxyUpnpOrgContentDirectory1EndCreateReference(iHandle, aAsyncHandle, &newID))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aNewID = Marshal.PtrToStringAnsi((IntPtr)newID);
-            ZappFree(newID);
+            uint index = 0;
+            aNewID = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1035,17 +1242,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferIDsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTransferIDsChanged(CallbackPropertyChanged aTransferIDsChanged)
         {
-            iTransferIDsChanged = aTransferIDsChanged;
-            iCallbackTransferIDsChanged = new Callback(PropertyTransferIDsChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyUpnpOrgContentDirectory1SetPropertyTransferIDsChanged(iHandle, iCallbackTransferIDsChanged, ptr);
+            lock (this)
+            {
+                iTransferIDsChanged = aTransferIDsChanged;
+            }
         }
 
-        private void PropertyTransferIDsChanged(IntPtr aPtr)
+        private void TransferIDsPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyUpnpOrgContentDirectory1 self = (CpProxyUpnpOrgContentDirectory1)gch.Target;
-            self.iTransferIDsChanged();
+            lock (this)
+            {
+                if (iTransferIDsChanged != null)
+                {
+                    iTransferIDsChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1056,17 +1267,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSystemUpdateIDChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySystemUpdateIDChanged(CallbackPropertyChanged aSystemUpdateIDChanged)
         {
-            iSystemUpdateIDChanged = aSystemUpdateIDChanged;
-            iCallbackSystemUpdateIDChanged = new Callback(PropertySystemUpdateIDChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyUpnpOrgContentDirectory1SetPropertySystemUpdateIDChanged(iHandle, iCallbackSystemUpdateIDChanged, ptr);
+            lock (this)
+            {
+                iSystemUpdateIDChanged = aSystemUpdateIDChanged;
+            }
         }
 
-        private void PropertySystemUpdateIDChanged(IntPtr aPtr)
+        private void SystemUpdateIDPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyUpnpOrgContentDirectory1 self = (CpProxyUpnpOrgContentDirectory1)gch.Target;
-            self.iSystemUpdateIDChanged();
+            lock (this)
+            {
+                if (iSystemUpdateIDChanged != null)
+                {
+                    iSystemUpdateIDChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1077,17 +1292,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aContainerUpdateIDsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyContainerUpdateIDsChanged(CallbackPropertyChanged aContainerUpdateIDsChanged)
         {
-            iContainerUpdateIDsChanged = aContainerUpdateIDsChanged;
-            iCallbackContainerUpdateIDsChanged = new Callback(PropertyContainerUpdateIDsChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyUpnpOrgContentDirectory1SetPropertyContainerUpdateIDsChanged(iHandle, iCallbackContainerUpdateIDsChanged, ptr);
+            lock (this)
+            {
+                iContainerUpdateIDsChanged = aContainerUpdateIDsChanged;
+            }
         }
 
-        private void PropertyContainerUpdateIDsChanged(IntPtr aPtr)
+        private void ContainerUpdateIDsPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyUpnpOrgContentDirectory1 self = (CpProxyUpnpOrgContentDirectory1)gch.Target;
-            self.iContainerUpdateIDsChanged();
+            lock (this)
+            {
+                if (iContainerUpdateIDsChanged != null)
+                {
+                    iContainerUpdateIDsChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1097,12 +1316,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aTransferIDs">Will be set to the value of the property</param>
-        public unsafe void PropertyTransferIDs(out string aTransferIDs)
+        public String PropertyTransferIDs()
         {
-            char* ptr;
-            CpProxyUpnpOrgContentDirectory1PropertyTransferIDs(iHandle, &ptr);
-            aTransferIDs = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iTransferIDs.Value();
         }
 
         /// <summary>
@@ -1112,12 +1328,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aSystemUpdateID">Will be set to the value of the property</param>
-        public unsafe void PropertySystemUpdateID(out uint aSystemUpdateID)
+        public uint PropertySystemUpdateID()
         {
-            fixed (uint* systemUpdateID = &aSystemUpdateID)
-            {
-                CpProxyUpnpOrgContentDirectory1PropertySystemUpdateID(iHandle, systemUpdateID);
-            }
+            return iSystemUpdateID.Value();
         }
 
         /// <summary>
@@ -1127,12 +1340,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aContainerUpdateIDs">Will be set to the value of the property</param>
-        public unsafe void PropertyContainerUpdateIDs(out string aContainerUpdateIDs)
+        public String PropertyContainerUpdateIDs()
         {
-            char* ptr;
-            CpProxyUpnpOrgContentDirectory1PropertyContainerUpdateIDs(iHandle, &ptr);
-            aContainerUpdateIDs = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iContainerUpdateIDs.Value();
         }
 
         /// <summary>
@@ -1152,21 +1362,33 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                CpProxyUpnpOrgContentDirectory1Destroy(iHandle);
-                iHandle = 0;
+                DisposeProxy();
+                iHandle = IntPtr.Zero;
+                iActionGetSearchCapabilities.Dispose();
+                iActionGetSortCapabilities.Dispose();
+                iActionGetSystemUpdateID.Dispose();
+                iActionBrowse.Dispose();
+                iActionSearch.Dispose();
+                iActionCreateObject.Dispose();
+                iActionDestroyObject.Dispose();
+                iActionUpdateObject.Dispose();
+                iActionImportResource.Dispose();
+                iActionExportResource.Dispose();
+                iActionStopTransferResource.Dispose();
+                iActionGetTransferProgress.Dispose();
+                iActionDeleteResource.Dispose();
+                iActionCreateReference.Dispose();
+                iTransferIDs.Dispose();
+                iSystemUpdateID.Dispose();
+                iContainerUpdateIDs.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

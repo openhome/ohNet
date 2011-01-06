@@ -1,4 +1,4 @@
-#include <Std/DvLinnCoUkTime1.h>
+#include "DvLinnCoUkTime1.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -39,12 +39,12 @@ void DvProviderLinnCoUkTime1Cpp::GetPropertySeconds(uint32_t& aValue)
 DvProviderLinnCoUkTime1Cpp::DvProviderLinnCoUkTime1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Time", 1)
 {
-    Functor empty;
-    iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"), empty);
+    
+    iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
     iService->AddProperty(iPropertyTrackCount); // passes ownership
-    iPropertyDuration = new PropertyUint(new ParameterUint("Duration"), empty);
+    iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
     iService->AddProperty(iPropertyDuration); // passes ownership
-    iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"), empty);
+    iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"));
     iService->AddProperty(iPropertySeconds); // passes ownership
 }
 

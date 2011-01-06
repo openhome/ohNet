@@ -1,97 +1,188 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgConnectionManager2 : ICpProxy, IDisposable
     {
-        void SyncGetProtocolInfo(out string aSource, out string aSink);
+        void SyncGetProtocolInfo(out String aSource, out String aSink);
         void BeginGetProtocolInfo(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetProtocolInfo(uint aAsyncHandle, out string aSource, out string aSink);
-        void SyncPrepareForConnection(string aRemoteProtocolInfo, string aPeerConnectionManager, int aPeerConnectionID, string aDirection, out int aConnectionID, out int aAVTransportID, out int aRcsID);
-        void BeginPrepareForConnection(string aRemoteProtocolInfo, string aPeerConnectionManager, int aPeerConnectionID, string aDirection, CpProxy.CallbackAsyncComplete aCallback);
-        void EndPrepareForConnection(uint aAsyncHandle, out int aConnectionID, out int aAVTransportID, out int aRcsID);
+        void EndGetProtocolInfo(IntPtr aAsyncHandle, out String aSource, out String aSink);
+        void SyncPrepareForConnection(String aRemoteProtocolInfo, String aPeerConnectionManager, int aPeerConnectionID, String aDirection, out int aConnectionID, out int aAVTransportID, out int aRcsID);
+        void BeginPrepareForConnection(String aRemoteProtocolInfo, String aPeerConnectionManager, int aPeerConnectionID, String aDirection, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPrepareForConnection(IntPtr aAsyncHandle, out int aConnectionID, out int aAVTransportID, out int aRcsID);
         void SyncConnectionComplete(int aConnectionID);
         void BeginConnectionComplete(int aConnectionID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndConnectionComplete(uint aAsyncHandle);
-        void SyncGetCurrentConnectionIDs(out string aConnectionIDs);
+        void EndConnectionComplete(IntPtr aAsyncHandle);
+        void SyncGetCurrentConnectionIDs(out String aConnectionIDs);
         void BeginGetCurrentConnectionIDs(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetCurrentConnectionIDs(uint aAsyncHandle, out string aConnectionIDs);
-        void SyncGetCurrentConnectionInfo(int aConnectionID, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus);
+        void EndGetCurrentConnectionIDs(IntPtr aAsyncHandle, out String aConnectionIDs);
+        void SyncGetCurrentConnectionInfo(int aConnectionID, out int aRcsID, out int aAVTransportID, out String aProtocolInfo, out String aPeerConnectionManager, out int aPeerConnectionID, out String aDirection, out String aStatus);
         void BeginGetCurrentConnectionInfo(int aConnectionID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetCurrentConnectionInfo(uint aAsyncHandle, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus);
-
+        void EndGetCurrentConnectionInfo(IntPtr aAsyncHandle, out int aRcsID, out int aAVTransportID, out String aProtocolInfo, out String aPeerConnectionManager, out int aPeerConnectionID, out String aDirection, out String aStatus);
         void SetPropertySourceProtocolInfoChanged(CpProxy.CallbackPropertyChanged aSourceProtocolInfoChanged);
-        void PropertySourceProtocolInfo(out string aSourceProtocolInfo);
+        String PropertySourceProtocolInfo();
         void SetPropertySinkProtocolInfoChanged(CpProxy.CallbackPropertyChanged aSinkProtocolInfoChanged);
-        void PropertySinkProtocolInfo(out string aSinkProtocolInfo);
+        String PropertySinkProtocolInfo();
         void SetPropertyCurrentConnectionIDsChanged(CpProxy.CallbackPropertyChanged aCurrentConnectionIDsChanged);
-        void PropertyCurrentConnectionIDs(out string aCurrentConnectionIDs);
+        String PropertyCurrentConnectionIDs();
     }
+
+    internal class SyncGetProtocolInfoUpnpOrgConnectionManager2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgConnectionManager2 iService;
+        private String iSource;
+        private String iSink;
+
+        public SyncGetProtocolInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Source()
+        {
+            return iSource;
+        }
+        public String Sink()
+        {
+            return iSink;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetProtocolInfo(aAsyncHandle, out iSource, out iSink);
+        }
+    };
+
+    internal class SyncPrepareForConnectionUpnpOrgConnectionManager2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgConnectionManager2 iService;
+        private int iConnectionID;
+        private int iAVTransportID;
+        private int iRcsID;
+
+        public SyncPrepareForConnectionUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public int ConnectionID()
+        {
+            return iConnectionID;
+        }
+        public int AVTransportID()
+        {
+            return iAVTransportID;
+        }
+        public int RcsID()
+        {
+            return iRcsID;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndPrepareForConnection(aAsyncHandle, out iConnectionID, out iAVTransportID, out iRcsID);
+        }
+    };
+
+    internal class SyncConnectionCompleteUpnpOrgConnectionManager2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgConnectionManager2 iService;
+
+        public SyncConnectionCompleteUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndConnectionComplete(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgConnectionManager2 iService;
+        private String iConnectionIDs;
+
+        public SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String ConnectionIDs()
+        {
+            return iConnectionIDs;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetCurrentConnectionIDs(aAsyncHandle, out iConnectionIDs);
+        }
+    };
+
+    internal class SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgConnectionManager2 iService;
+        private int iRcsID;
+        private int iAVTransportID;
+        private String iProtocolInfo;
+        private String iPeerConnectionManager;
+        private int iPeerConnectionID;
+        private String iDirection;
+        private String iStatus;
+
+        public SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public int RcsID()
+        {
+            return iRcsID;
+        }
+        public int AVTransportID()
+        {
+            return iAVTransportID;
+        }
+        public String ProtocolInfo()
+        {
+            return iProtocolInfo;
+        }
+        public String PeerConnectionManager()
+        {
+            return iPeerConnectionManager;
+        }
+        public int PeerConnectionID()
+        {
+            return iPeerConnectionID;
+        }
+        public String Direction()
+        {
+            return iDirection;
+        }
+        public String Status()
+        {
+            return iStatus;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetCurrentConnectionInfo(aAsyncHandle, out iRcsID, out iAVTransportID, out iProtocolInfo, out iPeerConnectionManager, out iPeerConnectionID, out iDirection, out iStatus);
+        }
+    };
 
     /// <summary>
     /// Proxy for the upnp.org:ConnectionManager:2 UPnP service
     /// </summary>
     public class CpProxyUpnpOrgConnectionManager2 : CpProxy, IDisposable, ICpProxyUpnpOrgConnectionManager2
     {
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern uint CpProxyUpnpOrgConnectionManager2Create(uint aDeviceHandle);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern void CpProxyUpnpOrgConnectionManager2Destroy(uint aHandle);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncGetProtocolInfo(uint aHandle, char** aSource, char** aSink);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginGetProtocolInfo(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndGetProtocolInfo(uint aHandle, uint aAsync, char** aSource, char** aSink);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncPrepareForConnection(uint aHandle, char* aRemoteProtocolInfo, char* aPeerConnectionManager, int aPeerConnectionID, char* aDirection, int* aConnectionID, int* aAVTransportID, int* aRcsID);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginPrepareForConnection(uint aHandle, char* aRemoteProtocolInfo, char* aPeerConnectionManager, int aPeerConnectionID, char* aDirection, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndPrepareForConnection(uint aHandle, uint aAsync, int* aConnectionID, int* aAVTransportID, int* aRcsID);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncConnectionComplete(uint aHandle, int aConnectionID);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginConnectionComplete(uint aHandle, int aConnectionID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndConnectionComplete(uint aHandle, uint aAsync);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncGetCurrentConnectionIDs(uint aHandle, char** aConnectionIDs);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginGetCurrentConnectionIDs(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndGetCurrentConnectionIDs(uint aHandle, uint aAsync, char** aConnectionIDs);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncGetCurrentConnectionInfo(uint aHandle, int aConnectionID, int* aRcsID, int* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int* aPeerConnectionID, char** aDirection, char** aStatus);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginGetCurrentConnectionInfo(uint aHandle, int aConnectionID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndGetCurrentConnectionInfo(uint aHandle, uint aAsync, int* aRcsID, int* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int* aPeerConnectionID, char** aDirection, char** aStatus);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern void CpProxyUpnpOrgConnectionManager2SetPropertySourceProtocolInfoChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern void CpProxyUpnpOrgConnectionManager2SetPropertySinkProtocolInfoChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern void CpProxyUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDsChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2PropertySourceProtocolInfo(uint aHandle, char** aSourceProtocolInfo);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2PropertySinkProtocolInfo(uint aHandle, char** aSinkProtocolInfo);
-        [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2PropertyCurrentConnectionIDs(uint aHandle, char** aCurrentConnectionIDs);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionGetProtocolInfo;
+        private Zapp.Core.Action iActionPrepareForConnection;
+        private Zapp.Core.Action iActionConnectionComplete;
+        private Zapp.Core.Action iActionGetCurrentConnectionIDs;
+        private Zapp.Core.Action iActionGetCurrentConnectionInfo;
+        private PropertyString iSourceProtocolInfo;
+        private PropertyString iSinkProtocolInfo;
+        private PropertyString iCurrentConnectionIDs;
         private CallbackPropertyChanged iSourceProtocolInfoChanged;
         private CallbackPropertyChanged iSinkProtocolInfoChanged;
         private CallbackPropertyChanged iCurrentConnectionIDsChanged;
-        private Callback iCallbackSourceProtocolInfoChanged;
-        private Callback iCallbackSinkProtocolInfoChanged;
-        private Callback iCallbackCurrentConnectionIDsChanged;
 
         /// <summary>
         /// Constructor
@@ -99,9 +190,77 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyUpnpOrgConnectionManager2(CpDevice aDevice)
+            : base("schemas-upnp-org", "ConnectionManager", 2, aDevice)
         {
-            iHandle = CpProxyUpnpOrgConnectionManager2Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionGetProtocolInfo = new Zapp.Core.Action("GetProtocolInfo");
+            param = new ParameterString("Source", allowedValues);
+            iActionGetProtocolInfo.AddOutputParameter(param);
+            param = new ParameterString("Sink", allowedValues);
+            iActionGetProtocolInfo.AddOutputParameter(param);
+
+            iActionPrepareForConnection = new Zapp.Core.Action("PrepareForConnection");
+            param = new ParameterString("RemoteProtocolInfo", allowedValues);
+            iActionPrepareForConnection.AddInputParameter(param);
+            param = new ParameterString("PeerConnectionManager", allowedValues);
+            iActionPrepareForConnection.AddInputParameter(param);
+            param = new ParameterInt("PeerConnectionID");
+            iActionPrepareForConnection.AddInputParameter(param);
+            allowedValues.Add("Input");
+            allowedValues.Add("Output");
+            param = new ParameterString("Direction", allowedValues);
+            iActionPrepareForConnection.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterInt("ConnectionID");
+            iActionPrepareForConnection.AddOutputParameter(param);
+            param = new ParameterInt("AVTransportID");
+            iActionPrepareForConnection.AddOutputParameter(param);
+            param = new ParameterInt("RcsID");
+            iActionPrepareForConnection.AddOutputParameter(param);
+
+            iActionConnectionComplete = new Zapp.Core.Action("ConnectionComplete");
+            param = new ParameterInt("ConnectionID");
+            iActionConnectionComplete.AddInputParameter(param);
+
+            iActionGetCurrentConnectionIDs = new Zapp.Core.Action("GetCurrentConnectionIDs");
+            param = new ParameterString("ConnectionIDs", allowedValues);
+            iActionGetCurrentConnectionIDs.AddOutputParameter(param);
+
+            iActionGetCurrentConnectionInfo = new Zapp.Core.Action("GetCurrentConnectionInfo");
+            param = new ParameterInt("ConnectionID");
+            iActionGetCurrentConnectionInfo.AddInputParameter(param);
+            param = new ParameterInt("RcsID");
+            iActionGetCurrentConnectionInfo.AddOutputParameter(param);
+            param = new ParameterInt("AVTransportID");
+            iActionGetCurrentConnectionInfo.AddOutputParameter(param);
+            param = new ParameterString("ProtocolInfo", allowedValues);
+            iActionGetCurrentConnectionInfo.AddOutputParameter(param);
+            param = new ParameterString("PeerConnectionManager", allowedValues);
+            iActionGetCurrentConnectionInfo.AddOutputParameter(param);
+            param = new ParameterInt("PeerConnectionID");
+            iActionGetCurrentConnectionInfo.AddOutputParameter(param);
+            allowedValues.Add("Input");
+            allowedValues.Add("Output");
+            param = new ParameterString("Direction", allowedValues);
+            iActionGetCurrentConnectionInfo.AddOutputParameter(param);
+            allowedValues.Clear();
+            allowedValues.Add("OK");
+            allowedValues.Add("ContentFormatMismatch");
+            allowedValues.Add("InsufficientBandwidth");
+            allowedValues.Add("UnreliableChannel");
+            allowedValues.Add("Unknown");
+            param = new ParameterString("Status", allowedValues);
+            iActionGetCurrentConnectionInfo.AddOutputParameter(param);
+            allowedValues.Clear();
+
+            iSourceProtocolInfo = new PropertyString("SourceProtocolInfo", SourceProtocolInfoPropertyChanged);
+            AddProperty(iSourceProtocolInfo);
+            iSinkProtocolInfo = new PropertyString("SinkProtocolInfo", SinkProtocolInfoPropertyChanged);
+            AddProperty(iSinkProtocolInfo);
+            iCurrentConnectionIDs = new PropertyString("CurrentConnectionIDs", CurrentConnectionIDsPropertyChanged);
+            AddProperty(iCurrentConnectionIDs);
         }
 
         /// <summary>
@@ -111,17 +270,14 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aSource"></param>
         /// <param name="aSink"></param>
-        public unsafe void SyncGetProtocolInfo(out string aSource, out string aSink)
+        public void SyncGetProtocolInfo(out String aSource, out String aSink)
         {
-            char* source;
-            char* sink;
-            {
-                CpProxyUpnpOrgConnectionManager2SyncGetProtocolInfo(iHandle, &source, &sink);
-            }
-            aSource = Marshal.PtrToStringAnsi((IntPtr)source);
-            ZappFree(source);
-            aSink = Marshal.PtrToStringAnsi((IntPtr)sink);
-            ZappFree(sink);
+            SyncGetProtocolInfoUpnpOrgConnectionManager2 sync = new SyncGetProtocolInfoUpnpOrgConnectionManager2(this);
+            BeginGetProtocolInfo(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aSource = sync.Source();
+            aSink = sync.Sink();
         }
 
         /// <summary>
@@ -132,11 +288,13 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetProtocolInfo().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetProtocolInfo(CallbackAsyncComplete aCallback)
+        public void BeginGetProtocolInfo(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgConnectionManager2BeginGetProtocolInfo(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetProtocolInfo, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetProtocolInfo.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetProtocolInfo.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -146,20 +304,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aSource"></param>
         /// <param name="aSink"></param>
-        public unsafe void EndGetProtocolInfo(uint aAsyncHandle, out string aSource, out string aSink)
+        public void EndGetProtocolInfo(IntPtr aAsyncHandle, out String aSource, out String aSink)
         {
-            char* source;
-            char* sink;
-            {
-                if (0 != CpProxyUpnpOrgConnectionManager2EndGetProtocolInfo(iHandle, aAsyncHandle, &source, &sink))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aSource = Marshal.PtrToStringAnsi((IntPtr)source);
-            ZappFree(source);
-            aSink = Marshal.PtrToStringAnsi((IntPtr)sink);
-            ZappFree(sink);
+            uint index = 0;
+            aSource = Invocation.OutputString(aAsyncHandle, index++);
+            aSink = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -174,20 +323,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aConnectionID"></param>
         /// <param name="aAVTransportID"></param>
         /// <param name="aRcsID"></param>
-        public unsafe void SyncPrepareForConnection(string aRemoteProtocolInfo, string aPeerConnectionManager, int aPeerConnectionID, string aDirection, out int aConnectionID, out int aAVTransportID, out int aRcsID)
+        public void SyncPrepareForConnection(String aRemoteProtocolInfo, String aPeerConnectionManager, int aPeerConnectionID, String aDirection, out int aConnectionID, out int aAVTransportID, out int aRcsID)
         {
-            char* remoteProtocolInfo = (char*)Marshal.StringToHGlobalAnsi(aRemoteProtocolInfo);
-            char* peerConnectionManager = (char*)Marshal.StringToHGlobalAnsi(aPeerConnectionManager);
-            char* direction = (char*)Marshal.StringToHGlobalAnsi(aDirection);
-            fixed (int* connectionID = &aConnectionID)
-            fixed (int* aVTransportID = &aAVTransportID)
-            fixed (int* rcsID = &aRcsID)
-            {
-                CpProxyUpnpOrgConnectionManager2SyncPrepareForConnection(iHandle, remoteProtocolInfo, peerConnectionManager, aPeerConnectionID, direction, connectionID, aVTransportID, rcsID);
-            }
-            Marshal.FreeHGlobal((IntPtr)remoteProtocolInfo);
-            Marshal.FreeHGlobal((IntPtr)peerConnectionManager);
-            Marshal.FreeHGlobal((IntPtr)direction);
+            SyncPrepareForConnectionUpnpOrgConnectionManager2 sync = new SyncPrepareForConnectionUpnpOrgConnectionManager2(this);
+            BeginPrepareForConnection(aRemoteProtocolInfo, aPeerConnectionManager, aPeerConnectionID, aDirection, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aConnectionID = sync.ConnectionID();
+            aAVTransportID = sync.AVTransportID();
+            aRcsID = sync.RcsID();
         }
 
         /// <summary>
@@ -202,17 +346,19 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDirection"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginPrepareForConnection(string aRemoteProtocolInfo, string aPeerConnectionManager, int aPeerConnectionID, string aDirection, CallbackAsyncComplete aCallback)
+        public void BeginPrepareForConnection(String aRemoteProtocolInfo, String aPeerConnectionManager, int aPeerConnectionID, String aDirection, CallbackAsyncComplete aCallback)
         {
-            char* remoteProtocolInfo = (char*)Marshal.StringToHGlobalAnsi(aRemoteProtocolInfo);
-            char* peerConnectionManager = (char*)Marshal.StringToHGlobalAnsi(aPeerConnectionManager);
-            char* direction = (char*)Marshal.StringToHGlobalAnsi(aDirection);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgConnectionManager2BeginPrepareForConnection(iHandle, remoteProtocolInfo, peerConnectionManager, aPeerConnectionID, direction, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)remoteProtocolInfo);
-            Marshal.FreeHGlobal((IntPtr)peerConnectionManager);
-            Marshal.FreeHGlobal((IntPtr)direction);
+            Invocation invocation = iService.Invocation(iActionPrepareForConnection, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionPrepareForConnection.InputParameter(inIndex++), aRemoteProtocolInfo));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionPrepareForConnection.InputParameter(inIndex++), aPeerConnectionManager));
+            invocation.AddInput(new ArgumentInt((ParameterInt)iActionPrepareForConnection.InputParameter(inIndex++), aPeerConnectionID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionPrepareForConnection.InputParameter(inIndex++), aDirection));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionPrepareForConnection.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionPrepareForConnection.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionPrepareForConnection.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -223,17 +369,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aConnectionID"></param>
         /// <param name="aAVTransportID"></param>
         /// <param name="aRcsID"></param>
-        public unsafe void EndPrepareForConnection(uint aAsyncHandle, out int aConnectionID, out int aAVTransportID, out int aRcsID)
+        public void EndPrepareForConnection(IntPtr aAsyncHandle, out int aConnectionID, out int aAVTransportID, out int aRcsID)
         {
-            fixed (int* connectionID = &aConnectionID)
-            fixed (int* aVTransportID = &aAVTransportID)
-            fixed (int* rcsID = &aRcsID)
-            {
-                if (0 != CpProxyUpnpOrgConnectionManager2EndPrepareForConnection(iHandle, aAsyncHandle, connectionID, aVTransportID, rcsID))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aConnectionID = Invocation.OutputInt(aAsyncHandle, index++);
+            aAVTransportID = Invocation.OutputInt(aAsyncHandle, index++);
+            aRcsID = Invocation.OutputInt(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -242,11 +383,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aConnectionID"></param>
-        public unsafe void SyncConnectionComplete(int aConnectionID)
+        public void SyncConnectionComplete(int aConnectionID)
         {
-            {
-                CpProxyUpnpOrgConnectionManager2SyncConnectionComplete(iHandle, aConnectionID);
-            }
+            SyncConnectionCompleteUpnpOrgConnectionManager2 sync = new SyncConnectionCompleteUpnpOrgConnectionManager2(this);
+            BeginConnectionComplete(aConnectionID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -258,11 +400,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aConnectionID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginConnectionComplete(int aConnectionID, CallbackAsyncComplete aCallback)
+        public void BeginConnectionComplete(int aConnectionID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgConnectionManager2BeginConnectionComplete(iHandle, aConnectionID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionConnectionComplete, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentInt((ParameterInt)iActionConnectionComplete.InputParameter(inIndex++), aConnectionID));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -270,14 +413,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndConnectionComplete(uint aAsyncHandle)
+        public void EndConnectionComplete(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgConnectionManager2EndConnectionComplete(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -286,14 +423,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aConnectionIDs"></param>
-        public unsafe void SyncGetCurrentConnectionIDs(out string aConnectionIDs)
+        public void SyncGetCurrentConnectionIDs(out String aConnectionIDs)
         {
-            char* connectionIDs;
-            {
-                CpProxyUpnpOrgConnectionManager2SyncGetCurrentConnectionIDs(iHandle, &connectionIDs);
-            }
-            aConnectionIDs = Marshal.PtrToStringAnsi((IntPtr)connectionIDs);
-            ZappFree(connectionIDs);
+            SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2 sync = new SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2(this);
+            BeginGetCurrentConnectionIDs(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aConnectionIDs = sync.ConnectionIDs();
         }
 
         /// <summary>
@@ -304,11 +440,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetCurrentConnectionIDs().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetCurrentConnectionIDs(CallbackAsyncComplete aCallback)
+        public void BeginGetCurrentConnectionIDs(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgConnectionManager2BeginGetCurrentConnectionIDs(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetCurrentConnectionIDs, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetCurrentConnectionIDs.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -317,17 +454,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aConnectionIDs"></param>
-        public unsafe void EndGetCurrentConnectionIDs(uint aAsyncHandle, out string aConnectionIDs)
+        public void EndGetCurrentConnectionIDs(IntPtr aAsyncHandle, out String aConnectionIDs)
         {
-            char* connectionIDs;
-            {
-                if (0 != CpProxyUpnpOrgConnectionManager2EndGetCurrentConnectionIDs(iHandle, aAsyncHandle, &connectionIDs))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aConnectionIDs = Marshal.PtrToStringAnsi((IntPtr)connectionIDs);
-            ZappFree(connectionIDs);
+            uint index = 0;
+            aConnectionIDs = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -343,26 +473,19 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aPeerConnectionID"></param>
         /// <param name="aDirection"></param>
         /// <param name="aStatus"></param>
-        public unsafe void SyncGetCurrentConnectionInfo(int aConnectionID, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus)
+        public void SyncGetCurrentConnectionInfo(int aConnectionID, out int aRcsID, out int aAVTransportID, out String aProtocolInfo, out String aPeerConnectionManager, out int aPeerConnectionID, out String aDirection, out String aStatus)
         {
-            char* protocolInfo;
-            char* peerConnectionManager;
-            char* direction;
-            char* status;
-            fixed (int* rcsID = &aRcsID)
-            fixed (int* aVTransportID = &aAVTransportID)
-            fixed (int* peerConnectionID = &aPeerConnectionID)
-            {
-                CpProxyUpnpOrgConnectionManager2SyncGetCurrentConnectionInfo(iHandle, aConnectionID, rcsID, aVTransportID, &protocolInfo, &peerConnectionManager, peerConnectionID, &direction, &status);
-            }
-            aProtocolInfo = Marshal.PtrToStringAnsi((IntPtr)protocolInfo);
-            ZappFree(protocolInfo);
-            aPeerConnectionManager = Marshal.PtrToStringAnsi((IntPtr)peerConnectionManager);
-            ZappFree(peerConnectionManager);
-            aDirection = Marshal.PtrToStringAnsi((IntPtr)direction);
-            ZappFree(direction);
-            aStatus = Marshal.PtrToStringAnsi((IntPtr)status);
-            ZappFree(status);
+            SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2 sync = new SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2(this);
+            BeginGetCurrentConnectionInfo(aConnectionID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aRcsID = sync.RcsID();
+            aAVTransportID = sync.AVTransportID();
+            aProtocolInfo = sync.ProtocolInfo();
+            aPeerConnectionManager = sync.PeerConnectionManager();
+            aPeerConnectionID = sync.PeerConnectionID();
+            aDirection = sync.Direction();
+            aStatus = sync.Status();
         }
 
         /// <summary>
@@ -374,11 +497,20 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aConnectionID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetCurrentConnectionInfo(int aConnectionID, CallbackAsyncComplete aCallback)
+        public void BeginGetCurrentConnectionInfo(int aConnectionID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgConnectionManager2BeginGetCurrentConnectionInfo(iHandle, aConnectionID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetCurrentConnectionInfo, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentInt((ParameterInt)iActionGetCurrentConnectionInfo.InputParameter(inIndex++), aConnectionID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionGetCurrentConnectionInfo.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionGetCurrentConnectionInfo.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetCurrentConnectionInfo.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetCurrentConnectionInfo.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionGetCurrentConnectionInfo.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetCurrentConnectionInfo.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetCurrentConnectionInfo.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -393,29 +525,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aPeerConnectionID"></param>
         /// <param name="aDirection"></param>
         /// <param name="aStatus"></param>
-        public unsafe void EndGetCurrentConnectionInfo(uint aAsyncHandle, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus)
+        public void EndGetCurrentConnectionInfo(IntPtr aAsyncHandle, out int aRcsID, out int aAVTransportID, out String aProtocolInfo, out String aPeerConnectionManager, out int aPeerConnectionID, out String aDirection, out String aStatus)
         {
-            char* protocolInfo;
-            char* peerConnectionManager;
-            char* direction;
-            char* status;
-            fixed (int* rcsID = &aRcsID)
-            fixed (int* aVTransportID = &aAVTransportID)
-            fixed (int* peerConnectionID = &aPeerConnectionID)
-            {
-                if (0 != CpProxyUpnpOrgConnectionManager2EndGetCurrentConnectionInfo(iHandle, aAsyncHandle, rcsID, aVTransportID, &protocolInfo, &peerConnectionManager, peerConnectionID, &direction, &status))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aProtocolInfo = Marshal.PtrToStringAnsi((IntPtr)protocolInfo);
-            ZappFree(protocolInfo);
-            aPeerConnectionManager = Marshal.PtrToStringAnsi((IntPtr)peerConnectionManager);
-            ZappFree(peerConnectionManager);
-            aDirection = Marshal.PtrToStringAnsi((IntPtr)direction);
-            ZappFree(direction);
-            aStatus = Marshal.PtrToStringAnsi((IntPtr)status);
-            ZappFree(status);
+            uint index = 0;
+            aRcsID = Invocation.OutputInt(aAsyncHandle, index++);
+            aAVTransportID = Invocation.OutputInt(aAsyncHandle, index++);
+            aProtocolInfo = Invocation.OutputString(aAsyncHandle, index++);
+            aPeerConnectionManager = Invocation.OutputString(aAsyncHandle, index++);
+            aPeerConnectionID = Invocation.OutputInt(aAsyncHandle, index++);
+            aDirection = Invocation.OutputString(aAsyncHandle, index++);
+            aStatus = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -426,17 +545,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSourceProtocolInfoChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySourceProtocolInfoChanged(CallbackPropertyChanged aSourceProtocolInfoChanged)
         {
-            iSourceProtocolInfoChanged = aSourceProtocolInfoChanged;
-            iCallbackSourceProtocolInfoChanged = new Callback(PropertySourceProtocolInfoChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyUpnpOrgConnectionManager2SetPropertySourceProtocolInfoChanged(iHandle, iCallbackSourceProtocolInfoChanged, ptr);
+            lock (this)
+            {
+                iSourceProtocolInfoChanged = aSourceProtocolInfoChanged;
+            }
         }
 
-        private void PropertySourceProtocolInfoChanged(IntPtr aPtr)
+        private void SourceProtocolInfoPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyUpnpOrgConnectionManager2 self = (CpProxyUpnpOrgConnectionManager2)gch.Target;
-            self.iSourceProtocolInfoChanged();
+            lock (this)
+            {
+                if (iSourceProtocolInfoChanged != null)
+                {
+                    iSourceProtocolInfoChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -447,17 +570,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSinkProtocolInfoChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySinkProtocolInfoChanged(CallbackPropertyChanged aSinkProtocolInfoChanged)
         {
-            iSinkProtocolInfoChanged = aSinkProtocolInfoChanged;
-            iCallbackSinkProtocolInfoChanged = new Callback(PropertySinkProtocolInfoChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyUpnpOrgConnectionManager2SetPropertySinkProtocolInfoChanged(iHandle, iCallbackSinkProtocolInfoChanged, ptr);
+            lock (this)
+            {
+                iSinkProtocolInfoChanged = aSinkProtocolInfoChanged;
+            }
         }
 
-        private void PropertySinkProtocolInfoChanged(IntPtr aPtr)
+        private void SinkProtocolInfoPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyUpnpOrgConnectionManager2 self = (CpProxyUpnpOrgConnectionManager2)gch.Target;
-            self.iSinkProtocolInfoChanged();
+            lock (this)
+            {
+                if (iSinkProtocolInfoChanged != null)
+                {
+                    iSinkProtocolInfoChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -468,17 +595,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCurrentConnectionIDsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyCurrentConnectionIDsChanged(CallbackPropertyChanged aCurrentConnectionIDsChanged)
         {
-            iCurrentConnectionIDsChanged = aCurrentConnectionIDsChanged;
-            iCallbackCurrentConnectionIDsChanged = new Callback(PropertyCurrentConnectionIDsChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDsChanged(iHandle, iCallbackCurrentConnectionIDsChanged, ptr);
+            lock (this)
+            {
+                iCurrentConnectionIDsChanged = aCurrentConnectionIDsChanged;
+            }
         }
 
-        private void PropertyCurrentConnectionIDsChanged(IntPtr aPtr)
+        private void CurrentConnectionIDsPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyUpnpOrgConnectionManager2 self = (CpProxyUpnpOrgConnectionManager2)gch.Target;
-            self.iCurrentConnectionIDsChanged();
+            lock (this)
+            {
+                if (iCurrentConnectionIDsChanged != null)
+                {
+                    iCurrentConnectionIDsChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -488,12 +619,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aSourceProtocolInfo">Will be set to the value of the property</param>
-        public unsafe void PropertySourceProtocolInfo(out string aSourceProtocolInfo)
+        public String PropertySourceProtocolInfo()
         {
-            char* ptr;
-            CpProxyUpnpOrgConnectionManager2PropertySourceProtocolInfo(iHandle, &ptr);
-            aSourceProtocolInfo = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iSourceProtocolInfo.Value();
         }
 
         /// <summary>
@@ -503,12 +631,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aSinkProtocolInfo">Will be set to the value of the property</param>
-        public unsafe void PropertySinkProtocolInfo(out string aSinkProtocolInfo)
+        public String PropertySinkProtocolInfo()
         {
-            char* ptr;
-            CpProxyUpnpOrgConnectionManager2PropertySinkProtocolInfo(iHandle, &ptr);
-            aSinkProtocolInfo = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iSinkProtocolInfo.Value();
         }
 
         /// <summary>
@@ -518,12 +643,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aCurrentConnectionIDs">Will be set to the value of the property</param>
-        public unsafe void PropertyCurrentConnectionIDs(out string aCurrentConnectionIDs)
+        public String PropertyCurrentConnectionIDs()
         {
-            char* ptr;
-            CpProxyUpnpOrgConnectionManager2PropertyCurrentConnectionIDs(iHandle, &ptr);
-            aCurrentConnectionIDs = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iCurrentConnectionIDs.Value();
         }
 
         /// <summary>
@@ -543,21 +665,24 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                CpProxyUpnpOrgConnectionManager2Destroy(iHandle);
-                iHandle = 0;
+                DisposeProxy();
+                iHandle = IntPtr.Zero;
+                iActionGetProtocolInfo.Dispose();
+                iActionPrepareForConnection.Dispose();
+                iActionConnectionComplete.Dispose();
+                iActionGetCurrentConnectionIDs.Dispose();
+                iActionGetCurrentConnectionInfo.Dispose();
+                iSourceProtocolInfo.Dispose();
+                iSinkProtocolInfo.Dispose();
+                iCurrentConnectionIDs.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

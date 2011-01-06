@@ -3,10 +3,42 @@
 
 #include <OsTypes.h>
 #include <C/Zapp.h>
+#include <C/Service.h>
+#include <C/CpDevice.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * Create a proxy that will be manually populated with actions/properties
+ *
+ * In most cases, clients should create proxy instances for specific services instead.
+ *
+ * @param[in] aDomain   Domain (vendor) name
+ * @param[in] aName     Service name
+ * @param[in] aVersion  Version number
+ * @param[in] aDevice   Handle to the device the proxy will communicate with / operate on
+ *
+ * @return  Handle to the new (empty) proxy
+ */
+DllExport THandle CpProxyCreate(const char* aDomain, const char* aName, uint32_t aVersion, CpDeviceC aDevice);
+
+/**
+ * Destroy a proxy (only useful to clients who have called CpProxyCreate)
+ *
+ * @param[in] aProxy  Returned by CpProxyCreate
+ */
+DllExport void CpProxyDestroy(THandle aProxy);
+
+/**
+ * Retrieve the handle to the underlying service (only useful to clients who have called CpProxyCreate)
+ *
+ * @param[in] aProxy  Returned by CpProxyCreate
+ *
+ * @return  Handle to the underlying service
+ */
+DllExport THandle CpProxyService(THandle aProxy);
 
 /**
  * Subscribe to be notified of changes in state variables for a given service
@@ -19,7 +51,7 @@ extern "C" {
  *
  * @param[in] aHandle    Returned from [service]CreateEvented
  */
-DllExport void CpProxyCSubscribe(THandle aHandle);
+DllExport void CpProxySubscribe(THandle aHandle);
 
 /**
  * Unsubscribe from notifications of changes in state variables for a given
@@ -30,7 +62,7 @@ DllExport void CpProxyCSubscribe(THandle aHandle);
  *
  * @param[in] aHandle    Returned from [service]CreateEvented
  */
-DllExport void CpProxyCUnsubscribe(THandle aHandle);
+DllExport void CpProxyUnsubscribe(THandle aHandle);
 
 /**
  * Register a callback which will run after each group of 1..n changes to
@@ -40,7 +72,7 @@ DllExport void CpProxyCUnsubscribe(THandle aHandle);
  * @param[in] aCallback  The callback to run
  * @param[in] aPtr       Data to be passed to the callback
  */
-DllExport void CpProxyCSetPropertyChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxySetPropertyChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
 
 /**
  * Register a callback which will run when the state of all properties becomes available.
@@ -50,7 +82,16 @@ DllExport void CpProxyCSetPropertyChanged(THandle aHandle, ZappCallback aCallbac
  * @param[in] aCallback  The callback to run
  * @param[in] aPtr       Data to be passed to the callback
  */
-DllExport void CpProxyCSetPropertyInitialEvent(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxySetPropertyInitialEvent(THandle aHandle, ZappCallback aCallback, void* aPtr);
+
+/**
+ * Add a property to a service.
+ * Will normally only be called by auto-generated code.
+ *
+ * @param[in] aHandle    Returned from [service]CreateEvented
+ * @param[in] aProperty  Returned from ServicePropertyCreate[type]
+ */
+DllExport void CpProxyAddProperty(THandle aHandle, ServiceProperty aProperty);
 
 #ifdef __cplusplus
 } // extern "C"

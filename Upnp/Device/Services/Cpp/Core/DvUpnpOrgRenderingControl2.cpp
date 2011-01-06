@@ -1,4 +1,4 @@
-#include <Core/DvUpnpOrgRenderingControl2.h>
+#include "DvUpnpOrgRenderingControl2.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -19,8 +19,8 @@ void DvProviderUpnpOrgRenderingControl2::GetPropertyLastChange(Brhz& aValue)
 DvProviderUpnpOrgRenderingControl2::DvProviderUpnpOrgRenderingControl2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "RenderingControl", 2)
 {
-    Functor empty;
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"), empty);
+    
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 

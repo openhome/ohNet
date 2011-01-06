@@ -1,23 +1,29 @@
-#include <C/DvUpnpOrgSwitchPower1.h>
-#include <Core/DvUpnpOrgSwitchPower1.h>
+#include "DvUpnpOrgSwitchPower1.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
+#include <DvProvider.h>
 #include <C/Zapp.h>
+#include <ZappTypes.h>
+#include <Core/DvInvocationResponse.h>
+#include <Service.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-class DvProviderUpnpOrgSwitchPower1C : public DvProviderUpnpOrgSwitchPower1
+class DvProviderUpnpOrgSwitchPower1C : public DvProvider
 {
 public:
-    DvProviderUpnpOrgSwitchPower1C(DvDevice& aDevice);
+    DvProviderUpnpOrgSwitchPower1C(DvDeviceC aDevice);
+    TBool SetPropertyStatus(TBool aValue);
+    void GetPropertyStatus(TBool& aValue);
     void EnableActionSetTarget(CallbackSwitchPower1SetTarget aCallback, void* aPtr);
     void EnableActionGetTarget(CallbackSwitchPower1GetTarget aCallback, void* aPtr);
     void EnableActionGetStatus(CallbackSwitchPower1GetStatus aCallback, void* aPtr);
 private:
-    void SetTarget(IInvocationResponse& aResponse, TUint aVersion, TBool anewTargetValue);
-    void GetTarget(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aRetTargetValue);
-    void GetStatus(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aResultStatus);
+    void DoSetTarget(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetTarget(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetStatus(IDviInvocation& aInvocation, TUint aVersion);
 private:
     CallbackSwitchPower1SetTarget iCallbackSetTarget;
     void* iPtrSetTarget;
@@ -25,76 +31,111 @@ private:
     void* iPtrGetTarget;
     CallbackSwitchPower1GetStatus iCallbackGetStatus;
     void* iPtrGetStatus;
+    PropertyBool* iPropertyStatus;
 };
 
-DvProviderUpnpOrgSwitchPower1C::DvProviderUpnpOrgSwitchPower1C(DvDevice& aDevice)
-    : DvProviderUpnpOrgSwitchPower1(aDevice)
+DvProviderUpnpOrgSwitchPower1C::DvProviderUpnpOrgSwitchPower1C(DvDeviceC aDevice)
+    : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "upnp.org", "SwitchPower", 1)
 {
+    
+    iPropertyStatus = new PropertyBool(new ParameterBool("Status"));
+    iService->AddProperty(iPropertyStatus); // passes ownership
+}
+
+TBool DvProviderUpnpOrgSwitchPower1C::SetPropertyStatus(TBool aValue)
+{
+    return SetPropertyBool(*iPropertyStatus, aValue);
+}
+
+void DvProviderUpnpOrgSwitchPower1C::GetPropertyStatus(TBool& aValue)
+{
+    aValue = iPropertyStatus->Value();
 }
 
 void DvProviderUpnpOrgSwitchPower1C::EnableActionSetTarget(CallbackSwitchPower1SetTarget aCallback, void* aPtr)
 {
     iCallbackSetTarget = aCallback;
     iPtrSetTarget = aPtr;
-    DvProviderUpnpOrgSwitchPower1::EnableActionSetTarget();
+    Zapp::Action* action = new Zapp::Action("SetTarget");
+    action->AddInputParameter(new ParameterBool("newTargetValue"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgSwitchPower1C::DoSetTarget);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgSwitchPower1C::EnableActionGetTarget(CallbackSwitchPower1GetTarget aCallback, void* aPtr)
 {
     iCallbackGetTarget = aCallback;
     iPtrGetTarget = aPtr;
-    DvProviderUpnpOrgSwitchPower1::EnableActionGetTarget();
+    Zapp::Action* action = new Zapp::Action("GetTarget");
+    action->AddOutputParameter(new ParameterBool("RetTargetValue"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgSwitchPower1C::DoGetTarget);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgSwitchPower1C::EnableActionGetStatus(CallbackSwitchPower1GetStatus aCallback, void* aPtr)
 {
     iCallbackGetStatus = aCallback;
     iPtrGetStatus = aPtr;
-    DvProviderUpnpOrgSwitchPower1::EnableActionGetStatus();
+    Zapp::Action* action = new Zapp::Action("GetStatus");
+    action->AddOutputParameter(new ParameterRelated("ResultStatus", *iPropertyStatus));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgSwitchPower1C::DoGetStatus);
+    iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgSwitchPower1C::SetTarget(IInvocationResponse& aResponse, TUint aVersion, TBool anewTargetValue)
+void DvProviderUpnpOrgSwitchPower1C::DoSetTarget(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TBool newTargetValue = aInvocation.InvocationReadBool("newTargetValue");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetTarget != NULL);
-    if (0 != iCallbackSetTarget(iPtrSetTarget, aVersion, anewTargetValue)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetTarget(iPtrSetTarget, aVersion, newTargetValue)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgSwitchPower1C::GetTarget(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aRetTargetValue)
+void DvProviderUpnpOrgSwitchPower1C::DoGetTarget(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t RetTargetValue;
     ASSERT(iCallbackGetTarget != NULL);
     if (0 != iCallbackGetTarget(iPtrGetTarget, aVersion, &RetTargetValue)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aRetTargetValue.Write((RetTargetValue!=0));
-    aResponse.End();
+    InvocationResponseBool respRetTargetValue(aInvocation, "RetTargetValue");
+    resp.Start();
+    respRetTargetValue.Write((RetTargetValue!=0));
+    resp.End();
 }
 
-void DvProviderUpnpOrgSwitchPower1C::GetStatus(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aResultStatus)
+void DvProviderUpnpOrgSwitchPower1C::DoGetStatus(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t ResultStatus;
     ASSERT(iCallbackGetStatus != NULL);
     if (0 != iCallbackGetStatus(iPtrGetStatus, aVersion, &ResultStatus)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResultStatus.Write((ResultStatus!=0));
-    aResponse.End();
+    InvocationResponseBool respResultStatus(aInvocation, "ResultStatus");
+    resp.Start();
+    respResultStatus.Write((ResultStatus!=0));
+    resp.End();
 }
 
 
 
 THandle DvProviderUpnpOrgSwitchPower1Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgSwitchPower1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderUpnpOrgSwitchPower1C(aDevice);
 }
 
 void DvProviderUpnpOrgSwitchPower1Destroy(THandle aProvider)

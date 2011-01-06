@@ -1,4 +1,4 @@
-#include <Core/DvUpnpOrgAVTransport1.h>
+#include "DvUpnpOrgAVTransport1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -19,8 +19,8 @@ void DvProviderUpnpOrgAVTransport1::GetPropertyLastChange(Brhz& aValue)
 DvProviderUpnpOrgAVTransport1::DvProviderUpnpOrgAVTransport1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "AVTransport", 1)
 {
-    Functor empty;
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"), empty);
+    
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 

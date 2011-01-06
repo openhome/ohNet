@@ -9,7 +9,7 @@ namespace Zapp.ControlPoint
     public class CpDeviceListUpnpAll : CpDeviceList
     {
         [DllImport ("ZappUpnp")]
-        static extern unsafe uint CpDeviceListCreateUpnpAll(CallbackDevice aAdded, IntPtr aPtrAdded,
+        static extern unsafe IntPtr CpDeviceListCreateUpnpAll(CallbackDevice aAdded, IntPtr aPtrAdded,
                                                             CallbackDevice aRemoved, IntPtr aPtrRemoved);
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Zapp.ControlPoint
     public class CpDeviceListUpnpRoot : CpDeviceList
     {
         [DllImport ("ZappUpnp")]
-        static extern unsafe uint CpDeviceListCreateUpnpRoot(CallbackDevice aAdded, IntPtr aPtrAdded,
+        static extern unsafe IntPtr CpDeviceListCreateUpnpRoot(CallbackDevice aAdded, IntPtr aPtrAdded,
                                                              CallbackDevice aRemoved, IntPtr aPtrRemoved);
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Zapp.ControlPoint
     public class CpDeviceListUpnpUuid : CpDeviceList
     {
         [DllImport ("ZappUpnp", CharSet = CharSet.Ansi)]
-        static extern unsafe uint CpDeviceListCreateUpnpUuid(char* aUuid,
+        static extern unsafe IntPtr CpDeviceListCreateUpnpUuid(char* aUuid,
                                                              CallbackDevice aAdded, IntPtr aPtrAdded,
                                                              CallbackDevice aRemoved, IntPtr aPtrRemoved);
 
@@ -96,7 +96,7 @@ namespace Zapp.ControlPoint
     public class CpDeviceListUpnpDeviceType : CpDeviceList
     {
         [DllImport ("ZappUpnp", CharSet = CharSet.Ansi)]
-        static extern unsafe uint CpDeviceListCreateUpnpDeviceType(char* aDomainName, char* aDeviceType, uint aVersion,
+        static extern unsafe IntPtr CpDeviceListCreateUpnpDeviceType(char* aDomainName, char* aDeviceType, uint aVersion,
                                                                    CallbackDevice aAdded, IntPtr aPtrAdded,
                                                                    CallbackDevice aRemoved, IntPtr aPtrRemoved);
 
@@ -130,7 +130,7 @@ namespace Zapp.ControlPoint
     public class CpDeviceListUpnpServiceType : CpDeviceList
     {
         [DllImport ("ZappUpnp", CharSet = CharSet.Ansi)]
-        static extern unsafe uint CpDeviceListCreateUpnpServiceType(char* aDomainName, char* aServiceType, uint aVersion,
+        static extern unsafe IntPtr CpDeviceListCreateUpnpServiceType(char* aDomainName, char* aServiceType, uint aVersion,
                                                                     CallbackDevice aAdded, IntPtr aPtrAdded,
                                                                     CallbackDevice aRemoved, IntPtr aPtrRemoved);
 

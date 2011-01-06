@@ -1,124 +1,202 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkJukebox1 : ICpProxy, IDisposable
     {
-        void SyncSetPresetPrefix(string aaUri);
-        void BeginSetPresetPrefix(string aaUri, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetPresetPrefix(uint aAsyncHandle);
-        void SyncPresetPrefix(out string aaUri);
+        void SyncSetPresetPrefix(String aUri);
+        void BeginSetPresetPrefix(String aUri, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetPresetPrefix(IntPtr aAsyncHandle);
+        void SyncPresetPrefix(out String aUri);
         void BeginPresetPrefix(CpProxy.CallbackAsyncComplete aCallback);
-        void EndPresetPrefix(uint aAsyncHandle, out string aaUri);
-        void SyncSetAlbumArtFileName(string aaName);
-        void BeginSetAlbumArtFileName(string aaName, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetAlbumArtFileName(uint aAsyncHandle);
-        void SyncAlbumArtFileName(out string aaName);
+        void EndPresetPrefix(IntPtr aAsyncHandle, out String aUri);
+        void SyncSetAlbumArtFileName(String aName);
+        void BeginSetAlbumArtFileName(String aName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetAlbumArtFileName(IntPtr aAsyncHandle);
+        void SyncAlbumArtFileName(out String aName);
         void BeginAlbumArtFileName(CpProxy.CallbackAsyncComplete aCallback);
-        void EndAlbumArtFileName(uint aAsyncHandle, out string aaName);
-        void SyncSetCurrentPreset(uint aaPreset);
-        void BeginSetCurrentPreset(uint aaPreset, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetCurrentPreset(uint aAsyncHandle);
-        void SyncCurrentPreset(out uint aaPreset);
+        void EndAlbumArtFileName(IntPtr aAsyncHandle, out String aName);
+        void SyncSetCurrentPreset(uint aPreset);
+        void BeginSetCurrentPreset(uint aPreset, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetCurrentPreset(IntPtr aAsyncHandle);
+        void SyncCurrentPreset(out uint aPreset);
         void BeginCurrentPreset(CpProxy.CallbackAsyncComplete aCallback);
-        void EndCurrentPreset(uint aAsyncHandle, out uint aaPreset);
-        void SyncPresetMetaData(uint aaPreset, out string aaMetaData);
-        void BeginPresetMetaData(uint aaPreset, CpProxy.CallbackAsyncComplete aCallback);
-        void EndPresetMetaData(uint aAsyncHandle, out string aaMetaData);
-        void SyncLoadManifest(out uint aaTotalPresets);
+        void EndCurrentPreset(IntPtr aAsyncHandle, out uint aPreset);
+        void SyncPresetMetaData(uint aPreset, out String aMetaData);
+        void BeginPresetMetaData(uint aPreset, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPresetMetaData(IntPtr aAsyncHandle, out String aMetaData);
+        void SyncLoadManifest(out uint aTotalPresets);
         void BeginLoadManifest(CpProxy.CallbackAsyncComplete aCallback);
-        void EndLoadManifest(uint aAsyncHandle, out uint aaTotalPresets);
-
+        void EndLoadManifest(IntPtr aAsyncHandle, out uint aTotalPresets);
         void SetPropertyCurrentPresetChanged(CpProxy.CallbackPropertyChanged aCurrentPresetChanged);
-        void PropertyCurrentPreset(out uint aCurrentPreset);
+        uint PropertyCurrentPreset();
         void SetPropertyPresetPrefixChanged(CpProxy.CallbackPropertyChanged aPresetPrefixChanged);
-        void PropertyPresetPrefix(out string aPresetPrefix);
+        String PropertyPresetPrefix();
         void SetPropertyAlbumArtFileNameChanged(CpProxy.CallbackPropertyChanged aAlbumArtFileNameChanged);
-        void PropertyAlbumArtFileName(out string aAlbumArtFileName);
+        String PropertyAlbumArtFileName();
     }
+
+    internal class SyncSetPresetPrefixLinnCoUkJukebox1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkJukebox1 iService;
+
+        public SyncSetPresetPrefixLinnCoUkJukebox1(CpProxyLinnCoUkJukebox1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetPresetPrefix(aAsyncHandle);
+        }
+    };
+
+    internal class SyncPresetPrefixLinnCoUkJukebox1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkJukebox1 iService;
+        private String iUri;
+
+        public SyncPresetPrefixLinnCoUkJukebox1(CpProxyLinnCoUkJukebox1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Uri()
+        {
+            return iUri;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndPresetPrefix(aAsyncHandle, out iUri);
+        }
+    };
+
+    internal class SyncSetAlbumArtFileNameLinnCoUkJukebox1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkJukebox1 iService;
+
+        public SyncSetAlbumArtFileNameLinnCoUkJukebox1(CpProxyLinnCoUkJukebox1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetAlbumArtFileName(aAsyncHandle);
+        }
+    };
+
+    internal class SyncAlbumArtFileNameLinnCoUkJukebox1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkJukebox1 iService;
+        private String iName;
+
+        public SyncAlbumArtFileNameLinnCoUkJukebox1(CpProxyLinnCoUkJukebox1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Name()
+        {
+            return iName;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndAlbumArtFileName(aAsyncHandle, out iName);
+        }
+    };
+
+    internal class SyncSetCurrentPresetLinnCoUkJukebox1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkJukebox1 iService;
+
+        public SyncSetCurrentPresetLinnCoUkJukebox1(CpProxyLinnCoUkJukebox1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetCurrentPreset(aAsyncHandle);
+        }
+    };
+
+    internal class SyncCurrentPresetLinnCoUkJukebox1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkJukebox1 iService;
+        private uint iPreset;
+
+        public SyncCurrentPresetLinnCoUkJukebox1(CpProxyLinnCoUkJukebox1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Preset()
+        {
+            return iPreset;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndCurrentPreset(aAsyncHandle, out iPreset);
+        }
+    };
+
+    internal class SyncPresetMetaDataLinnCoUkJukebox1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkJukebox1 iService;
+        private String iMetaData;
+
+        public SyncPresetMetaDataLinnCoUkJukebox1(CpProxyLinnCoUkJukebox1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String MetaData()
+        {
+            return iMetaData;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndPresetMetaData(aAsyncHandle, out iMetaData);
+        }
+    };
+
+    internal class SyncLoadManifestLinnCoUkJukebox1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkJukebox1 iService;
+        private uint iTotalPresets;
+
+        public SyncLoadManifestLinnCoUkJukebox1(CpProxyLinnCoUkJukebox1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint TotalPresets()
+        {
+            return iTotalPresets;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndLoadManifest(aAsyncHandle, out iTotalPresets);
+        }
+    };
 
     /// <summary>
     /// Proxy for the linn.co.uk:Jukebox:1 UPnP service
     /// </summary>
     public class CpProxyLinnCoUkJukebox1 : CpProxy, IDisposable, ICpProxyLinnCoUkJukebox1
     {
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern uint CpProxyLinnCoUkJukebox1Create(uint aDeviceHandle);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern void CpProxyLinnCoUkJukebox1Destroy(uint aHandle);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1SyncSetPresetPrefix(uint aHandle, char* aaUri);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1BeginSetPresetPrefix(uint aHandle, char* aaUri, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe int CpProxyLinnCoUkJukebox1EndSetPresetPrefix(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1SyncPresetPrefix(uint aHandle, char** aaUri);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1BeginPresetPrefix(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe int CpProxyLinnCoUkJukebox1EndPresetPrefix(uint aHandle, uint aAsync, char** aaUri);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1SyncSetAlbumArtFileName(uint aHandle, char* aaName);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1BeginSetAlbumArtFileName(uint aHandle, char* aaName, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe int CpProxyLinnCoUkJukebox1EndSetAlbumArtFileName(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1SyncAlbumArtFileName(uint aHandle, char** aaName);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1BeginAlbumArtFileName(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe int CpProxyLinnCoUkJukebox1EndAlbumArtFileName(uint aHandle, uint aAsync, char** aaName);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1SyncSetCurrentPreset(uint aHandle, uint aaPreset);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1BeginSetCurrentPreset(uint aHandle, uint aaPreset, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe int CpProxyLinnCoUkJukebox1EndSetCurrentPreset(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1SyncCurrentPreset(uint aHandle, uint* aaPreset);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1BeginCurrentPreset(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe int CpProxyLinnCoUkJukebox1EndCurrentPreset(uint aHandle, uint aAsync, uint* aaPreset);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1SyncPresetMetaData(uint aHandle, uint aaPreset, char** aaMetaData);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1BeginPresetMetaData(uint aHandle, uint aaPreset, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe int CpProxyLinnCoUkJukebox1EndPresetMetaData(uint aHandle, uint aAsync, char** aaMetaData);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1SyncLoadManifest(uint aHandle, uint* aaTotalPresets);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1BeginLoadManifest(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe int CpProxyLinnCoUkJukebox1EndLoadManifest(uint aHandle, uint aAsync, uint* aaTotalPresets);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern void CpProxyLinnCoUkJukebox1SetPropertyCurrentPresetChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern void CpProxyLinnCoUkJukebox1SetPropertyPresetPrefixChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern void CpProxyLinnCoUkJukebox1SetPropertyAlbumArtFileNameChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1PropertyCurrentPreset(uint aHandle, uint* aCurrentPreset);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1PropertyPresetPrefix(uint aHandle, char** aPresetPrefix);
-        [DllImport("CpLinnCoUkJukebox1")]
-        static extern unsafe void CpProxyLinnCoUkJukebox1PropertyAlbumArtFileName(uint aHandle, char** aAlbumArtFileName);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionSetPresetPrefix;
+        private Zapp.Core.Action iActionPresetPrefix;
+        private Zapp.Core.Action iActionSetAlbumArtFileName;
+        private Zapp.Core.Action iActionAlbumArtFileName;
+        private Zapp.Core.Action iActionSetCurrentPreset;
+        private Zapp.Core.Action iActionCurrentPreset;
+        private Zapp.Core.Action iActionPresetMetaData;
+        private Zapp.Core.Action iActionLoadManifest;
+        private PropertyUint iCurrentPreset;
+        private PropertyString iPresetPrefix;
+        private PropertyString iAlbumArtFileName;
         private CallbackPropertyChanged iCurrentPresetChanged;
         private CallbackPropertyChanged iPresetPrefixChanged;
         private CallbackPropertyChanged iAlbumArtFileNameChanged;
-        private Callback iCallbackCurrentPresetChanged;
-        private Callback iCallbackPresetPrefixChanged;
-        private Callback iCallbackAlbumArtFileNameChanged;
 
         /// <summary>
         /// Constructor
@@ -126,9 +204,51 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkJukebox1(CpDevice aDevice)
+            : base("linn-co-uk", "Jukebox", 1, aDevice)
         {
-            iHandle = CpProxyLinnCoUkJukebox1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionSetPresetPrefix = new Zapp.Core.Action("SetPresetPrefix");
+            param = new ParameterString("aUri", allowedValues);
+            iActionSetPresetPrefix.AddInputParameter(param);
+
+            iActionPresetPrefix = new Zapp.Core.Action("PresetPrefix");
+            param = new ParameterString("aUri", allowedValues);
+            iActionPresetPrefix.AddOutputParameter(param);
+
+            iActionSetAlbumArtFileName = new Zapp.Core.Action("SetAlbumArtFileName");
+            param = new ParameterString("aName", allowedValues);
+            iActionSetAlbumArtFileName.AddInputParameter(param);
+
+            iActionAlbumArtFileName = new Zapp.Core.Action("AlbumArtFileName");
+            param = new ParameterString("aName", allowedValues);
+            iActionAlbumArtFileName.AddOutputParameter(param);
+
+            iActionSetCurrentPreset = new Zapp.Core.Action("SetCurrentPreset");
+            param = new ParameterUint("aPreset");
+            iActionSetCurrentPreset.AddInputParameter(param);
+
+            iActionCurrentPreset = new Zapp.Core.Action("CurrentPreset");
+            param = new ParameterUint("aPreset");
+            iActionCurrentPreset.AddOutputParameter(param);
+
+            iActionPresetMetaData = new Zapp.Core.Action("PresetMetaData");
+            param = new ParameterUint("aPreset");
+            iActionPresetMetaData.AddInputParameter(param);
+            param = new ParameterString("aMetaData", allowedValues);
+            iActionPresetMetaData.AddOutputParameter(param);
+
+            iActionLoadManifest = new Zapp.Core.Action("LoadManifest");
+            param = new ParameterUint("aTotalPresets");
+            iActionLoadManifest.AddOutputParameter(param);
+
+            iCurrentPreset = new PropertyUint("CurrentPreset", CurrentPresetPropertyChanged);
+            AddProperty(iCurrentPreset);
+            iPresetPrefix = new PropertyString("PresetPrefix", PresetPrefixPropertyChanged);
+            AddProperty(iPresetPrefix);
+            iAlbumArtFileName = new PropertyString("AlbumArtFileName", AlbumArtFileNamePropertyChanged);
+            AddProperty(iAlbumArtFileName);
         }
 
         /// <summary>
@@ -137,13 +257,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUri"></param>
-        public unsafe void SyncSetPresetPrefix(string aaUri)
+        public void SyncSetPresetPrefix(String aUri)
         {
-            char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
-            {
-                CpProxyLinnCoUkJukebox1SyncSetPresetPrefix(iHandle, aUri);
-            }
-            Marshal.FreeHGlobal((IntPtr)aUri);
+            SyncSetPresetPrefixLinnCoUkJukebox1 sync = new SyncSetPresetPrefixLinnCoUkJukebox1(this);
+            BeginSetPresetPrefix(aUri, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -155,13 +274,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUri"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetPresetPrefix(string aaUri, CallbackAsyncComplete aCallback)
+        public void BeginSetPresetPrefix(String aUri, CallbackAsyncComplete aCallback)
         {
-            char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkJukebox1BeginSetPresetPrefix(iHandle, aUri, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)aUri);
+            Invocation invocation = iService.Invocation(iActionSetPresetPrefix, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetPresetPrefix.InputParameter(inIndex++), aUri));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -169,14 +287,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetPresetPrefix(uint aAsyncHandle)
+        public void EndSetPresetPrefix(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkJukebox1EndSetPresetPrefix(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -185,14 +297,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUri"></param>
-        public unsafe void SyncPresetPrefix(out string aaUri)
+        public void SyncPresetPrefix(out String aUri)
         {
-            char* aUri;
-            {
-                CpProxyLinnCoUkJukebox1SyncPresetPrefix(iHandle, &aUri);
-            }
-            aaUri = Marshal.PtrToStringAnsi((IntPtr)aUri);
-            ZappFree(aUri);
+            SyncPresetPrefixLinnCoUkJukebox1 sync = new SyncPresetPrefixLinnCoUkJukebox1(this);
+            BeginPresetPrefix(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aUri = sync.Uri();
         }
 
         /// <summary>
@@ -203,11 +314,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndPresetPrefix().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginPresetPrefix(CallbackAsyncComplete aCallback)
+        public void BeginPresetPrefix(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkJukebox1BeginPresetPrefix(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionPresetPrefix, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionPresetPrefix.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -216,17 +328,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaUri"></param>
-        public unsafe void EndPresetPrefix(uint aAsyncHandle, out string aaUri)
+        public void EndPresetPrefix(IntPtr aAsyncHandle, out String aUri)
         {
-            char* aUri;
-            {
-                if (0 != CpProxyLinnCoUkJukebox1EndPresetPrefix(iHandle, aAsyncHandle, &aUri))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaUri = Marshal.PtrToStringAnsi((IntPtr)aUri);
-            ZappFree(aUri);
+            uint index = 0;
+            aUri = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -235,13 +340,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaName"></param>
-        public unsafe void SyncSetAlbumArtFileName(string aaName)
+        public void SyncSetAlbumArtFileName(String aName)
         {
-            char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
-            {
-                CpProxyLinnCoUkJukebox1SyncSetAlbumArtFileName(iHandle, aName);
-            }
-            Marshal.FreeHGlobal((IntPtr)aName);
+            SyncSetAlbumArtFileNameLinnCoUkJukebox1 sync = new SyncSetAlbumArtFileNameLinnCoUkJukebox1(this);
+            BeginSetAlbumArtFileName(aName, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -253,13 +357,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaName"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetAlbumArtFileName(string aaName, CallbackAsyncComplete aCallback)
+        public void BeginSetAlbumArtFileName(String aName, CallbackAsyncComplete aCallback)
         {
-            char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkJukebox1BeginSetAlbumArtFileName(iHandle, aName, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)aName);
+            Invocation invocation = iService.Invocation(iActionSetAlbumArtFileName, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetAlbumArtFileName.InputParameter(inIndex++), aName));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -267,14 +370,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetAlbumArtFileName(uint aAsyncHandle)
+        public void EndSetAlbumArtFileName(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkJukebox1EndSetAlbumArtFileName(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -283,14 +380,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaName"></param>
-        public unsafe void SyncAlbumArtFileName(out string aaName)
+        public void SyncAlbumArtFileName(out String aName)
         {
-            char* aName;
-            {
-                CpProxyLinnCoUkJukebox1SyncAlbumArtFileName(iHandle, &aName);
-            }
-            aaName = Marshal.PtrToStringAnsi((IntPtr)aName);
-            ZappFree(aName);
+            SyncAlbumArtFileNameLinnCoUkJukebox1 sync = new SyncAlbumArtFileNameLinnCoUkJukebox1(this);
+            BeginAlbumArtFileName(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aName = sync.Name();
         }
 
         /// <summary>
@@ -301,11 +397,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndAlbumArtFileName().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginAlbumArtFileName(CallbackAsyncComplete aCallback)
+        public void BeginAlbumArtFileName(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkJukebox1BeginAlbumArtFileName(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionAlbumArtFileName, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionAlbumArtFileName.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -314,17 +411,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaName"></param>
-        public unsafe void EndAlbumArtFileName(uint aAsyncHandle, out string aaName)
+        public void EndAlbumArtFileName(IntPtr aAsyncHandle, out String aName)
         {
-            char* aName;
-            {
-                if (0 != CpProxyLinnCoUkJukebox1EndAlbumArtFileName(iHandle, aAsyncHandle, &aName))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaName = Marshal.PtrToStringAnsi((IntPtr)aName);
-            ZappFree(aName);
+            uint index = 0;
+            aName = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -333,11 +423,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPreset"></param>
-        public unsafe void SyncSetCurrentPreset(uint aaPreset)
+        public void SyncSetCurrentPreset(uint aPreset)
         {
-            {
-                CpProxyLinnCoUkJukebox1SyncSetCurrentPreset(iHandle, aaPreset);
-            }
+            SyncSetCurrentPresetLinnCoUkJukebox1 sync = new SyncSetCurrentPresetLinnCoUkJukebox1(this);
+            BeginSetCurrentPreset(aPreset, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -349,11 +440,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPreset"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetCurrentPreset(uint aaPreset, CallbackAsyncComplete aCallback)
+        public void BeginSetCurrentPreset(uint aPreset, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkJukebox1BeginSetCurrentPreset(iHandle, aaPreset, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetCurrentPreset, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetCurrentPreset.InputParameter(inIndex++), aPreset));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -361,14 +453,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetCurrentPreset(uint aAsyncHandle)
+        public void EndSetCurrentPreset(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkJukebox1EndSetCurrentPreset(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -377,12 +463,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPreset"></param>
-        public unsafe void SyncCurrentPreset(out uint aaPreset)
+        public void SyncCurrentPreset(out uint aPreset)
         {
-            fixed (uint* aPreset = &aaPreset)
-            {
-                CpProxyLinnCoUkJukebox1SyncCurrentPreset(iHandle, aPreset);
-            }
+            SyncCurrentPresetLinnCoUkJukebox1 sync = new SyncCurrentPresetLinnCoUkJukebox1(this);
+            BeginCurrentPreset(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aPreset = sync.Preset();
         }
 
         /// <summary>
@@ -393,11 +480,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndCurrentPreset().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginCurrentPreset(CallbackAsyncComplete aCallback)
+        public void BeginCurrentPreset(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkJukebox1BeginCurrentPreset(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionCurrentPreset, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionCurrentPreset.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -406,15 +494,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaPreset"></param>
-        public unsafe void EndCurrentPreset(uint aAsyncHandle, out uint aaPreset)
+        public void EndCurrentPreset(IntPtr aAsyncHandle, out uint aPreset)
         {
-            fixed (uint* aPreset = &aaPreset)
-            {
-                if (0 != CpProxyLinnCoUkJukebox1EndCurrentPreset(iHandle, aAsyncHandle, aPreset))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aPreset = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -424,14 +507,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPreset"></param>
         /// <param name="aaMetaData"></param>
-        public unsafe void SyncPresetMetaData(uint aaPreset, out string aaMetaData)
+        public void SyncPresetMetaData(uint aPreset, out String aMetaData)
         {
-            char* aMetaData;
-            {
-                CpProxyLinnCoUkJukebox1SyncPresetMetaData(iHandle, aaPreset, &aMetaData);
-            }
-            aaMetaData = Marshal.PtrToStringAnsi((IntPtr)aMetaData);
-            ZappFree(aMetaData);
+            SyncPresetMetaDataLinnCoUkJukebox1 sync = new SyncPresetMetaDataLinnCoUkJukebox1(this);
+            BeginPresetMetaData(aPreset, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aMetaData = sync.MetaData();
         }
 
         /// <summary>
@@ -443,11 +525,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPreset"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginPresetMetaData(uint aaPreset, CallbackAsyncComplete aCallback)
+        public void BeginPresetMetaData(uint aPreset, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkJukebox1BeginPresetMetaData(iHandle, aaPreset, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionPresetMetaData, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionPresetMetaData.InputParameter(inIndex++), aPreset));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionPresetMetaData.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -456,17 +541,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMetaData"></param>
-        public unsafe void EndPresetMetaData(uint aAsyncHandle, out string aaMetaData)
+        public void EndPresetMetaData(IntPtr aAsyncHandle, out String aMetaData)
         {
-            char* aMetaData;
-            {
-                if (0 != CpProxyLinnCoUkJukebox1EndPresetMetaData(iHandle, aAsyncHandle, &aMetaData))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaMetaData = Marshal.PtrToStringAnsi((IntPtr)aMetaData);
-            ZappFree(aMetaData);
+            uint index = 0;
+            aMetaData = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -475,12 +553,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaTotalPresets"></param>
-        public unsafe void SyncLoadManifest(out uint aaTotalPresets)
+        public void SyncLoadManifest(out uint aTotalPresets)
         {
-            fixed (uint* aTotalPresets = &aaTotalPresets)
-            {
-                CpProxyLinnCoUkJukebox1SyncLoadManifest(iHandle, aTotalPresets);
-            }
+            SyncLoadManifestLinnCoUkJukebox1 sync = new SyncLoadManifestLinnCoUkJukebox1(this);
+            BeginLoadManifest(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aTotalPresets = sync.TotalPresets();
         }
 
         /// <summary>
@@ -491,11 +570,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndLoadManifest().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginLoadManifest(CallbackAsyncComplete aCallback)
+        public void BeginLoadManifest(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkJukebox1BeginLoadManifest(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionLoadManifest, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionLoadManifest.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -504,15 +584,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaTotalPresets"></param>
-        public unsafe void EndLoadManifest(uint aAsyncHandle, out uint aaTotalPresets)
+        public void EndLoadManifest(IntPtr aAsyncHandle, out uint aTotalPresets)
         {
-            fixed (uint* aTotalPresets = &aaTotalPresets)
-            {
-                if (0 != CpProxyLinnCoUkJukebox1EndLoadManifest(iHandle, aAsyncHandle, aTotalPresets))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aTotalPresets = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -523,17 +598,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCurrentPresetChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyCurrentPresetChanged(CallbackPropertyChanged aCurrentPresetChanged)
         {
-            iCurrentPresetChanged = aCurrentPresetChanged;
-            iCallbackCurrentPresetChanged = new Callback(PropertyCurrentPresetChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkJukebox1SetPropertyCurrentPresetChanged(iHandle, iCallbackCurrentPresetChanged, ptr);
+            lock (this)
+            {
+                iCurrentPresetChanged = aCurrentPresetChanged;
+            }
         }
 
-        private void PropertyCurrentPresetChanged(IntPtr aPtr)
+        private void CurrentPresetPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkJukebox1 self = (CpProxyLinnCoUkJukebox1)gch.Target;
-            self.iCurrentPresetChanged();
+            lock (this)
+            {
+                if (iCurrentPresetChanged != null)
+                {
+                    iCurrentPresetChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -544,17 +623,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aPresetPrefixChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyPresetPrefixChanged(CallbackPropertyChanged aPresetPrefixChanged)
         {
-            iPresetPrefixChanged = aPresetPrefixChanged;
-            iCallbackPresetPrefixChanged = new Callback(PropertyPresetPrefixChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkJukebox1SetPropertyPresetPrefixChanged(iHandle, iCallbackPresetPrefixChanged, ptr);
+            lock (this)
+            {
+                iPresetPrefixChanged = aPresetPrefixChanged;
+            }
         }
 
-        private void PropertyPresetPrefixChanged(IntPtr aPtr)
+        private void PresetPrefixPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkJukebox1 self = (CpProxyLinnCoUkJukebox1)gch.Target;
-            self.iPresetPrefixChanged();
+            lock (this)
+            {
+                if (iPresetPrefixChanged != null)
+                {
+                    iPresetPrefixChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -565,17 +648,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAlbumArtFileNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyAlbumArtFileNameChanged(CallbackPropertyChanged aAlbumArtFileNameChanged)
         {
-            iAlbumArtFileNameChanged = aAlbumArtFileNameChanged;
-            iCallbackAlbumArtFileNameChanged = new Callback(PropertyAlbumArtFileNameChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkJukebox1SetPropertyAlbumArtFileNameChanged(iHandle, iCallbackAlbumArtFileNameChanged, ptr);
+            lock (this)
+            {
+                iAlbumArtFileNameChanged = aAlbumArtFileNameChanged;
+            }
         }
 
-        private void PropertyAlbumArtFileNameChanged(IntPtr aPtr)
+        private void AlbumArtFileNamePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkJukebox1 self = (CpProxyLinnCoUkJukebox1)gch.Target;
-            self.iAlbumArtFileNameChanged();
+            lock (this)
+            {
+                if (iAlbumArtFileNameChanged != null)
+                {
+                    iAlbumArtFileNameChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -585,12 +672,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aCurrentPreset">Will be set to the value of the property</param>
-        public unsafe void PropertyCurrentPreset(out uint aCurrentPreset)
+        public uint PropertyCurrentPreset()
         {
-            fixed (uint* currentPreset = &aCurrentPreset)
-            {
-                CpProxyLinnCoUkJukebox1PropertyCurrentPreset(iHandle, currentPreset);
-            }
+            return iCurrentPreset.Value();
         }
 
         /// <summary>
@@ -600,12 +684,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aPresetPrefix">Will be set to the value of the property</param>
-        public unsafe void PropertyPresetPrefix(out string aPresetPrefix)
+        public String PropertyPresetPrefix()
         {
-            char* ptr;
-            CpProxyLinnCoUkJukebox1PropertyPresetPrefix(iHandle, &ptr);
-            aPresetPrefix = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iPresetPrefix.Value();
         }
 
         /// <summary>
@@ -615,12 +696,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aAlbumArtFileName">Will be set to the value of the property</param>
-        public unsafe void PropertyAlbumArtFileName(out string aAlbumArtFileName)
+        public String PropertyAlbumArtFileName()
         {
-            char* ptr;
-            CpProxyLinnCoUkJukebox1PropertyAlbumArtFileName(iHandle, &ptr);
-            aAlbumArtFileName = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iAlbumArtFileName.Value();
         }
 
         /// <summary>
@@ -640,21 +718,27 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                CpProxyLinnCoUkJukebox1Destroy(iHandle);
-                iHandle = 0;
+                DisposeProxy();
+                iHandle = IntPtr.Zero;
+                iActionSetPresetPrefix.Dispose();
+                iActionPresetPrefix.Dispose();
+                iActionSetAlbumArtFileName.Dispose();
+                iActionAlbumArtFileName.Dispose();
+                iActionSetCurrentPreset.Dispose();
+                iActionCurrentPreset.Dispose();
+                iActionPresetMetaData.Dispose();
+                iActionLoadManifest.Dispose();
+                iCurrentPreset.Dispose();
+                iPresetPrefix.Dispose();
+                iAlbumArtFileName.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

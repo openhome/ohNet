@@ -1,4 +1,4 @@
-#include <Core/CpUpnpOrgSwitchPower1.h>
+#include "CpUpnpOrgSwitchPower1.h"
 #include <CpProxy.h>
 #include <CpiService.h>
 #include <Thread.h>

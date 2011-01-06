@@ -1,4 +1,4 @@
-#include <Std/DvUpnpOrgRenderingControl2.h>
+#include "DvUpnpOrgRenderingControl2.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -21,8 +21,8 @@ void DvProviderUpnpOrgRenderingControl2Cpp::GetPropertyLastChange(std::string& a
 DvProviderUpnpOrgRenderingControl2Cpp::DvProviderUpnpOrgRenderingControl2Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "RenderingControl", 2)
 {
-    Functor empty;
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"), empty);
+    
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 

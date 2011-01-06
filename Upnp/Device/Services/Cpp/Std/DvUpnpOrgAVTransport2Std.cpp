@@ -1,4 +1,4 @@
-#include <Std/DvUpnpOrgAVTransport2.h>
+#include "DvUpnpOrgAVTransport2.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -33,15 +33,15 @@ void DvProviderUpnpOrgAVTransport2Cpp::GetPropertyDRMState(std::string& aValue)
 DvProviderUpnpOrgAVTransport2Cpp::DvProviderUpnpOrgAVTransport2Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "AVTransport", 2)
 {
-    Functor empty;
+    
     TChar** allowedValues;
     TUint index;
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"), empty);
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"OK";
-    iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues, 1), empty);
+    iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues, 1));
     delete[] allowedValues;
     iService->AddProperty(iPropertyDRMState); // passes ownership
 }

@@ -1,4 +1,4 @@
-#include <Std/DvZappOrgTestWidget1.h>
+#include "DvZappOrgTestWidget1.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -89,22 +89,22 @@ void DvProviderZappOrgTestWidget1Cpp::GetPropertyReadOnlyRegister7(uint32_t& aVa
 DvProviderZappOrgTestWidget1Cpp::DvProviderZappOrgTestWidget1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "zapp.org", "TestWidget", 1)
 {
-    Functor empty;
-    iPropertyReadWriteRegister0 = new PropertyUint(new ParameterUint("ReadWriteRegister0"), empty);
+    
+    iPropertyReadWriteRegister0 = new PropertyUint(new ParameterUint("ReadWriteRegister0"));
     iService->AddProperty(iPropertyReadWriteRegister0); // passes ownership
-    iPropertyReadWriteRegister1 = new PropertyUint(new ParameterUint("ReadWriteRegister1"), empty);
+    iPropertyReadWriteRegister1 = new PropertyUint(new ParameterUint("ReadWriteRegister1"));
     iService->AddProperty(iPropertyReadWriteRegister1); // passes ownership
-    iPropertyReadWriteRegister2 = new PropertyUint(new ParameterUint("ReadWriteRegister2"), empty);
+    iPropertyReadWriteRegister2 = new PropertyUint(new ParameterUint("ReadWriteRegister2"));
     iService->AddProperty(iPropertyReadWriteRegister2); // passes ownership
-    iPropertyReadWriteRegister3 = new PropertyUint(new ParameterUint("ReadWriteRegister3"), empty);
+    iPropertyReadWriteRegister3 = new PropertyUint(new ParameterUint("ReadWriteRegister3"));
     iService->AddProperty(iPropertyReadWriteRegister3); // passes ownership
-    iPropertyReadOnlyRegister4 = new PropertyUint(new ParameterUint("ReadOnlyRegister4"), empty);
+    iPropertyReadOnlyRegister4 = new PropertyUint(new ParameterUint("ReadOnlyRegister4"));
     iService->AddProperty(iPropertyReadOnlyRegister4); // passes ownership
-    iPropertyReadOnlyRegister5 = new PropertyUint(new ParameterUint("ReadOnlyRegister5"), empty);
+    iPropertyReadOnlyRegister5 = new PropertyUint(new ParameterUint("ReadOnlyRegister5"));
     iService->AddProperty(iPropertyReadOnlyRegister5); // passes ownership
-    iPropertyReadOnlyRegister6 = new PropertyUint(new ParameterUint("ReadOnlyRegister6"), empty);
+    iPropertyReadOnlyRegister6 = new PropertyUint(new ParameterUint("ReadOnlyRegister6"));
     iService->AddProperty(iPropertyReadOnlyRegister6); // passes ownership
-    iPropertyReadOnlyRegister7 = new PropertyUint(new ParameterUint("ReadOnlyRegister7"), empty);
+    iPropertyReadOnlyRegister7 = new PropertyUint(new ParameterUint("ReadOnlyRegister7"));
     iService->AddProperty(iPropertyReadOnlyRegister7); // passes ownership
 }
 

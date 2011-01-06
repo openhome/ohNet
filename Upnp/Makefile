@@ -7,14 +7,6 @@ cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LI
 objdir = Build/Obj/Posix/
 inc_build = Build/Include
 includes = -IBuild/Include/ -IBuild/Include/Cpp/
-proxySrcCppCore = ControlPoint/Services/Cpp/Core/
-proxySrcC = ControlPoint/Services/C/
-proxySrcCppStd = ControlPoint/Services/Cpp/Std/
-proxySrcCs = ControlPoint/Services/Cs/
-deviceSrcCppCore = Device/Services/Cpp/Core/
-deviceSrcCppStd = Device/Services/Cpp/Std/
-deviceSrcC = Device/Services/C/
-deviceSrcCs = Device/Services/Cs/
 osdir = Posix
 objext = o
 libprefix = lib
@@ -36,6 +28,7 @@ installincludedir = $(prefix)/include/zapp
 installpkgconfdir = $(prefix)/lib/pkgconfig
 mkdir = mkdir -p
 rmdir = rm -rf
+uset4 = no
 
 default : all
 
@@ -48,7 +41,10 @@ include Common.mak
 # Include the generated makefiles. Because nmake on Windows requires contortions to
 # include such files and handle their non-existance, these includes have to be at
 # the platform-specific level.
+ifeq ($(uset4),yes)
 include Generated/GenerateSourceFiles.mak
+endif
+
 include Generated/Proxies.mak
 include Generated/Devices.mak
 
@@ -72,12 +68,16 @@ copy_build_includes:
 	cp -u Api/Cpp/Core/*.h $(inc_build)/Cpp/Core
 	cp -u Api/Cpp/Std/*.h $(inc_build)/Cpp/Std
 	cp -u *.h $(inc_build)
-	cp -u Arch/*.h $(inc_build)
-	cp -u Arch/I386/ArchSpecific.h $(inc_build)
 	cp -u ControlPoint/*.h $(inc_build)
+	cp -u ControlPoint/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
+	cp -u ControlPoint/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
+	cp -u ControlPoint/Services/C/*.h $(inc_build)/C
 	cp -u ControlPoint/Dv/*.h $(inc_build)
 	cp -u ControlPoint/Upnp/*.h $(inc_build)
 	cp -u Device/*.h $(inc_build)
+	cp -u Device/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
+	cp -u Device/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
+	cp -u Device/Services/C/*.h $(inc_build)/C
 	cp -u Device/Upnp/*.h $(inc_build)
 	cp -u Network/*.h $(inc_build)
 	cp -u Service/*.h $(inc_build)
@@ -87,7 +87,6 @@ copy_build_includes:
 	cp -u Public/C/*.h $(inc_build)/C
 	cp -u Public/Cpp/Std/*.h $(inc_build)/Cpp/Std
 	cp -u Thread/Thread.h $(inc_build)
-	cp -u Timer/Timer.h $(inc_build)
 	cp -u Utils/*.h $(inc_build)
 	cp -u TestFramework/*.h $(inc_build)
 

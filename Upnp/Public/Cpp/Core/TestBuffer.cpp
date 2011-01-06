@@ -5,6 +5,7 @@
 #include <Arch.h>
 
 #include <string>
+#include <map>
 
 using namespace Zapp;
 using namespace Zapp::TestFramework;
@@ -588,6 +589,128 @@ void SuiteBrh::Test()
     TEST(brhz3.Equals(blah));
 }
 
+class SuiteBufferCmp : public Suite
+{
+public:
+    SuiteBufferCmp() : Suite("SuiteBufferCmp Test Suite") {}
+    void Test();
+private:
+    class Register
+    {
+    public:
+        Register(const TChar* aName, TInt aValue) : iName(aName), iValue(aValue) {}
+        const Brx& Name() const { return iName; }
+        TInt Value() const { return iValue; }
+    private:
+        Brh iName;
+        TInt iValue;
+    };
+};
+
+void SuiteBufferCmp::Test()
+{
+    typedef std::map<Brn,Register*,BufferCmp> Map;
+    Map map;
+    Register* r = new Register("Register0", 3);
+    Brn name(r->Name());
+    (void)map.insert(std::pair<Brn,Register*>(name, r));
+    r = new Register("Register1", 4);
+    name.Set(r->Name());
+    (void)map.insert(std::pair<Brn,Register*>(name, r));
+    r = new Register("Register2", 5);
+    name.Set(r->Name());
+    (void)map.insert(std::pair<Brn,Register*>(name, r));
+    r = new Register("Register5", 8);
+    name.Set(r->Name());
+    (void)map.insert(std::pair<Brn,Register*>(name, r));
+    r = new Register("Register7", 10);
+    name.Set(r->Name());
+    (void)map.insert(std::pair<Brn,Register*>(name, r));
+    r = new Register("Register3", 6);
+    name.Set(r->Name());
+    (void)map.insert(std::pair<Brn,Register*>(name, r));
+    r = new Register("Register6", 9);
+    name.Set(r->Name());
+    (void)map.insert(std::pair<Brn,Register*>(name, r));
+    r = new Register("Register4", 7);
+    name.Set(r->Name());
+    (void)map.insert(std::pair<Brn,Register*>(name, r));
+
+    Brn key("Register5");
+    Map::iterator it = map.find(key);
+    TEST(it != map.end());
+    TEST(it->second->Value() == 8);
+    key.Set("Register1");
+    it = map.find(key);
+    TEST(it != map.end());
+    TEST(it->second->Value() == 4);
+    key.Set("Register7");
+    it = map.find(key);
+    TEST(it != map.end());
+    TEST(it->second->Value() == 10);
+    key.Set("Register6");
+    it = map.find(key);
+    TEST(it != map.end());
+    TEST(it->second->Value() == 9);
+    key.Set("Register3");
+    it = map.find(key);
+    TEST(it != map.end());
+    TEST(it->second->Value() == 6);
+    key.Set("Register0");
+    it = map.find(key);
+    TEST(it != map.end());
+    TEST(it->second->Value() == 3);
+    key.Set("Register4");
+    it = map.find(key);
+    TEST(it != map.end());
+    TEST(it->second->Value() == 7);
+    key.Set("Register2");
+    it = map.find(key);
+    TEST(it != map.end());
+    TEST(it->second->Value() == 5);
+
+    it = map.begin();
+    TEST(it != map.end());
+    TEST(it->second->Name() == Brn("Register0"));
+    TEST(it->second->Value() == 3);
+    it++;
+    TEST(it != map.end());
+    TEST(it->second->Name() == Brn("Register1"));
+    TEST(it->second->Value() == 4);
+    it++;
+    TEST(it != map.end());
+    TEST(it->second->Name() == Brn("Register2"));
+    TEST(it->second->Value() == 5);
+    it++;
+    TEST(it != map.end());
+    TEST(it->second->Name() == Brn("Register3"));
+    TEST(it->second->Value() == 6);
+    it++;
+    TEST(it != map.end());
+    TEST(it->second->Name() == Brn("Register4"));
+    TEST(it->second->Value() == 7);
+    it++;
+    TEST(it != map.end());
+    TEST(it->second->Name() == Brn("Register5"));
+    TEST(it->second->Value() == 8);
+    it++;
+    TEST(it != map.end());
+    TEST(it->second->Name() == Brn("Register6"));
+    TEST(it->second->Value() == 9);
+    it++;
+    TEST(it != map.end());
+    TEST(it->second->Name() == Brn("Register7"));
+    TEST(it->second->Value() == 10);
+    it++;
+    TEST(it == map.end());
+
+    it = map.begin();
+    while (it != map.end()) {
+        delete it->second;
+        it++;
+    }
+}
+
 void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::InitialiseMinimal(aInitParams);
@@ -602,6 +725,7 @@ void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Initi
     runner.Add(new SuiteZeroBytes());
     runner.Add(new SuiteTestBwn());
     runner.Add(new SuiteBrh());
+    runner.Add(new SuiteBufferCmp());
     runner.Run();
 
     delete aInitParams;

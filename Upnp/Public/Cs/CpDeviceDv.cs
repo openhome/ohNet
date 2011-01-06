@@ -10,7 +10,7 @@ namespace Zapp.ControlPoint
     public class CpDeviceDv : CpDevice
     {
         [DllImport ("ZappUpnp", CharSet = CharSet.Ansi)]
-        static extern uint CpDeviceDvCreate(uint aDevice);
+        static extern IntPtr CpDeviceDvCreate(IntPtr aDevice);
 
         public CpDeviceDv(Device.DvDevice aDevice)
             : base(CpDeviceDvCreate(aDevice.Handle()))

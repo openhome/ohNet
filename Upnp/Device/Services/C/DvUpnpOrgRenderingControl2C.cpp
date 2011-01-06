@@ -1,16 +1,22 @@
-#include <C/DvUpnpOrgRenderingControl2.h>
-#include <Core/DvUpnpOrgRenderingControl2.h>
+#include "DvUpnpOrgRenderingControl2.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
+#include <DvProvider.h>
 #include <C/Zapp.h>
+#include <ZappTypes.h>
+#include <Core/DvInvocationResponse.h>
+#include <Service.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-class DvProviderUpnpOrgRenderingControl2C : public DvProviderUpnpOrgRenderingControl2
+class DvProviderUpnpOrgRenderingControl2C : public DvProvider
 {
 public:
-    DvProviderUpnpOrgRenderingControl2C(DvDevice& aDevice);
+    DvProviderUpnpOrgRenderingControl2C(DvDeviceC aDevice);
+    TBool SetPropertyLastChange(const Brx& aValue);
+    void GetPropertyLastChange(Brhz& aValue);
     void EnableActionListPresets(CallbackRenderingControl2ListPresets aCallback, void* aPtr);
     void EnableActionSelectPreset(CallbackRenderingControl2SelectPreset aCallback, void* aPtr);
     void EnableActionGetBrightness(CallbackRenderingControl2GetBrightness aCallback, void* aPtr);
@@ -49,43 +55,43 @@ public:
     void EnableActionGetStateVariables(CallbackRenderingControl2GetStateVariables aCallback, void* aPtr);
     void EnableActionSetStateVariables(CallbackRenderingControl2SetStateVariables aCallback, void* aPtr);
 private:
-    void ListPresets(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aCurrentPresetNameList);
-    void SelectPreset(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aPresetName);
-    void GetBrightness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentBrightness);
-    void SetBrightness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredBrightness);
-    void GetContrast(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentContrast);
-    void SetContrast(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredContrast);
-    void GetSharpness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentSharpness);
-    void SetSharpness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredSharpness);
-    void GetRedVideoGain(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentRedVideoGain);
-    void SetRedVideoGain(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredRedVideoGain);
-    void GetGreenVideoGain(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentGreenVideoGain);
-    void SetGreenVideoGain(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredGreenVideoGain);
-    void GetBlueVideoGain(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentBlueVideoGain);
-    void SetBlueVideoGain(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredBlueVideoGain);
-    void GetRedVideoBlackLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentRedVideoBlackLevel);
-    void SetRedVideoBlackLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredRedVideoBlackLevel);
-    void GetGreenVideoBlackLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentGreenVideoBlackLevel);
-    void SetGreenVideoBlackLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredGreenVideoBlackLevel);
-    void GetBlueVideoBlackLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentBlueVideoBlackLevel);
-    void SetBlueVideoBlackLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredBlueVideoBlackLevel);
-    void GetColorTemperature(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentColorTemperature);
-    void SetColorTemperature(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredColorTemperature);
-    void GetHorizontalKeystone(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseInt& aCurrentHorizontalKeystone);
-    void SetHorizontalKeystone(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TInt aDesiredHorizontalKeystone);
-    void GetVerticalKeystone(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseInt& aCurrentVerticalKeystone);
-    void SetVerticalKeystone(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TInt aDesiredVerticalKeystone);
-    void GetMute(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, IInvocationResponseBool& aCurrentMute);
-    void SetMute(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, TBool aDesiredMute);
-    void GetVolume(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, IInvocationResponseUint& aCurrentVolume);
-    void SetVolume(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, TUint aDesiredVolume);
-    void GetVolumeDB(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, IInvocationResponseInt& aCurrentVolume);
-    void SetVolumeDB(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, TInt aDesiredVolume);
-    void GetVolumeDBRange(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, IInvocationResponseInt& aMinValue, IInvocationResponseInt& aMaxValue);
-    void GetLoudness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, IInvocationResponseBool& aCurrentLoudness);
-    void SetLoudness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, TBool aDesiredLoudness);
-    void GetStateVariables(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aStateVariableList, IInvocationResponseString& aStateVariableValuePairs);
-    void SetStateVariables(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aRenderingControlUDN, const Brx& aServiceType, const Brx& aServiceId, const Brx& aStateVariableValuePairs, IInvocationResponseString& aStateVariableList);
+    void DoListPresets(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSelectPreset(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetBrightness(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetBrightness(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetContrast(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetContrast(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetSharpness(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetSharpness(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetRedVideoGain(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetRedVideoGain(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetGreenVideoGain(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetGreenVideoGain(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetBlueVideoGain(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetBlueVideoGain(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetColorTemperature(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetColorTemperature(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetHorizontalKeystone(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetHorizontalKeystone(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetVerticalKeystone(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetVerticalKeystone(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetMute(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetMute(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetVolume(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetVolume(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetVolumeDB(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetVolumeDB(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetVolumeDBRange(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetLoudness(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetLoudness(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetStateVariables(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStateVariables(IDviInvocation& aInvocation, TUint aVersion);
 private:
     CallbackRenderingControl2ListPresets iCallbackListPresets;
     void* iPtrListPresets;
@@ -161,735 +167,1187 @@ private:
     void* iPtrGetStateVariables;
     CallbackRenderingControl2SetStateVariables iCallbackSetStateVariables;
     void* iPtrSetStateVariables;
+    PropertyString* iPropertyLastChange;
 };
 
-DvProviderUpnpOrgRenderingControl2C::DvProviderUpnpOrgRenderingControl2C(DvDevice& aDevice)
-    : DvProviderUpnpOrgRenderingControl2(aDevice)
+DvProviderUpnpOrgRenderingControl2C::DvProviderUpnpOrgRenderingControl2C(DvDeviceC aDevice)
+    : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "upnp.org", "RenderingControl", 2)
 {
+    
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
+    iService->AddProperty(iPropertyLastChange); // passes ownership
+}
+
+TBool DvProviderUpnpOrgRenderingControl2C::SetPropertyLastChange(const Brx& aValue)
+{
+    return SetPropertyString(*iPropertyLastChange, aValue);
+}
+
+void DvProviderUpnpOrgRenderingControl2C::GetPropertyLastChange(Brhz& aValue)
+{
+    aValue.Set(iPropertyLastChange->Value());
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionListPresets(CallbackRenderingControl2ListPresets aCallback, void* aPtr)
 {
     iCallbackListPresets = aCallback;
     iPtrListPresets = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionListPresets();
+    Zapp::Action* action = new Zapp::Action("ListPresets");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterString("CurrentPresetNameList"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoListPresets);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSelectPreset(CallbackRenderingControl2SelectPreset aCallback, void* aPtr)
 {
     iCallbackSelectPreset = aCallback;
     iPtrSelectPreset = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSelectPreset();
+    Zapp::Action* action = new Zapp::Action("SelectPreset");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"FactoryDefaults";
+    action->AddInputParameter(new ParameterString("PresetName", allowedValues, 1));
+    delete[] allowedValues;
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSelectPreset);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetBrightness(CallbackRenderingControl2GetBrightness aCallback, void* aPtr)
 {
     iCallbackGetBrightness = aCallback;
     iPtrGetBrightness = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetBrightness();
+    Zapp::Action* action = new Zapp::Action("GetBrightness");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterUint("CurrentBrightness", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetBrightness);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetBrightness(CallbackRenderingControl2SetBrightness aCallback, void* aPtr)
 {
     iCallbackSetBrightness = aCallback;
     iPtrSetBrightness = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetBrightness();
+    Zapp::Action* action = new Zapp::Action("SetBrightness");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterUint("DesiredBrightness", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetBrightness);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetContrast(CallbackRenderingControl2GetContrast aCallback, void* aPtr)
 {
     iCallbackGetContrast = aCallback;
     iPtrGetContrast = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetContrast();
+    Zapp::Action* action = new Zapp::Action("GetContrast");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterUint("CurrentContrast", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetContrast);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetContrast(CallbackRenderingControl2SetContrast aCallback, void* aPtr)
 {
     iCallbackSetContrast = aCallback;
     iPtrSetContrast = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetContrast();
+    Zapp::Action* action = new Zapp::Action("SetContrast");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterUint("DesiredContrast", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetContrast);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetSharpness(CallbackRenderingControl2GetSharpness aCallback, void* aPtr)
 {
     iCallbackGetSharpness = aCallback;
     iPtrGetSharpness = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetSharpness();
+    Zapp::Action* action = new Zapp::Action("GetSharpness");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterUint("CurrentSharpness", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetSharpness);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetSharpness(CallbackRenderingControl2SetSharpness aCallback, void* aPtr)
 {
     iCallbackSetSharpness = aCallback;
     iPtrSetSharpness = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetSharpness();
+    Zapp::Action* action = new Zapp::Action("SetSharpness");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterUint("DesiredSharpness", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetSharpness);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetRedVideoGain(CallbackRenderingControl2GetRedVideoGain aCallback, void* aPtr)
 {
     iCallbackGetRedVideoGain = aCallback;
     iPtrGetRedVideoGain = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetRedVideoGain();
+    Zapp::Action* action = new Zapp::Action("GetRedVideoGain");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterUint("CurrentRedVideoGain", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetRedVideoGain);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetRedVideoGain(CallbackRenderingControl2SetRedVideoGain aCallback, void* aPtr)
 {
     iCallbackSetRedVideoGain = aCallback;
     iPtrSetRedVideoGain = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetRedVideoGain();
+    Zapp::Action* action = new Zapp::Action("SetRedVideoGain");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterUint("DesiredRedVideoGain", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetRedVideoGain);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetGreenVideoGain(CallbackRenderingControl2GetGreenVideoGain aCallback, void* aPtr)
 {
     iCallbackGetGreenVideoGain = aCallback;
     iPtrGetGreenVideoGain = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetGreenVideoGain();
+    Zapp::Action* action = new Zapp::Action("GetGreenVideoGain");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterUint("CurrentGreenVideoGain", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetGreenVideoGain);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetGreenVideoGain(CallbackRenderingControl2SetGreenVideoGain aCallback, void* aPtr)
 {
     iCallbackSetGreenVideoGain = aCallback;
     iPtrSetGreenVideoGain = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetGreenVideoGain();
+    Zapp::Action* action = new Zapp::Action("SetGreenVideoGain");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterUint("DesiredGreenVideoGain", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetGreenVideoGain);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetBlueVideoGain(CallbackRenderingControl2GetBlueVideoGain aCallback, void* aPtr)
 {
     iCallbackGetBlueVideoGain = aCallback;
     iPtrGetBlueVideoGain = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetBlueVideoGain();
+    Zapp::Action* action = new Zapp::Action("GetBlueVideoGain");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterUint("CurrentBlueVideoGain", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetBlueVideoGain);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetBlueVideoGain(CallbackRenderingControl2SetBlueVideoGain aCallback, void* aPtr)
 {
     iCallbackSetBlueVideoGain = aCallback;
     iPtrSetBlueVideoGain = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetBlueVideoGain();
+    Zapp::Action* action = new Zapp::Action("SetBlueVideoGain");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterUint("DesiredBlueVideoGain", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetBlueVideoGain);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetRedVideoBlackLevel(CallbackRenderingControl2GetRedVideoBlackLevel aCallback, void* aPtr)
 {
     iCallbackGetRedVideoBlackLevel = aCallback;
     iPtrGetRedVideoBlackLevel = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetRedVideoBlackLevel();
+    Zapp::Action* action = new Zapp::Action("GetRedVideoBlackLevel");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetRedVideoBlackLevel);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetRedVideoBlackLevel(CallbackRenderingControl2SetRedVideoBlackLevel aCallback, void* aPtr)
 {
     iCallbackSetRedVideoBlackLevel = aCallback;
     iPtrSetRedVideoBlackLevel = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetRedVideoBlackLevel();
+    Zapp::Action* action = new Zapp::Action("SetRedVideoBlackLevel");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetRedVideoBlackLevel);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetGreenVideoBlackLevel(CallbackRenderingControl2GetGreenVideoBlackLevel aCallback, void* aPtr)
 {
     iCallbackGetGreenVideoBlackLevel = aCallback;
     iPtrGetGreenVideoBlackLevel = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetGreenVideoBlackLevel();
+    Zapp::Action* action = new Zapp::Action("GetGreenVideoBlackLevel");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetGreenVideoBlackLevel);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetGreenVideoBlackLevel(CallbackRenderingControl2SetGreenVideoBlackLevel aCallback, void* aPtr)
 {
     iCallbackSetGreenVideoBlackLevel = aCallback;
     iPtrSetGreenVideoBlackLevel = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetGreenVideoBlackLevel();
+    Zapp::Action* action = new Zapp::Action("SetGreenVideoBlackLevel");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetGreenVideoBlackLevel);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetBlueVideoBlackLevel(CallbackRenderingControl2GetBlueVideoBlackLevel aCallback, void* aPtr)
 {
     iCallbackGetBlueVideoBlackLevel = aCallback;
     iPtrGetBlueVideoBlackLevel = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetBlueVideoBlackLevel();
+    Zapp::Action* action = new Zapp::Action("GetBlueVideoBlackLevel");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetBlueVideoBlackLevel);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetBlueVideoBlackLevel(CallbackRenderingControl2SetBlueVideoBlackLevel aCallback, void* aPtr)
 {
     iCallbackSetBlueVideoBlackLevel = aCallback;
     iPtrSetBlueVideoBlackLevel = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetBlueVideoBlackLevel();
+    Zapp::Action* action = new Zapp::Action("SetBlueVideoBlackLevel");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetBlueVideoBlackLevel);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetColorTemperature(CallbackRenderingControl2GetColorTemperature aCallback, void* aPtr)
 {
     iCallbackGetColorTemperature = aCallback;
     iPtrGetColorTemperature = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetColorTemperature();
+    Zapp::Action* action = new Zapp::Action("GetColorTemperature");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterUint("CurrentColorTemperature", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetColorTemperature);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetColorTemperature(CallbackRenderingControl2SetColorTemperature aCallback, void* aPtr)
 {
     iCallbackSetColorTemperature = aCallback;
     iPtrSetColorTemperature = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetColorTemperature();
+    Zapp::Action* action = new Zapp::Action("SetColorTemperature");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterUint("DesiredColorTemperature", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetColorTemperature);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetHorizontalKeystone(CallbackRenderingControl2GetHorizontalKeystone aCallback, void* aPtr)
 {
     iCallbackGetHorizontalKeystone = aCallback;
     iPtrGetHorizontalKeystone = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetHorizontalKeystone();
+    Zapp::Action* action = new Zapp::Action("GetHorizontalKeystone");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterInt("CurrentHorizontalKeystone"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetHorizontalKeystone);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetHorizontalKeystone(CallbackRenderingControl2SetHorizontalKeystone aCallback, void* aPtr)
 {
     iCallbackSetHorizontalKeystone = aCallback;
     iPtrSetHorizontalKeystone = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetHorizontalKeystone();
+    Zapp::Action* action = new Zapp::Action("SetHorizontalKeystone");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterInt("DesiredHorizontalKeystone"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetHorizontalKeystone);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetVerticalKeystone(CallbackRenderingControl2GetVerticalKeystone aCallback, void* aPtr)
 {
     iCallbackGetVerticalKeystone = aCallback;
     iPtrGetVerticalKeystone = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetVerticalKeystone();
+    Zapp::Action* action = new Zapp::Action("GetVerticalKeystone");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddOutputParameter(new ParameterInt("CurrentVerticalKeystone"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetVerticalKeystone);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetVerticalKeystone(CallbackRenderingControl2SetVerticalKeystone aCallback, void* aPtr)
 {
     iCallbackSetVerticalKeystone = aCallback;
     iPtrSetVerticalKeystone = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetVerticalKeystone();
+    Zapp::Action* action = new Zapp::Action("SetVerticalKeystone");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterInt("DesiredVerticalKeystone"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetVerticalKeystone);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetMute(CallbackRenderingControl2GetMute aCallback, void* aPtr)
 {
     iCallbackGetMute = aCallback;
     iPtrGetMute = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetMute();
+    Zapp::Action* action = new Zapp::Action("GetMute");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"Master";
+    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
+    delete[] allowedValues;
+    action->AddOutputParameter(new ParameterBool("CurrentMute"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetMute);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetMute(CallbackRenderingControl2SetMute aCallback, void* aPtr)
 {
     iCallbackSetMute = aCallback;
     iPtrSetMute = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetMute();
+    Zapp::Action* action = new Zapp::Action("SetMute");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"Master";
+    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
+    delete[] allowedValues;
+    action->AddInputParameter(new ParameterBool("DesiredMute"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetMute);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetVolume(CallbackRenderingControl2GetVolume aCallback, void* aPtr)
 {
     iCallbackGetVolume = aCallback;
     iPtrGetVolume = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetVolume();
+    Zapp::Action* action = new Zapp::Action("GetVolume");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"Master";
+    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
+    delete[] allowedValues;
+    action->AddOutputParameter(new ParameterUint("CurrentVolume", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetVolume);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetVolume(CallbackRenderingControl2SetVolume aCallback, void* aPtr)
 {
     iCallbackSetVolume = aCallback;
     iPtrSetVolume = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetVolume();
+    Zapp::Action* action = new Zapp::Action("SetVolume");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"Master";
+    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
+    delete[] allowedValues;
+    action->AddInputParameter(new ParameterUint("DesiredVolume", 0, 0, 1));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetVolume);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetVolumeDB(CallbackRenderingControl2GetVolumeDB aCallback, void* aPtr)
 {
     iCallbackGetVolumeDB = aCallback;
     iPtrGetVolumeDB = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetVolumeDB();
+    Zapp::Action* action = new Zapp::Action("GetVolumeDB");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"Master";
+    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
+    delete[] allowedValues;
+    action->AddOutputParameter(new ParameterInt("CurrentVolume"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetVolumeDB);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetVolumeDB(CallbackRenderingControl2SetVolumeDB aCallback, void* aPtr)
 {
     iCallbackSetVolumeDB = aCallback;
     iPtrSetVolumeDB = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetVolumeDB();
+    Zapp::Action* action = new Zapp::Action("SetVolumeDB");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"Master";
+    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
+    delete[] allowedValues;
+    action->AddInputParameter(new ParameterInt("DesiredVolume"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetVolumeDB);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetVolumeDBRange(CallbackRenderingControl2GetVolumeDBRange aCallback, void* aPtr)
 {
     iCallbackGetVolumeDBRange = aCallback;
     iPtrGetVolumeDBRange = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetVolumeDBRange();
+    Zapp::Action* action = new Zapp::Action("GetVolumeDBRange");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"Master";
+    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
+    delete[] allowedValues;
+    action->AddOutputParameter(new ParameterInt("MinValue"));
+    action->AddOutputParameter(new ParameterInt("MaxValue"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetVolumeDBRange);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetLoudness(CallbackRenderingControl2GetLoudness aCallback, void* aPtr)
 {
     iCallbackGetLoudness = aCallback;
     iPtrGetLoudness = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetLoudness();
+    Zapp::Action* action = new Zapp::Action("GetLoudness");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"Master";
+    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
+    delete[] allowedValues;
+    action->AddOutputParameter(new ParameterBool("CurrentLoudness"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetLoudness);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetLoudness(CallbackRenderingControl2SetLoudness aCallback, void* aPtr)
 {
     iCallbackSetLoudness = aCallback;
     iPtrSetLoudness = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetLoudness();
+    Zapp::Action* action = new Zapp::Action("SetLoudness");
+    TChar** allowedValues;
+    TUint index;
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    index = 0;
+    allowedValues = new TChar*[1];
+    allowedValues[index++] = (TChar*)"Master";
+    action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
+    delete[] allowedValues;
+    action->AddInputParameter(new ParameterBool("DesiredLoudness"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetLoudness);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionGetStateVariables(CallbackRenderingControl2GetStateVariables aCallback, void* aPtr)
 {
     iCallbackGetStateVariables = aCallback;
     iPtrGetStateVariables = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionGetStateVariables();
+    Zapp::Action* action = new Zapp::Action("GetStateVariables");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterString("StateVariableList"));
+    action->AddOutputParameter(new ParameterString("StateVariableValuePairs"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetStateVariables);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgRenderingControl2C::EnableActionSetStateVariables(CallbackRenderingControl2SetStateVariables aCallback, void* aPtr)
 {
     iCallbackSetStateVariables = aCallback;
     iPtrSetStateVariables = aPtr;
-    DvProviderUpnpOrgRenderingControl2::EnableActionSetStateVariables();
+    Zapp::Action* action = new Zapp::Action("SetStateVariables");
+    action->AddInputParameter(new ParameterUint("InstanceID"));
+    action->AddInputParameter(new ParameterString("RenderingControlUDN"));
+    action->AddInputParameter(new ParameterString("ServiceType"));
+    action->AddInputParameter(new ParameterString("ServiceId"));
+    action->AddInputParameter(new ParameterString("StateVariableValuePairs"));
+    action->AddOutputParameter(new ParameterString("StateVariableList"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetStateVariables);
+    iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgRenderingControl2C::ListPresets(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aCurrentPresetNameList)
+void DvProviderUpnpOrgRenderingControl2C::DoListPresets(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* CurrentPresetNameList;
     ASSERT(iCallbackListPresets != NULL);
-    if (0 != iCallbackListPresets(iPtrListPresets, aVersion, aInstanceID, &CurrentPresetNameList)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackListPresets(iPtrListPresets, aVersion, InstanceID, &CurrentPresetNameList)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respCurrentPresetNameList(aInvocation, "CurrentPresetNameList");
+    resp.Start();
     Brhz bufCurrentPresetNameList((const TChar*)CurrentPresetNameList);
     ZappFreeExternal(CurrentPresetNameList);
-    aCurrentPresetNameList.Write(bufCurrentPresetNameList);
-    aCurrentPresetNameList.WriteFlush();
-    aResponse.End();
+    respCurrentPresetNameList.Write(bufCurrentPresetNameList);
+    respCurrentPresetNameList.WriteFlush();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SelectPreset(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aPresetName)
+void DvProviderUpnpOrgRenderingControl2C::DoSelectPreset(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz PresetName;
+    aInvocation.InvocationReadString("PresetName", PresetName);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSelectPreset != NULL);
-    if (0 != iCallbackSelectPreset(iPtrSelectPreset, aVersion, aInstanceID, (const char*)aPresetName.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSelectPreset(iPtrSelectPreset, aVersion, InstanceID, (const char*)PresetName.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetBrightness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentBrightness)
+void DvProviderUpnpOrgRenderingControl2C::DoGetBrightness(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t CurrentBrightness;
     ASSERT(iCallbackGetBrightness != NULL);
-    if (0 != iCallbackGetBrightness(iPtrGetBrightness, aVersion, aInstanceID, &CurrentBrightness)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetBrightness(iPtrGetBrightness, aVersion, InstanceID, &CurrentBrightness)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentBrightness.Write(CurrentBrightness);
-    aResponse.End();
+    InvocationResponseUint respCurrentBrightness(aInvocation, "CurrentBrightness");
+    resp.Start();
+    respCurrentBrightness.Write(CurrentBrightness);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetBrightness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredBrightness)
+void DvProviderUpnpOrgRenderingControl2C::DoSetBrightness(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    TUint DesiredBrightness = aInvocation.InvocationReadUint("DesiredBrightness");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetBrightness != NULL);
-    if (0 != iCallbackSetBrightness(iPtrSetBrightness, aVersion, aInstanceID, aDesiredBrightness)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetBrightness(iPtrSetBrightness, aVersion, InstanceID, DesiredBrightness)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetContrast(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentContrast)
+void DvProviderUpnpOrgRenderingControl2C::DoGetContrast(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t CurrentContrast;
     ASSERT(iCallbackGetContrast != NULL);
-    if (0 != iCallbackGetContrast(iPtrGetContrast, aVersion, aInstanceID, &CurrentContrast)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetContrast(iPtrGetContrast, aVersion, InstanceID, &CurrentContrast)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentContrast.Write(CurrentContrast);
-    aResponse.End();
+    InvocationResponseUint respCurrentContrast(aInvocation, "CurrentContrast");
+    resp.Start();
+    respCurrentContrast.Write(CurrentContrast);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetContrast(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredContrast)
+void DvProviderUpnpOrgRenderingControl2C::DoSetContrast(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    TUint DesiredContrast = aInvocation.InvocationReadUint("DesiredContrast");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetContrast != NULL);
-    if (0 != iCallbackSetContrast(iPtrSetContrast, aVersion, aInstanceID, aDesiredContrast)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetContrast(iPtrSetContrast, aVersion, InstanceID, DesiredContrast)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetSharpness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentSharpness)
+void DvProviderUpnpOrgRenderingControl2C::DoGetSharpness(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t CurrentSharpness;
     ASSERT(iCallbackGetSharpness != NULL);
-    if (0 != iCallbackGetSharpness(iPtrGetSharpness, aVersion, aInstanceID, &CurrentSharpness)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetSharpness(iPtrGetSharpness, aVersion, InstanceID, &CurrentSharpness)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentSharpness.Write(CurrentSharpness);
-    aResponse.End();
+    InvocationResponseUint respCurrentSharpness(aInvocation, "CurrentSharpness");
+    resp.Start();
+    respCurrentSharpness.Write(CurrentSharpness);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetSharpness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredSharpness)
+void DvProviderUpnpOrgRenderingControl2C::DoSetSharpness(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    TUint DesiredSharpness = aInvocation.InvocationReadUint("DesiredSharpness");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetSharpness != NULL);
-    if (0 != iCallbackSetSharpness(iPtrSetSharpness, aVersion, aInstanceID, aDesiredSharpness)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetSharpness(iPtrSetSharpness, aVersion, InstanceID, DesiredSharpness)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetRedVideoGain(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentRedVideoGain)
+void DvProviderUpnpOrgRenderingControl2C::DoGetRedVideoGain(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t CurrentRedVideoGain;
     ASSERT(iCallbackGetRedVideoGain != NULL);
-    if (0 != iCallbackGetRedVideoGain(iPtrGetRedVideoGain, aVersion, aInstanceID, &CurrentRedVideoGain)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetRedVideoGain(iPtrGetRedVideoGain, aVersion, InstanceID, &CurrentRedVideoGain)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentRedVideoGain.Write(CurrentRedVideoGain);
-    aResponse.End();
+    InvocationResponseUint respCurrentRedVideoGain(aInvocation, "CurrentRedVideoGain");
+    resp.Start();
+    respCurrentRedVideoGain.Write(CurrentRedVideoGain);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetRedVideoGain(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredRedVideoGain)
+void DvProviderUpnpOrgRenderingControl2C::DoSetRedVideoGain(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    TUint DesiredRedVideoGain = aInvocation.InvocationReadUint("DesiredRedVideoGain");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetRedVideoGain != NULL);
-    if (0 != iCallbackSetRedVideoGain(iPtrSetRedVideoGain, aVersion, aInstanceID, aDesiredRedVideoGain)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetRedVideoGain(iPtrSetRedVideoGain, aVersion, InstanceID, DesiredRedVideoGain)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetGreenVideoGain(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentGreenVideoGain)
+void DvProviderUpnpOrgRenderingControl2C::DoGetGreenVideoGain(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t CurrentGreenVideoGain;
     ASSERT(iCallbackGetGreenVideoGain != NULL);
-    if (0 != iCallbackGetGreenVideoGain(iPtrGetGreenVideoGain, aVersion, aInstanceID, &CurrentGreenVideoGain)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetGreenVideoGain(iPtrGetGreenVideoGain, aVersion, InstanceID, &CurrentGreenVideoGain)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentGreenVideoGain.Write(CurrentGreenVideoGain);
-    aResponse.End();
+    InvocationResponseUint respCurrentGreenVideoGain(aInvocation, "CurrentGreenVideoGain");
+    resp.Start();
+    respCurrentGreenVideoGain.Write(CurrentGreenVideoGain);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetGreenVideoGain(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredGreenVideoGain)
+void DvProviderUpnpOrgRenderingControl2C::DoSetGreenVideoGain(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    TUint DesiredGreenVideoGain = aInvocation.InvocationReadUint("DesiredGreenVideoGain");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetGreenVideoGain != NULL);
-    if (0 != iCallbackSetGreenVideoGain(iPtrSetGreenVideoGain, aVersion, aInstanceID, aDesiredGreenVideoGain)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetGreenVideoGain(iPtrSetGreenVideoGain, aVersion, InstanceID, DesiredGreenVideoGain)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetBlueVideoGain(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentBlueVideoGain)
+void DvProviderUpnpOrgRenderingControl2C::DoGetBlueVideoGain(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t CurrentBlueVideoGain;
     ASSERT(iCallbackGetBlueVideoGain != NULL);
-    if (0 != iCallbackGetBlueVideoGain(iPtrGetBlueVideoGain, aVersion, aInstanceID, &CurrentBlueVideoGain)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetBlueVideoGain(iPtrGetBlueVideoGain, aVersion, InstanceID, &CurrentBlueVideoGain)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentBlueVideoGain.Write(CurrentBlueVideoGain);
-    aResponse.End();
+    InvocationResponseUint respCurrentBlueVideoGain(aInvocation, "CurrentBlueVideoGain");
+    resp.Start();
+    respCurrentBlueVideoGain.Write(CurrentBlueVideoGain);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetBlueVideoGain(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredBlueVideoGain)
+void DvProviderUpnpOrgRenderingControl2C::DoSetBlueVideoGain(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    TUint DesiredBlueVideoGain = aInvocation.InvocationReadUint("DesiredBlueVideoGain");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetBlueVideoGain != NULL);
-    if (0 != iCallbackSetBlueVideoGain(iPtrSetBlueVideoGain, aVersion, aInstanceID, aDesiredBlueVideoGain)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetBlueVideoGain(iPtrSetBlueVideoGain, aVersion, InstanceID, DesiredBlueVideoGain)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetRedVideoBlackLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentRedVideoBlackLevel)
+void DvProviderUpnpOrgRenderingControl2C::DoGetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t CurrentRedVideoBlackLevel;
     ASSERT(iCallbackGetRedVideoBlackLevel != NULL);
-    if (0 != iCallbackGetRedVideoBlackLevel(iPtrGetRedVideoBlackLevel, aVersion, aInstanceID, &CurrentRedVideoBlackLevel)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetRedVideoBlackLevel(iPtrGetRedVideoBlackLevel, aVersion, InstanceID, &CurrentRedVideoBlackLevel)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentRedVideoBlackLevel.Write(CurrentRedVideoBlackLevel);
-    aResponse.End();
+    InvocationResponseUint respCurrentRedVideoBlackLevel(aInvocation, "CurrentRedVideoBlackLevel");
+    resp.Start();
+    respCurrentRedVideoBlackLevel.Write(CurrentRedVideoBlackLevel);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetRedVideoBlackLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredRedVideoBlackLevel)
+void DvProviderUpnpOrgRenderingControl2C::DoSetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    TUint DesiredRedVideoBlackLevel = aInvocation.InvocationReadUint("DesiredRedVideoBlackLevel");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetRedVideoBlackLevel != NULL);
-    if (0 != iCallbackSetRedVideoBlackLevel(iPtrSetRedVideoBlackLevel, aVersion, aInstanceID, aDesiredRedVideoBlackLevel)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetRedVideoBlackLevel(iPtrSetRedVideoBlackLevel, aVersion, InstanceID, DesiredRedVideoBlackLevel)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetGreenVideoBlackLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentGreenVideoBlackLevel)
+void DvProviderUpnpOrgRenderingControl2C::DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t CurrentGreenVideoBlackLevel;
     ASSERT(iCallbackGetGreenVideoBlackLevel != NULL);
-    if (0 != iCallbackGetGreenVideoBlackLevel(iPtrGetGreenVideoBlackLevel, aVersion, aInstanceID, &CurrentGreenVideoBlackLevel)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetGreenVideoBlackLevel(iPtrGetGreenVideoBlackLevel, aVersion, InstanceID, &CurrentGreenVideoBlackLevel)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentGreenVideoBlackLevel.Write(CurrentGreenVideoBlackLevel);
-    aResponse.End();
+    InvocationResponseUint respCurrentGreenVideoBlackLevel(aInvocation, "CurrentGreenVideoBlackLevel");
+    resp.Start();
+    respCurrentGreenVideoBlackLevel.Write(CurrentGreenVideoBlackLevel);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetGreenVideoBlackLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredGreenVideoBlackLevel)
+void DvProviderUpnpOrgRenderingControl2C::DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    TUint DesiredGreenVideoBlackLevel = aInvocation.InvocationReadUint("DesiredGreenVideoBlackLevel");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetGreenVideoBlackLevel != NULL);
-    if (0 != iCallbackSetGreenVideoBlackLevel(iPtrSetGreenVideoBlackLevel, aVersion, aInstanceID, aDesiredGreenVideoBlackLevel)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetGreenVideoBlackLevel(iPtrSetGreenVideoBlackLevel, aVersion, InstanceID, DesiredGreenVideoBlackLevel)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetBlueVideoBlackLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentBlueVideoBlackLevel)
+void DvProviderUpnpOrgRenderingControl2C::DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t CurrentBlueVideoBlackLevel;
     ASSERT(iCallbackGetBlueVideoBlackLevel != NULL);
-    if (0 != iCallbackGetBlueVideoBlackLevel(iPtrGetBlueVideoBlackLevel, aVersion, aInstanceID, &CurrentBlueVideoBlackLevel)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetBlueVideoBlackLevel(iPtrGetBlueVideoBlackLevel, aVersion, InstanceID, &CurrentBlueVideoBlackLevel)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentBlueVideoBlackLevel.Write(CurrentBlueVideoBlackLevel);
-    aResponse.End();
+    InvocationResponseUint respCurrentBlueVideoBlackLevel(aInvocation, "CurrentBlueVideoBlackLevel");
+    resp.Start();
+    respCurrentBlueVideoBlackLevel.Write(CurrentBlueVideoBlackLevel);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetBlueVideoBlackLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredBlueVideoBlackLevel)
+void DvProviderUpnpOrgRenderingControl2C::DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    TUint DesiredBlueVideoBlackLevel = aInvocation.InvocationReadUint("DesiredBlueVideoBlackLevel");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetBlueVideoBlackLevel != NULL);
-    if (0 != iCallbackSetBlueVideoBlackLevel(iPtrSetBlueVideoBlackLevel, aVersion, aInstanceID, aDesiredBlueVideoBlackLevel)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetBlueVideoBlackLevel(iPtrSetBlueVideoBlackLevel, aVersion, InstanceID, DesiredBlueVideoBlackLevel)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetColorTemperature(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseUint& aCurrentColorTemperature)
+void DvProviderUpnpOrgRenderingControl2C::DoGetColorTemperature(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t CurrentColorTemperature;
     ASSERT(iCallbackGetColorTemperature != NULL);
-    if (0 != iCallbackGetColorTemperature(iPtrGetColorTemperature, aVersion, aInstanceID, &CurrentColorTemperature)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetColorTemperature(iPtrGetColorTemperature, aVersion, InstanceID, &CurrentColorTemperature)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentColorTemperature.Write(CurrentColorTemperature);
-    aResponse.End();
+    InvocationResponseUint respCurrentColorTemperature(aInvocation, "CurrentColorTemperature");
+    resp.Start();
+    respCurrentColorTemperature.Write(CurrentColorTemperature);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetColorTemperature(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TUint aDesiredColorTemperature)
+void DvProviderUpnpOrgRenderingControl2C::DoSetColorTemperature(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    TUint DesiredColorTemperature = aInvocation.InvocationReadUint("DesiredColorTemperature");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetColorTemperature != NULL);
-    if (0 != iCallbackSetColorTemperature(iPtrSetColorTemperature, aVersion, aInstanceID, aDesiredColorTemperature)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetColorTemperature(iPtrSetColorTemperature, aVersion, InstanceID, DesiredColorTemperature)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetHorizontalKeystone(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseInt& aCurrentHorizontalKeystone)
+void DvProviderUpnpOrgRenderingControl2C::DoGetHorizontalKeystone(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     int32_t CurrentHorizontalKeystone;
     ASSERT(iCallbackGetHorizontalKeystone != NULL);
-    if (0 != iCallbackGetHorizontalKeystone(iPtrGetHorizontalKeystone, aVersion, aInstanceID, &CurrentHorizontalKeystone)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetHorizontalKeystone(iPtrGetHorizontalKeystone, aVersion, InstanceID, &CurrentHorizontalKeystone)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentHorizontalKeystone.Write(CurrentHorizontalKeystone);
-    aResponse.End();
+    InvocationResponseInt respCurrentHorizontalKeystone(aInvocation, "CurrentHorizontalKeystone");
+    resp.Start();
+    respCurrentHorizontalKeystone.Write(CurrentHorizontalKeystone);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetHorizontalKeystone(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TInt aDesiredHorizontalKeystone)
+void DvProviderUpnpOrgRenderingControl2C::DoSetHorizontalKeystone(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    TInt DesiredHorizontalKeystone = aInvocation.InvocationReadInt("DesiredHorizontalKeystone");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetHorizontalKeystone != NULL);
-    if (0 != iCallbackSetHorizontalKeystone(iPtrSetHorizontalKeystone, aVersion, aInstanceID, aDesiredHorizontalKeystone)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetHorizontalKeystone(iPtrSetHorizontalKeystone, aVersion, InstanceID, DesiredHorizontalKeystone)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetVerticalKeystone(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseInt& aCurrentVerticalKeystone)
+void DvProviderUpnpOrgRenderingControl2C::DoGetVerticalKeystone(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     int32_t CurrentVerticalKeystone;
     ASSERT(iCallbackGetVerticalKeystone != NULL);
-    if (0 != iCallbackGetVerticalKeystone(iPtrGetVerticalKeystone, aVersion, aInstanceID, &CurrentVerticalKeystone)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetVerticalKeystone(iPtrGetVerticalKeystone, aVersion, InstanceID, &CurrentVerticalKeystone)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentVerticalKeystone.Write(CurrentVerticalKeystone);
-    aResponse.End();
+    InvocationResponseInt respCurrentVerticalKeystone(aInvocation, "CurrentVerticalKeystone");
+    resp.Start();
+    respCurrentVerticalKeystone.Write(CurrentVerticalKeystone);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetVerticalKeystone(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, TInt aDesiredVerticalKeystone)
+void DvProviderUpnpOrgRenderingControl2C::DoSetVerticalKeystone(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    TInt DesiredVerticalKeystone = aInvocation.InvocationReadInt("DesiredVerticalKeystone");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetVerticalKeystone != NULL);
-    if (0 != iCallbackSetVerticalKeystone(iPtrSetVerticalKeystone, aVersion, aInstanceID, aDesiredVerticalKeystone)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetVerticalKeystone(iPtrSetVerticalKeystone, aVersion, InstanceID, DesiredVerticalKeystone)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetMute(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, IInvocationResponseBool& aCurrentMute)
+void DvProviderUpnpOrgRenderingControl2C::DoGetMute(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz Channel;
+    aInvocation.InvocationReadString("Channel", Channel);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t CurrentMute;
     ASSERT(iCallbackGetMute != NULL);
-    if (0 != iCallbackGetMute(iPtrGetMute, aVersion, aInstanceID, (const char*)aChannel.Ptr(), &CurrentMute)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetMute(iPtrGetMute, aVersion, InstanceID, (const char*)Channel.Ptr(), &CurrentMute)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentMute.Write((CurrentMute!=0));
-    aResponse.End();
+    InvocationResponseBool respCurrentMute(aInvocation, "CurrentMute");
+    resp.Start();
+    respCurrentMute.Write((CurrentMute!=0));
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetMute(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, TBool aDesiredMute)
+void DvProviderUpnpOrgRenderingControl2C::DoSetMute(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz Channel;
+    aInvocation.InvocationReadString("Channel", Channel);
+    TBool DesiredMute = aInvocation.InvocationReadBool("DesiredMute");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetMute != NULL);
-    if (0 != iCallbackSetMute(iPtrSetMute, aVersion, aInstanceID, (const char*)aChannel.Ptr(), aDesiredMute)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetMute(iPtrSetMute, aVersion, InstanceID, (const char*)Channel.Ptr(), DesiredMute)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetVolume(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, IInvocationResponseUint& aCurrentVolume)
+void DvProviderUpnpOrgRenderingControl2C::DoGetVolume(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz Channel;
+    aInvocation.InvocationReadString("Channel", Channel);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t CurrentVolume;
     ASSERT(iCallbackGetVolume != NULL);
-    if (0 != iCallbackGetVolume(iPtrGetVolume, aVersion, aInstanceID, (const char*)aChannel.Ptr(), &CurrentVolume)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetVolume(iPtrGetVolume, aVersion, InstanceID, (const char*)Channel.Ptr(), &CurrentVolume)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentVolume.Write(CurrentVolume);
-    aResponse.End();
+    InvocationResponseUint respCurrentVolume(aInvocation, "CurrentVolume");
+    resp.Start();
+    respCurrentVolume.Write(CurrentVolume);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetVolume(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, TUint aDesiredVolume)
+void DvProviderUpnpOrgRenderingControl2C::DoSetVolume(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz Channel;
+    aInvocation.InvocationReadString("Channel", Channel);
+    TUint DesiredVolume = aInvocation.InvocationReadUint("DesiredVolume");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetVolume != NULL);
-    if (0 != iCallbackSetVolume(iPtrSetVolume, aVersion, aInstanceID, (const char*)aChannel.Ptr(), aDesiredVolume)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetVolume(iPtrSetVolume, aVersion, InstanceID, (const char*)Channel.Ptr(), DesiredVolume)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetVolumeDB(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, IInvocationResponseInt& aCurrentVolume)
+void DvProviderUpnpOrgRenderingControl2C::DoGetVolumeDB(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz Channel;
+    aInvocation.InvocationReadString("Channel", Channel);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     int32_t CurrentVolume;
     ASSERT(iCallbackGetVolumeDB != NULL);
-    if (0 != iCallbackGetVolumeDB(iPtrGetVolumeDB, aVersion, aInstanceID, (const char*)aChannel.Ptr(), &CurrentVolume)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetVolumeDB(iPtrGetVolumeDB, aVersion, InstanceID, (const char*)Channel.Ptr(), &CurrentVolume)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentVolume.Write(CurrentVolume);
-    aResponse.End();
+    InvocationResponseInt respCurrentVolume(aInvocation, "CurrentVolume");
+    resp.Start();
+    respCurrentVolume.Write(CurrentVolume);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetVolumeDB(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, TInt aDesiredVolume)
+void DvProviderUpnpOrgRenderingControl2C::DoSetVolumeDB(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz Channel;
+    aInvocation.InvocationReadString("Channel", Channel);
+    TInt DesiredVolume = aInvocation.InvocationReadInt("DesiredVolume");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetVolumeDB != NULL);
-    if (0 != iCallbackSetVolumeDB(iPtrSetVolumeDB, aVersion, aInstanceID, (const char*)aChannel.Ptr(), aDesiredVolume)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetVolumeDB(iPtrSetVolumeDB, aVersion, InstanceID, (const char*)Channel.Ptr(), DesiredVolume)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetVolumeDBRange(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, IInvocationResponseInt& aMinValue, IInvocationResponseInt& aMaxValue)
+void DvProviderUpnpOrgRenderingControl2C::DoGetVolumeDBRange(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz Channel;
+    aInvocation.InvocationReadString("Channel", Channel);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     int32_t MinValue;
     int32_t MaxValue;
     ASSERT(iCallbackGetVolumeDBRange != NULL);
-    if (0 != iCallbackGetVolumeDBRange(iPtrGetVolumeDBRange, aVersion, aInstanceID, (const char*)aChannel.Ptr(), &MinValue, &MaxValue)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetVolumeDBRange(iPtrGetVolumeDBRange, aVersion, InstanceID, (const char*)Channel.Ptr(), &MinValue, &MaxValue)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aMinValue.Write(MinValue);
-    aMaxValue.Write(MaxValue);
-    aResponse.End();
+    InvocationResponseInt respMinValue(aInvocation, "MinValue");
+    InvocationResponseInt respMaxValue(aInvocation, "MaxValue");
+    resp.Start();
+    respMinValue.Write(MinValue);
+    respMaxValue.Write(MaxValue);
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetLoudness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, IInvocationResponseBool& aCurrentLoudness)
+void DvProviderUpnpOrgRenderingControl2C::DoGetLoudness(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz Channel;
+    aInvocation.InvocationReadString("Channel", Channel);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t CurrentLoudness;
     ASSERT(iCallbackGetLoudness != NULL);
-    if (0 != iCallbackGetLoudness(iPtrGetLoudness, aVersion, aInstanceID, (const char*)aChannel.Ptr(), &CurrentLoudness)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetLoudness(iPtrGetLoudness, aVersion, InstanceID, (const char*)Channel.Ptr(), &CurrentLoudness)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCurrentLoudness.Write((CurrentLoudness!=0));
-    aResponse.End();
+    InvocationResponseBool respCurrentLoudness(aInvocation, "CurrentLoudness");
+    resp.Start();
+    respCurrentLoudness.Write((CurrentLoudness!=0));
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetLoudness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, TBool aDesiredLoudness)
+void DvProviderUpnpOrgRenderingControl2C::DoSetLoudness(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz Channel;
+    aInvocation.InvocationReadString("Channel", Channel);
+    TBool DesiredLoudness = aInvocation.InvocationReadBool("DesiredLoudness");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetLoudness != NULL);
-    if (0 != iCallbackSetLoudness(iPtrSetLoudness, aVersion, aInstanceID, (const char*)aChannel.Ptr(), aDesiredLoudness)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetLoudness(iPtrSetLoudness, aVersion, InstanceID, (const char*)Channel.Ptr(), DesiredLoudness)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::GetStateVariables(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aStateVariableList, IInvocationResponseString& aStateVariableValuePairs)
+void DvProviderUpnpOrgRenderingControl2C::DoGetStateVariables(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz StateVariableList;
+    aInvocation.InvocationReadString("StateVariableList", StateVariableList);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* StateVariableValuePairs;
     ASSERT(iCallbackGetStateVariables != NULL);
-    if (0 != iCallbackGetStateVariables(iPtrGetStateVariables, aVersion, aInstanceID, (const char*)aStateVariableList.Ptr(), &StateVariableValuePairs)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetStateVariables(iPtrGetStateVariables, aVersion, InstanceID, (const char*)StateVariableList.Ptr(), &StateVariableValuePairs)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respStateVariableValuePairs(aInvocation, "StateVariableValuePairs");
+    resp.Start();
     Brhz bufStateVariableValuePairs((const TChar*)StateVariableValuePairs);
     ZappFreeExternal(StateVariableValuePairs);
-    aStateVariableValuePairs.Write(bufStateVariableValuePairs);
-    aStateVariableValuePairs.WriteFlush();
-    aResponse.End();
+    respStateVariableValuePairs.Write(bufStateVariableValuePairs);
+    respStateVariableValuePairs.WriteFlush();
+    resp.End();
 }
 
-void DvProviderUpnpOrgRenderingControl2C::SetStateVariables(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aRenderingControlUDN, const Brx& aServiceType, const Brx& aServiceId, const Brx& aStateVariableValuePairs, IInvocationResponseString& aStateVariableList)
+void DvProviderUpnpOrgRenderingControl2C::DoSetStateVariables(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint InstanceID = aInvocation.InvocationReadUint("InstanceID");
+    Brhz RenderingControlUDN;
+    aInvocation.InvocationReadString("RenderingControlUDN", RenderingControlUDN);
+    Brhz ServiceType;
+    aInvocation.InvocationReadString("ServiceType", ServiceType);
+    Brhz ServiceId;
+    aInvocation.InvocationReadString("ServiceId", ServiceId);
+    Brhz StateVariableValuePairs;
+    aInvocation.InvocationReadString("StateVariableValuePairs", StateVariableValuePairs);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* StateVariableList;
     ASSERT(iCallbackSetStateVariables != NULL);
-    if (0 != iCallbackSetStateVariables(iPtrSetStateVariables, aVersion, aInstanceID, (const char*)aRenderingControlUDN.Ptr(), (const char*)aServiceType.Ptr(), (const char*)aServiceId.Ptr(), (const char*)aStateVariableValuePairs.Ptr(), &StateVariableList)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetStateVariables(iPtrSetStateVariables, aVersion, InstanceID, (const char*)RenderingControlUDN.Ptr(), (const char*)ServiceType.Ptr(), (const char*)ServiceId.Ptr(), (const char*)StateVariableValuePairs.Ptr(), &StateVariableList)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respStateVariableList(aInvocation, "StateVariableList");
+    resp.Start();
     Brhz bufStateVariableList((const TChar*)StateVariableList);
     ZappFreeExternal(StateVariableList);
-    aStateVariableList.Write(bufStateVariableList);
-    aStateVariableList.WriteFlush();
-    aResponse.End();
+    respStateVariableList.Write(bufStateVariableList);
+    respStateVariableList.WriteFlush();
+    resp.End();
 }
 
 
 
 THandle DvProviderUpnpOrgRenderingControl2Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgRenderingControl2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderUpnpOrgRenderingControl2C(aDevice);
 }
 
 void DvProviderUpnpOrgRenderingControl2Destroy(THandle aProvider)

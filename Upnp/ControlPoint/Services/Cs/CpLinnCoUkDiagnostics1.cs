@@ -1,153 +1,304 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkDiagnostics1 : ICpProxy, IDisposable
     {
-        void SyncEcho(string aaIn, out string aaOut);
-        void BeginEcho(string aaIn, CpProxy.CallbackAsyncComplete aCallback);
-        void EndEcho(uint aAsyncHandle, out string aaOut);
-        void SyncElfFile(out string aaElfFile);
+        void SyncEcho(String aIn, out String aOut);
+        void BeginEcho(String aIn, CpProxy.CallbackAsyncComplete aCallback);
+        void EndEcho(IntPtr aAsyncHandle, out String aOut);
+        void SyncElfFile(out String aElfFile);
         void BeginElfFile(CpProxy.CallbackAsyncComplete aCallback);
-        void EndElfFile(uint aAsyncHandle, out string aaElfFile);
-        void SyncElfFingerprint(out string aaElfFileFingerprint);
+        void EndElfFile(IntPtr aAsyncHandle, out String aElfFile);
+        void SyncElfFingerprint(out String aElfFileFingerprint);
         void BeginElfFingerprint(CpProxy.CallbackAsyncComplete aCallback);
-        void EndElfFingerprint(uint aAsyncHandle, out string aaElfFileFingerprint);
-        void SyncCrashDataStatus(out string aaCrashDataStatus);
+        void EndElfFingerprint(IntPtr aAsyncHandle, out String aElfFileFingerprint);
+        void SyncCrashDataStatus(out String aCrashDataStatus);
         void BeginCrashDataStatus(CpProxy.CallbackAsyncComplete aCallback);
-        void EndCrashDataStatus(uint aAsyncHandle, out string aaCrashDataStatus);
-        void SyncCrashDataFetch(out string aaCrashData);
+        void EndCrashDataStatus(IntPtr aAsyncHandle, out String aCrashDataStatus);
+        void SyncCrashDataFetch(out String aCrashData);
         void BeginCrashDataFetch(CpProxy.CallbackAsyncComplete aCallback);
-        void EndCrashDataFetch(uint aAsyncHandle, out string aaCrashData);
+        void EndCrashDataFetch(IntPtr aAsyncHandle, out String aCrashData);
         void SyncCrashDataClear();
         void BeginCrashDataClear(CpProxy.CallbackAsyncComplete aCallback);
-        void EndCrashDataClear(uint aAsyncHandle);
-        void SyncSysLog(out string aaSysLog);
+        void EndCrashDataClear(IntPtr aAsyncHandle);
+        void SyncSysLog(out String aSysLog);
         void BeginSysLog(CpProxy.CallbackAsyncComplete aCallback);
-        void EndSysLog(uint aAsyncHandle, out string aaSysLog);
-        void SyncDiagnostic(string aaDiagnosticType, out string aaDiagnosticInfo);
-        void BeginDiagnostic(string aaDiagnosticType, CpProxy.CallbackAsyncComplete aCallback);
-        void EndDiagnostic(uint aAsyncHandle, out string aaDiagnosticInfo);
-        void SyncStateVariable(out uint aaStateVariable);
+        void EndSysLog(IntPtr aAsyncHandle, out String aSysLog);
+        void SyncDiagnostic(String aDiagnosticType, out String aDiagnosticInfo);
+        void BeginDiagnostic(String aDiagnosticType, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDiagnostic(IntPtr aAsyncHandle, out String aDiagnosticInfo);
+        void SyncStateVariable(out uint aStateVariable);
         void BeginStateVariable(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStateVariable(uint aAsyncHandle, out uint aaStateVariable);
-        void SyncSetStateVariable(uint aaStateVariable);
-        void BeginSetStateVariable(uint aaStateVariable, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetStateVariable(uint aAsyncHandle);
-        void SyncStateVariablePeriod(out uint aaPeriod);
+        void EndStateVariable(IntPtr aAsyncHandle, out uint aStateVariable);
+        void SyncSetStateVariable(uint aStateVariable);
+        void BeginSetStateVariable(uint aStateVariable, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStateVariable(IntPtr aAsyncHandle);
+        void SyncStateVariablePeriod(out uint aPeriod);
         void BeginStateVariablePeriod(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStateVariablePeriod(uint aAsyncHandle, out uint aaPeriod);
-        void SyncSetStateVariablePeriod(uint aaPeriod);
-        void BeginSetStateVariablePeriod(uint aaPeriod, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetStateVariablePeriod(uint aAsyncHandle);
-        void SyncReboot(uint aaDelay);
-        void BeginReboot(uint aaDelay, CpProxy.CallbackAsyncComplete aCallback);
-        void EndReboot(uint aAsyncHandle);
-
+        void EndStateVariablePeriod(IntPtr aAsyncHandle, out uint aPeriod);
+        void SyncSetStateVariablePeriod(uint aPeriod);
+        void BeginSetStateVariablePeriod(uint aPeriod, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStateVariablePeriod(IntPtr aAsyncHandle);
+        void SyncReboot(uint aDelay);
+        void BeginReboot(uint aDelay, CpProxy.CallbackAsyncComplete aCallback);
+        void EndReboot(IntPtr aAsyncHandle);
         void SetPropertyaStateVariableChanged(CpProxy.CallbackPropertyChanged aaStateVariableChanged);
-        void PropertyaStateVariable(out uint aaStateVariable);
+        uint PropertyaStateVariable();
     }
+
+    internal class SyncEchoLinnCoUkDiagnostics1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDiagnostics1 iService;
+        private String iOut;
+
+        public SyncEchoLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Out()
+        {
+            return iOut;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndEcho(aAsyncHandle, out iOut);
+        }
+    };
+
+    internal class SyncElfFileLinnCoUkDiagnostics1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDiagnostics1 iService;
+        private String iElfFile;
+
+        public SyncElfFileLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String ElfFile()
+        {
+            return iElfFile;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndElfFile(aAsyncHandle, out iElfFile);
+        }
+    };
+
+    internal class SyncElfFingerprintLinnCoUkDiagnostics1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDiagnostics1 iService;
+        private String iElfFileFingerprint;
+
+        public SyncElfFingerprintLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String ElfFileFingerprint()
+        {
+            return iElfFileFingerprint;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndElfFingerprint(aAsyncHandle, out iElfFileFingerprint);
+        }
+    };
+
+    internal class SyncCrashDataStatusLinnCoUkDiagnostics1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDiagnostics1 iService;
+        private String iCrashDataStatus;
+
+        public SyncCrashDataStatusLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String CrashDataStatus()
+        {
+            return iCrashDataStatus;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndCrashDataStatus(aAsyncHandle, out iCrashDataStatus);
+        }
+    };
+
+    internal class SyncCrashDataFetchLinnCoUkDiagnostics1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDiagnostics1 iService;
+        private String iCrashData;
+
+        public SyncCrashDataFetchLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String CrashData()
+        {
+            return iCrashData;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndCrashDataFetch(aAsyncHandle, out iCrashData);
+        }
+    };
+
+    internal class SyncCrashDataClearLinnCoUkDiagnostics1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDiagnostics1 iService;
+
+        public SyncCrashDataClearLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndCrashDataClear(aAsyncHandle);
+        }
+    };
+
+    internal class SyncSysLogLinnCoUkDiagnostics1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDiagnostics1 iService;
+        private String iSysLog;
+
+        public SyncSysLogLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String SysLog()
+        {
+            return iSysLog;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSysLog(aAsyncHandle, out iSysLog);
+        }
+    };
+
+    internal class SyncDiagnosticLinnCoUkDiagnostics1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDiagnostics1 iService;
+        private String iDiagnosticInfo;
+
+        public SyncDiagnosticLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String DiagnosticInfo()
+        {
+            return iDiagnosticInfo;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndDiagnostic(aAsyncHandle, out iDiagnosticInfo);
+        }
+    };
+
+    internal class SyncStateVariableLinnCoUkDiagnostics1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDiagnostics1 iService;
+        private uint iStateVariable;
+
+        public SyncStateVariableLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint StateVariable()
+        {
+            return iStateVariable;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndStateVariable(aAsyncHandle, out iStateVariable);
+        }
+    };
+
+    internal class SyncSetStateVariableLinnCoUkDiagnostics1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDiagnostics1 iService;
+
+        public SyncSetStateVariableLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetStateVariable(aAsyncHandle);
+        }
+    };
+
+    internal class SyncStateVariablePeriodLinnCoUkDiagnostics1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDiagnostics1 iService;
+        private uint iPeriod;
+
+        public SyncStateVariablePeriodLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Period()
+        {
+            return iPeriod;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndStateVariablePeriod(aAsyncHandle, out iPeriod);
+        }
+    };
+
+    internal class SyncSetStateVariablePeriodLinnCoUkDiagnostics1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDiagnostics1 iService;
+
+        public SyncSetStateVariablePeriodLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetStateVariablePeriod(aAsyncHandle);
+        }
+    };
+
+    internal class SyncRebootLinnCoUkDiagnostics1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDiagnostics1 iService;
+
+        public SyncRebootLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndReboot(aAsyncHandle);
+        }
+    };
 
     /// <summary>
     /// Proxy for the linn.co.uk:Diagnostics:1 UPnP service
     /// </summary>
     public class CpProxyLinnCoUkDiagnostics1 : CpProxy, IDisposable, ICpProxyLinnCoUkDiagnostics1
     {
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern uint CpProxyLinnCoUkDiagnostics1Create(uint aDeviceHandle);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern void CpProxyLinnCoUkDiagnostics1Destroy(uint aHandle);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncEcho(uint aHandle, char* aaIn, char** aaOut);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginEcho(uint aHandle, char* aaIn, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndEcho(uint aHandle, uint aAsync, char** aaOut);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncElfFile(uint aHandle, char** aaElfFile);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginElfFile(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndElfFile(uint aHandle, uint aAsync, char** aaElfFile);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncElfFingerprint(uint aHandle, char** aaElfFileFingerprint);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginElfFingerprint(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndElfFingerprint(uint aHandle, uint aAsync, char** aaElfFileFingerprint);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncCrashDataStatus(uint aHandle, char** aaCrashDataStatus);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginCrashDataStatus(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndCrashDataStatus(uint aHandle, uint aAsync, char** aaCrashDataStatus);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncCrashDataFetch(uint aHandle, char** aaCrashData, uint* aaCrashDataLen);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginCrashDataFetch(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndCrashDataFetch(uint aHandle, uint aAsync, char** aaCrashData, uint* aaCrashDataLen);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncCrashDataClear(uint aHandle);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginCrashDataClear(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndCrashDataClear(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncSysLog(uint aHandle, char** aaSysLog, uint* aaSysLogLen);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginSysLog(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndSysLog(uint aHandle, uint aAsync, char** aaSysLog, uint* aaSysLogLen);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncDiagnostic(uint aHandle, char* aaDiagnosticType, char** aaDiagnosticInfo);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginDiagnostic(uint aHandle, char* aaDiagnosticType, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndDiagnostic(uint aHandle, uint aAsync, char** aaDiagnosticInfo);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncStateVariable(uint aHandle, uint* aaStateVariable);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginStateVariable(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndStateVariable(uint aHandle, uint aAsync, uint* aaStateVariable);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncSetStateVariable(uint aHandle, uint aaStateVariable);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginSetStateVariable(uint aHandle, uint aaStateVariable, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndSetStateVariable(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncStateVariablePeriod(uint aHandle, uint* aaPeriod);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginStateVariablePeriod(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndStateVariablePeriod(uint aHandle, uint aAsync, uint* aaPeriod);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncSetStateVariablePeriod(uint aHandle, uint aaPeriod);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginSetStateVariablePeriod(uint aHandle, uint aaPeriod, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndSetStateVariablePeriod(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncReboot(uint aHandle, uint aaDelay);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginReboot(uint aHandle, uint aaDelay, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndReboot(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern void CpProxyLinnCoUkDiagnostics1SetPropertyaStateVariableChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1PropertyaStateVariable(uint aHandle, uint* aaStateVariable);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionEcho;
+        private Zapp.Core.Action iActionElfFile;
+        private Zapp.Core.Action iActionElfFingerprint;
+        private Zapp.Core.Action iActionCrashDataStatus;
+        private Zapp.Core.Action iActionCrashDataFetch;
+        private Zapp.Core.Action iActionCrashDataClear;
+        private Zapp.Core.Action iActionSysLog;
+        private Zapp.Core.Action iActionDiagnostic;
+        private Zapp.Core.Action iActionStateVariable;
+        private Zapp.Core.Action iActionSetStateVariable;
+        private Zapp.Core.Action iActionStateVariablePeriod;
+        private Zapp.Core.Action iActionSetStateVariablePeriod;
+        private Zapp.Core.Action iActionReboot;
+        private PropertyUint iaStateVariable;
         private CallbackPropertyChanged iaStateVariableChanged;
-        private Callback iCallbackaStateVariableChanged;
 
         /// <summary>
         /// Constructor
@@ -155,9 +306,67 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkDiagnostics1(CpDevice aDevice)
+            : base("linn-co-uk", "Diagnostics", 1, aDevice)
         {
-            iHandle = CpProxyLinnCoUkDiagnostics1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionEcho = new Zapp.Core.Action("Echo");
+            param = new ParameterString("aIn", allowedValues);
+            iActionEcho.AddInputParameter(param);
+            param = new ParameterString("aOut", allowedValues);
+            iActionEcho.AddOutputParameter(param);
+
+            iActionElfFile = new Zapp.Core.Action("ElfFile");
+            param = new ParameterString("aElfFile", allowedValues);
+            iActionElfFile.AddOutputParameter(param);
+
+            iActionElfFingerprint = new Zapp.Core.Action("ElfFingerprint");
+            param = new ParameterString("aElfFileFingerprint", allowedValues);
+            iActionElfFingerprint.AddOutputParameter(param);
+
+            iActionCrashDataStatus = new Zapp.Core.Action("CrashDataStatus");
+            param = new ParameterString("aCrashDataStatus", allowedValues);
+            iActionCrashDataStatus.AddOutputParameter(param);
+
+            iActionCrashDataFetch = new Zapp.Core.Action("CrashDataFetch");
+            param = new ParameterBinary("aCrashData");
+            iActionCrashDataFetch.AddOutputParameter(param);
+
+            iActionCrashDataClear = new Zapp.Core.Action("CrashDataClear");
+
+            iActionSysLog = new Zapp.Core.Action("SysLog");
+            param = new ParameterBinary("aSysLog");
+            iActionSysLog.AddOutputParameter(param);
+
+            iActionDiagnostic = new Zapp.Core.Action("Diagnostic");
+            param = new ParameterString("aDiagnosticType", allowedValues);
+            iActionDiagnostic.AddInputParameter(param);
+            param = new ParameterString("aDiagnosticInfo", allowedValues);
+            iActionDiagnostic.AddOutputParameter(param);
+
+            iActionStateVariable = new Zapp.Core.Action("StateVariable");
+            param = new ParameterUint("aStateVariable");
+            iActionStateVariable.AddOutputParameter(param);
+
+            iActionSetStateVariable = new Zapp.Core.Action("SetStateVariable");
+            param = new ParameterUint("aStateVariable");
+            iActionSetStateVariable.AddInputParameter(param);
+
+            iActionStateVariablePeriod = new Zapp.Core.Action("StateVariablePeriod");
+            param = new ParameterUint("aPeriod");
+            iActionStateVariablePeriod.AddOutputParameter(param);
+
+            iActionSetStateVariablePeriod = new Zapp.Core.Action("SetStateVariablePeriod");
+            param = new ParameterUint("aPeriod");
+            iActionSetStateVariablePeriod.AddInputParameter(param);
+
+            iActionReboot = new Zapp.Core.Action("Reboot");
+            param = new ParameterUint("aDelay");
+            iActionReboot.AddInputParameter(param);
+
+            iaStateVariable = new PropertyUint("aStateVariable", aStateVariablePropertyChanged);
+            AddProperty(iaStateVariable);
         }
 
         /// <summary>
@@ -167,16 +376,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIn"></param>
         /// <param name="aaOut"></param>
-        public unsafe void SyncEcho(string aaIn, out string aaOut)
+        public void SyncEcho(String aIn, out String aOut)
         {
-            char* aIn = (char*)Marshal.StringToHGlobalAnsi(aaIn);
-            char* aOut;
-            {
-                CpProxyLinnCoUkDiagnostics1SyncEcho(iHandle, aIn, &aOut);
-            }
-            Marshal.FreeHGlobal((IntPtr)aIn);
-            aaOut = Marshal.PtrToStringAnsi((IntPtr)aOut);
-            ZappFree(aOut);
+            SyncEchoLinnCoUkDiagnostics1 sync = new SyncEchoLinnCoUkDiagnostics1(this);
+            BeginEcho(aIn, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aOut = sync.Out();
         }
 
         /// <summary>
@@ -188,13 +394,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIn"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginEcho(string aaIn, CallbackAsyncComplete aCallback)
+        public void BeginEcho(String aIn, CallbackAsyncComplete aCallback)
         {
-            char* aIn = (char*)Marshal.StringToHGlobalAnsi(aaIn);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDiagnostics1BeginEcho(iHandle, aIn, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)aIn);
+            Invocation invocation = iService.Invocation(iActionEcho, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionEcho.InputParameter(inIndex++), aIn));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionEcho.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -203,17 +410,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaOut"></param>
-        public unsafe void EndEcho(uint aAsyncHandle, out string aaOut)
+        public void EndEcho(IntPtr aAsyncHandle, out String aOut)
         {
-            char* aOut;
-            {
-                if (0 != CpProxyLinnCoUkDiagnostics1EndEcho(iHandle, aAsyncHandle, &aOut))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaOut = Marshal.PtrToStringAnsi((IntPtr)aOut);
-            ZappFree(aOut);
+            uint index = 0;
+            aOut = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -222,14 +422,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaElfFile"></param>
-        public unsafe void SyncElfFile(out string aaElfFile)
+        public void SyncElfFile(out String aElfFile)
         {
-            char* aElfFile;
-            {
-                CpProxyLinnCoUkDiagnostics1SyncElfFile(iHandle, &aElfFile);
-            }
-            aaElfFile = Marshal.PtrToStringAnsi((IntPtr)aElfFile);
-            ZappFree(aElfFile);
+            SyncElfFileLinnCoUkDiagnostics1 sync = new SyncElfFileLinnCoUkDiagnostics1(this);
+            BeginElfFile(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aElfFile = sync.ElfFile();
         }
 
         /// <summary>
@@ -240,11 +439,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndElfFile().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginElfFile(CallbackAsyncComplete aCallback)
+        public void BeginElfFile(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDiagnostics1BeginElfFile(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionElfFile, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionElfFile.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -253,17 +453,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaElfFile"></param>
-        public unsafe void EndElfFile(uint aAsyncHandle, out string aaElfFile)
+        public void EndElfFile(IntPtr aAsyncHandle, out String aElfFile)
         {
-            char* aElfFile;
-            {
-                if (0 != CpProxyLinnCoUkDiagnostics1EndElfFile(iHandle, aAsyncHandle, &aElfFile))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaElfFile = Marshal.PtrToStringAnsi((IntPtr)aElfFile);
-            ZappFree(aElfFile);
+            uint index = 0;
+            aElfFile = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -272,14 +465,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaElfFileFingerprint"></param>
-        public unsafe void SyncElfFingerprint(out string aaElfFileFingerprint)
+        public void SyncElfFingerprint(out String aElfFileFingerprint)
         {
-            char* aElfFileFingerprint;
-            {
-                CpProxyLinnCoUkDiagnostics1SyncElfFingerprint(iHandle, &aElfFileFingerprint);
-            }
-            aaElfFileFingerprint = Marshal.PtrToStringAnsi((IntPtr)aElfFileFingerprint);
-            ZappFree(aElfFileFingerprint);
+            SyncElfFingerprintLinnCoUkDiagnostics1 sync = new SyncElfFingerprintLinnCoUkDiagnostics1(this);
+            BeginElfFingerprint(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aElfFileFingerprint = sync.ElfFileFingerprint();
         }
 
         /// <summary>
@@ -290,11 +482,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndElfFingerprint().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginElfFingerprint(CallbackAsyncComplete aCallback)
+        public void BeginElfFingerprint(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDiagnostics1BeginElfFingerprint(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionElfFingerprint, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionElfFingerprint.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -303,17 +496,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaElfFileFingerprint"></param>
-        public unsafe void EndElfFingerprint(uint aAsyncHandle, out string aaElfFileFingerprint)
+        public void EndElfFingerprint(IntPtr aAsyncHandle, out String aElfFileFingerprint)
         {
-            char* aElfFileFingerprint;
-            {
-                if (0 != CpProxyLinnCoUkDiagnostics1EndElfFingerprint(iHandle, aAsyncHandle, &aElfFileFingerprint))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaElfFileFingerprint = Marshal.PtrToStringAnsi((IntPtr)aElfFileFingerprint);
-            ZappFree(aElfFileFingerprint);
+            uint index = 0;
+            aElfFileFingerprint = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -322,14 +508,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaCrashDataStatus"></param>
-        public unsafe void SyncCrashDataStatus(out string aaCrashDataStatus)
+        public void SyncCrashDataStatus(out String aCrashDataStatus)
         {
-            char* aCrashDataStatus;
-            {
-                CpProxyLinnCoUkDiagnostics1SyncCrashDataStatus(iHandle, &aCrashDataStatus);
-            }
-            aaCrashDataStatus = Marshal.PtrToStringAnsi((IntPtr)aCrashDataStatus);
-            ZappFree(aCrashDataStatus);
+            SyncCrashDataStatusLinnCoUkDiagnostics1 sync = new SyncCrashDataStatusLinnCoUkDiagnostics1(this);
+            BeginCrashDataStatus(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCrashDataStatus = sync.CrashDataStatus();
         }
 
         /// <summary>
@@ -340,11 +525,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndCrashDataStatus().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginCrashDataStatus(CallbackAsyncComplete aCallback)
+        public void BeginCrashDataStatus(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDiagnostics1BeginCrashDataStatus(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionCrashDataStatus, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionCrashDataStatus.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -353,17 +539,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaCrashDataStatus"></param>
-        public unsafe void EndCrashDataStatus(uint aAsyncHandle, out string aaCrashDataStatus)
+        public void EndCrashDataStatus(IntPtr aAsyncHandle, out String aCrashDataStatus)
         {
-            char* aCrashDataStatus;
-            {
-                if (0 != CpProxyLinnCoUkDiagnostics1EndCrashDataStatus(iHandle, aAsyncHandle, &aCrashDataStatus))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaCrashDataStatus = Marshal.PtrToStringAnsi((IntPtr)aCrashDataStatus);
-            ZappFree(aCrashDataStatus);
+            uint index = 0;
+            aCrashDataStatus = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -372,15 +551,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaCrashData"></param>
-        public unsafe void SyncCrashDataFetch(out string aaCrashData)
+        public void SyncCrashDataFetch(out String aCrashData)
         {
-            char* aCrashData;
-            uint aCrashDataLen;
-            {
-                CpProxyLinnCoUkDiagnostics1SyncCrashDataFetch(iHandle, &aCrashData, &aCrashDataLen);
-            }
-            aaCrashData = Marshal.PtrToStringAnsi((IntPtr)aCrashData, (int)aCrashDataLen);
-            ZappFree(aCrashData);
+            SyncCrashDataFetchLinnCoUkDiagnostics1 sync = new SyncCrashDataFetchLinnCoUkDiagnostics1(this);
+            BeginCrashDataFetch(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCrashData = sync.CrashData();
         }
 
         /// <summary>
@@ -391,11 +568,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndCrashDataFetch().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginCrashDataFetch(CallbackAsyncComplete aCallback)
+        public void BeginCrashDataFetch(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDiagnostics1BeginCrashDataFetch(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionCrashDataFetch, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentBinary((ParameterBinary)iActionCrashDataFetch.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -404,18 +582,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaCrashData"></param>
-        public unsafe void EndCrashDataFetch(uint aAsyncHandle, out string aaCrashData)
+        public void EndCrashDataFetch(IntPtr aAsyncHandle, out String aCrashData)
         {
-            char* aCrashData;
-            uint aCrashDataLen;
-            {
-                if (0 != CpProxyLinnCoUkDiagnostics1EndCrashDataFetch(iHandle, aAsyncHandle, &aCrashData, &aCrashDataLen))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaCrashData = Marshal.PtrToStringAnsi((IntPtr)aCrashData, (int)aCrashDataLen);
-            ZappFree(aCrashData);
+            uint index = 0;
+            aCrashData = Invocation.OutputBinary(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -423,11 +593,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncCrashDataClear()
+        public void SyncCrashDataClear()
         {
-            {
-                CpProxyLinnCoUkDiagnostics1SyncCrashDataClear(iHandle);
-            }
+            SyncCrashDataClearLinnCoUkDiagnostics1 sync = new SyncCrashDataClearLinnCoUkDiagnostics1(this);
+            BeginCrashDataClear(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -438,11 +609,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndCrashDataClear().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginCrashDataClear(CallbackAsyncComplete aCallback)
+        public void BeginCrashDataClear(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDiagnostics1BeginCrashDataClear(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionCrashDataClear, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -450,14 +620,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndCrashDataClear(uint aAsyncHandle)
+        public void EndCrashDataClear(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkDiagnostics1EndCrashDataClear(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -466,15 +630,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSysLog"></param>
-        public unsafe void SyncSysLog(out string aaSysLog)
+        public void SyncSysLog(out String aSysLog)
         {
-            char* aSysLog;
-            uint aSysLogLen;
-            {
-                CpProxyLinnCoUkDiagnostics1SyncSysLog(iHandle, &aSysLog, &aSysLogLen);
-            }
-            aaSysLog = Marshal.PtrToStringAnsi((IntPtr)aSysLog, (int)aSysLogLen);
-            ZappFree(aSysLog);
+            SyncSysLogLinnCoUkDiagnostics1 sync = new SyncSysLogLinnCoUkDiagnostics1(this);
+            BeginSysLog(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aSysLog = sync.SysLog();
         }
 
         /// <summary>
@@ -485,11 +647,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndSysLog().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSysLog(CallbackAsyncComplete aCallback)
+        public void BeginSysLog(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDiagnostics1BeginSysLog(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSysLog, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentBinary((ParameterBinary)iActionSysLog.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -498,18 +661,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSysLog"></param>
-        public unsafe void EndSysLog(uint aAsyncHandle, out string aaSysLog)
+        public void EndSysLog(IntPtr aAsyncHandle, out String aSysLog)
         {
-            char* aSysLog;
-            uint aSysLogLen;
-            {
-                if (0 != CpProxyLinnCoUkDiagnostics1EndSysLog(iHandle, aAsyncHandle, &aSysLog, &aSysLogLen))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaSysLog = Marshal.PtrToStringAnsi((IntPtr)aSysLog, (int)aSysLogLen);
-            ZappFree(aSysLog);
+            uint index = 0;
+            aSysLog = Invocation.OutputBinary(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -519,16 +674,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaDiagnosticType"></param>
         /// <param name="aaDiagnosticInfo"></param>
-        public unsafe void SyncDiagnostic(string aaDiagnosticType, out string aaDiagnosticInfo)
+        public void SyncDiagnostic(String aDiagnosticType, out String aDiagnosticInfo)
         {
-            char* aDiagnosticType = (char*)Marshal.StringToHGlobalAnsi(aaDiagnosticType);
-            char* aDiagnosticInfo;
-            {
-                CpProxyLinnCoUkDiagnostics1SyncDiagnostic(iHandle, aDiagnosticType, &aDiagnosticInfo);
-            }
-            Marshal.FreeHGlobal((IntPtr)aDiagnosticType);
-            aaDiagnosticInfo = Marshal.PtrToStringAnsi((IntPtr)aDiagnosticInfo);
-            ZappFree(aDiagnosticInfo);
+            SyncDiagnosticLinnCoUkDiagnostics1 sync = new SyncDiagnosticLinnCoUkDiagnostics1(this);
+            BeginDiagnostic(aDiagnosticType, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aDiagnosticInfo = sync.DiagnosticInfo();
         }
 
         /// <summary>
@@ -540,13 +692,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaDiagnosticType"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginDiagnostic(string aaDiagnosticType, CallbackAsyncComplete aCallback)
+        public void BeginDiagnostic(String aDiagnosticType, CallbackAsyncComplete aCallback)
         {
-            char* aDiagnosticType = (char*)Marshal.StringToHGlobalAnsi(aaDiagnosticType);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDiagnostics1BeginDiagnostic(iHandle, aDiagnosticType, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)aDiagnosticType);
+            Invocation invocation = iService.Invocation(iActionDiagnostic, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionDiagnostic.InputParameter(inIndex++), aDiagnosticType));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionDiagnostic.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -555,17 +708,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaDiagnosticInfo"></param>
-        public unsafe void EndDiagnostic(uint aAsyncHandle, out string aaDiagnosticInfo)
+        public void EndDiagnostic(IntPtr aAsyncHandle, out String aDiagnosticInfo)
         {
-            char* aDiagnosticInfo;
-            {
-                if (0 != CpProxyLinnCoUkDiagnostics1EndDiagnostic(iHandle, aAsyncHandle, &aDiagnosticInfo))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaDiagnosticInfo = Marshal.PtrToStringAnsi((IntPtr)aDiagnosticInfo);
-            ZappFree(aDiagnosticInfo);
+            uint index = 0;
+            aDiagnosticInfo = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -574,12 +720,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaStateVariable"></param>
-        public unsafe void SyncStateVariable(out uint aaStateVariable)
+        public void SyncStateVariable(out uint aStateVariable)
         {
-            fixed (uint* aStateVariable = &aaStateVariable)
-            {
-                CpProxyLinnCoUkDiagnostics1SyncStateVariable(iHandle, aStateVariable);
-            }
+            SyncStateVariableLinnCoUkDiagnostics1 sync = new SyncStateVariableLinnCoUkDiagnostics1(this);
+            BeginStateVariable(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aStateVariable = sync.StateVariable();
         }
 
         /// <summary>
@@ -590,11 +737,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndStateVariable().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginStateVariable(CallbackAsyncComplete aCallback)
+        public void BeginStateVariable(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDiagnostics1BeginStateVariable(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionStateVariable, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionStateVariable.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -603,15 +751,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaStateVariable"></param>
-        public unsafe void EndStateVariable(uint aAsyncHandle, out uint aaStateVariable)
+        public void EndStateVariable(IntPtr aAsyncHandle, out uint aStateVariable)
         {
-            fixed (uint* aStateVariable = &aaStateVariable)
-            {
-                if (0 != CpProxyLinnCoUkDiagnostics1EndStateVariable(iHandle, aAsyncHandle, aStateVariable))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aStateVariable = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -620,11 +763,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaStateVariable"></param>
-        public unsafe void SyncSetStateVariable(uint aaStateVariable)
+        public void SyncSetStateVariable(uint aStateVariable)
         {
-            {
-                CpProxyLinnCoUkDiagnostics1SyncSetStateVariable(iHandle, aaStateVariable);
-            }
+            SyncSetStateVariableLinnCoUkDiagnostics1 sync = new SyncSetStateVariableLinnCoUkDiagnostics1(this);
+            BeginSetStateVariable(aStateVariable, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -636,11 +780,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStateVariable"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetStateVariable(uint aaStateVariable, CallbackAsyncComplete aCallback)
+        public void BeginSetStateVariable(uint aStateVariable, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDiagnostics1BeginSetStateVariable(iHandle, aaStateVariable, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetStateVariable, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetStateVariable.InputParameter(inIndex++), aStateVariable));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -648,14 +793,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetStateVariable(uint aAsyncHandle)
+        public void EndSetStateVariable(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkDiagnostics1EndSetStateVariable(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -664,12 +803,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPeriod"></param>
-        public unsafe void SyncStateVariablePeriod(out uint aaPeriod)
+        public void SyncStateVariablePeriod(out uint aPeriod)
         {
-            fixed (uint* aPeriod = &aaPeriod)
-            {
-                CpProxyLinnCoUkDiagnostics1SyncStateVariablePeriod(iHandle, aPeriod);
-            }
+            SyncStateVariablePeriodLinnCoUkDiagnostics1 sync = new SyncStateVariablePeriodLinnCoUkDiagnostics1(this);
+            BeginStateVariablePeriod(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aPeriod = sync.Period();
         }
 
         /// <summary>
@@ -680,11 +820,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndStateVariablePeriod().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginStateVariablePeriod(CallbackAsyncComplete aCallback)
+        public void BeginStateVariablePeriod(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDiagnostics1BeginStateVariablePeriod(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionStateVariablePeriod, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionStateVariablePeriod.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -693,15 +834,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaPeriod"></param>
-        public unsafe void EndStateVariablePeriod(uint aAsyncHandle, out uint aaPeriod)
+        public void EndStateVariablePeriod(IntPtr aAsyncHandle, out uint aPeriod)
         {
-            fixed (uint* aPeriod = &aaPeriod)
-            {
-                if (0 != CpProxyLinnCoUkDiagnostics1EndStateVariablePeriod(iHandle, aAsyncHandle, aPeriod))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aPeriod = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -710,11 +846,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPeriod"></param>
-        public unsafe void SyncSetStateVariablePeriod(uint aaPeriod)
+        public void SyncSetStateVariablePeriod(uint aPeriod)
         {
-            {
-                CpProxyLinnCoUkDiagnostics1SyncSetStateVariablePeriod(iHandle, aaPeriod);
-            }
+            SyncSetStateVariablePeriodLinnCoUkDiagnostics1 sync = new SyncSetStateVariablePeriodLinnCoUkDiagnostics1(this);
+            BeginSetStateVariablePeriod(aPeriod, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -726,11 +863,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPeriod"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetStateVariablePeriod(uint aaPeriod, CallbackAsyncComplete aCallback)
+        public void BeginSetStateVariablePeriod(uint aPeriod, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDiagnostics1BeginSetStateVariablePeriod(iHandle, aaPeriod, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetStateVariablePeriod, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetStateVariablePeriod.InputParameter(inIndex++), aPeriod));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -738,14 +876,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetStateVariablePeriod(uint aAsyncHandle)
+        public void EndSetStateVariablePeriod(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkDiagnostics1EndSetStateVariablePeriod(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -754,11 +886,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaDelay"></param>
-        public unsafe void SyncReboot(uint aaDelay)
+        public void SyncReboot(uint aDelay)
         {
-            {
-                CpProxyLinnCoUkDiagnostics1SyncReboot(iHandle, aaDelay);
-            }
+            SyncRebootLinnCoUkDiagnostics1 sync = new SyncRebootLinnCoUkDiagnostics1(this);
+            BeginReboot(aDelay, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -770,11 +903,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaDelay"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginReboot(uint aaDelay, CallbackAsyncComplete aCallback)
+        public void BeginReboot(uint aDelay, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDiagnostics1BeginReboot(iHandle, aaDelay, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionReboot, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionReboot.InputParameter(inIndex++), aDelay));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -782,14 +916,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndReboot(uint aAsyncHandle)
+        public void EndReboot(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkDiagnostics1EndReboot(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -800,17 +928,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStateVariableChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyaStateVariableChanged(CallbackPropertyChanged aaStateVariableChanged)
         {
-            iaStateVariableChanged = aaStateVariableChanged;
-            iCallbackaStateVariableChanged = new Callback(PropertyaStateVariableChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkDiagnostics1SetPropertyaStateVariableChanged(iHandle, iCallbackaStateVariableChanged, ptr);
+            lock (this)
+            {
+                iaStateVariableChanged = aaStateVariableChanged;
+            }
         }
 
-        private void PropertyaStateVariableChanged(IntPtr aPtr)
+        private void aStateVariablePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkDiagnostics1 self = (CpProxyLinnCoUkDiagnostics1)gch.Target;
-            self.iaStateVariableChanged();
+            lock (this)
+            {
+                if (iaStateVariableChanged != null)
+                {
+                    iaStateVariableChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -820,12 +952,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aaStateVariable">Will be set to the value of the property</param>
-        public unsafe void PropertyaStateVariable(out uint aaStateVariable)
+        public uint PropertyaStateVariable()
         {
-            fixed (uint* aStateVariable = &aaStateVariable)
-            {
-                CpProxyLinnCoUkDiagnostics1PropertyaStateVariable(iHandle, aStateVariable);
-            }
+            return iaStateVariable.Value();
         }
 
         /// <summary>
@@ -845,21 +974,30 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                CpProxyLinnCoUkDiagnostics1Destroy(iHandle);
-                iHandle = 0;
+                DisposeProxy();
+                iHandle = IntPtr.Zero;
+                iActionEcho.Dispose();
+                iActionElfFile.Dispose();
+                iActionElfFingerprint.Dispose();
+                iActionCrashDataStatus.Dispose();
+                iActionCrashDataFetch.Dispose();
+                iActionCrashDataClear.Dispose();
+                iActionSysLog.Dispose();
+                iActionDiagnostic.Dispose();
+                iActionStateVariable.Dispose();
+                iActionSetStateVariable.Dispose();
+                iActionStateVariablePeriod.Dispose();
+                iActionSetStateVariablePeriod.Dispose();
+                iActionReboot.Dispose();
+                iaStateVariable.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

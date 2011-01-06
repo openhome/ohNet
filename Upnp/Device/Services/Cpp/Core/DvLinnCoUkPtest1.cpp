@@ -1,4 +1,4 @@
-#include <Core/DvLinnCoUkPtest1.h>
+#include "DvLinnCoUkPtest1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -9,7 +9,7 @@ using namespace Zapp;
 DvProviderLinnCoUkPtest1::DvProviderLinnCoUkPtest1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Ptest", 1)
 {
-    Functor empty;
+    
 }
 
 void DvProviderLinnCoUkPtest1::EnableActionTestComPort()

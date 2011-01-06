@@ -1,4 +1,4 @@
-#include <Core/DvLinnCoUkJukebox1.h>
+#include "DvLinnCoUkJukebox1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -39,12 +39,12 @@ void DvProviderLinnCoUkJukebox1::GetPropertyAlbumArtFileName(Brhz& aValue)
 DvProviderLinnCoUkJukebox1::DvProviderLinnCoUkJukebox1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Jukebox", 1)
 {
-    Functor empty;
-    iPropertyCurrentPreset = new PropertyUint(new ParameterUint("CurrentPreset"), empty);
+    
+    iPropertyCurrentPreset = new PropertyUint(new ParameterUint("CurrentPreset"));
     iService->AddProperty(iPropertyCurrentPreset); // passes ownership
-    iPropertyPresetPrefix = new PropertyString(new ParameterString("PresetPrefix"), empty);
+    iPropertyPresetPrefix = new PropertyString(new ParameterString("PresetPrefix"));
     iService->AddProperty(iPropertyPresetPrefix); // passes ownership
-    iPropertyAlbumArtFileName = new PropertyString(new ParameterString("AlbumArtFileName"), empty);
+    iPropertyAlbumArtFileName = new PropertyString(new ParameterString("AlbumArtFileName"));
     iService->AddProperty(iPropertyAlbumArtFileName); // passes ownership
 }
 

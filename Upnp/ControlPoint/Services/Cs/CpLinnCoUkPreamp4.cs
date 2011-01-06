@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
@@ -9,194 +11,317 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncVolumeInc();
         void BeginVolumeInc(CpProxy.CallbackAsyncComplete aCallback);
-        void EndVolumeInc(uint aAsyncHandle);
+        void EndVolumeInc(IntPtr aAsyncHandle);
         void SyncVolumeDec();
         void BeginVolumeDec(CpProxy.CallbackAsyncComplete aCallback);
-        void EndVolumeDec(uint aAsyncHandle);
-        void SyncSetVolume(uint aaVolume);
-        void BeginSetVolume(uint aaVolume, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetVolume(uint aAsyncHandle);
-        void SyncVolume(out uint aaVolume);
+        void EndVolumeDec(IntPtr aAsyncHandle);
+        void SyncSetVolume(uint aVolume);
+        void BeginSetVolume(uint aVolume, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetVolume(IntPtr aAsyncHandle);
+        void SyncVolume(out uint aVolume);
         void BeginVolume(CpProxy.CallbackAsyncComplete aCallback);
-        void EndVolume(uint aAsyncHandle, out uint aaVolume);
-        void SyncSetMute(bool aaMute);
-        void BeginSetMute(bool aaMute, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetMute(uint aAsyncHandle);
-        void SyncMute(out bool aaMute);
+        void EndVolume(IntPtr aAsyncHandle, out uint aVolume);
+        void SyncSetMute(bool aMute);
+        void BeginSetMute(bool aMute, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetMute(IntPtr aAsyncHandle);
+        void SyncMute(out bool aMute);
         void BeginMute(CpProxy.CallbackAsyncComplete aCallback);
-        void EndMute(uint aAsyncHandle, out bool aaMute);
-        void SyncSetBalance(int aaBalance);
-        void BeginSetBalance(int aaBalance, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetBalance(uint aAsyncHandle);
-        void SyncBalance(out int aaBalance);
+        void EndMute(IntPtr aAsyncHandle, out bool aMute);
+        void SyncSetBalance(int aBalance);
+        void BeginSetBalance(int aBalance, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetBalance(IntPtr aAsyncHandle);
+        void SyncBalance(out int aBalance);
         void BeginBalance(CpProxy.CallbackAsyncComplete aCallback);
-        void EndBalance(uint aAsyncHandle, out int aaBalance);
-        void SyncSetVolumeLimit(uint aaVolumeLimit);
-        void BeginSetVolumeLimit(uint aaVolumeLimit, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetVolumeLimit(uint aAsyncHandle);
-        void SyncVolumeLimit(out uint aaVolumeLimit);
+        void EndBalance(IntPtr aAsyncHandle, out int aBalance);
+        void SyncSetVolumeLimit(uint aVolumeLimit);
+        void BeginSetVolumeLimit(uint aVolumeLimit, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetVolumeLimit(IntPtr aAsyncHandle);
+        void SyncVolumeLimit(out uint aVolumeLimit);
         void BeginVolumeLimit(CpProxy.CallbackAsyncComplete aCallback);
-        void EndVolumeLimit(uint aAsyncHandle, out uint aaVolumeLimit);
-        void SyncSetStartupVolume(uint aaStartupVolume);
-        void BeginSetStartupVolume(uint aaStartupVolume, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetStartupVolume(uint aAsyncHandle);
-        void SyncStartupVolume(out uint aaStartupVolume);
+        void EndVolumeLimit(IntPtr aAsyncHandle, out uint aVolumeLimit);
+        void SyncSetStartupVolume(uint aStartupVolume);
+        void BeginSetStartupVolume(uint aStartupVolume, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStartupVolume(IntPtr aAsyncHandle);
+        void SyncStartupVolume(out uint aStartupVolume);
         void BeginStartupVolume(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStartupVolume(uint aAsyncHandle, out uint aaStartupVolume);
-        void SyncSetStartupVolumeEnabled(bool aaStartupVolumeEnabled);
-        void BeginSetStartupVolumeEnabled(bool aaStartupVolumeEnabled, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetStartupVolumeEnabled(uint aAsyncHandle);
-        void SyncStartupVolumeEnabled(out bool aaStartupVolumeEnabled);
+        void EndStartupVolume(IntPtr aAsyncHandle, out uint aStartupVolume);
+        void SyncSetStartupVolumeEnabled(bool aStartupVolumeEnabled);
+        void BeginSetStartupVolumeEnabled(bool aStartupVolumeEnabled, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStartupVolumeEnabled(IntPtr aAsyncHandle);
+        void SyncStartupVolumeEnabled(out bool aStartupVolumeEnabled);
         void BeginStartupVolumeEnabled(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStartupVolumeEnabled(uint aAsyncHandle, out bool aaStartupVolumeEnabled);
-
+        void EndStartupVolumeEnabled(IntPtr aAsyncHandle, out bool aStartupVolumeEnabled);
         void SetPropertyVolumeChanged(CpProxy.CallbackPropertyChanged aVolumeChanged);
-        void PropertyVolume(out uint aVolume);
+        uint PropertyVolume();
         void SetPropertyMuteChanged(CpProxy.CallbackPropertyChanged aMuteChanged);
-        void PropertyMute(out bool aMute);
+        bool PropertyMute();
         void SetPropertyBalanceChanged(CpProxy.CallbackPropertyChanged aBalanceChanged);
-        void PropertyBalance(out int aBalance);
+        int PropertyBalance();
         void SetPropertyVolumeLimitChanged(CpProxy.CallbackPropertyChanged aVolumeLimitChanged);
-        void PropertyVolumeLimit(out uint aVolumeLimit);
+        uint PropertyVolumeLimit();
         void SetPropertyStartupVolumeChanged(CpProxy.CallbackPropertyChanged aStartupVolumeChanged);
-        void PropertyStartupVolume(out uint aStartupVolume);
+        uint PropertyStartupVolume();
         void SetPropertyStartupVolumeEnabledChanged(CpProxy.CallbackPropertyChanged aStartupVolumeEnabledChanged);
-        void PropertyStartupVolumeEnabled(out bool aStartupVolumeEnabled);
+        bool PropertyStartupVolumeEnabled();
     }
+
+    internal class SyncVolumeIncLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+
+        public SyncVolumeIncLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndVolumeInc(aAsyncHandle);
+        }
+    };
+
+    internal class SyncVolumeDecLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+
+        public SyncVolumeDecLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndVolumeDec(aAsyncHandle);
+        }
+    };
+
+    internal class SyncSetVolumeLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+
+        public SyncSetVolumeLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetVolume(aAsyncHandle);
+        }
+    };
+
+    internal class SyncVolumeLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+        private uint iVolume;
+
+        public SyncVolumeLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Volume()
+        {
+            return iVolume;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndVolume(aAsyncHandle, out iVolume);
+        }
+    };
+
+    internal class SyncSetMuteLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+
+        public SyncSetMuteLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetMute(aAsyncHandle);
+        }
+    };
+
+    internal class SyncMuteLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+        private bool iMute;
+
+        public SyncMuteLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        public bool Mute()
+        {
+            return iMute;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndMute(aAsyncHandle, out iMute);
+        }
+    };
+
+    internal class SyncSetBalanceLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+
+        public SyncSetBalanceLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetBalance(aAsyncHandle);
+        }
+    };
+
+    internal class SyncBalanceLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+        private int iBalance;
+
+        public SyncBalanceLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        public int Balance()
+        {
+            return iBalance;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndBalance(aAsyncHandle, out iBalance);
+        }
+    };
+
+    internal class SyncSetVolumeLimitLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+
+        public SyncSetVolumeLimitLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetVolumeLimit(aAsyncHandle);
+        }
+    };
+
+    internal class SyncVolumeLimitLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+        private uint iVolumeLimit;
+
+        public SyncVolumeLimitLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint VolumeLimit()
+        {
+            return iVolumeLimit;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndVolumeLimit(aAsyncHandle, out iVolumeLimit);
+        }
+    };
+
+    internal class SyncSetStartupVolumeLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+
+        public SyncSetStartupVolumeLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetStartupVolume(aAsyncHandle);
+        }
+    };
+
+    internal class SyncStartupVolumeLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+        private uint iStartupVolume;
+
+        public SyncStartupVolumeLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint StartupVolume()
+        {
+            return iStartupVolume;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndStartupVolume(aAsyncHandle, out iStartupVolume);
+        }
+    };
+
+    internal class SyncSetStartupVolumeEnabledLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+
+        public SyncSetStartupVolumeEnabledLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetStartupVolumeEnabled(aAsyncHandle);
+        }
+    };
+
+    internal class SyncStartupVolumeEnabledLinnCoUkPreamp4 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPreamp4 iService;
+        private bool iStartupVolumeEnabled;
+
+        public SyncStartupVolumeEnabledLinnCoUkPreamp4(CpProxyLinnCoUkPreamp4 aProxy)
+        {
+            iService = aProxy;
+        }
+        public bool StartupVolumeEnabled()
+        {
+            return iStartupVolumeEnabled;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndStartupVolumeEnabled(aAsyncHandle, out iStartupVolumeEnabled);
+        }
+    };
 
     /// <summary>
     /// Proxy for the linn.co.uk:Preamp:4 UPnP service
     /// </summary>
     public class CpProxyLinnCoUkPreamp4 : CpProxy, IDisposable, ICpProxyLinnCoUkPreamp4
     {
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern uint CpProxyLinnCoUkPreamp4Create(uint aDeviceHandle);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4Destroy(uint aHandle);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncVolumeInc(uint aHandle);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginVolumeInc(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndVolumeInc(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncVolumeDec(uint aHandle);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginVolumeDec(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndVolumeDec(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetVolume(uint aHandle, uint aaVolume);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetVolume(uint aHandle, uint aaVolume, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetVolume(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncVolume(uint aHandle, uint* aaVolume);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginVolume(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndVolume(uint aHandle, uint aAsync, uint* aaVolume);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetMute(uint aHandle, uint aaMute);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetMute(uint aHandle, uint aaMute, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetMute(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncMute(uint aHandle, uint* aaMute);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginMute(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndMute(uint aHandle, uint aAsync, uint* aaMute);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetBalance(uint aHandle, int aaBalance);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetBalance(uint aHandle, int aaBalance, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetBalance(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncBalance(uint aHandle, int* aaBalance);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginBalance(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndBalance(uint aHandle, uint aAsync, int* aaBalance);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetVolumeLimit(uint aHandle, uint aaVolumeLimit);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetVolumeLimit(uint aHandle, uint aaVolumeLimit, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetVolumeLimit(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncVolumeLimit(uint aHandle, uint* aaVolumeLimit);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginVolumeLimit(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndVolumeLimit(uint aHandle, uint aAsync, uint* aaVolumeLimit);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetStartupVolume(uint aHandle, uint aaStartupVolume);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetStartupVolume(uint aHandle, uint aaStartupVolume, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetStartupVolume(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncStartupVolume(uint aHandle, uint* aaStartupVolume);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginStartupVolume(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndStartupVolume(uint aHandle, uint aAsync, uint* aaStartupVolume);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetStartupVolumeEnabled(uint aHandle, uint aaStartupVolumeEnabled);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetStartupVolumeEnabled(uint aHandle, uint aaStartupVolumeEnabled, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetStartupVolumeEnabled(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncStartupVolumeEnabled(uint aHandle, uint* aaStartupVolumeEnabled);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginStartupVolumeEnabled(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndStartupVolumeEnabled(uint aHandle, uint aAsync, uint* aaStartupVolumeEnabled);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4SetPropertyVolumeChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4SetPropertyMuteChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4SetPropertyBalanceChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4SetPropertyVolumeLimitChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4SetPropertyStartupVolumeChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4SetPropertyStartupVolumeEnabledChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyVolume(uint aHandle, uint* aVolume);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyMute(uint aHandle, uint* aMute);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyBalance(uint aHandle, int* aBalance);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyVolumeLimit(uint aHandle, uint* aVolumeLimit);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyStartupVolume(uint aHandle, uint* aStartupVolume);
-        [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyStartupVolumeEnabled(uint aHandle, uint* aStartupVolumeEnabled);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionVolumeInc;
+        private Zapp.Core.Action iActionVolumeDec;
+        private Zapp.Core.Action iActionSetVolume;
+        private Zapp.Core.Action iActionVolume;
+        private Zapp.Core.Action iActionSetMute;
+        private Zapp.Core.Action iActionMute;
+        private Zapp.Core.Action iActionSetBalance;
+        private Zapp.Core.Action iActionBalance;
+        private Zapp.Core.Action iActionSetVolumeLimit;
+        private Zapp.Core.Action iActionVolumeLimit;
+        private Zapp.Core.Action iActionSetStartupVolume;
+        private Zapp.Core.Action iActionStartupVolume;
+        private Zapp.Core.Action iActionSetStartupVolumeEnabled;
+        private Zapp.Core.Action iActionStartupVolumeEnabled;
+        private PropertyUint iVolume;
+        private PropertyBool iMute;
+        private PropertyInt iBalance;
+        private PropertyUint iVolumeLimit;
+        private PropertyUint iStartupVolume;
+        private PropertyBool iStartupVolumeEnabled;
         private CallbackPropertyChanged iVolumeChanged;
         private CallbackPropertyChanged iMuteChanged;
         private CallbackPropertyChanged iBalanceChanged;
         private CallbackPropertyChanged iVolumeLimitChanged;
         private CallbackPropertyChanged iStartupVolumeChanged;
         private CallbackPropertyChanged iStartupVolumeEnabledChanged;
-        private Callback iCallbackVolumeChanged;
-        private Callback iCallbackMuteChanged;
-        private Callback iCallbackBalanceChanged;
-        private Callback iCallbackVolumeLimitChanged;
-        private Callback iCallbackStartupVolumeChanged;
-        private Callback iCallbackStartupVolumeEnabledChanged;
 
         /// <summary>
         /// Constructor
@@ -204,9 +329,74 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkPreamp4(CpDevice aDevice)
+            : base("linn-co-uk", "Preamp", 4, aDevice)
         {
-            iHandle = CpProxyLinnCoUkPreamp4Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+
+            iActionVolumeInc = new Zapp.Core.Action("VolumeInc");
+
+            iActionVolumeDec = new Zapp.Core.Action("VolumeDec");
+
+            iActionSetVolume = new Zapp.Core.Action("SetVolume");
+            param = new ParameterUint("aVolume");
+            iActionSetVolume.AddInputParameter(param);
+
+            iActionVolume = new Zapp.Core.Action("Volume");
+            param = new ParameterUint("aVolume");
+            iActionVolume.AddOutputParameter(param);
+
+            iActionSetMute = new Zapp.Core.Action("SetMute");
+            param = new ParameterBool("aMute");
+            iActionSetMute.AddInputParameter(param);
+
+            iActionMute = new Zapp.Core.Action("Mute");
+            param = new ParameterBool("aMute");
+            iActionMute.AddOutputParameter(param);
+
+            iActionSetBalance = new Zapp.Core.Action("SetBalance");
+            param = new ParameterInt("aBalance");
+            iActionSetBalance.AddInputParameter(param);
+
+            iActionBalance = new Zapp.Core.Action("Balance");
+            param = new ParameterInt("aBalance");
+            iActionBalance.AddOutputParameter(param);
+
+            iActionSetVolumeLimit = new Zapp.Core.Action("SetVolumeLimit");
+            param = new ParameterUint("aVolumeLimit");
+            iActionSetVolumeLimit.AddInputParameter(param);
+
+            iActionVolumeLimit = new Zapp.Core.Action("VolumeLimit");
+            param = new ParameterUint("aVolumeLimit");
+            iActionVolumeLimit.AddOutputParameter(param);
+
+            iActionSetStartupVolume = new Zapp.Core.Action("SetStartupVolume");
+            param = new ParameterUint("aStartupVolume");
+            iActionSetStartupVolume.AddInputParameter(param);
+
+            iActionStartupVolume = new Zapp.Core.Action("StartupVolume");
+            param = new ParameterUint("aStartupVolume");
+            iActionStartupVolume.AddOutputParameter(param);
+
+            iActionSetStartupVolumeEnabled = new Zapp.Core.Action("SetStartupVolumeEnabled");
+            param = new ParameterBool("aStartupVolumeEnabled");
+            iActionSetStartupVolumeEnabled.AddInputParameter(param);
+
+            iActionStartupVolumeEnabled = new Zapp.Core.Action("StartupVolumeEnabled");
+            param = new ParameterBool("aStartupVolumeEnabled");
+            iActionStartupVolumeEnabled.AddOutputParameter(param);
+
+            iVolume = new PropertyUint("Volume", VolumePropertyChanged);
+            AddProperty(iVolume);
+            iMute = new PropertyBool("Mute", MutePropertyChanged);
+            AddProperty(iMute);
+            iBalance = new PropertyInt("Balance", BalancePropertyChanged);
+            AddProperty(iBalance);
+            iVolumeLimit = new PropertyUint("VolumeLimit", VolumeLimitPropertyChanged);
+            AddProperty(iVolumeLimit);
+            iStartupVolume = new PropertyUint("StartupVolume", StartupVolumePropertyChanged);
+            AddProperty(iStartupVolume);
+            iStartupVolumeEnabled = new PropertyBool("StartupVolumeEnabled", StartupVolumeEnabledPropertyChanged);
+            AddProperty(iStartupVolumeEnabled);
         }
 
         /// <summary>
@@ -214,11 +404,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncVolumeInc()
+        public void SyncVolumeInc()
         {
-            {
-                CpProxyLinnCoUkPreamp4SyncVolumeInc(iHandle);
-            }
+            SyncVolumeIncLinnCoUkPreamp4 sync = new SyncVolumeIncLinnCoUkPreamp4(this);
+            BeginVolumeInc(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -229,11 +420,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndVolumeInc().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginVolumeInc(CallbackAsyncComplete aCallback)
+        public void BeginVolumeInc(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginVolumeInc(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionVolumeInc, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -241,14 +431,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndVolumeInc(uint aAsyncHandle)
+        public void EndVolumeInc(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndVolumeInc(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -256,11 +440,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncVolumeDec()
+        public void SyncVolumeDec()
         {
-            {
-                CpProxyLinnCoUkPreamp4SyncVolumeDec(iHandle);
-            }
+            SyncVolumeDecLinnCoUkPreamp4 sync = new SyncVolumeDecLinnCoUkPreamp4(this);
+            BeginVolumeDec(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -271,11 +456,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndVolumeDec().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginVolumeDec(CallbackAsyncComplete aCallback)
+        public void BeginVolumeDec(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginVolumeDec(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionVolumeDec, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -283,14 +467,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndVolumeDec(uint aAsyncHandle)
+        public void EndVolumeDec(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndVolumeDec(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -299,11 +477,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaVolume"></param>
-        public unsafe void SyncSetVolume(uint aaVolume)
+        public void SyncSetVolume(uint aVolume)
         {
-            {
-                CpProxyLinnCoUkPreamp4SyncSetVolume(iHandle, aaVolume);
-            }
+            SyncSetVolumeLinnCoUkPreamp4 sync = new SyncSetVolumeLinnCoUkPreamp4(this);
+            BeginSetVolume(aVolume, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -315,11 +494,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaVolume"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetVolume(uint aaVolume, CallbackAsyncComplete aCallback)
+        public void BeginSetVolume(uint aVolume, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginSetVolume(iHandle, aaVolume, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetVolume, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetVolume.InputParameter(inIndex++), aVolume));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -327,14 +507,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetVolume(uint aAsyncHandle)
+        public void EndSetVolume(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndSetVolume(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -343,12 +517,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaVolume"></param>
-        public unsafe void SyncVolume(out uint aaVolume)
+        public void SyncVolume(out uint aVolume)
         {
-            fixed (uint* aVolume = &aaVolume)
-            {
-                CpProxyLinnCoUkPreamp4SyncVolume(iHandle, aVolume);
-            }
+            SyncVolumeLinnCoUkPreamp4 sync = new SyncVolumeLinnCoUkPreamp4(this);
+            BeginVolume(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aVolume = sync.Volume();
         }
 
         /// <summary>
@@ -359,11 +534,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndVolume().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginVolume(CallbackAsyncComplete aCallback)
+        public void BeginVolume(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginVolume(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionVolume, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionVolume.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -372,15 +548,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaVolume"></param>
-        public unsafe void EndVolume(uint aAsyncHandle, out uint aaVolume)
+        public void EndVolume(IntPtr aAsyncHandle, out uint aVolume)
         {
-            fixed (uint* aVolume = &aaVolume)
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndVolume(iHandle, aAsyncHandle, aVolume))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aVolume = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -389,12 +560,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMute"></param>
-        public unsafe void SyncSetMute(bool aaMute)
+        public void SyncSetMute(bool aMute)
         {
-            uint aMute = (aaMute? 1u : 0u);
-            {
-                CpProxyLinnCoUkPreamp4SyncSetMute(iHandle, aMute);
-            }
+            SyncSetMuteLinnCoUkPreamp4 sync = new SyncSetMuteLinnCoUkPreamp4(this);
+            BeginSetMute(aMute, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -406,12 +577,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMute"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetMute(bool aaMute, CallbackAsyncComplete aCallback)
+        public void BeginSetMute(bool aMute, CallbackAsyncComplete aCallback)
         {
-            uint aMute = (aaMute? 1u : 0u);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginSetMute(iHandle, aMute, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetMute, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentBool((ParameterBool)iActionSetMute.InputParameter(inIndex++), aMute));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -419,14 +590,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetMute(uint aAsyncHandle)
+        public void EndSetMute(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndSetMute(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -435,13 +600,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMute"></param>
-        public unsafe void SyncMute(out bool aaMute)
+        public void SyncMute(out bool aMute)
         {
-            uint aMute;
-            {
-                CpProxyLinnCoUkPreamp4SyncMute(iHandle, &aMute);
-            }
-            aaMute = (aMute != 0);
+            SyncMuteLinnCoUkPreamp4 sync = new SyncMuteLinnCoUkPreamp4(this);
+            BeginMute(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aMute = sync.Mute();
         }
 
         /// <summary>
@@ -452,11 +617,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndMute().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginMute(CallbackAsyncComplete aCallback)
+        public void BeginMute(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginMute(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionMute, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentBool((ParameterBool)iActionMute.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -465,16 +631,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMute"></param>
-        public unsafe void EndMute(uint aAsyncHandle, out bool aaMute)
+        public void EndMute(IntPtr aAsyncHandle, out bool aMute)
         {
-            uint aMute;
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndMute(iHandle, aAsyncHandle, &aMute))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaMute = (aMute != 0);
+            uint index = 0;
+            aMute = Invocation.OutputBool(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -483,11 +643,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaBalance"></param>
-        public unsafe void SyncSetBalance(int aaBalance)
+        public void SyncSetBalance(int aBalance)
         {
-            {
-                CpProxyLinnCoUkPreamp4SyncSetBalance(iHandle, aaBalance);
-            }
+            SyncSetBalanceLinnCoUkPreamp4 sync = new SyncSetBalanceLinnCoUkPreamp4(this);
+            BeginSetBalance(aBalance, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -499,11 +660,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBalance"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetBalance(int aaBalance, CallbackAsyncComplete aCallback)
+        public void BeginSetBalance(int aBalance, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginSetBalance(iHandle, aaBalance, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetBalance, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentInt((ParameterInt)iActionSetBalance.InputParameter(inIndex++), aBalance));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -511,14 +673,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetBalance(uint aAsyncHandle)
+        public void EndSetBalance(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndSetBalance(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -527,12 +683,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaBalance"></param>
-        public unsafe void SyncBalance(out int aaBalance)
+        public void SyncBalance(out int aBalance)
         {
-            fixed (int* aBalance = &aaBalance)
-            {
-                CpProxyLinnCoUkPreamp4SyncBalance(iHandle, aBalance);
-            }
+            SyncBalanceLinnCoUkPreamp4 sync = new SyncBalanceLinnCoUkPreamp4(this);
+            BeginBalance(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aBalance = sync.Balance();
         }
 
         /// <summary>
@@ -543,11 +700,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndBalance().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginBalance(CallbackAsyncComplete aCallback)
+        public void BeginBalance(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginBalance(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionBalance, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionBalance.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -556,15 +714,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaBalance"></param>
-        public unsafe void EndBalance(uint aAsyncHandle, out int aaBalance)
+        public void EndBalance(IntPtr aAsyncHandle, out int aBalance)
         {
-            fixed (int* aBalance = &aaBalance)
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndBalance(iHandle, aAsyncHandle, aBalance))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aBalance = Invocation.OutputInt(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -573,11 +726,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaVolumeLimit"></param>
-        public unsafe void SyncSetVolumeLimit(uint aaVolumeLimit)
+        public void SyncSetVolumeLimit(uint aVolumeLimit)
         {
-            {
-                CpProxyLinnCoUkPreamp4SyncSetVolumeLimit(iHandle, aaVolumeLimit);
-            }
+            SyncSetVolumeLimitLinnCoUkPreamp4 sync = new SyncSetVolumeLimitLinnCoUkPreamp4(this);
+            BeginSetVolumeLimit(aVolumeLimit, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -589,11 +743,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaVolumeLimit"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetVolumeLimit(uint aaVolumeLimit, CallbackAsyncComplete aCallback)
+        public void BeginSetVolumeLimit(uint aVolumeLimit, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginSetVolumeLimit(iHandle, aaVolumeLimit, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetVolumeLimit, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetVolumeLimit.InputParameter(inIndex++), aVolumeLimit));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -601,14 +756,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetVolumeLimit(uint aAsyncHandle)
+        public void EndSetVolumeLimit(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndSetVolumeLimit(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -617,12 +766,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaVolumeLimit"></param>
-        public unsafe void SyncVolumeLimit(out uint aaVolumeLimit)
+        public void SyncVolumeLimit(out uint aVolumeLimit)
         {
-            fixed (uint* aVolumeLimit = &aaVolumeLimit)
-            {
-                CpProxyLinnCoUkPreamp4SyncVolumeLimit(iHandle, aVolumeLimit);
-            }
+            SyncVolumeLimitLinnCoUkPreamp4 sync = new SyncVolumeLimitLinnCoUkPreamp4(this);
+            BeginVolumeLimit(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aVolumeLimit = sync.VolumeLimit();
         }
 
         /// <summary>
@@ -633,11 +783,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndVolumeLimit().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginVolumeLimit(CallbackAsyncComplete aCallback)
+        public void BeginVolumeLimit(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginVolumeLimit(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionVolumeLimit, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionVolumeLimit.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -646,15 +797,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaVolumeLimit"></param>
-        public unsafe void EndVolumeLimit(uint aAsyncHandle, out uint aaVolumeLimit)
+        public void EndVolumeLimit(IntPtr aAsyncHandle, out uint aVolumeLimit)
         {
-            fixed (uint* aVolumeLimit = &aaVolumeLimit)
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndVolumeLimit(iHandle, aAsyncHandle, aVolumeLimit))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aVolumeLimit = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -663,11 +809,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaStartupVolume"></param>
-        public unsafe void SyncSetStartupVolume(uint aaStartupVolume)
+        public void SyncSetStartupVolume(uint aStartupVolume)
         {
-            {
-                CpProxyLinnCoUkPreamp4SyncSetStartupVolume(iHandle, aaStartupVolume);
-            }
+            SyncSetStartupVolumeLinnCoUkPreamp4 sync = new SyncSetStartupVolumeLinnCoUkPreamp4(this);
+            BeginSetStartupVolume(aStartupVolume, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -679,11 +826,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStartupVolume"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetStartupVolume(uint aaStartupVolume, CallbackAsyncComplete aCallback)
+        public void BeginSetStartupVolume(uint aStartupVolume, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginSetStartupVolume(iHandle, aaStartupVolume, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetStartupVolume, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetStartupVolume.InputParameter(inIndex++), aStartupVolume));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -691,14 +839,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetStartupVolume(uint aAsyncHandle)
+        public void EndSetStartupVolume(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndSetStartupVolume(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -707,12 +849,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaStartupVolume"></param>
-        public unsafe void SyncStartupVolume(out uint aaStartupVolume)
+        public void SyncStartupVolume(out uint aStartupVolume)
         {
-            fixed (uint* aStartupVolume = &aaStartupVolume)
-            {
-                CpProxyLinnCoUkPreamp4SyncStartupVolume(iHandle, aStartupVolume);
-            }
+            SyncStartupVolumeLinnCoUkPreamp4 sync = new SyncStartupVolumeLinnCoUkPreamp4(this);
+            BeginStartupVolume(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aStartupVolume = sync.StartupVolume();
         }
 
         /// <summary>
@@ -723,11 +866,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndStartupVolume().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginStartupVolume(CallbackAsyncComplete aCallback)
+        public void BeginStartupVolume(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginStartupVolume(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionStartupVolume, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionStartupVolume.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -736,15 +880,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaStartupVolume"></param>
-        public unsafe void EndStartupVolume(uint aAsyncHandle, out uint aaStartupVolume)
+        public void EndStartupVolume(IntPtr aAsyncHandle, out uint aStartupVolume)
         {
-            fixed (uint* aStartupVolume = &aaStartupVolume)
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndStartupVolume(iHandle, aAsyncHandle, aStartupVolume))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aStartupVolume = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -753,12 +892,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaStartupVolumeEnabled"></param>
-        public unsafe void SyncSetStartupVolumeEnabled(bool aaStartupVolumeEnabled)
+        public void SyncSetStartupVolumeEnabled(bool aStartupVolumeEnabled)
         {
-            uint aStartupVolumeEnabled = (aaStartupVolumeEnabled? 1u : 0u);
-            {
-                CpProxyLinnCoUkPreamp4SyncSetStartupVolumeEnabled(iHandle, aStartupVolumeEnabled);
-            }
+            SyncSetStartupVolumeEnabledLinnCoUkPreamp4 sync = new SyncSetStartupVolumeEnabledLinnCoUkPreamp4(this);
+            BeginSetStartupVolumeEnabled(aStartupVolumeEnabled, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -770,12 +909,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStartupVolumeEnabled"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetStartupVolumeEnabled(bool aaStartupVolumeEnabled, CallbackAsyncComplete aCallback)
+        public void BeginSetStartupVolumeEnabled(bool aStartupVolumeEnabled, CallbackAsyncComplete aCallback)
         {
-            uint aStartupVolumeEnabled = (aaStartupVolumeEnabled? 1u : 0u);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginSetStartupVolumeEnabled(iHandle, aStartupVolumeEnabled, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetStartupVolumeEnabled, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentBool((ParameterBool)iActionSetStartupVolumeEnabled.InputParameter(inIndex++), aStartupVolumeEnabled));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -783,14 +922,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetStartupVolumeEnabled(uint aAsyncHandle)
+        public void EndSetStartupVolumeEnabled(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndSetStartupVolumeEnabled(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -799,13 +932,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaStartupVolumeEnabled"></param>
-        public unsafe void SyncStartupVolumeEnabled(out bool aaStartupVolumeEnabled)
+        public void SyncStartupVolumeEnabled(out bool aStartupVolumeEnabled)
         {
-            uint aStartupVolumeEnabled;
-            {
-                CpProxyLinnCoUkPreamp4SyncStartupVolumeEnabled(iHandle, &aStartupVolumeEnabled);
-            }
-            aaStartupVolumeEnabled = (aStartupVolumeEnabled != 0);
+            SyncStartupVolumeEnabledLinnCoUkPreamp4 sync = new SyncStartupVolumeEnabledLinnCoUkPreamp4(this);
+            BeginStartupVolumeEnabled(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aStartupVolumeEnabled = sync.StartupVolumeEnabled();
         }
 
         /// <summary>
@@ -816,11 +949,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndStartupVolumeEnabled().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginStartupVolumeEnabled(CallbackAsyncComplete aCallback)
+        public void BeginStartupVolumeEnabled(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPreamp4BeginStartupVolumeEnabled(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionStartupVolumeEnabled, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentBool((ParameterBool)iActionStartupVolumeEnabled.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -829,16 +963,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaStartupVolumeEnabled"></param>
-        public unsafe void EndStartupVolumeEnabled(uint aAsyncHandle, out bool aaStartupVolumeEnabled)
+        public void EndStartupVolumeEnabled(IntPtr aAsyncHandle, out bool aStartupVolumeEnabled)
         {
-            uint aStartupVolumeEnabled;
-            {
-                if (0 != CpProxyLinnCoUkPreamp4EndStartupVolumeEnabled(iHandle, aAsyncHandle, &aStartupVolumeEnabled))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaStartupVolumeEnabled = (aStartupVolumeEnabled != 0);
+            uint index = 0;
+            aStartupVolumeEnabled = Invocation.OutputBool(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -849,17 +977,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVolumeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVolumeChanged(CallbackPropertyChanged aVolumeChanged)
         {
-            iVolumeChanged = aVolumeChanged;
-            iCallbackVolumeChanged = new Callback(PropertyVolumeChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkPreamp4SetPropertyVolumeChanged(iHandle, iCallbackVolumeChanged, ptr);
+            lock (this)
+            {
+                iVolumeChanged = aVolumeChanged;
+            }
         }
 
-        private void PropertyVolumeChanged(IntPtr aPtr)
+        private void VolumePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkPreamp4 self = (CpProxyLinnCoUkPreamp4)gch.Target;
-            self.iVolumeChanged();
+            lock (this)
+            {
+                if (iVolumeChanged != null)
+                {
+                    iVolumeChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -870,17 +1002,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aMuteChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyMuteChanged(CallbackPropertyChanged aMuteChanged)
         {
-            iMuteChanged = aMuteChanged;
-            iCallbackMuteChanged = new Callback(PropertyMuteChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkPreamp4SetPropertyMuteChanged(iHandle, iCallbackMuteChanged, ptr);
+            lock (this)
+            {
+                iMuteChanged = aMuteChanged;
+            }
         }
 
-        private void PropertyMuteChanged(IntPtr aPtr)
+        private void MutePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkPreamp4 self = (CpProxyLinnCoUkPreamp4)gch.Target;
-            self.iMuteChanged();
+            lock (this)
+            {
+                if (iMuteChanged != null)
+                {
+                    iMuteChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -891,17 +1027,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aBalanceChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyBalanceChanged(CallbackPropertyChanged aBalanceChanged)
         {
-            iBalanceChanged = aBalanceChanged;
-            iCallbackBalanceChanged = new Callback(PropertyBalanceChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkPreamp4SetPropertyBalanceChanged(iHandle, iCallbackBalanceChanged, ptr);
+            lock (this)
+            {
+                iBalanceChanged = aBalanceChanged;
+            }
         }
 
-        private void PropertyBalanceChanged(IntPtr aPtr)
+        private void BalancePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkPreamp4 self = (CpProxyLinnCoUkPreamp4)gch.Target;
-            self.iBalanceChanged();
+            lock (this)
+            {
+                if (iBalanceChanged != null)
+                {
+                    iBalanceChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -912,17 +1052,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVolumeLimitChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVolumeLimitChanged(CallbackPropertyChanged aVolumeLimitChanged)
         {
-            iVolumeLimitChanged = aVolumeLimitChanged;
-            iCallbackVolumeLimitChanged = new Callback(PropertyVolumeLimitChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkPreamp4SetPropertyVolumeLimitChanged(iHandle, iCallbackVolumeLimitChanged, ptr);
+            lock (this)
+            {
+                iVolumeLimitChanged = aVolumeLimitChanged;
+            }
         }
 
-        private void PropertyVolumeLimitChanged(IntPtr aPtr)
+        private void VolumeLimitPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkPreamp4 self = (CpProxyLinnCoUkPreamp4)gch.Target;
-            self.iVolumeLimitChanged();
+            lock (this)
+            {
+                if (iVolumeLimitChanged != null)
+                {
+                    iVolumeLimitChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -933,17 +1077,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStartupVolumeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStartupVolumeChanged(CallbackPropertyChanged aStartupVolumeChanged)
         {
-            iStartupVolumeChanged = aStartupVolumeChanged;
-            iCallbackStartupVolumeChanged = new Callback(PropertyStartupVolumeChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkPreamp4SetPropertyStartupVolumeChanged(iHandle, iCallbackStartupVolumeChanged, ptr);
+            lock (this)
+            {
+                iStartupVolumeChanged = aStartupVolumeChanged;
+            }
         }
 
-        private void PropertyStartupVolumeChanged(IntPtr aPtr)
+        private void StartupVolumePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkPreamp4 self = (CpProxyLinnCoUkPreamp4)gch.Target;
-            self.iStartupVolumeChanged();
+            lock (this)
+            {
+                if (iStartupVolumeChanged != null)
+                {
+                    iStartupVolumeChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -954,17 +1102,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStartupVolumeEnabledChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStartupVolumeEnabledChanged(CallbackPropertyChanged aStartupVolumeEnabledChanged)
         {
-            iStartupVolumeEnabledChanged = aStartupVolumeEnabledChanged;
-            iCallbackStartupVolumeEnabledChanged = new Callback(PropertyStartupVolumeEnabledChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkPreamp4SetPropertyStartupVolumeEnabledChanged(iHandle, iCallbackStartupVolumeEnabledChanged, ptr);
+            lock (this)
+            {
+                iStartupVolumeEnabledChanged = aStartupVolumeEnabledChanged;
+            }
         }
 
-        private void PropertyStartupVolumeEnabledChanged(IntPtr aPtr)
+        private void StartupVolumeEnabledPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkPreamp4 self = (CpProxyLinnCoUkPreamp4)gch.Target;
-            self.iStartupVolumeEnabledChanged();
+            lock (this)
+            {
+                if (iStartupVolumeEnabledChanged != null)
+                {
+                    iStartupVolumeEnabledChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -974,12 +1126,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aVolume">Will be set to the value of the property</param>
-        public unsafe void PropertyVolume(out uint aVolume)
+        public uint PropertyVolume()
         {
-            fixed (uint* volume = &aVolume)
-            {
-                CpProxyLinnCoUkPreamp4PropertyVolume(iHandle, volume);
-            }
+            return iVolume.Value();
         }
 
         /// <summary>
@@ -989,11 +1138,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aMute">Will be set to the value of the property</param>
-        public unsafe void PropertyMute(out bool aMute)
+        public bool PropertyMute()
         {
-            uint mute;
-            CpProxyLinnCoUkPreamp4PropertyMute(iHandle, &mute);
-            aMute = (mute != 0);
+            return iMute.Value();
         }
 
         /// <summary>
@@ -1003,12 +1150,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aBalance">Will be set to the value of the property</param>
-        public unsafe void PropertyBalance(out int aBalance)
+        public int PropertyBalance()
         {
-            fixed (int* balance = &aBalance)
-            {
-                CpProxyLinnCoUkPreamp4PropertyBalance(iHandle, balance);
-            }
+            return iBalance.Value();
         }
 
         /// <summary>
@@ -1018,12 +1162,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aVolumeLimit">Will be set to the value of the property</param>
-        public unsafe void PropertyVolumeLimit(out uint aVolumeLimit)
+        public uint PropertyVolumeLimit()
         {
-            fixed (uint* volumeLimit = &aVolumeLimit)
-            {
-                CpProxyLinnCoUkPreamp4PropertyVolumeLimit(iHandle, volumeLimit);
-            }
+            return iVolumeLimit.Value();
         }
 
         /// <summary>
@@ -1033,12 +1174,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aStartupVolume">Will be set to the value of the property</param>
-        public unsafe void PropertyStartupVolume(out uint aStartupVolume)
+        public uint PropertyStartupVolume()
         {
-            fixed (uint* startupVolume = &aStartupVolume)
-            {
-                CpProxyLinnCoUkPreamp4PropertyStartupVolume(iHandle, startupVolume);
-            }
+            return iStartupVolume.Value();
         }
 
         /// <summary>
@@ -1048,11 +1186,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aStartupVolumeEnabled">Will be set to the value of the property</param>
-        public unsafe void PropertyStartupVolumeEnabled(out bool aStartupVolumeEnabled)
+        public bool PropertyStartupVolumeEnabled()
         {
-            uint startupVolumeEnabled;
-            CpProxyLinnCoUkPreamp4PropertyStartupVolumeEnabled(iHandle, &startupVolumeEnabled);
-            aStartupVolumeEnabled = (startupVolumeEnabled != 0);
+            return iStartupVolumeEnabled.Value();
         }
 
         /// <summary>
@@ -1072,21 +1208,36 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                CpProxyLinnCoUkPreamp4Destroy(iHandle);
-                iHandle = 0;
+                DisposeProxy();
+                iHandle = IntPtr.Zero;
+                iActionVolumeInc.Dispose();
+                iActionVolumeDec.Dispose();
+                iActionSetVolume.Dispose();
+                iActionVolume.Dispose();
+                iActionSetMute.Dispose();
+                iActionMute.Dispose();
+                iActionSetBalance.Dispose();
+                iActionBalance.Dispose();
+                iActionSetVolumeLimit.Dispose();
+                iActionVolumeLimit.Dispose();
+                iActionSetStartupVolume.Dispose();
+                iActionStartupVolume.Dispose();
+                iActionSetStartupVolumeEnabled.Dispose();
+                iActionStartupVolumeEnabled.Dispose();
+                iVolume.Dispose();
+                iMute.Dispose();
+                iBalance.Dispose();
+                iVolumeLimit.Dispose();
+                iStartupVolume.Dispose();
+                iStartupVolumeEnabled.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

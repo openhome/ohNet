@@ -1,7 +1,7 @@
 objdir = Build/Obj/Posix
 incdir = Build/Include
 zappdir = ../Upnp/Build/Obj/Posix
-toolsDir = ../Upnp/Build/Tools
+toolsDir = ../Upnp/Build/Posix/Tools
 templatesDir = ../Upnp/T4/Templates
 
 

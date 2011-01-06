@@ -1,23 +1,27 @@
-#include <C/DvLinnCoUkPtest1.h>
-#include <Core/DvLinnCoUkPtest1.h>
+#include "DvLinnCoUkPtest1.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
+#include <DvProvider.h>
 #include <C/Zapp.h>
+#include <ZappTypes.h>
+#include <Core/DvInvocationResponse.h>
+#include <Service.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-class DvProviderLinnCoUkPtest1C : public DvProviderLinnCoUkPtest1
+class DvProviderLinnCoUkPtest1C : public DvProvider
 {
 public:
-    DvProviderLinnCoUkPtest1C(DvDevice& aDevice);
+    DvProviderLinnCoUkPtest1C(DvDeviceC aDevice);
     void EnableActionTestComPort(CallbackPtest1TestComPort aCallback, void* aPtr);
     void EnableActionLedsOn(CallbackPtest1LedsOn aCallback, void* aPtr);
     void EnableActionLedsOff(CallbackPtest1LedsOff aCallback, void* aPtr);
 private:
-    void TestComPort(IInvocationResponse& aResponse, TUint aVersion, TUint aaPort, IInvocationResponseBool& aaResult);
-    void LedsOn(IInvocationResponse& aResponse, TUint aVersion);
-    void LedsOff(IInvocationResponse& aResponse, TUint aVersion);
+    void DoTestComPort(IDviInvocation& aInvocation, TUint aVersion);
+    void DoLedsOn(IDviInvocation& aInvocation, TUint aVersion);
+    void DoLedsOff(IDviInvocation& aInvocation, TUint aVersion);
 private:
     CallbackPtest1TestComPort iCallbackTestComPort;
     void* iPtrTestComPort;
@@ -27,72 +31,92 @@ private:
     void* iPtrLedsOff;
 };
 
-DvProviderLinnCoUkPtest1C::DvProviderLinnCoUkPtest1C(DvDevice& aDevice)
-    : DvProviderLinnCoUkPtest1(aDevice)
+DvProviderLinnCoUkPtest1C::DvProviderLinnCoUkPtest1C(DvDeviceC aDevice)
+    : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "linn.co.uk", "Ptest", 1)
 {
+    
 }
 
 void DvProviderLinnCoUkPtest1C::EnableActionTestComPort(CallbackPtest1TestComPort aCallback, void* aPtr)
 {
     iCallbackTestComPort = aCallback;
     iPtrTestComPort = aPtr;
-    DvProviderLinnCoUkPtest1::EnableActionTestComPort();
+    Zapp::Action* action = new Zapp::Action("TestComPort");
+    action->AddInputParameter(new ParameterUint("aPort"));
+    action->AddOutputParameter(new ParameterBool("aResult"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPtest1C::DoTestComPort);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPtest1C::EnableActionLedsOn(CallbackPtest1LedsOn aCallback, void* aPtr)
 {
     iCallbackLedsOn = aCallback;
     iPtrLedsOn = aPtr;
-    DvProviderLinnCoUkPtest1::EnableActionLedsOn();
+    Zapp::Action* action = new Zapp::Action("LedsOn");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPtest1C::DoLedsOn);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPtest1C::EnableActionLedsOff(CallbackPtest1LedsOff aCallback, void* aPtr)
 {
     iCallbackLedsOff = aCallback;
     iPtrLedsOff = aPtr;
-    DvProviderLinnCoUkPtest1::EnableActionLedsOff();
+    Zapp::Action* action = new Zapp::Action("LedsOff");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPtest1C::DoLedsOff);
+    iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkPtest1C::TestComPort(IInvocationResponse& aResponse, TUint aVersion, TUint aaPort, IInvocationResponseBool& aaResult)
+void DvProviderLinnCoUkPtest1C::DoTestComPort(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aPort = aInvocation.InvocationReadUint("aPort");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aResult;
     ASSERT(iCallbackTestComPort != NULL);
-    if (0 != iCallbackTestComPort(iPtrTestComPort, aVersion, aaPort, &aResult)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackTestComPort(iPtrTestComPort, aVersion, aPort, &aResult)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaResult.Write((aResult!=0));
-    aResponse.End();
+    InvocationResponseBool respaResult(aInvocation, "aResult");
+    resp.Start();
+    respaResult.Write((aResult!=0));
+    resp.End();
 }
 
-void DvProviderLinnCoUkPtest1C::LedsOn(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderLinnCoUkPtest1C::DoLedsOn(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackLedsOn != NULL);
     if (0 != iCallbackLedsOn(iPtrLedsOn, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkPtest1C::LedsOff(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderLinnCoUkPtest1C::DoLedsOff(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackLedsOff != NULL);
     if (0 != iCallbackLedsOff(iPtrLedsOff, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
 
 
 THandle DvProviderLinnCoUkPtest1Create(DvDeviceC aDevice)
 {
-	return new DvProviderLinnCoUkPtest1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkPtest1C(aDevice);
 }
 
 void DvProviderLinnCoUkPtest1Destroy(THandle aProvider)

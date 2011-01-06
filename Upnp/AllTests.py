@@ -23,7 +23,7 @@ def runBuilds():
         else:
             cleanCmd = 'make clean'
         os.system(cleanCmd)
-    targets = ['Tests', 'Zapp', 'CpProxyDlls', 'DvDeviceDlls']
+    targets = ['Tests', 'Zapp', 'proxies', 'DvDeviceDlls', 'CpProxyDotNetAssemblies', 'DvDeviceDotNetAssemblies']
     for target in targets:
         build(target)
     print '\nBuilds complete'
@@ -161,43 +161,28 @@ gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestCpDeviceDvStd', [], True)
              ,TestCase('TestCpDeviceDvC', [], True)
              ,TestCase('TestProxyCs', [], False, False)
-             ,TestCase('TestDvDeviceCs', [], False, False)
-             ,TestCase('TestCpDeviceDvCs', [], False, False)
+             ,TestCase('TestDvDeviceCs', [], True, False)
+             ,TestCase('TestCpDeviceDvCs', [], True, False)
             ]
 
 def JsOnly():
-
-
-		
-		print "running javascript tests"
-		
-		if not os.path.exists("xout"):
-			os.mkdir("xout")
-
-		
-		jsfailed = open("xout/ProxyJsTest.xml", "w")
-		jsfailed.writelines('<?xml version="1.0" encoding="UTF-8"?><testsuites><testsuite name="Test Proxy" tests="1" failures="1" time="0.01"><testcase name="No Results Output" time="0.01"><failure message="No XML Results Output from JS Proxy Tests."><![CDATA[No XML Results Output from JS Proxy Tests.]]></failure></testcase></testsuite></testsuites>')
-		jsfailed.close()
-
-		LocalAppData = os.environ.get('LOCALAPPDATA')
-		WorkSpace = os.environ.get('WORKSPACE')
-
-		UIPath = os.path.join(WorkSpace, 'Upnp\Public\Js\Zapp.Web.UI.Tests')
-		Chrome = os.path.join(LocalAppData, 'Google\chrome\Application\Chrome.exe')
-
-		TestBasic = "Build\Obj\Windows\TestDvTestBasic.exe"
-		TestDeviceFinder = "Build\Obj\Windows\TestDeviceFinder.exe"
-		
-		testbasic = subprocess.Popen([TestBasic, '-l', '-c', UIPath])
-
-		devfinder = subprocess.Popen([TestDeviceFinder, '-l', '-s', 'zapp.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-			
-		devfinder_out = devfinder.communicate() 
-
-
-		subprocess.call([Chrome, devfinder_out])
-
-		os.kill(testbasic.pid, signal.SIGTERM)
+    print "running javascript tests"
+    if not os.path.exists("xout"):
+	    os.mkdir("xout")
+    jsfailed = open("xout/ProxyJsTest.xml", "w")
+    jsfailed.writelines('<?xml version="1.0" encoding="UTF-8"?><testsuites><testsuite name="Test Proxy" tests="1" failures="1" time="0.01"><testcase name="No Results Output" time="0.01"><failure message="No XML Results Output from JS Proxy Tests."><![CDATA[No XML Results Output from JS Proxy Tests.]]></failure></testcase></testsuite></testsuites>')
+    jsfailed.close()
+    LocalAppData = os.environ.get('LOCALAPPDATA')
+    WorkSpace = os.environ.get('WORKSPACE')
+    UIPath = os.path.join(WorkSpace, 'Upnp\Public\Js\Zapp.Web.UI.Tests')
+    Chrome = os.path.join(LocalAppData, 'Google\chrome\Application\8.0.552.215\Chrome.exe')
+    TestBasic = "Build\Obj\Windows\TestDvTestBasic.exe"
+    TestDeviceFinder = "Build\Obj\Windows\TestDeviceFinder.exe"
+    testbasic = subprocess.Popen([TestBasic, '-l', '-c', UIPath])
+    devfinder = subprocess.Popen([TestDeviceFinder, '-l', '-s', 'zapp.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    devfinder_out = devfinder.communicate() 
+    subprocess.call([Chrome, devfinder_out])
+    os.kill(testbasic.pid, signal.SIGTERM)
 
 if gTestsOnly == 0:
     runBuilds()

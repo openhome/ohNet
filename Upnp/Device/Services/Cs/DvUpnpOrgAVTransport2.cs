@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the LastChange property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyLastChange(out string aValue);
+        string PropertyLastChange();
 
         /// <summary>
         /// Set the value of the DRMState property
@@ -32,7 +33,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DRMState property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDRMState(out string aValue);
+        string PropertyDRMState();
         
     }
     /// <summary>
@@ -40,116 +41,46 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderUpnpOrgAVTransport2 : DvProvider, IDisposable, IDvProviderUpnpOrgAVTransport2
     {
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern uint DvProviderUpnpOrgAVTransport2Create(uint aDeviceHandle);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2Destroy(uint aHandle);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern unsafe int DvProviderUpnpOrgAVTransport2SetPropertyLastChange(uint aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern unsafe void DvProviderUpnpOrgAVTransport2GetPropertyLastChange(uint aHandle, char** aValue);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern unsafe int DvProviderUpnpOrgAVTransport2SetPropertyDRMState(uint aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern unsafe void DvProviderUpnpOrgAVTransport2GetPropertyDRMState(uint aHandle, char** aValue);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionSetAVTransportURI(uint aHandle, CallbackSetAVTransportURI aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionSetNextAVTransportURI(uint aHandle, CallbackSetNextAVTransportURI aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionGetMediaInfo(uint aHandle, CallbackGetMediaInfo aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionGetMediaInfo_Ext(uint aHandle, CallbackGetMediaInfo_Ext aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionGetTransportInfo(uint aHandle, CallbackGetTransportInfo aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionGetPositionInfo(uint aHandle, CallbackGetPositionInfo aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionGetDeviceCapabilities(uint aHandle, CallbackGetDeviceCapabilities aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionGetTransportSettings(uint aHandle, CallbackGetTransportSettings aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionStop(uint aHandle, CallbackStop aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionPlay(uint aHandle, CallbackPlay aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionPause(uint aHandle, CallbackPause aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionRecord(uint aHandle, CallbackRecord aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionSeek(uint aHandle, CallbackSeek aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionNext(uint aHandle, CallbackNext aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionPrevious(uint aHandle, CallbackPrevious aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionSetPlayMode(uint aHandle, CallbackSetPlayMode aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionSetRecordQualityMode(uint aHandle, CallbackSetRecordQualityMode aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionGetCurrentTransportActions(uint aHandle, CallbackGetCurrentTransportActions aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionGetDRMState(uint aHandle, CallbackGetDRMState aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionGetStateVariables(uint aHandle, CallbackGetStateVariables aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvProviderUpnpOrgAVTransport2EnableActionSetStateVariables(uint aHandle, CallbackSetStateVariables aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackSetAVTransportURI(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aCurrentURI, char* aCurrentURIMetaData);
-        private unsafe delegate int CallbackSetNextAVTransportURI(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aNextURI, char* aNextURIMetaData);
-        private unsafe delegate int CallbackGetMediaInfo(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
-        private unsafe delegate int CallbackGetMediaInfo_Ext(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aCurrentType, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
-        private unsafe delegate int CallbackGetTransportInfo(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
-        private unsafe delegate int CallbackGetPositionInfo(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int* aRelCount, int* aAbsCount);
-        private unsafe delegate int CallbackGetDeviceCapabilities(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
-        private unsafe delegate int CallbackGetTransportSettings(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aPlayMode, char** aRecQualityMode);
-        private unsafe delegate int CallbackStop(IntPtr aPtr, uint aVersion, uint aInstanceID);
-        private unsafe delegate int CallbackPlay(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aSpeed);
-        private unsafe delegate int CallbackPause(IntPtr aPtr, uint aVersion, uint aInstanceID);
-        private unsafe delegate int CallbackRecord(IntPtr aPtr, uint aVersion, uint aInstanceID);
-        private unsafe delegate int CallbackSeek(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aUnit, char* aTarget);
-        private unsafe delegate int CallbackNext(IntPtr aPtr, uint aVersion, uint aInstanceID);
-        private unsafe delegate int CallbackPrevious(IntPtr aPtr, uint aVersion, uint aInstanceID);
-        private unsafe delegate int CallbackSetPlayMode(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aNewPlayMode);
-        private unsafe delegate int CallbackSetRecordQualityMode(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aNewRecordQualityMode);
-        private unsafe delegate int CallbackGetCurrentTransportActions(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aActions);
-        private unsafe delegate int CallbackGetDRMState(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aCurrentDRMState);
-        private unsafe delegate int CallbackGetStateVariables(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aStateVariableList, char** aStateVariableValuePairs);
-        private unsafe delegate int CallbackSetStateVariables(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aAVTransportUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, char** aStateVariableList);
-
         private GCHandle iGch;
-        private CallbackSetAVTransportURI iCallbackSetAVTransportURI;
-        private CallbackSetNextAVTransportURI iCallbackSetNextAVTransportURI;
-        private CallbackGetMediaInfo iCallbackGetMediaInfo;
-        private CallbackGetMediaInfo_Ext iCallbackGetMediaInfo_Ext;
-        private CallbackGetTransportInfo iCallbackGetTransportInfo;
-        private CallbackGetPositionInfo iCallbackGetPositionInfo;
-        private CallbackGetDeviceCapabilities iCallbackGetDeviceCapabilities;
-        private CallbackGetTransportSettings iCallbackGetTransportSettings;
-        private CallbackStop iCallbackStop;
-        private CallbackPlay iCallbackPlay;
-        private CallbackPause iCallbackPause;
-        private CallbackRecord iCallbackRecord;
-        private CallbackSeek iCallbackSeek;
-        private CallbackNext iCallbackNext;
-        private CallbackPrevious iCallbackPrevious;
-        private CallbackSetPlayMode iCallbackSetPlayMode;
-        private CallbackSetRecordQualityMode iCallbackSetRecordQualityMode;
-        private CallbackGetCurrentTransportActions iCallbackGetCurrentTransportActions;
-        private CallbackGetDRMState iCallbackGetDRMState;
-        private CallbackGetStateVariables iCallbackGetStateVariables;
-        private CallbackSetStateVariables iCallbackSetStateVariables;
+        private ActionDelegate iDelegateSetAVTransportURI;
+        private ActionDelegate iDelegateSetNextAVTransportURI;
+        private ActionDelegate iDelegateGetMediaInfo;
+        private ActionDelegate iDelegateGetMediaInfo_Ext;
+        private ActionDelegate iDelegateGetTransportInfo;
+        private ActionDelegate iDelegateGetPositionInfo;
+        private ActionDelegate iDelegateGetDeviceCapabilities;
+        private ActionDelegate iDelegateGetTransportSettings;
+        private ActionDelegate iDelegateStop;
+        private ActionDelegate iDelegatePlay;
+        private ActionDelegate iDelegatePause;
+        private ActionDelegate iDelegateRecord;
+        private ActionDelegate iDelegateSeek;
+        private ActionDelegate iDelegateNext;
+        private ActionDelegate iDelegatePrevious;
+        private ActionDelegate iDelegateSetPlayMode;
+        private ActionDelegate iDelegateSetRecordQualityMode;
+        private ActionDelegate iDelegateGetCurrentTransportActions;
+        private ActionDelegate iDelegateGetDRMState;
+        private ActionDelegate iDelegateGetStateVariables;
+        private ActionDelegate iDelegateSetStateVariables;
+        private PropertyString iPropertyLastChange;
+        private PropertyString iPropertyDRMState;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderUpnpOrgAVTransport2(DvDevice aDevice)
+            : base(aDevice, "schemas-upnp-org", "AVTransport", 2)
         {
-            iHandle = DvProviderUpnpOrgAVTransport2Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            List<String> allowedValues = new List<String>();
+            iPropertyLastChange = new PropertyString(new ParameterString("LastChange", allowedValues));
+            AddProperty(iPropertyLastChange);
+            allowedValues.Add("OK");
+            iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues));
+            AddProperty(iPropertyDRMState);
+            allowedValues.Clear();
         }
 
         /// <summary>
@@ -157,29 +88,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyLastChange(string aValue)
+        public bool SetPropertyLastChange(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderUpnpOrgAVTransport2SetPropertyLastChange(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyLastChange, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the LastChange property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyLastChange(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyLastChange()
         {
-            char* value;
-            DvProviderUpnpOrgAVTransport2GetPropertyLastChange(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyLastChange.Value();
         }
 
         /// <summary>
@@ -187,29 +107,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDRMState(string aValue)
+        public bool SetPropertyDRMState(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderUpnpOrgAVTransport2SetPropertyDRMState(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyDRMState, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DRMState property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDRMState(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyDRMState()
         {
-            char* value;
-            DvProviderUpnpOrgAVTransport2GetPropertyDRMState(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyDRMState.Value();
         }
 
         /// <summary>
@@ -217,11 +126,15 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetAVTransportURI must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetAVTransportURI()
+        protected void EnableActionSetAVTransportURI()
         {
-            iCallbackSetAVTransportURI = new CallbackSetAVTransportURI(DoSetAVTransportURI);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionSetAVTransportURI(iHandle, iCallbackSetAVTransportURI, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetAVTransportURI");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            action.AddInputParameter(new ParameterString("CurrentURI", allowedValues));
+            action.AddInputParameter(new ParameterString("CurrentURIMetaData", allowedValues));
+            iDelegateSetAVTransportURI = new ActionDelegate(DoSetAVTransportURI);
+            EnableAction(action, iDelegateSetAVTransportURI, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -229,11 +142,15 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetNextAVTransportURI must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetNextAVTransportURI()
+        protected void EnableActionSetNextAVTransportURI()
         {
-            iCallbackSetNextAVTransportURI = new CallbackSetNextAVTransportURI(DoSetNextAVTransportURI);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionSetNextAVTransportURI(iHandle, iCallbackSetNextAVTransportURI, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetNextAVTransportURI");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            action.AddInputParameter(new ParameterString("NextURI", allowedValues));
+            action.AddInputParameter(new ParameterString("NextURIMetaData", allowedValues));
+            iDelegateSetNextAVTransportURI = new ActionDelegate(DoSetNextAVTransportURI);
+            EnableAction(action, iDelegateSetNextAVTransportURI, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -241,11 +158,22 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetMediaInfo must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetMediaInfo()
+        protected void EnableActionGetMediaInfo()
         {
-            iCallbackGetMediaInfo = new CallbackGetMediaInfo(DoGetMediaInfo);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionGetMediaInfo(iHandle, iCallbackGetMediaInfo, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetMediaInfo");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            action.AddOutputParameter(new ParameterUint("NrTracks", 0, 0));
+            action.AddOutputParameter(new ParameterString("MediaDuration", allowedValues));
+            action.AddOutputParameter(new ParameterString("CurrentURI", allowedValues));
+            action.AddOutputParameter(new ParameterString("CurrentURIMetaData", allowedValues));
+            action.AddOutputParameter(new ParameterString("NextURI", allowedValues));
+            action.AddOutputParameter(new ParameterString("NextURIMetaData", allowedValues));
+            action.AddOutputParameter(new ParameterString("PlayMedium", allowedValues));
+            action.AddOutputParameter(new ParameterString("RecordMedium", allowedValues));
+            action.AddOutputParameter(new ParameterString("WriteStatus", allowedValues));
+            iDelegateGetMediaInfo = new ActionDelegate(DoGetMediaInfo);
+            EnableAction(action, iDelegateGetMediaInfo, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -253,11 +181,27 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetMediaInfo_Ext must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetMediaInfo_Ext()
+        protected void EnableActionGetMediaInfo_Ext()
         {
-            iCallbackGetMediaInfo_Ext = new CallbackGetMediaInfo_Ext(DoGetMediaInfo_Ext);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionGetMediaInfo_Ext(iHandle, iCallbackGetMediaInfo_Ext, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetMediaInfo_Ext");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            allowedValues.Add("NO_MEDIA");
+            allowedValues.Add("TRACK_AWARE");
+            allowedValues.Add("TRACK_UNAWARE");
+            action.AddOutputParameter(new ParameterString("CurrentType", allowedValues));
+            allowedValues.Clear();
+            action.AddOutputParameter(new ParameterUint("NrTracks", 0, 0));
+            action.AddOutputParameter(new ParameterString("MediaDuration", allowedValues));
+            action.AddOutputParameter(new ParameterString("CurrentURI", allowedValues));
+            action.AddOutputParameter(new ParameterString("CurrentURIMetaData", allowedValues));
+            action.AddOutputParameter(new ParameterString("NextURI", allowedValues));
+            action.AddOutputParameter(new ParameterString("NextURIMetaData", allowedValues));
+            action.AddOutputParameter(new ParameterString("PlayMedium", allowedValues));
+            action.AddOutputParameter(new ParameterString("RecordMedium", allowedValues));
+            action.AddOutputParameter(new ParameterString("WriteStatus", allowedValues));
+            iDelegateGetMediaInfo_Ext = new ActionDelegate(DoGetMediaInfo_Ext);
+            EnableAction(action, iDelegateGetMediaInfo_Ext, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -265,11 +209,24 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetTransportInfo must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetTransportInfo()
+        protected void EnableActionGetTransportInfo()
         {
-            iCallbackGetTransportInfo = new CallbackGetTransportInfo(DoGetTransportInfo);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionGetTransportInfo(iHandle, iCallbackGetTransportInfo, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetTransportInfo");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            allowedValues.Add("STOPPED");
+            allowedValues.Add("PLAYING");
+            action.AddOutputParameter(new ParameterString("CurrentTransportState", allowedValues));
+            allowedValues.Clear();
+            allowedValues.Add("OK");
+            allowedValues.Add("ERROR_OCCURRED");
+            action.AddOutputParameter(new ParameterString("CurrentTransportStatus", allowedValues));
+            allowedValues.Clear();
+            allowedValues.Add("1");
+            action.AddOutputParameter(new ParameterString("CurrentSpeed", allowedValues));
+            allowedValues.Clear();
+            iDelegateGetTransportInfo = new ActionDelegate(DoGetTransportInfo);
+            EnableAction(action, iDelegateGetTransportInfo, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -277,11 +234,21 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetPositionInfo must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetPositionInfo()
+        protected void EnableActionGetPositionInfo()
         {
-            iCallbackGetPositionInfo = new CallbackGetPositionInfo(DoGetPositionInfo);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionGetPositionInfo(iHandle, iCallbackGetPositionInfo, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetPositionInfo");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            action.AddOutputParameter(new ParameterUint("Track", 0, 0, 1));
+            action.AddOutputParameter(new ParameterString("TrackDuration", allowedValues));
+            action.AddOutputParameter(new ParameterString("TrackMetaData", allowedValues));
+            action.AddOutputParameter(new ParameterString("TrackURI", allowedValues));
+            action.AddOutputParameter(new ParameterString("RelTime", allowedValues));
+            action.AddOutputParameter(new ParameterString("AbsTime", allowedValues));
+            action.AddOutputParameter(new ParameterInt("RelCount"));
+            action.AddOutputParameter(new ParameterInt("AbsCount"));
+            iDelegateGetPositionInfo = new ActionDelegate(DoGetPositionInfo);
+            EnableAction(action, iDelegateGetPositionInfo, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -289,11 +256,16 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetDeviceCapabilities must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetDeviceCapabilities()
+        protected void EnableActionGetDeviceCapabilities()
         {
-            iCallbackGetDeviceCapabilities = new CallbackGetDeviceCapabilities(DoGetDeviceCapabilities);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionGetDeviceCapabilities(iHandle, iCallbackGetDeviceCapabilities, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetDeviceCapabilities");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            action.AddOutputParameter(new ParameterString("PlayMedia", allowedValues));
+            action.AddOutputParameter(new ParameterString("RecMedia", allowedValues));
+            action.AddOutputParameter(new ParameterString("RecQualityModes", allowedValues));
+            iDelegateGetDeviceCapabilities = new ActionDelegate(DoGetDeviceCapabilities);
+            EnableAction(action, iDelegateGetDeviceCapabilities, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -301,11 +273,17 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetTransportSettings must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetTransportSettings()
+        protected void EnableActionGetTransportSettings()
         {
-            iCallbackGetTransportSettings = new CallbackGetTransportSettings(DoGetTransportSettings);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionGetTransportSettings(iHandle, iCallbackGetTransportSettings, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetTransportSettings");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            allowedValues.Add("NORMAL");
+            action.AddOutputParameter(new ParameterString("PlayMode", allowedValues));
+            allowedValues.Clear();
+            action.AddOutputParameter(new ParameterString("RecQualityMode", allowedValues));
+            iDelegateGetTransportSettings = new ActionDelegate(DoGetTransportSettings);
+            EnableAction(action, iDelegateGetTransportSettings, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -313,11 +291,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStop must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStop()
+        protected void EnableActionStop()
         {
-            iCallbackStop = new CallbackStop(DoStop);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionStop(iHandle, iCallbackStop, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Stop");
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            iDelegateStop = new ActionDelegate(DoStop);
+            EnableAction(action, iDelegateStop, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -325,11 +304,16 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPlay must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPlay()
+        protected void EnableActionPlay()
         {
-            iCallbackPlay = new CallbackPlay(DoPlay);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionPlay(iHandle, iCallbackPlay, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Play");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            allowedValues.Add("1");
+            action.AddInputParameter(new ParameterString("Speed", allowedValues));
+            allowedValues.Clear();
+            iDelegatePlay = new ActionDelegate(DoPlay);
+            EnableAction(action, iDelegatePlay, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -337,11 +321,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPause must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPause()
+        protected void EnableActionPause()
         {
-            iCallbackPause = new CallbackPause(DoPause);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionPause(iHandle, iCallbackPause, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Pause");
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            iDelegatePause = new ActionDelegate(DoPause);
+            EnableAction(action, iDelegatePause, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -349,11 +334,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoRecord must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionRecord()
+        protected void EnableActionRecord()
         {
-            iCallbackRecord = new CallbackRecord(DoRecord);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionRecord(iHandle, iCallbackRecord, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Record");
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            iDelegateRecord = new ActionDelegate(DoRecord);
+            EnableAction(action, iDelegateRecord, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -361,11 +347,17 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeek must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeek()
+        protected void EnableActionSeek()
         {
-            iCallbackSeek = new CallbackSeek(DoSeek);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionSeek(iHandle, iCallbackSeek, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Seek");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            allowedValues.Add("TRACK_NR");
+            action.AddInputParameter(new ParameterString("Unit", allowedValues));
+            allowedValues.Clear();
+            action.AddInputParameter(new ParameterString("Target", allowedValues));
+            iDelegateSeek = new ActionDelegate(DoSeek);
+            EnableAction(action, iDelegateSeek, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -373,11 +365,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoNext must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionNext()
+        protected void EnableActionNext()
         {
-            iCallbackNext = new CallbackNext(DoNext);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionNext(iHandle, iCallbackNext, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Next");
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            iDelegateNext = new ActionDelegate(DoNext);
+            EnableAction(action, iDelegateNext, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -385,11 +378,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPrevious must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPrevious()
+        protected void EnableActionPrevious()
         {
-            iCallbackPrevious = new CallbackPrevious(DoPrevious);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionPrevious(iHandle, iCallbackPrevious, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Previous");
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            iDelegatePrevious = new ActionDelegate(DoPrevious);
+            EnableAction(action, iDelegatePrevious, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -397,11 +391,16 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetPlayMode must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetPlayMode()
+        protected void EnableActionSetPlayMode()
         {
-            iCallbackSetPlayMode = new CallbackSetPlayMode(DoSetPlayMode);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionSetPlayMode(iHandle, iCallbackSetPlayMode, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetPlayMode");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            allowedValues.Add("NORMAL");
+            action.AddInputParameter(new ParameterString("NewPlayMode", allowedValues));
+            allowedValues.Clear();
+            iDelegateSetPlayMode = new ActionDelegate(DoSetPlayMode);
+            EnableAction(action, iDelegateSetPlayMode, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -409,11 +408,14 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetRecordQualityMode must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetRecordQualityMode()
+        protected void EnableActionSetRecordQualityMode()
         {
-            iCallbackSetRecordQualityMode = new CallbackSetRecordQualityMode(DoSetRecordQualityMode);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionSetRecordQualityMode(iHandle, iCallbackSetRecordQualityMode, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetRecordQualityMode");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            action.AddInputParameter(new ParameterString("NewRecordQualityMode", allowedValues));
+            iDelegateSetRecordQualityMode = new ActionDelegate(DoSetRecordQualityMode);
+            EnableAction(action, iDelegateSetRecordQualityMode, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -421,11 +423,14 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetCurrentTransportActions must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetCurrentTransportActions()
+        protected void EnableActionGetCurrentTransportActions()
         {
-            iCallbackGetCurrentTransportActions = new CallbackGetCurrentTransportActions(DoGetCurrentTransportActions);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionGetCurrentTransportActions(iHandle, iCallbackGetCurrentTransportActions, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetCurrentTransportActions");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            action.AddOutputParameter(new ParameterString("Actions", allowedValues));
+            iDelegateGetCurrentTransportActions = new ActionDelegate(DoGetCurrentTransportActions);
+            EnableAction(action, iDelegateGetCurrentTransportActions, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -433,11 +438,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetDRMState must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetDRMState()
+        protected void EnableActionGetDRMState()
         {
-            iCallbackGetDRMState = new CallbackGetDRMState(DoGetDRMState);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionGetDRMState(iHandle, iCallbackGetDRMState, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetDRMState");
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            action.AddOutputParameter(new ParameterRelated("CurrentDRMState", iPropertyDRMState));
+            iDelegateGetDRMState = new ActionDelegate(DoGetDRMState);
+            EnableAction(action, iDelegateGetDRMState, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -445,11 +452,15 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetStateVariables must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetStateVariables()
+        protected void EnableActionGetStateVariables()
         {
-            iCallbackGetStateVariables = new CallbackGetStateVariables(DoGetStateVariables);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionGetStateVariables(iHandle, iCallbackGetStateVariables, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetStateVariables");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            action.AddInputParameter(new ParameterString("StateVariableList", allowedValues));
+            action.AddOutputParameter(new ParameterString("StateVariableValuePairs", allowedValues));
+            iDelegateGetStateVariables = new ActionDelegate(DoGetStateVariables);
+            EnableAction(action, iDelegateGetStateVariables, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -457,11 +468,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStateVariables must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStateVariables()
+        protected void EnableActionSetStateVariables()
         {
-            iCallbackSetStateVariables = new CallbackSetStateVariables(DoSetStateVariables);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgAVTransport2EnableActionSetStateVariables(iHandle, iCallbackSetStateVariables, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetStateVariables");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("InstanceID"));
+            action.AddInputParameter(new ParameterString("AVTransportUDN", allowedValues));
+            action.AddInputParameter(new ParameterString("ServiceType", allowedValues));
+            action.AddInputParameter(new ParameterString("ServiceId", allowedValues));
+            action.AddInputParameter(new ParameterString("StateVariableValuePairs", allowedValues));
+            action.AddOutputParameter(new ParameterString("StateVariableList", allowedValues));
+            iDelegateSetStateVariables = new ActionDelegate(DoSetStateVariables);
+            EnableAction(action, iDelegateSetStateVariables, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -811,30 +829,100 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoSetAVTransportURI(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aCurrentURI, char* aCurrentURIMetaData)
+        private static int DoSetAVTransportURI(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
-            string currentURI = Marshal.PtrToStringAnsi((IntPtr)aCurrentURI);
-            string currentURIMetaData = Marshal.PtrToStringAnsi((IntPtr)aCurrentURIMetaData);
-            self.SetAVTransportURI(aVersion, aInstanceID, currentURI, currentURIMetaData);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
+            string currentURI;
+            string currentURIMetaData;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                currentURI = invocation.ReadString("CurrentURI");
+                currentURIMetaData = invocation.ReadString("CurrentURIMetaData");
+                invocation.ReadEnd();
+                self.SetAVTransportURI(aVersion, instanceID, currentURI, currentURIMetaData);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetNextAVTransportURI(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aNextURI, char* aNextURIMetaData)
+        private static int DoSetNextAVTransportURI(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
-            string nextURI = Marshal.PtrToStringAnsi((IntPtr)aNextURI);
-            string nextURIMetaData = Marshal.PtrToStringAnsi((IntPtr)aNextURIMetaData);
-            self.SetNextAVTransportURI(aVersion, aInstanceID, nextURI, nextURIMetaData);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
+            string nextURI;
+            string nextURIMetaData;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                nextURI = invocation.ReadString("NextURI");
+                nextURIMetaData = invocation.ReadString("NextURIMetaData");
+                invocation.ReadEnd();
+                self.SetNextAVTransportURI(aVersion, instanceID, nextURI, nextURIMetaData);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetMediaInfo(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
+        private static int DoGetMediaInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
             uint nrTracks;
             string mediaDuration;
             string currentURI;
@@ -844,23 +932,55 @@ namespace Zapp.Device.Providers
             string playMedium;
             string recordMedium;
             string writeStatus;
-            self.GetMediaInfo(aVersion, aInstanceID, out nrTracks, out mediaDuration, out currentURI, out currentURIMetaData, out nextURI, out nextURIMetaData, out playMedium, out recordMedium, out writeStatus);
-            *aNrTracks = nrTracks;
-            *aMediaDuration = (char*)Marshal.StringToHGlobalAnsi(mediaDuration).ToPointer();
-            *aCurrentURI = (char*)Marshal.StringToHGlobalAnsi(currentURI).ToPointer();
-            *aCurrentURIMetaData = (char*)Marshal.StringToHGlobalAnsi(currentURIMetaData).ToPointer();
-            *aNextURI = (char*)Marshal.StringToHGlobalAnsi(nextURI).ToPointer();
-            *aNextURIMetaData = (char*)Marshal.StringToHGlobalAnsi(nextURIMetaData).ToPointer();
-            *aPlayMedium = (char*)Marshal.StringToHGlobalAnsi(playMedium).ToPointer();
-            *aRecordMedium = (char*)Marshal.StringToHGlobalAnsi(recordMedium).ToPointer();
-            *aWriteStatus = (char*)Marshal.StringToHGlobalAnsi(writeStatus).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                self.GetMediaInfo(aVersion, instanceID, out nrTracks, out mediaDuration, out currentURI, out currentURIMetaData, out nextURI, out nextURIMetaData, out playMedium, out recordMedium, out writeStatus);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("NrTracks", nrTracks);
+                invocation.WriteString("MediaDuration", mediaDuration);
+                invocation.WriteString("CurrentURI", currentURI);
+                invocation.WriteString("CurrentURIMetaData", currentURIMetaData);
+                invocation.WriteString("NextURI", nextURI);
+                invocation.WriteString("NextURIMetaData", nextURIMetaData);
+                invocation.WriteString("PlayMedium", playMedium);
+                invocation.WriteString("RecordMedium", recordMedium);
+                invocation.WriteString("WriteStatus", writeStatus);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetMediaInfo_Ext(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aCurrentType, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
+        private static int DoGetMediaInfo_Ext(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
             string currentType;
             uint nrTracks;
             string mediaDuration;
@@ -871,38 +991,102 @@ namespace Zapp.Device.Providers
             string playMedium;
             string recordMedium;
             string writeStatus;
-            self.GetMediaInfo_Ext(aVersion, aInstanceID, out currentType, out nrTracks, out mediaDuration, out currentURI, out currentURIMetaData, out nextURI, out nextURIMetaData, out playMedium, out recordMedium, out writeStatus);
-            *aCurrentType = (char*)Marshal.StringToHGlobalAnsi(currentType).ToPointer();
-            *aNrTracks = nrTracks;
-            *aMediaDuration = (char*)Marshal.StringToHGlobalAnsi(mediaDuration).ToPointer();
-            *aCurrentURI = (char*)Marshal.StringToHGlobalAnsi(currentURI).ToPointer();
-            *aCurrentURIMetaData = (char*)Marshal.StringToHGlobalAnsi(currentURIMetaData).ToPointer();
-            *aNextURI = (char*)Marshal.StringToHGlobalAnsi(nextURI).ToPointer();
-            *aNextURIMetaData = (char*)Marshal.StringToHGlobalAnsi(nextURIMetaData).ToPointer();
-            *aPlayMedium = (char*)Marshal.StringToHGlobalAnsi(playMedium).ToPointer();
-            *aRecordMedium = (char*)Marshal.StringToHGlobalAnsi(recordMedium).ToPointer();
-            *aWriteStatus = (char*)Marshal.StringToHGlobalAnsi(writeStatus).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                self.GetMediaInfo_Ext(aVersion, instanceID, out currentType, out nrTracks, out mediaDuration, out currentURI, out currentURIMetaData, out nextURI, out nextURIMetaData, out playMedium, out recordMedium, out writeStatus);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("CurrentType", currentType);
+                invocation.WriteUint("NrTracks", nrTracks);
+                invocation.WriteString("MediaDuration", mediaDuration);
+                invocation.WriteString("CurrentURI", currentURI);
+                invocation.WriteString("CurrentURIMetaData", currentURIMetaData);
+                invocation.WriteString("NextURI", nextURI);
+                invocation.WriteString("NextURIMetaData", nextURIMetaData);
+                invocation.WriteString("PlayMedium", playMedium);
+                invocation.WriteString("RecordMedium", recordMedium);
+                invocation.WriteString("WriteStatus", writeStatus);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetTransportInfo(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed)
+        private static int DoGetTransportInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
             string currentTransportState;
             string currentTransportStatus;
             string currentSpeed;
-            self.GetTransportInfo(aVersion, aInstanceID, out currentTransportState, out currentTransportStatus, out currentSpeed);
-            *aCurrentTransportState = (char*)Marshal.StringToHGlobalAnsi(currentTransportState).ToPointer();
-            *aCurrentTransportStatus = (char*)Marshal.StringToHGlobalAnsi(currentTransportStatus).ToPointer();
-            *aCurrentSpeed = (char*)Marshal.StringToHGlobalAnsi(currentSpeed).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                self.GetTransportInfo(aVersion, instanceID, out currentTransportState, out currentTransportStatus, out currentSpeed);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("CurrentTransportState", currentTransportState);
+                invocation.WriteString("CurrentTransportStatus", currentTransportStatus);
+                invocation.WriteString("CurrentSpeed", currentSpeed);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetPositionInfo(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int* aRelCount, int* aAbsCount)
+        private static int DoGetPositionInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
             uint track;
             string trackDuration;
             string trackMetaData;
@@ -911,163 +1095,683 @@ namespace Zapp.Device.Providers
             string absTime;
             int relCount;
             int absCount;
-            self.GetPositionInfo(aVersion, aInstanceID, out track, out trackDuration, out trackMetaData, out trackURI, out relTime, out absTime, out relCount, out absCount);
-            *aTrack = track;
-            *aTrackDuration = (char*)Marshal.StringToHGlobalAnsi(trackDuration).ToPointer();
-            *aTrackMetaData = (char*)Marshal.StringToHGlobalAnsi(trackMetaData).ToPointer();
-            *aTrackURI = (char*)Marshal.StringToHGlobalAnsi(trackURI).ToPointer();
-            *aRelTime = (char*)Marshal.StringToHGlobalAnsi(relTime).ToPointer();
-            *aAbsTime = (char*)Marshal.StringToHGlobalAnsi(absTime).ToPointer();
-            *aRelCount = relCount;
-            *aAbsCount = absCount;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                self.GetPositionInfo(aVersion, instanceID, out track, out trackDuration, out trackMetaData, out trackURI, out relTime, out absTime, out relCount, out absCount);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("Track", track);
+                invocation.WriteString("TrackDuration", trackDuration);
+                invocation.WriteString("TrackMetaData", trackMetaData);
+                invocation.WriteString("TrackURI", trackURI);
+                invocation.WriteString("RelTime", relTime);
+                invocation.WriteString("AbsTime", absTime);
+                invocation.WriteInt("RelCount", relCount);
+                invocation.WriteInt("AbsCount", absCount);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetDeviceCapabilities(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes)
+        private static int DoGetDeviceCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
             string playMedia;
             string recMedia;
             string recQualityModes;
-            self.GetDeviceCapabilities(aVersion, aInstanceID, out playMedia, out recMedia, out recQualityModes);
-            *aPlayMedia = (char*)Marshal.StringToHGlobalAnsi(playMedia).ToPointer();
-            *aRecMedia = (char*)Marshal.StringToHGlobalAnsi(recMedia).ToPointer();
-            *aRecQualityModes = (char*)Marshal.StringToHGlobalAnsi(recQualityModes).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                self.GetDeviceCapabilities(aVersion, instanceID, out playMedia, out recMedia, out recQualityModes);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("PlayMedia", playMedia);
+                invocation.WriteString("RecMedia", recMedia);
+                invocation.WriteString("RecQualityModes", recQualityModes);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetTransportSettings(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aPlayMode, char** aRecQualityMode)
+        private static int DoGetTransportSettings(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
             string playMode;
             string recQualityMode;
-            self.GetTransportSettings(aVersion, aInstanceID, out playMode, out recQualityMode);
-            *aPlayMode = (char*)Marshal.StringToHGlobalAnsi(playMode).ToPointer();
-            *aRecQualityMode = (char*)Marshal.StringToHGlobalAnsi(recQualityMode).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                self.GetTransportSettings(aVersion, instanceID, out playMode, out recQualityMode);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("PlayMode", playMode);
+                invocation.WriteString("RecQualityMode", recQualityMode);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoStop(IntPtr aPtr, uint aVersion, uint aInstanceID)
+        private static int DoStop(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
-            self.Stop(aVersion, aInstanceID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                self.Stop(aVersion, instanceID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoPlay(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aSpeed)
+        private static int DoPlay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
-            string speed = Marshal.PtrToStringAnsi((IntPtr)aSpeed);
-            self.Play(aVersion, aInstanceID, speed);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
+            string speed;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                speed = invocation.ReadString("Speed");
+                invocation.ReadEnd();
+                self.Play(aVersion, instanceID, speed);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoPause(IntPtr aPtr, uint aVersion, uint aInstanceID)
+        private static int DoPause(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
-            self.Pause(aVersion, aInstanceID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                self.Pause(aVersion, instanceID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoRecord(IntPtr aPtr, uint aVersion, uint aInstanceID)
+        private static int DoRecord(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
-            self.Record(aVersion, aInstanceID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                self.Record(aVersion, instanceID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSeek(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aUnit, char* aTarget)
+        private static int DoSeek(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
-            string unit = Marshal.PtrToStringAnsi((IntPtr)aUnit);
-            string target = Marshal.PtrToStringAnsi((IntPtr)aTarget);
-            self.Seek(aVersion, aInstanceID, unit, target);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
+            string unit;
+            string target;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                unit = invocation.ReadString("Unit");
+                target = invocation.ReadString("Target");
+                invocation.ReadEnd();
+                self.Seek(aVersion, instanceID, unit, target);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoNext(IntPtr aPtr, uint aVersion, uint aInstanceID)
+        private static int DoNext(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
-            self.Next(aVersion, aInstanceID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                self.Next(aVersion, instanceID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoPrevious(IntPtr aPtr, uint aVersion, uint aInstanceID)
+        private static int DoPrevious(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
-            self.Previous(aVersion, aInstanceID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                self.Previous(aVersion, instanceID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetPlayMode(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aNewPlayMode)
+        private static int DoSetPlayMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
-            string newPlayMode = Marshal.PtrToStringAnsi((IntPtr)aNewPlayMode);
-            self.SetPlayMode(aVersion, aInstanceID, newPlayMode);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
+            string newPlayMode;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                newPlayMode = invocation.ReadString("NewPlayMode");
+                invocation.ReadEnd();
+                self.SetPlayMode(aVersion, instanceID, newPlayMode);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetRecordQualityMode(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aNewRecordQualityMode)
+        private static int DoSetRecordQualityMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
-            string newRecordQualityMode = Marshal.PtrToStringAnsi((IntPtr)aNewRecordQualityMode);
-            self.SetRecordQualityMode(aVersion, aInstanceID, newRecordQualityMode);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
+            string newRecordQualityMode;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                newRecordQualityMode = invocation.ReadString("NewRecordQualityMode");
+                invocation.ReadEnd();
+                self.SetRecordQualityMode(aVersion, instanceID, newRecordQualityMode);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetCurrentTransportActions(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aActions)
+        private static int DoGetCurrentTransportActions(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
             string actions;
-            self.GetCurrentTransportActions(aVersion, aInstanceID, out actions);
-            *aActions = (char*)Marshal.StringToHGlobalAnsi(actions).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                self.GetCurrentTransportActions(aVersion, instanceID, out actions);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("Actions", actions);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetDRMState(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aCurrentDRMState)
+        private static int DoGetDRMState(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
             string currentDRMState;
-            self.GetDRMState(aVersion, aInstanceID, out currentDRMState);
-            *aCurrentDRMState = (char*)Marshal.StringToHGlobalAnsi(currentDRMState).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                self.GetDRMState(aVersion, instanceID, out currentDRMState);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("CurrentDRMState", currentDRMState);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetStateVariables(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aStateVariableList, char** aStateVariableValuePairs)
+        private static int DoGetStateVariables(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
-            string stateVariableList = Marshal.PtrToStringAnsi((IntPtr)aStateVariableList);
-            string stateVariableValuePairs;
-            self.GetStateVariables(aVersion, aInstanceID, stateVariableList, out stateVariableValuePairs);
-            *aStateVariableValuePairs = (char*)Marshal.StringToHGlobalAnsi(stateVariableValuePairs).ToPointer();
-            return 0;
-        }
-
-        private static unsafe int DoSetStateVariables(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aAVTransportUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, char** aStateVariableList)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
-            string aVTransportUDN = Marshal.PtrToStringAnsi((IntPtr)aAVTransportUDN);
-            string serviceType = Marshal.PtrToStringAnsi((IntPtr)aServiceType);
-            string serviceId = Marshal.PtrToStringAnsi((IntPtr)aServiceId);
-            string stateVariableValuePairs = Marshal.PtrToStringAnsi((IntPtr)aStateVariableValuePairs);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
             string stateVariableList;
-            self.SetStateVariables(aVersion, aInstanceID, aVTransportUDN, serviceType, serviceId, stateVariableValuePairs, out stateVariableList);
-            *aStateVariableList = (char*)Marshal.StringToHGlobalAnsi(stateVariableList).ToPointer();
+            string stateVariableValuePairs;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                stateVariableList = invocation.ReadString("StateVariableList");
+                invocation.ReadEnd();
+                self.GetStateVariables(aVersion, instanceID, stateVariableList, out stateVariableValuePairs);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("StateVariableValuePairs", stateVariableValuePairs);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoSetStateVariables(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderUpnpOrgAVTransport2 self = (DvProviderUpnpOrgAVTransport2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint instanceID;
+            string aVTransportUDN;
+            string serviceType;
+            string serviceId;
+            string stateVariableValuePairs;
+            string stateVariableList;
+            try
+            {
+                invocation.ReadStart();
+                instanceID = invocation.ReadUint("InstanceID");
+                aVTransportUDN = invocation.ReadString("AVTransportUDN");
+                serviceType = invocation.ReadString("ServiceType");
+                serviceId = invocation.ReadString("ServiceId");
+                stateVariableValuePairs = invocation.ReadString("StateVariableValuePairs");
+                invocation.ReadEnd();
+                self.SetStateVariables(aVersion, instanceID, aVTransportUDN, serviceType, serviceId, stateVariableValuePairs, out stateVariableList);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("StateVariableList", stateVariableList);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1087,21 +1791,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            DvProviderUpnpOrgAVTransport2Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

@@ -1,4 +1,4 @@
-#include <Core/DvLinnCoUkConfiguration1.h>
+#include "DvLinnCoUkConfiguration1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -29,10 +29,10 @@ void DvProviderLinnCoUkConfiguration1::GetPropertyParameterXml(Brhz& aValue)
 DvProviderLinnCoUkConfiguration1::DvProviderLinnCoUkConfiguration1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Configuration", 1)
 {
-    Functor empty;
-    iPropertyConfigurationXml = new PropertyString(new ParameterString("ConfigurationXml"), empty);
+    
+    iPropertyConfigurationXml = new PropertyString(new ParameterString("ConfigurationXml"));
     iService->AddProperty(iPropertyConfigurationXml); // passes ownership
-    iPropertyParameterXml = new PropertyString(new ParameterString("ParameterXml"), empty);
+    iPropertyParameterXml = new PropertyString(new ParameterString("ParameterXml"));
     iService->AddProperty(iPropertyParameterXml); // passes ownership
 }
 

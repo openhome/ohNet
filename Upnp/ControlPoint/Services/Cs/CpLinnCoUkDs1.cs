@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
@@ -9,164 +11,263 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncPlay();
         void BeginPlay(CpProxy.CallbackAsyncComplete aCallback);
-        void EndPlay(uint aAsyncHandle);
+        void EndPlay(IntPtr aAsyncHandle);
         void SyncPause();
         void BeginPause(CpProxy.CallbackAsyncComplete aCallback);
-        void EndPause(uint aAsyncHandle);
+        void EndPause(IntPtr aAsyncHandle);
         void SyncStop();
         void BeginStop(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStop(uint aAsyncHandle);
-        void SyncSeekSecondAbsolute(uint aaSecond);
-        void BeginSeekSecondAbsolute(uint aaSecond, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeekSecondAbsolute(uint aAsyncHandle);
-        void SyncSeekSecondRelative(int aaSecond);
-        void BeginSeekSecondRelative(int aaSecond, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeekSecondRelative(uint aAsyncHandle);
-        void SyncSeekTrackId(uint aaTrackId);
-        void BeginSeekTrackId(uint aaTrackId, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeekTrackId(uint aAsyncHandle);
-        void SyncSeekTrackAbsolute(uint aaTrack);
-        void BeginSeekTrackAbsolute(uint aaTrack, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeekTrackAbsolute(uint aAsyncHandle);
-        void SyncSeekTrackRelative(int aaTrack);
-        void BeginSeekTrackRelative(int aaTrack, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeekTrackRelative(uint aAsyncHandle);
-        void SyncState(out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId);
+        void EndStop(IntPtr aAsyncHandle);
+        void SyncSeekSecondAbsolute(uint aSecond);
+        void BeginSeekSecondAbsolute(uint aSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekSecondAbsolute(IntPtr aAsyncHandle);
+        void SyncSeekSecondRelative(int aSecond);
+        void BeginSeekSecondRelative(int aSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekSecondRelative(IntPtr aAsyncHandle);
+        void SyncSeekTrackId(uint aTrackId);
+        void BeginSeekTrackId(uint aTrackId, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekTrackId(IntPtr aAsyncHandle);
+        void SyncSeekTrackAbsolute(uint aTrack);
+        void BeginSeekTrackAbsolute(uint aTrack, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekTrackAbsolute(IntPtr aAsyncHandle);
+        void SyncSeekTrackRelative(int aTrack);
+        void BeginSeekTrackRelative(int aTrack, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekTrackRelative(IntPtr aAsyncHandle);
+        void SyncState(out String aTransportState, out uint aTrackDuration, out uint aTrackBitRate, out bool aTrackLossless, out uint aTrackBitDepth, out uint aTrackSampleRate, out String aTrackCodecName, out uint aTrackId);
         void BeginState(CpProxy.CallbackAsyncComplete aCallback);
-        void EndState(uint aAsyncHandle, out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId);
-        void SyncProtocolInfo(out string aaSupportedProtocols);
+        void EndState(IntPtr aAsyncHandle, out String aTransportState, out uint aTrackDuration, out uint aTrackBitRate, out bool aTrackLossless, out uint aTrackBitDepth, out uint aTrackSampleRate, out String aTrackCodecName, out uint aTrackId);
+        void SyncProtocolInfo(out String aSupportedProtocols);
         void BeginProtocolInfo(CpProxy.CallbackAsyncComplete aCallback);
-        void EndProtocolInfo(uint aAsyncHandle, out string aaSupportedProtocols);
-
+        void EndProtocolInfo(IntPtr aAsyncHandle, out String aSupportedProtocols);
         void SetPropertySupportedProtocolsChanged(CpProxy.CallbackPropertyChanged aSupportedProtocolsChanged);
-        void PropertySupportedProtocols(out string aSupportedProtocols);
+        String PropertySupportedProtocols();
         void SetPropertyTrackDurationChanged(CpProxy.CallbackPropertyChanged aTrackDurationChanged);
-        void PropertyTrackDuration(out uint aTrackDuration);
+        uint PropertyTrackDuration();
         void SetPropertyTrackBitRateChanged(CpProxy.CallbackPropertyChanged aTrackBitRateChanged);
-        void PropertyTrackBitRate(out uint aTrackBitRate);
+        uint PropertyTrackBitRate();
         void SetPropertyTrackLosslessChanged(CpProxy.CallbackPropertyChanged aTrackLosslessChanged);
-        void PropertyTrackLossless(out bool aTrackLossless);
+        bool PropertyTrackLossless();
         void SetPropertyTrackBitDepthChanged(CpProxy.CallbackPropertyChanged aTrackBitDepthChanged);
-        void PropertyTrackBitDepth(out uint aTrackBitDepth);
+        uint PropertyTrackBitDepth();
         void SetPropertyTrackSampleRateChanged(CpProxy.CallbackPropertyChanged aTrackSampleRateChanged);
-        void PropertyTrackSampleRate(out uint aTrackSampleRate);
+        uint PropertyTrackSampleRate();
         void SetPropertyTrackCodecNameChanged(CpProxy.CallbackPropertyChanged aTrackCodecNameChanged);
-        void PropertyTrackCodecName(out string aTrackCodecName);
+        String PropertyTrackCodecName();
         void SetPropertyTrackIdChanged(CpProxy.CallbackPropertyChanged aTrackIdChanged);
-        void PropertyTrackId(out uint aTrackId);
+        uint PropertyTrackId();
         void SetPropertyTransportStateChanged(CpProxy.CallbackPropertyChanged aTransportStateChanged);
-        void PropertyTransportState(out string aTransportState);
+        String PropertyTransportState();
     }
+
+    internal class SyncPlayLinnCoUkDs1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDs1 iService;
+
+        public SyncPlayLinnCoUkDs1(CpProxyLinnCoUkDs1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndPlay(aAsyncHandle);
+        }
+    };
+
+    internal class SyncPauseLinnCoUkDs1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDs1 iService;
+
+        public SyncPauseLinnCoUkDs1(CpProxyLinnCoUkDs1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndPause(aAsyncHandle);
+        }
+    };
+
+    internal class SyncStopLinnCoUkDs1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDs1 iService;
+
+        public SyncStopLinnCoUkDs1(CpProxyLinnCoUkDs1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndStop(aAsyncHandle);
+        }
+    };
+
+    internal class SyncSeekSecondAbsoluteLinnCoUkDs1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDs1 iService;
+
+        public SyncSeekSecondAbsoluteLinnCoUkDs1(CpProxyLinnCoUkDs1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSeekSecondAbsolute(aAsyncHandle);
+        }
+    };
+
+    internal class SyncSeekSecondRelativeLinnCoUkDs1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDs1 iService;
+
+        public SyncSeekSecondRelativeLinnCoUkDs1(CpProxyLinnCoUkDs1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSeekSecondRelative(aAsyncHandle);
+        }
+    };
+
+    internal class SyncSeekTrackIdLinnCoUkDs1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDs1 iService;
+
+        public SyncSeekTrackIdLinnCoUkDs1(CpProxyLinnCoUkDs1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSeekTrackId(aAsyncHandle);
+        }
+    };
+
+    internal class SyncSeekTrackAbsoluteLinnCoUkDs1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDs1 iService;
+
+        public SyncSeekTrackAbsoluteLinnCoUkDs1(CpProxyLinnCoUkDs1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSeekTrackAbsolute(aAsyncHandle);
+        }
+    };
+
+    internal class SyncSeekTrackRelativeLinnCoUkDs1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDs1 iService;
+
+        public SyncSeekTrackRelativeLinnCoUkDs1(CpProxyLinnCoUkDs1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSeekTrackRelative(aAsyncHandle);
+        }
+    };
+
+    internal class SyncStateLinnCoUkDs1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDs1 iService;
+        private String iTransportState;
+        private uint iTrackDuration;
+        private uint iTrackBitRate;
+        private bool iTrackLossless;
+        private uint iTrackBitDepth;
+        private uint iTrackSampleRate;
+        private String iTrackCodecName;
+        private uint iTrackId;
+
+        public SyncStateLinnCoUkDs1(CpProxyLinnCoUkDs1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String TransportState()
+        {
+            return iTransportState;
+        }
+        public uint TrackDuration()
+        {
+            return iTrackDuration;
+        }
+        public uint TrackBitRate()
+        {
+            return iTrackBitRate;
+        }
+        public bool TrackLossless()
+        {
+            return iTrackLossless;
+        }
+        public uint TrackBitDepth()
+        {
+            return iTrackBitDepth;
+        }
+        public uint TrackSampleRate()
+        {
+            return iTrackSampleRate;
+        }
+        public String TrackCodecName()
+        {
+            return iTrackCodecName;
+        }
+        public uint TrackId()
+        {
+            return iTrackId;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndState(aAsyncHandle, out iTransportState, out iTrackDuration, out iTrackBitRate, out iTrackLossless, out iTrackBitDepth, out iTrackSampleRate, out iTrackCodecName, out iTrackId);
+        }
+    };
+
+    internal class SyncProtocolInfoLinnCoUkDs1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkDs1 iService;
+        private String iSupportedProtocols;
+
+        public SyncProtocolInfoLinnCoUkDs1(CpProxyLinnCoUkDs1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String SupportedProtocols()
+        {
+            return iSupportedProtocols;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndProtocolInfo(aAsyncHandle, out iSupportedProtocols);
+        }
+    };
 
     /// <summary>
     /// Proxy for the linn.co.uk:Ds:1 UPnP service
     /// </summary>
     public class CpProxyLinnCoUkDs1 : CpProxy, IDisposable, ICpProxyLinnCoUkDs1
     {
-        [DllImport("CpLinnCoUkDs1")]
-        static extern uint CpProxyLinnCoUkDs1Create(uint aDeviceHandle);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1Destroy(uint aHandle);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncPlay(uint aHandle);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginPlay(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndPlay(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncPause(uint aHandle);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginPause(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndPause(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncStop(uint aHandle);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginStop(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndStop(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekSecondAbsolute(uint aHandle, uint aaSecond);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekSecondAbsolute(uint aHandle, uint aaSecond, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndSeekSecondAbsolute(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekSecondRelative(uint aHandle, int aaSecond);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekSecondRelative(uint aHandle, int aaSecond, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndSeekSecondRelative(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekTrackId(uint aHandle, uint aaTrackId);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekTrackId(uint aHandle, uint aaTrackId, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndSeekTrackId(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekTrackAbsolute(uint aHandle, uint aaTrack);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekTrackAbsolute(uint aHandle, uint aaTrack, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndSeekTrackAbsolute(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekTrackRelative(uint aHandle, int aaTrack);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekTrackRelative(uint aHandle, int aaTrack, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndSeekTrackRelative(uint aHandle, uint aAsync);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncState(uint aHandle, char** aaTransportState, uint* aaTrackDuration, uint* aaTrackBitRate, uint* aaTrackLossless, uint* aaTrackBitDepth, uint* aaTrackSampleRate, char** aaTrackCodecName, uint* aaTrackId);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginState(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndState(uint aHandle, uint aAsync, char** aaTransportState, uint* aaTrackDuration, uint* aaTrackBitRate, uint* aaTrackLossless, uint* aaTrackBitDepth, uint* aaTrackSampleRate, char** aaTrackCodecName, uint* aaTrackId);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncProtocolInfo(uint aHandle, char** aaSupportedProtocols);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginProtocolInfo(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndProtocolInfo(uint aHandle, uint aAsync, char** aaSupportedProtocols);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertySupportedProtocolsChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackDurationChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackBitRateChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackLosslessChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackBitDepthChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackSampleRateChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackCodecNameChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackIdChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTransportStateChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertySupportedProtocols(uint aHandle, char** aSupportedProtocols);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackDuration(uint aHandle, uint* aTrackDuration);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackBitRate(uint aHandle, uint* aTrackBitRate);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackLossless(uint aHandle, uint* aTrackLossless);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackBitDepth(uint aHandle, uint* aTrackBitDepth);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackSampleRate(uint aHandle, uint* aTrackSampleRate);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackCodecName(uint aHandle, char** aTrackCodecName);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackId(uint aHandle, uint* aTrackId);
-        [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTransportState(uint aHandle, char** aTransportState);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionPlay;
+        private Zapp.Core.Action iActionPause;
+        private Zapp.Core.Action iActionStop;
+        private Zapp.Core.Action iActionSeekSecondAbsolute;
+        private Zapp.Core.Action iActionSeekSecondRelative;
+        private Zapp.Core.Action iActionSeekTrackId;
+        private Zapp.Core.Action iActionSeekTrackAbsolute;
+        private Zapp.Core.Action iActionSeekTrackRelative;
+        private Zapp.Core.Action iActionState;
+        private Zapp.Core.Action iActionProtocolInfo;
+        private PropertyString iSupportedProtocols;
+        private PropertyUint iTrackDuration;
+        private PropertyUint iTrackBitRate;
+        private PropertyBool iTrackLossless;
+        private PropertyUint iTrackBitDepth;
+        private PropertyUint iTrackSampleRate;
+        private PropertyString iTrackCodecName;
+        private PropertyUint iTrackId;
+        private PropertyString iTransportState;
         private CallbackPropertyChanged iSupportedProtocolsChanged;
         private CallbackPropertyChanged iTrackDurationChanged;
         private CallbackPropertyChanged iTrackBitRateChanged;
@@ -176,15 +277,6 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iTrackCodecNameChanged;
         private CallbackPropertyChanged iTrackIdChanged;
         private CallbackPropertyChanged iTransportStateChanged;
-        private Callback iCallbackSupportedProtocolsChanged;
-        private Callback iCallbackTrackDurationChanged;
-        private Callback iCallbackTrackBitRateChanged;
-        private Callback iCallbackTrackLosslessChanged;
-        private Callback iCallbackTrackBitDepthChanged;
-        private Callback iCallbackTrackSampleRateChanged;
-        private Callback iCallbackTrackCodecNameChanged;
-        private Callback iCallbackTrackIdChanged;
-        private Callback iCallbackTransportStateChanged;
 
         /// <summary>
         /// Constructor
@@ -192,9 +284,82 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkDs1(CpDevice aDevice)
+            : base("linn-co-uk", "Ds", 1, aDevice)
         {
-            iHandle = CpProxyLinnCoUkDs1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionPlay = new Zapp.Core.Action("Play");
+
+            iActionPause = new Zapp.Core.Action("Pause");
+
+            iActionStop = new Zapp.Core.Action("Stop");
+
+            iActionSeekSecondAbsolute = new Zapp.Core.Action("SeekSecondAbsolute");
+            param = new ParameterUint("aSecond");
+            iActionSeekSecondAbsolute.AddInputParameter(param);
+
+            iActionSeekSecondRelative = new Zapp.Core.Action("SeekSecondRelative");
+            param = new ParameterInt("aSecond");
+            iActionSeekSecondRelative.AddInputParameter(param);
+
+            iActionSeekTrackId = new Zapp.Core.Action("SeekTrackId");
+            param = new ParameterUint("aTrackId");
+            iActionSeekTrackId.AddInputParameter(param);
+
+            iActionSeekTrackAbsolute = new Zapp.Core.Action("SeekTrackAbsolute");
+            param = new ParameterUint("aTrack");
+            iActionSeekTrackAbsolute.AddInputParameter(param);
+
+            iActionSeekTrackRelative = new Zapp.Core.Action("SeekTrackRelative");
+            param = new ParameterInt("aTrack");
+            iActionSeekTrackRelative.AddInputParameter(param);
+
+            iActionState = new Zapp.Core.Action("State");
+            allowedValues.Add("Playing");
+            allowedValues.Add("Paused");
+            allowedValues.Add("Stopped");
+            allowedValues.Add("Buffering");
+            param = new ParameterString("aTransportState", allowedValues);
+            iActionState.AddOutputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterUint("aTrackDuration");
+            iActionState.AddOutputParameter(param);
+            param = new ParameterUint("aTrackBitRate");
+            iActionState.AddOutputParameter(param);
+            param = new ParameterBool("aTrackLossless");
+            iActionState.AddOutputParameter(param);
+            param = new ParameterUint("aTrackBitDepth");
+            iActionState.AddOutputParameter(param);
+            param = new ParameterUint("aTrackSampleRate");
+            iActionState.AddOutputParameter(param);
+            param = new ParameterString("aTrackCodecName", allowedValues);
+            iActionState.AddOutputParameter(param);
+            param = new ParameterUint("aTrackId");
+            iActionState.AddOutputParameter(param);
+
+            iActionProtocolInfo = new Zapp.Core.Action("ProtocolInfo");
+            param = new ParameterString("aSupportedProtocols", allowedValues);
+            iActionProtocolInfo.AddOutputParameter(param);
+
+            iSupportedProtocols = new PropertyString("SupportedProtocols", SupportedProtocolsPropertyChanged);
+            AddProperty(iSupportedProtocols);
+            iTrackDuration = new PropertyUint("TrackDuration", TrackDurationPropertyChanged);
+            AddProperty(iTrackDuration);
+            iTrackBitRate = new PropertyUint("TrackBitRate", TrackBitRatePropertyChanged);
+            AddProperty(iTrackBitRate);
+            iTrackLossless = new PropertyBool("TrackLossless", TrackLosslessPropertyChanged);
+            AddProperty(iTrackLossless);
+            iTrackBitDepth = new PropertyUint("TrackBitDepth", TrackBitDepthPropertyChanged);
+            AddProperty(iTrackBitDepth);
+            iTrackSampleRate = new PropertyUint("TrackSampleRate", TrackSampleRatePropertyChanged);
+            AddProperty(iTrackSampleRate);
+            iTrackCodecName = new PropertyString("TrackCodecName", TrackCodecNamePropertyChanged);
+            AddProperty(iTrackCodecName);
+            iTrackId = new PropertyUint("TrackId", TrackIdPropertyChanged);
+            AddProperty(iTrackId);
+            iTransportState = new PropertyString("TransportState", TransportStatePropertyChanged);
+            AddProperty(iTransportState);
         }
 
         /// <summary>
@@ -202,11 +367,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncPlay()
+        public void SyncPlay()
         {
-            {
-                CpProxyLinnCoUkDs1SyncPlay(iHandle);
-            }
+            SyncPlayLinnCoUkDs1 sync = new SyncPlayLinnCoUkDs1(this);
+            BeginPlay(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -217,11 +383,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndPlay().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginPlay(CallbackAsyncComplete aCallback)
+        public void BeginPlay(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDs1BeginPlay(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionPlay, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -229,14 +394,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndPlay(uint aAsyncHandle)
+        public void EndPlay(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkDs1EndPlay(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -244,11 +403,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncPause()
+        public void SyncPause()
         {
-            {
-                CpProxyLinnCoUkDs1SyncPause(iHandle);
-            }
+            SyncPauseLinnCoUkDs1 sync = new SyncPauseLinnCoUkDs1(this);
+            BeginPause(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -259,11 +419,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndPause().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginPause(CallbackAsyncComplete aCallback)
+        public void BeginPause(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDs1BeginPause(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionPause, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -271,14 +430,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndPause(uint aAsyncHandle)
+        public void EndPause(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkDs1EndPause(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -286,11 +439,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncStop()
+        public void SyncStop()
         {
-            {
-                CpProxyLinnCoUkDs1SyncStop(iHandle);
-            }
+            SyncStopLinnCoUkDs1 sync = new SyncStopLinnCoUkDs1(this);
+            BeginStop(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -301,11 +455,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndStop().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginStop(CallbackAsyncComplete aCallback)
+        public void BeginStop(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDs1BeginStop(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionStop, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -313,14 +466,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndStop(uint aAsyncHandle)
+        public void EndStop(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkDs1EndStop(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -329,11 +476,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSecond"></param>
-        public unsafe void SyncSeekSecondAbsolute(uint aaSecond)
+        public void SyncSeekSecondAbsolute(uint aSecond)
         {
-            {
-                CpProxyLinnCoUkDs1SyncSeekSecondAbsolute(iHandle, aaSecond);
-            }
+            SyncSeekSecondAbsoluteLinnCoUkDs1 sync = new SyncSeekSecondAbsoluteLinnCoUkDs1(this);
+            BeginSeekSecondAbsolute(aSecond, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -345,11 +493,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSecond"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSeekSecondAbsolute(uint aaSecond, CallbackAsyncComplete aCallback)
+        public void BeginSeekSecondAbsolute(uint aSecond, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDs1BeginSeekSecondAbsolute(iHandle, aaSecond, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSeekSecondAbsolute, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSeekSecondAbsolute.InputParameter(inIndex++), aSecond));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -357,14 +506,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSeekSecondAbsolute(uint aAsyncHandle)
+        public void EndSeekSecondAbsolute(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkDs1EndSeekSecondAbsolute(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -373,11 +516,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSecond"></param>
-        public unsafe void SyncSeekSecondRelative(int aaSecond)
+        public void SyncSeekSecondRelative(int aSecond)
         {
-            {
-                CpProxyLinnCoUkDs1SyncSeekSecondRelative(iHandle, aaSecond);
-            }
+            SyncSeekSecondRelativeLinnCoUkDs1 sync = new SyncSeekSecondRelativeLinnCoUkDs1(this);
+            BeginSeekSecondRelative(aSecond, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -389,11 +533,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSecond"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSeekSecondRelative(int aaSecond, CallbackAsyncComplete aCallback)
+        public void BeginSeekSecondRelative(int aSecond, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDs1BeginSeekSecondRelative(iHandle, aaSecond, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSeekSecondRelative, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentInt((ParameterInt)iActionSeekSecondRelative.InputParameter(inIndex++), aSecond));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -401,14 +546,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSeekSecondRelative(uint aAsyncHandle)
+        public void EndSeekSecondRelative(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkDs1EndSeekSecondRelative(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -417,11 +556,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaTrackId"></param>
-        public unsafe void SyncSeekTrackId(uint aaTrackId)
+        public void SyncSeekTrackId(uint aTrackId)
         {
-            {
-                CpProxyLinnCoUkDs1SyncSeekTrackId(iHandle, aaTrackId);
-            }
+            SyncSeekTrackIdLinnCoUkDs1 sync = new SyncSeekTrackIdLinnCoUkDs1(this);
+            BeginSeekTrackId(aTrackId, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -433,11 +573,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackId"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSeekTrackId(uint aaTrackId, CallbackAsyncComplete aCallback)
+        public void BeginSeekTrackId(uint aTrackId, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDs1BeginSeekTrackId(iHandle, aaTrackId, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSeekTrackId, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSeekTrackId.InputParameter(inIndex++), aTrackId));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -445,14 +586,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSeekTrackId(uint aAsyncHandle)
+        public void EndSeekTrackId(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkDs1EndSeekTrackId(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -461,11 +596,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaTrack"></param>
-        public unsafe void SyncSeekTrackAbsolute(uint aaTrack)
+        public void SyncSeekTrackAbsolute(uint aTrack)
         {
-            {
-                CpProxyLinnCoUkDs1SyncSeekTrackAbsolute(iHandle, aaTrack);
-            }
+            SyncSeekTrackAbsoluteLinnCoUkDs1 sync = new SyncSeekTrackAbsoluteLinnCoUkDs1(this);
+            BeginSeekTrackAbsolute(aTrack, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -477,11 +613,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrack"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSeekTrackAbsolute(uint aaTrack, CallbackAsyncComplete aCallback)
+        public void BeginSeekTrackAbsolute(uint aTrack, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDs1BeginSeekTrackAbsolute(iHandle, aaTrack, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSeekTrackAbsolute, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSeekTrackAbsolute.InputParameter(inIndex++), aTrack));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -489,14 +626,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSeekTrackAbsolute(uint aAsyncHandle)
+        public void EndSeekTrackAbsolute(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkDs1EndSeekTrackAbsolute(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -505,11 +636,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaTrack"></param>
-        public unsafe void SyncSeekTrackRelative(int aaTrack)
+        public void SyncSeekTrackRelative(int aTrack)
         {
-            {
-                CpProxyLinnCoUkDs1SyncSeekTrackRelative(iHandle, aaTrack);
-            }
+            SyncSeekTrackRelativeLinnCoUkDs1 sync = new SyncSeekTrackRelativeLinnCoUkDs1(this);
+            BeginSeekTrackRelative(aTrack, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -521,11 +653,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrack"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSeekTrackRelative(int aaTrack, CallbackAsyncComplete aCallback)
+        public void BeginSeekTrackRelative(int aTrack, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDs1BeginSeekTrackRelative(iHandle, aaTrack, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSeekTrackRelative, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentInt((ParameterInt)iActionSeekTrackRelative.InputParameter(inIndex++), aTrack));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -533,14 +666,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSeekTrackRelative(uint aAsyncHandle)
+        public void EndSeekTrackRelative(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkDs1EndSeekTrackRelative(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -556,24 +683,20 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackSampleRate"></param>
         /// <param name="aaTrackCodecName"></param>
         /// <param name="aaTrackId"></param>
-        public unsafe void SyncState(out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId)
+        public void SyncState(out String aTransportState, out uint aTrackDuration, out uint aTrackBitRate, out bool aTrackLossless, out uint aTrackBitDepth, out uint aTrackSampleRate, out String aTrackCodecName, out uint aTrackId)
         {
-            char* aTransportState;
-            uint aTrackLossless;
-            char* aTrackCodecName;
-            fixed (uint* aTrackDuration = &aaTrackDuration)
-            fixed (uint* aTrackBitRate = &aaTrackBitRate)
-            fixed (uint* aTrackBitDepth = &aaTrackBitDepth)
-            fixed (uint* aTrackSampleRate = &aaTrackSampleRate)
-            fixed (uint* aTrackId = &aaTrackId)
-            {
-                CpProxyLinnCoUkDs1SyncState(iHandle, &aTransportState, aTrackDuration, aTrackBitRate, &aTrackLossless, aTrackBitDepth, aTrackSampleRate, &aTrackCodecName, aTrackId);
-            }
-            aaTransportState = Marshal.PtrToStringAnsi((IntPtr)aTransportState);
-            ZappFree(aTransportState);
-            aaTrackLossless = (aTrackLossless != 0);
-            aaTrackCodecName = Marshal.PtrToStringAnsi((IntPtr)aTrackCodecName);
-            ZappFree(aTrackCodecName);
+            SyncStateLinnCoUkDs1 sync = new SyncStateLinnCoUkDs1(this);
+            BeginState(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aTransportState = sync.TransportState();
+            aTrackDuration = sync.TrackDuration();
+            aTrackBitRate = sync.TrackBitRate();
+            aTrackLossless = sync.TrackLossless();
+            aTrackBitDepth = sync.TrackBitDepth();
+            aTrackSampleRate = sync.TrackSampleRate();
+            aTrackCodecName = sync.TrackCodecName();
+            aTrackId = sync.TrackId();
         }
 
         /// <summary>
@@ -584,11 +707,19 @@ namespace Zapp.ControlPoint.Proxies
         /// EndState().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginState(CallbackAsyncComplete aCallback)
+        public void BeginState(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDs1BeginState(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionState, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionState.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionState.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionState.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentBool((ParameterBool)iActionState.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionState.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionState.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionState.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionState.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -604,27 +735,17 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackSampleRate"></param>
         /// <param name="aaTrackCodecName"></param>
         /// <param name="aaTrackId"></param>
-        public unsafe void EndState(uint aAsyncHandle, out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId)
+        public void EndState(IntPtr aAsyncHandle, out String aTransportState, out uint aTrackDuration, out uint aTrackBitRate, out bool aTrackLossless, out uint aTrackBitDepth, out uint aTrackSampleRate, out String aTrackCodecName, out uint aTrackId)
         {
-            char* aTransportState;
-            uint aTrackLossless;
-            char* aTrackCodecName;
-            fixed (uint* aTrackDuration = &aaTrackDuration)
-            fixed (uint* aTrackBitRate = &aaTrackBitRate)
-            fixed (uint* aTrackBitDepth = &aaTrackBitDepth)
-            fixed (uint* aTrackSampleRate = &aaTrackSampleRate)
-            fixed (uint* aTrackId = &aaTrackId)
-            {
-                if (0 != CpProxyLinnCoUkDs1EndState(iHandle, aAsyncHandle, &aTransportState, aTrackDuration, aTrackBitRate, &aTrackLossless, aTrackBitDepth, aTrackSampleRate, &aTrackCodecName, aTrackId))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaTransportState = Marshal.PtrToStringAnsi((IntPtr)aTransportState);
-            ZappFree(aTransportState);
-            aaTrackLossless = (aTrackLossless != 0);
-            aaTrackCodecName = Marshal.PtrToStringAnsi((IntPtr)aTrackCodecName);
-            ZappFree(aTrackCodecName);
+            uint index = 0;
+            aTransportState = Invocation.OutputString(aAsyncHandle, index++);
+            aTrackDuration = Invocation.OutputUint(aAsyncHandle, index++);
+            aTrackBitRate = Invocation.OutputUint(aAsyncHandle, index++);
+            aTrackLossless = Invocation.OutputBool(aAsyncHandle, index++);
+            aTrackBitDepth = Invocation.OutputUint(aAsyncHandle, index++);
+            aTrackSampleRate = Invocation.OutputUint(aAsyncHandle, index++);
+            aTrackCodecName = Invocation.OutputString(aAsyncHandle, index++);
+            aTrackId = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -633,14 +754,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSupportedProtocols"></param>
-        public unsafe void SyncProtocolInfo(out string aaSupportedProtocols)
+        public void SyncProtocolInfo(out String aSupportedProtocols)
         {
-            char* aSupportedProtocols;
-            {
-                CpProxyLinnCoUkDs1SyncProtocolInfo(iHandle, &aSupportedProtocols);
-            }
-            aaSupportedProtocols = Marshal.PtrToStringAnsi((IntPtr)aSupportedProtocols);
-            ZappFree(aSupportedProtocols);
+            SyncProtocolInfoLinnCoUkDs1 sync = new SyncProtocolInfoLinnCoUkDs1(this);
+            BeginProtocolInfo(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aSupportedProtocols = sync.SupportedProtocols();
         }
 
         /// <summary>
@@ -651,11 +771,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndProtocolInfo().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginProtocolInfo(CallbackAsyncComplete aCallback)
+        public void BeginProtocolInfo(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkDs1BeginProtocolInfo(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionProtocolInfo, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionProtocolInfo.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -664,17 +785,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSupportedProtocols"></param>
-        public unsafe void EndProtocolInfo(uint aAsyncHandle, out string aaSupportedProtocols)
+        public void EndProtocolInfo(IntPtr aAsyncHandle, out String aSupportedProtocols)
         {
-            char* aSupportedProtocols;
-            {
-                if (0 != CpProxyLinnCoUkDs1EndProtocolInfo(iHandle, aAsyncHandle, &aSupportedProtocols))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaSupportedProtocols = Marshal.PtrToStringAnsi((IntPtr)aSupportedProtocols);
-            ZappFree(aSupportedProtocols);
+            uint index = 0;
+            aSupportedProtocols = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -685,17 +799,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSupportedProtocolsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySupportedProtocolsChanged(CallbackPropertyChanged aSupportedProtocolsChanged)
         {
-            iSupportedProtocolsChanged = aSupportedProtocolsChanged;
-            iCallbackSupportedProtocolsChanged = new Callback(PropertySupportedProtocolsChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkDs1SetPropertySupportedProtocolsChanged(iHandle, iCallbackSupportedProtocolsChanged, ptr);
+            lock (this)
+            {
+                iSupportedProtocolsChanged = aSupportedProtocolsChanged;
+            }
         }
 
-        private void PropertySupportedProtocolsChanged(IntPtr aPtr)
+        private void SupportedProtocolsPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkDs1 self = (CpProxyLinnCoUkDs1)gch.Target;
-            self.iSupportedProtocolsChanged();
+            lock (this)
+            {
+                if (iSupportedProtocolsChanged != null)
+                {
+                    iSupportedProtocolsChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -706,17 +824,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackDurationChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackDurationChanged(CallbackPropertyChanged aTrackDurationChanged)
         {
-            iTrackDurationChanged = aTrackDurationChanged;
-            iCallbackTrackDurationChanged = new Callback(PropertyTrackDurationChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkDs1SetPropertyTrackDurationChanged(iHandle, iCallbackTrackDurationChanged, ptr);
+            lock (this)
+            {
+                iTrackDurationChanged = aTrackDurationChanged;
+            }
         }
 
-        private void PropertyTrackDurationChanged(IntPtr aPtr)
+        private void TrackDurationPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkDs1 self = (CpProxyLinnCoUkDs1)gch.Target;
-            self.iTrackDurationChanged();
+            lock (this)
+            {
+                if (iTrackDurationChanged != null)
+                {
+                    iTrackDurationChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -727,17 +849,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackBitRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackBitRateChanged(CallbackPropertyChanged aTrackBitRateChanged)
         {
-            iTrackBitRateChanged = aTrackBitRateChanged;
-            iCallbackTrackBitRateChanged = new Callback(PropertyTrackBitRateChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkDs1SetPropertyTrackBitRateChanged(iHandle, iCallbackTrackBitRateChanged, ptr);
+            lock (this)
+            {
+                iTrackBitRateChanged = aTrackBitRateChanged;
+            }
         }
 
-        private void PropertyTrackBitRateChanged(IntPtr aPtr)
+        private void TrackBitRatePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkDs1 self = (CpProxyLinnCoUkDs1)gch.Target;
-            self.iTrackBitRateChanged();
+            lock (this)
+            {
+                if (iTrackBitRateChanged != null)
+                {
+                    iTrackBitRateChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -748,17 +874,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackLosslessChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackLosslessChanged(CallbackPropertyChanged aTrackLosslessChanged)
         {
-            iTrackLosslessChanged = aTrackLosslessChanged;
-            iCallbackTrackLosslessChanged = new Callback(PropertyTrackLosslessChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkDs1SetPropertyTrackLosslessChanged(iHandle, iCallbackTrackLosslessChanged, ptr);
+            lock (this)
+            {
+                iTrackLosslessChanged = aTrackLosslessChanged;
+            }
         }
 
-        private void PropertyTrackLosslessChanged(IntPtr aPtr)
+        private void TrackLosslessPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkDs1 self = (CpProxyLinnCoUkDs1)gch.Target;
-            self.iTrackLosslessChanged();
+            lock (this)
+            {
+                if (iTrackLosslessChanged != null)
+                {
+                    iTrackLosslessChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -769,17 +899,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackBitDepthChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackBitDepthChanged(CallbackPropertyChanged aTrackBitDepthChanged)
         {
-            iTrackBitDepthChanged = aTrackBitDepthChanged;
-            iCallbackTrackBitDepthChanged = new Callback(PropertyTrackBitDepthChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkDs1SetPropertyTrackBitDepthChanged(iHandle, iCallbackTrackBitDepthChanged, ptr);
+            lock (this)
+            {
+                iTrackBitDepthChanged = aTrackBitDepthChanged;
+            }
         }
 
-        private void PropertyTrackBitDepthChanged(IntPtr aPtr)
+        private void TrackBitDepthPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkDs1 self = (CpProxyLinnCoUkDs1)gch.Target;
-            self.iTrackBitDepthChanged();
+            lock (this)
+            {
+                if (iTrackBitDepthChanged != null)
+                {
+                    iTrackBitDepthChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -790,17 +924,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackSampleRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackSampleRateChanged(CallbackPropertyChanged aTrackSampleRateChanged)
         {
-            iTrackSampleRateChanged = aTrackSampleRateChanged;
-            iCallbackTrackSampleRateChanged = new Callback(PropertyTrackSampleRateChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkDs1SetPropertyTrackSampleRateChanged(iHandle, iCallbackTrackSampleRateChanged, ptr);
+            lock (this)
+            {
+                iTrackSampleRateChanged = aTrackSampleRateChanged;
+            }
         }
 
-        private void PropertyTrackSampleRateChanged(IntPtr aPtr)
+        private void TrackSampleRatePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkDs1 self = (CpProxyLinnCoUkDs1)gch.Target;
-            self.iTrackSampleRateChanged();
+            lock (this)
+            {
+                if (iTrackSampleRateChanged != null)
+                {
+                    iTrackSampleRateChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -811,17 +949,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackCodecNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackCodecNameChanged(CallbackPropertyChanged aTrackCodecNameChanged)
         {
-            iTrackCodecNameChanged = aTrackCodecNameChanged;
-            iCallbackTrackCodecNameChanged = new Callback(PropertyTrackCodecNameChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkDs1SetPropertyTrackCodecNameChanged(iHandle, iCallbackTrackCodecNameChanged, ptr);
+            lock (this)
+            {
+                iTrackCodecNameChanged = aTrackCodecNameChanged;
+            }
         }
 
-        private void PropertyTrackCodecNameChanged(IntPtr aPtr)
+        private void TrackCodecNamePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkDs1 self = (CpProxyLinnCoUkDs1)gch.Target;
-            self.iTrackCodecNameChanged();
+            lock (this)
+            {
+                if (iTrackCodecNameChanged != null)
+                {
+                    iTrackCodecNameChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -832,17 +974,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackIdChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackIdChanged(CallbackPropertyChanged aTrackIdChanged)
         {
-            iTrackIdChanged = aTrackIdChanged;
-            iCallbackTrackIdChanged = new Callback(PropertyTrackIdChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkDs1SetPropertyTrackIdChanged(iHandle, iCallbackTrackIdChanged, ptr);
+            lock (this)
+            {
+                iTrackIdChanged = aTrackIdChanged;
+            }
         }
 
-        private void PropertyTrackIdChanged(IntPtr aPtr)
+        private void TrackIdPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkDs1 self = (CpProxyLinnCoUkDs1)gch.Target;
-            self.iTrackIdChanged();
+            lock (this)
+            {
+                if (iTrackIdChanged != null)
+                {
+                    iTrackIdChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -853,17 +999,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransportStateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTransportStateChanged(CallbackPropertyChanged aTransportStateChanged)
         {
-            iTransportStateChanged = aTransportStateChanged;
-            iCallbackTransportStateChanged = new Callback(PropertyTransportStateChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkDs1SetPropertyTransportStateChanged(iHandle, iCallbackTransportStateChanged, ptr);
+            lock (this)
+            {
+                iTransportStateChanged = aTransportStateChanged;
+            }
         }
 
-        private void PropertyTransportStateChanged(IntPtr aPtr)
+        private void TransportStatePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkDs1 self = (CpProxyLinnCoUkDs1)gch.Target;
-            self.iTransportStateChanged();
+            lock (this)
+            {
+                if (iTransportStateChanged != null)
+                {
+                    iTransportStateChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -873,12 +1023,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aSupportedProtocols">Will be set to the value of the property</param>
-        public unsafe void PropertySupportedProtocols(out string aSupportedProtocols)
+        public String PropertySupportedProtocols()
         {
-            char* ptr;
-            CpProxyLinnCoUkDs1PropertySupportedProtocols(iHandle, &ptr);
-            aSupportedProtocols = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iSupportedProtocols.Value();
         }
 
         /// <summary>
@@ -888,12 +1035,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aTrackDuration">Will be set to the value of the property</param>
-        public unsafe void PropertyTrackDuration(out uint aTrackDuration)
+        public uint PropertyTrackDuration()
         {
-            fixed (uint* trackDuration = &aTrackDuration)
-            {
-                CpProxyLinnCoUkDs1PropertyTrackDuration(iHandle, trackDuration);
-            }
+            return iTrackDuration.Value();
         }
 
         /// <summary>
@@ -903,12 +1047,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aTrackBitRate">Will be set to the value of the property</param>
-        public unsafe void PropertyTrackBitRate(out uint aTrackBitRate)
+        public uint PropertyTrackBitRate()
         {
-            fixed (uint* trackBitRate = &aTrackBitRate)
-            {
-                CpProxyLinnCoUkDs1PropertyTrackBitRate(iHandle, trackBitRate);
-            }
+            return iTrackBitRate.Value();
         }
 
         /// <summary>
@@ -918,11 +1059,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aTrackLossless">Will be set to the value of the property</param>
-        public unsafe void PropertyTrackLossless(out bool aTrackLossless)
+        public bool PropertyTrackLossless()
         {
-            uint trackLossless;
-            CpProxyLinnCoUkDs1PropertyTrackLossless(iHandle, &trackLossless);
-            aTrackLossless = (trackLossless != 0);
+            return iTrackLossless.Value();
         }
 
         /// <summary>
@@ -932,12 +1071,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aTrackBitDepth">Will be set to the value of the property</param>
-        public unsafe void PropertyTrackBitDepth(out uint aTrackBitDepth)
+        public uint PropertyTrackBitDepth()
         {
-            fixed (uint* trackBitDepth = &aTrackBitDepth)
-            {
-                CpProxyLinnCoUkDs1PropertyTrackBitDepth(iHandle, trackBitDepth);
-            }
+            return iTrackBitDepth.Value();
         }
 
         /// <summary>
@@ -947,12 +1083,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aTrackSampleRate">Will be set to the value of the property</param>
-        public unsafe void PropertyTrackSampleRate(out uint aTrackSampleRate)
+        public uint PropertyTrackSampleRate()
         {
-            fixed (uint* trackSampleRate = &aTrackSampleRate)
-            {
-                CpProxyLinnCoUkDs1PropertyTrackSampleRate(iHandle, trackSampleRate);
-            }
+            return iTrackSampleRate.Value();
         }
 
         /// <summary>
@@ -962,12 +1095,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aTrackCodecName">Will be set to the value of the property</param>
-        public unsafe void PropertyTrackCodecName(out string aTrackCodecName)
+        public String PropertyTrackCodecName()
         {
-            char* ptr;
-            CpProxyLinnCoUkDs1PropertyTrackCodecName(iHandle, &ptr);
-            aTrackCodecName = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iTrackCodecName.Value();
         }
 
         /// <summary>
@@ -977,12 +1107,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aTrackId">Will be set to the value of the property</param>
-        public unsafe void PropertyTrackId(out uint aTrackId)
+        public uint PropertyTrackId()
         {
-            fixed (uint* trackId = &aTrackId)
-            {
-                CpProxyLinnCoUkDs1PropertyTrackId(iHandle, trackId);
-            }
+            return iTrackId.Value();
         }
 
         /// <summary>
@@ -992,12 +1119,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aTransportState">Will be set to the value of the property</param>
-        public unsafe void PropertyTransportState(out string aTransportState)
+        public String PropertyTransportState()
         {
-            char* ptr;
-            CpProxyLinnCoUkDs1PropertyTransportState(iHandle, &ptr);
-            aTransportState = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iTransportState.Value();
         }
 
         /// <summary>
@@ -1017,21 +1141,35 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                CpProxyLinnCoUkDs1Destroy(iHandle);
-                iHandle = 0;
+                DisposeProxy();
+                iHandle = IntPtr.Zero;
+                iActionPlay.Dispose();
+                iActionPause.Dispose();
+                iActionStop.Dispose();
+                iActionSeekSecondAbsolute.Dispose();
+                iActionSeekSecondRelative.Dispose();
+                iActionSeekTrackId.Dispose();
+                iActionSeekTrackAbsolute.Dispose();
+                iActionSeekTrackRelative.Dispose();
+                iActionState.Dispose();
+                iActionProtocolInfo.Dispose();
+                iSupportedProtocols.Dispose();
+                iTrackDuration.Dispose();
+                iTrackBitRate.Dispose();
+                iTrackLossless.Dispose();
+                iTrackBitDepth.Dispose();
+                iTrackSampleRate.Dispose();
+                iTrackCodecName.Dispose();
+                iTrackId.Dispose();
+                iTransportState.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

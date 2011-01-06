@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the Room property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyRoom(out string aValue);
+        string PropertyRoom();
 
         /// <summary>
         /// Set the value of the Standby property
@@ -32,7 +33,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the Standby property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyStandby(out bool aValue);
+        bool PropertyStandby();
         
     }
     /// <summary>
@@ -40,48 +41,27 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkProduct1 : DvProvider, IDisposable, IDvProviderLinnCoUkProduct1
     {
-        [DllImport("DvLinnCoUkProduct1")]
-        static extern uint DvProviderLinnCoUkProduct1Create(uint aDeviceHandle);
-        [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvProviderLinnCoUkProduct1Destroy(uint aHandle);
-        [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe int DvProviderLinnCoUkProduct1SetPropertyRoom(uint aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe void DvProviderLinnCoUkProduct1GetPropertyRoom(uint aHandle, char** aValue);
-        [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe int DvProviderLinnCoUkProduct1SetPropertyStandby(uint aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe void DvProviderLinnCoUkProduct1GetPropertyStandby(uint aHandle, int* aValue);
-        [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvProviderLinnCoUkProduct1EnableActionRoom(uint aHandle, CallbackRoom aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvProviderLinnCoUkProduct1EnableActionSetRoom(uint aHandle, CallbackSetRoom aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvProviderLinnCoUkProduct1EnableActionStandby(uint aHandle, CallbackStandby aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvProviderLinnCoUkProduct1EnableActionSetStandby(uint aHandle, CallbackSetStandby aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackRoom(IntPtr aPtr, uint aVersion, char** aaRoom);
-        private unsafe delegate int CallbackSetRoom(IntPtr aPtr, uint aVersion, char* aaRoom);
-        private unsafe delegate int CallbackStandby(IntPtr aPtr, uint aVersion, int* aaStandby);
-        private unsafe delegate int CallbackSetStandby(IntPtr aPtr, uint aVersion, int aaStandby);
-
         private GCHandle iGch;
-        private CallbackRoom iCallbackRoom;
-        private CallbackSetRoom iCallbackSetRoom;
-        private CallbackStandby iCallbackStandby;
-        private CallbackSetStandby iCallbackSetStandby;
+        private ActionDelegate iDelegateRoom;
+        private ActionDelegate iDelegateSetRoom;
+        private ActionDelegate iDelegateStandby;
+        private ActionDelegate iDelegateSetStandby;
+        private PropertyString iPropertyRoom;
+        private PropertyBool iPropertyStandby;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkProduct1(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "Product", 1)
         {
-            iHandle = DvProviderLinnCoUkProduct1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            List<String> allowedValues = new List<String>();
+            iPropertyRoom = new PropertyString(new ParameterString("Room", allowedValues));
+            AddProperty(iPropertyRoom);
+            iPropertyStandby = new PropertyBool(new ParameterBool("Standby"));
+            AddProperty(iPropertyStandby);
         }
 
         /// <summary>
@@ -89,29 +69,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyRoom(string aValue)
+        public bool SetPropertyRoom(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkProduct1SetPropertyRoom(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyRoom, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Room property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyRoom(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyRoom()
         {
-            char* value;
-            DvProviderLinnCoUkProduct1GetPropertyRoom(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyRoom.Value();
         }
 
         /// <summary>
@@ -119,26 +88,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyStandby(bool aValue)
+        public bool SetPropertyStandby(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkProduct1SetPropertyStandby(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyStandby, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Standby property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyStandby(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyStandby()
         {
-            int value;
-            DvProviderLinnCoUkProduct1GetPropertyStandby(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyStandby.Value();
         }
 
         /// <summary>
@@ -146,11 +107,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoRoom must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionRoom()
+        protected void EnableActionRoom()
         {
-            iCallbackRoom = new CallbackRoom(DoRoom);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProduct1EnableActionRoom(iHandle, iCallbackRoom, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Room");
+            action.AddOutputParameter(new ParameterRelated("aRoom", iPropertyRoom));
+            iDelegateRoom = new ActionDelegate(DoRoom);
+            EnableAction(action, iDelegateRoom, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -158,11 +120,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetRoom must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetRoom()
+        protected void EnableActionSetRoom()
         {
-            iCallbackSetRoom = new CallbackSetRoom(DoSetRoom);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProduct1EnableActionSetRoom(iHandle, iCallbackSetRoom, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetRoom");
+            action.AddInputParameter(new ParameterRelated("aRoom", iPropertyRoom));
+            iDelegateSetRoom = new ActionDelegate(DoSetRoom);
+            EnableAction(action, iDelegateSetRoom, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -170,11 +133,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStandby must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStandby()
+        protected void EnableActionStandby()
         {
-            iCallbackStandby = new CallbackStandby(DoStandby);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProduct1EnableActionStandby(iHandle, iCallbackStandby, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Standby");
+            action.AddOutputParameter(new ParameterRelated("aStandby", iPropertyStandby));
+            iDelegateStandby = new ActionDelegate(DoStandby);
+            EnableAction(action, iDelegateStandby, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -182,11 +146,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStandby must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStandby()
+        protected void EnableActionSetStandby()
         {
-            iCallbackSetStandby = new CallbackSetStandby(DoSetStandby);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProduct1EnableActionSetStandby(iHandle, iCallbackSetStandby, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetStandby");
+            action.AddInputParameter(new ParameterRelated("aStandby", iPropertyStandby));
+            iDelegateSetStandby = new ActionDelegate(DoSetStandby);
+            EnableAction(action, iDelegateSetStandby, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -245,41 +210,163 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoRoom(IntPtr aPtr, uint aVersion, char** aaRoom)
+        private static int DoRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aRoom;
-            self.Room(aVersion, out aRoom);
-            *aaRoom = (char*)Marshal.StringToHGlobalAnsi(aRoom).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.Room(aVersion, out aRoom);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("aRoom", aRoom);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetRoom(IntPtr aPtr, uint aVersion, char* aaRoom)
+        private static int DoSetRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
-            string aRoom = Marshal.PtrToStringAnsi((IntPtr)aaRoom);
-            self.SetRoom(aVersion, aRoom);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aRoom;
+            try
+            {
+                invocation.ReadStart();
+                aRoom = invocation.ReadString("aRoom");
+                invocation.ReadEnd();
+                self.SetRoom(aVersion, aRoom);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoStandby(IntPtr aPtr, uint aVersion, int* aaStandby)
+        private static int DoStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aStandby;
-            self.Standby(aVersion, out aStandby);
-            *aaStandby = (aStandby ? 1 : 0);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.Standby(aVersion, out aStandby);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBool("aStandby", aStandby);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetStandby(IntPtr aPtr, uint aVersion, int aaStandby)
+        private static int DoSetStandby(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
-            bool aStandby = (aaStandby != 0);
-            self.SetStandby(aVersion, aStandby);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aStandby;
+            try
+            {
+                invocation.ReadStart();
+                aStandby = invocation.ReadBool("aStandby");
+                invocation.ReadEnd();
+                self.SetStandby(aVersion, aStandby);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -299,21 +386,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkProduct1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

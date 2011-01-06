@@ -33,6 +33,7 @@ public:
      *                      so can safely be deleted by the caller when this returns
      */
     NetworkInterface(TIpAddress aAddress, TIpAddress aNetMask, const char* aName);
+    ~NetworkInterface();
     /**
      * Copy a NetworkInterface instance (probably using the output from UpnpLibrary::SubnetList())
      *

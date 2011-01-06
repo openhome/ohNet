@@ -3,19 +3,11 @@
 
 # Macros used by Common.mak
 ar = lib /nologo /out:$(objdir)
-cflags = /MDd /W4 /WX /EHsc /RTC1 /Zi /FR /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS /Od -DDllImport=__declspec(dllimport) -DDllExport=__declspec(dllexport) -DDllExportClass=
+cflags = /MDd /W4 /WX /EHsc /RTC1 /Zi /FR$(objdir) /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS /Od -DDllImport=__declspec(dllimport) -DDllExport=__declspec(dllexport) -DDllExportClass=
 objdirbare = Build\Obj\Windows
 objdir = $(objdirbare)^\
 inc_build = Build\Include
 includes = -IBuild\Include -IBuild\Include\Cpp
-proxySrcCppCore = ControlPoint\Services\Cpp\Core^\
-proxySrcC = ControlPoint\Services\C^\
-proxySrcCppStd = ControlPoint\Services\Cpp\Std^\
-proxySrcCs = ControlPoint\Services\Cs^\
-deviceSrcCppCore = Device\Services\Cpp\Core^\
-deviceSrcCppStd = Device\Services\Cpp\Std^\
-deviceSrcC = Device\Services\C^\
-deviceSrcCs = Device\Services\Cs^\
 osdir = Windows
 objext = obj
 libprefix = 
@@ -36,16 +28,20 @@ installlibdir = $(installdir)\lib
 installincludedir = $(installdir)\include
 mkdir = Scripts\mkdir.bat
 rmdir = Scripts\rmdir.bat
+uset4 = no
+
 default : all
 
 include T4Windows.mak
 # Actual building of code is shared between platforms
 include Common.mak
 
+!if "$(uset4)"=="yes"
 !if exist (Generated\GenerateSourceFiles.mak)
 !include Generated\GenerateSourceFiles.mak
 !else
 !message Note: Generated\GenerateSourceFiles.mak does not yet exist. Try "make generate-makefiles".
+!endif
 !endif
 
 !if exist (Generated\Proxies.mak)
@@ -80,12 +76,16 @@ copy_build_includes:
 	copy Api\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
 	copy Api\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
 	copy *.h $(inc_build) > nul
-	copy Arch\*.h $(inc_build) > nul
-	copy Arch\I386\ArchSpecific.h $(inc_build) > nul
 	copy ControlPoint\*.h $(inc_build) > nul
+	copy ControlPoint\Services\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
+	copy ControlPoint\Services\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
+	copy ControlPoint\Services\C\*.h $(inc_build)\C > nul
 	copy ControlPoint\Dv\*.h $(inc_build) > nul
 	copy ControlPoint\Upnp\*.h $(inc_build) > nul
 	copy Device\*.h $(inc_build) > nul
+	copy Device\Services\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
+	copy Device\Services\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
+	copy Device\Services\C\*.h $(inc_build)\C > nul
 	copy Device\Upnp\*.h $(inc_build) > nul
 	copy Network\*.h $(inc_build) > nul
 	copy Service\*.h $(inc_build) > nul
@@ -95,7 +95,6 @@ copy_build_includes:
 	copy Public\C\*.h $(inc_build)\C > nul
 	copy Public\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
 	copy Thread\Thread.h $(inc_build) > nul
-	copy Timer\Timer.h $(inc_build) > nul
 	copy Utils\*.h $(inc_build) > nul
 	copy TestFramework\*.h $(inc_build) > nul
 

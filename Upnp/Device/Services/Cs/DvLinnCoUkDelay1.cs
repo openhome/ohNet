@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the PresetXml property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyPresetXml(out string aValue);
+        string PropertyPresetXml();
 
         /// <summary>
         /// Set the value of the PresetIndex property
@@ -32,7 +33,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the PresetIndex property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyPresetIndex(out uint aValue);
+        uint PropertyPresetIndex();
         
     }
     /// <summary>
@@ -40,68 +41,32 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkDelay1 : DvProvider, IDisposable, IDvProviderLinnCoUkDelay1
     {
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern uint DvProviderLinnCoUkDelay1Create(uint aDeviceHandle);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvProviderLinnCoUkDelay1Destroy(uint aHandle);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern unsafe int DvProviderLinnCoUkDelay1SetPropertyPresetXml(uint aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern unsafe void DvProviderLinnCoUkDelay1GetPropertyPresetXml(uint aHandle, char** aValue);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern unsafe int DvProviderLinnCoUkDelay1SetPropertyPresetIndex(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern unsafe void DvProviderLinnCoUkDelay1GetPropertyPresetIndex(uint aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvProviderLinnCoUkDelay1EnableActionPresetXml(uint aHandle, CallbackPresetXml aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvProviderLinnCoUkDelay1EnableActionPresetIndex(uint aHandle, CallbackPresetIndex aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvProviderLinnCoUkDelay1EnableActionSetPresetIndex(uint aHandle, CallbackSetPresetIndex aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvProviderLinnCoUkDelay1EnableActionSetPresetDelay(uint aHandle, CallbackSetPresetDelay aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvProviderLinnCoUkDelay1EnableActionSetPresetVisible(uint aHandle, CallbackSetPresetVisible aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvProviderLinnCoUkDelay1EnableActionSetPresetName(uint aHandle, CallbackSetPresetName aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvProviderLinnCoUkDelay1EnableActionDelayMinimum(uint aHandle, CallbackDelayMinimum aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvProviderLinnCoUkDelay1EnableActionDelayMaximum(uint aHandle, CallbackDelayMaximum aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvProviderLinnCoUkDelay1EnableActionPresetCount(uint aHandle, CallbackPresetCount aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackPresetXml(IntPtr aPtr, uint aVersion, char** aaPresetXml);
-        private unsafe delegate int CallbackPresetIndex(IntPtr aPtr, uint aVersion, uint* aaIndex);
-        private unsafe delegate int CallbackSetPresetIndex(IntPtr aPtr, uint aVersion, uint aaIndex);
-        private unsafe delegate int CallbackSetPresetDelay(IntPtr aPtr, uint aVersion, uint aaIndex, uint aaDelay);
-        private unsafe delegate int CallbackSetPresetVisible(IntPtr aPtr, uint aVersion, uint aaIndex, int aaVisible);
-        private unsafe delegate int CallbackSetPresetName(IntPtr aPtr, uint aVersion, uint aaIndex, char* aaName);
-        private unsafe delegate int CallbackDelayMinimum(IntPtr aPtr, uint aVersion, uint* aaDelay);
-        private unsafe delegate int CallbackDelayMaximum(IntPtr aPtr, uint aVersion, uint* aaDelay);
-        private unsafe delegate int CallbackPresetCount(IntPtr aPtr, uint aVersion, uint* aaCount);
-
         private GCHandle iGch;
-        private CallbackPresetXml iCallbackPresetXml;
-        private CallbackPresetIndex iCallbackPresetIndex;
-        private CallbackSetPresetIndex iCallbackSetPresetIndex;
-        private CallbackSetPresetDelay iCallbackSetPresetDelay;
-        private CallbackSetPresetVisible iCallbackSetPresetVisible;
-        private CallbackSetPresetName iCallbackSetPresetName;
-        private CallbackDelayMinimum iCallbackDelayMinimum;
-        private CallbackDelayMaximum iCallbackDelayMaximum;
-        private CallbackPresetCount iCallbackPresetCount;
+        private ActionDelegate iDelegatePresetXml;
+        private ActionDelegate iDelegatePresetIndex;
+        private ActionDelegate iDelegateSetPresetIndex;
+        private ActionDelegate iDelegateSetPresetDelay;
+        private ActionDelegate iDelegateSetPresetVisible;
+        private ActionDelegate iDelegateSetPresetName;
+        private ActionDelegate iDelegateDelayMinimum;
+        private ActionDelegate iDelegateDelayMaximum;
+        private ActionDelegate iDelegatePresetCount;
+        private PropertyString iPropertyPresetXml;
+        private PropertyUint iPropertyPresetIndex;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkDelay1(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "Delay", 1)
         {
-            iHandle = DvProviderLinnCoUkDelay1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            List<String> allowedValues = new List<String>();
+            iPropertyPresetXml = new PropertyString(new ParameterString("PresetXml", allowedValues));
+            AddProperty(iPropertyPresetXml);
+            iPropertyPresetIndex = new PropertyUint(new ParameterUint("PresetIndex"));
+            AddProperty(iPropertyPresetIndex);
         }
 
         /// <summary>
@@ -109,29 +74,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyPresetXml(string aValue)
+        public bool SetPropertyPresetXml(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkDelay1SetPropertyPresetXml(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyPresetXml, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the PresetXml property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyPresetXml(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyPresetXml()
         {
-            char* value;
-            DvProviderLinnCoUkDelay1GetPropertyPresetXml(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyPresetXml.Value();
         }
 
         /// <summary>
@@ -139,26 +93,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyPresetIndex(uint aValue)
+        public bool SetPropertyPresetIndex(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkDelay1SetPropertyPresetIndex(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyPresetIndex, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the PresetIndex property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyPresetIndex(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyPresetIndex()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkDelay1GetPropertyPresetIndex(iHandle, value);
-            }
+            return iPropertyPresetIndex.Value();
         }
 
         /// <summary>
@@ -166,11 +112,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPresetXml must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPresetXml()
+        protected void EnableActionPresetXml()
         {
-            iCallbackPresetXml = new CallbackPresetXml(DoPresetXml);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDelay1EnableActionPresetXml(iHandle, iCallbackPresetXml, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("PresetXml");
+            action.AddOutputParameter(new ParameterRelated("aPresetXml", iPropertyPresetXml));
+            iDelegatePresetXml = new ActionDelegate(DoPresetXml);
+            EnableAction(action, iDelegatePresetXml, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -178,11 +125,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPresetIndex must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPresetIndex()
+        protected void EnableActionPresetIndex()
         {
-            iCallbackPresetIndex = new CallbackPresetIndex(DoPresetIndex);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDelay1EnableActionPresetIndex(iHandle, iCallbackPresetIndex, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("PresetIndex");
+            action.AddOutputParameter(new ParameterRelated("aIndex", iPropertyPresetIndex));
+            iDelegatePresetIndex = new ActionDelegate(DoPresetIndex);
+            EnableAction(action, iDelegatePresetIndex, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -190,11 +138,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetPresetIndex must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetPresetIndex()
+        protected void EnableActionSetPresetIndex()
         {
-            iCallbackSetPresetIndex = new CallbackSetPresetIndex(DoSetPresetIndex);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDelay1EnableActionSetPresetIndex(iHandle, iCallbackSetPresetIndex, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetPresetIndex");
+            action.AddInputParameter(new ParameterRelated("aIndex", iPropertyPresetIndex));
+            iDelegateSetPresetIndex = new ActionDelegate(DoSetPresetIndex);
+            EnableAction(action, iDelegateSetPresetIndex, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -202,11 +151,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetPresetDelay must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetPresetDelay()
+        protected void EnableActionSetPresetDelay()
         {
-            iCallbackSetPresetDelay = new CallbackSetPresetDelay(DoSetPresetDelay);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDelay1EnableActionSetPresetDelay(iHandle, iCallbackSetPresetDelay, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetPresetDelay");
+            action.AddInputParameter(new ParameterUint("aIndex"));
+            action.AddInputParameter(new ParameterUint("aDelay"));
+            iDelegateSetPresetDelay = new ActionDelegate(DoSetPresetDelay);
+            EnableAction(action, iDelegateSetPresetDelay, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -214,11 +165,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetPresetVisible must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetPresetVisible()
+        protected void EnableActionSetPresetVisible()
         {
-            iCallbackSetPresetVisible = new CallbackSetPresetVisible(DoSetPresetVisible);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDelay1EnableActionSetPresetVisible(iHandle, iCallbackSetPresetVisible, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetPresetVisible");
+            action.AddInputParameter(new ParameterUint("aIndex"));
+            action.AddInputParameter(new ParameterBool("aVisible"));
+            iDelegateSetPresetVisible = new ActionDelegate(DoSetPresetVisible);
+            EnableAction(action, iDelegateSetPresetVisible, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -226,11 +179,14 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetPresetName must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetPresetName()
+        protected void EnableActionSetPresetName()
         {
-            iCallbackSetPresetName = new CallbackSetPresetName(DoSetPresetName);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDelay1EnableActionSetPresetName(iHandle, iCallbackSetPresetName, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetPresetName");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("aIndex"));
+            action.AddInputParameter(new ParameterString("aName", allowedValues));
+            iDelegateSetPresetName = new ActionDelegate(DoSetPresetName);
+            EnableAction(action, iDelegateSetPresetName, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -238,11 +194,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDelayMinimum must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDelayMinimum()
+        protected void EnableActionDelayMinimum()
         {
-            iCallbackDelayMinimum = new CallbackDelayMinimum(DoDelayMinimum);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDelay1EnableActionDelayMinimum(iHandle, iCallbackDelayMinimum, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DelayMinimum");
+            action.AddOutputParameter(new ParameterUint("aDelay"));
+            iDelegateDelayMinimum = new ActionDelegate(DoDelayMinimum);
+            EnableAction(action, iDelegateDelayMinimum, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -250,11 +207,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoDelayMaximum must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionDelayMaximum()
+        protected void EnableActionDelayMaximum()
         {
-            iCallbackDelayMaximum = new CallbackDelayMaximum(DoDelayMaximum);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDelay1EnableActionDelayMaximum(iHandle, iCallbackDelayMaximum, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DelayMaximum");
+            action.AddOutputParameter(new ParameterUint("aDelay"));
+            iDelegateDelayMaximum = new ActionDelegate(DoDelayMaximum);
+            EnableAction(action, iDelegateDelayMaximum, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -262,11 +220,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoPresetCount must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionPresetCount()
+        protected void EnableActionPresetCount()
         {
-            iCallbackPresetCount = new CallbackPresetCount(DoPresetCount);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkDelay1EnableActionPresetCount(iHandle, iCallbackPresetCount, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("PresetCount");
+            action.AddOutputParameter(new ParameterUint("aCount"));
+            iDelegatePresetCount = new ActionDelegate(DoPresetCount);
+            EnableAction(action, iDelegatePresetCount, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -398,87 +357,369 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoPresetXml(IntPtr aPtr, uint aVersion, char** aaPresetXml)
+        private static int DoPresetXml(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aPresetXml;
-            self.PresetXml(aVersion, out aPresetXml);
-            *aaPresetXml = (char*)Marshal.StringToHGlobalAnsi(aPresetXml).ToPointer();
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.PresetXml(aVersion, out aPresetXml);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteString("aPresetXml", aPresetXml);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoPresetIndex(IntPtr aPtr, uint aVersion, uint* aaIndex)
+        private static int DoPresetIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aIndex;
-            self.PresetIndex(aVersion, out aIndex);
-            *aaIndex = aIndex;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.PresetIndex(aVersion, out aIndex);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("aIndex", aIndex);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetPresetIndex(IntPtr aPtr, uint aVersion, uint aaIndex)
+        private static int DoSetPresetIndex(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
-            self.SetPresetIndex(aVersion, aaIndex);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aIndex;
+            try
+            {
+                invocation.ReadStart();
+                aIndex = invocation.ReadUint("aIndex");
+                invocation.ReadEnd();
+                self.SetPresetIndex(aVersion, aIndex);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetPresetDelay(IntPtr aPtr, uint aVersion, uint aaIndex, uint aaDelay)
+        private static int DoSetPresetDelay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
-            self.SetPresetDelay(aVersion, aaIndex, aaDelay);
-            return 0;
-        }
-
-        private static unsafe int DoSetPresetVisible(IntPtr aPtr, uint aVersion, uint aaIndex, int aaVisible)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
-            bool aVisible = (aaVisible != 0);
-            self.SetPresetVisible(aVersion, aaIndex, aVisible);
-            return 0;
-        }
-
-        private static unsafe int DoSetPresetName(IntPtr aPtr, uint aVersion, uint aaIndex, char* aaName)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
-            string aName = Marshal.PtrToStringAnsi((IntPtr)aaName);
-            self.SetPresetName(aVersion, aaIndex, aName);
-            return 0;
-        }
-
-        private static unsafe int DoDelayMinimum(IntPtr aPtr, uint aVersion, uint* aaDelay)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aIndex;
             uint aDelay;
-            self.DelayMinimum(aVersion, out aDelay);
-            *aaDelay = aDelay;
+            try
+            {
+                invocation.ReadStart();
+                aIndex = invocation.ReadUint("aIndex");
+                aDelay = invocation.ReadUint("aDelay");
+                invocation.ReadEnd();
+                self.SetPresetDelay(aVersion, aIndex, aDelay);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoDelayMaximum(IntPtr aPtr, uint aVersion, uint* aaDelay)
+        private static int DoSetPresetVisible(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aIndex;
+            bool aVisible;
+            try
+            {
+                invocation.ReadStart();
+                aIndex = invocation.ReadUint("aIndex");
+                aVisible = invocation.ReadBool("aVisible");
+                invocation.ReadEnd();
+                self.SetPresetVisible(aVersion, aIndex, aVisible);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoSetPresetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aIndex;
+            string aName;
+            try
+            {
+                invocation.ReadStart();
+                aIndex = invocation.ReadUint("aIndex");
+                aName = invocation.ReadString("aName");
+                invocation.ReadEnd();
+                self.SetPresetName(aVersion, aIndex, aName);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoDelayMinimum(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aDelay;
-            self.DelayMaximum(aVersion, out aDelay);
-            *aaDelay = aDelay;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.DelayMinimum(aVersion, out aDelay);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("aDelay", aDelay);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoPresetCount(IntPtr aPtr, uint aVersion, uint* aaCount)
+        private static int DoDelayMaximum(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aDelay;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.DelayMaximum(aVersion, out aDelay);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("aDelay", aDelay);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoPresetCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aCount;
-            self.PresetCount(aVersion, out aCount);
-            *aaCount = aCount;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.PresetCount(aVersion, out aCount);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("aCount", aCount);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -498,21 +739,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkDelay1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

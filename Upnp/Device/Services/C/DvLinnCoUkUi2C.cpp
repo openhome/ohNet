@@ -1,16 +1,42 @@
-#include <C/DvLinnCoUkUi2.h>
-#include <Core/DvLinnCoUkUi2.h>
+#include "DvLinnCoUkUi2.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
+#include <DvProvider.h>
 #include <C/Zapp.h>
+#include <ZappTypes.h>
+#include <Core/DvInvocationResponse.h>
+#include <Service.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-class DvProviderLinnCoUkUi2C : public DvProviderLinnCoUkUi2
+class DvProviderLinnCoUkUi2C : public DvProvider
 {
 public:
-    DvProviderLinnCoUkUi2C(DvDevice& aDevice);
+    DvProviderLinnCoUkUi2C(DvDeviceC aDevice);
+    TBool SetPropertyDisplayBrightness(TUint aValue);
+    void GetPropertyDisplayBrightness(TUint& aValue);
+    TBool SetPropertyDisplayBrightnessAuto(TBool aValue);
+    void GetPropertyDisplayBrightnessAuto(TBool& aValue);
+    TBool SetPropertyInfraredCommands(const Brx& aValue);
+    void GetPropertyInfraredCommands(Brhz& aValue);
+    TBool SetPropertyInfraredTerminalCommands(const Brx& aValue);
+    void GetPropertyInfraredTerminalCommands(Brhz& aValue);
+    TBool SetPropertyDisplayUpsideDown(TBool aValue);
+    void GetPropertyDisplayUpsideDown(TBool& aValue);
+    TBool SetPropertyDisplayScrollText(TBool aValue);
+    void GetPropertyDisplayScrollText(TBool& aValue);
+    TBool SetPropertyDisplaySleep(TBool aValue);
+    void GetPropertyDisplaySleep(TBool& aValue);
+    TBool SetPropertyDisplayLedOff(TBool aValue);
+    void GetPropertyDisplayLedOff(TBool& aValue);
+    TBool SetPropertyTerminalInputCode(TUint aValue);
+    void GetPropertyTerminalInputCode(TUint& aValue);
+    TBool SetPropertyTerminalInputName(const Brx& aValue);
+    void GetPropertyTerminalInputName(Brhz& aValue);
+    TBool SetPropertyDisplayPixels(const Brx& aValue);
+    void GetPropertyDisplayPixels(Brh& aValue);
     void EnableActionDisplayTestPattern(CallbackUi2DisplayTestPattern aCallback, void* aPtr);
     void EnableActionDisplayFill(CallbackUi2DisplayFill aCallback, void* aPtr);
     void EnableActionDisplayClear(CallbackUi2DisplayClear aCallback, void* aPtr);
@@ -36,30 +62,30 @@ public:
     void EnableActionSetDisplayLedOff(CallbackUi2SetDisplayLedOff aCallback, void* aPtr);
     void EnableActionDisplayLedOff(CallbackUi2DisplayLedOff aCallback, void* aPtr);
 private:
-    void DisplayTestPattern(IInvocationResponse& aResponse, TUint aVersion, TInt aaTestPattern);
-    void DisplayFill(IInvocationResponse& aResponse, TUint aVersion);
-    void DisplayClear(IInvocationResponse& aResponse, TUint aVersion);
-    void SetTestModeEnabled(IInvocationResponse& aResponse, TUint aVersion, TBool aaEnabled);
-    void SimulateInfraredInput(IInvocationResponse& aResponse, TUint aVersion, TUint aaCode);
-    void SimulateButtonInput(IInvocationResponse& aResponse, TUint aVersion, TUint aaCode);
-    void SimulateLightSensor(IInvocationResponse& aResponse, TUint aVersion, TUint aaLightLevel);
-    void GetLightSensorData(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaLightLevel);
-    void SetDisplayBrightness(IInvocationResponse& aResponse, TUint aVersion, TUint aaBrightness);
-    void SetDisplayBrightnessAuto(IInvocationResponse& aResponse, TUint aVersion, TBool aaBrightnessAuto);
-    void SetInfraredCommands(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaCommands);
-    void InfraredCommands(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaCommands);
-    void SetInfraredTerminalCommands(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaCommands);
-    void InfraredTerminalCommands(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaCommands);
-    void DisplayBrightness(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaBrightness);
-    void DisplayBrightnessAuto(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaBrightnessAuto);
-    void DisplayUpsideDown(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaUpsideDown);
-    void SetDisplayUpsideDown(IInvocationResponse& aResponse, TUint aVersion, TBool aaUpsideDown);
-    void SetDisplayScrollText(IInvocationResponse& aResponse, TUint aVersion, TBool aaDisplayScrollText);
-    void DisplayScrollText(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaDisplayScrollTextEnabled);
-    void SetDisplaySleep(IInvocationResponse& aResponse, TUint aVersion, TBool aaEnabled);
-    void DisplaySleep(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaEnabled);
-    void SetDisplayLedOff(IInvocationResponse& aResponse, TUint aVersion, TBool aaOff);
-    void DisplayLedOff(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaOff);
+    void DoDisplayTestPattern(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayFill(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayClear(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetTestModeEnabled(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSimulateInfraredInput(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSimulateButtonInput(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSimulateLightSensor(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetLightSensorData(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDisplayBrightness(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDisplayBrightnessAuto(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetInfraredCommands(IDviInvocation& aInvocation, TUint aVersion);
+    void DoInfraredCommands(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetInfraredTerminalCommands(IDviInvocation& aInvocation, TUint aVersion);
+    void DoInfraredTerminalCommands(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayBrightness(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayBrightnessAuto(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayUpsideDown(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDisplayUpsideDown(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDisplayScrollText(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayScrollText(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDisplaySleep(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplaySleep(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDisplayLedOff(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayLedOff(IDviInvocation& aInvocation, TUint aVersion);
 private:
     CallbackUi2DisplayTestPattern iCallbackDisplayTestPattern;
     void* iPtrDisplayTestPattern;
@@ -109,474 +135,800 @@ private:
     void* iPtrSetDisplayLedOff;
     CallbackUi2DisplayLedOff iCallbackDisplayLedOff;
     void* iPtrDisplayLedOff;
+    PropertyUint* iPropertyDisplayBrightness;
+    PropertyBool* iPropertyDisplayBrightnessAuto;
+    PropertyString* iPropertyInfraredCommands;
+    PropertyString* iPropertyInfraredTerminalCommands;
+    PropertyBool* iPropertyDisplayUpsideDown;
+    PropertyBool* iPropertyDisplayScrollText;
+    PropertyBool* iPropertyDisplaySleep;
+    PropertyBool* iPropertyDisplayLedOff;
+    PropertyUint* iPropertyTerminalInputCode;
+    PropertyString* iPropertyTerminalInputName;
+    PropertyBinary* iPropertyDisplayPixels;
 };
 
-DvProviderLinnCoUkUi2C::DvProviderLinnCoUkUi2C(DvDevice& aDevice)
-    : DvProviderLinnCoUkUi2(aDevice)
+DvProviderLinnCoUkUi2C::DvProviderLinnCoUkUi2C(DvDeviceC aDevice)
+    : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "linn.co.uk", "Ui", 2)
 {
+    
+    TChar** allowedValues;
+    TUint index;
+    iPropertyDisplayBrightness = new PropertyUint(new ParameterUint("DisplayBrightness"));
+    iService->AddProperty(iPropertyDisplayBrightness); // passes ownership
+    iPropertyDisplayBrightnessAuto = new PropertyBool(new ParameterBool("DisplayBrightnessAuto"));
+    iService->AddProperty(iPropertyDisplayBrightnessAuto); // passes ownership
+    index = 0;
+    allowedValues = new TChar*[4];
+    allowedValues[index++] = (TChar*)"None";
+    allowedValues[index++] = (TChar*)"All";
+    allowedValues[index++] = (TChar*)"Cd";
+    allowedValues[index++] = (TChar*)"Dvd";
+    iPropertyInfraredCommands = new PropertyString(new ParameterString("InfraredCommands", allowedValues, 4));
+    delete[] allowedValues;
+    iService->AddProperty(iPropertyInfraredCommands); // passes ownership
+    index = 0;
+    allowedValues = new TChar*[4];
+    allowedValues[index++] = (TChar*)"None";
+    allowedValues[index++] = (TChar*)"All";
+    allowedValues[index++] = (TChar*)"Cd";
+    allowedValues[index++] = (TChar*)"Dvd";
+    iPropertyInfraredTerminalCommands = new PropertyString(new ParameterString("InfraredTerminalCommands", allowedValues, 4));
+    delete[] allowedValues;
+    iService->AddProperty(iPropertyInfraredTerminalCommands); // passes ownership
+    iPropertyDisplayUpsideDown = new PropertyBool(new ParameterBool("DisplayUpsideDown"));
+    iService->AddProperty(iPropertyDisplayUpsideDown); // passes ownership
+    iPropertyDisplayScrollText = new PropertyBool(new ParameterBool("DisplayScrollText"));
+    iService->AddProperty(iPropertyDisplayScrollText); // passes ownership
+    iPropertyDisplaySleep = new PropertyBool(new ParameterBool("DisplaySleep"));
+    iService->AddProperty(iPropertyDisplaySleep); // passes ownership
+    iPropertyDisplayLedOff = new PropertyBool(new ParameterBool("DisplayLedOff"));
+    iService->AddProperty(iPropertyDisplayLedOff); // passes ownership
+    iPropertyTerminalInputCode = new PropertyUint(new ParameterUint("TerminalInputCode"));
+    iService->AddProperty(iPropertyTerminalInputCode); // passes ownership
+    iPropertyTerminalInputName = new PropertyString(new ParameterString("TerminalInputName"));
+    iService->AddProperty(iPropertyTerminalInputName); // passes ownership
+    iPropertyDisplayPixels = new PropertyBinary(new ParameterBinary("DisplayPixels"));
+    iService->AddProperty(iPropertyDisplayPixels); // passes ownership
+}
+
+TBool DvProviderLinnCoUkUi2C::SetPropertyDisplayBrightness(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyDisplayBrightness, aValue);
+}
+
+void DvProviderLinnCoUkUi2C::GetPropertyDisplayBrightness(TUint& aValue)
+{
+    aValue = iPropertyDisplayBrightness->Value();
+}
+
+TBool DvProviderLinnCoUkUi2C::SetPropertyDisplayBrightnessAuto(TBool aValue)
+{
+    return SetPropertyBool(*iPropertyDisplayBrightnessAuto, aValue);
+}
+
+void DvProviderLinnCoUkUi2C::GetPropertyDisplayBrightnessAuto(TBool& aValue)
+{
+    aValue = iPropertyDisplayBrightnessAuto->Value();
+}
+
+TBool DvProviderLinnCoUkUi2C::SetPropertyInfraredCommands(const Brx& aValue)
+{
+    return SetPropertyString(*iPropertyInfraredCommands, aValue);
+}
+
+void DvProviderLinnCoUkUi2C::GetPropertyInfraredCommands(Brhz& aValue)
+{
+    aValue.Set(iPropertyInfraredCommands->Value());
+}
+
+TBool DvProviderLinnCoUkUi2C::SetPropertyInfraredTerminalCommands(const Brx& aValue)
+{
+    return SetPropertyString(*iPropertyInfraredTerminalCommands, aValue);
+}
+
+void DvProviderLinnCoUkUi2C::GetPropertyInfraredTerminalCommands(Brhz& aValue)
+{
+    aValue.Set(iPropertyInfraredTerminalCommands->Value());
+}
+
+TBool DvProviderLinnCoUkUi2C::SetPropertyDisplayUpsideDown(TBool aValue)
+{
+    return SetPropertyBool(*iPropertyDisplayUpsideDown, aValue);
+}
+
+void DvProviderLinnCoUkUi2C::GetPropertyDisplayUpsideDown(TBool& aValue)
+{
+    aValue = iPropertyDisplayUpsideDown->Value();
+}
+
+TBool DvProviderLinnCoUkUi2C::SetPropertyDisplayScrollText(TBool aValue)
+{
+    return SetPropertyBool(*iPropertyDisplayScrollText, aValue);
+}
+
+void DvProviderLinnCoUkUi2C::GetPropertyDisplayScrollText(TBool& aValue)
+{
+    aValue = iPropertyDisplayScrollText->Value();
+}
+
+TBool DvProviderLinnCoUkUi2C::SetPropertyDisplaySleep(TBool aValue)
+{
+    return SetPropertyBool(*iPropertyDisplaySleep, aValue);
+}
+
+void DvProviderLinnCoUkUi2C::GetPropertyDisplaySleep(TBool& aValue)
+{
+    aValue = iPropertyDisplaySleep->Value();
+}
+
+TBool DvProviderLinnCoUkUi2C::SetPropertyDisplayLedOff(TBool aValue)
+{
+    return SetPropertyBool(*iPropertyDisplayLedOff, aValue);
+}
+
+void DvProviderLinnCoUkUi2C::GetPropertyDisplayLedOff(TBool& aValue)
+{
+    aValue = iPropertyDisplayLedOff->Value();
+}
+
+TBool DvProviderLinnCoUkUi2C::SetPropertyTerminalInputCode(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyTerminalInputCode, aValue);
+}
+
+void DvProviderLinnCoUkUi2C::GetPropertyTerminalInputCode(TUint& aValue)
+{
+    aValue = iPropertyTerminalInputCode->Value();
+}
+
+TBool DvProviderLinnCoUkUi2C::SetPropertyTerminalInputName(const Brx& aValue)
+{
+    return SetPropertyString(*iPropertyTerminalInputName, aValue);
+}
+
+void DvProviderLinnCoUkUi2C::GetPropertyTerminalInputName(Brhz& aValue)
+{
+    aValue.Set(iPropertyTerminalInputName->Value());
+}
+
+TBool DvProviderLinnCoUkUi2C::SetPropertyDisplayPixels(const Brx& aValue)
+{
+    return SetPropertyBinary(*iPropertyDisplayPixels, aValue);
+}
+
+void DvProviderLinnCoUkUi2C::GetPropertyDisplayPixels(Brh& aValue)
+{
+    aValue.Set(iPropertyDisplayPixels->Value());
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionDisplayTestPattern(CallbackUi2DisplayTestPattern aCallback, void* aPtr)
 {
     iCallbackDisplayTestPattern = aCallback;
     iPtrDisplayTestPattern = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionDisplayTestPattern();
+    Zapp::Action* action = new Zapp::Action("DisplayTestPattern");
+    action->AddInputParameter(new ParameterInt("aTestPattern", 0, 6));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoDisplayTestPattern);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionDisplayFill(CallbackUi2DisplayFill aCallback, void* aPtr)
 {
     iCallbackDisplayFill = aCallback;
     iPtrDisplayFill = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionDisplayFill();
+    Zapp::Action* action = new Zapp::Action("DisplayFill");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoDisplayFill);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionDisplayClear(CallbackUi2DisplayClear aCallback, void* aPtr)
 {
     iCallbackDisplayClear = aCallback;
     iPtrDisplayClear = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionDisplayClear();
+    Zapp::Action* action = new Zapp::Action("DisplayClear");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoDisplayClear);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionSetTestModeEnabled(CallbackUi2SetTestModeEnabled aCallback, void* aPtr)
 {
     iCallbackSetTestModeEnabled = aCallback;
     iPtrSetTestModeEnabled = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionSetTestModeEnabled();
+    Zapp::Action* action = new Zapp::Action("SetTestModeEnabled");
+    action->AddInputParameter(new ParameterBool("aEnabled"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoSetTestModeEnabled);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionSimulateInfraredInput(CallbackUi2SimulateInfraredInput aCallback, void* aPtr)
 {
     iCallbackSimulateInfraredInput = aCallback;
     iPtrSimulateInfraredInput = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionSimulateInfraredInput();
+    Zapp::Action* action = new Zapp::Action("SimulateInfraredInput");
+    action->AddInputParameter(new ParameterRelated("aCode", *iPropertyTerminalInputCode));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoSimulateInfraredInput);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionSimulateButtonInput(CallbackUi2SimulateButtonInput aCallback, void* aPtr)
 {
     iCallbackSimulateButtonInput = aCallback;
     iPtrSimulateButtonInput = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionSimulateButtonInput();
+    Zapp::Action* action = new Zapp::Action("SimulateButtonInput");
+    action->AddInputParameter(new ParameterRelated("aCode", *iPropertyTerminalInputCode));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoSimulateButtonInput);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionSimulateLightSensor(CallbackUi2SimulateLightSensor aCallback, void* aPtr)
 {
     iCallbackSimulateLightSensor = aCallback;
     iPtrSimulateLightSensor = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionSimulateLightSensor();
+    Zapp::Action* action = new Zapp::Action("SimulateLightSensor");
+    action->AddInputParameter(new ParameterUint("aLightLevel"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoSimulateLightSensor);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionGetLightSensorData(CallbackUi2GetLightSensorData aCallback, void* aPtr)
 {
     iCallbackGetLightSensorData = aCallback;
     iPtrGetLightSensorData = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionGetLightSensorData();
+    Zapp::Action* action = new Zapp::Action("GetLightSensorData");
+    action->AddOutputParameter(new ParameterUint("aLightLevel"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoGetLightSensorData);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionSetDisplayBrightness(CallbackUi2SetDisplayBrightness aCallback, void* aPtr)
 {
     iCallbackSetDisplayBrightness = aCallback;
     iPtrSetDisplayBrightness = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionSetDisplayBrightness();
+    Zapp::Action* action = new Zapp::Action("SetDisplayBrightness");
+    action->AddInputParameter(new ParameterRelated("aBrightness", *iPropertyDisplayBrightness));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoSetDisplayBrightness);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionSetDisplayBrightnessAuto(CallbackUi2SetDisplayBrightnessAuto aCallback, void* aPtr)
 {
     iCallbackSetDisplayBrightnessAuto = aCallback;
     iPtrSetDisplayBrightnessAuto = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionSetDisplayBrightnessAuto();
+    Zapp::Action* action = new Zapp::Action("SetDisplayBrightnessAuto");
+    action->AddInputParameter(new ParameterRelated("aBrightnessAuto", *iPropertyDisplayBrightnessAuto));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoSetDisplayBrightnessAuto);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionSetInfraredCommands(CallbackUi2SetInfraredCommands aCallback, void* aPtr)
 {
     iCallbackSetInfraredCommands = aCallback;
     iPtrSetInfraredCommands = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionSetInfraredCommands();
+    Zapp::Action* action = new Zapp::Action("SetInfraredCommands");
+    action->AddInputParameter(new ParameterRelated("aCommands", *iPropertyInfraredCommands));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoSetInfraredCommands);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionInfraredCommands(CallbackUi2InfraredCommands aCallback, void* aPtr)
 {
     iCallbackInfraredCommands = aCallback;
     iPtrInfraredCommands = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionInfraredCommands();
+    Zapp::Action* action = new Zapp::Action("InfraredCommands");
+    action->AddOutputParameter(new ParameterRelated("aCommands", *iPropertyInfraredCommands));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoInfraredCommands);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionSetInfraredTerminalCommands(CallbackUi2SetInfraredTerminalCommands aCallback, void* aPtr)
 {
     iCallbackSetInfraredTerminalCommands = aCallback;
     iPtrSetInfraredTerminalCommands = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionSetInfraredTerminalCommands();
+    Zapp::Action* action = new Zapp::Action("SetInfraredTerminalCommands");
+    action->AddInputParameter(new ParameterRelated("aCommands", *iPropertyInfraredTerminalCommands));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoSetInfraredTerminalCommands);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionInfraredTerminalCommands(CallbackUi2InfraredTerminalCommands aCallback, void* aPtr)
 {
     iCallbackInfraredTerminalCommands = aCallback;
     iPtrInfraredTerminalCommands = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionInfraredTerminalCommands();
+    Zapp::Action* action = new Zapp::Action("InfraredTerminalCommands");
+    action->AddOutputParameter(new ParameterRelated("aCommands", *iPropertyInfraredTerminalCommands));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoInfraredTerminalCommands);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionDisplayBrightness(CallbackUi2DisplayBrightness aCallback, void* aPtr)
 {
     iCallbackDisplayBrightness = aCallback;
     iPtrDisplayBrightness = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionDisplayBrightness();
+    Zapp::Action* action = new Zapp::Action("DisplayBrightness");
+    action->AddOutputParameter(new ParameterRelated("aBrightness", *iPropertyDisplayBrightness));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoDisplayBrightness);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionDisplayBrightnessAuto(CallbackUi2DisplayBrightnessAuto aCallback, void* aPtr)
 {
     iCallbackDisplayBrightnessAuto = aCallback;
     iPtrDisplayBrightnessAuto = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionDisplayBrightnessAuto();
+    Zapp::Action* action = new Zapp::Action("DisplayBrightnessAuto");
+    action->AddOutputParameter(new ParameterRelated("aBrightnessAuto", *iPropertyDisplayBrightnessAuto));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoDisplayBrightnessAuto);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionDisplayUpsideDown(CallbackUi2DisplayUpsideDown aCallback, void* aPtr)
 {
     iCallbackDisplayUpsideDown = aCallback;
     iPtrDisplayUpsideDown = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionDisplayUpsideDown();
+    Zapp::Action* action = new Zapp::Action("DisplayUpsideDown");
+    action->AddOutputParameter(new ParameterRelated("aUpsideDown", *iPropertyDisplayUpsideDown));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoDisplayUpsideDown);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionSetDisplayUpsideDown(CallbackUi2SetDisplayUpsideDown aCallback, void* aPtr)
 {
     iCallbackSetDisplayUpsideDown = aCallback;
     iPtrSetDisplayUpsideDown = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionSetDisplayUpsideDown();
+    Zapp::Action* action = new Zapp::Action("SetDisplayUpsideDown");
+    action->AddInputParameter(new ParameterRelated("aUpsideDown", *iPropertyDisplayUpsideDown));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoSetDisplayUpsideDown);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionSetDisplayScrollText(CallbackUi2SetDisplayScrollText aCallback, void* aPtr)
 {
     iCallbackSetDisplayScrollText = aCallback;
     iPtrSetDisplayScrollText = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionSetDisplayScrollText();
+    Zapp::Action* action = new Zapp::Action("SetDisplayScrollText");
+    action->AddInputParameter(new ParameterRelated("aDisplayScrollText", *iPropertyDisplayScrollText));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoSetDisplayScrollText);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionDisplayScrollText(CallbackUi2DisplayScrollText aCallback, void* aPtr)
 {
     iCallbackDisplayScrollText = aCallback;
     iPtrDisplayScrollText = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionDisplayScrollText();
+    Zapp::Action* action = new Zapp::Action("DisplayScrollText");
+    action->AddOutputParameter(new ParameterRelated("aDisplayScrollTextEnabled", *iPropertyDisplayScrollText));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoDisplayScrollText);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionSetDisplaySleep(CallbackUi2SetDisplaySleep aCallback, void* aPtr)
 {
     iCallbackSetDisplaySleep = aCallback;
     iPtrSetDisplaySleep = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionSetDisplaySleep();
+    Zapp::Action* action = new Zapp::Action("SetDisplaySleep");
+    action->AddInputParameter(new ParameterRelated("aEnabled", *iPropertyDisplaySleep));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoSetDisplaySleep);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionDisplaySleep(CallbackUi2DisplaySleep aCallback, void* aPtr)
 {
     iCallbackDisplaySleep = aCallback;
     iPtrDisplaySleep = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionDisplaySleep();
+    Zapp::Action* action = new Zapp::Action("DisplaySleep");
+    action->AddOutputParameter(new ParameterRelated("aEnabled", *iPropertyDisplaySleep));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoDisplaySleep);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionSetDisplayLedOff(CallbackUi2SetDisplayLedOff aCallback, void* aPtr)
 {
     iCallbackSetDisplayLedOff = aCallback;
     iPtrSetDisplayLedOff = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionSetDisplayLedOff();
+    Zapp::Action* action = new Zapp::Action("SetDisplayLedOff");
+    action->AddInputParameter(new ParameterRelated("aOff", *iPropertyDisplayLedOff));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoSetDisplayLedOff);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2C::EnableActionDisplayLedOff(CallbackUi2DisplayLedOff aCallback, void* aPtr)
 {
     iCallbackDisplayLedOff = aCallback;
     iPtrDisplayLedOff = aPtr;
-    DvProviderLinnCoUkUi2::EnableActionDisplayLedOff();
+    Zapp::Action* action = new Zapp::Action("DisplayLedOff");
+    action->AddOutputParameter(new ParameterRelated("aOff", *iPropertyDisplayLedOff));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2C::DoDisplayLedOff);
+    iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkUi2C::DisplayTestPattern(IInvocationResponse& aResponse, TUint aVersion, TInt aaTestPattern)
+void DvProviderLinnCoUkUi2C::DoDisplayTestPattern(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TInt aTestPattern = aInvocation.InvocationReadInt("aTestPattern");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackDisplayTestPattern != NULL);
-    if (0 != iCallbackDisplayTestPattern(iPtrDisplayTestPattern, aVersion, aaTestPattern)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackDisplayTestPattern(iPtrDisplayTestPattern, aVersion, aTestPattern)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::DisplayFill(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderLinnCoUkUi2C::DoDisplayFill(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackDisplayFill != NULL);
     if (0 != iCallbackDisplayFill(iPtrDisplayFill, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::DisplayClear(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderLinnCoUkUi2C::DoDisplayClear(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackDisplayClear != NULL);
     if (0 != iCallbackDisplayClear(iPtrDisplayClear, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::SetTestModeEnabled(IInvocationResponse& aResponse, TUint aVersion, TBool aaEnabled)
+void DvProviderLinnCoUkUi2C::DoSetTestModeEnabled(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TBool aEnabled = aInvocation.InvocationReadBool("aEnabled");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetTestModeEnabled != NULL);
-    if (0 != iCallbackSetTestModeEnabled(iPtrSetTestModeEnabled, aVersion, aaEnabled)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetTestModeEnabled(iPtrSetTestModeEnabled, aVersion, aEnabled)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::SimulateInfraredInput(IInvocationResponse& aResponse, TUint aVersion, TUint aaCode)
+void DvProviderLinnCoUkUi2C::DoSimulateInfraredInput(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aCode = aInvocation.InvocationReadUint("aCode");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSimulateInfraredInput != NULL);
-    if (0 != iCallbackSimulateInfraredInput(iPtrSimulateInfraredInput, aVersion, aaCode)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSimulateInfraredInput(iPtrSimulateInfraredInput, aVersion, aCode)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::SimulateButtonInput(IInvocationResponse& aResponse, TUint aVersion, TUint aaCode)
+void DvProviderLinnCoUkUi2C::DoSimulateButtonInput(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aCode = aInvocation.InvocationReadUint("aCode");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSimulateButtonInput != NULL);
-    if (0 != iCallbackSimulateButtonInput(iPtrSimulateButtonInput, aVersion, aaCode)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSimulateButtonInput(iPtrSimulateButtonInput, aVersion, aCode)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::SimulateLightSensor(IInvocationResponse& aResponse, TUint aVersion, TUint aaLightLevel)
+void DvProviderLinnCoUkUi2C::DoSimulateLightSensor(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aLightLevel = aInvocation.InvocationReadUint("aLightLevel");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSimulateLightSensor != NULL);
-    if (0 != iCallbackSimulateLightSensor(iPtrSimulateLightSensor, aVersion, aaLightLevel)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSimulateLightSensor(iPtrSimulateLightSensor, aVersion, aLightLevel)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::GetLightSensorData(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaLightLevel)
+void DvProviderLinnCoUkUi2C::DoGetLightSensorData(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aLightLevel;
     ASSERT(iCallbackGetLightSensorData != NULL);
     if (0 != iCallbackGetLightSensorData(iPtrGetLightSensorData, aVersion, &aLightLevel)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaLightLevel.Write(aLightLevel);
-    aResponse.End();
+    InvocationResponseUint respaLightLevel(aInvocation, "aLightLevel");
+    resp.Start();
+    respaLightLevel.Write(aLightLevel);
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::SetDisplayBrightness(IInvocationResponse& aResponse, TUint aVersion, TUint aaBrightness)
+void DvProviderLinnCoUkUi2C::DoSetDisplayBrightness(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aBrightness = aInvocation.InvocationReadUint("aBrightness");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetDisplayBrightness != NULL);
-    if (0 != iCallbackSetDisplayBrightness(iPtrSetDisplayBrightness, aVersion, aaBrightness)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetDisplayBrightness(iPtrSetDisplayBrightness, aVersion, aBrightness)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::SetDisplayBrightnessAuto(IInvocationResponse& aResponse, TUint aVersion, TBool aaBrightnessAuto)
+void DvProviderLinnCoUkUi2C::DoSetDisplayBrightnessAuto(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TBool aBrightnessAuto = aInvocation.InvocationReadBool("aBrightnessAuto");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetDisplayBrightnessAuto != NULL);
-    if (0 != iCallbackSetDisplayBrightnessAuto(iPtrSetDisplayBrightnessAuto, aVersion, aaBrightnessAuto)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetDisplayBrightnessAuto(iPtrSetDisplayBrightnessAuto, aVersion, aBrightnessAuto)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::SetInfraredCommands(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaCommands)
+void DvProviderLinnCoUkUi2C::DoSetInfraredCommands(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    Brhz aCommands;
+    aInvocation.InvocationReadString("aCommands", aCommands);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetInfraredCommands != NULL);
-    if (0 != iCallbackSetInfraredCommands(iPtrSetInfraredCommands, aVersion, (const char*)aaCommands.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetInfraredCommands(iPtrSetInfraredCommands, aVersion, (const char*)aCommands.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::InfraredCommands(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaCommands)
+void DvProviderLinnCoUkUi2C::DoInfraredCommands(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aCommands;
     ASSERT(iCallbackInfraredCommands != NULL);
     if (0 != iCallbackInfraredCommands(iPtrInfraredCommands, aVersion, &aCommands)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaCommands(aInvocation, "aCommands");
+    resp.Start();
     Brhz bufaCommands((const TChar*)aCommands);
     ZappFreeExternal(aCommands);
-    aaCommands.Write(bufaCommands);
-    aaCommands.WriteFlush();
-    aResponse.End();
+    respaCommands.Write(bufaCommands);
+    respaCommands.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::SetInfraredTerminalCommands(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaCommands)
+void DvProviderLinnCoUkUi2C::DoSetInfraredTerminalCommands(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    Brhz aCommands;
+    aInvocation.InvocationReadString("aCommands", aCommands);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetInfraredTerminalCommands != NULL);
-    if (0 != iCallbackSetInfraredTerminalCommands(iPtrSetInfraredTerminalCommands, aVersion, (const char*)aaCommands.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetInfraredTerminalCommands(iPtrSetInfraredTerminalCommands, aVersion, (const char*)aCommands.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::InfraredTerminalCommands(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaCommands)
+void DvProviderLinnCoUkUi2C::DoInfraredTerminalCommands(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aCommands;
     ASSERT(iCallbackInfraredTerminalCommands != NULL);
     if (0 != iCallbackInfraredTerminalCommands(iPtrInfraredTerminalCommands, aVersion, &aCommands)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaCommands(aInvocation, "aCommands");
+    resp.Start();
     Brhz bufaCommands((const TChar*)aCommands);
     ZappFreeExternal(aCommands);
-    aaCommands.Write(bufaCommands);
-    aaCommands.WriteFlush();
-    aResponse.End();
+    respaCommands.Write(bufaCommands);
+    respaCommands.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::DisplayBrightness(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaBrightness)
+void DvProviderLinnCoUkUi2C::DoDisplayBrightness(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aBrightness;
     ASSERT(iCallbackDisplayBrightness != NULL);
     if (0 != iCallbackDisplayBrightness(iPtrDisplayBrightness, aVersion, &aBrightness)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaBrightness.Write(aBrightness);
-    aResponse.End();
+    InvocationResponseUint respaBrightness(aInvocation, "aBrightness");
+    resp.Start();
+    respaBrightness.Write(aBrightness);
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::DisplayBrightnessAuto(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaBrightnessAuto)
+void DvProviderLinnCoUkUi2C::DoDisplayBrightnessAuto(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aBrightnessAuto;
     ASSERT(iCallbackDisplayBrightnessAuto != NULL);
     if (0 != iCallbackDisplayBrightnessAuto(iPtrDisplayBrightnessAuto, aVersion, &aBrightnessAuto)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaBrightnessAuto.Write((aBrightnessAuto!=0));
-    aResponse.End();
+    InvocationResponseBool respaBrightnessAuto(aInvocation, "aBrightnessAuto");
+    resp.Start();
+    respaBrightnessAuto.Write((aBrightnessAuto!=0));
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::DisplayUpsideDown(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaUpsideDown)
+void DvProviderLinnCoUkUi2C::DoDisplayUpsideDown(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aUpsideDown;
     ASSERT(iCallbackDisplayUpsideDown != NULL);
     if (0 != iCallbackDisplayUpsideDown(iPtrDisplayUpsideDown, aVersion, &aUpsideDown)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaUpsideDown.Write((aUpsideDown!=0));
-    aResponse.End();
+    InvocationResponseBool respaUpsideDown(aInvocation, "aUpsideDown");
+    resp.Start();
+    respaUpsideDown.Write((aUpsideDown!=0));
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::SetDisplayUpsideDown(IInvocationResponse& aResponse, TUint aVersion, TBool aaUpsideDown)
+void DvProviderLinnCoUkUi2C::DoSetDisplayUpsideDown(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TBool aUpsideDown = aInvocation.InvocationReadBool("aUpsideDown");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetDisplayUpsideDown != NULL);
-    if (0 != iCallbackSetDisplayUpsideDown(iPtrSetDisplayUpsideDown, aVersion, aaUpsideDown)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetDisplayUpsideDown(iPtrSetDisplayUpsideDown, aVersion, aUpsideDown)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::SetDisplayScrollText(IInvocationResponse& aResponse, TUint aVersion, TBool aaDisplayScrollText)
+void DvProviderLinnCoUkUi2C::DoSetDisplayScrollText(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TBool aDisplayScrollText = aInvocation.InvocationReadBool("aDisplayScrollText");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetDisplayScrollText != NULL);
-    if (0 != iCallbackSetDisplayScrollText(iPtrSetDisplayScrollText, aVersion, aaDisplayScrollText)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetDisplayScrollText(iPtrSetDisplayScrollText, aVersion, aDisplayScrollText)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::DisplayScrollText(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaDisplayScrollTextEnabled)
+void DvProviderLinnCoUkUi2C::DoDisplayScrollText(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aDisplayScrollTextEnabled;
     ASSERT(iCallbackDisplayScrollText != NULL);
     if (0 != iCallbackDisplayScrollText(iPtrDisplayScrollText, aVersion, &aDisplayScrollTextEnabled)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaDisplayScrollTextEnabled.Write((aDisplayScrollTextEnabled!=0));
-    aResponse.End();
+    InvocationResponseBool respaDisplayScrollTextEnabled(aInvocation, "aDisplayScrollTextEnabled");
+    resp.Start();
+    respaDisplayScrollTextEnabled.Write((aDisplayScrollTextEnabled!=0));
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::SetDisplaySleep(IInvocationResponse& aResponse, TUint aVersion, TBool aaEnabled)
+void DvProviderLinnCoUkUi2C::DoSetDisplaySleep(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TBool aEnabled = aInvocation.InvocationReadBool("aEnabled");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetDisplaySleep != NULL);
-    if (0 != iCallbackSetDisplaySleep(iPtrSetDisplaySleep, aVersion, aaEnabled)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetDisplaySleep(iPtrSetDisplaySleep, aVersion, aEnabled)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::DisplaySleep(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaEnabled)
+void DvProviderLinnCoUkUi2C::DoDisplaySleep(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aEnabled;
     ASSERT(iCallbackDisplaySleep != NULL);
     if (0 != iCallbackDisplaySleep(iPtrDisplaySleep, aVersion, &aEnabled)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaEnabled.Write((aEnabled!=0));
-    aResponse.End();
+    InvocationResponseBool respaEnabled(aInvocation, "aEnabled");
+    resp.Start();
+    respaEnabled.Write((aEnabled!=0));
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::SetDisplayLedOff(IInvocationResponse& aResponse, TUint aVersion, TBool aaOff)
+void DvProviderLinnCoUkUi2C::DoSetDisplayLedOff(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TBool aOff = aInvocation.InvocationReadBool("aOff");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetDisplayLedOff != NULL);
-    if (0 != iCallbackSetDisplayLedOff(iPtrSetDisplayLedOff, aVersion, aaOff)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetDisplayLedOff(iPtrSetDisplayLedOff, aVersion, aOff)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkUi2C::DisplayLedOff(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaOff)
+void DvProviderLinnCoUkUi2C::DoDisplayLedOff(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aOff;
     ASSERT(iCallbackDisplayLedOff != NULL);
     if (0 != iCallbackDisplayLedOff(iPtrDisplayLedOff, aVersion, &aOff)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaOff.Write((aOff!=0));
-    aResponse.End();
+    InvocationResponseBool respaOff(aInvocation, "aOff");
+    resp.Start();
+    respaOff.Write((aOff!=0));
+    resp.End();
 }
 
 
 
 THandle DvProviderLinnCoUkUi2Create(DvDeviceC aDevice)
 {
-	return new DvProviderLinnCoUkUi2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkUi2C(aDevice);
 }
 
 void DvProviderLinnCoUkUi2Destroy(THandle aProvider)

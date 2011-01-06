@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the Status property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyStatus(out bool aValue);
+        bool PropertyStatus();
         
     }
     /// <summary>
@@ -27,40 +28,22 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderUpnpOrgSwitchPower1 : DvProvider, IDisposable, IDvProviderUpnpOrgSwitchPower1
     {
-        [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern uint DvProviderUpnpOrgSwitchPower1Create(uint aDeviceHandle);
-        [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern void DvProviderUpnpOrgSwitchPower1Destroy(uint aHandle);
-        [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern unsafe int DvProviderUpnpOrgSwitchPower1SetPropertyStatus(uint aHandle, int aValue, uint* aChanged);
-        [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern unsafe void DvProviderUpnpOrgSwitchPower1GetPropertyStatus(uint aHandle, int* aValue);
-        [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern void DvProviderUpnpOrgSwitchPower1EnableActionSetTarget(uint aHandle, CallbackSetTarget aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern void DvProviderUpnpOrgSwitchPower1EnableActionGetTarget(uint aHandle, CallbackGetTarget aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern void DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(uint aHandle, CallbackGetStatus aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackSetTarget(IntPtr aPtr, uint aVersion, int anewTargetValue);
-        private unsafe delegate int CallbackGetTarget(IntPtr aPtr, uint aVersion, int* aRetTargetValue);
-        private unsafe delegate int CallbackGetStatus(IntPtr aPtr, uint aVersion, int* aResultStatus);
-
         private GCHandle iGch;
-        private CallbackSetTarget iCallbackSetTarget;
-        private CallbackGetTarget iCallbackGetTarget;
-        private CallbackGetStatus iCallbackGetStatus;
+        private ActionDelegate iDelegateSetTarget;
+        private ActionDelegate iDelegateGetTarget;
+        private ActionDelegate iDelegateGetStatus;
+        private PropertyBool iPropertyStatus;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderUpnpOrgSwitchPower1(DvDevice aDevice)
+            : base(aDevice, "schemas-upnp-org", "SwitchPower", 1)
         {
-            iHandle = DvProviderUpnpOrgSwitchPower1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            iPropertyStatus = new PropertyBool(new ParameterBool("Status"));
+            AddProperty(iPropertyStatus);
         }
 
         /// <summary>
@@ -68,26 +51,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyStatus(bool aValue)
+        public bool SetPropertyStatus(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderUpnpOrgSwitchPower1SetPropertyStatus(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyStatus, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Status property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyStatus(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyStatus()
         {
-            int value;
-            DvProviderUpnpOrgSwitchPower1GetPropertyStatus(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyStatus.Value();
         }
 
         /// <summary>
@@ -95,11 +70,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetTarget must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetTarget()
+        protected void EnableActionSetTarget()
         {
-            iCallbackSetTarget = new CallbackSetTarget(DoSetTarget);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgSwitchPower1EnableActionSetTarget(iHandle, iCallbackSetTarget, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetTarget");
+            action.AddInputParameter(new ParameterBool("newTargetValue"));
+            iDelegateSetTarget = new ActionDelegate(DoSetTarget);
+            EnableAction(action, iDelegateSetTarget, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -107,11 +83,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetTarget must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetTarget()
+        protected void EnableActionGetTarget()
         {
-            iCallbackGetTarget = new CallbackGetTarget(DoGetTarget);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgSwitchPower1EnableActionGetTarget(iHandle, iCallbackGetTarget, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetTarget");
+            action.AddOutputParameter(new ParameterBool("RetTargetValue"));
+            iDelegateGetTarget = new ActionDelegate(DoGetTarget);
+            EnableAction(action, iDelegateGetTarget, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -119,11 +96,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoGetStatus must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionGetStatus()
+        protected void EnableActionGetStatus()
         {
-            iCallbackGetStatus = new CallbackGetStatus(DoGetStatus);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(iHandle, iCallbackGetStatus, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetStatus");
+            action.AddOutputParameter(new ParameterRelated("ResultStatus", iPropertyStatus));
+            iDelegateGetStatus = new ActionDelegate(DoGetStatus);
+            EnableAction(action, iDelegateGetStatus, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -168,32 +146,123 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoSetTarget(IntPtr aPtr, uint aVersion, int anewTargetValue)
+        private static int DoSetTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgSwitchPower1 self = (DvProviderUpnpOrgSwitchPower1)gch.Target;
-            bool newTargetValue = (anewTargetValue != 0);
-            self.SetTarget(aVersion, newTargetValue);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool newTargetValue;
+            try
+            {
+                invocation.ReadStart();
+                newTargetValue = invocation.ReadBool("newTargetValue");
+                invocation.ReadEnd();
+                self.SetTarget(aVersion, newTargetValue);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetTarget(IntPtr aPtr, uint aVersion, int* aRetTargetValue)
+        private static int DoGetTarget(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgSwitchPower1 self = (DvProviderUpnpOrgSwitchPower1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool retTargetValue;
-            self.GetTarget(aVersion, out retTargetValue);
-            *aRetTargetValue = (retTargetValue ? 1 : 0);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.GetTarget(aVersion, out retTargetValue);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBool("RetTargetValue", retTargetValue);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoGetStatus(IntPtr aPtr, uint aVersion, int* aResultStatus)
+        private static int DoGetStatus(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgSwitchPower1 self = (DvProviderUpnpOrgSwitchPower1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool resultStatus;
-            self.GetStatus(aVersion, out resultStatus);
-            *aResultStatus = (resultStatus ? 1 : 0);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.GetStatus(aVersion, out resultStatus);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBool("ResultStatus", resultStatus);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -213,21 +282,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            DvProviderUpnpOrgSwitchPower1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

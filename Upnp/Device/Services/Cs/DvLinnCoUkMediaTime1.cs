@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the Seconds property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertySeconds(out uint aValue);
+        uint PropertySeconds();
         
     }
     /// <summary>
@@ -27,32 +28,20 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkMediaTime1 : DvProvider, IDisposable, IDvProviderLinnCoUkMediaTime1
     {
-        [DllImport("DvLinnCoUkMediaTime1")]
-        static extern uint DvProviderLinnCoUkMediaTime1Create(uint aDeviceHandle);
-        [DllImport("DvLinnCoUkMediaTime1")]
-        static extern void DvProviderLinnCoUkMediaTime1Destroy(uint aHandle);
-        [DllImport("DvLinnCoUkMediaTime1")]
-        static extern unsafe int DvProviderLinnCoUkMediaTime1SetPropertySeconds(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkMediaTime1")]
-        static extern unsafe void DvProviderLinnCoUkMediaTime1GetPropertySeconds(uint aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkMediaTime1")]
-        static extern void DvProviderLinnCoUkMediaTime1EnableActionSeconds(uint aHandle, CallbackSeconds aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackSeconds(IntPtr aPtr, uint aVersion, uint* aaSeconds);
-
         private GCHandle iGch;
-        private CallbackSeconds iCallbackSeconds;
+        private ActionDelegate iDelegateSeconds;
+        private PropertyUint iPropertySeconds;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkMediaTime1(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "MediaTime", 1)
         {
-            iHandle = DvProviderLinnCoUkMediaTime1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"));
+            AddProperty(iPropertySeconds);
         }
 
         /// <summary>
@@ -60,26 +49,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertySeconds(uint aValue)
+        public bool SetPropertySeconds(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkMediaTime1SetPropertySeconds(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertySeconds, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Seconds property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertySeconds(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertySeconds()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkMediaTime1GetPropertySeconds(iHandle, value);
-            }
+            return iPropertySeconds.Value();
         }
 
         /// <summary>
@@ -87,11 +68,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSeconds must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSeconds()
+        protected void EnableActionSeconds()
         {
-            iCallbackSeconds = new CallbackSeconds(DoSeconds);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkMediaTime1EnableActionSeconds(iHandle, iCallbackSeconds, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Seconds");
+            action.AddOutputParameter(new ParameterRelated("aSeconds", iPropertySeconds));
+            iDelegateSeconds = new ActionDelegate(DoSeconds);
+            EnableAction(action, iDelegateSeconds, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -108,13 +90,43 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoSeconds(IntPtr aPtr, uint aVersion, uint* aaSeconds)
+        private static int DoSeconds(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkMediaTime1 self = (DvProviderLinnCoUkMediaTime1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aSeconds;
-            self.Seconds(aVersion, out aSeconds);
-            *aaSeconds = aSeconds;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.Seconds(aVersion, out aSeconds);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("aSeconds", aSeconds);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -134,21 +146,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkMediaTime1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

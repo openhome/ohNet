@@ -1,4 +1,4 @@
-#include <Core/CpUpnpOrgAVTransport2.h>
+#include "CpUpnpOrgAVTransport2.h"
 #include <CpProxy.h>
 #include <CpiService.h>
 #include <Thread.h>

@@ -1,4 +1,4 @@
-#include <Std/DvZappOrgTestWidgetController1.h>
+#include "DvZappOrgTestWidgetController1.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -9,7 +9,7 @@ using namespace Zapp;
 DvProviderZappOrgTestWidgetController1Cpp::DvProviderZappOrgTestWidgetController1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "zapp.org", "TestWidgetController", 1)
 {
-    Functor empty;
+    
 }
 
 void DvProviderZappOrgTestWidgetController1Cpp::EnableActionCreateWidget()

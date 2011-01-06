@@ -1,16 +1,20 @@
-#include <C/DvZappOrgTestLights1.h>
-#include <Core/DvZappOrgTestLights1.h>
+#include "DvZappOrgTestLights1.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
+#include <DvProvider.h>
 #include <C/Zapp.h>
+#include <ZappTypes.h>
+#include <Core/DvInvocationResponse.h>
+#include <Service.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-class DvProviderZappOrgTestLights1C : public DvProviderZappOrgTestLights1
+class DvProviderZappOrgTestLights1C : public DvProvider
 {
 public:
-    DvProviderZappOrgTestLights1C(DvDevice& aDevice);
+    DvProviderZappOrgTestLights1C(DvDeviceC aDevice);
     void EnableActionGetCount(CallbackTestLights1GetCount aCallback, void* aPtr);
     void EnableActionGetRoom(CallbackTestLights1GetRoom aCallback, void* aPtr);
     void EnableActionGetName(CallbackTestLights1GetName aCallback, void* aPtr);
@@ -19,13 +23,13 @@ public:
     void EnableActionGetColor(CallbackTestLights1GetColor aCallback, void* aPtr);
     void EnableActionGetColorComponents(CallbackTestLights1GetColorComponents aCallback, void* aPtr);
 private:
-    void GetCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aCount);
-    void GetRoom(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aRoomName);
-    void GetName(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aFriendlyName);
-    void GetPosition(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseUint& aX, IInvocationResponseUint& aY, IInvocationResponseUint& aZ);
-    void SetColor(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, TUint aColor);
-    void GetColor(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseUint& aColor);
-    void GetColorComponents(IInvocationResponse& aResponse, TUint aVersion, TUint aColor, IInvocationResponseUint& aBrightness, IInvocationResponseUint& aRed, IInvocationResponseUint& aGreen, IInvocationResponseUint& aBlue);
+    void DoGetCount(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetRoom(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetName(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetPosition(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetColor(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetColor(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetColorComponents(IDviInvocation& aInvocation, TUint aVersion);
 private:
     CallbackTestLights1GetCount iCallbackGetCount;
     void* iPtrGetCount;
@@ -43,170 +47,242 @@ private:
     void* iPtrGetColorComponents;
 };
 
-DvProviderZappOrgTestLights1C::DvProviderZappOrgTestLights1C(DvDevice& aDevice)
-    : DvProviderZappOrgTestLights1(aDevice)
+DvProviderZappOrgTestLights1C::DvProviderZappOrgTestLights1C(DvDeviceC aDevice)
+    : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "zapp.org", "TestLights", 1)
 {
+    
 }
 
 void DvProviderZappOrgTestLights1C::EnableActionGetCount(CallbackTestLights1GetCount aCallback, void* aPtr)
 {
     iCallbackGetCount = aCallback;
     iPtrGetCount = aPtr;
-    DvProviderZappOrgTestLights1::EnableActionGetCount();
+    Zapp::Action* action = new Zapp::Action("GetCount");
+    action->AddOutputParameter(new ParameterUint("Count"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1C::DoGetCount);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderZappOrgTestLights1C::EnableActionGetRoom(CallbackTestLights1GetRoom aCallback, void* aPtr)
 {
     iCallbackGetRoom = aCallback;
     iPtrGetRoom = aPtr;
-    DvProviderZappOrgTestLights1::EnableActionGetRoom();
+    Zapp::Action* action = new Zapp::Action("GetRoom");
+    action->AddInputParameter(new ParameterUint("Index"));
+    action->AddOutputParameter(new ParameterString("RoomName"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1C::DoGetRoom);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderZappOrgTestLights1C::EnableActionGetName(CallbackTestLights1GetName aCallback, void* aPtr)
 {
     iCallbackGetName = aCallback;
     iPtrGetName = aPtr;
-    DvProviderZappOrgTestLights1::EnableActionGetName();
+    Zapp::Action* action = new Zapp::Action("GetName");
+    action->AddInputParameter(new ParameterUint("Index"));
+    action->AddOutputParameter(new ParameterString("FriendlyName"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1C::DoGetName);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderZappOrgTestLights1C::EnableActionGetPosition(CallbackTestLights1GetPosition aCallback, void* aPtr)
 {
     iCallbackGetPosition = aCallback;
     iPtrGetPosition = aPtr;
-    DvProviderZappOrgTestLights1::EnableActionGetPosition();
+    Zapp::Action* action = new Zapp::Action("GetPosition");
+    action->AddInputParameter(new ParameterUint("Index"));
+    action->AddOutputParameter(new ParameterUint("X"));
+    action->AddOutputParameter(new ParameterUint("Y"));
+    action->AddOutputParameter(new ParameterUint("Z"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1C::DoGetPosition);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderZappOrgTestLights1C::EnableActionSetColor(CallbackTestLights1SetColor aCallback, void* aPtr)
 {
     iCallbackSetColor = aCallback;
     iPtrSetColor = aPtr;
-    DvProviderZappOrgTestLights1::EnableActionSetColor();
+    Zapp::Action* action = new Zapp::Action("SetColor");
+    action->AddInputParameter(new ParameterUint("Index"));
+    action->AddInputParameter(new ParameterUint("Color"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1C::DoSetColor);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderZappOrgTestLights1C::EnableActionGetColor(CallbackTestLights1GetColor aCallback, void* aPtr)
 {
     iCallbackGetColor = aCallback;
     iPtrGetColor = aPtr;
-    DvProviderZappOrgTestLights1::EnableActionGetColor();
+    Zapp::Action* action = new Zapp::Action("GetColor");
+    action->AddInputParameter(new ParameterUint("Index"));
+    action->AddOutputParameter(new ParameterUint("Color"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1C::DoGetColor);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderZappOrgTestLights1C::EnableActionGetColorComponents(CallbackTestLights1GetColorComponents aCallback, void* aPtr)
 {
     iCallbackGetColorComponents = aCallback;
     iPtrGetColorComponents = aPtr;
-    DvProviderZappOrgTestLights1::EnableActionGetColorComponents();
+    Zapp::Action* action = new Zapp::Action("GetColorComponents");
+    action->AddInputParameter(new ParameterUint("Color"));
+    action->AddOutputParameter(new ParameterUint("Brightness"));
+    action->AddOutputParameter(new ParameterUint("Red"));
+    action->AddOutputParameter(new ParameterUint("Green"));
+    action->AddOutputParameter(new ParameterUint("Blue"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1C::DoGetColorComponents);
+    iService->AddAction(action, functor);
 }
 
-void DvProviderZappOrgTestLights1C::GetCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aCount)
+void DvProviderZappOrgTestLights1C::DoGetCount(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t Count;
     ASSERT(iCallbackGetCount != NULL);
     if (0 != iCallbackGetCount(iPtrGetCount, aVersion, &Count)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aCount.Write(Count);
-    aResponse.End();
+    InvocationResponseUint respCount(aInvocation, "Count");
+    resp.Start();
+    respCount.Write(Count);
+    resp.End();
 }
 
-void DvProviderZappOrgTestLights1C::GetRoom(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aRoomName)
+void DvProviderZappOrgTestLights1C::DoGetRoom(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint Index = aInvocation.InvocationReadUint("Index");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* RoomName;
     ASSERT(iCallbackGetRoom != NULL);
-    if (0 != iCallbackGetRoom(iPtrGetRoom, aVersion, aIndex, &RoomName)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetRoom(iPtrGetRoom, aVersion, Index, &RoomName)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respRoomName(aInvocation, "RoomName");
+    resp.Start();
     Brhz bufRoomName((const TChar*)RoomName);
     ZappFreeExternal(RoomName);
-    aRoomName.Write(bufRoomName);
-    aRoomName.WriteFlush();
-    aResponse.End();
+    respRoomName.Write(bufRoomName);
+    respRoomName.WriteFlush();
+    resp.End();
 }
 
-void DvProviderZappOrgTestLights1C::GetName(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aFriendlyName)
+void DvProviderZappOrgTestLights1C::DoGetName(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint Index = aInvocation.InvocationReadUint("Index");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* FriendlyName;
     ASSERT(iCallbackGetName != NULL);
-    if (0 != iCallbackGetName(iPtrGetName, aVersion, aIndex, &FriendlyName)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetName(iPtrGetName, aVersion, Index, &FriendlyName)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respFriendlyName(aInvocation, "FriendlyName");
+    resp.Start();
     Brhz bufFriendlyName((const TChar*)FriendlyName);
     ZappFreeExternal(FriendlyName);
-    aFriendlyName.Write(bufFriendlyName);
-    aFriendlyName.WriteFlush();
-    aResponse.End();
+    respFriendlyName.Write(bufFriendlyName);
+    respFriendlyName.WriteFlush();
+    resp.End();
 }
 
-void DvProviderZappOrgTestLights1C::GetPosition(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseUint& aX, IInvocationResponseUint& aY, IInvocationResponseUint& aZ)
+void DvProviderZappOrgTestLights1C::DoGetPosition(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint Index = aInvocation.InvocationReadUint("Index");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t X;
     uint32_t Y;
     uint32_t Z;
     ASSERT(iCallbackGetPosition != NULL);
-    if (0 != iCallbackGetPosition(iPtrGetPosition, aVersion, aIndex, &X, &Y, &Z)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetPosition(iPtrGetPosition, aVersion, Index, &X, &Y, &Z)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aX.Write(X);
-    aY.Write(Y);
-    aZ.Write(Z);
-    aResponse.End();
+    InvocationResponseUint respX(aInvocation, "X");
+    InvocationResponseUint respY(aInvocation, "Y");
+    InvocationResponseUint respZ(aInvocation, "Z");
+    resp.Start();
+    respX.Write(X);
+    respY.Write(Y);
+    respZ.Write(Z);
+    resp.End();
 }
 
-void DvProviderZappOrgTestLights1C::SetColor(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, TUint aColor)
+void DvProviderZappOrgTestLights1C::DoSetColor(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint Index = aInvocation.InvocationReadUint("Index");
+    TUint Color = aInvocation.InvocationReadUint("Color");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetColor != NULL);
-    if (0 != iCallbackSetColor(iPtrSetColor, aVersion, aIndex, aColor)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetColor(iPtrSetColor, aVersion, Index, Color)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderZappOrgTestLights1C::GetColor(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseUint& aColor)
+void DvProviderZappOrgTestLights1C::DoGetColor(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint Index = aInvocation.InvocationReadUint("Index");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t Color;
     ASSERT(iCallbackGetColor != NULL);
-    if (0 != iCallbackGetColor(iPtrGetColor, aVersion, aIndex, &Color)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetColor(iPtrGetColor, aVersion, Index, &Color)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aColor.Write(Color);
-    aResponse.End();
+    InvocationResponseUint respColor(aInvocation, "Color");
+    resp.Start();
+    respColor.Write(Color);
+    resp.End();
 }
 
-void DvProviderZappOrgTestLights1C::GetColorComponents(IInvocationResponse& aResponse, TUint aVersion, TUint aColor, IInvocationResponseUint& aBrightness, IInvocationResponseUint& aRed, IInvocationResponseUint& aGreen, IInvocationResponseUint& aBlue)
+void DvProviderZappOrgTestLights1C::DoGetColorComponents(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint Color = aInvocation.InvocationReadUint("Color");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t Brightness;
     uint32_t Red;
     uint32_t Green;
     uint32_t Blue;
     ASSERT(iCallbackGetColorComponents != NULL);
-    if (0 != iCallbackGetColorComponents(iPtrGetColorComponents, aVersion, aColor, &Brightness, &Red, &Green, &Blue)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackGetColorComponents(iPtrGetColorComponents, aVersion, Color, &Brightness, &Red, &Green, &Blue)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aBrightness.Write(Brightness);
-    aRed.Write(Red);
-    aGreen.Write(Green);
-    aBlue.Write(Blue);
-    aResponse.End();
+    InvocationResponseUint respBrightness(aInvocation, "Brightness");
+    InvocationResponseUint respRed(aInvocation, "Red");
+    InvocationResponseUint respGreen(aInvocation, "Green");
+    InvocationResponseUint respBlue(aInvocation, "Blue");
+    resp.Start();
+    respBrightness.Write(Brightness);
+    respRed.Write(Red);
+    respGreen.Write(Green);
+    respBlue.Write(Blue);
+    resp.End();
 }
 
 
 
 THandle DvProviderZappOrgTestLights1Create(DvDeviceC aDevice)
 {
-	return new DvProviderZappOrgTestLights1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderZappOrgTestLights1C(aDevice);
 }
 
 void DvProviderZappOrgTestLights1Destroy(THandle aProvider)

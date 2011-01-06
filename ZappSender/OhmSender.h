@@ -4,8 +4,8 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
 #include <Thread.h>
+#include <Timer.h>
 
 #include "Ohm.h"
 

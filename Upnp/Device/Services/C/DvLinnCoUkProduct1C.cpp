@@ -1,25 +1,33 @@
-#include <C/DvLinnCoUkProduct1.h>
-#include <Core/DvLinnCoUkProduct1.h>
+#include "DvLinnCoUkProduct1.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
+#include <DvProvider.h>
 #include <C/Zapp.h>
+#include <ZappTypes.h>
+#include <Core/DvInvocationResponse.h>
+#include <Service.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-class DvProviderLinnCoUkProduct1C : public DvProviderLinnCoUkProduct1
+class DvProviderLinnCoUkProduct1C : public DvProvider
 {
 public:
-    DvProviderLinnCoUkProduct1C(DvDevice& aDevice);
+    DvProviderLinnCoUkProduct1C(DvDeviceC aDevice);
+    TBool SetPropertyRoom(const Brx& aValue);
+    void GetPropertyRoom(Brhz& aValue);
+    TBool SetPropertyStandby(TBool aValue);
+    void GetPropertyStandby(TBool& aValue);
     void EnableActionRoom(CallbackProduct1Room aCallback, void* aPtr);
     void EnableActionSetRoom(CallbackProduct1SetRoom aCallback, void* aPtr);
     void EnableActionStandby(CallbackProduct1Standby aCallback, void* aPtr);
     void EnableActionSetStandby(CallbackProduct1SetStandby aCallback, void* aPtr);
 private:
-    void Room(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaRoom);
-    void SetRoom(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaRoom);
-    void Standby(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaStandby);
-    void SetStandby(IInvocationResponse& aResponse, TUint aVersion, TBool aaStandby);
+    void DoRoom(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetRoom(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStandby(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStandby(IDviInvocation& aInvocation, TUint aVersion);
 private:
     CallbackProduct1Room iCallbackRoom;
     void* iPtrRoom;
@@ -29,97 +37,153 @@ private:
     void* iPtrStandby;
     CallbackProduct1SetStandby iCallbackSetStandby;
     void* iPtrSetStandby;
+    PropertyString* iPropertyRoom;
+    PropertyBool* iPropertyStandby;
 };
 
-DvProviderLinnCoUkProduct1C::DvProviderLinnCoUkProduct1C(DvDevice& aDevice)
-    : DvProviderLinnCoUkProduct1(aDevice)
+DvProviderLinnCoUkProduct1C::DvProviderLinnCoUkProduct1C(DvDeviceC aDevice)
+    : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "linn.co.uk", "Product", 1)
 {
+    
+    iPropertyRoom = new PropertyString(new ParameterString("Room"));
+    iService->AddProperty(iPropertyRoom); // passes ownership
+    iPropertyStandby = new PropertyBool(new ParameterBool("Standby"));
+    iService->AddProperty(iPropertyStandby); // passes ownership
+}
+
+TBool DvProviderLinnCoUkProduct1C::SetPropertyRoom(const Brx& aValue)
+{
+    return SetPropertyString(*iPropertyRoom, aValue);
+}
+
+void DvProviderLinnCoUkProduct1C::GetPropertyRoom(Brhz& aValue)
+{
+    aValue.Set(iPropertyRoom->Value());
+}
+
+TBool DvProviderLinnCoUkProduct1C::SetPropertyStandby(TBool aValue)
+{
+    return SetPropertyBool(*iPropertyStandby, aValue);
+}
+
+void DvProviderLinnCoUkProduct1C::GetPropertyStandby(TBool& aValue)
+{
+    aValue = iPropertyStandby->Value();
 }
 
 void DvProviderLinnCoUkProduct1C::EnableActionRoom(CallbackProduct1Room aCallback, void* aPtr)
 {
     iCallbackRoom = aCallback;
     iPtrRoom = aPtr;
-    DvProviderLinnCoUkProduct1::EnableActionRoom();
+    Zapp::Action* action = new Zapp::Action("Room");
+    action->AddOutputParameter(new ParameterRelated("aRoom", *iPropertyRoom));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct1C::DoRoom);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct1C::EnableActionSetRoom(CallbackProduct1SetRoom aCallback, void* aPtr)
 {
     iCallbackSetRoom = aCallback;
     iPtrSetRoom = aPtr;
-    DvProviderLinnCoUkProduct1::EnableActionSetRoom();
+    Zapp::Action* action = new Zapp::Action("SetRoom");
+    action->AddInputParameter(new ParameterRelated("aRoom", *iPropertyRoom));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct1C::DoSetRoom);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct1C::EnableActionStandby(CallbackProduct1Standby aCallback, void* aPtr)
 {
     iCallbackStandby = aCallback;
     iPtrStandby = aPtr;
-    DvProviderLinnCoUkProduct1::EnableActionStandby();
+    Zapp::Action* action = new Zapp::Action("Standby");
+    action->AddOutputParameter(new ParameterRelated("aStandby", *iPropertyStandby));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct1C::DoStandby);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct1C::EnableActionSetStandby(CallbackProduct1SetStandby aCallback, void* aPtr)
 {
     iCallbackSetStandby = aCallback;
     iPtrSetStandby = aPtr;
-    DvProviderLinnCoUkProduct1::EnableActionSetStandby();
+    Zapp::Action* action = new Zapp::Action("SetStandby");
+    action->AddInputParameter(new ParameterRelated("aStandby", *iPropertyStandby));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct1C::DoSetStandby);
+    iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkProduct1C::Room(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaRoom)
+void DvProviderLinnCoUkProduct1C::DoRoom(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aRoom;
     ASSERT(iCallbackRoom != NULL);
     if (0 != iCallbackRoom(iPtrRoom, aVersion, &aRoom)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaRoom(aInvocation, "aRoom");
+    resp.Start();
     Brhz bufaRoom((const TChar*)aRoom);
     ZappFreeExternal(aRoom);
-    aaRoom.Write(bufaRoom);
-    aaRoom.WriteFlush();
-    aResponse.End();
+    respaRoom.Write(bufaRoom);
+    respaRoom.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct1C::SetRoom(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaRoom)
+void DvProviderLinnCoUkProduct1C::DoSetRoom(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    Brhz aRoom;
+    aInvocation.InvocationReadString("aRoom", aRoom);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetRoom != NULL);
-    if (0 != iCallbackSetRoom(iPtrSetRoom, aVersion, (const char*)aaRoom.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetRoom(iPtrSetRoom, aVersion, (const char*)aRoom.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct1C::Standby(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaStandby)
+void DvProviderLinnCoUkProduct1C::DoStandby(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aStandby;
     ASSERT(iCallbackStandby != NULL);
     if (0 != iCallbackStandby(iPtrStandby, aVersion, &aStandby)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaStandby.Write((aStandby!=0));
-    aResponse.End();
+    InvocationResponseBool respaStandby(aInvocation, "aStandby");
+    resp.Start();
+    respaStandby.Write((aStandby!=0));
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct1C::SetStandby(IInvocationResponse& aResponse, TUint aVersion, TBool aaStandby)
+void DvProviderLinnCoUkProduct1C::DoSetStandby(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TBool aStandby = aInvocation.InvocationReadBool("aStandby");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetStandby != NULL);
-    if (0 != iCallbackSetStandby(iPtrSetStandby, aVersion, aaStandby)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetStandby(iPtrSetStandby, aVersion, aStandby)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
 
 
 THandle DvProviderLinnCoUkProduct1Create(DvDeviceC aDevice)
 {
-	return new DvProviderLinnCoUkProduct1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkProduct1C(aDevice);
 }
 
 void DvProviderLinnCoUkProduct1Destroy(THandle aProvider)

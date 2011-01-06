@@ -2,6 +2,7 @@
 #include <Thread.h>
 #include <Debug.h>
 #include <ZappTypes.h>
+#include <Stack.h>
 
 using namespace Zapp;
 
@@ -17,6 +18,7 @@ CpiDevice::CpiDevice(const Brx& aUdn, ICpiProtocol& aProtocol, ICpiDeviceObserve
     , iReady(false)
     , iExpired(false)
 {
+    Stack::AddObject(this, "CpiDevice");
 }
 
 const Brx& CpiDevice::Udn() const
@@ -114,6 +116,7 @@ CpiDevice::~CpiDevice()
     LOG(kDevice, iUdn);
     LOG(kDevice, "\n");
     ASSERT(iRefCount == 0);
+    Stack::RemoveObject(this, "CpiDevice");
 }
 
 
@@ -150,12 +153,14 @@ CpiDeviceList::CpiDeviceList(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved)
 {
     ASSERT(iAdded);
     ASSERT(iRemoved);
+    Stack::AddObject(this, "CpiDeviceList");
 }
 
 CpiDeviceList::~CpiDeviceList()
 {
     ClearMap(iMap);
     ClearMap(iRefreshMap);
+    Stack::RemoveObject(this, "CpiDeviceList");
 }
 
 void CpiDeviceList::Add(CpiDevice* aDevice)

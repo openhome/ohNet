@@ -3,6 +3,46 @@ import os
 import subprocess
 import threading
 
+def rssh(username,host,cmd):
+
+	import paramiko
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+        ssh.connect(host, username=username, look_for_keys='True')
+
+        stdin, stdout, stderr = ssh.exec_command(cmd)
+
+        def get_thread(pipe):
+                for line in pipe.readlines():
+                        print line
+
+        stdout_thread = threading.Thread(target=get_thread, args=(stdout,))
+        stderr_thread = threading.Thread(target=get_thread, args=(stderr,))
+
+        stdout_thread.start()
+        stderr_thread.start()
+        stdout_thread.join()
+        stderr_thread.join()
+
+        channel = stdout.channel
+
+        exit_status = channel.recv_exit_status()
+
+        return exit_status
+
+        ssh.close()
+
+def rsync(username,host,src,dst,excludes):
+
+        cmd = ['rsync', '-avz', ''+src+'', ''+username+'@'+host+':'+dst+'' ]
+
+        for exclude in excludes:
+                cmd.append('--exclude='+exclude+'')
+        ret = subprocess.call(cmd)
+        return ret
+
 def getEnvironment():
         if os.environ.get('label') == 'arm':
 				tool = 'env'
@@ -201,56 +241,39 @@ valgrind_nightly = Environment['nightly_run']
 if valgrind_run != "0" and valgrind_nightly == "1":
         ParseDir()
 
-def ArmTests(module, arch, nightly):
+def GenDocs(module, os, nightly, arch):
 
-        host = "sheeva002.linn.co.uk"
-        username = "hudson-zapp"
+	if module == "upnp" and os == "Linux" and arch == "x86" and nightly == "1":
+
+
+		docgen_cmd = "cd Upnp && make docs"
+		Build(Environment['tool'],docgen_cmd,'')
+
+                ret = rsync('hudson-zapp','zapp.linn.co.uk','Upnp/Build/Docs/','~/doc','')
+
+                if ret != 0:
+                          print ret
+                          sys.exit(10)
+		
+def ArmTests(module, arch, nightly):
 
         if module == "upnp" and arch == "arm":
 
-                import paramiko
+		excludes = ['*.o', '*.a', 'Include','Docs']
+                ret = rsync('hudson-zapp','sheeva002.linn.co.uk','Upnp/Build','~/',excludes)
+                ret = rsync('hudson-zapp','sheeva002.linn.co.uk','Upnp/AllTests.py','~/',excludes)
 
-                rsyncCmd = "rsync -avz --exclude='*.o' --exclude='*.a' --exclude='Include' Upnp/Build "+host+":~/ && rsync -avz Upnp/AllTests.py "+host+":~/"
-                ret = subprocess.call(rsyncCmd, shell=True)
                 if ret != 0:
 			  print ret
                           sys.exit(10)
 
-                ssh = paramiko.SSHClient()
-                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-                ssh.connect(host, username=username, look_for_keys='True')
-
 		if nightly == "1":
 
-                	stdin, stdout, stderr = ssh.exec_command("python AllTests.py -f -t")
-
+                	rssh('hudson-zapp','sheeva002.linn.co.uk','python AllTests.py -f -t')
 		else:
-			stdin, stdout, stderr = ssh.exec_command("python AllTests.py -t")
-			
-                def get_thread(pipe):
-                                for line in pipe.readlines():
-                                        print line
-
-                stdout_thread = threading.Thread(target=get_thread, args=(stdout,))
-                stderr_thread = threading.Thread(target=get_thread, args=(stderr,))
-
-                stdout_thread.start()
-                stderr_thread.start()
-                stdout_thread.join()
-                stderr_thread.join()
-
-                channel = stdout.channel
-
-                exit_status = channel.recv_exit_status()
-
-                if exit_status != 0:
-                        print "FAILED: non-zero exit status on sheeva node"
-                        ssh.close()
-                        print exit_status
-			sys.exit(10)
-
-                ssh.close()
-
+			rssh('hudson-zapp','sheeva002.linn.co.uk','python AllTests.py -t')
+		
 
 ArmTests(Module['module'],Environment['arch'],Environment['nightly_run'])
+GenDocs(Module['module'],Environment['ostype'],Environment['nightly_run'],Environment['arch'])
+

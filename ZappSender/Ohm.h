@@ -85,7 +85,7 @@ private:
     //ByteStart Bytes                   Desc
     //0         4                       "Ohm "
     //4         1                       OhmHeader Major Version
-    //5         1                       Msg Type (1 = OhmMsgAudio)
+    //5         1                       Msg Type (2 = OhmMsgAudio)
     //6         2                       Total Bytes (Absolutely all bytes in the entire frame)
 };
 
@@ -102,6 +102,7 @@ public:
     OhmHeaderAudio();
     OhmHeaderAudio(TBool aHalt, 
                    TBool aLossless,
+                   TBool aSync,
                    TUint aSamples,
                    TUint aFrame,
                    TUint aTxTimestampPrev,

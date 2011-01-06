@@ -1,16 +1,30 @@
-#include <C/DvUpnpOrgDimming1.h>
-#include <Core/DvUpnpOrgDimming1.h>
+#include "DvUpnpOrgDimming1.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
+#include <DvProvider.h>
 #include <C/Zapp.h>
+#include <ZappTypes.h>
+#include <Core/DvInvocationResponse.h>
+#include <Service.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-class DvProviderUpnpOrgDimming1C : public DvProviderUpnpOrgDimming1
+class DvProviderUpnpOrgDimming1C : public DvProvider
 {
 public:
-    DvProviderUpnpOrgDimming1C(DvDevice& aDevice);
+    DvProviderUpnpOrgDimming1C(DvDeviceC aDevice);
+    TBool SetPropertyLoadLevelStatus(TUint aValue);
+    void GetPropertyLoadLevelStatus(TUint& aValue);
+    TBool SetPropertyStepDelta(TUint aValue);
+    void GetPropertyStepDelta(TUint& aValue);
+    TBool SetPropertyRampRate(TUint aValue);
+    void GetPropertyRampRate(TUint& aValue);
+    TBool SetPropertyIsRamping(TBool aValue);
+    void GetPropertyIsRamping(TBool& aValue);
+    TBool SetPropertyRampPaused(TBool aValue);
+    void GetPropertyRampPaused(TBool& aValue);
     void EnableActionSetLoadLevelTarget(CallbackDimming1SetLoadLevelTarget aCallback, void* aPtr);
     void EnableActionGetLoadLevelTarget(CallbackDimming1GetLoadLevelTarget aCallback, void* aPtr);
     void EnableActionGetLoadLevelStatus(CallbackDimming1GetLoadLevelStatus aCallback, void* aPtr);
@@ -33,27 +47,27 @@ public:
     void EnableActionGetRampPaused(CallbackDimming1GetRampPaused aCallback, void* aPtr);
     void EnableActionGetRampTime(CallbackDimming1GetRampTime aCallback, void* aPtr);
 private:
-    void SetLoadLevelTarget(IInvocationResponse& aResponse, TUint aVersion, TUint anewLoadlevelTarget);
-    void GetLoadLevelTarget(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aGetLoadlevelTarget);
-    void GetLoadLevelStatus(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aretLoadlevelStatus);
-    void SetOnEffectLevel(IInvocationResponse& aResponse, TUint aVersion, TUint anewOnEffectLevel);
-    void SetOnEffect(IInvocationResponse& aResponse, TUint aVersion, const Brx& anewOnEffect);
-    void GetOnEffectParameters(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aretOnEffect, IInvocationResponseUint& aretOnEffectLevel);
-    void StepUp(IInvocationResponse& aResponse, TUint aVersion);
-    void StepDown(IInvocationResponse& aResponse, TUint aVersion);
-    void StartRampUp(IInvocationResponse& aResponse, TUint aVersion);
-    void StartRampDown(IInvocationResponse& aResponse, TUint aVersion);
-    void StopRamp(IInvocationResponse& aResponse, TUint aVersion);
-    void StartRampToLevel(IInvocationResponse& aResponse, TUint aVersion, TUint anewLoadLevelTarget, TUint anewRampTime);
-    void SetStepDelta(IInvocationResponse& aResponse, TUint aVersion, TUint anewStepDelta);
-    void GetStepDelta(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aretStepDelta);
-    void SetRampRate(IInvocationResponse& aResponse, TUint aVersion, TUint anewRampRate);
-    void GetRampRate(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aretRampRate);
-    void PauseRamp(IInvocationResponse& aResponse, TUint aVersion);
-    void ResumeRamp(IInvocationResponse& aResponse, TUint aVersion);
-    void GetIsRamping(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aretIsRamping);
-    void GetRampPaused(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aretRampPaused);
-    void GetRampTime(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aretRampTime);
+    void DoSetLoadLevelTarget(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetLoadLevelTarget(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetLoadLevelStatus(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetOnEffectLevel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetOnEffect(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetOnEffectParameters(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStepUp(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStepDown(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStartRampUp(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStartRampDown(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStopRamp(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStartRampToLevel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStepDelta(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetStepDelta(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetRampRate(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetRampRate(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPauseRamp(IDviInvocation& aInvocation, TUint aVersion);
+    void DoResumeRamp(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetIsRamping(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetRampPaused(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetRampTime(IDviInvocation& aInvocation, TUint aVersion);
 private:
     CallbackDimming1SetLoadLevelTarget iCallbackSetLoadLevelTarget;
     void* iPtrSetLoadLevelTarget;
@@ -97,417 +111,637 @@ private:
     void* iPtrGetRampPaused;
     CallbackDimming1GetRampTime iCallbackGetRampTime;
     void* iPtrGetRampTime;
+    PropertyUint* iPropertyLoadLevelStatus;
+    PropertyUint* iPropertyStepDelta;
+    PropertyUint* iPropertyRampRate;
+    PropertyBool* iPropertyIsRamping;
+    PropertyBool* iPropertyRampPaused;
 };
 
-DvProviderUpnpOrgDimming1C::DvProviderUpnpOrgDimming1C(DvDevice& aDevice)
-    : DvProviderUpnpOrgDimming1(aDevice)
+DvProviderUpnpOrgDimming1C::DvProviderUpnpOrgDimming1C(DvDeviceC aDevice)
+    : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "upnp.org", "Dimming", 1)
 {
+    
+    iPropertyLoadLevelStatus = new PropertyUint(new ParameterUint("LoadLevelStatus", 0, 100));
+    iService->AddProperty(iPropertyLoadLevelStatus); // passes ownership
+    iPropertyStepDelta = new PropertyUint(new ParameterUint("StepDelta", 1, 100));
+    iService->AddProperty(iPropertyStepDelta); // passes ownership
+    iPropertyRampRate = new PropertyUint(new ParameterUint("RampRate", 0, 100));
+    iService->AddProperty(iPropertyRampRate); // passes ownership
+    iPropertyIsRamping = new PropertyBool(new ParameterBool("IsRamping"));
+    iService->AddProperty(iPropertyIsRamping); // passes ownership
+    iPropertyRampPaused = new PropertyBool(new ParameterBool("RampPaused"));
+    iService->AddProperty(iPropertyRampPaused); // passes ownership
+}
+
+TBool DvProviderUpnpOrgDimming1C::SetPropertyLoadLevelStatus(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyLoadLevelStatus, aValue);
+}
+
+void DvProviderUpnpOrgDimming1C::GetPropertyLoadLevelStatus(TUint& aValue)
+{
+    aValue = iPropertyLoadLevelStatus->Value();
+}
+
+TBool DvProviderUpnpOrgDimming1C::SetPropertyStepDelta(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyStepDelta, aValue);
+}
+
+void DvProviderUpnpOrgDimming1C::GetPropertyStepDelta(TUint& aValue)
+{
+    aValue = iPropertyStepDelta->Value();
+}
+
+TBool DvProviderUpnpOrgDimming1C::SetPropertyRampRate(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyRampRate, aValue);
+}
+
+void DvProviderUpnpOrgDimming1C::GetPropertyRampRate(TUint& aValue)
+{
+    aValue = iPropertyRampRate->Value();
+}
+
+TBool DvProviderUpnpOrgDimming1C::SetPropertyIsRamping(TBool aValue)
+{
+    return SetPropertyBool(*iPropertyIsRamping, aValue);
+}
+
+void DvProviderUpnpOrgDimming1C::GetPropertyIsRamping(TBool& aValue)
+{
+    aValue = iPropertyIsRamping->Value();
+}
+
+TBool DvProviderUpnpOrgDimming1C::SetPropertyRampPaused(TBool aValue)
+{
+    return SetPropertyBool(*iPropertyRampPaused, aValue);
+}
+
+void DvProviderUpnpOrgDimming1C::GetPropertyRampPaused(TBool& aValue)
+{
+    aValue = iPropertyRampPaused->Value();
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionSetLoadLevelTarget(CallbackDimming1SetLoadLevelTarget aCallback, void* aPtr)
 {
     iCallbackSetLoadLevelTarget = aCallback;
     iPtrSetLoadLevelTarget = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionSetLoadLevelTarget();
+    Zapp::Action* action = new Zapp::Action("SetLoadLevelTarget");
+    action->AddInputParameter(new ParameterUint("newLoadlevelTarget", 0, 100));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoSetLoadLevelTarget);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionGetLoadLevelTarget(CallbackDimming1GetLoadLevelTarget aCallback, void* aPtr)
 {
     iCallbackGetLoadLevelTarget = aCallback;
     iPtrGetLoadLevelTarget = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionGetLoadLevelTarget();
+    Zapp::Action* action = new Zapp::Action("GetLoadLevelTarget");
+    action->AddOutputParameter(new ParameterUint("GetLoadlevelTarget", 0, 100));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetLoadLevelTarget);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionGetLoadLevelStatus(CallbackDimming1GetLoadLevelStatus aCallback, void* aPtr)
 {
     iCallbackGetLoadLevelStatus = aCallback;
     iPtrGetLoadLevelStatus = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionGetLoadLevelStatus();
+    Zapp::Action* action = new Zapp::Action("GetLoadLevelStatus");
+    action->AddOutputParameter(new ParameterRelated("retLoadlevelStatus", *iPropertyLoadLevelStatus));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetLoadLevelStatus);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionSetOnEffectLevel(CallbackDimming1SetOnEffectLevel aCallback, void* aPtr)
 {
     iCallbackSetOnEffectLevel = aCallback;
     iPtrSetOnEffectLevel = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionSetOnEffectLevel();
+    Zapp::Action* action = new Zapp::Action("SetOnEffectLevel");
+    action->AddInputParameter(new ParameterUint("newOnEffectLevel", 0, 100));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoSetOnEffectLevel);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionSetOnEffect(CallbackDimming1SetOnEffect aCallback, void* aPtr)
 {
     iCallbackSetOnEffect = aCallback;
     iPtrSetOnEffect = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionSetOnEffect();
+    Zapp::Action* action = new Zapp::Action("SetOnEffect");
+    TChar** allowedValues;
+    TUint index;
+    index = 0;
+    allowedValues = new TChar*[3];
+    allowedValues[index++] = (TChar*)"OnEffectLevel";
+    allowedValues[index++] = (TChar*)"LastSetting";
+    allowedValues[index++] = (TChar*)"Default";
+    action->AddInputParameter(new ParameterString("newOnEffect", allowedValues, 3));
+    delete[] allowedValues;
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoSetOnEffect);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionGetOnEffectParameters(CallbackDimming1GetOnEffectParameters aCallback, void* aPtr)
 {
     iCallbackGetOnEffectParameters = aCallback;
     iPtrGetOnEffectParameters = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionGetOnEffectParameters();
+    Zapp::Action* action = new Zapp::Action("GetOnEffectParameters");
+    TChar** allowedValues;
+    TUint index;
+    index = 0;
+    allowedValues = new TChar*[3];
+    allowedValues[index++] = (TChar*)"OnEffectLevel";
+    allowedValues[index++] = (TChar*)"LastSetting";
+    allowedValues[index++] = (TChar*)"Default";
+    action->AddOutputParameter(new ParameterString("retOnEffect", allowedValues, 3));
+    delete[] allowedValues;
+    action->AddOutputParameter(new ParameterUint("retOnEffectLevel", 0, 100));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetOnEffectParameters);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionStepUp(CallbackDimming1StepUp aCallback, void* aPtr)
 {
     iCallbackStepUp = aCallback;
     iPtrStepUp = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionStepUp();
+    Zapp::Action* action = new Zapp::Action("StepUp");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoStepUp);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionStepDown(CallbackDimming1StepDown aCallback, void* aPtr)
 {
     iCallbackStepDown = aCallback;
     iPtrStepDown = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionStepDown();
+    Zapp::Action* action = new Zapp::Action("StepDown");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoStepDown);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionStartRampUp(CallbackDimming1StartRampUp aCallback, void* aPtr)
 {
     iCallbackStartRampUp = aCallback;
     iPtrStartRampUp = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionStartRampUp();
+    Zapp::Action* action = new Zapp::Action("StartRampUp");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoStartRampUp);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionStartRampDown(CallbackDimming1StartRampDown aCallback, void* aPtr)
 {
     iCallbackStartRampDown = aCallback;
     iPtrStartRampDown = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionStartRampDown();
+    Zapp::Action* action = new Zapp::Action("StartRampDown");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoStartRampDown);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionStopRamp(CallbackDimming1StopRamp aCallback, void* aPtr)
 {
     iCallbackStopRamp = aCallback;
     iPtrStopRamp = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionStopRamp();
+    Zapp::Action* action = new Zapp::Action("StopRamp");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoStopRamp);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionStartRampToLevel(CallbackDimming1StartRampToLevel aCallback, void* aPtr)
 {
     iCallbackStartRampToLevel = aCallback;
     iPtrStartRampToLevel = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionStartRampToLevel();
+    Zapp::Action* action = new Zapp::Action("StartRampToLevel");
+    action->AddInputParameter(new ParameterUint("newLoadLevelTarget", 0, 100));
+    action->AddInputParameter(new ParameterUint("newRampTime"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoStartRampToLevel);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionSetStepDelta(CallbackDimming1SetStepDelta aCallback, void* aPtr)
 {
     iCallbackSetStepDelta = aCallback;
     iPtrSetStepDelta = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionSetStepDelta();
+    Zapp::Action* action = new Zapp::Action("SetStepDelta");
+    action->AddInputParameter(new ParameterRelated("newStepDelta", *iPropertyStepDelta));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoSetStepDelta);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionGetStepDelta(CallbackDimming1GetStepDelta aCallback, void* aPtr)
 {
     iCallbackGetStepDelta = aCallback;
     iPtrGetStepDelta = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionGetStepDelta();
+    Zapp::Action* action = new Zapp::Action("GetStepDelta");
+    action->AddOutputParameter(new ParameterRelated("retStepDelta", *iPropertyStepDelta));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetStepDelta);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionSetRampRate(CallbackDimming1SetRampRate aCallback, void* aPtr)
 {
     iCallbackSetRampRate = aCallback;
     iPtrSetRampRate = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionSetRampRate();
+    Zapp::Action* action = new Zapp::Action("SetRampRate");
+    action->AddInputParameter(new ParameterRelated("newRampRate", *iPropertyRampRate));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoSetRampRate);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionGetRampRate(CallbackDimming1GetRampRate aCallback, void* aPtr)
 {
     iCallbackGetRampRate = aCallback;
     iPtrGetRampRate = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionGetRampRate();
+    Zapp::Action* action = new Zapp::Action("GetRampRate");
+    action->AddOutputParameter(new ParameterRelated("retRampRate", *iPropertyRampRate));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetRampRate);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionPauseRamp(CallbackDimming1PauseRamp aCallback, void* aPtr)
 {
     iCallbackPauseRamp = aCallback;
     iPtrPauseRamp = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionPauseRamp();
+    Zapp::Action* action = new Zapp::Action("PauseRamp");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoPauseRamp);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionResumeRamp(CallbackDimming1ResumeRamp aCallback, void* aPtr)
 {
     iCallbackResumeRamp = aCallback;
     iPtrResumeRamp = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionResumeRamp();
+    Zapp::Action* action = new Zapp::Action("ResumeRamp");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoResumeRamp);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionGetIsRamping(CallbackDimming1GetIsRamping aCallback, void* aPtr)
 {
     iCallbackGetIsRamping = aCallback;
     iPtrGetIsRamping = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionGetIsRamping();
+    Zapp::Action* action = new Zapp::Action("GetIsRamping");
+    action->AddOutputParameter(new ParameterRelated("retIsRamping", *iPropertyIsRamping));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetIsRamping);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionGetRampPaused(CallbackDimming1GetRampPaused aCallback, void* aPtr)
 {
     iCallbackGetRampPaused = aCallback;
     iPtrGetRampPaused = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionGetRampPaused();
+    Zapp::Action* action = new Zapp::Action("GetRampPaused");
+    action->AddOutputParameter(new ParameterRelated("retRampPaused", *iPropertyRampPaused));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetRampPaused);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderUpnpOrgDimming1C::EnableActionGetRampTime(CallbackDimming1GetRampTime aCallback, void* aPtr)
 {
     iCallbackGetRampTime = aCallback;
     iPtrGetRampTime = aPtr;
-    DvProviderUpnpOrgDimming1::EnableActionGetRampTime();
+    Zapp::Action* action = new Zapp::Action("GetRampTime");
+    action->AddOutputParameter(new ParameterUint("retRampTime"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetRampTime);
+    iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgDimming1C::SetLoadLevelTarget(IInvocationResponse& aResponse, TUint aVersion, TUint anewLoadlevelTarget)
+void DvProviderUpnpOrgDimming1C::DoSetLoadLevelTarget(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint newLoadlevelTarget = aInvocation.InvocationReadUint("newLoadlevelTarget");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetLoadLevelTarget != NULL);
-    if (0 != iCallbackSetLoadLevelTarget(iPtrSetLoadLevelTarget, aVersion, anewLoadlevelTarget)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetLoadLevelTarget(iPtrSetLoadLevelTarget, aVersion, newLoadlevelTarget)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::GetLoadLevelTarget(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aGetLoadlevelTarget)
+void DvProviderUpnpOrgDimming1C::DoGetLoadLevelTarget(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t GetLoadlevelTarget;
     ASSERT(iCallbackGetLoadLevelTarget != NULL);
     if (0 != iCallbackGetLoadLevelTarget(iPtrGetLoadLevelTarget, aVersion, &GetLoadlevelTarget)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aGetLoadlevelTarget.Write(GetLoadlevelTarget);
-    aResponse.End();
+    InvocationResponseUint respGetLoadlevelTarget(aInvocation, "GetLoadlevelTarget");
+    resp.Start();
+    respGetLoadlevelTarget.Write(GetLoadlevelTarget);
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::GetLoadLevelStatus(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aretLoadlevelStatus)
+void DvProviderUpnpOrgDimming1C::DoGetLoadLevelStatus(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t retLoadlevelStatus;
     ASSERT(iCallbackGetLoadLevelStatus != NULL);
     if (0 != iCallbackGetLoadLevelStatus(iPtrGetLoadLevelStatus, aVersion, &retLoadlevelStatus)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aretLoadlevelStatus.Write(retLoadlevelStatus);
-    aResponse.End();
+    InvocationResponseUint respretLoadlevelStatus(aInvocation, "retLoadlevelStatus");
+    resp.Start();
+    respretLoadlevelStatus.Write(retLoadlevelStatus);
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::SetOnEffectLevel(IInvocationResponse& aResponse, TUint aVersion, TUint anewOnEffectLevel)
+void DvProviderUpnpOrgDimming1C::DoSetOnEffectLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint newOnEffectLevel = aInvocation.InvocationReadUint("newOnEffectLevel");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetOnEffectLevel != NULL);
-    if (0 != iCallbackSetOnEffectLevel(iPtrSetOnEffectLevel, aVersion, anewOnEffectLevel)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetOnEffectLevel(iPtrSetOnEffectLevel, aVersion, newOnEffectLevel)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::SetOnEffect(IInvocationResponse& aResponse, TUint aVersion, const Brx& anewOnEffect)
+void DvProviderUpnpOrgDimming1C::DoSetOnEffect(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    Brhz newOnEffect;
+    aInvocation.InvocationReadString("newOnEffect", newOnEffect);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetOnEffect != NULL);
-    if (0 != iCallbackSetOnEffect(iPtrSetOnEffect, aVersion, (const char*)anewOnEffect.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetOnEffect(iPtrSetOnEffect, aVersion, (const char*)newOnEffect.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::GetOnEffectParameters(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aretOnEffect, IInvocationResponseUint& aretOnEffectLevel)
+void DvProviderUpnpOrgDimming1C::DoGetOnEffectParameters(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* retOnEffect;
     uint32_t retOnEffectLevel;
     ASSERT(iCallbackGetOnEffectParameters != NULL);
     if (0 != iCallbackGetOnEffectParameters(iPtrGetOnEffectParameters, aVersion, &retOnEffect, &retOnEffectLevel)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respretOnEffect(aInvocation, "retOnEffect");
+    InvocationResponseUint respretOnEffectLevel(aInvocation, "retOnEffectLevel");
+    resp.Start();
     Brhz bufretOnEffect((const TChar*)retOnEffect);
     ZappFreeExternal(retOnEffect);
-    aretOnEffect.Write(bufretOnEffect);
-    aretOnEffect.WriteFlush();
-    aretOnEffectLevel.Write(retOnEffectLevel);
-    aResponse.End();
+    respretOnEffect.Write(bufretOnEffect);
+    respretOnEffect.WriteFlush();
+    respretOnEffectLevel.Write(retOnEffectLevel);
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::StepUp(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoStepUp(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackStepUp != NULL);
     if (0 != iCallbackStepUp(iPtrStepUp, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::StepDown(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoStepDown(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackStepDown != NULL);
     if (0 != iCallbackStepDown(iPtrStepDown, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::StartRampUp(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoStartRampUp(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackStartRampUp != NULL);
     if (0 != iCallbackStartRampUp(iPtrStartRampUp, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::StartRampDown(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoStartRampDown(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackStartRampDown != NULL);
     if (0 != iCallbackStartRampDown(iPtrStartRampDown, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::StopRamp(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoStopRamp(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackStopRamp != NULL);
     if (0 != iCallbackStopRamp(iPtrStopRamp, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::StartRampToLevel(IInvocationResponse& aResponse, TUint aVersion, TUint anewLoadLevelTarget, TUint anewRampTime)
+void DvProviderUpnpOrgDimming1C::DoStartRampToLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint newLoadLevelTarget = aInvocation.InvocationReadUint("newLoadLevelTarget");
+    TUint newRampTime = aInvocation.InvocationReadUint("newRampTime");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackStartRampToLevel != NULL);
-    if (0 != iCallbackStartRampToLevel(iPtrStartRampToLevel, aVersion, anewLoadLevelTarget, anewRampTime)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackStartRampToLevel(iPtrStartRampToLevel, aVersion, newLoadLevelTarget, newRampTime)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::SetStepDelta(IInvocationResponse& aResponse, TUint aVersion, TUint anewStepDelta)
+void DvProviderUpnpOrgDimming1C::DoSetStepDelta(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint newStepDelta = aInvocation.InvocationReadUint("newStepDelta");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetStepDelta != NULL);
-    if (0 != iCallbackSetStepDelta(iPtrSetStepDelta, aVersion, anewStepDelta)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetStepDelta(iPtrSetStepDelta, aVersion, newStepDelta)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::GetStepDelta(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aretStepDelta)
+void DvProviderUpnpOrgDimming1C::DoGetStepDelta(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t retStepDelta;
     ASSERT(iCallbackGetStepDelta != NULL);
     if (0 != iCallbackGetStepDelta(iPtrGetStepDelta, aVersion, &retStepDelta)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aretStepDelta.Write(retStepDelta);
-    aResponse.End();
+    InvocationResponseUint respretStepDelta(aInvocation, "retStepDelta");
+    resp.Start();
+    respretStepDelta.Write(retStepDelta);
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::SetRampRate(IInvocationResponse& aResponse, TUint aVersion, TUint anewRampRate)
+void DvProviderUpnpOrgDimming1C::DoSetRampRate(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint newRampRate = aInvocation.InvocationReadUint("newRampRate");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetRampRate != NULL);
-    if (0 != iCallbackSetRampRate(iPtrSetRampRate, aVersion, anewRampRate)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetRampRate(iPtrSetRampRate, aVersion, newRampRate)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::GetRampRate(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aretRampRate)
+void DvProviderUpnpOrgDimming1C::DoGetRampRate(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t retRampRate;
     ASSERT(iCallbackGetRampRate != NULL);
     if (0 != iCallbackGetRampRate(iPtrGetRampRate, aVersion, &retRampRate)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aretRampRate.Write(retRampRate);
-    aResponse.End();
+    InvocationResponseUint respretRampRate(aInvocation, "retRampRate");
+    resp.Start();
+    respretRampRate.Write(retRampRate);
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::PauseRamp(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoPauseRamp(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackPauseRamp != NULL);
     if (0 != iCallbackPauseRamp(iPtrPauseRamp, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::ResumeRamp(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderUpnpOrgDimming1C::DoResumeRamp(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackResumeRamp != NULL);
     if (0 != iCallbackResumeRamp(iPtrResumeRamp, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::GetIsRamping(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aretIsRamping)
+void DvProviderUpnpOrgDimming1C::DoGetIsRamping(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t retIsRamping;
     ASSERT(iCallbackGetIsRamping != NULL);
     if (0 != iCallbackGetIsRamping(iPtrGetIsRamping, aVersion, &retIsRamping)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aretIsRamping.Write((retIsRamping!=0));
-    aResponse.End();
+    InvocationResponseBool respretIsRamping(aInvocation, "retIsRamping");
+    resp.Start();
+    respretIsRamping.Write((retIsRamping!=0));
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::GetRampPaused(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aretRampPaused)
+void DvProviderUpnpOrgDimming1C::DoGetRampPaused(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t retRampPaused;
     ASSERT(iCallbackGetRampPaused != NULL);
     if (0 != iCallbackGetRampPaused(iPtrGetRampPaused, aVersion, &retRampPaused)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aretRampPaused.Write((retRampPaused!=0));
-    aResponse.End();
+    InvocationResponseBool respretRampPaused(aInvocation, "retRampPaused");
+    resp.Start();
+    respretRampPaused.Write((retRampPaused!=0));
+    resp.End();
 }
 
-void DvProviderUpnpOrgDimming1C::GetRampTime(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aretRampTime)
+void DvProviderUpnpOrgDimming1C::DoGetRampTime(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t retRampTime;
     ASSERT(iCallbackGetRampTime != NULL);
     if (0 != iCallbackGetRampTime(iPtrGetRampTime, aVersion, &retRampTime)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aretRampTime.Write(retRampTime);
-    aResponse.End();
+    InvocationResponseUint respretRampTime(aInvocation, "retRampTime");
+    resp.Start();
+    respretRampTime.Write(retRampTime);
+    resp.End();
 }
 
 
 
 THandle DvProviderUpnpOrgDimming1Create(DvDeviceC aDevice)
 {
-	return new DvProviderUpnpOrgDimming1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderUpnpOrgDimming1C(aDevice);
 }
 
 void DvProviderUpnpOrgDimming1Destroy(THandle aProvider)

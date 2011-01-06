@@ -31,6 +31,7 @@ DviDevice::DviDevice(const Brx& aUdn, IResourceManager& aResourceManager)
 
 void DviDevice::Construct(const Brx& aUdn)
 {
+    Stack::AddObject(this, "DviDevice");
     iRefCount = 1;
     iUdn.Set(aUdn);
     iEnabled = eDisabled;
@@ -50,6 +51,7 @@ DviDevice::~DviDevice()
     for (TUint i=0; i<iServices.size(); i++) {
         iServices[i]->RemoveRef();
     }
+    Stack::RemoveObject(this, "DviDevice");
 }
 
 void DviDevice::Destroy()

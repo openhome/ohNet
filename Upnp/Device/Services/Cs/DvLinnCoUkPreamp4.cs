@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the Volume property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyVolume(out uint aValue);
+        uint PropertyVolume();
 
         /// <summary>
         /// Set the value of the Mute property
@@ -32,7 +33,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the Mute property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyMute(out bool aValue);
+        bool PropertyMute();
 
         /// <summary>
         /// Set the value of the Balance property
@@ -45,7 +46,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the Balance property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyBalance(out int aValue);
+        int PropertyBalance();
 
         /// <summary>
         /// Set the value of the VolumeLimit property
@@ -58,7 +59,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the VolumeLimit property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyVolumeLimit(out uint aValue);
+        uint PropertyVolumeLimit();
 
         /// <summary>
         /// Set the value of the StartupVolume property
@@ -71,7 +72,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the StartupVolume property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyStartupVolume(out uint aValue);
+        uint PropertyStartupVolume();
 
         /// <summary>
         /// Set the value of the StartupVolumeEnabled property
@@ -84,7 +85,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the StartupVolumeEnabled property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyStartupVolumeEnabled(out bool aValue);
+        bool PropertyStartupVolumeEnabled();
         
     }
     /// <summary>
@@ -92,104 +93,48 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkPreamp4 : DvProvider, IDisposable, IDvProviderLinnCoUkPreamp4
     {
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern uint DvProviderLinnCoUkPreamp4Create(uint aDeviceHandle);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4Destroy(uint aHandle);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyVolume(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyVolume(uint aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyMute(uint aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyMute(uint aHandle, int* aValue);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyBalance(uint aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyBalance(uint aHandle, int* aValue);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyVolumeLimit(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyVolumeLimit(uint aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyStartupVolume(uint aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyStartupVolume(uint aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(uint aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyStartupVolumeEnabled(uint aHandle, int* aValue);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionVolumeInc(uint aHandle, CallbackVolumeInc aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionVolumeDec(uint aHandle, CallbackVolumeDec aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionSetVolume(uint aHandle, CallbackSetVolume aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionVolume(uint aHandle, CallbackVolume aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionSetMute(uint aHandle, CallbackSetMute aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionMute(uint aHandle, CallbackMute aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionSetBalance(uint aHandle, CallbackSetBalance aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionBalance(uint aHandle, CallbackBalance aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionSetVolumeLimit(uint aHandle, CallbackSetVolumeLimit aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionVolumeLimit(uint aHandle, CallbackVolumeLimit aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionSetStartupVolume(uint aHandle, CallbackSetStartupVolume aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionStartupVolume(uint aHandle, CallbackStartupVolume aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionSetStartupVolumeEnabled(uint aHandle, CallbackSetStartupVolumeEnabled aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionStartupVolumeEnabled(uint aHandle, CallbackStartupVolumeEnabled aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackVolumeInc(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackVolumeDec(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackSetVolume(IntPtr aPtr, uint aVersion, uint aaVolume);
-        private unsafe delegate int CallbackVolume(IntPtr aPtr, uint aVersion, uint* aaVolume);
-        private unsafe delegate int CallbackSetMute(IntPtr aPtr, uint aVersion, int aaMute);
-        private unsafe delegate int CallbackMute(IntPtr aPtr, uint aVersion, int* aaMute);
-        private unsafe delegate int CallbackSetBalance(IntPtr aPtr, uint aVersion, int aaBalance);
-        private unsafe delegate int CallbackBalance(IntPtr aPtr, uint aVersion, int* aaBalance);
-        private unsafe delegate int CallbackSetVolumeLimit(IntPtr aPtr, uint aVersion, uint aaVolumeLimit);
-        private unsafe delegate int CallbackVolumeLimit(IntPtr aPtr, uint aVersion, uint* aaVolumeLimit);
-        private unsafe delegate int CallbackSetStartupVolume(IntPtr aPtr, uint aVersion, uint aaStartupVolume);
-        private unsafe delegate int CallbackStartupVolume(IntPtr aPtr, uint aVersion, uint* aaStartupVolume);
-        private unsafe delegate int CallbackSetStartupVolumeEnabled(IntPtr aPtr, uint aVersion, int aaStartupVolumeEnabled);
-        private unsafe delegate int CallbackStartupVolumeEnabled(IntPtr aPtr, uint aVersion, int* aaStartupVolumeEnabled);
-
         private GCHandle iGch;
-        private CallbackVolumeInc iCallbackVolumeInc;
-        private CallbackVolumeDec iCallbackVolumeDec;
-        private CallbackSetVolume iCallbackSetVolume;
-        private CallbackVolume iCallbackVolume;
-        private CallbackSetMute iCallbackSetMute;
-        private CallbackMute iCallbackMute;
-        private CallbackSetBalance iCallbackSetBalance;
-        private CallbackBalance iCallbackBalance;
-        private CallbackSetVolumeLimit iCallbackSetVolumeLimit;
-        private CallbackVolumeLimit iCallbackVolumeLimit;
-        private CallbackSetStartupVolume iCallbackSetStartupVolume;
-        private CallbackStartupVolume iCallbackStartupVolume;
-        private CallbackSetStartupVolumeEnabled iCallbackSetStartupVolumeEnabled;
-        private CallbackStartupVolumeEnabled iCallbackStartupVolumeEnabled;
+        private ActionDelegate iDelegateVolumeInc;
+        private ActionDelegate iDelegateVolumeDec;
+        private ActionDelegate iDelegateSetVolume;
+        private ActionDelegate iDelegateVolume;
+        private ActionDelegate iDelegateSetMute;
+        private ActionDelegate iDelegateMute;
+        private ActionDelegate iDelegateSetBalance;
+        private ActionDelegate iDelegateBalance;
+        private ActionDelegate iDelegateSetVolumeLimit;
+        private ActionDelegate iDelegateVolumeLimit;
+        private ActionDelegate iDelegateSetStartupVolume;
+        private ActionDelegate iDelegateStartupVolume;
+        private ActionDelegate iDelegateSetStartupVolumeEnabled;
+        private ActionDelegate iDelegateStartupVolumeEnabled;
+        private PropertyUint iPropertyVolume;
+        private PropertyBool iPropertyMute;
+        private PropertyInt iPropertyBalance;
+        private PropertyUint iPropertyVolumeLimit;
+        private PropertyUint iPropertyStartupVolume;
+        private PropertyBool iPropertyStartupVolumeEnabled;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkPreamp4(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "Preamp", 4)
         {
-            iHandle = DvProviderLinnCoUkPreamp4Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            iPropertyVolume = new PropertyUint(new ParameterUint("Volume"));
+            AddProperty(iPropertyVolume);
+            iPropertyMute = new PropertyBool(new ParameterBool("Mute"));
+            AddProperty(iPropertyMute);
+            iPropertyBalance = new PropertyInt(new ParameterInt("Balance"));
+            AddProperty(iPropertyBalance);
+            iPropertyVolumeLimit = new PropertyUint(new ParameterUint("VolumeLimit"));
+            AddProperty(iPropertyVolumeLimit);
+            iPropertyStartupVolume = new PropertyUint(new ParameterUint("StartupVolume"));
+            AddProperty(iPropertyStartupVolume);
+            iPropertyStartupVolumeEnabled = new PropertyBool(new ParameterBool("StartupVolumeEnabled"));
+            AddProperty(iPropertyStartupVolumeEnabled);
         }
 
         /// <summary>
@@ -197,26 +142,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyVolume(uint aValue)
+        public bool SetPropertyVolume(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkPreamp4SetPropertyVolume(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyVolume, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Volume property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyVolume(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyVolume()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkPreamp4GetPropertyVolume(iHandle, value);
-            }
+            return iPropertyVolume.Value();
         }
 
         /// <summary>
@@ -224,26 +161,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyMute(bool aValue)
+        public bool SetPropertyMute(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkPreamp4SetPropertyMute(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyMute, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Mute property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyMute(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyMute()
         {
-            int value;
-            DvProviderLinnCoUkPreamp4GetPropertyMute(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyMute.Value();
         }
 
         /// <summary>
@@ -251,26 +180,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyBalance(int aValue)
+        public bool SetPropertyBalance(int aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkPreamp4SetPropertyBalance(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyInt(iPropertyBalance, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Balance property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyBalance(out int aValue)
+        /// <returns>The value of the property</returns>
+        public int PropertyBalance()
         {
-            fixed (int* value = &aValue)
-            {
-                DvProviderLinnCoUkPreamp4GetPropertyBalance(iHandle, value);
-            }
+            return iPropertyBalance.Value();
         }
 
         /// <summary>
@@ -278,26 +199,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyVolumeLimit(uint aValue)
+        public bool SetPropertyVolumeLimit(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkPreamp4SetPropertyVolumeLimit(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyVolumeLimit, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VolumeLimit property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyVolumeLimit(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyVolumeLimit()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkPreamp4GetPropertyVolumeLimit(iHandle, value);
-            }
+            return iPropertyVolumeLimit.Value();
         }
 
         /// <summary>
@@ -305,26 +218,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyStartupVolume(uint aValue)
+        public bool SetPropertyStartupVolume(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkPreamp4SetPropertyStartupVolume(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyStartupVolume, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the StartupVolume property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyStartupVolume(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyStartupVolume()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkPreamp4GetPropertyStartupVolume(iHandle, value);
-            }
+            return iPropertyStartupVolume.Value();
         }
 
         /// <summary>
@@ -332,26 +237,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyStartupVolumeEnabled(bool aValue)
+        public bool SetPropertyStartupVolumeEnabled(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyStartupVolumeEnabled, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the StartupVolumeEnabled property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyStartupVolumeEnabled(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyStartupVolumeEnabled()
         {
-            int value;
-            DvProviderLinnCoUkPreamp4GetPropertyStartupVolumeEnabled(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyStartupVolumeEnabled.Value();
         }
 
         /// <summary>
@@ -359,11 +256,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoVolumeInc must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionVolumeInc()
+        protected void EnableActionVolumeInc()
         {
-            iCallbackVolumeInc = new CallbackVolumeInc(DoVolumeInc);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionVolumeInc(iHandle, iCallbackVolumeInc, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("VolumeInc");
+            iDelegateVolumeInc = new ActionDelegate(DoVolumeInc);
+            EnableAction(action, iDelegateVolumeInc, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -371,11 +268,11 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoVolumeDec must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionVolumeDec()
+        protected void EnableActionVolumeDec()
         {
-            iCallbackVolumeDec = new CallbackVolumeDec(DoVolumeDec);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionVolumeDec(iHandle, iCallbackVolumeDec, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("VolumeDec");
+            iDelegateVolumeDec = new ActionDelegate(DoVolumeDec);
+            EnableAction(action, iDelegateVolumeDec, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -383,11 +280,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetVolume must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetVolume()
+        protected void EnableActionSetVolume()
         {
-            iCallbackSetVolume = new CallbackSetVolume(DoSetVolume);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionSetVolume(iHandle, iCallbackSetVolume, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetVolume");
+            action.AddInputParameter(new ParameterUint("aVolume"));
+            iDelegateSetVolume = new ActionDelegate(DoSetVolume);
+            EnableAction(action, iDelegateSetVolume, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -395,11 +293,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoVolume must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionVolume()
+        protected void EnableActionVolume()
         {
-            iCallbackVolume = new CallbackVolume(DoVolume);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionVolume(iHandle, iCallbackVolume, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Volume");
+            action.AddOutputParameter(new ParameterUint("aVolume"));
+            iDelegateVolume = new ActionDelegate(DoVolume);
+            EnableAction(action, iDelegateVolume, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -407,11 +306,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetMute must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetMute()
+        protected void EnableActionSetMute()
         {
-            iCallbackSetMute = new CallbackSetMute(DoSetMute);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionSetMute(iHandle, iCallbackSetMute, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetMute");
+            action.AddInputParameter(new ParameterBool("aMute"));
+            iDelegateSetMute = new ActionDelegate(DoSetMute);
+            EnableAction(action, iDelegateSetMute, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -419,11 +319,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoMute must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionMute()
+        protected void EnableActionMute()
         {
-            iCallbackMute = new CallbackMute(DoMute);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionMute(iHandle, iCallbackMute, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Mute");
+            action.AddOutputParameter(new ParameterBool("aMute"));
+            iDelegateMute = new ActionDelegate(DoMute);
+            EnableAction(action, iDelegateMute, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -431,11 +332,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetBalance must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetBalance()
+        protected void EnableActionSetBalance()
         {
-            iCallbackSetBalance = new CallbackSetBalance(DoSetBalance);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionSetBalance(iHandle, iCallbackSetBalance, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetBalance");
+            action.AddInputParameter(new ParameterInt("aBalance"));
+            iDelegateSetBalance = new ActionDelegate(DoSetBalance);
+            EnableAction(action, iDelegateSetBalance, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -443,11 +345,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoBalance must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionBalance()
+        protected void EnableActionBalance()
         {
-            iCallbackBalance = new CallbackBalance(DoBalance);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionBalance(iHandle, iCallbackBalance, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Balance");
+            action.AddOutputParameter(new ParameterInt("aBalance"));
+            iDelegateBalance = new ActionDelegate(DoBalance);
+            EnableAction(action, iDelegateBalance, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -455,11 +358,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetVolumeLimit must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetVolumeLimit()
+        protected void EnableActionSetVolumeLimit()
         {
-            iCallbackSetVolumeLimit = new CallbackSetVolumeLimit(DoSetVolumeLimit);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionSetVolumeLimit(iHandle, iCallbackSetVolumeLimit, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetVolumeLimit");
+            action.AddInputParameter(new ParameterUint("aVolumeLimit"));
+            iDelegateSetVolumeLimit = new ActionDelegate(DoSetVolumeLimit);
+            EnableAction(action, iDelegateSetVolumeLimit, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -467,11 +371,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoVolumeLimit must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionVolumeLimit()
+        protected void EnableActionVolumeLimit()
         {
-            iCallbackVolumeLimit = new CallbackVolumeLimit(DoVolumeLimit);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionVolumeLimit(iHandle, iCallbackVolumeLimit, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("VolumeLimit");
+            action.AddOutputParameter(new ParameterUint("aVolumeLimit"));
+            iDelegateVolumeLimit = new ActionDelegate(DoVolumeLimit);
+            EnableAction(action, iDelegateVolumeLimit, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -479,11 +384,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStartupVolume must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStartupVolume()
+        protected void EnableActionSetStartupVolume()
         {
-            iCallbackSetStartupVolume = new CallbackSetStartupVolume(DoSetStartupVolume);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionSetStartupVolume(iHandle, iCallbackSetStartupVolume, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetStartupVolume");
+            action.AddInputParameter(new ParameterUint("aStartupVolume"));
+            iDelegateSetStartupVolume = new ActionDelegate(DoSetStartupVolume);
+            EnableAction(action, iDelegateSetStartupVolume, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -491,11 +397,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStartupVolume must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStartupVolume()
+        protected void EnableActionStartupVolume()
         {
-            iCallbackStartupVolume = new CallbackStartupVolume(DoStartupVolume);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionStartupVolume(iHandle, iCallbackStartupVolume, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("StartupVolume");
+            action.AddOutputParameter(new ParameterUint("aStartupVolume"));
+            iDelegateStartupVolume = new ActionDelegate(DoStartupVolume);
+            EnableAction(action, iDelegateStartupVolume, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -503,11 +410,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoSetStartupVolumeEnabled must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionSetStartupVolumeEnabled()
+        protected void EnableActionSetStartupVolumeEnabled()
         {
-            iCallbackSetStartupVolumeEnabled = new CallbackSetStartupVolumeEnabled(DoSetStartupVolumeEnabled);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionSetStartupVolumeEnabled(iHandle, iCallbackSetStartupVolumeEnabled, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetStartupVolumeEnabled");
+            action.AddInputParameter(new ParameterBool("aStartupVolumeEnabled"));
+            iDelegateSetStartupVolumeEnabled = new ActionDelegate(DoSetStartupVolumeEnabled);
+            EnableAction(action, iDelegateSetStartupVolumeEnabled, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -515,11 +423,12 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
         /// DoStartupVolumeEnabled must be overridden if this is called.</remarks>
-        protected unsafe void EnableActionStartupVolumeEnabled()
+        protected void EnableActionStartupVolumeEnabled()
         {
-            iCallbackStartupVolumeEnabled = new CallbackStartupVolumeEnabled(DoStartupVolumeEnabled);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPreamp4EnableActionStartupVolumeEnabled(iHandle, iCallbackStartupVolumeEnabled, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("StartupVolumeEnabled");
+            action.AddOutputParameter(new ParameterBool("aStartupVolumeEnabled"));
+            iDelegateStartupVolumeEnabled = new ActionDelegate(DoStartupVolumeEnabled);
+            EnableAction(action, iDelegateStartupVolumeEnabled, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -716,129 +625,559 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoVolumeInc(IntPtr aPtr, uint aVersion)
+        private static int DoVolumeInc(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
-            self.VolumeInc(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.VolumeInc(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoVolumeDec(IntPtr aPtr, uint aVersion)
+        private static int DoVolumeDec(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
-            self.VolumeDec(aVersion);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.VolumeDec(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetVolume(IntPtr aPtr, uint aVersion, uint aaVolume)
+        private static int DoSetVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
-            self.SetVolume(aVersion, aaVolume);
-            return 0;
-        }
-
-        private static unsafe int DoVolume(IntPtr aPtr, uint aVersion, uint* aaVolume)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aVolume;
-            self.Volume(aVersion, out aVolume);
-            *aaVolume = aVolume;
+            try
+            {
+                invocation.ReadStart();
+                aVolume = invocation.ReadUint("aVolume");
+                invocation.ReadEnd();
+                self.SetVolume(aVersion, aVolume);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetMute(IntPtr aPtr, uint aVersion, int aaMute)
+        private static int DoVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
-            bool aMute = (aaMute != 0);
-            self.SetMute(aVersion, aMute);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aVolume;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.Volume(aVersion, out aVolume);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("aVolume", aVolume);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoMute(IntPtr aPtr, uint aVersion, int* aaMute)
+        private static int DoSetMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aMute;
-            self.Mute(aVersion, out aMute);
-            *aaMute = (aMute ? 1 : 0);
+            try
+            {
+                invocation.ReadStart();
+                aMute = invocation.ReadBool("aMute");
+                invocation.ReadEnd();
+                self.SetMute(aVersion, aMute);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetBalance(IntPtr aPtr, uint aVersion, int aaBalance)
+        private static int DoMute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
-            self.SetBalance(aVersion, aaBalance);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aMute;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.Mute(aVersion, out aMute);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBool("aMute", aMute);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoBalance(IntPtr aPtr, uint aVersion, int* aaBalance)
+        private static int DoSetBalance(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             int aBalance;
-            self.Balance(aVersion, out aBalance);
-            *aaBalance = aBalance;
+            try
+            {
+                invocation.ReadStart();
+                aBalance = invocation.ReadInt("aBalance");
+                invocation.ReadEnd();
+                self.SetBalance(aVersion, aBalance);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetVolumeLimit(IntPtr aPtr, uint aVersion, uint aaVolumeLimit)
+        private static int DoBalance(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
-            self.SetVolumeLimit(aVersion, aaVolumeLimit);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            int aBalance;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.Balance(aVersion, out aBalance);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteInt("aBalance", aBalance);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoVolumeLimit(IntPtr aPtr, uint aVersion, uint* aaVolumeLimit)
+        private static int DoSetVolumeLimit(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aVolumeLimit;
-            self.VolumeLimit(aVersion, out aVolumeLimit);
-            *aaVolumeLimit = aVolumeLimit;
+            try
+            {
+                invocation.ReadStart();
+                aVolumeLimit = invocation.ReadUint("aVolumeLimit");
+                invocation.ReadEnd();
+                self.SetVolumeLimit(aVersion, aVolumeLimit);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetStartupVolume(IntPtr aPtr, uint aVersion, uint aaStartupVolume)
+        private static int DoVolumeLimit(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
-            self.SetStartupVolume(aVersion, aaStartupVolume);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aVolumeLimit;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.VolumeLimit(aVersion, out aVolumeLimit);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("aVolumeLimit", aVolumeLimit);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoStartupVolume(IntPtr aPtr, uint aVersion, uint* aaStartupVolume)
+        private static int DoSetStartupVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aStartupVolume;
-            self.StartupVolume(aVersion, out aStartupVolume);
-            *aaStartupVolume = aStartupVolume;
+            try
+            {
+                invocation.ReadStart();
+                aStartupVolume = invocation.ReadUint("aStartupVolume");
+                invocation.ReadEnd();
+                self.SetStartupVolume(aVersion, aStartupVolume);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoSetStartupVolumeEnabled(IntPtr aPtr, uint aVersion, int aaStartupVolumeEnabled)
+        private static int DoStartupVolume(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
-            bool aStartupVolumeEnabled = (aaStartupVolumeEnabled != 0);
-            self.SetStartupVolumeEnabled(aVersion, aStartupVolumeEnabled);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aStartupVolume;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.StartupVolume(aVersion, out aStartupVolume);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteUint("aStartupVolume", aStartupVolume);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
-        private static unsafe int DoStartupVolumeEnabled(IntPtr aPtr, uint aVersion, int* aaStartupVolumeEnabled)
+        private static int DoSetStartupVolumeEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aStartupVolumeEnabled;
-            self.StartupVolumeEnabled(aVersion, out aStartupVolumeEnabled);
-            *aaStartupVolumeEnabled = (aStartupVolumeEnabled ? 1 : 0);
+            try
+            {
+                invocation.ReadStart();
+                aStartupVolumeEnabled = invocation.ReadBool("aStartupVolumeEnabled");
+                invocation.ReadEnd();
+                self.SetStartupVolumeEnabled(aVersion, aStartupVolumeEnabled);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        private static int DoStartupVolumeEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aStartupVolumeEnabled;
+            try
+            {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.StartupVolumeEnabled(aVersion, out aStartupVolumeEnabled);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteBool("aStartupVolumeEnabled", aStartupVolumeEnabled);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -858,21 +1197,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
-                iHandle = 0;
+                DisposeProvider();
+                iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkPreamp4Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

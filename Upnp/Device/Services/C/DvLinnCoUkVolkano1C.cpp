@@ -1,16 +1,20 @@
-#include <C/DvLinnCoUkVolkano1.h>
-#include <Core/DvLinnCoUkVolkano1.h>
+#include "DvLinnCoUkVolkano1.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
+#include <DvProvider.h>
 #include <C/Zapp.h>
+#include <ZappTypes.h>
+#include <Core/DvInvocationResponse.h>
+#include <Service.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-class DvProviderLinnCoUkVolkano1C : public DvProviderLinnCoUkVolkano1
+class DvProviderLinnCoUkVolkano1C : public DvProvider
 {
 public:
-    DvProviderLinnCoUkVolkano1C(DvDevice& aDevice);
+    DvProviderLinnCoUkVolkano1C(DvDeviceC aDevice);
     void EnableActionReboot(CallbackVolkano1Reboot aCallback, void* aPtr);
     void EnableActionBootMode(CallbackVolkano1BootMode aCallback, void* aPtr);
     void EnableActionSetBootMode(CallbackVolkano1SetBootMode aCallback, void* aPtr);
@@ -23,17 +27,17 @@ public:
     void EnableActionMaxBoards(CallbackVolkano1MaxBoards aCallback, void* aPtr);
     void EnableActionSoftwareVersion(CallbackVolkano1SoftwareVersion aCallback, void* aPtr);
 private:
-    void Reboot(IInvocationResponse& aResponse, TUint aVersion);
-    void BootMode(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaMode);
-    void SetBootMode(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaMode);
-    void BspType(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaBspType);
-    void UglyName(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaUglyName);
-    void MacAddress(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaMacAddress);
-    void ProductId(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaProductNumber);
-    void BoardId(IInvocationResponse& aResponse, TUint aVersion, TUint aaIndex, IInvocationResponseString& aaBoardNumber);
-    void BoardType(IInvocationResponse& aResponse, TUint aVersion, TUint aaIndex, IInvocationResponseString& aaBoardNumber);
-    void MaxBoards(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaMaxBoards);
-    void SoftwareVersion(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaSoftwareVersion);
+    void DoReboot(IDviInvocation& aInvocation, TUint aVersion);
+    void DoBootMode(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetBootMode(IDviInvocation& aInvocation, TUint aVersion);
+    void DoBspType(IDviInvocation& aInvocation, TUint aVersion);
+    void DoUglyName(IDviInvocation& aInvocation, TUint aVersion);
+    void DoMacAddress(IDviInvocation& aInvocation, TUint aVersion);
+    void DoProductId(IDviInvocation& aInvocation, TUint aVersion);
+    void DoBoardId(IDviInvocation& aInvocation, TUint aVersion);
+    void DoBoardType(IDviInvocation& aInvocation, TUint aVersion);
+    void DoMaxBoards(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSoftwareVersion(IDviInvocation& aInvocation, TUint aVersion);
 private:
     CallbackVolkano1Reboot iCallbackReboot;
     void* iPtrReboot;
@@ -59,256 +63,352 @@ private:
     void* iPtrSoftwareVersion;
 };
 
-DvProviderLinnCoUkVolkano1C::DvProviderLinnCoUkVolkano1C(DvDevice& aDevice)
-    : DvProviderLinnCoUkVolkano1(aDevice)
+DvProviderLinnCoUkVolkano1C::DvProviderLinnCoUkVolkano1C(DvDeviceC aDevice)
+    : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "linn.co.uk", "Volkano", 1)
 {
+    
 }
 
 void DvProviderLinnCoUkVolkano1C::EnableActionReboot(CallbackVolkano1Reboot aCallback, void* aPtr)
 {
     iCallbackReboot = aCallback;
     iPtrReboot = aPtr;
-    DvProviderLinnCoUkVolkano1::EnableActionReboot();
+    Zapp::Action* action = new Zapp::Action("Reboot");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1C::DoReboot);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkVolkano1C::EnableActionBootMode(CallbackVolkano1BootMode aCallback, void* aPtr)
 {
     iCallbackBootMode = aCallback;
     iPtrBootMode = aPtr;
-    DvProviderLinnCoUkVolkano1::EnableActionBootMode();
+    Zapp::Action* action = new Zapp::Action("BootMode");
+    TChar** allowedValues;
+    TUint index;
+    index = 0;
+    allowedValues = new TChar*[3];
+    allowedValues[index++] = (TChar*)"Main";
+    allowedValues[index++] = (TChar*)"Fallback";
+    allowedValues[index++] = (TChar*)"Ram";
+    action->AddOutputParameter(new ParameterString("aMode", allowedValues, 3));
+    delete[] allowedValues;
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1C::DoBootMode);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkVolkano1C::EnableActionSetBootMode(CallbackVolkano1SetBootMode aCallback, void* aPtr)
 {
     iCallbackSetBootMode = aCallback;
     iPtrSetBootMode = aPtr;
-    DvProviderLinnCoUkVolkano1::EnableActionSetBootMode();
+    Zapp::Action* action = new Zapp::Action("SetBootMode");
+    TChar** allowedValues;
+    TUint index;
+    index = 0;
+    allowedValues = new TChar*[2];
+    allowedValues[index++] = (TChar*)"Main";
+    allowedValues[index++] = (TChar*)"Fallback";
+    action->AddInputParameter(new ParameterString("aMode", allowedValues, 2));
+    delete[] allowedValues;
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1C::DoSetBootMode);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkVolkano1C::EnableActionBspType(CallbackVolkano1BspType aCallback, void* aPtr)
 {
     iCallbackBspType = aCallback;
     iPtrBspType = aPtr;
-    DvProviderLinnCoUkVolkano1::EnableActionBspType();
+    Zapp::Action* action = new Zapp::Action("BspType");
+    action->AddOutputParameter(new ParameterString("aBspType"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1C::DoBspType);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkVolkano1C::EnableActionUglyName(CallbackVolkano1UglyName aCallback, void* aPtr)
 {
     iCallbackUglyName = aCallback;
     iPtrUglyName = aPtr;
-    DvProviderLinnCoUkVolkano1::EnableActionUglyName();
+    Zapp::Action* action = new Zapp::Action("UglyName");
+    action->AddOutputParameter(new ParameterString("aUglyName"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1C::DoUglyName);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkVolkano1C::EnableActionMacAddress(CallbackVolkano1MacAddress aCallback, void* aPtr)
 {
     iCallbackMacAddress = aCallback;
     iPtrMacAddress = aPtr;
-    DvProviderLinnCoUkVolkano1::EnableActionMacAddress();
+    Zapp::Action* action = new Zapp::Action("MacAddress");
+    action->AddOutputParameter(new ParameterString("aMacAddress"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1C::DoMacAddress);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkVolkano1C::EnableActionProductId(CallbackVolkano1ProductId aCallback, void* aPtr)
 {
     iCallbackProductId = aCallback;
     iPtrProductId = aPtr;
-    DvProviderLinnCoUkVolkano1::EnableActionProductId();
+    Zapp::Action* action = new Zapp::Action("ProductId");
+    action->AddOutputParameter(new ParameterString("aProductNumber"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1C::DoProductId);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkVolkano1C::EnableActionBoardId(CallbackVolkano1BoardId aCallback, void* aPtr)
 {
     iCallbackBoardId = aCallback;
     iPtrBoardId = aPtr;
-    DvProviderLinnCoUkVolkano1::EnableActionBoardId();
+    Zapp::Action* action = new Zapp::Action("BoardId");
+    action->AddInputParameter(new ParameterUint("aIndex"));
+    action->AddOutputParameter(new ParameterString("aBoardNumber"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1C::DoBoardId);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkVolkano1C::EnableActionBoardType(CallbackVolkano1BoardType aCallback, void* aPtr)
 {
     iCallbackBoardType = aCallback;
     iPtrBoardType = aPtr;
-    DvProviderLinnCoUkVolkano1::EnableActionBoardType();
+    Zapp::Action* action = new Zapp::Action("BoardType");
+    action->AddInputParameter(new ParameterUint("aIndex"));
+    action->AddOutputParameter(new ParameterString("aBoardNumber"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1C::DoBoardType);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkVolkano1C::EnableActionMaxBoards(CallbackVolkano1MaxBoards aCallback, void* aPtr)
 {
     iCallbackMaxBoards = aCallback;
     iPtrMaxBoards = aPtr;
-    DvProviderLinnCoUkVolkano1::EnableActionMaxBoards();
+    Zapp::Action* action = new Zapp::Action("MaxBoards");
+    action->AddOutputParameter(new ParameterUint("aMaxBoards"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1C::DoMaxBoards);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkVolkano1C::EnableActionSoftwareVersion(CallbackVolkano1SoftwareVersion aCallback, void* aPtr)
 {
     iCallbackSoftwareVersion = aCallback;
     iPtrSoftwareVersion = aPtr;
-    DvProviderLinnCoUkVolkano1::EnableActionSoftwareVersion();
+    Zapp::Action* action = new Zapp::Action("SoftwareVersion");
+    action->AddOutputParameter(new ParameterString("aSoftwareVersion"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1C::DoSoftwareVersion);
+    iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkVolkano1C::Reboot(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderLinnCoUkVolkano1C::DoReboot(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackReboot != NULL);
     if (0 != iCallbackReboot(iPtrReboot, aVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkVolkano1C::BootMode(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaMode)
+void DvProviderLinnCoUkVolkano1C::DoBootMode(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aMode;
     ASSERT(iCallbackBootMode != NULL);
     if (0 != iCallbackBootMode(iPtrBootMode, aVersion, &aMode)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaMode(aInvocation, "aMode");
+    resp.Start();
     Brhz bufaMode((const TChar*)aMode);
     ZappFreeExternal(aMode);
-    aaMode.Write(bufaMode);
-    aaMode.WriteFlush();
-    aResponse.End();
+    respaMode.Write(bufaMode);
+    respaMode.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkVolkano1C::SetBootMode(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaMode)
+void DvProviderLinnCoUkVolkano1C::DoSetBootMode(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    Brhz aMode;
+    aInvocation.InvocationReadString("aMode", aMode);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetBootMode != NULL);
-    if (0 != iCallbackSetBootMode(iPtrSetBootMode, aVersion, (const char*)aaMode.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetBootMode(iPtrSetBootMode, aVersion, (const char*)aMode.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkVolkano1C::BspType(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaBspType)
+void DvProviderLinnCoUkVolkano1C::DoBspType(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aBspType;
     ASSERT(iCallbackBspType != NULL);
     if (0 != iCallbackBspType(iPtrBspType, aVersion, &aBspType)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaBspType(aInvocation, "aBspType");
+    resp.Start();
     Brhz bufaBspType((const TChar*)aBspType);
     ZappFreeExternal(aBspType);
-    aaBspType.Write(bufaBspType);
-    aaBspType.WriteFlush();
-    aResponse.End();
+    respaBspType.Write(bufaBspType);
+    respaBspType.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkVolkano1C::UglyName(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaUglyName)
+void DvProviderLinnCoUkVolkano1C::DoUglyName(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aUglyName;
     ASSERT(iCallbackUglyName != NULL);
     if (0 != iCallbackUglyName(iPtrUglyName, aVersion, &aUglyName)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaUglyName(aInvocation, "aUglyName");
+    resp.Start();
     Brhz bufaUglyName((const TChar*)aUglyName);
     ZappFreeExternal(aUglyName);
-    aaUglyName.Write(bufaUglyName);
-    aaUglyName.WriteFlush();
-    aResponse.End();
+    respaUglyName.Write(bufaUglyName);
+    respaUglyName.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkVolkano1C::MacAddress(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaMacAddress)
+void DvProviderLinnCoUkVolkano1C::DoMacAddress(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aMacAddress;
     ASSERT(iCallbackMacAddress != NULL);
     if (0 != iCallbackMacAddress(iPtrMacAddress, aVersion, &aMacAddress)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaMacAddress(aInvocation, "aMacAddress");
+    resp.Start();
     Brhz bufaMacAddress((const TChar*)aMacAddress);
     ZappFreeExternal(aMacAddress);
-    aaMacAddress.Write(bufaMacAddress);
-    aaMacAddress.WriteFlush();
-    aResponse.End();
+    respaMacAddress.Write(bufaMacAddress);
+    respaMacAddress.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkVolkano1C::ProductId(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaProductNumber)
+void DvProviderLinnCoUkVolkano1C::DoProductId(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aProductNumber;
     ASSERT(iCallbackProductId != NULL);
     if (0 != iCallbackProductId(iPtrProductId, aVersion, &aProductNumber)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaProductNumber(aInvocation, "aProductNumber");
+    resp.Start();
     Brhz bufaProductNumber((const TChar*)aProductNumber);
     ZappFreeExternal(aProductNumber);
-    aaProductNumber.Write(bufaProductNumber);
-    aaProductNumber.WriteFlush();
-    aResponse.End();
+    respaProductNumber.Write(bufaProductNumber);
+    respaProductNumber.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkVolkano1C::BoardId(IInvocationResponse& aResponse, TUint aVersion, TUint aaIndex, IInvocationResponseString& aaBoardNumber)
+void DvProviderLinnCoUkVolkano1C::DoBoardId(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aIndex = aInvocation.InvocationReadUint("aIndex");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aBoardNumber;
     ASSERT(iCallbackBoardId != NULL);
-    if (0 != iCallbackBoardId(iPtrBoardId, aVersion, aaIndex, &aBoardNumber)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackBoardId(iPtrBoardId, aVersion, aIndex, &aBoardNumber)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaBoardNumber(aInvocation, "aBoardNumber");
+    resp.Start();
     Brhz bufaBoardNumber((const TChar*)aBoardNumber);
     ZappFreeExternal(aBoardNumber);
-    aaBoardNumber.Write(bufaBoardNumber);
-    aaBoardNumber.WriteFlush();
-    aResponse.End();
+    respaBoardNumber.Write(bufaBoardNumber);
+    respaBoardNumber.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkVolkano1C::BoardType(IInvocationResponse& aResponse, TUint aVersion, TUint aaIndex, IInvocationResponseString& aaBoardNumber)
+void DvProviderLinnCoUkVolkano1C::DoBoardType(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aIndex = aInvocation.InvocationReadUint("aIndex");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aBoardNumber;
     ASSERT(iCallbackBoardType != NULL);
-    if (0 != iCallbackBoardType(iPtrBoardType, aVersion, aaIndex, &aBoardNumber)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackBoardType(iPtrBoardType, aVersion, aIndex, &aBoardNumber)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaBoardNumber(aInvocation, "aBoardNumber");
+    resp.Start();
     Brhz bufaBoardNumber((const TChar*)aBoardNumber);
     ZappFreeExternal(aBoardNumber);
-    aaBoardNumber.Write(bufaBoardNumber);
-    aaBoardNumber.WriteFlush();
-    aResponse.End();
+    respaBoardNumber.Write(bufaBoardNumber);
+    respaBoardNumber.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkVolkano1C::MaxBoards(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaMaxBoards)
+void DvProviderLinnCoUkVolkano1C::DoMaxBoards(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aMaxBoards;
     ASSERT(iCallbackMaxBoards != NULL);
     if (0 != iCallbackMaxBoards(iPtrMaxBoards, aVersion, &aMaxBoards)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaMaxBoards.Write(aMaxBoards);
-    aResponse.End();
+    InvocationResponseUint respaMaxBoards(aInvocation, "aMaxBoards");
+    resp.Start();
+    respaMaxBoards.Write(aMaxBoards);
+    resp.End();
 }
 
-void DvProviderLinnCoUkVolkano1C::SoftwareVersion(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaSoftwareVersion)
+void DvProviderLinnCoUkVolkano1C::DoSoftwareVersion(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aSoftwareVersion;
     ASSERT(iCallbackSoftwareVersion != NULL);
     if (0 != iCallbackSoftwareVersion(iPtrSoftwareVersion, aVersion, &aSoftwareVersion)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaSoftwareVersion(aInvocation, "aSoftwareVersion");
+    resp.Start();
     Brhz bufaSoftwareVersion((const TChar*)aSoftwareVersion);
     ZappFreeExternal(aSoftwareVersion);
-    aaSoftwareVersion.Write(bufaSoftwareVersion);
-    aaSoftwareVersion.WriteFlush();
-    aResponse.End();
+    respaSoftwareVersion.Write(bufaSoftwareVersion);
+    respaSoftwareVersion.WriteFlush();
+    resp.End();
 }
 
 
 
 THandle DvProviderLinnCoUkVolkano1Create(DvDeviceC aDevice)
 {
-	return new DvProviderLinnCoUkVolkano1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkVolkano1C(aDevice);
 }
 
 void DvProviderLinnCoUkVolkano1Destroy(THandle aProvider)

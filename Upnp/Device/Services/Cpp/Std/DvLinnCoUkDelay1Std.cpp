@@ -1,4 +1,4 @@
-#include <Std/DvLinnCoUkDelay1.h>
+#include "DvLinnCoUkDelay1.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -31,10 +31,10 @@ void DvProviderLinnCoUkDelay1Cpp::GetPropertyPresetIndex(uint32_t& aValue)
 DvProviderLinnCoUkDelay1Cpp::DvProviderLinnCoUkDelay1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Delay", 1)
 {
-    Functor empty;
-    iPropertyPresetXml = new PropertyString(new ParameterString("PresetXml"), empty);
+    
+    iPropertyPresetXml = new PropertyString(new ParameterString("PresetXml"));
     iService->AddProperty(iPropertyPresetXml); // passes ownership
-    iPropertyPresetIndex = new PropertyUint(new ParameterUint("PresetIndex"), empty);
+    iPropertyPresetIndex = new PropertyUint(new ParameterUint("PresetIndex"));
     iService->AddProperty(iPropertyPresetIndex); // passes ownership
 }
 

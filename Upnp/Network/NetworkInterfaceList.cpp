@@ -12,6 +12,7 @@ NetworkInterfaceList::NetworkInterfaceList(TIpAddress aDefaultSubnet)
     , iListenerLock("MNIO")
     , iNextListenerId(1)
 {
+    Stack::AddObject(this, "NetworkInterfaceList");
     iDefaultSubnet = aDefaultSubnet;
     iNetworkInterfaces = Os::NetworkListInterfaces(Stack::InitParams().UseLoopbackNetworkInterface());
     iSubnets = CreateSubnetList();
@@ -23,6 +24,7 @@ NetworkInterfaceList::~NetworkInterfaceList()
 {
     ClearInterfaces(iNetworkInterfaces);
     ClearInterfaces(iSubnets);
+    Stack::RemoveObject(this, "NetworkInterfaceList");
 }
 
 NetworkInterface* NetworkInterfaceList::CurrentInterface() const

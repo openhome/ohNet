@@ -1,16 +1,46 @@
-#include <C/DvLinnCoUkProduct3.h>
-#include <Core/DvLinnCoUkProduct3.h>
+#include "DvLinnCoUkProduct3.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
+#include <DvProvider.h>
 #include <C/Zapp.h>
+#include <ZappTypes.h>
+#include <Core/DvInvocationResponse.h>
+#include <Service.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-class DvProviderLinnCoUkProduct3C : public DvProviderLinnCoUkProduct3
+class DvProviderLinnCoUkProduct3C : public DvProvider
 {
 public:
-    DvProviderLinnCoUkProduct3C(DvDevice& aDevice);
+    DvProviderLinnCoUkProduct3C(DvDeviceC aDevice);
+    TBool SetPropertyProductType(const Brx& aValue);
+    void GetPropertyProductType(Brhz& aValue);
+    TBool SetPropertyProductModel(const Brx& aValue);
+    void GetPropertyProductModel(Brhz& aValue);
+    TBool SetPropertyProductName(const Brx& aValue);
+    void GetPropertyProductName(Brhz& aValue);
+    TBool SetPropertyProductRoom(const Brx& aValue);
+    void GetPropertyProductRoom(Brhz& aValue);
+    TBool SetPropertyProductStandby(TBool aValue);
+    void GetPropertyProductStandby(TBool& aValue);
+    TBool SetPropertyProductSourceIndex(TUint aValue);
+    void GetPropertyProductSourceIndex(TUint& aValue);
+    TBool SetPropertyProductSourceCount(TUint aValue);
+    void GetPropertyProductSourceCount(TUint& aValue);
+    TBool SetPropertyProductSourceXml(const Brx& aValue);
+    void GetPropertyProductSourceXml(Brhz& aValue);
+    TBool SetPropertyStartupSourceIndex(TUint aValue);
+    void GetPropertyStartupSourceIndex(TUint& aValue);
+    TBool SetPropertyStartupSourceEnabled(TBool aValue);
+    void GetPropertyStartupSourceEnabled(TBool& aValue);
+    TBool SetPropertyProductAnySourceName(TUint aValue);
+    void GetPropertyProductAnySourceName(TUint& aValue);
+    TBool SetPropertyProductAnySourceVisible(TUint aValue);
+    void GetPropertyProductAnySourceVisible(TUint& aValue);
+    TBool SetPropertyProductAnySourceType(TUint aValue);
+    void GetPropertyProductAnySourceType(TUint& aValue);
     void EnableActionType(CallbackProduct3Type aCallback, void* aPtr);
     void EnableActionModel(CallbackProduct3Model aCallback, void* aPtr);
     void EnableActionName(CallbackProduct3Name aCallback, void* aPtr);
@@ -36,30 +66,30 @@ public:
     void EnableActionSourceVisible(CallbackProduct3SourceVisible aCallback, void* aPtr);
     void EnableActionSetSourceVisible(CallbackProduct3SetSourceVisible aCallback, void* aPtr);
 private:
-    void Type(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaType);
-    void Model(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaModel);
-    void Name(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaName);
-    void SetName(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaName);
-    void Room(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaRoom);
-    void SetRoom(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaRoom);
-    void Standby(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaStandby);
-    void SetStandby(IInvocationResponse& aResponse, TUint aVersion, TBool aaStandby);
-    void SourceCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaSourceCount);
-    void SourceXml(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaSourceXml);
-    void SourceIndex(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaSourceIndex);
-    void SetSourceIndex(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex);
-    void SetSourceIndexByName(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaSourceName);
-    void SetStartupSourceIndexByName(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaSourceName);
-    void StartupSourceIndex(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaSourceIndex);
-    void SetStartupSourceIndex(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex);
-    void StartupSourceEnabled(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaStartupSourceEnabled);
-    void SetStartupSourceEnabled(IInvocationResponse& aResponse, TUint aVersion, TBool aaStartupSourceEnabled);
-    void SourceSystemName(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex, IInvocationResponseString& aaSourceName);
-    void SourceName(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex, IInvocationResponseString& aaSourceName);
-    void SetSourceName(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex, const Brx& aaSourceName);
-    void SourceType(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex, IInvocationResponseString& aaSourceType);
-    void SourceVisible(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex, IInvocationResponseBool& aaSourceVisible);
-    void SetSourceVisible(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex, TBool aaSourceVisible);
+    void DoType(IDviInvocation& aInvocation, TUint aVersion);
+    void DoModel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoName(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetName(IDviInvocation& aInvocation, TUint aVersion);
+    void DoRoom(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetRoom(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStandby(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStandby(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSourceCount(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSourceXml(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSourceIndex(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetSourceIndex(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetSourceIndexByName(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStartupSourceIndexByName(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStartupSourceIndex(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStartupSourceIndex(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStartupSourceEnabled(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStartupSourceEnabled(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSourceSystemName(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSourceName(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetSourceName(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSourceType(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSourceVisible(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetSourceVisible(IDviInvocation& aInvocation, TUint aVersion);
 private:
     CallbackProduct3Type iCallbackType;
     void* iPtrType;
@@ -109,502 +139,857 @@ private:
     void* iPtrSourceVisible;
     CallbackProduct3SetSourceVisible iCallbackSetSourceVisible;
     void* iPtrSetSourceVisible;
+    PropertyString* iPropertyProductType;
+    PropertyString* iPropertyProductModel;
+    PropertyString* iPropertyProductName;
+    PropertyString* iPropertyProductRoom;
+    PropertyBool* iPropertyProductStandby;
+    PropertyUint* iPropertyProductSourceIndex;
+    PropertyUint* iPropertyProductSourceCount;
+    PropertyString* iPropertyProductSourceXml;
+    PropertyUint* iPropertyStartupSourceIndex;
+    PropertyBool* iPropertyStartupSourceEnabled;
+    PropertyUint* iPropertyProductAnySourceName;
+    PropertyUint* iPropertyProductAnySourceVisible;
+    PropertyUint* iPropertyProductAnySourceType;
 };
 
-DvProviderLinnCoUkProduct3C::DvProviderLinnCoUkProduct3C(DvDevice& aDevice)
-    : DvProviderLinnCoUkProduct3(aDevice)
+DvProviderLinnCoUkProduct3C::DvProviderLinnCoUkProduct3C(DvDeviceC aDevice)
+    : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "linn.co.uk", "Product", 3)
 {
+    
+    iPropertyProductType = new PropertyString(new ParameterString("ProductType"));
+    iService->AddProperty(iPropertyProductType); // passes ownership
+    iPropertyProductModel = new PropertyString(new ParameterString("ProductModel"));
+    iService->AddProperty(iPropertyProductModel); // passes ownership
+    iPropertyProductName = new PropertyString(new ParameterString("ProductName"));
+    iService->AddProperty(iPropertyProductName); // passes ownership
+    iPropertyProductRoom = new PropertyString(new ParameterString("ProductRoom"));
+    iService->AddProperty(iPropertyProductRoom); // passes ownership
+    iPropertyProductStandby = new PropertyBool(new ParameterBool("ProductStandby"));
+    iService->AddProperty(iPropertyProductStandby); // passes ownership
+    iPropertyProductSourceIndex = new PropertyUint(new ParameterUint("ProductSourceIndex"));
+    iService->AddProperty(iPropertyProductSourceIndex); // passes ownership
+    iPropertyProductSourceCount = new PropertyUint(new ParameterUint("ProductSourceCount"));
+    iService->AddProperty(iPropertyProductSourceCount); // passes ownership
+    iPropertyProductSourceXml = new PropertyString(new ParameterString("ProductSourceXml"));
+    iService->AddProperty(iPropertyProductSourceXml); // passes ownership
+    iPropertyStartupSourceIndex = new PropertyUint(new ParameterUint("StartupSourceIndex"));
+    iService->AddProperty(iPropertyStartupSourceIndex); // passes ownership
+    iPropertyStartupSourceEnabled = new PropertyBool(new ParameterBool("StartupSourceEnabled"));
+    iService->AddProperty(iPropertyStartupSourceEnabled); // passes ownership
+    iPropertyProductAnySourceName = new PropertyUint(new ParameterUint("ProductAnySourceName"));
+    iService->AddProperty(iPropertyProductAnySourceName); // passes ownership
+    iPropertyProductAnySourceVisible = new PropertyUint(new ParameterUint("ProductAnySourceVisible"));
+    iService->AddProperty(iPropertyProductAnySourceVisible); // passes ownership
+    iPropertyProductAnySourceType = new PropertyUint(new ParameterUint("ProductAnySourceType"));
+    iService->AddProperty(iPropertyProductAnySourceType); // passes ownership
+}
+
+TBool DvProviderLinnCoUkProduct3C::SetPropertyProductType(const Brx& aValue)
+{
+    return SetPropertyString(*iPropertyProductType, aValue);
+}
+
+void DvProviderLinnCoUkProduct3C::GetPropertyProductType(Brhz& aValue)
+{
+    aValue.Set(iPropertyProductType->Value());
+}
+
+TBool DvProviderLinnCoUkProduct3C::SetPropertyProductModel(const Brx& aValue)
+{
+    return SetPropertyString(*iPropertyProductModel, aValue);
+}
+
+void DvProviderLinnCoUkProduct3C::GetPropertyProductModel(Brhz& aValue)
+{
+    aValue.Set(iPropertyProductModel->Value());
+}
+
+TBool DvProviderLinnCoUkProduct3C::SetPropertyProductName(const Brx& aValue)
+{
+    return SetPropertyString(*iPropertyProductName, aValue);
+}
+
+void DvProviderLinnCoUkProduct3C::GetPropertyProductName(Brhz& aValue)
+{
+    aValue.Set(iPropertyProductName->Value());
+}
+
+TBool DvProviderLinnCoUkProduct3C::SetPropertyProductRoom(const Brx& aValue)
+{
+    return SetPropertyString(*iPropertyProductRoom, aValue);
+}
+
+void DvProviderLinnCoUkProduct3C::GetPropertyProductRoom(Brhz& aValue)
+{
+    aValue.Set(iPropertyProductRoom->Value());
+}
+
+TBool DvProviderLinnCoUkProduct3C::SetPropertyProductStandby(TBool aValue)
+{
+    return SetPropertyBool(*iPropertyProductStandby, aValue);
+}
+
+void DvProviderLinnCoUkProduct3C::GetPropertyProductStandby(TBool& aValue)
+{
+    aValue = iPropertyProductStandby->Value();
+}
+
+TBool DvProviderLinnCoUkProduct3C::SetPropertyProductSourceIndex(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyProductSourceIndex, aValue);
+}
+
+void DvProviderLinnCoUkProduct3C::GetPropertyProductSourceIndex(TUint& aValue)
+{
+    aValue = iPropertyProductSourceIndex->Value();
+}
+
+TBool DvProviderLinnCoUkProduct3C::SetPropertyProductSourceCount(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyProductSourceCount, aValue);
+}
+
+void DvProviderLinnCoUkProduct3C::GetPropertyProductSourceCount(TUint& aValue)
+{
+    aValue = iPropertyProductSourceCount->Value();
+}
+
+TBool DvProviderLinnCoUkProduct3C::SetPropertyProductSourceXml(const Brx& aValue)
+{
+    return SetPropertyString(*iPropertyProductSourceXml, aValue);
+}
+
+void DvProviderLinnCoUkProduct3C::GetPropertyProductSourceXml(Brhz& aValue)
+{
+    aValue.Set(iPropertyProductSourceXml->Value());
+}
+
+TBool DvProviderLinnCoUkProduct3C::SetPropertyStartupSourceIndex(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyStartupSourceIndex, aValue);
+}
+
+void DvProviderLinnCoUkProduct3C::GetPropertyStartupSourceIndex(TUint& aValue)
+{
+    aValue = iPropertyStartupSourceIndex->Value();
+}
+
+TBool DvProviderLinnCoUkProduct3C::SetPropertyStartupSourceEnabled(TBool aValue)
+{
+    return SetPropertyBool(*iPropertyStartupSourceEnabled, aValue);
+}
+
+void DvProviderLinnCoUkProduct3C::GetPropertyStartupSourceEnabled(TBool& aValue)
+{
+    aValue = iPropertyStartupSourceEnabled->Value();
+}
+
+TBool DvProviderLinnCoUkProduct3C::SetPropertyProductAnySourceName(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyProductAnySourceName, aValue);
+}
+
+void DvProviderLinnCoUkProduct3C::GetPropertyProductAnySourceName(TUint& aValue)
+{
+    aValue = iPropertyProductAnySourceName->Value();
+}
+
+TBool DvProviderLinnCoUkProduct3C::SetPropertyProductAnySourceVisible(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyProductAnySourceVisible, aValue);
+}
+
+void DvProviderLinnCoUkProduct3C::GetPropertyProductAnySourceVisible(TUint& aValue)
+{
+    aValue = iPropertyProductAnySourceVisible->Value();
+}
+
+TBool DvProviderLinnCoUkProduct3C::SetPropertyProductAnySourceType(TUint aValue)
+{
+    return SetPropertyUint(*iPropertyProductAnySourceType, aValue);
+}
+
+void DvProviderLinnCoUkProduct3C::GetPropertyProductAnySourceType(TUint& aValue)
+{
+    aValue = iPropertyProductAnySourceType->Value();
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionType(CallbackProduct3Type aCallback, void* aPtr)
 {
     iCallbackType = aCallback;
     iPtrType = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionType();
+    Zapp::Action* action = new Zapp::Action("Type");
+    action->AddOutputParameter(new ParameterRelated("aType", *iPropertyProductType));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoType);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionModel(CallbackProduct3Model aCallback, void* aPtr)
 {
     iCallbackModel = aCallback;
     iPtrModel = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionModel();
+    Zapp::Action* action = new Zapp::Action("Model");
+    action->AddOutputParameter(new ParameterRelated("aModel", *iPropertyProductModel));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoModel);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionName(CallbackProduct3Name aCallback, void* aPtr)
 {
     iCallbackName = aCallback;
     iPtrName = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionName();
+    Zapp::Action* action = new Zapp::Action("Name");
+    action->AddOutputParameter(new ParameterRelated("aName", *iPropertyProductName));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoName);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSetName(CallbackProduct3SetName aCallback, void* aPtr)
 {
     iCallbackSetName = aCallback;
     iPtrSetName = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSetName();
+    Zapp::Action* action = new Zapp::Action("SetName");
+    action->AddInputParameter(new ParameterRelated("aName", *iPropertyProductName));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSetName);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionRoom(CallbackProduct3Room aCallback, void* aPtr)
 {
     iCallbackRoom = aCallback;
     iPtrRoom = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionRoom();
+    Zapp::Action* action = new Zapp::Action("Room");
+    action->AddOutputParameter(new ParameterRelated("aRoom", *iPropertyProductRoom));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoRoom);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSetRoom(CallbackProduct3SetRoom aCallback, void* aPtr)
 {
     iCallbackSetRoom = aCallback;
     iPtrSetRoom = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSetRoom();
+    Zapp::Action* action = new Zapp::Action("SetRoom");
+    action->AddInputParameter(new ParameterRelated("aRoom", *iPropertyProductRoom));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSetRoom);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionStandby(CallbackProduct3Standby aCallback, void* aPtr)
 {
     iCallbackStandby = aCallback;
     iPtrStandby = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionStandby();
+    Zapp::Action* action = new Zapp::Action("Standby");
+    action->AddOutputParameter(new ParameterRelated("aStandby", *iPropertyProductStandby));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoStandby);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSetStandby(CallbackProduct3SetStandby aCallback, void* aPtr)
 {
     iCallbackSetStandby = aCallback;
     iPtrSetStandby = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSetStandby();
+    Zapp::Action* action = new Zapp::Action("SetStandby");
+    action->AddInputParameter(new ParameterRelated("aStandby", *iPropertyProductStandby));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSetStandby);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSourceCount(CallbackProduct3SourceCount aCallback, void* aPtr)
 {
     iCallbackSourceCount = aCallback;
     iPtrSourceCount = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSourceCount();
+    Zapp::Action* action = new Zapp::Action("SourceCount");
+    action->AddOutputParameter(new ParameterRelated("aSourceCount", *iPropertyProductSourceCount));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSourceCount);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSourceXml(CallbackProduct3SourceXml aCallback, void* aPtr)
 {
     iCallbackSourceXml = aCallback;
     iPtrSourceXml = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSourceXml();
+    Zapp::Action* action = new Zapp::Action("SourceXml");
+    action->AddOutputParameter(new ParameterRelated("aSourceXml", *iPropertyProductSourceXml));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSourceXml);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSourceIndex(CallbackProduct3SourceIndex aCallback, void* aPtr)
 {
     iCallbackSourceIndex = aCallback;
     iPtrSourceIndex = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSourceIndex();
+    Zapp::Action* action = new Zapp::Action("SourceIndex");
+    action->AddOutputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSourceIndex);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSetSourceIndex(CallbackProduct3SetSourceIndex aCallback, void* aPtr)
 {
     iCallbackSetSourceIndex = aCallback;
     iPtrSetSourceIndex = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSetSourceIndex();
+    Zapp::Action* action = new Zapp::Action("SetSourceIndex");
+    action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSetSourceIndex);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSetSourceIndexByName(CallbackProduct3SetSourceIndexByName aCallback, void* aPtr)
 {
     iCallbackSetSourceIndexByName = aCallback;
     iPtrSetSourceIndexByName = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSetSourceIndexByName();
+    Zapp::Action* action = new Zapp::Action("SetSourceIndexByName");
+    action->AddInputParameter(new ParameterString("aSourceName"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSetSourceIndexByName);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSetStartupSourceIndexByName(CallbackProduct3SetStartupSourceIndexByName aCallback, void* aPtr)
 {
     iCallbackSetStartupSourceIndexByName = aCallback;
     iPtrSetStartupSourceIndexByName = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSetStartupSourceIndexByName();
+    Zapp::Action* action = new Zapp::Action("SetStartupSourceIndexByName");
+    action->AddInputParameter(new ParameterString("aSourceName"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSetStartupSourceIndexByName);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionStartupSourceIndex(CallbackProduct3StartupSourceIndex aCallback, void* aPtr)
 {
     iCallbackStartupSourceIndex = aCallback;
     iPtrStartupSourceIndex = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionStartupSourceIndex();
+    Zapp::Action* action = new Zapp::Action("StartupSourceIndex");
+    action->AddOutputParameter(new ParameterRelated("aSourceIndex", *iPropertyStartupSourceIndex));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoStartupSourceIndex);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSetStartupSourceIndex(CallbackProduct3SetStartupSourceIndex aCallback, void* aPtr)
 {
     iCallbackSetStartupSourceIndex = aCallback;
     iPtrSetStartupSourceIndex = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSetStartupSourceIndex();
+    Zapp::Action* action = new Zapp::Action("SetStartupSourceIndex");
+    action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyStartupSourceIndex));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSetStartupSourceIndex);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionStartupSourceEnabled(CallbackProduct3StartupSourceEnabled aCallback, void* aPtr)
 {
     iCallbackStartupSourceEnabled = aCallback;
     iPtrStartupSourceEnabled = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionStartupSourceEnabled();
+    Zapp::Action* action = new Zapp::Action("StartupSourceEnabled");
+    action->AddOutputParameter(new ParameterRelated("aStartupSourceEnabled", *iPropertyStartupSourceEnabled));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoStartupSourceEnabled);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSetStartupSourceEnabled(CallbackProduct3SetStartupSourceEnabled aCallback, void* aPtr)
 {
     iCallbackSetStartupSourceEnabled = aCallback;
     iPtrSetStartupSourceEnabled = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSetStartupSourceEnabled();
+    Zapp::Action* action = new Zapp::Action("SetStartupSourceEnabled");
+    action->AddInputParameter(new ParameterRelated("aStartupSourceEnabled", *iPropertyStartupSourceEnabled));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSetStartupSourceEnabled);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSourceSystemName(CallbackProduct3SourceSystemName aCallback, void* aPtr)
 {
     iCallbackSourceSystemName = aCallback;
     iPtrSourceSystemName = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSourceSystemName();
+    Zapp::Action* action = new Zapp::Action("SourceSystemName");
+    action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
+    action->AddOutputParameter(new ParameterString("aSourceName"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSourceSystemName);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSourceName(CallbackProduct3SourceName aCallback, void* aPtr)
 {
     iCallbackSourceName = aCallback;
     iPtrSourceName = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSourceName();
+    Zapp::Action* action = new Zapp::Action("SourceName");
+    action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
+    action->AddOutputParameter(new ParameterString("aSourceName"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSourceName);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSetSourceName(CallbackProduct3SetSourceName aCallback, void* aPtr)
 {
     iCallbackSetSourceName = aCallback;
     iPtrSetSourceName = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSetSourceName();
+    Zapp::Action* action = new Zapp::Action("SetSourceName");
+    action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
+    action->AddInputParameter(new ParameterString("aSourceName"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSetSourceName);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSourceType(CallbackProduct3SourceType aCallback, void* aPtr)
 {
     iCallbackSourceType = aCallback;
     iPtrSourceType = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSourceType();
+    Zapp::Action* action = new Zapp::Action("SourceType");
+    action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
+    action->AddOutputParameter(new ParameterString("aSourceType"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSourceType);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSourceVisible(CallbackProduct3SourceVisible aCallback, void* aPtr)
 {
     iCallbackSourceVisible = aCallback;
     iPtrSourceVisible = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSourceVisible();
+    Zapp::Action* action = new Zapp::Action("SourceVisible");
+    action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
+    action->AddOutputParameter(new ParameterBool("aSourceVisible"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSourceVisible);
+    iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkProduct3C::EnableActionSetSourceVisible(CallbackProduct3SetSourceVisible aCallback, void* aPtr)
 {
     iCallbackSetSourceVisible = aCallback;
     iPtrSetSourceVisible = aPtr;
-    DvProviderLinnCoUkProduct3::EnableActionSetSourceVisible();
+    Zapp::Action* action = new Zapp::Action("SetSourceVisible");
+    action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
+    action->AddInputParameter(new ParameterBool("aSourceVisible"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3C::DoSetSourceVisible);
+    iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkProduct3C::Type(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaType)
+void DvProviderLinnCoUkProduct3C::DoType(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aType;
     ASSERT(iCallbackType != NULL);
     if (0 != iCallbackType(iPtrType, aVersion, &aType)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaType(aInvocation, "aType");
+    resp.Start();
     Brhz bufaType((const TChar*)aType);
     ZappFreeExternal(aType);
-    aaType.Write(bufaType);
-    aaType.WriteFlush();
-    aResponse.End();
+    respaType.Write(bufaType);
+    respaType.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::Model(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaModel)
+void DvProviderLinnCoUkProduct3C::DoModel(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aModel;
     ASSERT(iCallbackModel != NULL);
     if (0 != iCallbackModel(iPtrModel, aVersion, &aModel)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaModel(aInvocation, "aModel");
+    resp.Start();
     Brhz bufaModel((const TChar*)aModel);
     ZappFreeExternal(aModel);
-    aaModel.Write(bufaModel);
-    aaModel.WriteFlush();
-    aResponse.End();
+    respaModel.Write(bufaModel);
+    respaModel.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::Name(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaName)
+void DvProviderLinnCoUkProduct3C::DoName(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aName;
     ASSERT(iCallbackName != NULL);
     if (0 != iCallbackName(iPtrName, aVersion, &aName)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaName(aInvocation, "aName");
+    resp.Start();
     Brhz bufaName((const TChar*)aName);
     ZappFreeExternal(aName);
-    aaName.Write(bufaName);
-    aaName.WriteFlush();
-    aResponse.End();
+    respaName.Write(bufaName);
+    respaName.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SetName(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaName)
+void DvProviderLinnCoUkProduct3C::DoSetName(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    Brhz aName;
+    aInvocation.InvocationReadString("aName", aName);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetName != NULL);
-    if (0 != iCallbackSetName(iPtrSetName, aVersion, (const char*)aaName.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetName(iPtrSetName, aVersion, (const char*)aName.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::Room(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaRoom)
+void DvProviderLinnCoUkProduct3C::DoRoom(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aRoom;
     ASSERT(iCallbackRoom != NULL);
     if (0 != iCallbackRoom(iPtrRoom, aVersion, &aRoom)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaRoom(aInvocation, "aRoom");
+    resp.Start();
     Brhz bufaRoom((const TChar*)aRoom);
     ZappFreeExternal(aRoom);
-    aaRoom.Write(bufaRoom);
-    aaRoom.WriteFlush();
-    aResponse.End();
+    respaRoom.Write(bufaRoom);
+    respaRoom.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SetRoom(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaRoom)
+void DvProviderLinnCoUkProduct3C::DoSetRoom(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    Brhz aRoom;
+    aInvocation.InvocationReadString("aRoom", aRoom);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetRoom != NULL);
-    if (0 != iCallbackSetRoom(iPtrSetRoom, aVersion, (const char*)aaRoom.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetRoom(iPtrSetRoom, aVersion, (const char*)aRoom.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::Standby(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaStandby)
+void DvProviderLinnCoUkProduct3C::DoStandby(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aStandby;
     ASSERT(iCallbackStandby != NULL);
     if (0 != iCallbackStandby(iPtrStandby, aVersion, &aStandby)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaStandby.Write((aStandby!=0));
-    aResponse.End();
+    InvocationResponseBool respaStandby(aInvocation, "aStandby");
+    resp.Start();
+    respaStandby.Write((aStandby!=0));
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SetStandby(IInvocationResponse& aResponse, TUint aVersion, TBool aaStandby)
+void DvProviderLinnCoUkProduct3C::DoSetStandby(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TBool aStandby = aInvocation.InvocationReadBool("aStandby");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetStandby != NULL);
-    if (0 != iCallbackSetStandby(iPtrSetStandby, aVersion, aaStandby)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetStandby(iPtrSetStandby, aVersion, aStandby)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SourceCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaSourceCount)
+void DvProviderLinnCoUkProduct3C::DoSourceCount(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aSourceCount;
     ASSERT(iCallbackSourceCount != NULL);
     if (0 != iCallbackSourceCount(iPtrSourceCount, aVersion, &aSourceCount)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaSourceCount.Write(aSourceCount);
-    aResponse.End();
+    InvocationResponseUint respaSourceCount(aInvocation, "aSourceCount");
+    resp.Start();
+    respaSourceCount.Write(aSourceCount);
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SourceXml(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaSourceXml)
+void DvProviderLinnCoUkProduct3C::DoSourceXml(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aSourceXml;
     ASSERT(iCallbackSourceXml != NULL);
     if (0 != iCallbackSourceXml(iPtrSourceXml, aVersion, &aSourceXml)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaSourceXml(aInvocation, "aSourceXml");
+    resp.Start();
     Brhz bufaSourceXml((const TChar*)aSourceXml);
     ZappFreeExternal(aSourceXml);
-    aaSourceXml.Write(bufaSourceXml);
-    aaSourceXml.WriteFlush();
-    aResponse.End();
+    respaSourceXml.Write(bufaSourceXml);
+    respaSourceXml.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SourceIndex(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaSourceIndex)
+void DvProviderLinnCoUkProduct3C::DoSourceIndex(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aSourceIndex;
     ASSERT(iCallbackSourceIndex != NULL);
     if (0 != iCallbackSourceIndex(iPtrSourceIndex, aVersion, &aSourceIndex)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaSourceIndex.Write(aSourceIndex);
-    aResponse.End();
+    InvocationResponseUint respaSourceIndex(aInvocation, "aSourceIndex");
+    resp.Start();
+    respaSourceIndex.Write(aSourceIndex);
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SetSourceIndex(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex)
+void DvProviderLinnCoUkProduct3C::DoSetSourceIndex(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetSourceIndex != NULL);
-    if (0 != iCallbackSetSourceIndex(iPtrSetSourceIndex, aVersion, aaSourceIndex)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetSourceIndex(iPtrSetSourceIndex, aVersion, aSourceIndex)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SetSourceIndexByName(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaSourceName)
+void DvProviderLinnCoUkProduct3C::DoSetSourceIndexByName(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    Brhz aSourceName;
+    aInvocation.InvocationReadString("aSourceName", aSourceName);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetSourceIndexByName != NULL);
-    if (0 != iCallbackSetSourceIndexByName(iPtrSetSourceIndexByName, aVersion, (const char*)aaSourceName.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetSourceIndexByName(iPtrSetSourceIndexByName, aVersion, (const char*)aSourceName.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SetStartupSourceIndexByName(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaSourceName)
+void DvProviderLinnCoUkProduct3C::DoSetStartupSourceIndexByName(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    Brhz aSourceName;
+    aInvocation.InvocationReadString("aSourceName", aSourceName);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetStartupSourceIndexByName != NULL);
-    if (0 != iCallbackSetStartupSourceIndexByName(iPtrSetStartupSourceIndexByName, aVersion, (const char*)aaSourceName.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetStartupSourceIndexByName(iPtrSetStartupSourceIndexByName, aVersion, (const char*)aSourceName.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::StartupSourceIndex(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaSourceIndex)
+void DvProviderLinnCoUkProduct3C::DoStartupSourceIndex(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aSourceIndex;
     ASSERT(iCallbackStartupSourceIndex != NULL);
     if (0 != iCallbackStartupSourceIndex(iPtrStartupSourceIndex, aVersion, &aSourceIndex)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaSourceIndex.Write(aSourceIndex);
-    aResponse.End();
+    InvocationResponseUint respaSourceIndex(aInvocation, "aSourceIndex");
+    resp.Start();
+    respaSourceIndex.Write(aSourceIndex);
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SetStartupSourceIndex(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex)
+void DvProviderLinnCoUkProduct3C::DoSetStartupSourceIndex(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetStartupSourceIndex != NULL);
-    if (0 != iCallbackSetStartupSourceIndex(iPtrSetStartupSourceIndex, aVersion, aaSourceIndex)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetStartupSourceIndex(iPtrSetStartupSourceIndex, aVersion, aSourceIndex)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::StartupSourceEnabled(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaStartupSourceEnabled)
+void DvProviderLinnCoUkProduct3C::DoStartupSourceEnabled(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aStartupSourceEnabled;
     ASSERT(iCallbackStartupSourceEnabled != NULL);
     if (0 != iCallbackStartupSourceEnabled(iPtrStartupSourceEnabled, aVersion, &aStartupSourceEnabled)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaStartupSourceEnabled.Write((aStartupSourceEnabled!=0));
-    aResponse.End();
+    InvocationResponseBool respaStartupSourceEnabled(aInvocation, "aStartupSourceEnabled");
+    resp.Start();
+    respaStartupSourceEnabled.Write((aStartupSourceEnabled!=0));
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SetStartupSourceEnabled(IInvocationResponse& aResponse, TUint aVersion, TBool aaStartupSourceEnabled)
+void DvProviderLinnCoUkProduct3C::DoSetStartupSourceEnabled(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TBool aStartupSourceEnabled = aInvocation.InvocationReadBool("aStartupSourceEnabled");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetStartupSourceEnabled != NULL);
-    if (0 != iCallbackSetStartupSourceEnabled(iPtrSetStartupSourceEnabled, aVersion, aaStartupSourceEnabled)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetStartupSourceEnabled(iPtrSetStartupSourceEnabled, aVersion, aStartupSourceEnabled)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SourceSystemName(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex, IInvocationResponseString& aaSourceName)
+void DvProviderLinnCoUkProduct3C::DoSourceSystemName(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aSourceName;
     ASSERT(iCallbackSourceSystemName != NULL);
-    if (0 != iCallbackSourceSystemName(iPtrSourceSystemName, aVersion, aaSourceIndex, &aSourceName)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSourceSystemName(iPtrSourceSystemName, aVersion, aSourceIndex, &aSourceName)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaSourceName(aInvocation, "aSourceName");
+    resp.Start();
     Brhz bufaSourceName((const TChar*)aSourceName);
     ZappFreeExternal(aSourceName);
-    aaSourceName.Write(bufaSourceName);
-    aaSourceName.WriteFlush();
-    aResponse.End();
+    respaSourceName.Write(bufaSourceName);
+    respaSourceName.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SourceName(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex, IInvocationResponseString& aaSourceName)
+void DvProviderLinnCoUkProduct3C::DoSourceName(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aSourceName;
     ASSERT(iCallbackSourceName != NULL);
-    if (0 != iCallbackSourceName(iPtrSourceName, aVersion, aaSourceIndex, &aSourceName)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSourceName(iPtrSourceName, aVersion, aSourceIndex, &aSourceName)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaSourceName(aInvocation, "aSourceName");
+    resp.Start();
     Brhz bufaSourceName((const TChar*)aSourceName);
     ZappFreeExternal(aSourceName);
-    aaSourceName.Write(bufaSourceName);
-    aaSourceName.WriteFlush();
-    aResponse.End();
+    respaSourceName.Write(bufaSourceName);
+    respaSourceName.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SetSourceName(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex, const Brx& aaSourceName)
+void DvProviderLinnCoUkProduct3C::DoSetSourceName(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
+    Brhz aSourceName;
+    aInvocation.InvocationReadString("aSourceName", aSourceName);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetSourceName != NULL);
-    if (0 != iCallbackSetSourceName(iPtrSetSourceName, aVersion, aaSourceIndex, (const char*)aaSourceName.Ptr())) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetSourceName(iPtrSetSourceName, aVersion, aSourceIndex, (const char*)aSourceName.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SourceType(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex, IInvocationResponseString& aaSourceType)
+void DvProviderLinnCoUkProduct3C::DoSourceType(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     char* aSourceType;
     ASSERT(iCallbackSourceType != NULL);
-    if (0 != iCallbackSourceType(iPtrSourceType, aVersion, aaSourceIndex, &aSourceType)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSourceType(iPtrSourceType, aVersion, aSourceIndex, &aSourceType)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+    InvocationResponseString respaSourceType(aInvocation, "aSourceType");
+    resp.Start();
     Brhz bufaSourceType((const TChar*)aSourceType);
     ZappFreeExternal(aSourceType);
-    aaSourceType.Write(bufaSourceType);
-    aaSourceType.WriteFlush();
-    aResponse.End();
+    respaSourceType.Write(bufaSourceType);
+    respaSourceType.WriteFlush();
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SourceVisible(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex, IInvocationResponseBool& aaSourceVisible)
+void DvProviderLinnCoUkProduct3C::DoSourceVisible(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     uint32_t aSourceVisible;
     ASSERT(iCallbackSourceVisible != NULL);
-    if (0 != iCallbackSourceVisible(iPtrSourceVisible, aVersion, aaSourceIndex, &aSourceVisible)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSourceVisible(iPtrSourceVisible, aVersion, aSourceIndex, &aSourceVisible)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aaSourceVisible.Write((aSourceVisible!=0));
-    aResponse.End();
+    InvocationResponseBool respaSourceVisible(aInvocation, "aSourceVisible");
+    resp.Start();
+    respaSourceVisible.Write((aSourceVisible!=0));
+    resp.End();
 }
 
-void DvProviderLinnCoUkProduct3C::SetSourceVisible(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex, TBool aaSourceVisible)
+void DvProviderLinnCoUkProduct3C::DoSetSourceVisible(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+    TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
+    TBool aSourceVisible = aInvocation.InvocationReadBool("aSourceVisible");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetSourceVisible != NULL);
-    if (0 != iCallbackSetSourceVisible(iPtrSetSourceVisible, aVersion, aaSourceIndex, aaSourceVisible)) {
-        aResponse.Error(502, Brn("Action failed"));
+    if (0 != iCallbackSetSourceVisible(iPtrSetSourceVisible, aVersion, aSourceIndex, aSourceVisible)) {
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
-    aResponse.End();
+    resp.Start();
+    resp.End();
 }
 
 
 
 THandle DvProviderLinnCoUkProduct3Create(DvDeviceC aDevice)
 {
-	return new DvProviderLinnCoUkProduct3C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkProduct3C(aDevice);
 }
 
 void DvProviderLinnCoUkProduct3Destroy(THandle aProvider)

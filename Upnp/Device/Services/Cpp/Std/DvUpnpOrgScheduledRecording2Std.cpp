@@ -1,4 +1,4 @@
-#include <Std/DvUpnpOrgScheduledRecording2.h>
+#include "DvUpnpOrgScheduledRecording2.h"
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
@@ -21,8 +21,8 @@ void DvProviderUpnpOrgScheduledRecording2Cpp::GetPropertyLastChange(std::string&
 DvProviderUpnpOrgScheduledRecording2Cpp::DvProviderUpnpOrgScheduledRecording2Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ScheduledRecording", 2)
 {
-    Functor empty;
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"), empty);
+    
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 

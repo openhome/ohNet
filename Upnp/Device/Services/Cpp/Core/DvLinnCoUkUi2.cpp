@@ -1,4 +1,4 @@
-#include <Core/DvLinnCoUkUi2.h>
+#include "DvLinnCoUkUi2.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
@@ -119,12 +119,12 @@ void DvProviderLinnCoUkUi2::GetPropertyDisplayPixels(Brh& aValue)
 DvProviderLinnCoUkUi2::DvProviderLinnCoUkUi2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Ui", 2)
 {
-    Functor empty;
+    
     TChar** allowedValues;
     TUint index;
-    iPropertyDisplayBrightness = new PropertyUint(new ParameterUint("DisplayBrightness"), empty);
+    iPropertyDisplayBrightness = new PropertyUint(new ParameterUint("DisplayBrightness"));
     iService->AddProperty(iPropertyDisplayBrightness); // passes ownership
-    iPropertyDisplayBrightnessAuto = new PropertyBool(new ParameterBool("DisplayBrightnessAuto"), empty);
+    iPropertyDisplayBrightnessAuto = new PropertyBool(new ParameterBool("DisplayBrightnessAuto"));
     iService->AddProperty(iPropertyDisplayBrightnessAuto); // passes ownership
     index = 0;
     allowedValues = new TChar*[4];
@@ -132,7 +132,7 @@ DvProviderLinnCoUkUi2::DvProviderLinnCoUkUi2(DvDevice& aDevice)
     allowedValues[index++] = (TChar*)"All";
     allowedValues[index++] = (TChar*)"Cd";
     allowedValues[index++] = (TChar*)"Dvd";
-    iPropertyInfraredCommands = new PropertyString(new ParameterString("InfraredCommands", allowedValues, 4), empty);
+    iPropertyInfraredCommands = new PropertyString(new ParameterString("InfraredCommands", allowedValues, 4));
     delete[] allowedValues;
     iService->AddProperty(iPropertyInfraredCommands); // passes ownership
     index = 0;
@@ -141,22 +141,22 @@ DvProviderLinnCoUkUi2::DvProviderLinnCoUkUi2(DvDevice& aDevice)
     allowedValues[index++] = (TChar*)"All";
     allowedValues[index++] = (TChar*)"Cd";
     allowedValues[index++] = (TChar*)"Dvd";
-    iPropertyInfraredTerminalCommands = new PropertyString(new ParameterString("InfraredTerminalCommands", allowedValues, 4), empty);
+    iPropertyInfraredTerminalCommands = new PropertyString(new ParameterString("InfraredTerminalCommands", allowedValues, 4));
     delete[] allowedValues;
     iService->AddProperty(iPropertyInfraredTerminalCommands); // passes ownership
-    iPropertyDisplayUpsideDown = new PropertyBool(new ParameterBool("DisplayUpsideDown"), empty);
+    iPropertyDisplayUpsideDown = new PropertyBool(new ParameterBool("DisplayUpsideDown"));
     iService->AddProperty(iPropertyDisplayUpsideDown); // passes ownership
-    iPropertyDisplayScrollText = new PropertyBool(new ParameterBool("DisplayScrollText"), empty);
+    iPropertyDisplayScrollText = new PropertyBool(new ParameterBool("DisplayScrollText"));
     iService->AddProperty(iPropertyDisplayScrollText); // passes ownership
-    iPropertyDisplaySleep = new PropertyBool(new ParameterBool("DisplaySleep"), empty);
+    iPropertyDisplaySleep = new PropertyBool(new ParameterBool("DisplaySleep"));
     iService->AddProperty(iPropertyDisplaySleep); // passes ownership
-    iPropertyDisplayLedOff = new PropertyBool(new ParameterBool("DisplayLedOff"), empty);
+    iPropertyDisplayLedOff = new PropertyBool(new ParameterBool("DisplayLedOff"));
     iService->AddProperty(iPropertyDisplayLedOff); // passes ownership
-    iPropertyTerminalInputCode = new PropertyUint(new ParameterUint("TerminalInputCode"), empty);
+    iPropertyTerminalInputCode = new PropertyUint(new ParameterUint("TerminalInputCode"));
     iService->AddProperty(iPropertyTerminalInputCode); // passes ownership
-    iPropertyTerminalInputName = new PropertyString(new ParameterString("TerminalInputName"), empty);
+    iPropertyTerminalInputName = new PropertyString(new ParameterString("TerminalInputName"));
     iService->AddProperty(iPropertyTerminalInputName); // passes ownership
-    iPropertyDisplayPixels = new PropertyBinary(new ParameterBinary("DisplayPixels"), empty);
+    iPropertyDisplayPixels = new PropertyBinary(new ParameterBinary("DisplayPixels"));
     iService->AddProperty(iPropertyDisplayPixels); // passes ownership
 }
 

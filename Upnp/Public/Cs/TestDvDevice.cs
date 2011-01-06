@@ -44,6 +44,13 @@ namespace Zapp.Device
             cp.TestActions();
 	        cp.TestSubscriptions();
             list.Dispose();
+            lock (this)
+            {
+                for (int i = 0; i < iDeviceList.Count; i++)
+                {
+                    iDeviceList[i].RemoveRef();
+                }
+            }
             device.Dispose();
 
             Console.Write("TestDvDeviceCpp - completed\n");
