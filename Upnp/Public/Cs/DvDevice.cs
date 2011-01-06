@@ -240,7 +240,6 @@ namespace Zapp.Device
             DvDeviceGetAttribute(iHandle, key, &value);
             Marshal.FreeHGlobal((IntPtr)key);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
         }
         
         /// <summary>
