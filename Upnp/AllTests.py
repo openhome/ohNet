@@ -175,7 +175,7 @@ def JsOnly():
     LocalAppData = os.environ.get('LOCALAPPDATA')
     WorkSpace = os.environ.get('WORKSPACE')
     UIPath = os.path.join(WorkSpace, 'Upnp\Public\Js\Zapp.Web.UI.Tests')
-    Chrome = os.path.join(LocalAppData, 'Google\chrome\Application\Chrome.exe')
+    Chrome = os.path.join(LocalAppData, 'Google\chrome\Application\8.0.552.215\Chrome.exe')
     TestBasic = "Build\Obj\Windows\TestDvTestBasic.exe"
     TestDeviceFinder = "Build\Obj\Windows\TestDeviceFinder.exe"
     testbasic = subprocess.Popen([TestBasic, '-l', '-c', UIPath])
