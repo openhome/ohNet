@@ -659,14 +659,14 @@ $(objdir)TestCpDeviceDvCs.exe: \
 Generated$(dirsep)GenerateSourceFiles.mak : $(tt) Service$(dirsep)Services.xml T4/Templates/UpnpMakeT4.tt
 	$(mkdir) Generated
 	$(t4) -o Generated$(dirsep)GenerateSourceFiles.mak T4/Templates/UpnpMakeT4.tt -a xml:Service/Services.xml
-	@echo Warning: a makefile has been re-generated.
+	@echo Attention: a makefile has been re-generated.
 
 Generated$(dirsep)Proxies.mak : $(tt) Service$(dirsep)Services.xml T4/Templates/CpUpnpMakeProxies.tt
 	$(mkdir) Generated
 	$(t4) -o Generated$(dirsep)Proxies.mak T4/Templates/CpUpnpMakeProxies.tt -a xml:Service/Services.xml
-	@echo Warning: a makefile has been re-generated.
+	@echo Attention: a makefile has been re-generated.
 
 Generated$(dirsep)Devices.mak : $(tt) Service$(dirsep)Services.xml T4/Templates/DvUpnpMakeDevices.tt
 	$(mkdir) Generated
 	$(t4) -o Generated$(dirsep)Devices.mak T4/Templates/DvUpnpMakeDevices.tt -a xml:Service/Services.xml
-	@echo Warning: a makefile has been re-generated.
+	@echo Attention: a makefile has been re-generated.
