@@ -1,6 +1,6 @@
 Zapp library
 ------------
-
+ 
 Zapp is a library for the discovery, monitoring, manipulation and implementation
 of UPnP devices, generalized to be extensible to other similar protocols.
 
