@@ -268,13 +268,13 @@ def ArmTests(module, arch, nightly):
         else:
             rssh('hudson-zapp','sheeva002.linn.co.uk','python AllTests.py -t')
 
-def publish_release(ostype, arch, release_name):
+def publish_release(ostype, arch, release_name, tool):
     target_name = "%s-%s" % (ostype, "ARM" if arch=="arm" else arch)
     if ostype == "Windows":
         artifacts = '\\\\zapp.linn.co.uk\\artifacts\\'
     else:
         artifacts = '/opt/artifacts/'
-    subprocess.check_call('cd Upnp && make bundle targetplatform=%s' % target_name, shell=True)
+    subprocess.check_call(tool + ' && cd Upnp && make bundle targetplatform=%s' % target_name, shell=True)
     release_source_bundle = 'Upnp/Build/Bundles/zapp-%s.tar.gz' % target_name
     release_target_bundle = '%sReleases/zapp-%s-%s.tar.gz' % (artifacts, release_name, target_name)
     shutil.copy(release_source_bundle, release_target_bundle)
@@ -303,8 +303,8 @@ def main():
 
     release_version = Environment['release_version']
 
-    if release_version is not None:
-        publish_release(Environment['ostype'], Environment['arch'], release_version)
+    if release_version is not None and Module['module'] == 'upnp':
+        publish_release(Environment['ostype'], Environment['arch'], release_version, Environment['tool'])
 
 if __name__=="__main__":
     main()
