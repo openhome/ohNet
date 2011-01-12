@@ -236,13 +236,13 @@ def ParseDir():
 
 
 
-def GenDocs(module, os, nightly, arch):
+def GenDocs(module, os, nightly, arch, tool):
 
     if module == "upnp" and os == "Linux" and arch == "x86" and nightly == "1":
 
 
         docgen_cmd = "cd Upnp && make docs"
-        Build(Environment['tool'],docgen_cmd,'')
+        Build(tool,docgen_cmd,'')
 
         ret = rsync('hudson-zapp','zapp.linn.co.uk','Upnp/Build/Docs/','~/doc','')
 
@@ -299,7 +299,7 @@ def main():
         ParseDir()
 
     ArmTests(Module['module'],Environment['arch'],Environment['nightly_run'])
-    GenDocs(Module['module'],Environment['ostype'],Environment['nightly_run'],Environment['arch'])
+    GenDocs(Module['module'],Environment['ostype'],Environment['nightly_run'],Environment['arch'],Environment['tool'])
 
     release_version = Environment['release_version']
 
