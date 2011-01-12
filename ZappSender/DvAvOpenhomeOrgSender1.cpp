@@ -59,14 +59,14 @@ void DvProviderAvOpenhomeOrgSender1::GetPropertyAttributes(Brhz& aValue)
 DvProviderAvOpenhomeOrgSender1::DvProviderAvOpenhomeOrgSender1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "av.openhome.org", "Sender", 1)
 {
-    Functor empty;
+    
     TChar** allowedValues;
     TUint index;
-    iPropertyPresentationUrl = new PropertyString(new ParameterString("PresentationUrl"), empty);
+    iPropertyPresentationUrl = new PropertyString(new ParameterString("PresentationUrl"));
     iService->AddProperty(iPropertyPresentationUrl); // passes ownership
-    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"), empty);
+    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
-    iPropertyAudio = new PropertyBool(new ParameterBool("Audio"), empty);
+    iPropertyAudio = new PropertyBool(new ParameterBool("Audio"));
     iService->AddProperty(iPropertyAudio); // passes ownership
     index = 0;
     allowedValues = new TChar*[5];
@@ -75,10 +75,10 @@ DvProviderAvOpenhomeOrgSender1::DvProviderAvOpenhomeOrgSender1(DvDevice& aDevice
     allowedValues[index++] = (TChar*)"Blocked";
     allowedValues[index++] = (TChar*)"Inactive";
     allowedValues[index++] = (TChar*)"Disabled";
-    iPropertyStatus = new PropertyString(new ParameterString("Status", allowedValues, 5), empty);
+    iPropertyStatus = new PropertyString(new ParameterString("Status", allowedValues, 5));
     delete[] allowedValues;
     iService->AddProperty(iPropertyStatus); // passes ownership
-    iPropertyAttributes = new PropertyString(new ParameterString("Attributes"), empty);
+    iPropertyAttributes = new PropertyString(new ParameterString("Attributes"));
     iService->AddProperty(iPropertyAttributes); // passes ownership
 }
 
