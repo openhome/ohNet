@@ -284,7 +284,7 @@ def writerev(ostype, arch):
 	if ostype == "Windows": 
 		artifacts = '\\\\zapp.linn.co.uk\\artifacts\\'
 
-	elseif ostype == "Linux" and arch != "arm":
+	elif ostype == "Linux" and arch != "arm":
 		artifacts = '/opt/artifacts/'
 	else:
 		artifacts = ''
