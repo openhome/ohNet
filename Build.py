@@ -275,7 +275,7 @@ def publish_release(ostype, arch, release_name, tool):
     else:
         artifacts = '/opt/artifacts/'
     subprocess.check_call(tool + ' && cd Upnp && make bundle-dev targetplatform=%s' % target_name, shell=True)
-    release_source_bundle = 'Upnp/Build/Bundles/zapp-%s.tar.gz' % target_name
+    release_source_bundle = 'Upnp/Build/Bundles/zapp-%s-dev.tar.gz' % target_name
     release_target_bundle = '%sReleases/zapp-%s-%s.tar.gz' % (artifacts, release_name, target_name)
     shutil.copyfile(release_source_bundle, release_target_bundle)
 
