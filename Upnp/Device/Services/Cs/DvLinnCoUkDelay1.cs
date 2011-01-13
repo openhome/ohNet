@@ -111,7 +111,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action PresetXml is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPresetXml must be overridden if this is called.</remarks>
+        /// PresetXml must be overridden if this is called.</remarks>
         protected void EnableActionPresetXml()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PresetXml");
@@ -124,7 +124,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action PresetIndex is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPresetIndex must be overridden if this is called.</remarks>
+        /// PresetIndex must be overridden if this is called.</remarks>
         protected void EnableActionPresetIndex()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PresetIndex");
@@ -137,7 +137,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetPresetIndex is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetPresetIndex must be overridden if this is called.</remarks>
+        /// SetPresetIndex must be overridden if this is called.</remarks>
         protected void EnableActionSetPresetIndex()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetPresetIndex");
@@ -150,7 +150,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetPresetDelay is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetPresetDelay must be overridden if this is called.</remarks>
+        /// SetPresetDelay must be overridden if this is called.</remarks>
         protected void EnableActionSetPresetDelay()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetPresetDelay");
@@ -164,7 +164,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetPresetVisible is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetPresetVisible must be overridden if this is called.</remarks>
+        /// SetPresetVisible must be overridden if this is called.</remarks>
         protected void EnableActionSetPresetVisible()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetPresetVisible");
@@ -178,7 +178,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetPresetName is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetPresetName must be overridden if this is called.</remarks>
+        /// SetPresetName must be overridden if this is called.</remarks>
         protected void EnableActionSetPresetName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetPresetName");
@@ -193,7 +193,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DelayMinimum is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDelayMinimum must be overridden if this is called.</remarks>
+        /// DelayMinimum must be overridden if this is called.</remarks>
         protected void EnableActionDelayMinimum()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DelayMinimum");
@@ -206,7 +206,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DelayMaximum is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDelayMaximum must be overridden if this is called.</remarks>
+        /// DelayMaximum must be overridden if this is called.</remarks>
         protected void EnableActionDelayMaximum()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DelayMaximum");
@@ -219,7 +219,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action PresetCount is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPresetCount must be overridden if this is called.</remarks>
+        /// PresetCount must be overridden if this is called.</remarks>
         protected void EnableActionPresetCount()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PresetCount");

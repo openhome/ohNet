@@ -451,7 +451,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DisplayTestPattern is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDisplayTestPattern must be overridden if this is called.</remarks>
+        /// DisplayTestPattern must be overridden if this is called.</remarks>
         protected void EnableActionDisplayTestPattern()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayTestPattern");
@@ -464,7 +464,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DisplayFill is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDisplayFill must be overridden if this is called.</remarks>
+        /// DisplayFill must be overridden if this is called.</remarks>
         protected void EnableActionDisplayFill()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayFill");
@@ -476,7 +476,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DisplayClear is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDisplayClear must be overridden if this is called.</remarks>
+        /// DisplayClear must be overridden if this is called.</remarks>
         protected void EnableActionDisplayClear()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayClear");
@@ -488,7 +488,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetTestModeEnabled is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetTestModeEnabled must be overridden if this is called.</remarks>
+        /// SetTestModeEnabled must be overridden if this is called.</remarks>
         protected void EnableActionSetTestModeEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetTestModeEnabled");
@@ -501,7 +501,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SimulateInfraredInput is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSimulateInfraredInput must be overridden if this is called.</remarks>
+        /// SimulateInfraredInput must be overridden if this is called.</remarks>
         protected void EnableActionSimulateInfraredInput()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SimulateInfraredInput");
@@ -514,7 +514,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SimulateButtonInput is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSimulateButtonInput must be overridden if this is called.</remarks>
+        /// SimulateButtonInput must be overridden if this is called.</remarks>
         protected void EnableActionSimulateButtonInput()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SimulateButtonInput");
@@ -527,7 +527,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SimulateLightSensor is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSimulateLightSensor must be overridden if this is called.</remarks>
+        /// SimulateLightSensor must be overridden if this is called.</remarks>
         protected void EnableActionSimulateLightSensor()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SimulateLightSensor");
@@ -540,7 +540,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetLightSensorData is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetLightSensorData must be overridden if this is called.</remarks>
+        /// GetLightSensorData must be overridden if this is called.</remarks>
         protected void EnableActionGetLightSensorData()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetLightSensorData");
@@ -553,7 +553,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetDisplayBrightness is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetDisplayBrightness must be overridden if this is called.</remarks>
+        /// SetDisplayBrightness must be overridden if this is called.</remarks>
         protected void EnableActionSetDisplayBrightness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayBrightness");
@@ -566,7 +566,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetDisplayBrightnessAuto is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetDisplayBrightnessAuto must be overridden if this is called.</remarks>
+        /// SetDisplayBrightnessAuto must be overridden if this is called.</remarks>
         protected void EnableActionSetDisplayBrightnessAuto()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayBrightnessAuto");
@@ -579,7 +579,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetInfraredCommands is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetInfraredCommands must be overridden if this is called.</remarks>
+        /// SetInfraredCommands must be overridden if this is called.</remarks>
         protected void EnableActionSetInfraredCommands()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetInfraredCommands");
@@ -592,7 +592,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action InfraredCommands is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoInfraredCommands must be overridden if this is called.</remarks>
+        /// InfraredCommands must be overridden if this is called.</remarks>
         protected void EnableActionInfraredCommands()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("InfraredCommands");
@@ -605,7 +605,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetInfraredTerminalCommands is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetInfraredTerminalCommands must be overridden if this is called.</remarks>
+        /// SetInfraredTerminalCommands must be overridden if this is called.</remarks>
         protected void EnableActionSetInfraredTerminalCommands()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetInfraredTerminalCommands");
@@ -618,7 +618,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action InfraredTerminalCommands is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoInfraredTerminalCommands must be overridden if this is called.</remarks>
+        /// InfraredTerminalCommands must be overridden if this is called.</remarks>
         protected void EnableActionInfraredTerminalCommands()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("InfraredTerminalCommands");
@@ -631,7 +631,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DisplayBrightness is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDisplayBrightness must be overridden if this is called.</remarks>
+        /// DisplayBrightness must be overridden if this is called.</remarks>
         protected void EnableActionDisplayBrightness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayBrightness");
@@ -644,7 +644,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DisplayBrightnessAuto is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDisplayBrightnessAuto must be overridden if this is called.</remarks>
+        /// DisplayBrightnessAuto must be overridden if this is called.</remarks>
         protected void EnableActionDisplayBrightnessAuto()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayBrightnessAuto");
@@ -657,7 +657,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DisplayUpsideDown is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDisplayUpsideDown must be overridden if this is called.</remarks>
+        /// DisplayUpsideDown must be overridden if this is called.</remarks>
         protected void EnableActionDisplayUpsideDown()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayUpsideDown");
@@ -670,7 +670,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetDisplayUpsideDown is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetDisplayUpsideDown must be overridden if this is called.</remarks>
+        /// SetDisplayUpsideDown must be overridden if this is called.</remarks>
         protected void EnableActionSetDisplayUpsideDown()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayUpsideDown");
@@ -683,7 +683,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetDisplayScrollText is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetDisplayScrollText must be overridden if this is called.</remarks>
+        /// SetDisplayScrollText must be overridden if this is called.</remarks>
         protected void EnableActionSetDisplayScrollText()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayScrollText");
@@ -696,7 +696,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DisplayScrollText is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDisplayScrollText must be overridden if this is called.</remarks>
+        /// DisplayScrollText must be overridden if this is called.</remarks>
         protected void EnableActionDisplayScrollText()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayScrollText");
@@ -709,7 +709,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetDisplaySleep is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetDisplaySleep must be overridden if this is called.</remarks>
+        /// SetDisplaySleep must be overridden if this is called.</remarks>
         protected void EnableActionSetDisplaySleep()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDisplaySleep");
@@ -722,7 +722,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DisplaySleep is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDisplaySleep must be overridden if this is called.</remarks>
+        /// DisplaySleep must be overridden if this is called.</remarks>
         protected void EnableActionDisplaySleep()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplaySleep");
@@ -735,7 +735,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetDisplayLedOff is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetDisplayLedOff must be overridden if this is called.</remarks>
+        /// SetDisplayLedOff must be overridden if this is called.</remarks>
         protected void EnableActionSetDisplayLedOff()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayLedOff");
@@ -748,7 +748,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DisplayLedOff is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDisplayLedOff must be overridden if this is called.</remarks>
+        /// DisplayLedOff must be overridden if this is called.</remarks>
         protected void EnableActionDisplayLedOff()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisplayLedOff");

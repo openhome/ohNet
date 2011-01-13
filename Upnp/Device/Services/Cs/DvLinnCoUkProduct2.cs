@@ -184,7 +184,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Type is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoType must be overridden if this is called.</remarks>
+        /// Type must be overridden if this is called.</remarks>
         protected void EnableActionType()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Type");
@@ -198,7 +198,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Model is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoModel must be overridden if this is called.</remarks>
+        /// Model must be overridden if this is called.</remarks>
         protected void EnableActionModel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Model");
@@ -212,7 +212,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Name is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoName must be overridden if this is called.</remarks>
+        /// Name must be overridden if this is called.</remarks>
         protected void EnableActionName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Name");
@@ -225,7 +225,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetName is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetName must be overridden if this is called.</remarks>
+        /// SetName must be overridden if this is called.</remarks>
         protected void EnableActionSetName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetName");
@@ -238,7 +238,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Room is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoRoom must be overridden if this is called.</remarks>
+        /// Room must be overridden if this is called.</remarks>
         protected void EnableActionRoom()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Room");
@@ -251,7 +251,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetRoom is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetRoom must be overridden if this is called.</remarks>
+        /// SetRoom must be overridden if this is called.</remarks>
         protected void EnableActionSetRoom()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRoom");
@@ -264,7 +264,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Standby is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStandby must be overridden if this is called.</remarks>
+        /// Standby must be overridden if this is called.</remarks>
         protected void EnableActionStandby()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Standby");
@@ -277,7 +277,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetStandby is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetStandby must be overridden if this is called.</remarks>
+        /// SetStandby must be overridden if this is called.</remarks>
         protected void EnableActionSetStandby()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStandby");
@@ -290,7 +290,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SourceCount is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSourceCount must be overridden if this is called.</remarks>
+        /// SourceCount must be overridden if this is called.</remarks>
         protected void EnableActionSourceCount()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SourceCount");
@@ -303,7 +303,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SourceIndex is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSourceIndex must be overridden if this is called.</remarks>
+        /// SourceIndex must be overridden if this is called.</remarks>
         protected void EnableActionSourceIndex()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SourceIndex");
@@ -316,7 +316,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetSourceIndex is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetSourceIndex must be overridden if this is called.</remarks>
+        /// SetSourceIndex must be overridden if this is called.</remarks>
         protected void EnableActionSetSourceIndex()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetSourceIndex");
@@ -329,7 +329,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SourceType is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSourceType must be overridden if this is called.</remarks>
+        /// SourceType must be overridden if this is called.</remarks>
         protected void EnableActionSourceType()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SourceType");

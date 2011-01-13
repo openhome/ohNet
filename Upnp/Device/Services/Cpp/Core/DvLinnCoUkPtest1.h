@@ -33,19 +33,19 @@ protected:
     /**
      * Signal that the action TestComPort is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoTestComPort must be overridden if this is called.
+     * TestComPort must be overridden if this is called.
      */
     void EnableActionTestComPort();
     /**
      * Signal that the action LedsOn is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoLedsOn must be overridden if this is called.
+     * LedsOn must be overridden if this is called.
      */
     void EnableActionLedsOn();
     /**
      * Signal that the action LedsOff is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoLedsOff must be overridden if this is called.
+     * LedsOff must be overridden if this is called.
      */
     void EnableActionLedsOff();
 private:

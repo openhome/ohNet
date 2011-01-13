@@ -188,7 +188,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action AmplifierEnabled is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoAmplifierEnabled must be overridden if this is called.</remarks>
+        /// AmplifierEnabled must be overridden if this is called.</remarks>
         protected void EnableActionAmplifierEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("AmplifierEnabled");
@@ -201,7 +201,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetAmplifierEnabled is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetAmplifierEnabled must be overridden if this is called.</remarks>
+        /// SetAmplifierEnabled must be overridden if this is called.</remarks>
         protected void EnableActionSetAmplifierEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetAmplifierEnabled");
@@ -214,7 +214,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action AmplifierAttenuation is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoAmplifierAttenuation must be overridden if this is called.</remarks>
+        /// AmplifierAttenuation must be overridden if this is called.</remarks>
         protected void EnableActionAmplifierAttenuation()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("AmplifierAttenuation");
@@ -227,7 +227,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetAmplifierAttenuation is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetAmplifierAttenuation must be overridden if this is called.</remarks>
+        /// SetAmplifierAttenuation must be overridden if this is called.</remarks>
         protected void EnableActionSetAmplifierAttenuation()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetAmplifierAttenuation");
@@ -240,7 +240,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetVolumeControlEnabled is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetVolumeControlEnabled must be overridden if this is called.</remarks>
+        /// SetVolumeControlEnabled must be overridden if this is called.</remarks>
         protected void EnableActionSetVolumeControlEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetVolumeControlEnabled");
@@ -253,7 +253,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action VolumeControlEnabled is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoVolumeControlEnabled must be overridden if this is called.</remarks>
+        /// VolumeControlEnabled must be overridden if this is called.</remarks>
         protected void EnableActionVolumeControlEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("VolumeControlEnabled");
@@ -266,7 +266,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetDigitalAudioOutputRaw is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetDigitalAudioOutputRaw must be overridden if this is called.</remarks>
+        /// SetDigitalAudioOutputRaw must be overridden if this is called.</remarks>
         protected void EnableActionSetDigitalAudioOutputRaw()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDigitalAudioOutputRaw");
@@ -279,7 +279,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DigitalAudioOutputRaw is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDigitalAudioOutputRaw must be overridden if this is called.</remarks>
+        /// DigitalAudioOutputRaw must be overridden if this is called.</remarks>
         protected void EnableActionDigitalAudioOutputRaw()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DigitalAudioOutputRaw");
@@ -292,7 +292,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action AmplifierOverTemperature is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoAmplifierOverTemperature must be overridden if this is called.</remarks>
+        /// AmplifierOverTemperature must be overridden if this is called.</remarks>
         protected void EnableActionAmplifierOverTemperature()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("AmplifierOverTemperature");
@@ -305,7 +305,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action EthernetLinkConnected is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoEthernetLinkConnected must be overridden if this is called.</remarks>
+        /// EthernetLinkConnected must be overridden if this is called.</remarks>
         protected void EnableActionEthernetLinkConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("EthernetLinkConnected");
@@ -318,7 +318,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Locate is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoLocate must be overridden if this is called.</remarks>
+        /// Locate must be overridden if this is called.</remarks>
         protected void EnableActionLocate()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Locate");

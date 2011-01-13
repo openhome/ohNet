@@ -105,7 +105,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ConfigurationXml is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoConfigurationXml must be overridden if this is called.</remarks>
+        /// ConfigurationXml must be overridden if this is called.</remarks>
         protected void EnableActionConfigurationXml()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ConfigurationXml");
@@ -118,7 +118,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ParameterXml is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoParameterXml must be overridden if this is called.</remarks>
+        /// ParameterXml must be overridden if this is called.</remarks>
         protected void EnableActionParameterXml()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ParameterXml");
@@ -131,7 +131,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetParameter is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetParameter must be overridden if this is called.</remarks>
+        /// SetParameter must be overridden if this is called.</remarks>
         protected void EnableActionSetParameter()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetParameter");

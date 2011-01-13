@@ -55,19 +55,19 @@ protected:
     /**
      * Signal that the action ConfigurationXml is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoConfigurationXml must be overridden if this is called.
+     * ConfigurationXml must be overridden if this is called.
      */
     void EnableActionConfigurationXml();
     /**
      * Signal that the action ParameterXml is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoParameterXml must be overridden if this is called.
+     * ParameterXml must be overridden if this is called.
      */
     void EnableActionParameterXml();
     /**
      * Signal that the action SetParameter is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetParameter must be overridden if this is called.
+     * SetParameter must be overridden if this is called.
      */
     void EnableActionSetParameter();
 private:

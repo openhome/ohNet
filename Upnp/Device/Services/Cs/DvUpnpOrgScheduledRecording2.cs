@@ -85,7 +85,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetSortCapabilities is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetSortCapabilities must be overridden if this is called.</remarks>
+        /// GetSortCapabilities must be overridden if this is called.</remarks>
         protected void EnableActionGetSortCapabilities()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetSortCapabilities");
@@ -100,7 +100,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetPropertyList is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetPropertyList must be overridden if this is called.</remarks>
+        /// GetPropertyList must be overridden if this is called.</remarks>
         protected void EnableActionGetPropertyList()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetPropertyList");
@@ -119,7 +119,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetAllowedValues is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetAllowedValues must be overridden if this is called.</remarks>
+        /// GetAllowedValues must be overridden if this is called.</remarks>
         protected void EnableActionGetAllowedValues()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetAllowedValues");
@@ -139,7 +139,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetStateUpdateID is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetStateUpdateID must be overridden if this is called.</remarks>
+        /// GetStateUpdateID must be overridden if this is called.</remarks>
         protected void EnableActionGetStateUpdateID()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetStateUpdateID");
@@ -152,7 +152,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action BrowseRecordSchedules is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoBrowseRecordSchedules must be overridden if this is called.</remarks>
+        /// BrowseRecordSchedules must be overridden if this is called.</remarks>
         protected void EnableActionBrowseRecordSchedules()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("BrowseRecordSchedules");
@@ -173,7 +173,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action BrowseRecordTasks is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoBrowseRecordTasks must be overridden if this is called.</remarks>
+        /// BrowseRecordTasks must be overridden if this is called.</remarks>
         protected void EnableActionBrowseRecordTasks()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("BrowseRecordTasks");
@@ -195,7 +195,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action CreateRecordSchedule is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoCreateRecordSchedule must be overridden if this is called.</remarks>
+        /// CreateRecordSchedule must be overridden if this is called.</remarks>
         protected void EnableActionCreateRecordSchedule()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CreateRecordSchedule");
@@ -212,7 +212,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DeleteRecordSchedule is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDeleteRecordSchedule must be overridden if this is called.</remarks>
+        /// DeleteRecordSchedule must be overridden if this is called.</remarks>
         protected void EnableActionDeleteRecordSchedule()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DeleteRecordSchedule");
@@ -226,7 +226,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetRecordSchedule is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetRecordSchedule must be overridden if this is called.</remarks>
+        /// GetRecordSchedule must be overridden if this is called.</remarks>
         protected void EnableActionGetRecordSchedule()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRecordSchedule");
@@ -243,7 +243,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action EnableRecordSchedule is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoEnableRecordSchedule must be overridden if this is called.</remarks>
+        /// EnableRecordSchedule must be overridden if this is called.</remarks>
         protected void EnableActionEnableRecordSchedule()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("EnableRecordSchedule");
@@ -257,7 +257,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DisableRecordSchedule is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDisableRecordSchedule must be overridden if this is called.</remarks>
+        /// DisableRecordSchedule must be overridden if this is called.</remarks>
         protected void EnableActionDisableRecordSchedule()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisableRecordSchedule");
@@ -271,7 +271,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DeleteRecordTask is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDeleteRecordTask must be overridden if this is called.</remarks>
+        /// DeleteRecordTask must be overridden if this is called.</remarks>
         protected void EnableActionDeleteRecordTask()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DeleteRecordTask");
@@ -285,7 +285,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetRecordTask is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetRecordTask must be overridden if this is called.</remarks>
+        /// GetRecordTask must be overridden if this is called.</remarks>
         protected void EnableActionGetRecordTask()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRecordTask");
@@ -302,7 +302,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action EnableRecordTask is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoEnableRecordTask must be overridden if this is called.</remarks>
+        /// EnableRecordTask must be overridden if this is called.</remarks>
         protected void EnableActionEnableRecordTask()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("EnableRecordTask");
@@ -316,7 +316,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DisableRecordTask is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDisableRecordTask must be overridden if this is called.</remarks>
+        /// DisableRecordTask must be overridden if this is called.</remarks>
         protected void EnableActionDisableRecordTask()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DisableRecordTask");
@@ -330,7 +330,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ResetRecordTask is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoResetRecordTask must be overridden if this is called.</remarks>
+        /// ResetRecordTask must be overridden if this is called.</remarks>
         protected void EnableActionResetRecordTask()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ResetRecordTask");
@@ -344,7 +344,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetRecordScheduleConflicts is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetRecordScheduleConflicts must be overridden if this is called.</remarks>
+        /// GetRecordScheduleConflicts must be overridden if this is called.</remarks>
         protected void EnableActionGetRecordScheduleConflicts()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRecordScheduleConflicts");
@@ -360,7 +360,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetRecordTaskConflicts is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetRecordTaskConflicts must be overridden if this is called.</remarks>
+        /// GetRecordTaskConflicts must be overridden if this is called.</remarks>
         protected void EnableActionGetRecordTaskConflicts()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRecordTaskConflicts");

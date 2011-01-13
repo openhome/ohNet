@@ -154,7 +154,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetSearchCapabilities is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetSearchCapabilities must be overridden if this is called.</remarks>
+        /// GetSearchCapabilities must be overridden if this is called.</remarks>
         protected void EnableActionGetSearchCapabilities()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetSearchCapabilities");
@@ -168,7 +168,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetSortCapabilities is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetSortCapabilities must be overridden if this is called.</remarks>
+        /// GetSortCapabilities must be overridden if this is called.</remarks>
         protected void EnableActionGetSortCapabilities()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetSortCapabilities");
@@ -182,7 +182,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetSortExtensionCapabilities is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetSortExtensionCapabilities must be overridden if this is called.</remarks>
+        /// GetSortExtensionCapabilities must be overridden if this is called.</remarks>
         protected void EnableActionGetSortExtensionCapabilities()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetSortExtensionCapabilities");
@@ -196,7 +196,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetFeatureList is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetFeatureList must be overridden if this is called.</remarks>
+        /// GetFeatureList must be overridden if this is called.</remarks>
         protected void EnableActionGetFeatureList()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetFeatureList");
@@ -210,7 +210,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetSystemUpdateID is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetSystemUpdateID must be overridden if this is called.</remarks>
+        /// GetSystemUpdateID must be overridden if this is called.</remarks>
         protected void EnableActionGetSystemUpdateID()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetSystemUpdateID");
@@ -223,7 +223,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Browse is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoBrowse must be overridden if this is called.</remarks>
+        /// Browse must be overridden if this is called.</remarks>
         protected void EnableActionBrowse()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Browse");
@@ -249,7 +249,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Search is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSearch must be overridden if this is called.</remarks>
+        /// Search must be overridden if this is called.</remarks>
         protected void EnableActionSearch()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Search");
@@ -272,7 +272,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action CreateObject is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoCreateObject must be overridden if this is called.</remarks>
+        /// CreateObject must be overridden if this is called.</remarks>
         protected void EnableActionCreateObject()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CreateObject");
@@ -289,7 +289,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DestroyObject is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDestroyObject must be overridden if this is called.</remarks>
+        /// DestroyObject must be overridden if this is called.</remarks>
         protected void EnableActionDestroyObject()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DestroyObject");
@@ -303,7 +303,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action UpdateObject is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoUpdateObject must be overridden if this is called.</remarks>
+        /// UpdateObject must be overridden if this is called.</remarks>
         protected void EnableActionUpdateObject()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("UpdateObject");
@@ -319,7 +319,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action MoveObject is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoMoveObject must be overridden if this is called.</remarks>
+        /// MoveObject must be overridden if this is called.</remarks>
         protected void EnableActionMoveObject()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("MoveObject");
@@ -335,7 +335,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ImportResource is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoImportResource must be overridden if this is called.</remarks>
+        /// ImportResource must be overridden if this is called.</remarks>
         protected void EnableActionImportResource()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ImportResource");
@@ -351,7 +351,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ExportResource is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoExportResource must be overridden if this is called.</remarks>
+        /// ExportResource must be overridden if this is called.</remarks>
         protected void EnableActionExportResource()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ExportResource");
@@ -367,7 +367,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DeleteResource is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDeleteResource must be overridden if this is called.</remarks>
+        /// DeleteResource must be overridden if this is called.</remarks>
         protected void EnableActionDeleteResource()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DeleteResource");
@@ -381,7 +381,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action StopTransferResource is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStopTransferResource must be overridden if this is called.</remarks>
+        /// StopTransferResource must be overridden if this is called.</remarks>
         protected void EnableActionStopTransferResource()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StopTransferResource");
@@ -394,7 +394,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetTransferProgress is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetTransferProgress must be overridden if this is called.</remarks>
+        /// GetTransferProgress must be overridden if this is called.</remarks>
         protected void EnableActionGetTransferProgress()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetTransferProgress");
@@ -416,7 +416,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action CreateReference is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoCreateReference must be overridden if this is called.</remarks>
+        /// CreateReference must be overridden if this is called.</remarks>
         protected void EnableActionCreateReference()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CreateReference");

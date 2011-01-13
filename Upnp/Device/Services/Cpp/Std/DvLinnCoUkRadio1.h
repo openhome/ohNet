@@ -105,97 +105,97 @@ protected:
     /**
      * Signal that the action Play is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPlay must be overridden if this is called.
+     * Play must be overridden if this is called.
      */
     void EnableActionPlay();
     /**
      * Signal that the action Pause is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPause must be overridden if this is called.
+     * Pause must be overridden if this is called.
      */
     void EnableActionPause();
     /**
      * Signal that the action Stop is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStop must be overridden if this is called.
+     * Stop must be overridden if this is called.
      */
     void EnableActionStop();
     /**
      * Signal that the action SeekSecondAbsolute is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSeekSecondAbsolute must be overridden if this is called.
+     * SeekSecondAbsolute must be overridden if this is called.
      */
     void EnableActionSeekSecondAbsolute();
     /**
      * Signal that the action SeekSecondRelative is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSeekSecondRelative must be overridden if this is called.
+     * SeekSecondRelative must be overridden if this is called.
      */
     void EnableActionSeekSecondRelative();
     /**
      * Signal that the action Channel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoChannel must be overridden if this is called.
+     * Channel must be overridden if this is called.
      */
     void EnableActionChannel();
     /**
      * Signal that the action SetChannel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetChannel must be overridden if this is called.
+     * SetChannel must be overridden if this is called.
      */
     void EnableActionSetChannel();
     /**
      * Signal that the action ProtocolInfo is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoProtocolInfo must be overridden if this is called.
+     * ProtocolInfo must be overridden if this is called.
      */
     void EnableActionProtocolInfo();
     /**
      * Signal that the action TransportState is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoTransportState must be overridden if this is called.
+     * TransportState must be overridden if this is called.
      */
     void EnableActionTransportState();
     /**
      * Signal that the action Id is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoId must be overridden if this is called.
+     * Id must be overridden if this is called.
      */
     void EnableActionId();
     /**
      * Signal that the action SetId is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetId must be overridden if this is called.
+     * SetId must be overridden if this is called.
      */
     void EnableActionSetId();
     /**
      * Signal that the action Read is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoRead must be overridden if this is called.
+     * Read must be overridden if this is called.
      */
     void EnableActionRead();
     /**
      * Signal that the action ReadList is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoReadList must be overridden if this is called.
+     * ReadList must be overridden if this is called.
      */
     void EnableActionReadList();
     /**
      * Signal that the action IdArray is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoIdArray must be overridden if this is called.
+     * IdArray must be overridden if this is called.
      */
     void EnableActionIdArray();
     /**
      * Signal that the action IdArrayChanged is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoIdArrayChanged must be overridden if this is called.
+     * IdArrayChanged must be overridden if this is called.
      */
     void EnableActionIdArrayChanged();
     /**
      * Signal that the action IdsMax is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoIdsMax must be overridden if this is called.
+     * IdsMax must be overridden if this is called.
      */
     void EnableActionIdsMax();
 private:

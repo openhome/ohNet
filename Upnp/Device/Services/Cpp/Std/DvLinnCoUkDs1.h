@@ -125,61 +125,61 @@ protected:
     /**
      * Signal that the action Play is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPlay must be overridden if this is called.
+     * Play must be overridden if this is called.
      */
     void EnableActionPlay();
     /**
      * Signal that the action Pause is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPause must be overridden if this is called.
+     * Pause must be overridden if this is called.
      */
     void EnableActionPause();
     /**
      * Signal that the action Stop is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStop must be overridden if this is called.
+     * Stop must be overridden if this is called.
      */
     void EnableActionStop();
     /**
      * Signal that the action SeekSecondAbsolute is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSeekSecondAbsolute must be overridden if this is called.
+     * SeekSecondAbsolute must be overridden if this is called.
      */
     void EnableActionSeekSecondAbsolute();
     /**
      * Signal that the action SeekSecondRelative is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSeekSecondRelative must be overridden if this is called.
+     * SeekSecondRelative must be overridden if this is called.
      */
     void EnableActionSeekSecondRelative();
     /**
      * Signal that the action SeekTrackId is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSeekTrackId must be overridden if this is called.
+     * SeekTrackId must be overridden if this is called.
      */
     void EnableActionSeekTrackId();
     /**
      * Signal that the action SeekTrackAbsolute is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSeekTrackAbsolute must be overridden if this is called.
+     * SeekTrackAbsolute must be overridden if this is called.
      */
     void EnableActionSeekTrackAbsolute();
     /**
      * Signal that the action SeekTrackRelative is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSeekTrackRelative must be overridden if this is called.
+     * SeekTrackRelative must be overridden if this is called.
      */
     void EnableActionSeekTrackRelative();
     /**
      * Signal that the action State is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoState must be overridden if this is called.
+     * State must be overridden if this is called.
      */
     void EnableActionState();
     /**
      * Signal that the action ProtocolInfo is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoProtocolInfo must be overridden if this is called.
+     * ProtocolInfo must be overridden if this is called.
      */
     void EnableActionProtocolInfo();
 private:

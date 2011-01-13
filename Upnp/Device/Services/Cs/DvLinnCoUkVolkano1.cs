@@ -42,7 +42,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Reboot is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoReboot must be overridden if this is called.</remarks>
+        /// Reboot must be overridden if this is called.</remarks>
         protected void EnableActionReboot()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Reboot");
@@ -54,7 +54,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action BootMode is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoBootMode must be overridden if this is called.</remarks>
+        /// BootMode must be overridden if this is called.</remarks>
         protected void EnableActionBootMode()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("BootMode");
@@ -72,7 +72,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetBootMode is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetBootMode must be overridden if this is called.</remarks>
+        /// SetBootMode must be overridden if this is called.</remarks>
         protected void EnableActionSetBootMode()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBootMode");
@@ -89,7 +89,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action BspType is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoBspType must be overridden if this is called.</remarks>
+        /// BspType must be overridden if this is called.</remarks>
         protected void EnableActionBspType()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("BspType");
@@ -103,7 +103,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action UglyName is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoUglyName must be overridden if this is called.</remarks>
+        /// UglyName must be overridden if this is called.</remarks>
         protected void EnableActionUglyName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("UglyName");
@@ -117,7 +117,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action MacAddress is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoMacAddress must be overridden if this is called.</remarks>
+        /// MacAddress must be overridden if this is called.</remarks>
         protected void EnableActionMacAddress()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("MacAddress");
@@ -131,7 +131,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ProductId is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoProductId must be overridden if this is called.</remarks>
+        /// ProductId must be overridden if this is called.</remarks>
         protected void EnableActionProductId()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ProductId");
@@ -145,7 +145,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action BoardId is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoBoardId must be overridden if this is called.</remarks>
+        /// BoardId must be overridden if this is called.</remarks>
         protected void EnableActionBoardId()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("BoardId");
@@ -160,7 +160,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action BoardType is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoBoardType must be overridden if this is called.</remarks>
+        /// BoardType must be overridden if this is called.</remarks>
         protected void EnableActionBoardType()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("BoardType");
@@ -175,7 +175,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action MaxBoards is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoMaxBoards must be overridden if this is called.</remarks>
+        /// MaxBoards must be overridden if this is called.</remarks>
         protected void EnableActionMaxBoards()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("MaxBoards");
@@ -188,7 +188,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SoftwareVersion is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSoftwareVersion must be overridden if this is called.</remarks>
+        /// SoftwareVersion must be overridden if this is called.</remarks>
         protected void EnableActionSoftwareVersion()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SoftwareVersion");

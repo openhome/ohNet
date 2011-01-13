@@ -67,7 +67,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Seconds is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSeconds must be overridden if this is called.</remarks>
+        /// Seconds must be overridden if this is called.</remarks>
         protected void EnableActionSeconds()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Seconds");
