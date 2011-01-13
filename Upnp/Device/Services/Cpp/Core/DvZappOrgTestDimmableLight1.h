@@ -43,13 +43,13 @@ protected:
     /**
      * Signal that the action GetLevel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetLevel must be overridden if this is called.
+     * GetLevel must be overridden if this is called.
      */
     void EnableActionGetLevel();
     /**
      * Signal that the action SetLevel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetLevel must be overridden if this is called.
+     * SetLevel must be overridden if this is called.
      */
     void EnableActionSetLevel();
 private:

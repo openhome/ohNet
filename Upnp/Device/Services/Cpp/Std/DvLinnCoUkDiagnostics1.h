@@ -45,79 +45,79 @@ protected:
     /**
      * Signal that the action Echo is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoEcho must be overridden if this is called.
+     * Echo must be overridden if this is called.
      */
     void EnableActionEcho();
     /**
      * Signal that the action ElfFile is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoElfFile must be overridden if this is called.
+     * ElfFile must be overridden if this is called.
      */
     void EnableActionElfFile();
     /**
      * Signal that the action ElfFingerprint is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoElfFingerprint must be overridden if this is called.
+     * ElfFingerprint must be overridden if this is called.
      */
     void EnableActionElfFingerprint();
     /**
      * Signal that the action CrashDataStatus is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoCrashDataStatus must be overridden if this is called.
+     * CrashDataStatus must be overridden if this is called.
      */
     void EnableActionCrashDataStatus();
     /**
      * Signal that the action CrashDataFetch is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoCrashDataFetch must be overridden if this is called.
+     * CrashDataFetch must be overridden if this is called.
      */
     void EnableActionCrashDataFetch();
     /**
      * Signal that the action CrashDataClear is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoCrashDataClear must be overridden if this is called.
+     * CrashDataClear must be overridden if this is called.
      */
     void EnableActionCrashDataClear();
     /**
      * Signal that the action SysLog is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSysLog must be overridden if this is called.
+     * SysLog must be overridden if this is called.
      */
     void EnableActionSysLog();
     /**
      * Signal that the action Diagnostic is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDiagnostic must be overridden if this is called.
+     * Diagnostic must be overridden if this is called.
      */
     void EnableActionDiagnostic();
     /**
      * Signal that the action StateVariable is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStateVariable must be overridden if this is called.
+     * StateVariable must be overridden if this is called.
      */
     void EnableActionStateVariable();
     /**
      * Signal that the action SetStateVariable is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetStateVariable must be overridden if this is called.
+     * SetStateVariable must be overridden if this is called.
      */
     void EnableActionSetStateVariable();
     /**
      * Signal that the action StateVariablePeriod is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStateVariablePeriod must be overridden if this is called.
+     * StateVariablePeriod must be overridden if this is called.
      */
     void EnableActionStateVariablePeriod();
     /**
      * Signal that the action SetStateVariablePeriod is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetStateVariablePeriod must be overridden if this is called.
+     * SetStateVariablePeriod must be overridden if this is called.
      */
     void EnableActionSetStateVariablePeriod();
     /**
      * Signal that the action Reboot is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoReboot must be overridden if this is called.
+     * Reboot must be overridden if this is called.
      */
     void EnableActionReboot();
 private:

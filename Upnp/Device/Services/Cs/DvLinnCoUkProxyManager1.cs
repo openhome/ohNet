@@ -204,7 +204,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action KontrolProductConnected is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoKontrolProductConnected must be overridden if this is called.</remarks>
+        /// KontrolProductConnected must be overridden if this is called.</remarks>
         protected void EnableActionKontrolProductConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("KontrolProductConnected");
@@ -217,7 +217,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetKontrolProductConnected is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetKontrolProductConnected must be overridden if this is called.</remarks>
+        /// SetKontrolProductConnected must be overridden if this is called.</remarks>
         protected void EnableActionSetKontrolProductConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetKontrolProductConnected");
@@ -230,7 +230,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action KontrolProductComPort is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoKontrolProductComPort must be overridden if this is called.</remarks>
+        /// KontrolProductComPort must be overridden if this is called.</remarks>
         protected void EnableActionKontrolProductComPort()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("KontrolProductComPort");
@@ -243,7 +243,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetKontrolProductComPort is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetKontrolProductComPort must be overridden if this is called.</remarks>
+        /// SetKontrolProductComPort must be overridden if this is called.</remarks>
         protected void EnableActionSetKontrolProductComPort()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetKontrolProductComPort");
@@ -256,7 +256,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DiscPlayerConnected is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDiscPlayerConnected must be overridden if this is called.</remarks>
+        /// DiscPlayerConnected must be overridden if this is called.</remarks>
         protected void EnableActionDiscPlayerConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DiscPlayerConnected");
@@ -269,7 +269,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetDiscPlayerConnected is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetDiscPlayerConnected must be overridden if this is called.</remarks>
+        /// SetDiscPlayerConnected must be overridden if this is called.</remarks>
         protected void EnableActionSetDiscPlayerConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDiscPlayerConnected");
@@ -282,7 +282,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DiscPlayerComPort is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDiscPlayerComPort must be overridden if this is called.</remarks>
+        /// DiscPlayerComPort must be overridden if this is called.</remarks>
         protected void EnableActionDiscPlayerComPort()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DiscPlayerComPort");
@@ -295,7 +295,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetDiscPlayerComPort is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetDiscPlayerComPort must be overridden if this is called.</remarks>
+        /// SetDiscPlayerComPort must be overridden if this is called.</remarks>
         protected void EnableActionSetDiscPlayerComPort()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDiscPlayerComPort");
@@ -308,7 +308,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action TestKontrolProductConnection is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoTestKontrolProductConnection must be overridden if this is called.</remarks>
+        /// TestKontrolProductConnection must be overridden if this is called.</remarks>
         protected void EnableActionTestKontrolProductConnection()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("TestKontrolProductConnection");
@@ -321,7 +321,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action TestDiscPlayerConnection is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoTestDiscPlayerConnection must be overridden if this is called.</remarks>
+        /// TestDiscPlayerConnection must be overridden if this is called.</remarks>
         protected void EnableActionTestDiscPlayerConnection()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("TestDiscPlayerConnection");

@@ -298,7 +298,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Play is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPlay must be overridden if this is called.</remarks>
+        /// Play must be overridden if this is called.</remarks>
         protected void EnableActionPlay()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Play");
@@ -310,7 +310,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Pause is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPause must be overridden if this is called.</remarks>
+        /// Pause must be overridden if this is called.</remarks>
         protected void EnableActionPause()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Pause");
@@ -322,7 +322,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Stop is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStop must be overridden if this is called.</remarks>
+        /// Stop must be overridden if this is called.</remarks>
         protected void EnableActionStop()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Stop");
@@ -334,7 +334,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SeekSecondAbsolute is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSeekSecondAbsolute must be overridden if this is called.</remarks>
+        /// SeekSecondAbsolute must be overridden if this is called.</remarks>
         protected void EnableActionSeekSecondAbsolute()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SeekSecondAbsolute");
@@ -347,7 +347,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SeekSecondRelative is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSeekSecondRelative must be overridden if this is called.</remarks>
+        /// SeekSecondRelative must be overridden if this is called.</remarks>
         protected void EnableActionSeekSecondRelative()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SeekSecondRelative");
@@ -360,7 +360,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Channel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoChannel must be overridden if this is called.</remarks>
+        /// Channel must be overridden if this is called.</remarks>
         protected void EnableActionChannel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Channel");
@@ -374,7 +374,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetChannel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetChannel must be overridden if this is called.</remarks>
+        /// SetChannel must be overridden if this is called.</remarks>
         protected void EnableActionSetChannel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetChannel");
@@ -388,7 +388,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ProtocolInfo is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoProtocolInfo must be overridden if this is called.</remarks>
+        /// ProtocolInfo must be overridden if this is called.</remarks>
         protected void EnableActionProtocolInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ProtocolInfo");
@@ -401,7 +401,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action TransportState is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoTransportState must be overridden if this is called.</remarks>
+        /// TransportState must be overridden if this is called.</remarks>
         protected void EnableActionTransportState()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("TransportState");
@@ -414,7 +414,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Id is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoId must be overridden if this is called.</remarks>
+        /// Id must be overridden if this is called.</remarks>
         protected void EnableActionId()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Id");
@@ -427,7 +427,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetId is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetId must be overridden if this is called.</remarks>
+        /// SetId must be overridden if this is called.</remarks>
         protected void EnableActionSetId()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetId");
@@ -441,7 +441,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Read is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoRead must be overridden if this is called.</remarks>
+        /// Read must be overridden if this is called.</remarks>
         protected void EnableActionRead()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Read");
@@ -455,7 +455,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ReadList is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoReadList must be overridden if this is called.</remarks>
+        /// ReadList must be overridden if this is called.</remarks>
         protected void EnableActionReadList()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ReadList");
@@ -470,7 +470,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action IdArray is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoIdArray must be overridden if this is called.</remarks>
+        /// IdArray must be overridden if this is called.</remarks>
         protected void EnableActionIdArray()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("IdArray");
@@ -484,7 +484,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action IdArrayChanged is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoIdArrayChanged must be overridden if this is called.</remarks>
+        /// IdArrayChanged must be overridden if this is called.</remarks>
         protected void EnableActionIdArrayChanged()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("IdArrayChanged");
@@ -498,7 +498,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action IdsMax is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoIdsMax must be overridden if this is called.</remarks>
+        /// IdsMax must be overridden if this is called.</remarks>
         protected void EnableActionIdsMax()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("IdsMax");

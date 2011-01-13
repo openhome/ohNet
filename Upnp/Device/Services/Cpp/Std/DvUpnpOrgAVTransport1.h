@@ -45,103 +45,103 @@ protected:
     /**
      * Signal that the action SetAVTransportURI is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetAVTransportURI must be overridden if this is called.
+     * SetAVTransportURI must be overridden if this is called.
      */
     void EnableActionSetAVTransportURI();
     /**
      * Signal that the action SetNextAVTransportURI is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetNextAVTransportURI must be overridden if this is called.
+     * SetNextAVTransportURI must be overridden if this is called.
      */
     void EnableActionSetNextAVTransportURI();
     /**
      * Signal that the action GetMediaInfo is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetMediaInfo must be overridden if this is called.
+     * GetMediaInfo must be overridden if this is called.
      */
     void EnableActionGetMediaInfo();
     /**
      * Signal that the action GetTransportInfo is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetTransportInfo must be overridden if this is called.
+     * GetTransportInfo must be overridden if this is called.
      */
     void EnableActionGetTransportInfo();
     /**
      * Signal that the action GetPositionInfo is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetPositionInfo must be overridden if this is called.
+     * GetPositionInfo must be overridden if this is called.
      */
     void EnableActionGetPositionInfo();
     /**
      * Signal that the action GetDeviceCapabilities is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetDeviceCapabilities must be overridden if this is called.
+     * GetDeviceCapabilities must be overridden if this is called.
      */
     void EnableActionGetDeviceCapabilities();
     /**
      * Signal that the action GetTransportSettings is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetTransportSettings must be overridden if this is called.
+     * GetTransportSettings must be overridden if this is called.
      */
     void EnableActionGetTransportSettings();
     /**
      * Signal that the action Stop is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStop must be overridden if this is called.
+     * Stop must be overridden if this is called.
      */
     void EnableActionStop();
     /**
      * Signal that the action Play is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPlay must be overridden if this is called.
+     * Play must be overridden if this is called.
      */
     void EnableActionPlay();
     /**
      * Signal that the action Pause is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPause must be overridden if this is called.
+     * Pause must be overridden if this is called.
      */
     void EnableActionPause();
     /**
      * Signal that the action Record is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoRecord must be overridden if this is called.
+     * Record must be overridden if this is called.
      */
     void EnableActionRecord();
     /**
      * Signal that the action Seek is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSeek must be overridden if this is called.
+     * Seek must be overridden if this is called.
      */
     void EnableActionSeek();
     /**
      * Signal that the action Next is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoNext must be overridden if this is called.
+     * Next must be overridden if this is called.
      */
     void EnableActionNext();
     /**
      * Signal that the action Previous is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPrevious must be overridden if this is called.
+     * Previous must be overridden if this is called.
      */
     void EnableActionPrevious();
     /**
      * Signal that the action SetPlayMode is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetPlayMode must be overridden if this is called.
+     * SetPlayMode must be overridden if this is called.
      */
     void EnableActionSetPlayMode();
     /**
      * Signal that the action SetRecordQualityMode is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetRecordQualityMode must be overridden if this is called.
+     * SetRecordQualityMode must be overridden if this is called.
      */
     void EnableActionSetRecordQualityMode();
     /**
      * Signal that the action GetCurrentTransportActions is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetCurrentTransportActions must be overridden if this is called.
+     * GetCurrentTransportActions must be overridden if this is called.
      */
     void EnableActionGetCurrentTransportActions();
 private:

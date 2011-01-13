@@ -63,85 +63,85 @@ protected:
     /**
      * Signal that the action GetSearchCapabilities is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetSearchCapabilities must be overridden if this is called.
+     * GetSearchCapabilities must be overridden if this is called.
      */
     void EnableActionGetSearchCapabilities();
     /**
      * Signal that the action GetSortCapabilities is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetSortCapabilities must be overridden if this is called.
+     * GetSortCapabilities must be overridden if this is called.
      */
     void EnableActionGetSortCapabilities();
     /**
      * Signal that the action GetSystemUpdateID is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetSystemUpdateID must be overridden if this is called.
+     * GetSystemUpdateID must be overridden if this is called.
      */
     void EnableActionGetSystemUpdateID();
     /**
      * Signal that the action Browse is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoBrowse must be overridden if this is called.
+     * Browse must be overridden if this is called.
      */
     void EnableActionBrowse();
     /**
      * Signal that the action Search is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSearch must be overridden if this is called.
+     * Search must be overridden if this is called.
      */
     void EnableActionSearch();
     /**
      * Signal that the action CreateObject is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoCreateObject must be overridden if this is called.
+     * CreateObject must be overridden if this is called.
      */
     void EnableActionCreateObject();
     /**
      * Signal that the action DestroyObject is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDestroyObject must be overridden if this is called.
+     * DestroyObject must be overridden if this is called.
      */
     void EnableActionDestroyObject();
     /**
      * Signal that the action UpdateObject is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoUpdateObject must be overridden if this is called.
+     * UpdateObject must be overridden if this is called.
      */
     void EnableActionUpdateObject();
     /**
      * Signal that the action ImportResource is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoImportResource must be overridden if this is called.
+     * ImportResource must be overridden if this is called.
      */
     void EnableActionImportResource();
     /**
      * Signal that the action ExportResource is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoExportResource must be overridden if this is called.
+     * ExportResource must be overridden if this is called.
      */
     void EnableActionExportResource();
     /**
      * Signal that the action StopTransferResource is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStopTransferResource must be overridden if this is called.
+     * StopTransferResource must be overridden if this is called.
      */
     void EnableActionStopTransferResource();
     /**
      * Signal that the action GetTransferProgress is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetTransferProgress must be overridden if this is called.
+     * GetTransferProgress must be overridden if this is called.
      */
     void EnableActionGetTransferProgress();
     /**
      * Signal that the action DeleteResource is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDeleteResource must be overridden if this is called.
+     * DeleteResource must be overridden if this is called.
      */
     void EnableActionDeleteResource();
     /**
      * Signal that the action CreateReference is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoCreateReference must be overridden if this is called.
+     * CreateReference must be overridden if this is called.
      */
     void EnableActionCreateReference();
 private:

@@ -106,7 +106,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Room is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoRoom must be overridden if this is called.</remarks>
+        /// Room must be overridden if this is called.</remarks>
         protected void EnableActionRoom()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Room");
@@ -119,7 +119,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetRoom is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetRoom must be overridden if this is called.</remarks>
+        /// SetRoom must be overridden if this is called.</remarks>
         protected void EnableActionSetRoom()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRoom");
@@ -132,7 +132,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Standby is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStandby must be overridden if this is called.</remarks>
+        /// Standby must be overridden if this is called.</remarks>
         protected void EnableActionStandby()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Standby");
@@ -145,7 +145,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetStandby is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetStandby must be overridden if this is called.</remarks>
+        /// SetStandby must be overridden if this is called.</remarks>
         protected void EnableActionSetStandby()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStandby");

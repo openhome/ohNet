@@ -34,7 +34,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action TestComPort is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoTestComPort must be overridden if this is called.</remarks>
+        /// TestComPort must be overridden if this is called.</remarks>
         protected void EnableActionTestComPort()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("TestComPort");
@@ -48,7 +48,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action LedsOn is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoLedsOn must be overridden if this is called.</remarks>
+        /// LedsOn must be overridden if this is called.</remarks>
         protected void EnableActionLedsOn()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("LedsOn");
@@ -60,7 +60,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action LedsOff is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoLedsOff must be overridden if this is called.</remarks>
+        /// LedsOff must be overridden if this is called.</remarks>
         protected void EnableActionLedsOff()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("LedsOff");

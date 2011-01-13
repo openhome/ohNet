@@ -63,49 +63,49 @@ protected:
     /**
      * Signal that the action SetPresetPrefix is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetPresetPrefix must be overridden if this is called.
+     * SetPresetPrefix must be overridden if this is called.
      */
     void EnableActionSetPresetPrefix();
     /**
      * Signal that the action PresetPrefix is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPresetPrefix must be overridden if this is called.
+     * PresetPrefix must be overridden if this is called.
      */
     void EnableActionPresetPrefix();
     /**
      * Signal that the action SetAlbumArtFileName is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetAlbumArtFileName must be overridden if this is called.
+     * SetAlbumArtFileName must be overridden if this is called.
      */
     void EnableActionSetAlbumArtFileName();
     /**
      * Signal that the action AlbumArtFileName is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoAlbumArtFileName must be overridden if this is called.
+     * AlbumArtFileName must be overridden if this is called.
      */
     void EnableActionAlbumArtFileName();
     /**
      * Signal that the action SetCurrentPreset is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetCurrentPreset must be overridden if this is called.
+     * SetCurrentPreset must be overridden if this is called.
      */
     void EnableActionSetCurrentPreset();
     /**
      * Signal that the action CurrentPreset is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoCurrentPreset must be overridden if this is called.
+     * CurrentPreset must be overridden if this is called.
      */
     void EnableActionCurrentPreset();
     /**
      * Signal that the action PresetMetaData is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPresetMetaData must be overridden if this is called.
+     * PresetMetaData must be overridden if this is called.
      */
     void EnableActionPresetMetaData();
     /**
      * Signal that the action LoadManifest is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoLoadManifest must be overridden if this is called.
+     * LoadManifest must be overridden if this is called.
      */
     void EnableActionLoadManifest();
 private:

@@ -241,20 +241,6 @@
     <publisher>Zapp</publisher>
     <dcpdir>Test</dcpdir>
     <domain>zapp.org</domain>
-    <type>TestWidget</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Zapp</publisher>
-    <dcpdir>Test</dcpdir>
-    <domain>zapp.org</domain>
-    <type>TestWidgetController</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Zapp</publisher>
-    <dcpdir>Test</dcpdir>
-    <domain>zapp.org</domain>
     <type>TestLights</type>
     <version>1</version>
   </service>
