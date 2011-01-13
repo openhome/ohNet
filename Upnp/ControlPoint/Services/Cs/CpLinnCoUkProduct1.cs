@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -106,6 +107,7 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyBool iStandby;
         private CallbackPropertyChanged iRoomChanged;
         private CallbackPropertyChanged iStandbyChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -138,6 +140,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iRoom);
             iStandby = new PropertyBool("Standby", StandbyPropertyChanged);
             AddProperty(iStandby);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -314,7 +318,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRoomChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyRoomChanged(CallbackPropertyChanged aRoomChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iRoomChanged = aRoomChanged;
             }
@@ -322,7 +326,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void RoomPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iRoomChanged != null)
                 {
@@ -339,7 +343,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStandbyChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStandbyChanged(CallbackPropertyChanged aStandbyChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iStandbyChanged = aStandbyChanged;
             }
@@ -347,7 +351,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void StandbyPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iStandbyChanged != null)
                 {

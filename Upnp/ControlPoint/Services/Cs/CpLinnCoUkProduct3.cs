@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -570,6 +571,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iProductAnySourceNameChanged;
         private CallbackPropertyChanged iProductAnySourceVisibleChanged;
         private CallbackPropertyChanged iProductAnySourceTypeChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -716,6 +718,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iProductAnySourceVisible);
             iProductAnySourceType = new PropertyUint("ProductAnySourceType", ProductAnySourceTypePropertyChanged);
             AddProperty(iProductAnySourceType);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -1750,7 +1754,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductTypeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductTypeChanged(CallbackPropertyChanged aProductTypeChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iProductTypeChanged = aProductTypeChanged;
             }
@@ -1758,7 +1762,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ProductTypePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iProductTypeChanged != null)
                 {
@@ -1775,7 +1779,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductModelChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductModelChanged(CallbackPropertyChanged aProductModelChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iProductModelChanged = aProductModelChanged;
             }
@@ -1783,7 +1787,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ProductModelPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iProductModelChanged != null)
                 {
@@ -1800,7 +1804,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductNameChanged(CallbackPropertyChanged aProductNameChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iProductNameChanged = aProductNameChanged;
             }
@@ -1808,7 +1812,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ProductNamePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iProductNameChanged != null)
                 {
@@ -1825,7 +1829,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductRoomChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductRoomChanged(CallbackPropertyChanged aProductRoomChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iProductRoomChanged = aProductRoomChanged;
             }
@@ -1833,7 +1837,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ProductRoomPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iProductRoomChanged != null)
                 {
@@ -1850,7 +1854,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductStandbyChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductStandbyChanged(CallbackPropertyChanged aProductStandbyChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iProductStandbyChanged = aProductStandbyChanged;
             }
@@ -1858,7 +1862,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ProductStandbyPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iProductStandbyChanged != null)
                 {
@@ -1875,7 +1879,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductSourceIndexChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductSourceIndexChanged(CallbackPropertyChanged aProductSourceIndexChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iProductSourceIndexChanged = aProductSourceIndexChanged;
             }
@@ -1883,7 +1887,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ProductSourceIndexPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iProductSourceIndexChanged != null)
                 {
@@ -1900,7 +1904,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductSourceCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductSourceCountChanged(CallbackPropertyChanged aProductSourceCountChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iProductSourceCountChanged = aProductSourceCountChanged;
             }
@@ -1908,7 +1912,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ProductSourceCountPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iProductSourceCountChanged != null)
                 {
@@ -1925,7 +1929,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductSourceXmlChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductSourceXmlChanged(CallbackPropertyChanged aProductSourceXmlChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iProductSourceXmlChanged = aProductSourceXmlChanged;
             }
@@ -1933,7 +1937,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ProductSourceXmlPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iProductSourceXmlChanged != null)
                 {
@@ -1950,7 +1954,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStartupSourceIndexChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStartupSourceIndexChanged(CallbackPropertyChanged aStartupSourceIndexChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iStartupSourceIndexChanged = aStartupSourceIndexChanged;
             }
@@ -1958,7 +1962,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void StartupSourceIndexPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iStartupSourceIndexChanged != null)
                 {
@@ -1975,7 +1979,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStartupSourceEnabledChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStartupSourceEnabledChanged(CallbackPropertyChanged aStartupSourceEnabledChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iStartupSourceEnabledChanged = aStartupSourceEnabledChanged;
             }
@@ -1983,7 +1987,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void StartupSourceEnabledPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iStartupSourceEnabledChanged != null)
                 {
@@ -2000,7 +2004,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductAnySourceNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductAnySourceNameChanged(CallbackPropertyChanged aProductAnySourceNameChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iProductAnySourceNameChanged = aProductAnySourceNameChanged;
             }
@@ -2008,7 +2012,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ProductAnySourceNamePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iProductAnySourceNameChanged != null)
                 {
@@ -2025,7 +2029,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductAnySourceVisibleChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductAnySourceVisibleChanged(CallbackPropertyChanged aProductAnySourceVisibleChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iProductAnySourceVisibleChanged = aProductAnySourceVisibleChanged;
             }
@@ -2033,7 +2037,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ProductAnySourceVisiblePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iProductAnySourceVisibleChanged != null)
                 {
@@ -2050,7 +2054,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductAnySourceTypeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductAnySourceTypeChanged(CallbackPropertyChanged aProductAnySourceTypeChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iProductAnySourceTypeChanged = aProductAnySourceTypeChanged;
             }
@@ -2058,7 +2062,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ProductAnySourceTypePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iProductAnySourceTypeChanged != null)
                 {

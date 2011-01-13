@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -89,6 +90,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iReadOnlyRegister5Changed;
         private CallbackPropertyChanged iReadOnlyRegister6Changed;
         private CallbackPropertyChanged iReadOnlyRegister7Changed;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -126,6 +128,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iReadOnlyRegister6);
             iReadOnlyRegister7 = new PropertyUint("ReadOnlyRegister7", ReadOnlyRegister7PropertyChanged);
             AddProperty(iReadOnlyRegister7);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -222,7 +226,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aReadWriteRegister0Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadWriteRegister0Changed(CallbackPropertyChanged aReadWriteRegister0Changed)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iReadWriteRegister0Changed = aReadWriteRegister0Changed;
             }
@@ -230,7 +234,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ReadWriteRegister0PropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iReadWriteRegister0Changed != null)
                 {
@@ -247,7 +251,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aReadWriteRegister1Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadWriteRegister1Changed(CallbackPropertyChanged aReadWriteRegister1Changed)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iReadWriteRegister1Changed = aReadWriteRegister1Changed;
             }
@@ -255,7 +259,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ReadWriteRegister1PropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iReadWriteRegister1Changed != null)
                 {
@@ -272,7 +276,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aReadWriteRegister2Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadWriteRegister2Changed(CallbackPropertyChanged aReadWriteRegister2Changed)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iReadWriteRegister2Changed = aReadWriteRegister2Changed;
             }
@@ -280,7 +284,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ReadWriteRegister2PropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iReadWriteRegister2Changed != null)
                 {
@@ -297,7 +301,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aReadWriteRegister3Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadWriteRegister3Changed(CallbackPropertyChanged aReadWriteRegister3Changed)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iReadWriteRegister3Changed = aReadWriteRegister3Changed;
             }
@@ -305,7 +309,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ReadWriteRegister3PropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iReadWriteRegister3Changed != null)
                 {
@@ -322,7 +326,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aReadOnlyRegister4Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadOnlyRegister4Changed(CallbackPropertyChanged aReadOnlyRegister4Changed)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iReadOnlyRegister4Changed = aReadOnlyRegister4Changed;
             }
@@ -330,7 +334,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ReadOnlyRegister4PropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iReadOnlyRegister4Changed != null)
                 {
@@ -347,7 +351,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aReadOnlyRegister5Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadOnlyRegister5Changed(CallbackPropertyChanged aReadOnlyRegister5Changed)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iReadOnlyRegister5Changed = aReadOnlyRegister5Changed;
             }
@@ -355,7 +359,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ReadOnlyRegister5PropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iReadOnlyRegister5Changed != null)
                 {
@@ -372,7 +376,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aReadOnlyRegister6Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadOnlyRegister6Changed(CallbackPropertyChanged aReadOnlyRegister6Changed)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iReadOnlyRegister6Changed = aReadOnlyRegister6Changed;
             }
@@ -380,7 +384,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ReadOnlyRegister6PropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iReadOnlyRegister6Changed != null)
                 {
@@ -397,7 +401,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aReadOnlyRegister7Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadOnlyRegister7Changed(CallbackPropertyChanged aReadOnlyRegister7Changed)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iReadOnlyRegister7Changed = aReadOnlyRegister7Changed;
             }
@@ -405,7 +409,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ReadOnlyRegister7PropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iReadOnlyRegister7Changed != null)
                 {

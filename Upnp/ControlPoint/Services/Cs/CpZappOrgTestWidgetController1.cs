@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -93,6 +94,7 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionRemoveWidget;
         private Zapp.Core.Action iActionSetWidgetRegister;
         private Zapp.Core.Action iActionGetWidgetRegister;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -130,6 +132,8 @@ namespace Zapp.ControlPoint.Proxies
             iActionGetWidgetRegister.AddInputParameter(param);
             param = new ParameterUint("RegisterValue");
             iActionGetWidgetRegister.AddOutputParameter(param);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>

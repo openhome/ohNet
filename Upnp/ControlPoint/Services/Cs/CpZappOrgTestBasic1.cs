@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -428,6 +429,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iVarBoolChanged;
         private CallbackPropertyChanged iVarStrChanged;
         private CallbackPropertyChanged iVarBinChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -538,6 +540,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iVarStr);
             iVarBin = new PropertyBinary("VarBin", VarBinPropertyChanged);
             AddProperty(iVarBin);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -1359,7 +1363,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarUintChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarUintChanged(CallbackPropertyChanged aVarUintChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iVarUintChanged = aVarUintChanged;
             }
@@ -1367,7 +1371,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void VarUintPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iVarUintChanged != null)
                 {
@@ -1384,7 +1388,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarIntChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarIntChanged(CallbackPropertyChanged aVarIntChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iVarIntChanged = aVarIntChanged;
             }
@@ -1392,7 +1396,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void VarIntPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iVarIntChanged != null)
                 {
@@ -1409,7 +1413,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarBoolChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarBoolChanged(CallbackPropertyChanged aVarBoolChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iVarBoolChanged = aVarBoolChanged;
             }
@@ -1417,7 +1421,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void VarBoolPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iVarBoolChanged != null)
                 {
@@ -1434,7 +1438,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarStrChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarStrChanged(CallbackPropertyChanged aVarStrChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iVarStrChanged = aVarStrChanged;
             }
@@ -1442,7 +1446,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void VarStrPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iVarStrChanged != null)
                 {
@@ -1459,7 +1463,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarBinChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarBinChanged(CallbackPropertyChanged aVarBinChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iVarBinChanged = aVarBinChanged;
             }
@@ -1467,7 +1471,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void VarBinPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iVarBinChanged != null)
                 {

@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -211,6 +212,7 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyUint iPresetIndex;
         private CallbackPropertyChanged iPresetXmlChanged;
         private CallbackPropertyChanged iPresetIndexChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -269,6 +271,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iPresetXml);
             iPresetIndex = new PropertyUint("PresetIndex", PresetIndexPropertyChanged);
             AddProperty(iPresetIndex);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -663,7 +667,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aPresetXmlChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyPresetXmlChanged(CallbackPropertyChanged aPresetXmlChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iPresetXmlChanged = aPresetXmlChanged;
             }
@@ -671,7 +675,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void PresetXmlPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iPresetXmlChanged != null)
                 {
@@ -688,7 +692,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aPresetIndexChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyPresetIndexChanged(CallbackPropertyChanged aPresetIndexChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iPresetIndexChanged = aPresetIndexChanged;
             }
@@ -696,7 +700,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void PresetIndexPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iPresetIndexChanged != null)
                 {

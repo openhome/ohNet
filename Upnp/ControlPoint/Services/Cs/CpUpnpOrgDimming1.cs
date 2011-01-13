@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -459,6 +460,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iRampRateChanged;
         private CallbackPropertyChanged iIsRampingChanged;
         private CallbackPropertyChanged iRampPausedChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -563,6 +565,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iIsRamping);
             iRampPaused = new PropertyBool("RampPaused", RampPausedPropertyChanged);
             AddProperty(iRampPaused);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -1417,7 +1421,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLoadLevelStatusChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyLoadLevelStatusChanged(CallbackPropertyChanged aLoadLevelStatusChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iLoadLevelStatusChanged = aLoadLevelStatusChanged;
             }
@@ -1425,7 +1429,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void LoadLevelStatusPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iLoadLevelStatusChanged != null)
                 {
@@ -1442,7 +1446,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStepDeltaChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStepDeltaChanged(CallbackPropertyChanged aStepDeltaChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iStepDeltaChanged = aStepDeltaChanged;
             }
@@ -1450,7 +1454,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void StepDeltaPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iStepDeltaChanged != null)
                 {
@@ -1467,7 +1471,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRampRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyRampRateChanged(CallbackPropertyChanged aRampRateChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iRampRateChanged = aRampRateChanged;
             }
@@ -1475,7 +1479,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void RampRatePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iRampRateChanged != null)
                 {
@@ -1492,7 +1496,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIsRampingChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyIsRampingChanged(CallbackPropertyChanged aIsRampingChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iIsRampingChanged = aIsRampingChanged;
             }
@@ -1500,7 +1504,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void IsRampingPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iIsRampingChanged != null)
                 {
@@ -1517,7 +1521,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRampPausedChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyRampPausedChanged(CallbackPropertyChanged aRampPausedChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iRampPausedChanged = aRampPausedChanged;
             }
@@ -1525,7 +1529,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void RampPausedPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iRampPausedChanged != null)
                 {
