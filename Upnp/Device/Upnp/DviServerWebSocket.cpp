@@ -679,8 +679,8 @@ void DviSessionWebSocket::Subscribe(const Brx& aRequest)
 
     // Start subscription, prompting delivery of the first update (covering all state variables)
     DviSubscriptionManager::AddSubscription(*subscription);
-    service->AddSubscription(subscription);
     DviSessionWebSocket::SubscriptionWrapper* wrapper = new DviSessionWebSocket::SubscriptionWrapper(*subscription, sid, *service);
+    service->AddSubscription(subscription);
     Brn key(wrapper->Sid());
     iMap.insert(std::pair<Brn,DviSessionWebSocket::SubscriptionWrapper*>(key, wrapper));
 }

@@ -2,278 +2,309 @@ import sys
 import os
 import subprocess
 import threading
+import shutil
 
 def rssh(username,host,cmd):
 
-	import paramiko
+    import paramiko
 
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-        ssh.connect(host, username=username, look_for_keys='True')
+    ssh.connect(host, username=username, look_for_keys='True')
 
-        stdin, stdout, stderr = ssh.exec_command(cmd)
+    stdin, stdout, stderr = ssh.exec_command(cmd)
 
-        def get_thread(pipe):
-                for line in pipe.readlines():
-                        print line
+    def get_thread(pipe):
+        for line in pipe.readlines():
+            print line
 
-        stdout_thread = threading.Thread(target=get_thread, args=(stdout,))
-        stderr_thread = threading.Thread(target=get_thread, args=(stderr,))
+    stdout_thread = threading.Thread(target=get_thread, args=(stdout,))
+    stderr_thread = threading.Thread(target=get_thread, args=(stderr,))
 
-        stdout_thread.start()
-        stderr_thread.start()
-        stdout_thread.join()
-        stderr_thread.join()
+    stdout_thread.start()
+    stderr_thread.start()
+    stdout_thread.join()
+    stderr_thread.join()
 
-        channel = stdout.channel
+    channel = stdout.channel
 
-        exit_status = channel.recv_exit_status()
+    exit_status = channel.recv_exit_status()
 
-        return exit_status
+    return exit_status
 
-        ssh.close()
+    ssh.close()
 
 def rsync(username,host,src,dst,excludes):
 
-        cmd = ['rsync', '-avz', ''+src+'', ''+username+'@'+host+':'+dst+'' ]
+    cmd = ['rsync', '-avz', ''+src+'', ''+username+'@'+host+':'+dst+'' ]
 
-        for exclude in excludes:
-                cmd.append('--exclude='+exclude+'')
-        ret = subprocess.call(cmd)
-        return ret
+    for exclude in excludes:
+        cmd.append('--exclude='+exclude+'')
+    ret = subprocess.call(cmd)
+    return ret
 
 def getEnvironment():
-        if os.environ.get('label') == 'arm':
-				tool = 'env'
-				ostype = 'Linux'
-				arch = 'arm'
-				os.environ['PATH'] = "/usr/local/arm-2010q1/bin:"+ os.environ['PATH']
-				os.environ['CROSS_COMPILE'] = 'arm-none-linux-gnueabi-'
+    if os.environ.get('label') == 'arm':
+        tool = 'env'
+        ostype = 'Linux'
+        arch = 'arm'
+        os.environ['PATH'] = "/usr/local/arm-2010q1/bin:"+ os.environ['PATH']
+        os.environ['CROSS_COMPILE'] = 'arm-none-linux-gnueabi-'
 
-        elif os.environ.get('label') == 'linux-x64':
-				tool = 'env'
-				ostype = 'Linux'
-				arch = 'x64'
+    elif os.environ.get('label') == 'linux-x64':
+        tool = 'env'
+        ostype = 'Linux'
+        arch = 'x64'
 
-        elif os.environ.get('label') == 'linux-x86':
-				tool = 'env'
-				ostype = 'Linux'
-				arch = 'x86'
-				
+    elif os.environ.get('label') == 'linux-x86':
+        tool = 'env'
+        ostype = 'Linux'
+        arch = 'x86'
+                
 
-        elif os.environ.get('label') == 'windows-x86':
-				tool = 'call vcvarsall.bat && (set LOCALAPPDATA=C:\Documents and Settings\Administrator\Local Settings\Application Data)'
-				ostype = 'Windows'
-				arch = 'x86'
+    elif os.environ.get('label') == 'windows-x86':
+        tool = 'call vcvarsall.bat && (set LOCALAPPDATA=C:\Documents and Settings\Administrator\Local Settings\Application Data)'
+        ostype = 'Windows'
+        arch = 'x86'
 
-        elif os.environ.get('label') == 'windows-x64':
-				tool = 'call vcvarsall.bat amd64 && set'
-				ostype = 'Windows'
-				arch = 'x64'
+    elif os.environ.get('label') == 'windows-x64':
+        tool = 'call vcvarsall.bat amd64 && set'
+        ostype = 'Windows'
+        arch = 'x64'
 
-	if ostype == "Windows" or (ostype == "Linux" and arch != "x86"):
-		valgrind = "0"
-		
-	else:
-		valgrind = ''
-										
-	if os.environ.get('nightly') == 'true':
-		nightly = '1'
-		
-	else:
-		nightly = '0'
-		
-	return {'tool':tool, 'ostype':ostype, 'arch':arch, 'valgrind_run':valgrind, 'nightly_run':nightly }
+    if ostype == "Windows" or (ostype == "Linux" and arch != "x86"):
+        valgrind = "0"
+    else:
+        valgrind = ''
+                                                    
+    if os.environ.get('nightly') == 'true':
+        nightly = '1'
+    else:
+        nightly = '0'
 
-Environment = getEnvironment()
+    if os.environ.get('PUBLISH_RELEASE') == 'true':
+        release_version = os.environ.get('RELEASE_VERSION')
+    else:
+        release_version = None
+
+        
+    return {'tool':tool, 'ostype':ostype, 'arch':arch, 'valgrind_run':valgrind, 'nightly_run':nightly, 'release_version':release_version }
+
 
 def getModule(): 
-		if os.environ.get('module') == 'upnp':
-				module = 'upnp'
-				cmd = 'cd Upnp && python AllTests.py'
-		
-		if os.environ.get('module') == 'zappSpyGUI':
-				module = 'zappSpyGUI'
-				cmd = 'cd ZappVs2010 && MSBuild.exe Zapp.sln'
-		
-		return {'module':module, 'cmd':cmd}
-		
-Module = getModule()
+    if os.environ.get('module') == 'upnp':
+        module = 'upnp'
+        cmd = 'cd Upnp && python AllTests.py'
+    
+    if os.environ.get('module') == 'zappSpyGUI':
+        module = 'zappSpyGUI'
+        cmd = 'cd ZappVs2010 && MSBuild.exe Zapp.sln'
+    
+    return {'module':module, 'cmd':cmd}
+        
 
 def getArguments(module,nightly,arch,valgrind,os):
 
-	if module == "upnp" and nightly == "1" and arch == "x86":
-			if valgrind != "0":
-				args = ' -s -f -vg'
-				
-			else:
-				args = ' -s -f -j'
-				
-	elif module == "upnp" and arch == 'arm':
-				args = ' -b'
+    if module == "upnp" and nightly == "1" and arch == "x86":
+        if valgrind != "0":
+            args = ' -s -f -vg'
+            
+        else:
+            args = ' -s -f -j'
+                
+    elif module == "upnp" and arch == 'arm':
+        args = ' -b'
 
-	elif module == "upnp" and arch == 'x64':
-				args = ' -s -f -n'
-				
-	elif module == "upnp" and arch == 'x86' and os == 'Windows':
-				args = ' -s -j'
+    elif module == "upnp" and arch == 'x64':
+        args = ' -s -f -n'
+                
+    elif module == "upnp" and arch == 'x86' and os == 'Windows':
+        args = ' -s -j'
 
-	elif module == "upnp":
-				args = ' -s'
-				
-	else:				
-				args = ''
+    elif module == "upnp":
+        args = ' -s'
+                
+    else:                                
+        args = ''
 
-	return {'args':args}
-	
-Arguments = getArguments(Module['module'],Environment['nightly_run'],Environment['arch'],Environment['valgrind_run'],Environment['ostype'])
-			
+    return {'args':args}
+    
+            
 
 def Build(tool, cmd, args):
 
-        buildCmd = []
-        buildCmd.append(tool + ' && ' + cmd + args)
-        print buildCmd
-        ret = subprocess.call(buildCmd, shell=True)
-        if ret != 0:
-                print ret        
-		sys.exit(10)
+    buildCmd = []
+    buildCmd.append(tool + ' && ' + cmd + args)
+    print buildCmd
+    ret = subprocess.call(buildCmd, shell=True)
+    if ret != 0:
+        print ret        
+        sys.exit(10)
 
 def DummyXML():
 
-		if not os.path.exists("Upnp/xout"):
-			os.mkdir("Upnp/xout")
-		dummy = open("Upnp/xout/dummy.xml", "w")
-		dummy.writelines('<?xml version="1.0" encoding="UTF-8"?><testsuite errors="0" failures="0" name="dummy" tests="0"><testcase classname="autogenerated" name="autogenerated" time="0"></testcase></testsuite>')
-		dummy.close()
+    if not os.path.exists("Upnp/xout"):
+        os.mkdir("Upnp/xout")
+    dummy = open("Upnp/xout/dummy.xml", "w")
+    dummy.writelines('<?xml version="1.0" encoding="UTF-8"?><testsuite errors="0" failures="0" name="dummy" tests="0"><testcase classname="autogenerated" name="autogenerated" time="0"></testcase></testsuite>')
+    dummy.close()
 
 
-Build(Environment['tool'],Module['cmd'],Arguments['args'])
-DummyXML()
 
 vgpath = "Upnp/vgout"
 xout = "Upnp/xout"
 
 def StripChars(charname):
 
-        charname = charname.replace('&', '')
+    charname = charname.replace('&', '')
 
-        return charname
+    return charname
 
 def ParseValgrind(filename):
-        import xml.etree.ElementTree as ET
-        fullpath = vgpath + '/' + filename
+    import xml.etree.ElementTree as ET
+    fullpath = vgpath + '/' + filename
 
-        doc = ET.parse(fullpath)
-        errors = doc.findall('//error')
+    doc = ET.parse(fullpath)
+    errors = doc.findall('//error')
 
-        out = open(xout + '/' + "vg-" + filename,"w")
-        out.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-        out.write('<testsuite name="memcheck" tests="1" errors="0" failures="'+str(len(errors))+'" skip="0">\n')
-        out.write('    <testcase classname="ValgrindMemoryCheck " \n')
-        out.write('              name="'+filename+'" time="0">\n')
+    out = open(xout + '/' + "vg-" + filename,"w")
+    out.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+    out.write('<testsuite name="memcheck" tests="1" errors="0" failures="'+str(len(errors))+'" skip="0">\n')
+    out.write('    <testcase classname="ValgrindMemoryCheck " \n')
+    out.write('              name="'+filename+'" time="0">\n')
 
-        for error in errors:
-            kind = error.find('kind')
-            what = error.find('what')
-            if  what == None:
-                what = error.find('xwhat/text')
+    for error in errors:
+        kind = error.find('kind')
+        what = error.find('what')
+        if  what == None:
+            what = error.find('xwhat/text')
 
-            out.write('        <error type="'+kind.text+'">\n')
-            out.write('            '+what.text+'\n')
-
-
-            frames = error.findall('.//frame')
-
-            for frame in frames:
-
-                getObj = frame.find('ip')
-                getFn = frame.find('fn')
-                getDir = frame.find('dir')
-                getFile = frame.find('file')
-                getLine = frame.find('line')
-
-                out.write(' ---- frame start ----\n')
-                if getObj != None:
-                        obj = StripChars(getObj.text)
-                        out.write(' Object: '+obj+'\n')
-
-                if getFn != None:
-                        function = StripChars(getFn.text)
-                        out.write(' Function: '+function+'\n')
+        out.write('        <error type="'+kind.text+'">\n')
+        out.write('            '+what.text+'\n')
 
 
-                if getDir != None:
-                        dir = StripChars(getDir.text)
-                        out.write(' Directory: '+dir+'\n')
+        frames = error.findall('.//frame')
 
-                if getFile != None:
-                        file = StripChars(getFile.text)
-                        out.write(' File: '+file+'\n')
+        for frame in frames:
 
-                if getLine != None:
-                        line = StripChars(getLine.text)
-                        out.write(' Line: '+line+'\n')
+            getObj = frame.find('ip')
+            getFn = frame.find('fn')
+            getDir = frame.find('dir')
+            getFile = frame.find('file')
+            getLine = frame.find('line')
 
-                out.write(' ---- frame end ----\n')
+            out.write(' ---- frame start ----\n')
+            if getObj != None:
+                obj = StripChars(getObj.text)
+                out.write(' Object: '+obj+'\n')
 
-            out.write('        </error>\n')
+            if getFn != None:
+                function = StripChars(getFn.text)
+                out.write(' Function: '+function+'\n')
 
-        out.write('    </testcase>\n')
-        out.write('</testsuite>\n')
-        out.close()
+
+            if getDir != None:
+                dir = StripChars(getDir.text)
+                out.write(' Directory: '+dir+'\n')
+
+            if getFile != None:
+                file = StripChars(getFile.text)
+                out.write(' File: '+file+'\n')
+
+            if getLine != None:
+                line = StripChars(getLine.text)
+                out.write(' Line: '+line+'\n')
+
+            out.write(' ---- frame end ----\n')
+
+        out.write('        </error>\n')
+
+    out.write('    </testcase>\n')
+    out.write('</testsuite>\n')
+    out.close()
 
 
 def ParseDir():
 
-        dirList=os.listdir(vgpath)
-        for fname in dirList:
-                if fname != "ParseValgrind.py":
-                        print fname
-                        ParseValgrind(fname)
+    dirList=os.listdir(vgpath)
+    for fname in dirList:
+        if fname != "ParseValgrind.py":
+            print fname
+            ParseValgrind(fname)
 
 
 
-valgrind_run = Environment['valgrind_run']
-valgrind_nightly = Environment['nightly_run']
 
-if valgrind_run != "0" and valgrind_nightly == "1":
-        ParseDir()
+def GenDocs(module, os, nightly, arch, tool):
 
-def GenDocs(module, os, nightly, arch):
-
-	if module == "upnp" and os == "Linux" and arch == "x86" and nightly == "1":
+    if module == "upnp" and os == "Linux" and arch == "x86" and nightly == "1":
 
 
-		docgen_cmd = "cd Upnp && make docs"
-		Build(Environment['tool'],docgen_cmd,'')
+        docgen_cmd = "cd Upnp && make docs"
+        Build(tool,docgen_cmd,'')
 
-                ret = rsync('hudson-zapp','zapp.linn.co.uk','Upnp/Build/Docs/','~/doc','')
+        ret = rsync('hudson-zapp','zapp.linn.co.uk','Upnp/Build/Docs/','~/doc','')
 
-                if ret != 0:
-                          print ret
-                          sys.exit(10)
-		
+        if ret != 0:
+            print ret
+            sys.exit(10)
+        
 def ArmTests(module, arch, nightly):
 
-        if module == "upnp" and arch == "arm":
+    if module == "upnp" and arch == "arm":
 
-		excludes = ['*.o', '*.a', 'Include','Docs']
-                ret = rsync('hudson-zapp','sheeva002.linn.co.uk','Upnp/Build','~/',excludes)
-                ret = rsync('hudson-zapp','sheeva002.linn.co.uk','Upnp/AllTests.py','~/',excludes)
+        excludes = ['*.o', '*.a', 'Include','Docs']
+        ret = rsync('hudson-zapp','sheeva002.linn.co.uk','Upnp/Build','~/',excludes)
+        ret = rsync('hudson-zapp','sheeva002.linn.co.uk','Upnp/AllTests.py','~/',excludes)
 
-                if ret != 0:
-			  print ret
-                          sys.exit(10)
+        if ret != 0:
+            print ret
+            sys.exit(10)
 
-		if nightly == "1":
+        if nightly == "1":
 
-                	rssh('hudson-zapp','sheeva002.linn.co.uk','python AllTests.py -f -t')
-		else:
-			rssh('hudson-zapp','sheeva002.linn.co.uk','python AllTests.py -t')
-		
+            rssh('hudson-zapp','sheeva002.linn.co.uk','python AllTests.py -f -t')
+        else:
+            rssh('hudson-zapp','sheeva002.linn.co.uk','python AllTests.py -t')
 
-ArmTests(Module['module'],Environment['arch'],Environment['nightly_run'])
-GenDocs(Module['module'],Environment['ostype'],Environment['nightly_run'],Environment['arch'])
+def publish_release(ostype, arch, release_name, tool):
+    target_name = "%s-%s" % (ostype, "ARM" if arch=="arm" else arch)
+    if ostype == "Windows":
+        artifacts = '\\\\zapp.linn.co.uk\\artifacts\\'
+    else:
+        artifacts = '/opt/artifacts/'
+    subprocess.check_call(tool + ' && cd Upnp && make bundle targetplatform=%s' % target_name, shell=True)
+    release_source_bundle = 'Upnp/Build/Bundles/zapp-%s.tar.gz' % target_name
+    release_target_bundle = '%sReleases/zapp-%s-%s.tar.gz' % (artifacts, release_name, target_name)
+    shutil.copyfile(release_source_bundle, release_target_bundle)
 
+
+
+
+def main():
+    Environment = getEnvironment()
+    Module = getModule()
+    Arguments = getArguments(Module['module'],Environment['nightly_run'],Environment['arch'],Environment['valgrind_run'],Environment['ostype'])
+
+
+
+    Build(Environment['tool'],Module['cmd'],Arguments['args'])
+    DummyXML()
+
+    valgrind_run = Environment['valgrind_run']
+    valgrind_nightly = Environment['nightly_run']
+
+    if valgrind_run != "0" and valgrind_nightly == "1":
+        ParseDir()
+
+    ArmTests(Module['module'],Environment['arch'],Environment['nightly_run'])
+    GenDocs(Module['module'],Environment['ostype'],Environment['nightly_run'],Environment['arch'],Environment['tool'])
+
+    release_version = Environment['release_version']
+
+    if release_version is not None and Module['module'] == 'upnp':
+        publish_release(Environment['ostype'], Environment['arch'], release_version, Environment['tool'])
+
+if __name__=="__main__":
+    main()
