@@ -279,6 +279,11 @@ def publish_release(ostype, arch, release_name, tool):
     release_target_bundle = '%sReleases/zapp-%s-%s.tar.gz' % (artifacts, release_name, target_name)
     shutil.copyfile(release_source_bundle, release_target_bundle)
 
+def writerev():
+	output = os.popen('git rev-parse HEAD')
+	f = open('revision.txt', 'w')
+	f.write(str(output.readline()))
+	f.close()
 
 
 
@@ -287,7 +292,7 @@ def main():
     Module = getModule()
     Arguments = getArguments(Module['module'],Environment['nightly_run'],Environment['arch'],Environment['valgrind_run'],Environment['ostype'])
 
-
+    writerev()
 
     Build(Environment['tool'],Module['cmd'],Arguments['args'])
     DummyXML()
