@@ -64,7 +64,7 @@
 
 
                             Y.Assert.isNotUndefined(proxy);
-                        },true);
+                        },false);
                         this.wait(kAsyncTimeoutMS);
                     },
 
@@ -104,7 +104,7 @@
                         _this = this;
                         var i = 3
                         proxy.Decrement(i, function (result) {
-                            Y.Assert.areEqual((i - 2), result["Result"]);
+                            Y.Assert.areEqual((i - 1), result["Result"]);
                             _this.resume();
                         });
                         this.wait(kAsyncTimeoutMS);
