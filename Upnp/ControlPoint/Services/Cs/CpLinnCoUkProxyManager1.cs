@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -242,6 +243,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iKontrolProductComPortChanged;
         private CallbackPropertyChanged iDiscPlayerConnectedChanged;
         private CallbackPropertyChanged iDiscPlayerComPortChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -346,6 +348,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iDiscPlayerConnected);
             iDiscPlayerComPort = new PropertyUint("DiscPlayerComPort", DiscPlayerComPortPropertyChanged);
             AddProperty(iDiscPlayerComPort);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -774,7 +778,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aKontrolProductConnectedChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyKontrolProductConnectedChanged(CallbackPropertyChanged aKontrolProductConnectedChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iKontrolProductConnectedChanged = aKontrolProductConnectedChanged;
             }
@@ -782,7 +786,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void KontrolProductConnectedPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iKontrolProductConnectedChanged != null)
                 {
@@ -799,7 +803,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aKontrolProductComPortChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyKontrolProductComPortChanged(CallbackPropertyChanged aKontrolProductComPortChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iKontrolProductComPortChanged = aKontrolProductComPortChanged;
             }
@@ -807,7 +811,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void KontrolProductComPortPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iKontrolProductComPortChanged != null)
                 {
@@ -824,7 +828,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDiscPlayerConnectedChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDiscPlayerConnectedChanged(CallbackPropertyChanged aDiscPlayerConnectedChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDiscPlayerConnectedChanged = aDiscPlayerConnectedChanged;
             }
@@ -832,7 +836,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DiscPlayerConnectedPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDiscPlayerConnectedChanged != null)
                 {
@@ -849,7 +853,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDiscPlayerComPortChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDiscPlayerComPortChanged(CallbackPropertyChanged aDiscPlayerComPortChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDiscPlayerComPortChanged = aDiscPlayerComPortChanged;
             }
@@ -857,7 +861,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DiscPlayerComPortPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDiscPlayerComPortChanged != null)
                 {

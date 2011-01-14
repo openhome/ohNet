@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -322,6 +323,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iVolumeLimitChanged;
         private CallbackPropertyChanged iStartupVolumeChanged;
         private CallbackPropertyChanged iStartupVolumeEnabledChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -397,6 +399,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iStartupVolume);
             iStartupVolumeEnabled = new PropertyBool("StartupVolumeEnabled", StartupVolumeEnabledPropertyChanged);
             AddProperty(iStartupVolumeEnabled);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -977,7 +981,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVolumeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVolumeChanged(CallbackPropertyChanged aVolumeChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iVolumeChanged = aVolumeChanged;
             }
@@ -985,7 +989,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void VolumePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iVolumeChanged != null)
                 {
@@ -1002,7 +1006,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aMuteChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyMuteChanged(CallbackPropertyChanged aMuteChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iMuteChanged = aMuteChanged;
             }
@@ -1010,7 +1014,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void MutePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iMuteChanged != null)
                 {
@@ -1027,7 +1031,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aBalanceChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyBalanceChanged(CallbackPropertyChanged aBalanceChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iBalanceChanged = aBalanceChanged;
             }
@@ -1035,7 +1039,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void BalancePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iBalanceChanged != null)
                 {
@@ -1052,7 +1056,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVolumeLimitChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVolumeLimitChanged(CallbackPropertyChanged aVolumeLimitChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iVolumeLimitChanged = aVolumeLimitChanged;
             }
@@ -1060,7 +1064,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void VolumeLimitPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iVolumeLimitChanged != null)
                 {
@@ -1077,7 +1081,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStartupVolumeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStartupVolumeChanged(CallbackPropertyChanged aStartupVolumeChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iStartupVolumeChanged = aStartupVolumeChanged;
             }
@@ -1085,7 +1089,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void StartupVolumePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iStartupVolumeChanged != null)
                 {
@@ -1102,7 +1106,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStartupVolumeEnabledChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStartupVolumeEnabledChanged(CallbackPropertyChanged aStartupVolumeEnabledChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iStartupVolumeEnabledChanged = aStartupVolumeEnabledChanged;
             }
@@ -1110,7 +1114,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void StartupVolumeEnabledPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iStartupVolumeEnabledChanged != null)
                 {

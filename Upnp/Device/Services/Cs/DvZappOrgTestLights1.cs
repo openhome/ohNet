@@ -38,7 +38,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetCount is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetCount must be overridden if this is called.</remarks>
+        /// GetCount must be overridden if this is called.</remarks>
         protected void EnableActionGetCount()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetCount");
@@ -51,7 +51,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetRoom is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetRoom must be overridden if this is called.</remarks>
+        /// GetRoom must be overridden if this is called.</remarks>
         protected void EnableActionGetRoom()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRoom");
@@ -66,7 +66,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetName is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetName must be overridden if this is called.</remarks>
+        /// GetName must be overridden if this is called.</remarks>
         protected void EnableActionGetName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetName");
@@ -81,7 +81,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetPosition is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetPosition must be overridden if this is called.</remarks>
+        /// GetPosition must be overridden if this is called.</remarks>
         protected void EnableActionGetPosition()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetPosition");
@@ -97,7 +97,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetColor is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetColor must be overridden if this is called.</remarks>
+        /// SetColor must be overridden if this is called.</remarks>
         protected void EnableActionSetColor()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetColor");
@@ -111,7 +111,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetColor is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetColor must be overridden if this is called.</remarks>
+        /// GetColor must be overridden if this is called.</remarks>
         protected void EnableActionGetColor()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetColor");
@@ -125,7 +125,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetColorComponents is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetColorComponents must be overridden if this is called.</remarks>
+        /// GetColorComponents must be overridden if this is called.</remarks>
         protected void EnableActionGetColorComponents()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetColorComponents");

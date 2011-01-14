@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -456,6 +457,7 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionGetCurrentTransportActions;
         private PropertyString iLastChange;
         private CallbackPropertyChanged iLastChangeChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -624,6 +626,8 @@ namespace Zapp.ControlPoint.Proxies
 
             iLastChange = new PropertyString("LastChange", LastChangePropertyChanged);
             AddProperty(iLastChange);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -1483,7 +1487,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLastChangeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyLastChangeChanged(CallbackPropertyChanged aLastChangeChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iLastChangeChanged = aLastChangeChanged;
             }
@@ -1491,7 +1495,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void LastChangePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iLastChangeChanged != null)
                 {

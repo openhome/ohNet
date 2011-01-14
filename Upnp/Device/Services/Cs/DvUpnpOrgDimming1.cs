@@ -227,7 +227,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetLoadLevelTarget is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetLoadLevelTarget must be overridden if this is called.</remarks>
+        /// SetLoadLevelTarget must be overridden if this is called.</remarks>
         protected void EnableActionSetLoadLevelTarget()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetLoadLevelTarget");
@@ -240,7 +240,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetLoadLevelTarget is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetLoadLevelTarget must be overridden if this is called.</remarks>
+        /// GetLoadLevelTarget must be overridden if this is called.</remarks>
         protected void EnableActionGetLoadLevelTarget()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetLoadLevelTarget");
@@ -253,7 +253,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetLoadLevelStatus is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetLoadLevelStatus must be overridden if this is called.</remarks>
+        /// GetLoadLevelStatus must be overridden if this is called.</remarks>
         protected void EnableActionGetLoadLevelStatus()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetLoadLevelStatus");
@@ -266,7 +266,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetOnEffectLevel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetOnEffectLevel must be overridden if this is called.</remarks>
+        /// SetOnEffectLevel must be overridden if this is called.</remarks>
         protected void EnableActionSetOnEffectLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetOnEffectLevel");
@@ -279,7 +279,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetOnEffect is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetOnEffect must be overridden if this is called.</remarks>
+        /// SetOnEffect must be overridden if this is called.</remarks>
         protected void EnableActionSetOnEffect()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetOnEffect");
@@ -297,7 +297,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetOnEffectParameters is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetOnEffectParameters must be overridden if this is called.</remarks>
+        /// GetOnEffectParameters must be overridden if this is called.</remarks>
         protected void EnableActionGetOnEffectParameters()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetOnEffectParameters");
@@ -316,7 +316,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action StepUp is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStepUp must be overridden if this is called.</remarks>
+        /// StepUp must be overridden if this is called.</remarks>
         protected void EnableActionStepUp()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StepUp");
@@ -328,7 +328,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action StepDown is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStepDown must be overridden if this is called.</remarks>
+        /// StepDown must be overridden if this is called.</remarks>
         protected void EnableActionStepDown()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StepDown");
@@ -340,7 +340,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action StartRampUp is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStartRampUp must be overridden if this is called.</remarks>
+        /// StartRampUp must be overridden if this is called.</remarks>
         protected void EnableActionStartRampUp()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StartRampUp");
@@ -352,7 +352,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action StartRampDown is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStartRampDown must be overridden if this is called.</remarks>
+        /// StartRampDown must be overridden if this is called.</remarks>
         protected void EnableActionStartRampDown()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StartRampDown");
@@ -364,7 +364,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action StopRamp is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStopRamp must be overridden if this is called.</remarks>
+        /// StopRamp must be overridden if this is called.</remarks>
         protected void EnableActionStopRamp()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StopRamp");
@@ -376,7 +376,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action StartRampToLevel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStartRampToLevel must be overridden if this is called.</remarks>
+        /// StartRampToLevel must be overridden if this is called.</remarks>
         protected void EnableActionStartRampToLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StartRampToLevel");
@@ -390,7 +390,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetStepDelta is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetStepDelta must be overridden if this is called.</remarks>
+        /// SetStepDelta must be overridden if this is called.</remarks>
         protected void EnableActionSetStepDelta()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStepDelta");
@@ -403,7 +403,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetStepDelta is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetStepDelta must be overridden if this is called.</remarks>
+        /// GetStepDelta must be overridden if this is called.</remarks>
         protected void EnableActionGetStepDelta()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetStepDelta");
@@ -416,7 +416,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetRampRate is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetRampRate must be overridden if this is called.</remarks>
+        /// SetRampRate must be overridden if this is called.</remarks>
         protected void EnableActionSetRampRate()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRampRate");
@@ -429,7 +429,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetRampRate is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetRampRate must be overridden if this is called.</remarks>
+        /// GetRampRate must be overridden if this is called.</remarks>
         protected void EnableActionGetRampRate()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRampRate");
@@ -442,7 +442,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action PauseRamp is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPauseRamp must be overridden if this is called.</remarks>
+        /// PauseRamp must be overridden if this is called.</remarks>
         protected void EnableActionPauseRamp()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PauseRamp");
@@ -454,7 +454,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ResumeRamp is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoResumeRamp must be overridden if this is called.</remarks>
+        /// ResumeRamp must be overridden if this is called.</remarks>
         protected void EnableActionResumeRamp()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ResumeRamp");
@@ -466,7 +466,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetIsRamping is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetIsRamping must be overridden if this is called.</remarks>
+        /// GetIsRamping must be overridden if this is called.</remarks>
         protected void EnableActionGetIsRamping()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetIsRamping");
@@ -479,7 +479,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetRampPaused is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetRampPaused must be overridden if this is called.</remarks>
+        /// GetRampPaused must be overridden if this is called.</remarks>
         protected void EnableActionGetRampPaused()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRampPaused");
@@ -492,7 +492,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetRampTime is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetRampTime must be overridden if this is called.</remarks>
+        /// GetRampTime must be overridden if this is called.</remarks>
         protected void EnableActionGetRampTime()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRampTime");

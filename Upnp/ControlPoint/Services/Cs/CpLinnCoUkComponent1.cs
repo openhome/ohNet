@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -260,6 +261,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iAmplifierAttenuationChanged;
         private CallbackPropertyChanged iVolumeControlEnabledChanged;
         private CallbackPropertyChanged iDigitalAudioOutputRawChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -332,6 +334,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iVolumeControlEnabled);
             iDigitalAudioOutputRaw = new PropertyBool("DigitalAudioOutputRaw", DigitalAudioOutputRawPropertyChanged);
             AddProperty(iDigitalAudioOutputRaw);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -796,7 +800,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAmplifierEnabledChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyAmplifierEnabledChanged(CallbackPropertyChanged aAmplifierEnabledChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iAmplifierEnabledChanged = aAmplifierEnabledChanged;
             }
@@ -804,7 +808,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void AmplifierEnabledPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iAmplifierEnabledChanged != null)
                 {
@@ -821,7 +825,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAmplifierAttenuationChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyAmplifierAttenuationChanged(CallbackPropertyChanged aAmplifierAttenuationChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iAmplifierAttenuationChanged = aAmplifierAttenuationChanged;
             }
@@ -829,7 +833,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void AmplifierAttenuationPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iAmplifierAttenuationChanged != null)
                 {
@@ -846,7 +850,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVolumeControlEnabledChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVolumeControlEnabledChanged(CallbackPropertyChanged aVolumeControlEnabledChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iVolumeControlEnabledChanged = aVolumeControlEnabledChanged;
             }
@@ -854,7 +858,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void VolumeControlEnabledPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iVolumeControlEnabledChanged != null)
                 {
@@ -871,7 +875,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDigitalAudioOutputRawChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDigitalAudioOutputRawChanged(CallbackPropertyChanged aDigitalAudioOutputRawChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDigitalAudioOutputRawChanged = aDigitalAudioOutputRawChanged;
             }
@@ -879,7 +883,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DigitalAudioOutputRawPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDigitalAudioOutputRawChanged != null)
                 {

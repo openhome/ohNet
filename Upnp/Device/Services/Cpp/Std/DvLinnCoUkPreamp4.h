@@ -95,85 +95,85 @@ protected:
     /**
      * Signal that the action VolumeInc is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoVolumeInc must be overridden if this is called.
+     * VolumeInc must be overridden if this is called.
      */
     void EnableActionVolumeInc();
     /**
      * Signal that the action VolumeDec is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoVolumeDec must be overridden if this is called.
+     * VolumeDec must be overridden if this is called.
      */
     void EnableActionVolumeDec();
     /**
      * Signal that the action SetVolume is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetVolume must be overridden if this is called.
+     * SetVolume must be overridden if this is called.
      */
     void EnableActionSetVolume();
     /**
      * Signal that the action Volume is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoVolume must be overridden if this is called.
+     * Volume must be overridden if this is called.
      */
     void EnableActionVolume();
     /**
      * Signal that the action SetMute is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetMute must be overridden if this is called.
+     * SetMute must be overridden if this is called.
      */
     void EnableActionSetMute();
     /**
      * Signal that the action Mute is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoMute must be overridden if this is called.
+     * Mute must be overridden if this is called.
      */
     void EnableActionMute();
     /**
      * Signal that the action SetBalance is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetBalance must be overridden if this is called.
+     * SetBalance must be overridden if this is called.
      */
     void EnableActionSetBalance();
     /**
      * Signal that the action Balance is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoBalance must be overridden if this is called.
+     * Balance must be overridden if this is called.
      */
     void EnableActionBalance();
     /**
      * Signal that the action SetVolumeLimit is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetVolumeLimit must be overridden if this is called.
+     * SetVolumeLimit must be overridden if this is called.
      */
     void EnableActionSetVolumeLimit();
     /**
      * Signal that the action VolumeLimit is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoVolumeLimit must be overridden if this is called.
+     * VolumeLimit must be overridden if this is called.
      */
     void EnableActionVolumeLimit();
     /**
      * Signal that the action SetStartupVolume is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetStartupVolume must be overridden if this is called.
+     * SetStartupVolume must be overridden if this is called.
      */
     void EnableActionSetStartupVolume();
     /**
      * Signal that the action StartupVolume is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStartupVolume must be overridden if this is called.
+     * StartupVolume must be overridden if this is called.
      */
     void EnableActionStartupVolume();
     /**
      * Signal that the action SetStartupVolumeEnabled is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetStartupVolumeEnabled must be overridden if this is called.
+     * SetStartupVolumeEnabled must be overridden if this is called.
      */
     void EnableActionSetStartupVolumeEnabled();
     /**
      * Signal that the action StartupVolumeEnabled is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStartupVolumeEnabled must be overridden if this is called.
+     * StartupVolumeEnabled must be overridden if this is called.
      */
     void EnableActionStartupVolumeEnabled();
 private:

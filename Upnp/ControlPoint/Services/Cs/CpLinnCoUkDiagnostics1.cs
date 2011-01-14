@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -299,6 +300,7 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionReboot;
         private PropertyUint iaStateVariable;
         private CallbackPropertyChanged iaStateVariableChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -367,6 +369,8 @@ namespace Zapp.ControlPoint.Proxies
 
             iaStateVariable = new PropertyUint("aStateVariable", aStateVariablePropertyChanged);
             AddProperty(iaStateVariable);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -928,7 +932,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStateVariableChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyaStateVariableChanged(CallbackPropertyChanged aaStateVariableChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iaStateVariableChanged = aaStateVariableChanged;
             }
@@ -936,7 +940,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void aStateVariablePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iaStateVariableChanged != null)
                 {

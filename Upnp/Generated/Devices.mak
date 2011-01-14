@@ -106,12 +106,6 @@ objects_devices = \
                   $(objdir)DvZappOrgTestBasic1.$(objext) \
                   $(objdir)DvZappOrgTestBasic1Std.$(objext) \
                   $(objdir)DvZappOrgTestBasic1C.$(objext) \
-                  $(objdir)DvZappOrgTestWidget1.$(objext) \
-                  $(objdir)DvZappOrgTestWidget1Std.$(objext) \
-                  $(objdir)DvZappOrgTestWidget1C.$(objext) \
-                  $(objdir)DvZappOrgTestWidgetController1.$(objext) \
-                  $(objdir)DvZappOrgTestWidgetController1Std.$(objext) \
-                  $(objdir)DvZappOrgTestWidgetController1C.$(objext) \
                   $(objdir)DvZappOrgTestLights1.$(objext) \
                   $(objdir)DvZappOrgTestLights1Std.$(objext) \
                   $(objdir)DvZappOrgTestLights1C.$(objext) \
@@ -164,8 +158,6 @@ device_dotnet_assemblies = \
 		DvLinnCoUkUi2.net.dll \
 		DvLinnCoUkVolkano1.net.dll \
 		DvZappOrgTestBasic1.net.dll \
-		DvZappOrgTestWidget1.net.dll \
-		DvZappOrgTestWidgetController1.net.dll \
 		DvZappOrgTestLights1.net.dll \
 		DvZappOrgTestDimmableLight1.net.dll \
 		DvOpenhomeOrgTestColorLight1.net.dll \
@@ -205,8 +197,6 @@ device_dotnet_assemblies_with_path = \
 		$(objdir)DvLinnCoUkUi2.net.dll \
 		$(objdir)DvLinnCoUkVolkano1.net.dll \
 		$(objdir)DvZappOrgTestBasic1.net.dll \
-		$(objdir)DvZappOrgTestWidget1.net.dll \
-		$(objdir)DvZappOrgTestWidgetController1.net.dll \
 		$(objdir)DvZappOrgTestLights1.net.dll \
 		$(objdir)DvZappOrgTestDimmableLight1.net.dll \
 		$(objdir)DvOpenhomeOrgTestColorLight1.net.dll \
@@ -417,18 +407,6 @@ $(objdir)DvZappOrgTestBasic1Std.$(objext) : $(deviceCppStd)DvZappOrgTestBasic1St
 	$(compiler)DvZappOrgTestBasic1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvZappOrgTestBasic1Std.cpp
 $(objdir)DvZappOrgTestBasic1C.$(objext) : $(deviceC)DvZappOrgTestBasic1C.cpp $(headers_device) $(inc_build)/C/DvZappOrgTestBasic1.h
 	$(compiler)DvZappOrgTestBasic1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvZappOrgTestBasic1C.cpp
-$(objdir)DvZappOrgTestWidget1.$(objext) : $(deviceCppCore)DvZappOrgTestWidget1.cpp $(headers_device)
-	$(compiler)DvZappOrgTestWidget1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvZappOrgTestWidget1.cpp
-$(objdir)DvZappOrgTestWidget1Std.$(objext) : $(deviceCppStd)DvZappOrgTestWidget1Std.cpp $(headers_device)
-	$(compiler)DvZappOrgTestWidget1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvZappOrgTestWidget1Std.cpp
-$(objdir)DvZappOrgTestWidget1C.$(objext) : $(deviceC)DvZappOrgTestWidget1C.cpp $(headers_device) $(inc_build)/C/DvZappOrgTestWidget1.h
-	$(compiler)DvZappOrgTestWidget1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvZappOrgTestWidget1C.cpp
-$(objdir)DvZappOrgTestWidgetController1.$(objext) : $(deviceCppCore)DvZappOrgTestWidgetController1.cpp $(headers_device)
-	$(compiler)DvZappOrgTestWidgetController1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvZappOrgTestWidgetController1.cpp
-$(objdir)DvZappOrgTestWidgetController1Std.$(objext) : $(deviceCppStd)DvZappOrgTestWidgetController1Std.cpp $(headers_device)
-	$(compiler)DvZappOrgTestWidgetController1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvZappOrgTestWidgetController1Std.cpp
-$(objdir)DvZappOrgTestWidgetController1C.$(objext) : $(deviceC)DvZappOrgTestWidgetController1C.cpp $(headers_device) $(inc_build)/C/DvZappOrgTestWidgetController1.h
-	$(compiler)DvZappOrgTestWidgetController1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvZappOrgTestWidgetController1C.cpp
 $(objdir)DvZappOrgTestLights1.$(objext) : $(deviceCppCore)DvZappOrgTestLights1.cpp $(headers_device)
 	$(compiler)DvZappOrgTestLights1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvZappOrgTestLights1.cpp
 $(objdir)DvZappOrgTestLights1Std.$(objext) : $(deviceCppStd)DvZappOrgTestLights1Std.cpp $(headers_device)
@@ -483,8 +461,6 @@ device_dlls = \
              DvLinnCoUkUi2Dll \
              DvLinnCoUkVolkano1Dll \
              DvZappOrgTestBasic1Dll \
-             DvZappOrgTestWidget1Dll \
-             DvZappOrgTestWidgetController1Dll \
              DvZappOrgTestLights1Dll \
              DvZappOrgTestDimmableLight1Dll \
              DvOpenhomeOrgTestColorLight1Dll \
@@ -592,12 +568,6 @@ $(objdir)$(dllprefix)DvLinnCoUkVolkano1.$(dllext) : ZappUpnpDll $(objdir)DvLinnC
 DvZappOrgTestBasic1Dll: $(objdir)$(dllprefix)DvZappOrgTestBasic1.$(dllext) 
 $(objdir)$(dllprefix)DvZappOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)DvZappOrgTestBasic1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvZappOrgTestBasic1.$(dllext) $(objdir)DvZappOrgTestBasic1.$(objext)
-DvZappOrgTestWidget1Dll: $(objdir)$(dllprefix)DvZappOrgTestWidget1.$(dllext) 
-$(objdir)$(dllprefix)DvZappOrgTestWidget1.$(dllext) : ZappUpnpDll $(objdir)DvZappOrgTestWidget1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvZappOrgTestWidget1.$(dllext) $(objdir)DvZappOrgTestWidget1.$(objext)
-DvZappOrgTestWidgetController1Dll: $(objdir)$(dllprefix)DvZappOrgTestWidgetController1.$(dllext) 
-$(objdir)$(dllprefix)DvZappOrgTestWidgetController1.$(dllext) : ZappUpnpDll $(objdir)DvZappOrgTestWidgetController1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvZappOrgTestWidgetController1.$(dllext) $(objdir)DvZappOrgTestWidgetController1.$(objext)
 DvZappOrgTestLights1Dll: $(objdir)$(dllprefix)DvZappOrgTestLights1.$(dllext) 
 $(objdir)$(dllprefix)DvZappOrgTestLights1.$(dllext) : ZappUpnpDll $(objdir)DvZappOrgTestLights1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvZappOrgTestLights1.$(dllext) $(objdir)DvZappOrgTestLights1.$(objext)
@@ -783,16 +753,6 @@ $(objdir)DvZappOrgTestBasic1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvZappOrg
 		/out:$(objdir)DvZappOrgTestBasic1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
 		$(deviceCs)DvZappOrgTestBasic1.cs
-$(objdir)DvZappOrgTestWidget1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvZappOrgTestWidget1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvZappOrgTestWidget1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvZappOrgTestWidget1.cs
-$(objdir)DvZappOrgTestWidgetController1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvZappOrgTestWidgetController1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvZappOrgTestWidgetController1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvZappOrgTestWidgetController1.cs
 $(objdir)DvZappOrgTestLights1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvZappOrgTestLights1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvZappOrgTestLights1.net.dll \

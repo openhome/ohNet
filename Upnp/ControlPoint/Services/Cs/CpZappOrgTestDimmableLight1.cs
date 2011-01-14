@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -61,6 +62,7 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionSetLevel;
         private PropertyUint iA_ARG_Level;
         private CallbackPropertyChanged iA_ARG_LevelChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -82,6 +84,8 @@ namespace Zapp.ControlPoint.Proxies
 
             iA_ARG_Level = new PropertyUint("A_ARG_Level", A_ARG_LevelPropertyChanged);
             AddProperty(iA_ARG_Level);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -175,7 +179,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aA_ARG_LevelChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyA_ARG_LevelChanged(CallbackPropertyChanged aA_ARG_LevelChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iA_ARG_LevelChanged = aA_ARG_LevelChanged;
             }
@@ -183,7 +187,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void A_ARG_LevelPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iA_ARG_LevelChanged != null)
                 {

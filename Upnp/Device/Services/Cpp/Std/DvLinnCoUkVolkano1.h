@@ -35,67 +35,67 @@ protected:
     /**
      * Signal that the action Reboot is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoReboot must be overridden if this is called.
+     * Reboot must be overridden if this is called.
      */
     void EnableActionReboot();
     /**
      * Signal that the action BootMode is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoBootMode must be overridden if this is called.
+     * BootMode must be overridden if this is called.
      */
     void EnableActionBootMode();
     /**
      * Signal that the action SetBootMode is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetBootMode must be overridden if this is called.
+     * SetBootMode must be overridden if this is called.
      */
     void EnableActionSetBootMode();
     /**
      * Signal that the action BspType is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoBspType must be overridden if this is called.
+     * BspType must be overridden if this is called.
      */
     void EnableActionBspType();
     /**
      * Signal that the action UglyName is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoUglyName must be overridden if this is called.
+     * UglyName must be overridden if this is called.
      */
     void EnableActionUglyName();
     /**
      * Signal that the action MacAddress is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoMacAddress must be overridden if this is called.
+     * MacAddress must be overridden if this is called.
      */
     void EnableActionMacAddress();
     /**
      * Signal that the action ProductId is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoProductId must be overridden if this is called.
+     * ProductId must be overridden if this is called.
      */
     void EnableActionProductId();
     /**
      * Signal that the action BoardId is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoBoardId must be overridden if this is called.
+     * BoardId must be overridden if this is called.
      */
     void EnableActionBoardId();
     /**
      * Signal that the action BoardType is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoBoardType must be overridden if this is called.
+     * BoardType must be overridden if this is called.
      */
     void EnableActionBoardType();
     /**
      * Signal that the action MaxBoards is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoMaxBoards must be overridden if this is called.
+     * MaxBoards must be overridden if this is called.
      */
     void EnableActionMaxBoards();
     /**
      * Signal that the action SoftwareVersion is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSoftwareVersion must be overridden if this is called.
+     * SoftwareVersion must be overridden if this is called.
      */
     void EnableActionSoftwareVersion();
 private:

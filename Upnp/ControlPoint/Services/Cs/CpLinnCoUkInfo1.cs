@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -196,6 +197,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iLosslessChanged;
         private CallbackPropertyChanged iCodecNameChanged;
         private CallbackPropertyChanged iMetatextChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -264,6 +266,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iCodecName);
             iMetatext = new PropertyString("Metatext", MetatextPropertyChanged);
             AddProperty(iMetatext);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -486,7 +490,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackCountChanged(CallbackPropertyChanged aTrackCountChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTrackCountChanged = aTrackCountChanged;
             }
@@ -494,7 +498,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TrackCountPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTrackCountChanged != null)
                 {
@@ -511,7 +515,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDetailsCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDetailsCountChanged(CallbackPropertyChanged aDetailsCountChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDetailsCountChanged = aDetailsCountChanged;
             }
@@ -519,7 +523,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DetailsCountPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDetailsCountChanged != null)
                 {
@@ -536,7 +540,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aMetatextCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyMetatextCountChanged(CallbackPropertyChanged aMetatextCountChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iMetatextCountChanged = aMetatextCountChanged;
             }
@@ -544,7 +548,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void MetatextCountPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iMetatextCountChanged != null)
                 {
@@ -561,7 +565,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aUriChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyUriChanged(CallbackPropertyChanged aUriChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iUriChanged = aUriChanged;
             }
@@ -569,7 +573,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void UriPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iUriChanged != null)
                 {
@@ -586,7 +590,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aMetadataChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyMetadataChanged(CallbackPropertyChanged aMetadataChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iMetadataChanged = aMetadataChanged;
             }
@@ -594,7 +598,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void MetadataPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iMetadataChanged != null)
                 {
@@ -611,7 +615,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDurationChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDurationChanged(CallbackPropertyChanged aDurationChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDurationChanged = aDurationChanged;
             }
@@ -619,7 +623,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DurationPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDurationChanged != null)
                 {
@@ -636,7 +640,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aBitRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyBitRateChanged(CallbackPropertyChanged aBitRateChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iBitRateChanged = aBitRateChanged;
             }
@@ -644,7 +648,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void BitRatePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iBitRateChanged != null)
                 {
@@ -661,7 +665,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aBitDepthChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyBitDepthChanged(CallbackPropertyChanged aBitDepthChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iBitDepthChanged = aBitDepthChanged;
             }
@@ -669,7 +673,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void BitDepthPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iBitDepthChanged != null)
                 {
@@ -686,7 +690,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSampleRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySampleRateChanged(CallbackPropertyChanged aSampleRateChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iSampleRateChanged = aSampleRateChanged;
             }
@@ -694,7 +698,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void SampleRatePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iSampleRateChanged != null)
                 {
@@ -711,7 +715,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLosslessChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyLosslessChanged(CallbackPropertyChanged aLosslessChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iLosslessChanged = aLosslessChanged;
             }
@@ -719,7 +723,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void LosslessPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iLosslessChanged != null)
                 {
@@ -736,7 +740,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCodecNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyCodecNameChanged(CallbackPropertyChanged aCodecNameChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iCodecNameChanged = aCodecNameChanged;
             }
@@ -744,7 +748,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void CodecNamePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iCodecNameChanged != null)
                 {
@@ -761,7 +765,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aMetatextChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyMetatextChanged(CallbackPropertyChanged aMetatextChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iMetatextChanged = aMetatextChanged;
             }
@@ -769,7 +773,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void MetatextPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iMetatextChanged != null)
                 {

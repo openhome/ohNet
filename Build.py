@@ -274,11 +274,25 @@ def publish_release(ostype, arch, release_name, tool):
         artifacts = '\\\\zapp.linn.co.uk\\artifacts\\'
     else:
         artifacts = '/opt/artifacts/'
-    subprocess.check_call(tool + ' && cd Upnp && make bundle targetplatform=%s' % target_name, shell=True)
-    release_source_bundle = 'Upnp/Build/Bundles/zapp-%s.tar.gz' % target_name
+    subprocess.check_call(tool + ' && cd Upnp && make bundle-dev targetplatform=%s' % target_name, shell=True)
+    release_source_bundle = 'Upnp/Build/Bundles/zapp-%s-dev.tar.gz' % target_name
     release_target_bundle = '%sReleases/zapp-%s-%s.tar.gz' % (artifacts, release_name, target_name)
     shutil.copyfile(release_source_bundle, release_target_bundle)
 
+def writerev(ostype, arch):
+
+	if ostype == "Windows": 
+		artifacts = '\\\\zapp.linn.co.uk\\artifacts\\'
+
+	elif ostype == "Linux" and arch != "arm":
+		artifacts = '/opt/artifacts/'
+	else:
+		artifacts = ''
+
+	output = os.popen('git rev-parse HEAD')
+	f = open(artifacts + 'revision.txt', 'w')
+	f.write(str(output.readline()))
+	f.close()
 
 
 
@@ -287,7 +301,7 @@ def main():
     Module = getModule()
     Arguments = getArguments(Module['module'],Environment['nightly_run'],Environment['arch'],Environment['valgrind_run'],Environment['ostype'])
 
-
+    writerev(Environment['ostype'], Environment['arch'])
 
     Build(Environment['tool'],Module['cmd'],Arguments['args'])
     DummyXML()

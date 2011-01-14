@@ -45,19 +45,19 @@ protected:
     /**
      * Signal that the action SetTarget is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetTarget must be overridden if this is called.
+     * SetTarget must be overridden if this is called.
      */
     void EnableActionSetTarget();
     /**
      * Signal that the action GetTarget is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetTarget must be overridden if this is called.
+     * GetTarget must be overridden if this is called.
      */
     void EnableActionGetTarget();
     /**
      * Signal that the action GetStatus is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetStatus must be overridden if this is called.
+     * GetStatus must be overridden if this is called.
      */
     void EnableActionGetStatus();
 private:

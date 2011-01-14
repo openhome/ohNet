@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -88,6 +89,7 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyString iParameterXml;
         private CallbackPropertyChanged iConfigurationXmlChanged;
         private CallbackPropertyChanged iParameterXmlChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -120,6 +122,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iConfigurationXml);
             iParameterXml = new PropertyString("ParameterXml", ParameterXmlPropertyChanged);
             AddProperty(iParameterXml);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -262,7 +266,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aConfigurationXmlChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyConfigurationXmlChanged(CallbackPropertyChanged aConfigurationXmlChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iConfigurationXmlChanged = aConfigurationXmlChanged;
             }
@@ -270,7 +274,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ConfigurationXmlPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iConfigurationXmlChanged != null)
                 {
@@ -287,7 +291,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aParameterXmlChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyParameterXmlChanged(CallbackPropertyChanged aParameterXmlChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iParameterXmlChanged = aParameterXmlChanged;
             }
@@ -295,7 +299,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ParameterXmlPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iParameterXmlChanged != null)
                 {

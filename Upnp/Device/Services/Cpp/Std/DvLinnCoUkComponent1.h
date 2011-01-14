@@ -75,67 +75,67 @@ protected:
     /**
      * Signal that the action AmplifierEnabled is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoAmplifierEnabled must be overridden if this is called.
+     * AmplifierEnabled must be overridden if this is called.
      */
     void EnableActionAmplifierEnabled();
     /**
      * Signal that the action SetAmplifierEnabled is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetAmplifierEnabled must be overridden if this is called.
+     * SetAmplifierEnabled must be overridden if this is called.
      */
     void EnableActionSetAmplifierEnabled();
     /**
      * Signal that the action AmplifierAttenuation is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoAmplifierAttenuation must be overridden if this is called.
+     * AmplifierAttenuation must be overridden if this is called.
      */
     void EnableActionAmplifierAttenuation();
     /**
      * Signal that the action SetAmplifierAttenuation is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetAmplifierAttenuation must be overridden if this is called.
+     * SetAmplifierAttenuation must be overridden if this is called.
      */
     void EnableActionSetAmplifierAttenuation();
     /**
      * Signal that the action SetVolumeControlEnabled is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetVolumeControlEnabled must be overridden if this is called.
+     * SetVolumeControlEnabled must be overridden if this is called.
      */
     void EnableActionSetVolumeControlEnabled();
     /**
      * Signal that the action VolumeControlEnabled is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoVolumeControlEnabled must be overridden if this is called.
+     * VolumeControlEnabled must be overridden if this is called.
      */
     void EnableActionVolumeControlEnabled();
     /**
      * Signal that the action SetDigitalAudioOutputRaw is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetDigitalAudioOutputRaw must be overridden if this is called.
+     * SetDigitalAudioOutputRaw must be overridden if this is called.
      */
     void EnableActionSetDigitalAudioOutputRaw();
     /**
      * Signal that the action DigitalAudioOutputRaw is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDigitalAudioOutputRaw must be overridden if this is called.
+     * DigitalAudioOutputRaw must be overridden if this is called.
      */
     void EnableActionDigitalAudioOutputRaw();
     /**
      * Signal that the action AmplifierOverTemperature is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoAmplifierOverTemperature must be overridden if this is called.
+     * AmplifierOverTemperature must be overridden if this is called.
      */
     void EnableActionAmplifierOverTemperature();
     /**
      * Signal that the action EthernetLinkConnected is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoEthernetLinkConnected must be overridden if this is called.
+     * EthernetLinkConnected must be overridden if this is called.
      */
     void EnableActionEthernetLinkConnected();
     /**
      * Signal that the action Locate is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoLocate must be overridden if this is called.
+     * Locate must be overridden if this is called.
      */
     void EnableActionLocate();
 private:
