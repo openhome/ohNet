@@ -352,7 +352,7 @@
         function onComplete(results) {
             var resultsXML = this.getResults(_Y.Test.Format.JUnitXML);
 
-            proxy.WriteFile(resultsXML,"C:\\ProxyJsTest.xml",
+            proxy.WriteFile(resultsXML,"xout\\ProxyJsTest.xml",
             function () {
                window.close();
             },function() {
