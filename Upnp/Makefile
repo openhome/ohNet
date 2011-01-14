@@ -131,7 +131,7 @@ docs:
 	mkdir -p Build/Docs/Js
 	perl ./JsDoc/jsdoc.pl -d Build/Docs/Js ControlPoint/Services/Js
 
-bundle:
+bundle: tt
 	mkdir -p $(bundle_build)
 ifeq ($(targetplatform),)
 	echo Usage: make bundle targetplatform=Linux-x86
@@ -139,7 +139,7 @@ else
 	python bundle_binaries.py Posix $(targetplatform)
 endif
 
-bundle-dev:
+bundle-dev: tt
 	mkdir -p $(bundle_build)
 ifeq ($(targetplatform),)
 	echo Usage: make bundle-dev targetplatform=Linux-x86

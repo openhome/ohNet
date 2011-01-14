@@ -113,12 +113,12 @@ uninstall :
 	if exist "$(installincludedir)" rmdir /s /q "$(installincludedir)"
 	rmdir "$(installdir)"
 
-bundle:
+bundle: tt
 	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
 	if "$(targetplatform)"=="" echo "Usage: make bundle targetplatform=Windows-x86" && exit /b 1
 	python bundle_binaries.py Windows $(targetplatform)
 
-bundle-dev:
+bundle-dev: tt
 	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
 	if "$(targetplatform)"=="" echo "Usage: make bundle_dev targetplatform=Windows-x86" && exit /b 1
 	python bundle_binaries.py --dev Windows $(targetplatform)
