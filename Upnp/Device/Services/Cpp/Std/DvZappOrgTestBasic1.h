@@ -85,115 +85,115 @@ protected:
     /**
      * Signal that the action Increment is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoIncrement must be overridden if this is called.
+     * Increment must be overridden if this is called.
      */
     void EnableActionIncrement();
     /**
      * Signal that the action Decrement is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDecrement must be overridden if this is called.
+     * Decrement must be overridden if this is called.
      */
     void EnableActionDecrement();
     /**
      * Signal that the action Toggle is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoToggle must be overridden if this is called.
+     * Toggle must be overridden if this is called.
      */
     void EnableActionToggle();
     /**
      * Signal that the action EchoString is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoEchoString must be overridden if this is called.
+     * EchoString must be overridden if this is called.
      */
     void EnableActionEchoString();
     /**
      * Signal that the action EchoBinary is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoEchoBinary must be overridden if this is called.
+     * EchoBinary must be overridden if this is called.
      */
     void EnableActionEchoBinary();
     /**
      * Signal that the action SetUint is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetUint must be overridden if this is called.
+     * SetUint must be overridden if this is called.
      */
     void EnableActionSetUint();
     /**
      * Signal that the action GetUint is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetUint must be overridden if this is called.
+     * GetUint must be overridden if this is called.
      */
     void EnableActionGetUint();
     /**
      * Signal that the action SetInt is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetInt must be overridden if this is called.
+     * SetInt must be overridden if this is called.
      */
     void EnableActionSetInt();
     /**
      * Signal that the action GetInt is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetInt must be overridden if this is called.
+     * GetInt must be overridden if this is called.
      */
     void EnableActionGetInt();
     /**
      * Signal that the action SetBool is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetBool must be overridden if this is called.
+     * SetBool must be overridden if this is called.
      */
     void EnableActionSetBool();
     /**
      * Signal that the action GetBool is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetBool must be overridden if this is called.
+     * GetBool must be overridden if this is called.
      */
     void EnableActionGetBool();
     /**
      * Signal that the action SetMultiple is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetMultiple must be overridden if this is called.
+     * SetMultiple must be overridden if this is called.
      */
     void EnableActionSetMultiple();
     /**
      * Signal that the action SetString is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetString must be overridden if this is called.
+     * SetString must be overridden if this is called.
      */
     void EnableActionSetString();
     /**
      * Signal that the action GetString is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetString must be overridden if this is called.
+     * GetString must be overridden if this is called.
      */
     void EnableActionGetString();
     /**
      * Signal that the action SetBinary is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetBinary must be overridden if this is called.
+     * SetBinary must be overridden if this is called.
      */
     void EnableActionSetBinary();
     /**
      * Signal that the action GetBinary is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetBinary must be overridden if this is called.
+     * GetBinary must be overridden if this is called.
      */
     void EnableActionGetBinary();
     /**
      * Signal that the action ToggleBool is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoToggleBool must be overridden if this is called.
+     * ToggleBool must be overridden if this is called.
      */
     void EnableActionToggleBool();
     /**
      * Signal that the action WriteFile is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoWriteFile must be overridden if this is called.
+     * WriteFile must be overridden if this is called.
      */
     void EnableActionWriteFile();
     /**
      * Signal that the action Shutdown is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoShutdown must be overridden if this is called.
+     * Shutdown must be overridden if this is called.
      */
     void EnableActionShutdown();
 private:

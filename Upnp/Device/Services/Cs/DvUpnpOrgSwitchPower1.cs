@@ -69,7 +69,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetTarget is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetTarget must be overridden if this is called.</remarks>
+        /// SetTarget must be overridden if this is called.</remarks>
         protected void EnableActionSetTarget()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetTarget");
@@ -82,7 +82,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetTarget is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetTarget must be overridden if this is called.</remarks>
+        /// GetTarget must be overridden if this is called.</remarks>
         protected void EnableActionGetTarget()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetTarget");
@@ -95,7 +95,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetStatus is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetStatus must be overridden if this is called.</remarks>
+        /// GetStatus must be overridden if this is called.</remarks>
         protected void EnableActionGetStatus()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetStatus");

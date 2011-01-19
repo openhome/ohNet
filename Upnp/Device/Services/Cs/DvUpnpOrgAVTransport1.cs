@@ -84,7 +84,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetAVTransportURI is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetAVTransportURI must be overridden if this is called.</remarks>
+        /// SetAVTransportURI must be overridden if this is called.</remarks>
         protected void EnableActionSetAVTransportURI()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetAVTransportURI");
@@ -100,7 +100,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetNextAVTransportURI is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetNextAVTransportURI must be overridden if this is called.</remarks>
+        /// SetNextAVTransportURI must be overridden if this is called.</remarks>
         protected void EnableActionSetNextAVTransportURI()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetNextAVTransportURI");
@@ -116,7 +116,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetMediaInfo is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetMediaInfo must be overridden if this is called.</remarks>
+        /// GetMediaInfo must be overridden if this is called.</remarks>
         protected void EnableActionGetMediaInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetMediaInfo");
@@ -139,7 +139,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetTransportInfo is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetTransportInfo must be overridden if this is called.</remarks>
+        /// GetTransportInfo must be overridden if this is called.</remarks>
         protected void EnableActionGetTransportInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetTransportInfo");
@@ -164,7 +164,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetPositionInfo is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetPositionInfo must be overridden if this is called.</remarks>
+        /// GetPositionInfo must be overridden if this is called.</remarks>
         protected void EnableActionGetPositionInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetPositionInfo");
@@ -186,7 +186,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetDeviceCapabilities is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetDeviceCapabilities must be overridden if this is called.</remarks>
+        /// GetDeviceCapabilities must be overridden if this is called.</remarks>
         protected void EnableActionGetDeviceCapabilities()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetDeviceCapabilities");
@@ -203,7 +203,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetTransportSettings is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetTransportSettings must be overridden if this is called.</remarks>
+        /// GetTransportSettings must be overridden if this is called.</remarks>
         protected void EnableActionGetTransportSettings()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetTransportSettings");
@@ -221,7 +221,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Stop is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStop must be overridden if this is called.</remarks>
+        /// Stop must be overridden if this is called.</remarks>
         protected void EnableActionStop()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Stop");
@@ -234,7 +234,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Play is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPlay must be overridden if this is called.</remarks>
+        /// Play must be overridden if this is called.</remarks>
         protected void EnableActionPlay()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Play");
@@ -251,7 +251,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Pause is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPause must be overridden if this is called.</remarks>
+        /// Pause must be overridden if this is called.</remarks>
         protected void EnableActionPause()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Pause");
@@ -264,7 +264,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Record is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoRecord must be overridden if this is called.</remarks>
+        /// Record must be overridden if this is called.</remarks>
         protected void EnableActionRecord()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Record");
@@ -277,7 +277,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Seek is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSeek must be overridden if this is called.</remarks>
+        /// Seek must be overridden if this is called.</remarks>
         protected void EnableActionSeek()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Seek");
@@ -295,7 +295,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Next is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoNext must be overridden if this is called.</remarks>
+        /// Next must be overridden if this is called.</remarks>
         protected void EnableActionNext()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Next");
@@ -308,7 +308,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Previous is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPrevious must be overridden if this is called.</remarks>
+        /// Previous must be overridden if this is called.</remarks>
         protected void EnableActionPrevious()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Previous");
@@ -321,7 +321,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetPlayMode is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetPlayMode must be overridden if this is called.</remarks>
+        /// SetPlayMode must be overridden if this is called.</remarks>
         protected void EnableActionSetPlayMode()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetPlayMode");
@@ -338,7 +338,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetRecordQualityMode is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetRecordQualityMode must be overridden if this is called.</remarks>
+        /// SetRecordQualityMode must be overridden if this is called.</remarks>
         protected void EnableActionSetRecordQualityMode()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRecordQualityMode");
@@ -353,7 +353,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetCurrentTransportActions is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetCurrentTransportActions must be overridden if this is called.</remarks>
+        /// GetCurrentTransportActions must be overridden if this is called.</remarks>
         protected void EnableActionGetCurrentTransportActions()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetCurrentTransportActions");

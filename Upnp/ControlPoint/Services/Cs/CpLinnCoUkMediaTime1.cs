@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -43,6 +44,7 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionSeconds;
         private PropertyUint iSeconds;
         private CallbackPropertyChanged iSecondsChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -60,6 +62,8 @@ namespace Zapp.ControlPoint.Proxies
 
             iSeconds = new PropertyUint("Seconds", SecondsPropertyChanged);
             AddProperty(iSeconds);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -113,7 +117,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSecondsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySecondsChanged(CallbackPropertyChanged aSecondsChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iSecondsChanged = aSecondsChanged;
             }
@@ -121,7 +125,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void SecondsPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iSecondsChanged != null)
                 {

@@ -255,7 +255,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action VolumeInc is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoVolumeInc must be overridden if this is called.</remarks>
+        /// VolumeInc must be overridden if this is called.</remarks>
         protected void EnableActionVolumeInc()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("VolumeInc");
@@ -267,7 +267,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action VolumeDec is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoVolumeDec must be overridden if this is called.</remarks>
+        /// VolumeDec must be overridden if this is called.</remarks>
         protected void EnableActionVolumeDec()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("VolumeDec");
@@ -279,7 +279,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetVolume is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetVolume must be overridden if this is called.</remarks>
+        /// SetVolume must be overridden if this is called.</remarks>
         protected void EnableActionSetVolume()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetVolume");
@@ -292,7 +292,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Volume is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoVolume must be overridden if this is called.</remarks>
+        /// Volume must be overridden if this is called.</remarks>
         protected void EnableActionVolume()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Volume");
@@ -305,7 +305,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetMute is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetMute must be overridden if this is called.</remarks>
+        /// SetMute must be overridden if this is called.</remarks>
         protected void EnableActionSetMute()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetMute");
@@ -318,7 +318,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Mute is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoMute must be overridden if this is called.</remarks>
+        /// Mute must be overridden if this is called.</remarks>
         protected void EnableActionMute()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Mute");
@@ -331,7 +331,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetBalance is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetBalance must be overridden if this is called.</remarks>
+        /// SetBalance must be overridden if this is called.</remarks>
         protected void EnableActionSetBalance()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBalance");
@@ -344,7 +344,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Balance is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoBalance must be overridden if this is called.</remarks>
+        /// Balance must be overridden if this is called.</remarks>
         protected void EnableActionBalance()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Balance");
@@ -357,7 +357,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetVolumeLimit is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetVolumeLimit must be overridden if this is called.</remarks>
+        /// SetVolumeLimit must be overridden if this is called.</remarks>
         protected void EnableActionSetVolumeLimit()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetVolumeLimit");
@@ -370,7 +370,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action VolumeLimit is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoVolumeLimit must be overridden if this is called.</remarks>
+        /// VolumeLimit must be overridden if this is called.</remarks>
         protected void EnableActionVolumeLimit()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("VolumeLimit");
@@ -383,7 +383,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetStartupVolume is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetStartupVolume must be overridden if this is called.</remarks>
+        /// SetStartupVolume must be overridden if this is called.</remarks>
         protected void EnableActionSetStartupVolume()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStartupVolume");
@@ -396,7 +396,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action StartupVolume is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStartupVolume must be overridden if this is called.</remarks>
+        /// StartupVolume must be overridden if this is called.</remarks>
         protected void EnableActionStartupVolume()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StartupVolume");
@@ -409,7 +409,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetStartupVolumeEnabled is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetStartupVolumeEnabled must be overridden if this is called.</remarks>
+        /// SetStartupVolumeEnabled must be overridden if this is called.</remarks>
         protected void EnableActionSetStartupVolumeEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStartupVolumeEnabled");
@@ -422,7 +422,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action StartupVolumeEnabled is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStartupVolumeEnabled must be overridden if this is called.</remarks>
+        /// StartupVolumeEnabled must be overridden if this is called.</remarks>
         protected void EnableActionStartupVolumeEnabled()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StartupVolumeEnabled");

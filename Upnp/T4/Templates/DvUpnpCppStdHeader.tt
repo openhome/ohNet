@@ -93,7 +93,7 @@ protected:
     /**
      * Signal that the action <#=a.name#> is supported.
      * The action's availability will be published in the device's service.xml.
-     * Do<#=a.name#> must be overridden if this is called.
+     * <#=a.name#> must be overridden if this is called.
      */
     void EnableAction<#=a.name#>();
 <#  } #>

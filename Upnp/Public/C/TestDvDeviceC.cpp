@@ -68,7 +68,12 @@ DeviceList::~DeviceList()
 
 void DeviceList::TestActions()
 {
-    ASSERT(iList.size() == 1);
+    size_t size = iList.size();
+    if (size != 1)
+    {
+        Print("TestDvDeviceC - Assertion failed. Expected to find 1 device, but got %d.\n", size);
+    }	    
+    ASSERT(size == 1);
     TestBasicCpC::TestActions(iList[0]);
 }
 

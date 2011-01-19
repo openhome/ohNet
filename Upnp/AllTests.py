@@ -98,7 +98,7 @@ for arg in sys.argv[1:]:
     elif arg == '-s' or arg == '--silent':
         gSilent = 1
     elif arg == '-j' or arg == '--jsonly':
-        gJsOnly = 1
+        gJsOnly = 0
     elif arg == '-t' or arg == '--testsonly':
         gTestsOnly = 1
     elif arg == '-vg' or arg == '--valgrind':

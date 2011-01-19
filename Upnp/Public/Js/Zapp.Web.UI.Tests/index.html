@@ -2,11 +2,24 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title></title>
+    <link href="resource/css/test.css" rel="stylesheet" type="text/css" />
     <script src="resource/scripts/jquery-1.4.2.min.js" type="text/javascript"></script>
     <script src="resource/scripts/ProxyCore.js" type="text/javascript"></script>
     <script src="resource/scripts/CpZappOrgTestBasic1.js" type="text/javascript"></script>
     <script src="resource/scripts/yui-min.js" type="text/javascript"></script>
     <script src="resource/scripts/yuitest-min.js" type="text/javascript"></script>
+    <script src="resource/scripts/loader-min.js" type="text/javascript"></script>
+    <script src="resource/scripts/substitute-min.js" type="text/javascript"></script>
+    <script src="resource/scripts/oop-min.js" type="text/javascript"></script>
+    <script src="resource/scripts/dom-min.js" type="text/javascript"></script>
+    <script src="resource/scripts/event-custom-base-min.js" type="text/javascript"></script>
+    <script src="resource/scripts/event-base-min.js" type="text/javascript"></script>
+    <script src="resource/scripts/pluginhost-min.js" type="text/javascript"></script>
+    <script src="resource/scripts/node-min.js" type="text/javascript"></script>
+    <script src="resource/scripts/event-delegate-min.js" type="text/javascript"></script>
+    <script src="resource/scripts/json-min.js" type="text/javascript"></script>
+    <script src="resource/scripts/event-simulate-min.js" type="text/javascript"></script>
+    <script src="resource/scripts/test-min.js" type="text/javascript"></script>
     <script type="text/javascript">
         var kAsyncTimeoutMS = 5000; //300;
         var _Y;
@@ -51,7 +64,7 @@
 
 
                             Y.Assert.isNotUndefined(proxy);
-                        },true);
+                        },false);
                         this.wait(kAsyncTimeoutMS);
                     },
 

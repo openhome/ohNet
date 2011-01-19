@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -61,6 +62,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iTrackCountChanged;
         private CallbackPropertyChanged iDurationChanged;
         private CallbackPropertyChanged iSecondsChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -86,6 +88,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iDuration);
             iSeconds = new PropertyUint("Seconds", SecondsPropertyChanged);
             AddProperty(iSeconds);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -149,7 +153,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackCountChanged(CallbackPropertyChanged aTrackCountChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTrackCountChanged = aTrackCountChanged;
             }
@@ -157,7 +161,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TrackCountPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTrackCountChanged != null)
                 {
@@ -174,7 +178,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDurationChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDurationChanged(CallbackPropertyChanged aDurationChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDurationChanged = aDurationChanged;
             }
@@ -182,7 +186,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DurationPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDurationChanged != null)
                 {
@@ -199,7 +203,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSecondsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySecondsChanged(CallbackPropertyChanged aSecondsChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iSecondsChanged = aSecondsChanged;
             }
@@ -207,7 +211,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void SecondsPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iSecondsChanged != null)
                 {

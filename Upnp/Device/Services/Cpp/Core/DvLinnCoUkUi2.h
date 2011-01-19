@@ -143,145 +143,145 @@ protected:
     /**
      * Signal that the action DisplayTestPattern is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDisplayTestPattern must be overridden if this is called.
+     * DisplayTestPattern must be overridden if this is called.
      */
     void EnableActionDisplayTestPattern();
     /**
      * Signal that the action DisplayFill is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDisplayFill must be overridden if this is called.
+     * DisplayFill must be overridden if this is called.
      */
     void EnableActionDisplayFill();
     /**
      * Signal that the action DisplayClear is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDisplayClear must be overridden if this is called.
+     * DisplayClear must be overridden if this is called.
      */
     void EnableActionDisplayClear();
     /**
      * Signal that the action SetTestModeEnabled is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetTestModeEnabled must be overridden if this is called.
+     * SetTestModeEnabled must be overridden if this is called.
      */
     void EnableActionSetTestModeEnabled();
     /**
      * Signal that the action SimulateInfraredInput is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSimulateInfraredInput must be overridden if this is called.
+     * SimulateInfraredInput must be overridden if this is called.
      */
     void EnableActionSimulateInfraredInput();
     /**
      * Signal that the action SimulateButtonInput is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSimulateButtonInput must be overridden if this is called.
+     * SimulateButtonInput must be overridden if this is called.
      */
     void EnableActionSimulateButtonInput();
     /**
      * Signal that the action SimulateLightSensor is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSimulateLightSensor must be overridden if this is called.
+     * SimulateLightSensor must be overridden if this is called.
      */
     void EnableActionSimulateLightSensor();
     /**
      * Signal that the action GetLightSensorData is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetLightSensorData must be overridden if this is called.
+     * GetLightSensorData must be overridden if this is called.
      */
     void EnableActionGetLightSensorData();
     /**
      * Signal that the action SetDisplayBrightness is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetDisplayBrightness must be overridden if this is called.
+     * SetDisplayBrightness must be overridden if this is called.
      */
     void EnableActionSetDisplayBrightness();
     /**
      * Signal that the action SetDisplayBrightnessAuto is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetDisplayBrightnessAuto must be overridden if this is called.
+     * SetDisplayBrightnessAuto must be overridden if this is called.
      */
     void EnableActionSetDisplayBrightnessAuto();
     /**
      * Signal that the action SetInfraredCommands is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetInfraredCommands must be overridden if this is called.
+     * SetInfraredCommands must be overridden if this is called.
      */
     void EnableActionSetInfraredCommands();
     /**
      * Signal that the action InfraredCommands is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoInfraredCommands must be overridden if this is called.
+     * InfraredCommands must be overridden if this is called.
      */
     void EnableActionInfraredCommands();
     /**
      * Signal that the action SetInfraredTerminalCommands is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetInfraredTerminalCommands must be overridden if this is called.
+     * SetInfraredTerminalCommands must be overridden if this is called.
      */
     void EnableActionSetInfraredTerminalCommands();
     /**
      * Signal that the action InfraredTerminalCommands is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoInfraredTerminalCommands must be overridden if this is called.
+     * InfraredTerminalCommands must be overridden if this is called.
      */
     void EnableActionInfraredTerminalCommands();
     /**
      * Signal that the action DisplayBrightness is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDisplayBrightness must be overridden if this is called.
+     * DisplayBrightness must be overridden if this is called.
      */
     void EnableActionDisplayBrightness();
     /**
      * Signal that the action DisplayBrightnessAuto is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDisplayBrightnessAuto must be overridden if this is called.
+     * DisplayBrightnessAuto must be overridden if this is called.
      */
     void EnableActionDisplayBrightnessAuto();
     /**
      * Signal that the action DisplayUpsideDown is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDisplayUpsideDown must be overridden if this is called.
+     * DisplayUpsideDown must be overridden if this is called.
      */
     void EnableActionDisplayUpsideDown();
     /**
      * Signal that the action SetDisplayUpsideDown is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetDisplayUpsideDown must be overridden if this is called.
+     * SetDisplayUpsideDown must be overridden if this is called.
      */
     void EnableActionSetDisplayUpsideDown();
     /**
      * Signal that the action SetDisplayScrollText is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetDisplayScrollText must be overridden if this is called.
+     * SetDisplayScrollText must be overridden if this is called.
      */
     void EnableActionSetDisplayScrollText();
     /**
      * Signal that the action DisplayScrollText is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDisplayScrollText must be overridden if this is called.
+     * DisplayScrollText must be overridden if this is called.
      */
     void EnableActionDisplayScrollText();
     /**
      * Signal that the action SetDisplaySleep is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetDisplaySleep must be overridden if this is called.
+     * SetDisplaySleep must be overridden if this is called.
      */
     void EnableActionSetDisplaySleep();
     /**
      * Signal that the action DisplaySleep is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDisplaySleep must be overridden if this is called.
+     * DisplaySleep must be overridden if this is called.
      */
     void EnableActionDisplaySleep();
     /**
      * Signal that the action SetDisplayLedOff is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetDisplayLedOff must be overridden if this is called.
+     * SetDisplayLedOff must be overridden if this is called.
      */
     void EnableActionSetDisplayLedOff();
     /**
      * Signal that the action DisplayLedOff is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDisplayLedOff must be overridden if this is called.
+     * DisplayLedOff must be overridden if this is called.
      */
     void EnableActionDisplayLedOff();
 private:

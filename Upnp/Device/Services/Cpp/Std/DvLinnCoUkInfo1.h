@@ -155,25 +155,25 @@ protected:
     /**
      * Signal that the action Counters is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoCounters must be overridden if this is called.
+     * Counters must be overridden if this is called.
      */
     void EnableActionCounters();
     /**
      * Signal that the action Track is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoTrack must be overridden if this is called.
+     * Track must be overridden if this is called.
      */
     void EnableActionTrack();
     /**
      * Signal that the action Details is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDetails must be overridden if this is called.
+     * Details must be overridden if this is called.
      */
     void EnableActionDetails();
     /**
      * Signal that the action Metatext is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoMetatext must be overridden if this is called.
+     * Metatext must be overridden if this is called.
      */
     void EnableActionMetatext();
 private:

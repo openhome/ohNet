@@ -73,61 +73,61 @@ protected:
     /**
      * Signal that the action KontrolProductConnected is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoKontrolProductConnected must be overridden if this is called.
+     * KontrolProductConnected must be overridden if this is called.
      */
     void EnableActionKontrolProductConnected();
     /**
      * Signal that the action SetKontrolProductConnected is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetKontrolProductConnected must be overridden if this is called.
+     * SetKontrolProductConnected must be overridden if this is called.
      */
     void EnableActionSetKontrolProductConnected();
     /**
      * Signal that the action KontrolProductComPort is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoKontrolProductComPort must be overridden if this is called.
+     * KontrolProductComPort must be overridden if this is called.
      */
     void EnableActionKontrolProductComPort();
     /**
      * Signal that the action SetKontrolProductComPort is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetKontrolProductComPort must be overridden if this is called.
+     * SetKontrolProductComPort must be overridden if this is called.
      */
     void EnableActionSetKontrolProductComPort();
     /**
      * Signal that the action DiscPlayerConnected is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDiscPlayerConnected must be overridden if this is called.
+     * DiscPlayerConnected must be overridden if this is called.
      */
     void EnableActionDiscPlayerConnected();
     /**
      * Signal that the action SetDiscPlayerConnected is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetDiscPlayerConnected must be overridden if this is called.
+     * SetDiscPlayerConnected must be overridden if this is called.
      */
     void EnableActionSetDiscPlayerConnected();
     /**
      * Signal that the action DiscPlayerComPort is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDiscPlayerComPort must be overridden if this is called.
+     * DiscPlayerComPort must be overridden if this is called.
      */
     void EnableActionDiscPlayerComPort();
     /**
      * Signal that the action SetDiscPlayerComPort is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetDiscPlayerComPort must be overridden if this is called.
+     * SetDiscPlayerComPort must be overridden if this is called.
      */
     void EnableActionSetDiscPlayerComPort();
     /**
      * Signal that the action TestKontrolProductConnection is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoTestKontrolProductConnection must be overridden if this is called.
+     * TestKontrolProductConnection must be overridden if this is called.
      */
     void EnableActionTestKontrolProductConnection();
     /**
      * Signal that the action TestDiscPlayerConnection is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoTestDiscPlayerConnection must be overridden if this is called.
+     * TestDiscPlayerConnection must be overridden if this is called.
      */
     void EnableActionTestDiscPlayerConnection();
 private:

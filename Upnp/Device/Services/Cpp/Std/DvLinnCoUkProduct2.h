@@ -75,73 +75,73 @@ protected:
     /**
      * Signal that the action Type is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoType must be overridden if this is called.
+     * Type must be overridden if this is called.
      */
     void EnableActionType();
     /**
      * Signal that the action Model is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoModel must be overridden if this is called.
+     * Model must be overridden if this is called.
      */
     void EnableActionModel();
     /**
      * Signal that the action Name is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoName must be overridden if this is called.
+     * Name must be overridden if this is called.
      */
     void EnableActionName();
     /**
      * Signal that the action SetName is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetName must be overridden if this is called.
+     * SetName must be overridden if this is called.
      */
     void EnableActionSetName();
     /**
      * Signal that the action Room is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoRoom must be overridden if this is called.
+     * Room must be overridden if this is called.
      */
     void EnableActionRoom();
     /**
      * Signal that the action SetRoom is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetRoom must be overridden if this is called.
+     * SetRoom must be overridden if this is called.
      */
     void EnableActionSetRoom();
     /**
      * Signal that the action Standby is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStandby must be overridden if this is called.
+     * Standby must be overridden if this is called.
      */
     void EnableActionStandby();
     /**
      * Signal that the action SetStandby is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetStandby must be overridden if this is called.
+     * SetStandby must be overridden if this is called.
      */
     void EnableActionSetStandby();
     /**
      * Signal that the action SourceCount is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSourceCount must be overridden if this is called.
+     * SourceCount must be overridden if this is called.
      */
     void EnableActionSourceCount();
     /**
      * Signal that the action SourceIndex is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSourceIndex must be overridden if this is called.
+     * SourceIndex must be overridden if this is called.
      */
     void EnableActionSourceIndex();
     /**
      * Signal that the action SetSourceIndex is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetSourceIndex must be overridden if this is called.
+     * SetSourceIndex must be overridden if this is called.
      */
     void EnableActionSetSourceIndex();
     /**
      * Signal that the action SourceType is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSourceType must be overridden if this is called.
+     * SourceType must be overridden if this is called.
      */
     void EnableActionSourceType();
 private:

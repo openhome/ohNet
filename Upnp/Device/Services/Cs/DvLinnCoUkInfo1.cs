@@ -456,7 +456,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Counters is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoCounters must be overridden if this is called.</remarks>
+        /// Counters must be overridden if this is called.</remarks>
         protected void EnableActionCounters()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Counters");
@@ -471,7 +471,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Track is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoTrack must be overridden if this is called.</remarks>
+        /// Track must be overridden if this is called.</remarks>
         protected void EnableActionTrack()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Track");
@@ -485,7 +485,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Details is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDetails must be overridden if this is called.</remarks>
+        /// Details must be overridden if this is called.</remarks>
         protected void EnableActionDetails()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Details");
@@ -503,7 +503,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Metatext is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoMetatext must be overridden if this is called.</remarks>
+        /// Metatext must be overridden if this is called.</remarks>
         protected void EnableActionMetatext()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Metatext");

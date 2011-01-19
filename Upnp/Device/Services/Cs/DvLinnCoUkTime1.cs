@@ -137,7 +137,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Time is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoTime must be overridden if this is called.</remarks>
+        /// Time must be overridden if this is called.</remarks>
         protected void EnableActionTime()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Time");

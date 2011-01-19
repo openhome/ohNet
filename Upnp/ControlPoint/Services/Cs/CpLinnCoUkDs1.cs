@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -277,6 +278,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iTrackCodecNameChanged;
         private CallbackPropertyChanged iTrackIdChanged;
         private CallbackPropertyChanged iTransportStateChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -360,6 +362,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iTrackId);
             iTransportState = new PropertyString("TransportState", TransportStatePropertyChanged);
             AddProperty(iTransportState);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -799,7 +803,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSupportedProtocolsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySupportedProtocolsChanged(CallbackPropertyChanged aSupportedProtocolsChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iSupportedProtocolsChanged = aSupportedProtocolsChanged;
             }
@@ -807,7 +811,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void SupportedProtocolsPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iSupportedProtocolsChanged != null)
                 {
@@ -824,7 +828,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackDurationChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackDurationChanged(CallbackPropertyChanged aTrackDurationChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTrackDurationChanged = aTrackDurationChanged;
             }
@@ -832,7 +836,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TrackDurationPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTrackDurationChanged != null)
                 {
@@ -849,7 +853,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackBitRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackBitRateChanged(CallbackPropertyChanged aTrackBitRateChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTrackBitRateChanged = aTrackBitRateChanged;
             }
@@ -857,7 +861,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TrackBitRatePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTrackBitRateChanged != null)
                 {
@@ -874,7 +878,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackLosslessChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackLosslessChanged(CallbackPropertyChanged aTrackLosslessChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTrackLosslessChanged = aTrackLosslessChanged;
             }
@@ -882,7 +886,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TrackLosslessPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTrackLosslessChanged != null)
                 {
@@ -899,7 +903,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackBitDepthChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackBitDepthChanged(CallbackPropertyChanged aTrackBitDepthChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTrackBitDepthChanged = aTrackBitDepthChanged;
             }
@@ -907,7 +911,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TrackBitDepthPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTrackBitDepthChanged != null)
                 {
@@ -924,7 +928,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackSampleRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackSampleRateChanged(CallbackPropertyChanged aTrackSampleRateChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTrackSampleRateChanged = aTrackSampleRateChanged;
             }
@@ -932,7 +936,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TrackSampleRatePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTrackSampleRateChanged != null)
                 {
@@ -949,7 +953,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackCodecNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackCodecNameChanged(CallbackPropertyChanged aTrackCodecNameChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTrackCodecNameChanged = aTrackCodecNameChanged;
             }
@@ -957,7 +961,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TrackCodecNamePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTrackCodecNameChanged != null)
                 {
@@ -974,7 +978,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackIdChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackIdChanged(CallbackPropertyChanged aTrackIdChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTrackIdChanged = aTrackIdChanged;
             }
@@ -982,7 +986,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TrackIdPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTrackIdChanged != null)
                 {
@@ -999,7 +1003,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransportStateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTransportStateChanged(CallbackPropertyChanged aTransportStateChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTransportStateChanged = aTransportStateChanged;
             }
@@ -1007,7 +1011,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TransportStatePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTransportStateChanged != null)
                 {

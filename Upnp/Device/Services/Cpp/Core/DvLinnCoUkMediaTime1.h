@@ -43,7 +43,7 @@ protected:
     /**
      * Signal that the action Seconds is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSeconds must be overridden if this is called.
+     * Seconds must be overridden if this is called.
      */
     void EnableActionSeconds();
 private:

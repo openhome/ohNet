@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -298,6 +299,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iRepeatChanged;
         private CallbackPropertyChanged iShuffleChanged;
         private CallbackPropertyChanged iTracksMaxChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -380,6 +382,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iShuffle);
             iTracksMax = new PropertyUint("TracksMax", TracksMaxPropertyChanged);
             AddProperty(iTracksMax);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -922,7 +926,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIdArrayChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyIdArrayChanged(CallbackPropertyChanged aIdArrayChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iIdArrayChanged = aIdArrayChanged;
             }
@@ -930,7 +934,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void IdArrayPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iIdArrayChanged != null)
                 {
@@ -947,7 +951,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRepeatChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyRepeatChanged(CallbackPropertyChanged aRepeatChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iRepeatChanged = aRepeatChanged;
             }
@@ -955,7 +959,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void RepeatPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iRepeatChanged != null)
                 {
@@ -972,7 +976,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aShuffleChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyShuffleChanged(CallbackPropertyChanged aShuffleChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iShuffleChanged = aShuffleChanged;
             }
@@ -980,7 +984,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ShufflePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iShuffleChanged != null)
                 {
@@ -997,7 +1001,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTracksMaxChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTracksMaxChanged(CallbackPropertyChanged aTracksMaxChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTracksMaxChanged = aTracksMaxChanged;
             }
@@ -1005,7 +1009,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TracksMaxPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTracksMaxChanged != null)
                 {

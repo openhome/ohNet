@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -197,6 +198,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iCurrentPresetChanged;
         private CallbackPropertyChanged iPresetPrefixChanged;
         private CallbackPropertyChanged iAlbumArtFileNameChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -249,6 +251,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iPresetPrefix);
             iAlbumArtFileName = new PropertyString("AlbumArtFileName", AlbumArtFileNamePropertyChanged);
             AddProperty(iAlbumArtFileName);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -598,7 +602,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCurrentPresetChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyCurrentPresetChanged(CallbackPropertyChanged aCurrentPresetChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iCurrentPresetChanged = aCurrentPresetChanged;
             }
@@ -606,7 +610,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void CurrentPresetPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iCurrentPresetChanged != null)
                 {
@@ -623,7 +627,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aPresetPrefixChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyPresetPrefixChanged(CallbackPropertyChanged aPresetPrefixChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iPresetPrefixChanged = aPresetPrefixChanged;
             }
@@ -631,7 +635,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void PresetPrefixPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iPresetPrefixChanged != null)
                 {
@@ -648,7 +652,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAlbumArtFileNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyAlbumArtFileNameChanged(CallbackPropertyChanged aAlbumArtFileNameChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iAlbumArtFileNameChanged = aAlbumArtFileNameChanged;
             }
@@ -656,7 +660,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void AlbumArtFileNamePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iAlbumArtFileNameChanged != null)
                 {

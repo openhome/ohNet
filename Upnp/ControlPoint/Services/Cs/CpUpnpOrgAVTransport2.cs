@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -597,6 +598,7 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyString iDRMState;
         private CallbackPropertyChanged iLastChangeChanged;
         private CallbackPropertyChanged iDRMStateChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -825,6 +827,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iLastChange);
             iDRMState = new PropertyString("DRMState", DRMStatePropertyChanged);
             AddProperty(iDRMState);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -1932,7 +1936,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLastChangeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyLastChangeChanged(CallbackPropertyChanged aLastChangeChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iLastChangeChanged = aLastChangeChanged;
             }
@@ -1940,7 +1944,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void LastChangePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iLastChangeChanged != null)
                 {
@@ -1957,7 +1961,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDRMStateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDRMStateChanged(CallbackPropertyChanged aDRMStateChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDRMStateChanged = aDRMStateChanged;
             }
@@ -1965,7 +1969,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DRMStatePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDRMStateChanged != null)
                 {

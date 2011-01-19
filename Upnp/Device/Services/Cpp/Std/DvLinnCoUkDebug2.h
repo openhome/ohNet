@@ -35,19 +35,19 @@ protected:
     /**
      * Signal that the action SetDebugLevel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetDebugLevel must be overridden if this is called.
+     * SetDebugLevel must be overridden if this is called.
      */
     void EnableActionSetDebugLevel();
     /**
      * Signal that the action DebugLevel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDebugLevel must be overridden if this is called.
+     * DebugLevel must be overridden if this is called.
      */
     void EnableActionDebugLevel();
     /**
      * Signal that the action MemWrite is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoMemWrite must be overridden if this is called.
+     * MemWrite must be overridden if this is called.
      */
     void EnableActionMemWrite();
 private:

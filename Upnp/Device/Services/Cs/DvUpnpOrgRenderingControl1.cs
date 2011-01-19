@@ -102,7 +102,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ListPresets is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoListPresets must be overridden if this is called.</remarks>
+        /// ListPresets must be overridden if this is called.</remarks>
         protected void EnableActionListPresets()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ListPresets");
@@ -117,7 +117,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SelectPreset is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSelectPreset must be overridden if this is called.</remarks>
+        /// SelectPreset must be overridden if this is called.</remarks>
         protected void EnableActionSelectPreset()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SelectPreset");
@@ -134,7 +134,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetBrightness is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetBrightness must be overridden if this is called.</remarks>
+        /// GetBrightness must be overridden if this is called.</remarks>
         protected void EnableActionGetBrightness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetBrightness");
@@ -148,7 +148,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetBrightness is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetBrightness must be overridden if this is called.</remarks>
+        /// SetBrightness must be overridden if this is called.</remarks>
         protected void EnableActionSetBrightness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBrightness");
@@ -162,7 +162,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetContrast is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetContrast must be overridden if this is called.</remarks>
+        /// GetContrast must be overridden if this is called.</remarks>
         protected void EnableActionGetContrast()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetContrast");
@@ -176,7 +176,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetContrast is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetContrast must be overridden if this is called.</remarks>
+        /// SetContrast must be overridden if this is called.</remarks>
         protected void EnableActionSetContrast()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetContrast");
@@ -190,7 +190,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetSharpness is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetSharpness must be overridden if this is called.</remarks>
+        /// GetSharpness must be overridden if this is called.</remarks>
         protected void EnableActionGetSharpness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetSharpness");
@@ -204,7 +204,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetSharpness is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetSharpness must be overridden if this is called.</remarks>
+        /// SetSharpness must be overridden if this is called.</remarks>
         protected void EnableActionSetSharpness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetSharpness");
@@ -218,7 +218,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetRedVideoGain is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetRedVideoGain must be overridden if this is called.</remarks>
+        /// GetRedVideoGain must be overridden if this is called.</remarks>
         protected void EnableActionGetRedVideoGain()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRedVideoGain");
@@ -232,7 +232,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetRedVideoGain is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetRedVideoGain must be overridden if this is called.</remarks>
+        /// SetRedVideoGain must be overridden if this is called.</remarks>
         protected void EnableActionSetRedVideoGain()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRedVideoGain");
@@ -246,7 +246,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetGreenVideoGain is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetGreenVideoGain must be overridden if this is called.</remarks>
+        /// GetGreenVideoGain must be overridden if this is called.</remarks>
         protected void EnableActionGetGreenVideoGain()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetGreenVideoGain");
@@ -260,7 +260,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetGreenVideoGain is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetGreenVideoGain must be overridden if this is called.</remarks>
+        /// SetGreenVideoGain must be overridden if this is called.</remarks>
         protected void EnableActionSetGreenVideoGain()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetGreenVideoGain");
@@ -274,7 +274,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetBlueVideoGain is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetBlueVideoGain must be overridden if this is called.</remarks>
+        /// GetBlueVideoGain must be overridden if this is called.</remarks>
         protected void EnableActionGetBlueVideoGain()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetBlueVideoGain");
@@ -288,7 +288,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetBlueVideoGain is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetBlueVideoGain must be overridden if this is called.</remarks>
+        /// SetBlueVideoGain must be overridden if this is called.</remarks>
         protected void EnableActionSetBlueVideoGain()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBlueVideoGain");
@@ -302,7 +302,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetRedVideoBlackLevel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetRedVideoBlackLevel must be overridden if this is called.</remarks>
+        /// GetRedVideoBlackLevel must be overridden if this is called.</remarks>
         protected void EnableActionGetRedVideoBlackLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetRedVideoBlackLevel");
@@ -316,7 +316,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetRedVideoBlackLevel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetRedVideoBlackLevel must be overridden if this is called.</remarks>
+        /// SetRedVideoBlackLevel must be overridden if this is called.</remarks>
         protected void EnableActionSetRedVideoBlackLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRedVideoBlackLevel");
@@ -330,7 +330,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetGreenVideoBlackLevel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetGreenVideoBlackLevel must be overridden if this is called.</remarks>
+        /// GetGreenVideoBlackLevel must be overridden if this is called.</remarks>
         protected void EnableActionGetGreenVideoBlackLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetGreenVideoBlackLevel");
@@ -344,7 +344,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetGreenVideoBlackLevel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetGreenVideoBlackLevel must be overridden if this is called.</remarks>
+        /// SetGreenVideoBlackLevel must be overridden if this is called.</remarks>
         protected void EnableActionSetGreenVideoBlackLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetGreenVideoBlackLevel");
@@ -358,7 +358,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetBlueVideoBlackLevel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetBlueVideoBlackLevel must be overridden if this is called.</remarks>
+        /// GetBlueVideoBlackLevel must be overridden if this is called.</remarks>
         protected void EnableActionGetBlueVideoBlackLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetBlueVideoBlackLevel");
@@ -372,7 +372,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetBlueVideoBlackLevel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetBlueVideoBlackLevel must be overridden if this is called.</remarks>
+        /// SetBlueVideoBlackLevel must be overridden if this is called.</remarks>
         protected void EnableActionSetBlueVideoBlackLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBlueVideoBlackLevel");
@@ -386,7 +386,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetColorTemperature is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetColorTemperature must be overridden if this is called.</remarks>
+        /// GetColorTemperature must be overridden if this is called.</remarks>
         protected void EnableActionGetColorTemperature()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetColorTemperature");
@@ -400,7 +400,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetColorTemperature is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetColorTemperature must be overridden if this is called.</remarks>
+        /// SetColorTemperature must be overridden if this is called.</remarks>
         protected void EnableActionSetColorTemperature()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetColorTemperature");
@@ -414,7 +414,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetHorizontalKeystone is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetHorizontalKeystone must be overridden if this is called.</remarks>
+        /// GetHorizontalKeystone must be overridden if this is called.</remarks>
         protected void EnableActionGetHorizontalKeystone()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetHorizontalKeystone");
@@ -428,7 +428,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetHorizontalKeystone is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetHorizontalKeystone must be overridden if this is called.</remarks>
+        /// SetHorizontalKeystone must be overridden if this is called.</remarks>
         protected void EnableActionSetHorizontalKeystone()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetHorizontalKeystone");
@@ -442,7 +442,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetVerticalKeystone is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetVerticalKeystone must be overridden if this is called.</remarks>
+        /// GetVerticalKeystone must be overridden if this is called.</remarks>
         protected void EnableActionGetVerticalKeystone()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetVerticalKeystone");
@@ -456,7 +456,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetVerticalKeystone is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetVerticalKeystone must be overridden if this is called.</remarks>
+        /// SetVerticalKeystone must be overridden if this is called.</remarks>
         protected void EnableActionSetVerticalKeystone()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetVerticalKeystone");
@@ -470,7 +470,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetMute is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetMute must be overridden if this is called.</remarks>
+        /// GetMute must be overridden if this is called.</remarks>
         protected void EnableActionGetMute()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetMute");
@@ -488,7 +488,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetMute is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetMute must be overridden if this is called.</remarks>
+        /// SetMute must be overridden if this is called.</remarks>
         protected void EnableActionSetMute()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetMute");
@@ -506,7 +506,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetVolume is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetVolume must be overridden if this is called.</remarks>
+        /// GetVolume must be overridden if this is called.</remarks>
         protected void EnableActionGetVolume()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetVolume");
@@ -524,7 +524,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetVolume is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetVolume must be overridden if this is called.</remarks>
+        /// SetVolume must be overridden if this is called.</remarks>
         protected void EnableActionSetVolume()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetVolume");
@@ -542,7 +542,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetVolumeDB is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetVolumeDB must be overridden if this is called.</remarks>
+        /// GetVolumeDB must be overridden if this is called.</remarks>
         protected void EnableActionGetVolumeDB()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetVolumeDB");
@@ -560,7 +560,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetVolumeDB is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetVolumeDB must be overridden if this is called.</remarks>
+        /// SetVolumeDB must be overridden if this is called.</remarks>
         protected void EnableActionSetVolumeDB()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetVolumeDB");
@@ -578,7 +578,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetVolumeDBRange is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetVolumeDBRange must be overridden if this is called.</remarks>
+        /// GetVolumeDBRange must be overridden if this is called.</remarks>
         protected void EnableActionGetVolumeDBRange()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetVolumeDBRange");
@@ -597,7 +597,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetLoudness is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetLoudness must be overridden if this is called.</remarks>
+        /// GetLoudness must be overridden if this is called.</remarks>
         protected void EnableActionGetLoudness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetLoudness");
@@ -615,7 +615,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetLoudness is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetLoudness must be overridden if this is called.</remarks>
+        /// SetLoudness must be overridden if this is called.</remarks>
         protected void EnableActionSetLoudness()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetLoudness");
