@@ -98,7 +98,7 @@ for arg in sys.argv[1:]:
     elif arg == '-s' or arg == '--silent':
         gSilent = 1
     elif arg == '-j' or arg == '--jsonly':
-        gJsOnly = 0
+        gJsOnly = 1
     elif arg == '-t' or arg == '--testsonly':
         gTestsOnly = 1
     elif arg == '-vg' or arg == '--valgrind':
@@ -175,7 +175,11 @@ def JsOnly():
     LocalAppData = os.environ.get('LOCALAPPDATA')
     WorkSpace = os.environ.get('WORKSPACE')
     UIPath = os.path.join(WorkSpace, 'Upnp\Public\Js\Zapp.Web.UI.Tests')
-    Chrome = os.path.join(LocalAppData, 'Google\chrome\Application\Chrome.exe')
+
+    ProgramFiles = os.environ.get('ProgramFiles')
+    Chrome = ""
+    Chrome = os.path.join(ProgramFiles, 'Safari\Safari.exe')
+    #Chrome = os.path.join(LocalAppData, 'Google\chrome\Application\Chrome.exe')
     TestBasic = "Build\Obj\Windows\TestDvTestBasic.exe"
     TestDeviceFinder = "Build\Obj\Windows\TestDeviceFinder.exe"
     testbasic = subprocess.Popen([TestBasic, '-l', '-c', UIPath])
