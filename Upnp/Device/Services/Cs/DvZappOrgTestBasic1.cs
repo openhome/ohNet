@@ -66,13 +66,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        bool SetPropertyVarBin(string aValue);
+        bool SetPropertyVarBin(byte[] aValue);
 
         /// <summary>
         /// Get a copy of the value of the VarBin property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        string PropertyVarBin();
+        byte[] PropertyVarBin();
         
     }
     /// <summary>
@@ -208,7 +208,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public bool SetPropertyVarBin(string aValue)
+        public bool SetPropertyVarBin(byte[] aValue)
         {
             return SetPropertyBinary(iPropertyVarBin, aValue);
         }
@@ -217,7 +217,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the VarBin property
         /// </summary>
         /// <returns>The value of the property</returns>
-        public string PropertyVarBin()
+        public byte[] PropertyVarBin()
         {
             return iPropertyVarBin.Value();
         }
@@ -547,7 +547,7 @@ namespace Zapp.Device.Providers
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
-        protected virtual void EchoBinary(uint aVersion, string aValue, out string aResult)
+        protected virtual void EchoBinary(uint aVersion, byte[] aValue, out byte[] aResult)
         {
             throw (new ActionDisabledError());
         }
@@ -689,7 +689,7 @@ namespace Zapp.Device.Providers
         /// Must be implemented iff EnableActionSetBinary was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aValueBin"></param>
-        protected virtual void SetBinary(uint aVersion, string aValueBin)
+        protected virtual void SetBinary(uint aVersion, byte[] aValueBin)
         {
             throw (new ActionDisabledError());
         }
@@ -703,7 +703,7 @@ namespace Zapp.Device.Providers
         /// Must be implemented iff EnableActionGetBinary was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aValueBin"></param>
-        protected virtual void GetBinary(uint aVersion, out string aValueBin)
+        protected virtual void GetBinary(uint aVersion, out byte[] aValueBin)
         {
             throw (new ActionDisabledError());
         }
@@ -922,8 +922,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            string value;
-            string result;
+            byte[] value;
+            byte[] result;
             try
             {
                 invocation.ReadStart();
@@ -1328,7 +1328,7 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            string valueBin;
+            byte[] valueBin;
             try
             {
                 invocation.ReadStart();
@@ -1368,7 +1368,7 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            string valueBin;
+            byte[] valueBin;
             try
             {
                 invocation.ReadStart();

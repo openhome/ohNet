@@ -17,8 +17,9 @@ namespace Zapp
             SetPropertyVarInt(0);
             SetPropertyVarBool(false);
             string empty = "";
+            byte[] emptyBinary = new byte[0];
             SetPropertyVarStr(empty);
-            SetPropertyVarBin(empty);
+            SetPropertyVarBin(emptyBinary);
 
             EnableActionIncrement();
             EnableActionDecrement();
@@ -58,7 +59,7 @@ namespace Zapp
             aResult = aValue;
         }
 
-        protected override void EchoBinary(uint aVersion, string aValue, out string aResult)
+        protected override void EchoBinary(uint aVersion, byte[] aValue, out byte[] aResult)
         {
             aResult = aValue;
         }
@@ -103,12 +104,12 @@ namespace Zapp
             aValueStr = PropertyVarStr();
         }
 
-        protected override void SetBinary(uint aVersion, string aValueBin)
+        protected override void SetBinary(uint aVersion, byte[] aValueBin)
         {
             SetPropertyVarBin(aValueBin);
         }
 
-        protected override void GetBinary(uint aVersion, out string aValueBin)
+        protected override void GetBinary(uint aVersion, out byte[] aValueBin)
         {
             aValueBin = PropertyVarBin();
         }

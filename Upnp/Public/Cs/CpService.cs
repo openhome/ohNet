@@ -230,11 +230,11 @@ namespace Zapp.ControlPoint
     public class ArgumentBinary : Argument
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr ActionArgumentCreateBinaryInput(IntPtr aParameter, char* aData, int aLength);
+        static extern unsafe IntPtr ActionArgumentCreateBinaryInput(IntPtr aParameter, IntPtr aData, int aLength);
         [DllImport("ZappUpnp")]
         static extern IntPtr ActionArgumentCreateBinaryOutput(IntPtr aParameter);
         [DllImport("ZappUpnp")]
-        static extern unsafe void ActionArgumentGetValueBinary(IntPtr aHandle, char** aData, uint* aLen);
+        static extern unsafe void ActionArgumentGetValueBinary(IntPtr aHandle, IntPtr* aData, uint* aLen);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(IntPtr aPtr);
 
@@ -245,11 +245,12 @@ namespace Zapp.ControlPoint
         /// <param name="aParameter">Defines the name for the argument.
         /// Must have been previously added to the action using Action.AddInputParameter</param>
         /// <param name="aValue">Value for the argument</param>
-        public unsafe ArgumentBinary(ParameterBinary aParameter, String aData)
+        public unsafe ArgumentBinary(ParameterBinary aParameter, byte[] aData)
         {
-            char* data = (char*)Marshal.StringToHGlobalAnsi(aData);
-            iHandle = ActionArgumentCreateBinaryInput(aParameter.Handle(), data, aData.Length);
-            Marshal.FreeHGlobal((IntPtr)data);
+            fixed (byte* pData = aData)
+            {
+                iHandle = ActionArgumentCreateBinaryInput(aParameter.Handle(), new IntPtr(pData), aData.Length);
+            }
         }
 
         /// <summary>
@@ -270,12 +271,13 @@ namespace Zapp.ControlPoint
         /// <remarks>Only intended for use with output arguments inside the invocation completed callback.
         /// Can only be called once as the first call extracts the string data from the underlying native object</remarks>
         /// <returns>Current value of the argument</returns>
-        unsafe String Value()
+        unsafe byte[] Value()
         {
-            char* data;
+            IntPtr data;
             uint len;
             ActionArgumentGetValueBinary(iHandle, &data, &len);
-            String ret = Marshal.PtrToStringAnsi((IntPtr)data, (int)len);
+            byte[] ret = new byte[len];
+            Marshal.Copy(data, ret, 0, (int)len);
             ZappFree((IntPtr)data);
             return ret;
         }
@@ -303,9 +305,9 @@ namespace Zapp.ControlPoint
         [DllImport("ZappUpnp")]
         static extern unsafe uint CpInvocationOutputBool(IntPtr aInvocation, uint aIndex);
         [DllImport("ZappUpnp")]
-        static extern unsafe char* CpInvocationOutputString(IntPtr aInvocation, uint aIndex);
+        static extern unsafe IntPtr CpInvocationOutputString(IntPtr aInvocation, uint aIndex);
         [DllImport("ZappUpnp")]
-        static extern unsafe void CpInvocationGetOutputBinary(IntPtr aInvocation, uint aIndex, char** aData, uint* aLen);
+        static extern unsafe void CpInvocationGetOutputBinary(IntPtr aInvocation, uint aIndex, IntPtr* aData, uint* aLen);
 
         private CpProxy.CallbackAsyncComplete iAsyncComplete;
         private CpProxy.CallbackActionComplete iCallbackAsyncComplete;
@@ -413,13 +415,13 @@ namespace Zapp.ControlPoint
         /// <returns>Value of the string output argument</returns>
         public static unsafe String OutputString(IntPtr aHandle, uint aIndex)
         {
-            char* cStr = CpInvocationOutputString(aHandle, aIndex);
+            IntPtr cStr = CpInvocationOutputString(aHandle, aIndex);
             if (cStr == null)
             {
                 return null;
             }
-            String str = Marshal.PtrToStringAnsi((IntPtr)cStr);
-            ZappFree((IntPtr)cStr);
+            String str = Marshal.PtrToStringAnsi(cStr);
+            ZappFree(cStr);
             return str;
         }
 
@@ -433,16 +435,17 @@ namespace Zapp.ControlPoint
         /// <param name="aIndex">Zero-based index into array of output arguments.
         /// Must refer to an ArgumentString.</param>
         /// <returns>Value of the string output argument</returns>
-        public static unsafe String OutputBinary(IntPtr aHandle, uint aIndex)
+        public static unsafe byte[] OutputBinary(IntPtr aHandle, uint aIndex)
         {
-            char* data;
+            IntPtr data;
             uint len;
             CpInvocationGetOutputBinary(aHandle, aIndex, &data, &len);
             if (data == null)
             {
                 return null;
             }
-            String bin = Marshal.PtrToStringAnsi((IntPtr)data, (int)len);
+            byte[] bin = new byte[len];
+            Marshal.Copy(data, bin, 0, (int)len);
             ZappFree((IntPtr)data);
             return bin;
         }

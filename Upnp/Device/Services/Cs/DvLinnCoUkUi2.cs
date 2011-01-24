@@ -144,13 +144,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        bool SetPropertyDisplayPixels(string aValue);
+        bool SetPropertyDisplayPixels(byte[] aValue);
 
         /// <summary>
         /// Get a copy of the value of the DisplayPixels property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        string PropertyDisplayPixels();
+        byte[] PropertyDisplayPixels();
         
     }
     /// <summary>
@@ -433,7 +433,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public bool SetPropertyDisplayPixels(string aValue)
+        public bool SetPropertyDisplayPixels(byte[] aValue)
         {
             return SetPropertyBinary(iPropertyDisplayPixels, aValue);
         }
@@ -442,7 +442,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplayPixels property
         /// </summary>
         /// <returns>The value of the property</returns>
-        public string PropertyDisplayPixels()
+        public byte[] PropertyDisplayPixels()
         {
             return iPropertyDisplayPixels.Value();
         }

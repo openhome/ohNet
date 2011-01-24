@@ -22,9 +22,9 @@ namespace Zapp.ControlPoint.Proxies
         void SyncEchoString(String aValue, out String aResult);
         void BeginEchoString(String aValue, CpProxy.CallbackAsyncComplete aCallback);
         void EndEchoString(IntPtr aAsyncHandle, out String aResult);
-        void SyncEchoBinary(String aValue, out String aResult);
-        void BeginEchoBinary(String aValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndEchoBinary(IntPtr aAsyncHandle, out String aResult);
+        void SyncEchoBinary(byte[] aValue, out byte[] aResult);
+        void BeginEchoBinary(byte[] aValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndEchoBinary(IntPtr aAsyncHandle, out byte[] aResult);
         void SyncSetUint(uint aValueUint);
         void BeginSetUint(uint aValueUint, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetUint(IntPtr aAsyncHandle);
@@ -52,12 +52,12 @@ namespace Zapp.ControlPoint.Proxies
         void SyncGetString(out String aValueStr);
         void BeginGetString(CpProxy.CallbackAsyncComplete aCallback);
         void EndGetString(IntPtr aAsyncHandle, out String aValueStr);
-        void SyncSetBinary(String aValueBin);
-        void BeginSetBinary(String aValueBin, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetBinary(byte[] aValueBin);
+        void BeginSetBinary(byte[] aValueBin, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetBinary(IntPtr aAsyncHandle);
-        void SyncGetBinary(out String aValueBin);
+        void SyncGetBinary(out byte[] aValueBin);
         void BeginGetBinary(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetBinary(IntPtr aAsyncHandle, out String aValueBin);
+        void EndGetBinary(IntPtr aAsyncHandle, out byte[] aValueBin);
         void SyncToggleBool();
         void BeginToggleBool(CpProxy.CallbackAsyncComplete aCallback);
         void EndToggleBool(IntPtr aAsyncHandle);
@@ -76,7 +76,7 @@ namespace Zapp.ControlPoint.Proxies
         void SetPropertyVarStrChanged(CpProxy.CallbackPropertyChanged aVarStrChanged);
         String PropertyVarStr();
         void SetPropertyVarBinChanged(CpProxy.CallbackPropertyChanged aVarBinChanged);
-        String PropertyVarBin();
+        byte[] PropertyVarBin();
     }
 
     internal class SyncIncrementZappOrgTestBasic1 : SyncProxyAction
@@ -158,13 +158,13 @@ namespace Zapp.ControlPoint.Proxies
     internal class SyncEchoBinaryZappOrgTestBasic1 : SyncProxyAction
     {
         private CpProxyZappOrgTestBasic1 iService;
-        private String iResult;
+        private byte[] iResult;
 
         public SyncEchoBinaryZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
         {
             iService = aProxy;
         }
-        public String Result()
+        public byte[] Result()
         {
             return iResult;
         }
@@ -337,13 +337,13 @@ namespace Zapp.ControlPoint.Proxies
     internal class SyncGetBinaryZappOrgTestBasic1 : SyncProxyAction
     {
         private CpProxyZappOrgTestBasic1 iService;
-        private String iValueBin;
+        private byte[] iValueBin;
 
         public SyncGetBinaryZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
         {
             iService = aProxy;
         }
-        public String ValueBin()
+        public byte[] ValueBin()
         {
             return iValueBin;
         }
@@ -739,7 +739,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
-        public void SyncEchoBinary(String aValue, out String aResult)
+        public void SyncEchoBinary(byte[] aValue, out byte[] aResult)
         {
             SyncEchoBinaryZappOrgTestBasic1 sync = new SyncEchoBinaryZappOrgTestBasic1(this);
             BeginEchoBinary(aValue, sync.AsyncComplete());
@@ -757,7 +757,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValue"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginEchoBinary(String aValue, CallbackAsyncComplete aCallback)
+        public void BeginEchoBinary(byte[] aValue, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionEchoBinary, aCallback);
             int inIndex = 0;
@@ -773,7 +773,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResult"></param>
-        public void EndEchoBinary(IntPtr aAsyncHandle, out String aResult)
+        public void EndEchoBinary(IntPtr aAsyncHandle, out byte[] aResult)
         {
             uint index = 0;
             aResult = Invocation.OutputBinary(aAsyncHandle, index++);
@@ -1163,7 +1163,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValueBin"></param>
-        public void SyncSetBinary(String aValueBin)
+        public void SyncSetBinary(byte[] aValueBin)
         {
             SyncSetBinaryZappOrgTestBasic1 sync = new SyncSetBinaryZappOrgTestBasic1(this);
             BeginSetBinary(aValueBin, sync.AsyncComplete());
@@ -1180,7 +1180,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValueBin"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetBinary(String aValueBin, CallbackAsyncComplete aCallback)
+        public void BeginSetBinary(byte[] aValueBin, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetBinary, aCallback);
             int inIndex = 0;
@@ -1203,7 +1203,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValueBin"></param>
-        public void SyncGetBinary(out String aValueBin)
+        public void SyncGetBinary(out byte[] aValueBin)
         {
             SyncGetBinaryZappOrgTestBasic1 sync = new SyncGetBinaryZappOrgTestBasic1(this);
             BeginGetBinary(sync.AsyncComplete());
@@ -1234,7 +1234,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aValueBin"></param>
-        public void EndGetBinary(IntPtr aAsyncHandle, out String aValueBin)
+        public void EndGetBinary(IntPtr aAsyncHandle, out byte[] aValueBin)
         {
             uint index = 0;
             aValueBin = Invocation.OutputBinary(aAsyncHandle, index++);
@@ -1535,7 +1535,7 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aVarBin">Will be set to the value of the property</param>
-        public String PropertyVarBin()
+        public byte[] PropertyVarBin()
         {
             return iVarBin.Value();
         }

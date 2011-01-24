@@ -316,7 +316,7 @@ namespace Zapp.Device.Providers
         /// Must be implemented iff EnableActionCrashDataFetch was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aaCrashData"></param>
-        protected virtual void CrashDataFetch(uint aVersion, out string aaCrashData)
+        protected virtual void CrashDataFetch(uint aVersion, out byte[] aaCrashData)
         {
             throw (new ActionDisabledError());
         }
@@ -343,7 +343,7 @@ namespace Zapp.Device.Providers
         /// Must be implemented iff EnableActionSysLog was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aaSysLog"></param>
-        protected virtual void SysLog(uint aVersion, out string aaSysLog)
+        protected virtual void SysLog(uint aVersion, out byte[] aaSysLog)
         {
             throw (new ActionDisabledError());
         }
@@ -600,7 +600,7 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            string aCrashData;
+            byte[] aCrashData;
             try
             {
                 invocation.ReadStart();
@@ -678,7 +678,7 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            string aSysLog;
+            byte[] aSysLog;
             try
             {
                 invocation.ReadStart();

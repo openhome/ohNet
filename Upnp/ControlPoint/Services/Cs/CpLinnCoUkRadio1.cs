@@ -49,9 +49,9 @@ namespace Zapp.ControlPoint.Proxies
         void SyncReadList(String aIdList, out String aMetadataList);
         void BeginReadList(String aIdList, CpProxy.CallbackAsyncComplete aCallback);
         void EndReadList(IntPtr aAsyncHandle, out String aMetadataList);
-        void SyncIdArray(out uint aIdArrayToken, out String aIdArray);
+        void SyncIdArray(out uint aIdArrayToken, out byte[] aIdArray);
         void BeginIdArray(CpProxy.CallbackAsyncComplete aCallback);
-        void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out String aIdArray);
+        void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out byte[] aIdArray);
         void SyncIdArrayChanged(uint aIdArrayToken, out bool aIdArrayChanged);
         void BeginIdArrayChanged(uint aIdArrayToken, CpProxy.CallbackAsyncComplete aCallback);
         void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aIdArrayChanged);
@@ -69,7 +69,7 @@ namespace Zapp.ControlPoint.Proxies
         void SetPropertyIdChanged(CpProxy.CallbackPropertyChanged aIdChanged);
         uint PropertyId();
         void SetPropertyIdArrayChanged(CpProxy.CallbackPropertyChanged aIdArrayChanged);
-        String PropertyIdArray();
+        byte[] PropertyIdArray();
         void SetPropertyIdsMaxChanged(CpProxy.CallbackPropertyChanged aIdsMaxChanged);
         uint PropertyIdsMax();
     }
@@ -295,7 +295,7 @@ namespace Zapp.ControlPoint.Proxies
     {
         private CpProxyLinnCoUkRadio1 iService;
         private uint iIdArrayToken;
-        private String iIdArray;
+        private byte[] iIdArray;
 
         public SyncIdArrayLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
         {
@@ -305,7 +305,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             return iIdArrayToken;
         }
-        public String IdArray()
+        public byte[] IdArray()
         {
             return iIdArray;
         }
@@ -1048,7 +1048,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArray"></param>
-        public void SyncIdArray(out uint aIdArrayToken, out String aIdArray)
+        public void SyncIdArray(out uint aIdArrayToken, out byte[] aIdArray)
         {
             SyncIdArrayLinnCoUkRadio1 sync = new SyncIdArrayLinnCoUkRadio1(this);
             BeginIdArray(sync.AsyncComplete());
@@ -1082,7 +1082,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArray"></param>
-        public void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out String aIdArray)
+        public void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out byte[] aIdArray)
         {
             uint index = 0;
             aIdArrayToken = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1421,7 +1421,7 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aIdArray">Will be set to the value of the property</param>
-        public String PropertyIdArray()
+        public byte[] PropertyIdArray()
         {
             return iIdArray.Value();
         }

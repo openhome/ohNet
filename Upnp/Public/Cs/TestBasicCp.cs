@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using System.Linq;
 using Zapp.ControlPoint;
 using Zapp.ControlPoint.Proxies;
 
@@ -62,19 +63,23 @@ namespace Zapp
             }
 
             Console.Write("    Binary arguments...\n");
-            char[] bin = new char[128];
+            byte[] bin = new byte[128];
             for (i=0; i<127; i++) {
-                bin[i] = (char)(i+1);
+                bin[i] = (byte)(i+1);
             }
-            bin[127] = '\0';
-            string valBin = new string(bin);
+            bin[127] = 0;
             for (i=0; i<kTestIterations; i++) {
-                string result;
-                proxy.SyncEchoBinary(valBin, out result);
-                Debug.Assert(result == valBin);
+                byte[] result;
+                proxy.SyncEchoBinary(bin, out result);
+                Debug.Assert(SequencesEqual(bin, result));
             }
 
             proxy.Dispose();
+        }
+        
+        private static bool SequencesEqual<T>(IEnumerable<T> xs, IEnumerable<T> ys)
+        {
+            return Enumerable.Zip(xs, ys, EqualityComparer<T>.Default.Equals).All(b=>b);
         }
 
         public void TestSubscriptions()
@@ -134,22 +139,21 @@ namespace Zapp
             Debug.Assert(propStr == valStr);
 
             Console.Write("    Binary...\n");
-            char[] bin = new char[128];
+            byte[] bin = new byte[128];
             for (int i=0; i<127; i++) {
-                bin[i] = (char)(i+1);
+                bin[i] = (byte)(i+1);
             }
-            bin[127] = '\0';
-            string bufBin = new string(bin);
-            proxy.SyncSetBinary(bufBin);
+            bin[127] = 0;
+            proxy.SyncSetBinary(bin);
             iUpdatesComplete.WaitOne();
-            string propBin = proxy.PropertyVarBin();
-            Debug.Assert(propBin == bufBin);
+            byte[] propBin = proxy.PropertyVarBin();
+            Debug.Assert(SequencesEqual(propBin, bin));
             // test again to check that PropertyVarBin didn't TransferTo the property
             propBin = proxy.PropertyVarBin();
-            Debug.Assert(propBin == bufBin);
-            string valBin;
+            Debug.Assert(SequencesEqual(propBin, bin));
+            byte[] valBin;
             proxy.SyncGetBinary(out valBin);
-            Debug.Assert(propBin == valBin);
+            Debug.Assert(SequencesEqual(propBin, valBin));
 
             Console.Write("    Multiple...\n");
             proxy.SyncSetMultiple(15, 658, false);

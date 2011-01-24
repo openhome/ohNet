@@ -79,13 +79,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        bool SetPropertyIdArray(string aValue);
+        bool SetPropertyIdArray(byte[] aValue);
 
         /// <summary>
         /// Get a copy of the value of the IdArray property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        string PropertyIdArray();
+        byte[] PropertyIdArray();
 
         /// <summary>
         /// Set the value of the IdsMax property
@@ -261,7 +261,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public bool SetPropertyIdArray(string aValue)
+        public bool SetPropertyIdArray(byte[] aValue)
         {
             return SetPropertyBinary(iPropertyIdArray, aValue);
         }
@@ -270,7 +270,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the IdArray property
         /// </summary>
         /// <returns>The value of the property</returns>
-        public string PropertyIdArray()
+        public byte[] PropertyIdArray()
         {
             return iPropertyIdArray.Value();
         }
@@ -701,7 +701,7 @@ namespace Zapp.Device.Providers
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArray"></param>
-        protected virtual void IdArray(uint aVersion, out uint aaIdArrayToken, out string aaIdArray)
+        protected virtual void IdArray(uint aVersion, out uint aaIdArrayToken, out byte[] aaIdArray)
         {
             throw (new ActionDisabledError());
         }
@@ -1265,7 +1265,7 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
             uint aIdArrayToken;
-            string aIdArray;
+            byte[] aIdArray;
             try
             {
                 invocation.ReadStart();

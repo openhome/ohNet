@@ -22,15 +22,15 @@ namespace Zapp.ControlPoint.Proxies
         void SyncCrashDataStatus(out String aCrashDataStatus);
         void BeginCrashDataStatus(CpProxy.CallbackAsyncComplete aCallback);
         void EndCrashDataStatus(IntPtr aAsyncHandle, out String aCrashDataStatus);
-        void SyncCrashDataFetch(out String aCrashData);
+        void SyncCrashDataFetch(out byte[] aCrashData);
         void BeginCrashDataFetch(CpProxy.CallbackAsyncComplete aCallback);
-        void EndCrashDataFetch(IntPtr aAsyncHandle, out String aCrashData);
+        void EndCrashDataFetch(IntPtr aAsyncHandle, out byte[] aCrashData);
         void SyncCrashDataClear();
         void BeginCrashDataClear(CpProxy.CallbackAsyncComplete aCallback);
         void EndCrashDataClear(IntPtr aAsyncHandle);
-        void SyncSysLog(out String aSysLog);
+        void SyncSysLog(out byte[] aSysLog);
         void BeginSysLog(CpProxy.CallbackAsyncComplete aCallback);
-        void EndSysLog(IntPtr aAsyncHandle, out String aSysLog);
+        void EndSysLog(IntPtr aAsyncHandle, out byte[] aSysLog);
         void SyncDiagnostic(String aDiagnosticType, out String aDiagnosticInfo);
         void BeginDiagnostic(String aDiagnosticType, CpProxy.CallbackAsyncComplete aCallback);
         void EndDiagnostic(IntPtr aAsyncHandle, out String aDiagnosticInfo);
@@ -132,13 +132,13 @@ namespace Zapp.ControlPoint.Proxies
     internal class SyncCrashDataFetchLinnCoUkDiagnostics1 : SyncProxyAction
     {
         private CpProxyLinnCoUkDiagnostics1 iService;
-        private String iCrashData;
+        private byte[] iCrashData;
 
         public SyncCrashDataFetchLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
         {
             iService = aProxy;
         }
-        public String CrashData()
+        public byte[] CrashData()
         {
             return iCrashData;
         }
@@ -165,13 +165,13 @@ namespace Zapp.ControlPoint.Proxies
     internal class SyncSysLogLinnCoUkDiagnostics1 : SyncProxyAction
     {
         private CpProxyLinnCoUkDiagnostics1 iService;
-        private String iSysLog;
+        private byte[] iSysLog;
 
         public SyncSysLogLinnCoUkDiagnostics1(CpProxyLinnCoUkDiagnostics1 aProxy)
         {
             iService = aProxy;
         }
-        public String SysLog()
+        public byte[] SysLog()
         {
             return iSysLog;
         }
@@ -555,7 +555,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaCrashData"></param>
-        public void SyncCrashDataFetch(out String aCrashData)
+        public void SyncCrashDataFetch(out byte[] aCrashData)
         {
             SyncCrashDataFetchLinnCoUkDiagnostics1 sync = new SyncCrashDataFetchLinnCoUkDiagnostics1(this);
             BeginCrashDataFetch(sync.AsyncComplete());
@@ -586,7 +586,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaCrashData"></param>
-        public void EndCrashDataFetch(IntPtr aAsyncHandle, out String aCrashData)
+        public void EndCrashDataFetch(IntPtr aAsyncHandle, out byte[] aCrashData)
         {
             uint index = 0;
             aCrashData = Invocation.OutputBinary(aAsyncHandle, index++);
@@ -634,7 +634,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSysLog"></param>
-        public void SyncSysLog(out String aSysLog)
+        public void SyncSysLog(out byte[] aSysLog)
         {
             SyncSysLogLinnCoUkDiagnostics1 sync = new SyncSysLogLinnCoUkDiagnostics1(this);
             BeginSysLog(sync.AsyncComplete());
@@ -665,7 +665,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSysLog"></param>
-        public void EndSysLog(IntPtr aAsyncHandle, out String aSysLog)
+        public void EndSysLog(IntPtr aAsyncHandle, out byte[] aSysLog)
         {
             uint index = 0;
             aSysLog = Invocation.OutputBinary(aAsyncHandle, index++);

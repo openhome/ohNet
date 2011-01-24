@@ -103,7 +103,7 @@ namespace Zapp.ControlPoint.Proxies
         void SetPropertyTerminalInputNameChanged(CpProxy.CallbackPropertyChanged aTerminalInputNameChanged);
         String PropertyTerminalInputName();
         void SetPropertyDisplayPixelsChanged(CpProxy.CallbackPropertyChanged aDisplayPixelsChanged);
-        String PropertyDisplayPixels();
+        byte[] PropertyDisplayPixels();
     }
 
     internal class SyncDisplayTestPatternLinnCoUkUi2 : SyncProxyAction
@@ -2070,7 +2070,7 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aDisplayPixels">Will be set to the value of the property</param>
-        public String PropertyDisplayPixels()
+        public byte[] PropertyDisplayPixels()
         {
             return iDisplayPixels.Value();
         }

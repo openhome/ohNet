@@ -369,7 +369,7 @@ void Initialise()
     argtype.Add("i2", "int");
     argtype.Add("i4", "int");
     argtype.Add("string", "String");
-    argtype.Add("bin.base64", "String");
+    argtype.Add("bin.base64", "byte[]");
     argtype.Add("uri", "String");
 
     paramType.Add("ui1", "ParameterUint");

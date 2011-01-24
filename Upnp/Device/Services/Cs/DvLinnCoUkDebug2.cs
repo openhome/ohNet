@@ -108,7 +108,7 @@ namespace Zapp.Device.Providers
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aaMemAddress"></param>
         /// <param name="aaMemData"></param>
-        protected virtual void MemWrite(uint aVersion, uint aaMemAddress, string aaMemData)
+        protected virtual void MemWrite(uint aVersion, uint aaMemAddress, byte[] aaMemData)
         {
             throw (new ActionDisabledError());
         }
@@ -199,7 +199,7 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
             uint aMemAddress;
-            string aMemData;
+            byte[] aMemData;
             try
             {
                 invocation.ReadStart();

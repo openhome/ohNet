@@ -128,8 +128,16 @@ int32_t DvProviderSetPropertyBinary(DvProviderC aProvider, ServiceProperty aProp
     try {
         PropertyBinary* prop = reinterpret_cast<PropertyBinary*>(aProperty);
         ASSERT(prop != NULL);
-        Brn data(aData, aLen);
-        TBool changed = ProviderFromHandle(aProvider)->SetPropertyBinary(*prop, data);
+        TBool changed;
+        if (aLen == 0)
+        {
+            changed = ProviderFromHandle(aProvider)->SetPropertyBinary(*prop, Brx::Empty());
+        }
+        else
+        {
+            Brn data(aData, aLen);
+            changed = ProviderFromHandle(aProvider)->SetPropertyBinary(*prop, data);
+        }
         *aChanged = (changed? 1 : 0);
     }
     catch (ParameterValidationError&) {

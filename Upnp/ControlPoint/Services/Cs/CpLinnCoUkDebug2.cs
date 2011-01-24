@@ -16,8 +16,8 @@ namespace Zapp.ControlPoint.Proxies
         void SyncDebugLevel(out uint aDebugLevel);
         void BeginDebugLevel(CpProxy.CallbackAsyncComplete aCallback);
         void EndDebugLevel(IntPtr aAsyncHandle, out uint aDebugLevel);
-        void SyncMemWrite(uint aMemAddress, String aMemData);
-        void BeginMemWrite(uint aMemAddress, String aMemData, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncMemWrite(uint aMemAddress, byte[] aMemData);
+        void BeginMemWrite(uint aMemAddress, byte[] aMemData, CpProxy.CallbackAsyncComplete aCallback);
         void EndMemWrite(IntPtr aAsyncHandle);
     }
 
@@ -195,7 +195,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMemAddress"></param>
         /// <param name="aaMemData"></param>
-        public void SyncMemWrite(uint aMemAddress, String aMemData)
+        public void SyncMemWrite(uint aMemAddress, byte[] aMemData)
         {
             SyncMemWriteLinnCoUkDebug2 sync = new SyncMemWriteLinnCoUkDebug2(this);
             BeginMemWrite(aMemAddress, aMemData, sync.AsyncComplete());
@@ -213,7 +213,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMemData"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginMemWrite(uint aMemAddress, String aMemData, CallbackAsyncComplete aCallback)
+        public void BeginMemWrite(uint aMemAddress, byte[] aMemData, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionMemWrite, aCallback);
             int inIndex = 0;
