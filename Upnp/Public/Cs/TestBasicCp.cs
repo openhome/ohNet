@@ -77,9 +77,51 @@ namespace Zapp
             proxy.Dispose();
         }
         
+        // We're not using a version of Mono with .Net 4.0, so we have
+        // to implement Zip for ourselves:
+        private static IEnumerable<TResult> Zip<TFirst, TSecond, TResult>(
+                IEnumerable<TFirst> first,
+                IEnumerable<TSecond> second,
+                Func<TFirst, TSecond, TResult> resultSelector)
+        {
+            if (first == null)
+            {
+                throw new ArgumentNullException("first");
+            }
+            if (second == null)
+            {
+                throw new ArgumentNullException("second");
+            }
+            if (resultSelector == null)
+            {
+                throw new ArgumentNullException("resultSelector");
+            }
+            return ZipImpl(first, second, resultSelector);
+        }
+        private static IEnumerable<TResult> ZipImpl<TFirst, TSecond, TResult>(
+                IEnumerable<TFirst> first,
+                IEnumerable<TSecond> second,
+                Func<TFirst, TSecond, TResult> resultSelector)
+        {
+            IEnumerator<TFirst> firstEnumerator = first.GetEnumerator();
+            IEnumerator<TSecond> secondEnumerator = second.GetEnumerator();
+            while (true)
+            {
+                if (!firstEnumerator.MoveNext())
+                {
+                    yield break;
+                }
+                if (!secondEnumerator.MoveNext())
+                {
+                    yield break;
+                }
+                yield return resultSelector(firstEnumerator.Current, secondEnumerator.Current);
+            }
+        }
+
         private static bool SequencesEqual<T>(IEnumerable<T> xs, IEnumerable<T> ys)
         {
-            return Enumerable.Zip(xs, ys, EqualityComparer<T>.Default.Equals).All(b=>b);
+            return Zip(xs, ys, EqualityComparer<T>.Default.Equals).All(b=>b);
         }
 
         public void TestSubscriptions()

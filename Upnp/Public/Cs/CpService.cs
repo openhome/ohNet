@@ -416,7 +416,7 @@ namespace Zapp.ControlPoint
         public static unsafe String OutputString(IntPtr aHandle, uint aIndex)
         {
             IntPtr cStr = CpInvocationOutputString(aHandle, aIndex);
-            if (cStr == null)
+            if (cStr == IntPtr.Zero)
             {
                 return null;
             }
@@ -440,7 +440,7 @@ namespace Zapp.ControlPoint
             IntPtr data;
             uint len;
             CpInvocationGetOutputBinary(aHandle, aIndex, &data, &len);
-            if (data == null)
+            if (data == IntPtr.Zero)
             {
                 return null;
             }
