@@ -121,7 +121,9 @@ namespace Zapp
 
         private static bool SequencesEqual<T>(IEnumerable<T> xs, IEnumerable<T> ys)
         {
-            return Zip(xs, ys, EqualityComparer<T>.Default.Equals).All(b=>b);
+            // We shouldn't have to specify the types to Zip<>, but the
+            // Mono 2.6.x compiler has a bug and cannot correctly infer them.
+            return Zip<T,T,bool>(xs, ys, EqualityComparer<T>.Default.Equals).All(b=>b);
         }
 
         public void TestSubscriptions()
