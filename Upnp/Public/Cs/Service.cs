@@ -106,7 +106,7 @@ namespace Zapp.Core
         public unsafe ParameterString(String aName, List<String> aAllowedValues)
         {
             IntPtr name = Marshal.StringToHGlobalAnsi(aName);
-            IntPtr[] allowed = aAllowedValues.Select(Marshal.StringToHGlobalAnsi).ToArray();
+            IntPtr[] allowed = aAllowedValues.Select<string, IntPtr>(Marshal.StringToHGlobalAnsi).ToArray();
             fixed (IntPtr* pAllowed = allowed)
             {
                 iHandle = ServiceParameterCreateString(name, pAllowed, (uint)aAllowedValues.Count);
