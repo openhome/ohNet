@@ -45,33 +45,50 @@ def rsync(username,host,src,dst,excludes):
     return ret
 
 def getEnvironment():
-    if os.environ.get('label') == 'arm':
+
+    Label = os.environ.get('label')
+
+    if Label == None:
+        print '\'label\' not set in environment!'
+        print 'Your options are:'
+        print '     arm'
+        print '     linux-x86'
+        print '     linux-x64'
+        print '     windows-x86'
+        print '     windows-x64'
+        print ''
+        print 'ps: we are aware that \'label\' is a terrible name for this parameter.'
+        print ''
+        sys.exit(1)
+
+    if Label == 'arm':
         tool = 'env'
         ostype = 'Linux'
         arch = 'arm'
         os.environ['PATH'] = "/usr/local/arm-2010q1/bin:"+ os.environ['PATH']
         os.environ['CROSS_COMPILE'] = 'arm-none-linux-gnueabi-'
 
-    elif os.environ.get('label') == 'linux-x64':
+    elif Label == 'linux-x64':
         tool = 'env'
         ostype = 'Linux'
         arch = 'x64'
 
-    elif os.environ.get('label') == 'linux-x86':
+    elif Label == 'linux-x86':
         tool = 'env'
         ostype = 'Linux'
         arch = 'x86'
-                
 
-    elif os.environ.get('label') == 'windows-x86':
+    elif Label == 'windows-x86':
         tool = 'call vcvarsall.bat && (set LOCALAPPDATA=C:\Documents and Settings\Administrator\Local Settings\Application Data)'
         ostype = 'Windows'
         arch = 'x86'
 
-    elif os.environ.get('label') == 'windows-x64':
+    elif Label == 'windows-x64':
         tool = 'call vcvarsall.bat amd64 && set'
         ostype = 'Windows'
         arch = 'x64'
+
+    # Check whether we can run valgrind
 
     if ostype == "Windows" or (ostype == "Linux" and arch != "x86"):
         valgrind = "0"
@@ -93,11 +110,21 @@ def getEnvironment():
 
 
 def getModule(): 
-    if os.environ.get('module') == 'upnp':
+
+    Module = os.environ.get('module')
+
+    if Module == None:
+        print '\'module\' not set in environment!'
+        print 'Your options are:'
+        print '     upnp'
+        print '     zappSpyGUI'
+        sys.exit(1)
+
+    if Module == 'upnp':
         module = 'upnp'
         cmd = 'cd Upnp && python AllTests.py'
     
-    if os.environ.get('module') == 'zappSpyGUI':
+    if Module == 'zappSpyGUI':
         module = 'zappSpyGUI'
         cmd = 'cd ZappVs2010 && MSBuild.exe Zapp.sln'
     
