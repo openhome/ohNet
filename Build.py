@@ -271,7 +271,7 @@ def GenDocs(module, os, nightly, arch, tool):
         docgen_cmd = "cd Upnp && make docs"
         Build(tool,docgen_cmd,'')
 
-        ret = rsync('hudson-zapp','zapp.linn.co.uk','Upnp/Build/Docs/','~/doc','')
+        ret = rsync('hudson-zapp','ohnet.linn.co.uk','Upnp/Build/Docs/','~/doc','')
 
         if ret != 0:
             print ret
@@ -298,7 +298,7 @@ def ArmTests(module, arch, nightly):
 def publish_release(ostype, arch, release_name, tool):
     target_name = "%s-%s" % (ostype, "ARM" if arch=="arm" else arch)
     if ostype == "Windows":
-        artifacts = '\\\\zapp.linn.co.uk\\artifacts\\'
+        artifacts = '\\\\ohnet.linn.co.uk\\artifacts\\'
     else:
         artifacts = '/opt/artifacts/'
     subprocess.check_call(tool + ' && cd Upnp && make bundle-dev targetplatform=%s' % target_name, shell=True)
@@ -309,7 +309,7 @@ def publish_release(ostype, arch, release_name, tool):
 def writerev(ostype, arch):
 
 	if ostype == "Windows": 
-		artifacts = '\\\\zapp.linn.co.uk\\artifacts\\'
+		artifacts = '\\\\ohnet.linn.co.uk\\artifacts\\'
 
 	elif ostype == "Linux" and arch != "arm":
 		artifacts = '/opt/artifacts/'
