@@ -319,6 +319,8 @@ def writerev(ostype, arch):
 	output = os.popen('git rev-parse HEAD')
 	f = open(artifacts + 'revision.txt', 'w')
 	f.write(str(output.readline()))
+	f.write(str(','))
+	f.write(os.environ.get('BUILD_NUMBER'))
 	f.close()
 
 
