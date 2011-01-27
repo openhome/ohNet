@@ -318,7 +318,7 @@ def writerev(ostype, arch):
 
 	output = os.popen('git rev-parse HEAD')
 	f = open(artifacts + 'revision.txt', 'w')
-	f.write(str(output.readline()))
+	output = subprocess.check_call('git rev-parse HEAD', stdout=f, shell=True)
 	f.close()
 
 
