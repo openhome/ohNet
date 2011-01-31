@@ -29,11 +29,11 @@ CpiDevice& CpiDeviceDv::Device()
 
 DviService* CpiDeviceDv::Service(const ServiceType& aServiceType)
 {
-    const Brx& fullName = aServiceType.FullName();
+    const Brx& fullNameUpnp = aServiceType.FullNameUpnp();
     const TUint count = iDeviceDv.ServiceCount();
     for (TUint i=0; i<count; i++) {
         DviService& service = iDeviceDv.Service(i);
-        if (service.ServiceType().FullNameUpnp() == fullName) {
+        if (service.ServiceType().FullNameUpnp() == fullNameUpnp) {
             return &service;
         }
     }
