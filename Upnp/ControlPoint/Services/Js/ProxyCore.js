@@ -2,6 +2,7 @@
 * The Zapp object is the single global object used by Zapp Services to
 * facilitate actions and subscriptions. 
 * @module Zapp
+* @title Zapp
 */
 
 if (typeof Zapp == "undefined" || !Zapp) {
@@ -570,10 +571,6 @@ Zapp.ServiceProperty.prototype.addListener = function (listener) {
 * @class SoapRequest
 */
 
-jQuery.ajaxSetup({
-    timeout: 10000 // The timeout value in milliseconds of the request
-});
-
 Zapp.SoapRequest = function (action, url, domain, type, version) {
     this.action = action; // The action to invoke
     this.url = url; // The soap web service url
@@ -653,7 +650,7 @@ Zapp.SoapRequest.prototype.send = function (successFunction, errorFunction) {
 		        var result = {};
 		        for (var i = 0, il = outParameters.length; i < il; i++) {
 		            var nodeValue = "";
-                    // one result is expected
+		            // one result is expected
 		            var children = outParameters[i].childNodes;
 		            if (children.length > 0) {
 		                nodeValue = children[0].nodeValue;
@@ -683,17 +680,29 @@ Zapp.SoapRequest.prototype.send = function (successFunction, errorFunction) {
 */
 Zapp.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorFunction) {
     var _this = this;
-    return new jQuery.ajax({
-        async: true,
-        url: this.url,
-        type: "POST",
-        dataType: "xml",
-        data: this.envelope,
-        success: function (data, textStatus, XMLHttpRequest) {
-            if (XMLHttpRequest.status) {
+    YUI().use("io-base", function (Y) {
+        var cfg = {
+            method: "POST",
+            data: _this.envelope,
+            headers: { 'SOAPAction': _this.getSoapAction() },
+            xdr: {
+                dataType: 'text/xml; charset=\"utf-8\"'
+            }
+        };
+
+        Y.io(_this.url, cfg);
+
+        Y.on('io:success', onSuccess, Y, true);
+        Y.on('io:failure', onFailure, Y, 'Transaction Failed');
+
+        function onSuccess(transactionid, response, arguments) {
+            // transactionid : The transaction's ID.
+            // response: The response object.
+            // arguments: Boolean value "true".
+            if (response.status) {
                 if (successFunction) {
                     try {
-                        successFunction(XMLHttpRequest);
+                        successFunction(response);
                     } catch (e) {
                         console.log("createAjaxRequest: " + e.message);
                         if (errorFunction) { errorFunction(textStatus); };
@@ -703,19 +712,91 @@ Zapp.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorF
                 console.log("createAjaxRequest: " + _this.url);
                 if (errorFunction) { errorFunction(); };
             }
-        },
-        processData: false,
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            if (errorFunction) {
-                errorFunction(XMLHttpRequest);
-            }
+        }
 
-        },
-        beforeSend: function (req) {
-            req.setRequestHeader("SOAPAction", _this.getSoapAction());
-        },
-        contentType: "text/xml; charset=\"utf-8\""
+        function onFailure(transactionid, response, arguments) {
+            // transactionid : The transaction's ID.
+            // response: The response object.  Only status and 
+            //           statusText are populated when the 
+            //           transaction is terminated due to abort 
+            //           or timeout.  The status will read
+            //           0, and statusText will return "timeout" 
+            //           or "abort" depending on the mode of 
+            //           termination.
+            // arguments: String "Transaction Failed".
+            if (errorFunction) {
+                errorFunction(response);
+            }
+        }
     });
+
+    //    var _this = this;
+
+    //    var parameters = this.envelope;
+    //    var headers =
+    //[
+    //{ name: "SOAPAction", value: _this.getSoapAction()
+    //}]
+    //    var xhr = new wink.XhrSOAP();
+
+    //    xhr.sendData(this.url, parameters, 'POST', { method: 'onsuccess' }, { method: 'onfailure' }, headers);
+
+    //    onsuccess = function (data, textStatus, XMLHttpRequest) {
+    //        if (XMLHttpRequest.status) {
+    //            if (successFunction) {
+    //                try {
+    //                    successFunction(XMLHttpRequest);
+    //                } catch (e) {
+    //                    console.log("createAjaxRequest: " + e.message);
+    //                    if (errorFunction) { errorFunction(textStatus); };
+    //                }
+    //            }
+    //        } else {
+    //            console.log("createAjaxRequest: " + _this.url);
+    //            if (errorFunction) { errorFunction(); };
+    //        }
+    //    }
+
+    //    onfailure = function (XMLHttpRequest, textStatus, errorThrown) {
+    //        if (errorFunction) {
+    //            errorFunction(XMLHttpRequest);
+    //        }
+    //    }
+    //    return xhr;
+
+    //    return new jQuery.ajax({
+    //        async: true,
+    //        url: this.url,
+    //        type: "POST",
+    //        dataType: "xml",
+    //        data: this.envelope,
+    //        success: function (data, textStatus, XMLHttpRequest) {
+    //            if (XMLHttpRequest.status) {
+    //                if (successFunction) {
+    //                    try {
+    //                        successFunction(XMLHttpRequest);
+    //                    } catch (e) {
+    //                        console.log("createAjaxRequest: " + e.message);
+    //                        if (errorFunction) { errorFunction(textStatus); };
+    //                    }
+    //                }
+    //            } else {
+    //                console.log("createAjaxRequest: " + _this.url);
+    //                if (errorFunction) { errorFunction(); };
+    //            }
+    //        },
+    //        processData: false,
+    //        error: function (XMLHttpRequest, textStatus, errorThrown) {
+    //            if (errorFunction) {
+    //                errorFunction(XMLHttpRequest);
+    //            }
+
+    //        },
+    //        beforeSend: function (req) {
+    //            req.setRequestHeader("SOAPAction", _this.getSoapAction());
+    //        },
+    //        contentType: "text/xml; charset=\"utf-8\""
+    //    });
 };
 
 
