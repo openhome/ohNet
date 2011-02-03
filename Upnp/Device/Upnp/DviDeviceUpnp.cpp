@@ -29,6 +29,7 @@ const Brn DviDeviceUpnp::kEventUrlTail("event");
 DviDeviceUpnp::DviDeviceUpnp(DviDevice& aDevice)
     : iDevice(aDevice)
     , iLock("DMUP")
+    , iSuppressScheduledEvents(false)
 {
     iLock.Wait();
     NetworkInterfaceList& nifList = Stack::NetworkInterfaceList();
@@ -52,6 +53,7 @@ DviDeviceUpnp::~DviDeviceUpnp()
     for (TUint i=0; i<iListeners.size(); i++) {
         delete iListeners[i];
     }
+    iSuppressScheduledEvents = true;
     iLock.Signal();
     for (TUint i=0; i<iMsgSchedulers.size(); i++) {
         delete iMsgSchedulers[i];
@@ -85,11 +87,21 @@ TUint DviDeviceUpnp::Version() const
 void DviDeviceUpnp::MsgSchedulerComplete(DeviceMsgScheduler* aScheduler)
 {
     iLock.Wait();
-    for (TUint i=0; i<iMsgSchedulers.size(); i++) {
-        DeviceMsgScheduler* scheduler = iMsgSchedulers[i];
-        if (scheduler == aScheduler) {
-            iMsgSchedulers.erase(iMsgSchedulers.begin() + i);
-            break;
+    // FIXME: iSuppressScheduledEvents hack
+    // I've added iSuppressScheduledEvents to fix the race condition
+    // where the destructor is attempting to delete the schedulers at
+    // the same time as the schedulers are still running and can call
+    // this method to try to delete themselves. I consider it a hack
+    // and I would recommend that we review this code and try to fix
+    // it in a cleaner manner. --AW
+    if (!iSuppressScheduledEvents)
+    {
+        for (TUint i=0; i<iMsgSchedulers.size(); i++) {
+            DeviceMsgScheduler* scheduler = iMsgSchedulers[i];
+            if (scheduler == aScheduler) {
+                iMsgSchedulers.erase(iMsgSchedulers.begin() + i);
+                break;
+            }
         }
     }
     iLock.Signal();
