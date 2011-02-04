@@ -41,6 +41,8 @@ installpkgconfdir = $(prefix)/lib/pkgconfig
 mkdir = mkdir -p
 rmdir = rm -rf
 
+all: $(objdir)/WavSender.exe $(objdir)/Receiver.exe
+
 $(objdir)/WavSender.exe :
 	mkdir -p $(objdir)
 	$(compiler)/DvAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) DvAvOpenhomeOrgSender1.cpp
@@ -48,6 +50,14 @@ $(objdir)/WavSender.exe :
 	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) OhmSender.cpp
 	$(compiler)/WavSender.$(objext) -c $(cflags) $(includes) WavSender.cpp
 	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(zappdir)/$(libprefix)upnp_core.$(libext) $(zappdir)/TestFramework.$(libext)
+
+$(objdir)/Receiver.exe :
+	mkdir -p $(objdir)
+	$(compiler)/DvAvOpenhomeOrgProduct1.$(objext) -c $(cflags) $(includes) DvAvOpenhomeOrgProduct1.cpp
+	$(compiler)/DvAvOpenhomeOrgReceiver1.$(objext) -c $(cflags) $(includes) DvAvOpenhomeOrgReceiver1.cpp
+	$(compiler)/Product.$(objext) -c $(cflags) $(includes) Product.cpp
+	$(compiler)/Receiver.$(objext) -c $(cflags) $(includes) Receiver.cpp
+	$(link) $(linkoutput)$(objdir)/Receiver.$(exeext) $(objdir)/Receiver.$(objext) $(objdir)/Product.$(objext) $(objdir)/DvAvOpenhomeOrgProduct1.$(objext) $(objdir)/DvAvOpenhomeOrgReceiver1.$(objext) $(zappdir)/$(libprefix)upnp_core.$(libext) $(zappdir)/TestFramework.$(libext)
 
 t4 = $(toolsDir)/TextTransform.exe
 

@@ -1,115 +1,387 @@
-#include "OhmSender.h"
-#include "DvAvOpenhomeOrgSender1.h"
+#include "DvAvOpenhomeOrgProduct1.h"
 #include <Ascii.h>
 #include <Maths.h>
 #include <Arch.h>
 
 #include <stdio.h>
 
-namespace Zapp {
-
-	class ProviderSender : public DvProviderAvOpenhomeOrgSender1
-	{
-	    static const TUint kMaxMetadataBytes = 4096;
-	    static const TUint kTimeoutAudioPresentMs = 1000;
-	
-	public:
-	    ProviderSender(DvDevice& aDevice);
-	    
-	    void SetMetadata(const Brx& aValue);
-	    
-	    void SetStatusReady();
-	    void SetStatusSending();
-	    void SetStatusBlocked();
-	    void SetStatusInactive();
-	    void SetStatusDisabled();
-	    
-	    void InformAudioPresent();
-	    
-	    ~ProviderSender() {}
-	    
-	private:
-	    virtual void PresentationUrl(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
-	    virtual void Metadata(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
-	    virtual void Audio(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue);
-	    virtual void Status(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
-	    virtual void Attributes(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
-	
-	    void UpdateMetadata();
-	    void TimerAudioPresentExpired();
-	
-	private:
-	    Bws<kMaxMetadataBytes> iMetadata;
-	    mutable Mutex iMutex;
-	    Timer iTimerAudioPresent;
-	};
-
-}
+#include "Product.h"
 
 using namespace Zapp;
 
-// ProviderSender
+using namespace Openhome::Av;
 
-ProviderSender::ProviderSender(DvDevice& aDevice)
-    : DvProviderAvOpenhomeOrgSender1(aDevice)
-    , iMutex("PSND")
-    , iTimerAudioPresent(MakeFunctor(*this, &ProviderSender::TimerAudioPresentExpired))
+// CObservable
+
+CObservable::CObservable()
 {
-    EnableActionPresentationUrl();
-    EnableActionMetadata();
-    EnableActionAudio();
-    EnableActionStatus();
+}
+
+void CObservable::Add(IObserver& aObserver)
+{
+	iObserverList.push_back(&aObserver);
+}
+
+void CObservable::InformObservers()
+{
+	for (std::vector<IObserver*>::iterator it = iObserverList.begin(); it != iObserverList.end(); ++it) {
+		*it->Changed();
+	}	
+}
+
+// CSource
+
+CSource::CSource(const Brx& aSystemName, const Brx& aType, const Brx& aName, TBool aVisible, ILockable& aLockable)
+	: iSystemName(aSystemName)
+	, iType(aType)
+	, iName(aName)
+	, iVisible(aVisible)
+	, iLockable(aLockable)
+{
+}
+
+TBool CSource::Visible(Bwx& aSystemName, Bwx& aType, Bwx& aName)
+{
+	aSystemName.Replace(iSystemName);
+	aType.Replace(iType);
+	iLockable.Wait();
+	aName.Replace(iName);
+	TBool visible = iVisible;
+	iMutex.Signal();
+	return (visible);
+}
+
+void CSource::SetName(const Brx& aValue)
+{
+	iMutex.Wait();
+	iName.Replace(aName);
+	iMutex.Release();
+	InformObservers();
+}
+
+void CSource::SetVisible(const Brx& aValue)
+{
+	iMutex.Wait();
+	iVisible = aVisible;
+	iMutex.Signal();
+	InformObservers();
+}
+
+// CSourceManager
+
+CSourceManager::CSourceManager()
+	: iMutex("SRCM")
+{
+	UpdateSourceXml();
+}
+
+void CSourceManager::Add(CSource* aSource)
+{
+	iSourceList.push_back(aSource);
+	aSource->Add(*this);
+}
+
+TUint CSourceManager::SourceCount() const
+{
+	return (iSourceList.size());
+}
+
+CSource& CSourceManager::Source(TUint aIndex)
+{
+	ASSERT(aIndex < iSourceList.size());
+	return (*iSourceList[aIndex]);
+}
+
+void CSourceManager::Changed()
+{
+}
+
+void CSourceManager::UpdateSourceXml()
+{
+    iSourceXml.Replace("<SourceList>");
+
+    TUint count = iProduct.SourceCount();
+
+    for (TUint i = 0; i < count; i++) {
+        iSourceXml.Append("<Source>");
+
+        Bws<Source::kMaxSourceNameBytes> name;
+        iProduct.SourceName(i, name);
+
+        LOG(kCommon,"name = ");
+        LOG(kCommon, name);
+        LOG(kCommon,"\n");
+
+        Bwd escapedName(EscapedLength(name));
+        Escape(name, escapedName);
+
+        LOG(kCommon,"escapedName = ");
+        LOG(kCommon, escapedName);
+        LOG(kCommon,"\n");
+
+        iSourceXml.Append("<Name>");
+        iSourceXml.Append(escapedName);
+        iSourceXml.Append("</Name>");
+
+        iSourceXml.Append("<Type>");
+        iSourceXml.Append(iProduct.SourceType(i));
+        iSourceXml.Append("</Type>");
+
+        iSourceXml.Append("<Visible>");
+        if (iProduct.SourceVisible(i)) {
+            iSourceXml.Append("true");
+        }
+        else {
+            iSourceXml.Append("false");
+        }
+        iSourceXml.Append("</Visible>");
+
+        iSourceXml.Append("</Source>");
+    }
+
+    iSourceXml.Append("</SourceList>");
+
+    iSourceXmlChangeCount++;
+}
+
+// CProduct
+
+CProduct::CProduct(DvDevice& aDevice
+    , IStandbyHandler& aStandbyHandler
+    , ISourceIndexHandler& aSourceIndexHandler
+	, TBool aStandby
+	, const TChar* aAttributes
+	, const TChar* aManufacturerName
+	, const TChar* aManufacturerInfo
+	, const TChar* aManufacturerUrl
+	, const TChar* aManufacturerImageUri
+	, const TChar* aModelName
+	, const TChar* aModelInfo
+	, const TChar* aModelUrl
+	, const TChar* aModelImageUri
+	, const TChar* aProductRoom
+	, const TChar* aProductName
+	, const TChar* aProductInfo
+	, const TChar* aProductUrl
+	, const TChar* aProductImageUri)
+    : DvProviderAvOpenhomeOrgProduct1(aDevice)
+    , iStandbyHandler(aStandbyHandler)
+    , iSourceIndexHandler(aSourceIndexHandler)
+    , iSourceXmlChangeCount(0)
+    , iMutex("PROD")
+{
+    aDevice.SetAttribute("Upnp.Domain", "av.openhome.org");
+    aDevice.SetAttribute("Upnp.Type", "Product");
+    aDevice.SetAttribute("Upnp.Version", "1");
+    aDevice.SetAttribute("Upnp.FriendlyName", "Product");
+    aDevice.SetAttribute("Upnp.Manufacturer", aManufacturerName);
+    aDevice.SetAttribute("Upnp.ManufacturerUrl", aManufacturerUrl);
+    aDevice.SetAttribute("Upnp.ModelDescription", aModelInfo);
+    aDevice.SetAttribute("Upnp.ModelName", aModelName);
+    aDevice.SetAttribute("Upnp.ModelNumber", "");
+    aDevice.SetAttribute("Upnp.ModelUrl", aModelUrl);
+    aDevice.SetAttribute("Upnp.SerialNumber", "");
+    aDevice.SetAttribute("Upnp.Upc", "");
+
+    EnableActionManufacturer();
+    EnableActionModel();
+    EnableActionProduct();
+    EnableActionStandby();
+    EnableActionSetStandby();
+    EnableActionSourceCount();
+    EnableActionSourceXml();
+    EnableActionSourceIndex();
+    EnableActionSetSourceIndex();
+    EnableActionSetSourceIndexByName();
+    EnableActionSource();
     EnableActionAttributes();
+    EnableActionSourceXmlChangeCount();
     
-    SetPropertyPresentationUrl(Brx::Empty());
-    SetPropertyMetadata(Brx::Empty());
-    SetPropertyAudio(false);
-    SetStatusInactive();
-    SetPropertyAttributes(Brx::Empty());
+    SetPropertyStandby(aStandby);
+    SetPropertyAttributes(Brn(aAttributes));
+    
+    SetPropertyManufacturerName(Brn(aManufacturerName));
+    SetPropertyManufacturerInfo(Brn(aManufacturerInfo));
+    SetPropertyManufacturerUrl(Brn(aManufacturerUrl));
+    SetPropertyManufacturerImageUri(Brn(aManufacturerImageUri));
+    
+    SetPropertyModelName(Brn(aModelName));
+    SetPropertyModelInfo(Brn(aModelInfo));
+    SetPropertyModelUrl(Brn(aModelUrl));
+    SetPropertyModelImageUri(Brn(aModelImageUri));
+    
+    SetPropertyProductRoom(Brn(aProductRoom));
+    SetPropertyProductName(Brn(aProductName));
+    SetPropertyProductInfo(Brn(aProductInfo));
+    SetPropertyProductUrl(Brn(aProductUrl));
+    SetPropertyProductImageUri(Brn(aProductImageUri));
+    
+    SetPropertySourceIndex(0);
+    SetPropertySourceCount(0);
+    SetPropertySourceXml(Brn(""));
 }
 
-void ProviderSender::PresentationUrl(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
+void CProduct::Manufacturer(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aName, IInvocationResponseString& aInfo, IInvocationResponseString& aUrl, IInvocationResponseString& aImageUri)
+{
+	Brhz name;
+	Brhz info;
+	Brhz url;
+	Brhz image;
+    GetPropertyManufacturerName(name);
+    GetPropertyManufacturerInfo(info);
+    GetPropertyManufacturerUrl(url);
+    GetPropertyManufacturerImageUri(image);
+    aResponse.Start();
+    aName.Write(name);
+    aName.WriteFlush();
+    aInfo.Write(info);
+    aInfo.WriteFlush();
+    aUrl.Write(url);
+    aUrl.WriteFlush();
+	aImageUri.Write(image);
+	aImageUri.WriteFlush();
+    aResponse.End();
+}
+
+void CProduct::Model(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aName, IInvocationResponseString& aInfo, IInvocationResponseString& aUrl, IInvocationResponseString& aImageUri)
+{
+	Brhz name;
+	Brhz info;
+	Brhz url;
+	Brhz image;
+    GetPropertyModelName(name);
+    GetPropertyModelInfo(info);
+    GetPropertyModelUrl(url);
+    GetPropertyModelImageUri(image);
+    aResponse.Start();
+    aName.Write(name);
+    aName.WriteFlush();
+    aInfo.Write(info);
+    aInfo.WriteFlush();
+    aUrl.Write(url);
+    aUrl.WriteFlush();
+	aImageUri.Write(image);
+	aImageUri.WriteFlush();
+    aResponse.End();
+}
+
+void CProduct::Product(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aRoom, IInvocationResponseString& aName, IInvocationResponseString& aInfo, IInvocationResponseString& aUrl, IInvocationResponseString& aImageUri)
+{
+	Brhz room;
+	Brhz name;
+	Brhz info;
+	Brhz url;
+	Brhz image;
+    GetPropertyProductRoom(room);
+    GetPropertyProductName(name);
+    GetPropertyProductInfo(info);
+    GetPropertyProductUrl(url);
+    GetPropertyProductImageUri(image);
+    aResponse.Start();
+    aRoom.Write(room);
+    aRoom.WriteFlush();
+    aName.Write(name);
+    aName.WriteFlush();
+    aInfo.Write(info);
+    aInfo.WriteFlush();
+    aUrl.Write(url);
+    aUrl.WriteFlush();
+	aImageUri.Write(image);
+	aImageUri.WriteFlush();
+    aResponse.End();
+}
+
+void CProduct::Standby(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue)
+{
+	TBool value;
+    GetPropertyStandby(value);
+    aResponse.Start();
+    aValue.Write(value);
+    aResponse.End();
+}
+
+void CProduct::SetStandby(IInvocationResponse& aResponse, TUint aVersion, TBool aValue)
+{
+    aResponse.Start();
+    aResponse.End();
+
+    if (SetPropertyStandby(aValue)) {
+    	iStandbyHandler.SetStandby(aValue);
+    }
+}
+
+void CProduct::SourceCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValue)
+{
+	TUint value;
+    GetPropertySourceCount(value);
+    aResponse.Start();
+    aValue.Write(value);
+    aResponse.End();
+}
+
+void CProduct::SourceXml(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
 {
 	Brhz value;
-    GetPropertyPresentationUrl(value);
+    GetPropertySourceXml(value);
     aResponse.Start();
     aValue.Write(value);
     aValue.WriteFlush();
     aResponse.End();
 }
 
-void ProviderSender::Metadata(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
+void CProduct::SourceIndex(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValue)
+{
+	TUint value;
+    GetPropertySourceIndex(value);
+    aResponse.Start();
+    aValue.Write(value);
+    aResponse.End();
+}
+
+void CProduct::SetSourceIndex(IInvocationResponse& aResponse, TUint aVersion, TUint aValue)
+{
+	TUint count;
+    GetPropertySourceCount(count);
+	if (aValue < count) {
+	    aResponse.Start();
+	    aResponse.End();
+	    if (SetPropertySourceIndex(aValue)) {
+	    	iSourceIndexHandler.SetSourceIndex(aValue);
+	    }
+	}
+	else {
+		aResponse.Error(802, Brn("Source index out of range"));
+	}
+}
+
+void CProduct::SetSourceIndexByName(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValue)
+{
+}
+
+void CProduct::Source(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aSystemName, IInvocationResponseString& aType, IInvocationResponseString& aName, IInvocationResponseBool& aVisible)
+{
+	TUint count;
+    GetPropertySourceCount(count);
+	if (aValue < count) {
+		CSource* source = iSourceList[aValue);
+	    aResponse.Start();
+	    aSystemName.Write(source->SystemName());
+	    aSystemName.WriteFlush();
+	    aType.Write(source->Type());
+	    aType.WriteFlush();
+	    aName.Write(source->Name());
+	    aName.WriteFlush();
+	    aVisible.Write(source->Visible());
+	    aResponse.End();
+	}
+	else {
+		aResponse.Error(802, Brn("Source index out of range"));
+	}
+}
+
+void CProduct::Attributes(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
 {
 	Brhz value;
-    GetPropertyMetadata(value);
-    aResponse.Start();
-    aValue.Write(value);
-    aValue.WriteFlush();
-    aResponse.End();
-}
-
-void ProviderSender::Audio(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue)
-{
-    TBool value;
-    GetPropertyAudio(value);
-    aResponse.Start();
-    aValue.Write(value);
-    aResponse.End();
-}
-
-void ProviderSender::Status(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
-{
-    Brhz value;
-    GetPropertyStatus(value);
-    aResponse.Start();
-    aValue.Write(value);
-    aValue.WriteFlush();
-    aResponse.End();
-}
-
-void ProviderSender::Attributes(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
-{
-    Brhz value;
     GetPropertyAttributes(value);
     aResponse.Start();
     aValue.Write(value);
@@ -117,553 +389,14 @@ void ProviderSender::Attributes(IInvocationResponse& aResponse, TUint aVersion, 
     aResponse.End();
 }
 
-void ProviderSender::SetMetadata(const Brx& aValue)
+void CProduct::SourceXmlChangeCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValue)
 {
-	SetPropertyMetadata(aValue);
-}
-
-static const Brn kStatusReady("Ready");
-static const Brn kStatusSending("Sending");
-static const Brn kStatusBlocked("Blocked");
-static const Brn kStatusInactive("Inactive");
-static const Brn kStatusDisabled("Disabled");
-
-void ProviderSender::SetStatusReady()
-{
-    SetPropertyStatus(kStatusReady);
-}
-
-void ProviderSender::SetStatusSending()
-{
-    SetPropertyStatus(kStatusSending);
-}
-
-void ProviderSender::SetStatusBlocked()
-{
-    SetPropertyStatus(kStatusBlocked);
-}
-
-void ProviderSender::SetStatusInactive()
-{
-    SetPropertyStatus(kStatusInactive);
-}
-
-void ProviderSender::SetStatusDisabled()
-{
-    SetPropertyStatus(kStatusDisabled);
-}
-
-void ProviderSender::InformAudioPresent()
-{
-    SetPropertyAudio(true);
-    iTimerAudioPresent.FireIn(kTimeoutAudioPresentMs);
-}
-    
-void ProviderSender::TimerAudioPresentExpired()
-{
-    SetPropertyAudio(false);
+	iMutex.Wait();
+	TUint value = iSourceXmlChangeCount;
+	iMutex.Signal();
+    aResponse.Start();
+    aValue.Write(value);
+    aResponse.End();
 }
 
 
-// OhmSender
-
-OhmSender::OhmSender(DvDevice& aDevice, TIpAddress aInterface, const Brx& aName, TUint aChannel)
-    : iDevice(aDevice)
-    , iName(aName)
-    , iChannel(aChannel)
-    , iEnabled(false)
-    , iSocket(kTtl, aInterface)
-    , iRxBuffer(iSocket)
-    , iMutexStartStop("OHMS")
-    , iMutexActive("OHMA")
-    , iNetworkAudioDeactivated("OHMD", 0)
-    , iTimerAliveJoin(MakeFunctor(*this, &OhmSender::TimerAliveJoinExpired))
-    , iTimerAliveAudio(MakeFunctor(*this, &OhmSender::TimerAliveAudioExpired))
-    , iStarted(false)
-    , iActive(false)
-    , iFrame(0)
-    , iSendTrack(false)
-    , iSendMetatext(false)
-    , iSampleStart(0)
-    , iSamplesTotal(0)
-    , iTimestamp(0)
-{
-    iProvider = new ProviderSender(iDevice);
-    
-    UpdateChannel();
-
-    iThreadNetwork = new ThreadFunctor("MPAU", MakeFunctor(*this, &OhmSender::RunNetwork), kThreadPriorityAudio, kThreadStackBytesAudio);
-    iThreadNetwork->Start();
-}
-
-void OhmSender::SetName(const Brx& aValue)
-{
-    iMutexStartStop.Wait();
-    
-	iName.Replace(aValue);
-	
-	UpdateMetadata();
-
-    iMutexStartStop.Signal();
-}
-
-void OhmSender::SetChannel(TUint aValue)
-{
-    iMutexStartStop.Wait();
-    
-    if (iStarted) {
-        Stop();
-        iChannel = aValue;
-        UpdateChannel();
-        Start();
-    }
-    else {
-        iChannel = aValue;
-        UpdateChannel();
-    }
-    
-    iMutexStartStop.Signal();
-}
-
-void OhmSender::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName)
-{
-    iMutexActive.Wait();
-    iSampleRate = aSampleRate;
-    iBitRate = aBitRate;
-    iChannels = aChannels;
-    iBitDepth = aBitDepth;
-    iLossless = aLossless;
-    iCodecName.Replace(aCodecName);
-    CalculateMclocksPerSample();
-    iMutexActive.Signal();
-}
-
-void OhmSender::CalculateMclocksPerSample()
-{
-    iMclocksPerSample = 256 * 44100 / iSampleRate;
-}
-
-void OhmSender::StartTrack(TUint64 aSampleStart)
-{
-    StartTrack(aSampleStart, 0);
-}
-
-void OhmSender::StartTrack(TUint64 aSampleStart, TUint64 aSamplesTotal)
-{
-    StartTrack(aSampleStart, aSamplesTotal, Brx::Empty(), Brx::Empty());
-}
-
-void OhmSender::StartTrack(TUint64 aSampleStart, TUint64 aSamplesTotal, const Brx& aUri, const Brx& aMetadata)
-{
-    iMutexActive.Wait();
-    iSampleStart = aSampleStart;
-    iSamplesTotal = aSamplesTotal;
-    iTrackUri.Replace(aUri);
-    iTrackMetadata.Replace(aMetadata);
-    iTrackMetatext.Replace(Brx::Empty());
-    iSendTrack = true;
-    iSendMetatext = true;
-    iMutexActive.Signal();
-}
-
-void OhmSender::SetMetatext(const Brx& aValue)
-{
-    iMutexActive.Wait();
-    iTrackMetatext.Replace(aValue);
-    iSendMetatext = true;
-    iMutexActive.Signal();
-}
-    
-void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
-{
-    iProvider->InformAudioPresent();
-    
-	iMutexActive.Wait();
-	
-	/*
-	if (!iActive) {
-        iMutexActive.Signal();
-        return;
-	}
-	*/
-	
-    if (iSendTrack) {   
-        SendTrack();
-    }
-
-    if (iSendMetatext) {   
-        SendMetatext();
-    }
-    
-    TUint samples = aBytes * 8 / iChannels / iBitDepth;
-    
-    OhmHeaderAudio headerAudio(false,  // halt
-                               iLossless,
-                               false, // sync
-                               samples,
-                               iFrame,
-                               iTimestamp,
-                               0, // sync timestamp
-                               iSampleStart,
-                               iSamplesTotal,
-                               iSampleRate,
-                               iBitRate,
-                               0, // volume offset
-                               iBitDepth,
-                               iChannels,
-                               iCodecName);
-    
-    OhmHeader header(OhmHeader::kMsgTypeAudio, headerAudio.MsgBytes());
-
-    WriterBuffer writer(iTxBuffer);
-    
-    writer.Flush();
-    header.Externalise(writer);
-    headerAudio.Externalise(writer);
-    
-    writer.Write(Brn(aData, aBytes));
-    
-    try {
-        iSocket.Write(iTxBuffer);
-        iSocket.WriteFlush();
-    }
-    catch (WriterError&) {
-	  	printf("Writer Error\n");
-    }
-    
-    iSampleStart += samples;
-    iTimestamp += samples * iMclocksPerSample;
-
-    iFrame++;
-    
-    iMutexActive.Signal();
-}
-
-OhmSender::~OhmSender()
-{
-    iMutexStartStop.Wait();
-    Stop();
-    iMutexStartStop.Signal();
-
-    delete iThreadNetwork;
-}
-
-// Start always called with the start/stop mutex locked
-
-void OhmSender::Start()
-{
-    if (!iStarted) {
-        iFrame = 0;
-        try {
-	        iSocket.AddMembership(iEndpoint);
-	    }
-	    catch (NetworkError&) {
-	    	printf("Start network error %x:%d\n", iEndpoint.Address(), iEndpoint.Port());
-	    	throw;
-	    }
-        iThreadNetwork->Signal();
-        iStarted = true;
-    }
-}
-
-// Stop always called with the start/stop mutex locked
-
-void OhmSender::Stop()
-{
-    if (iStarted) {
-        iSocket.ReadInterrupt();
-        iNetworkAudioDeactivated.Wait();
-        iSocket.DropMembership();
-        iStarted = false;
-    }
-}
-
-/*
-void OhmSender::Play(const Brx& aAudioBuffer)
-{
-    iFifoAudio.Write(aMsg);
-}
-
-void OhmSender::RunPipeline()
-{
-    while (true) {
-        //MsgIb* msg = iFifo.Read();
-    }
-}
-*/
-
-//  This runs a little state machine where the current state is reflected by:
-//
-//  iAliveJoined: Indicates that someone is listening to us (we received a join recently)
-//  iAliveBlocked: Indicates that someone else is sending on our channel (we received audio recently)
-//
-//  iActive, when true, causes pipeline audio to be sent out over the network
-//
-//  The state machine ensures that iActive is only true when iAliveJoined is true and iAliveBlocked is false
-//
-
-void OhmSender::RunNetwork()
-{
-    while (true) {
-        iMutexActive.Wait();
-
-        iAliveJoined = false;
-        iAliveBlocked = false;
-        iSendTrack = false;
-        iSendMetatext = false;
-
-        iMutexActive.Signal();
-        
-        iThreadNetwork->Wait();
-
-        iProvider->SetStatusReady();
-        
-        try {
-            while (true) {
-                try {
-                    printf("waiting for message\n");
-
-                    OhmHeader header;
-                    header.Internalise(iRxBuffer);
-                    
-                    printf("message received\n");
-                    
-                    if (header.MsgType() <= OhmHeader::kMsgTypeListen) {
-                        
-                        iMutexActive.Wait();
-                        
-                        iActive = true;
-                        iAliveJoined = true;
-                        
-                        if (header.MsgType() <= OhmHeader::kMsgTypeJoin) {
-                            iSendTrack = true;
-                            iSendMetatext = true;
-                        }
-                        
-                        iTimerAliveJoin.FireIn(kTimerAliveJoinTimeoutMs);
-
-                        iMutexActive.Signal();
-                        
-                        iProvider->SetStatusSending();
-                    }
-                    else {
-                        // LOG(kMedia, "OhmSender::RunNetwork audio received\n");
-
-                        // The following randomisation prevents two senders from both sending,
-                        // both seeing each other's audio, both backing off for the same amount of time,
-                        // then both sending again, then both seeing each other's audio again,
-                        // then both backing off for the same amount of time ...
-                        
-                        TUint delay = Random(kTimerAliveAudioTimeoutMs, kTimerAliveAudioTimeoutMs >> 1);
-                        iMutexActive.Wait();
-                        iActive = false;
-                        iAliveBlocked = true;
-                        iTimerAliveAudio.FireIn(delay);
-                        iMutexActive.Signal();
-                        iProvider->SetStatusBlocked();
-                    }
-                }
-                catch (OhmError)
-                {
-                }
-                
-                iRxBuffer.ReadFlush();
-            }
-        }
-        catch (ReaderError) {
-            // LOG(kMedia, "OhmSender::RunNetwork reader error\n");
-        }
-
-        iRxBuffer.ReadFlush();
-
-        iMutexActive.Wait();
-        iActive = false;
-        iMutexActive.Signal();
-        
-        iNetworkAudioDeactivated.Signal();
-        
-        iProvider->SetStatusInactive();
-    }
-}
-
-void OhmSender::TimerAliveJoinExpired()
-{
-    iMutexActive.Wait();
-    iActive = false;
-    iAliveJoined = false;
-    TBool blocked = iAliveBlocked;
-    iMutexActive.Signal();
-    
-    if (!blocked) {
-        iProvider->SetStatusReady();
-    }
-}
-
-void OhmSender::TimerAliveAudioExpired()
-{
-    iMutexActive.Wait();
-    TBool joined = iAliveBlocked;
-    iActive = joined;
-    iAliveBlocked = false;
-    iMutexActive.Signal();
-
-    if (joined) {
-        iProvider->SetStatusSending();
-    }
-    else {
-        iProvider->SetStatusReady();
-    }
-}
-
-/*
-void OhmSender::ProcessOutMsgIbAudio(MsgIbAudio* aMsg)
-{
-    iProvider->InformAudioPresent();
-    
-    iMutexActive.Wait();
-    
-    if (iActive) {
-        if (iSendTrack) {   
-            SendTrack();
-        }
-
-        if (iSendMetatext) {   
-            SendMetatext();
-        }
-        
-        TUint txTimestampPrev = 0;
-
-        if (iFrame != 0) {
-            txTimestampPrev = 123; // TODO
-        }
-        
-        OhmHeaderAudio headerAudio(aMsg, iFrame, txTimestampPrev);
-        OhmHeader header(OhmHeader::kMsgTypeAudio, headerAudio.MsgBytes());
-        
-        WriterBuffer writer(iTxBuffer);
-        
-        writer.Flush();
-        header.Externalise(writer);
-        headerAudio.Externalise(writer);
-        
-        TByte* ptr = (TByte*)iTxBuffer.Ptr();
-        TUint max = iTxBuffer.MaxBytes();
-        TUint bytes = iTxBuffer.Bytes();
-        
-        Bwn audio(ptr + bytes, max - bytes);
-        
-        MsgIbAudio::PackBigEndian(audio, *aMsg);
-        
-        iTxBuffer.SetBytes(bytes + audio.Bytes());
-        
-        try {
-            iSocket.Write(iTxBuffer);
-            iSocket.WriteFlush();
-        }
-        catch (WriterError&) {
-            LOG(kMedia, "OhmSender::ProcessOutMsgIbAudio WriterError\n");
-        }
-        
-        iFrame++;
-    }
-    
-    iMutexActive.Signal();
-
-    ProcessedOutIb(aMsg);
-}
-*/
-
-void OhmSender::UpdateChannel()
-{
-    TUint address = (iChannel & 0xffff) | 0xeffd0000; // 239.253.x.x
-    
-    iEndpoint.SetAddress(Arch::BigEndian4(address));
-    iEndpoint.SetPort(Ohm::kPort);
-
-    iUri.Replace("ohm://");
-    Ascii::AppendDec(iUri, (address >> 24 & 0xff));
-    iUri.Append('.');
-    Ascii::AppendDec(iUri, (address >> 16 & 0xff));
-    iUri.Append('.');
-    Ascii::AppendDec(iUri, (address >> 8 & 0xff));
-    iUri.Append('.');
-    Ascii::AppendDec(iUri, (address & 0xff));
-    iUri.Append(':');
-    Ascii::AppendDec(iUri, Ohm::kPort);
-
-	UpdateMetadata();    
-}
-
-void OhmSender::UpdateMetadata()
-{
-    iMetadata.Replace("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
-    iMetadata.Append("<item id=\"0\" restricted=\"True\">");
-    iMetadata.Append("<dc:title>");
-    iMetadata.Append(iName);
-    iMetadata.Append("</dc:title>");
-    iMetadata.Append("<res protocolInfo=\"ohm:*:*:*\">");
-    iMetadata.Append(iUri);
-    iMetadata.Append("</res>");
-    iMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");
-    iMetadata.Append("</item>");
-    iMetadata.Append("</DIDL-Lite>");
-
-	iProvider->SetMetadata(iMetadata);
-}
-
-void OhmSender::SetEnabled(TBool aValue)
-{
-    iMutexStartStop.Wait();
-    
-    iEnabled = aValue;
-    
-    if (iEnabled) {
-        Start();
-    }
-    else {
-        Stop();
-    }
-
-    iMutexStartStop.Signal();
-}
-
-// SendTrack called with alive mutex locked;
-
-void OhmSender::SendTrack()
-{
-    OhmHeaderTrack headerTrack(iTrackUri, iTrackMetadata);
-    OhmHeader header(OhmHeader::kMsgTypeTrack, headerTrack.MsgBytes());
-    
-    WriterBuffer writer(iTxBuffer);
-    
-    writer.Flush();
-    header.Externalise(writer);
-    headerTrack.Externalise(writer);
-    writer.Write(iTrackUri);
-    writer.Write(iTrackMetadata);
-    
-    iSocket.Write(iTxBuffer);
-    iSocket.WriteFlush();
-    
-    iSendTrack = false;
-}
-
-// SendMetatext called with alive mutex locked;
-
-void OhmSender::SendMetatext()
-{
-    OhmHeaderMetatext headerMetatext(iTrackMetatext);
-    OhmHeader header(OhmHeader::kMsgTypeMetatext, headerMetatext.MsgBytes());
-    
-    WriterBuffer writer(iTxBuffer);
-    
-    writer.Flush();
-    header.Externalise(writer);
-    headerMetatext.Externalise(writer);
-    writer.Write(iTrackMetatext);
-    
-    iSocket.Write(iTxBuffer);
-    iSocket.WriteFlush();
-
-    iSendMetatext = false;
-}

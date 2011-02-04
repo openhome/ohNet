@@ -1,5 +1,5 @@
-#ifndef HEADER_OHMSENDER
-#define HEADER_OHMSENDER
+#ifndef HEADER_OPENHOME_PRODUCT
+#define HEADER_OPENHOME_PRODUCT
 
 #include <ZappTypes.h>
 #include <Buffer.h>
@@ -7,105 +7,155 @@
 #include <Thread.h>
 #include <Timer.h>
 
-#include "Ohm.h"
+#include "DvAvOpenhomeOrgProduct1.h"
 
-namespace Zapp {
+using namespace Zapp;
 
-class ProviderSender;
+namespace Openhome {
+namespace Av {
 
-class OhmSender
+class ILockable
 {
-    static const TUint kTtl = 4;
-    static const TUint kMaxMetadataBytes = 1000;
-    static const TUint kMaxAudioFrameBytes = 16 * 1024;
-    static const TUint kThreadStackBytesAudio = 64 * 1024;
-    static const TUint kThreadPriorityAudio = kPriorityNormal;
-    static const TUint kTimerAliveJoinTimeoutMs = 10000;
-    static const TUint kTimerAliveAudioTimeoutMs = 3000;
-
 public:
-	static const TUint kMaxNameBytes = 32;
-	static const TUint kMaxTrackUriBytes = Ohm::kMaxTrackUriBytes;
-	static const TUint kMaxTrackMetadataBytes = Ohm::kMaxTrackMetadataBytes;
-	static const TUint kMaxTrackMetatextBytes = Ohm::kMaxTrackMetatextBytes;
-
-public:
-    OhmSender(DvDevice& aDevice, TIpAddress aInterface, const Brx& aName, TUint aChannel);
-    ~OhmSender();
-
-	void SetName(const Brx& aValue);
-	void SetChannel(TUint aValue);
-	void SetEnabled(TBool aValue);
-
-    void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName);
-    
-    void StartTrack(TUint64 aSampleStart);
-    void StartTrack(TUint64 aSampleStart, TUint64 aSamplesTotal);
-    void StartTrack(TUint64 aSampleStart, TUint64 aSamplesTotal, const Brx& aUri, const Brx& aMetadata);
-    
-	void SendAudio(const TByte* aData, TUint aBytes);
-
-	void SetMetatext(const Brx& aValue);
-    
-private:
-    void RunPipeline();
-    void RunNetwork();
-
-    void UpdateChannel();
-    void UpdateMetadata();
-
-    void Start();
-    void Stop();
-    void EnabledChanged();
-    void ChannelChanged();
-    void TimerAliveJoinExpired();
-    void TimerAliveAudioExpired();
-    void SendTrackInfo();
-    void SendTrack();
-    void SendMetatext();
-    void CalculateMclocksPerSample();
-    
-private:
-    DvDevice& iDevice;
-    Bws<kMaxNameBytes> iName;
-    TUint iChannel;
-    TBool iEnabled;
-    OhmSocket iSocket;
-    Srs<kMaxAudioFrameBytes> iRxBuffer;
-    Bws<kMaxAudioFrameBytes> iTxBuffer;
-    Mutex iMutexStartStop;
-    Mutex iMutexActive;
-    Semaphore iNetworkAudioDeactivated;
-    Timer iTimerAliveJoin;
-    Timer iTimerAliveAudio;
-    ProviderSender* iProvider;
-    TBool iStarted;
-    TBool iActive;
-    Endpoint iEndpoint;
-    TBool iAliveJoined;
-    TBool iAliveBlocked;
-    ThreadFunctor* iThreadNetwork;
-    TUint iFrame;
-    Bws<Ohm::kMaxUriBytes> iUri;
-    Bws<kMaxMetadataBytes> iMetadata;
-    TBool iSendTrack;
-    TBool iSendMetatext;
-    Bws<Ohm::kMaxTrackUriBytes> iTrackUri;
-    Bws<Ohm::kMaxTrackMetadataBytes> iTrackMetadata;
-    Bws<Ohm::kMaxTrackMetatextBytes> iTrackMetatext;
-    Bws<Ohm::kMaxCodecNameBytes> iCodecName;
-    TUint iSampleRate;
-    TUint iBitRate;
-    TUint iChannels;
-    TUint iBitDepth;
-    TBool iLossless;
-    TUint64 iSampleStart;
-    TUint64 iSamplesTotal;
-    TUint iTimestamp;
-    TUint iMclocksPerSample;
+	virtual void Wait() = 0;
+	virtual void Signal() = 0;
+	virtual ~ILockable() {}
 };
 
-} // namespace Zapp
+class IObserver
+{
+	virtual void Changed() = 0;
+	virtual ~IObserver() {}
+};
 
-#endif // HEADER_OHMSENDER
+// This observable class is not thread safe on adding observers
+
+class CObservable
+{
+public:
+	CObservable();
+	void Add(IObserver& aObserver);
+
+protected:
+	void InformObservers() const;
+
+private:
+	std::vector<IObserver*> iObserverList;
+};
+
+class IStandbyHandler
+{
+public:
+	virtual void SetStandby(TBool aValue) = 0;
+	virtual ~IStandbyHandler() {}
+};
+
+class ISourceIndexHandler
+{
+public:
+	virtual void SetSourceIndex(TUint aValue) = 0;
+	virtual ~ISourceIndexHandler() {}
+};
+
+class CSourceManager;
+
+class CSource : public CObservable
+{
+	friend class CSourceManager;
+	
+	static const TUint kMaxTypeBytes = 20;
+	static const TUint kMaxNameBytes = 20;
+
+public:
+	TBool Visible(Bwx& aSystemName, Bwx& aType, Bwx& aName);
+	void SetName(const Brx& aValue);
+	void SetVisible(const Brx& aValue);
+	void Add(IObserver& aObserver);	
+
+private:
+	Wait();
+	Signal();
+	CSource(const Brx& aSystemName, const Brx& aType, const Brx& aName, TBool aVisible, ILockable& aLockable);
+	
+private:
+	Bws<kMaxNameBytes) iSystemName;
+	Bws<kMaxTypeBytes) iType;
+	Bws<kMaxNameBytes) iName;
+	TBool iVisible;
+	ILockable& iLockable;
+};
+
+class CSourceManager : public CObservable, public IObserver, ILockable
+{
+public:
+	CSourceManager();
+	CSource& Create(const Brx& aSystemName, const Brx& aType, const Brx& aName, TBool aVisible);
+	TUint SourceCount() const;
+	CSource& Source(TUint aIndex);
+
+private:
+	virtual void Changed();
+	void UpdateSourceXml();
+	
+private:
+	mutable Mutex iMutex;	
+	std::vector<CSource*> iSourceList;
+	Bws<kMaxSourceXmlBytes> iSourceXml;
+};
+
+class CProduct : public Zapp::DvProviderAvOpenhomeOrgProduct1
+{
+	static const TUint kMaxRoomBytes = 30;
+	static const TUint kMaxNameBytes = 30;
+
+public:
+	CProduct(DvDevice& aDevice
+	, IStandbyHandler& aStandbyHandler
+    , ISourceIndexHandler& aSourceIndexHandler
+	, TBool aStandby
+	, const TChar* aAtrributes
+	, const TChar* aManufacturerName
+	, const TChar* aManufacturerInfo
+	, const TChar* aManufacturerUrl
+	, const TChar* aManufacturerImageUri
+	, const TChar* aModelName
+	, const TChar* aModelInfo
+	, const TChar* aModelUrl
+	, const TChar* aModelImageUri
+	, const TChar* aProductRoom
+	, const TChar* aProductName
+	, const TChar* aProductInfo
+	, const TChar* aProductUrl
+	, const TChar* aProductImageUri);
+    
+    void SetRoom(const Brx& aRoom);
+    void SetName(const Brx& aName);
+    void SetStandby(TBool aStandby);
+    
+private:
+    virtual void Manufacturer(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aName, IInvocationResponseString& aInfo, IInvocationResponseString& aUrl, IInvocationResponseString& aImageUri);
+    virtual void Model(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aName, IInvocationResponseString& aInfo, IInvocationResponseString& aUrl, IInvocationResponseString& aImageUri);
+    virtual void Product(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aRoom, IInvocationResponseString& aName, IInvocationResponseString& aInfo, IInvocationResponseString& aUrl, IInvocationResponseString& aImageUri);
+    virtual void Standby(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue);
+    virtual void SetStandby(IInvocationResponse& aResponse, TUint aVersion, TBool aValue);
+    virtual void SourceCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValue);
+    virtual void SourceXml(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void SourceIndex(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValue);
+    virtual void SetSourceIndex(IInvocationResponse& aResponse, TUint aVersion, TUint aValue);
+    virtual void SetSourceIndexByName(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValue);
+    virtual void Source(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aSystemName, IInvocationResponseString& aType, IInvocationResponseString& aName, IInvocationResponseBool& aVisible);
+    virtual void Attributes(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void SourceXmlChangeCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValue);
+
+private:
+    IStandbyHandler& iStandbyHandler;
+    ISourceIndexHandler& iSourceIndexHandler;
+    TUint iSourceXmlChangeCount;
+	mutable Mutex iMutex;
+};
+
+} // namespace Av
+} // namespace Openhome
+
+#endif // HEADER_OPENHOME_PRODUCT
 
