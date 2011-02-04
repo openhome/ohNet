@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -48,9 +49,9 @@ namespace Zapp.ControlPoint.Proxies
         void SyncReadList(String aIdList, out String aMetadataList);
         void BeginReadList(String aIdList, CpProxy.CallbackAsyncComplete aCallback);
         void EndReadList(IntPtr aAsyncHandle, out String aMetadataList);
-        void SyncIdArray(out uint aIdArrayToken, out String aIdArray);
+        void SyncIdArray(out uint aIdArrayToken, out byte[] aIdArray);
         void BeginIdArray(CpProxy.CallbackAsyncComplete aCallback);
-        void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out String aIdArray);
+        void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out byte[] aIdArray);
         void SyncIdArrayChanged(uint aIdArrayToken, out bool aIdArrayChanged);
         void BeginIdArrayChanged(uint aIdArrayToken, CpProxy.CallbackAsyncComplete aCallback);
         void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aIdArrayChanged);
@@ -68,7 +69,7 @@ namespace Zapp.ControlPoint.Proxies
         void SetPropertyIdChanged(CpProxy.CallbackPropertyChanged aIdChanged);
         uint PropertyId();
         void SetPropertyIdArrayChanged(CpProxy.CallbackPropertyChanged aIdArrayChanged);
-        String PropertyIdArray();
+        byte[] PropertyIdArray();
         void SetPropertyIdsMaxChanged(CpProxy.CallbackPropertyChanged aIdsMaxChanged);
         uint PropertyIdsMax();
     }
@@ -294,7 +295,7 @@ namespace Zapp.ControlPoint.Proxies
     {
         private CpProxyLinnCoUkRadio1 iService;
         private uint iIdArrayToken;
-        private String iIdArray;
+        private byte[] iIdArray;
 
         public SyncIdArrayLinnCoUkRadio1(CpProxyLinnCoUkRadio1 aProxy)
         {
@@ -304,7 +305,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             return iIdArrayToken;
         }
-        public String IdArray()
+        public byte[] IdArray()
         {
             return iIdArray;
         }
@@ -387,6 +388,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iIdChanged;
         private CallbackPropertyChanged iIdArrayChanged;
         private CallbackPropertyChanged iIdsMaxChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -490,6 +492,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iIdArray);
             iIdsMax = new PropertyUint("IdsMax", IdsMaxPropertyChanged);
             AddProperty(iIdsMax);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -1044,7 +1048,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArray"></param>
-        public void SyncIdArray(out uint aIdArrayToken, out String aIdArray)
+        public void SyncIdArray(out uint aIdArrayToken, out byte[] aIdArray)
         {
             SyncIdArrayLinnCoUkRadio1 sync = new SyncIdArrayLinnCoUkRadio1(this);
             BeginIdArray(sync.AsyncComplete());
@@ -1078,7 +1082,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArray"></param>
-        public void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out String aIdArray)
+        public void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out byte[] aIdArray)
         {
             uint index = 0;
             aIdArrayToken = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1183,7 +1187,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aChannelUriChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyChannelUriChanged(CallbackPropertyChanged aChannelUriChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iChannelUriChanged = aChannelUriChanged;
             }
@@ -1191,7 +1195,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ChannelUriPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iChannelUriChanged != null)
                 {
@@ -1208,7 +1212,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aChannelMetadataChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyChannelMetadataChanged(CallbackPropertyChanged aChannelMetadataChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iChannelMetadataChanged = aChannelMetadataChanged;
             }
@@ -1216,7 +1220,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ChannelMetadataPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iChannelMetadataChanged != null)
                 {
@@ -1233,7 +1237,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransportStateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTransportStateChanged(CallbackPropertyChanged aTransportStateChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTransportStateChanged = aTransportStateChanged;
             }
@@ -1241,7 +1245,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TransportStatePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTransportStateChanged != null)
                 {
@@ -1258,7 +1262,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProtocolInfoChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProtocolInfoChanged(CallbackPropertyChanged aProtocolInfoChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iProtocolInfoChanged = aProtocolInfoChanged;
             }
@@ -1266,7 +1270,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ProtocolInfoPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iProtocolInfoChanged != null)
                 {
@@ -1283,7 +1287,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIdChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyIdChanged(CallbackPropertyChanged aIdChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iIdChanged = aIdChanged;
             }
@@ -1291,7 +1295,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void IdPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iIdChanged != null)
                 {
@@ -1308,7 +1312,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIdArrayChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyIdArrayChanged(CallbackPropertyChanged aIdArrayChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iIdArrayChanged = aIdArrayChanged;
             }
@@ -1316,7 +1320,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void IdArrayPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iIdArrayChanged != null)
                 {
@@ -1333,7 +1337,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIdsMaxChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyIdsMaxChanged(CallbackPropertyChanged aIdsMaxChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iIdsMaxChanged = aIdsMaxChanged;
             }
@@ -1341,7 +1345,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void IdsMaxPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iIdsMaxChanged != null)
                 {
@@ -1417,7 +1421,7 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aIdArray">Will be set to the value of the property</param>
-        public String PropertyIdArray()
+        public byte[] PropertyIdArray()
         {
             return iIdArray.Value();
         }

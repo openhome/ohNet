@@ -75,73 +75,73 @@ protected:
     /**
      * Signal that the action Read is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoRead must be overridden if this is called.
+     * Read must be overridden if this is called.
      */
     void EnableActionRead();
     /**
      * Signal that the action ReadList is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoReadList must be overridden if this is called.
+     * ReadList must be overridden if this is called.
      */
     void EnableActionReadList();
     /**
      * Signal that the action Insert is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoInsert must be overridden if this is called.
+     * Insert must be overridden if this is called.
      */
     void EnableActionInsert();
     /**
      * Signal that the action Delete is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDelete must be overridden if this is called.
+     * Delete must be overridden if this is called.
      */
     void EnableActionDelete();
     /**
      * Signal that the action DeleteAll is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDeleteAll must be overridden if this is called.
+     * DeleteAll must be overridden if this is called.
      */
     void EnableActionDeleteAll();
     /**
      * Signal that the action SetRepeat is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetRepeat must be overridden if this is called.
+     * SetRepeat must be overridden if this is called.
      */
     void EnableActionSetRepeat();
     /**
      * Signal that the action Repeat is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoRepeat must be overridden if this is called.
+     * Repeat must be overridden if this is called.
      */
     void EnableActionRepeat();
     /**
      * Signal that the action SetShuffle is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetShuffle must be overridden if this is called.
+     * SetShuffle must be overridden if this is called.
      */
     void EnableActionSetShuffle();
     /**
      * Signal that the action Shuffle is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoShuffle must be overridden if this is called.
+     * Shuffle must be overridden if this is called.
      */
     void EnableActionShuffle();
     /**
      * Signal that the action TracksMax is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoTracksMax must be overridden if this is called.
+     * TracksMax must be overridden if this is called.
      */
     void EnableActionTracksMax();
     /**
      * Signal that the action IdArray is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoIdArray must be overridden if this is called.
+     * IdArray must be overridden if this is called.
      */
     void EnableActionIdArray();
     /**
      * Signal that the action IdArrayChanged is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoIdArrayChanged must be overridden if this is called.
+     * IdArrayChanged must be overridden if this is called.
      */
     void EnableActionIdArrayChanged();
 private:

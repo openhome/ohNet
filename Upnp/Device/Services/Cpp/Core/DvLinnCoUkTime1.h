@@ -63,7 +63,7 @@ protected:
     /**
      * Signal that the action Time is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoTime must be overridden if this is called.
+     * Time must be overridden if this is called.
      */
     void EnableActionTime();
 private:

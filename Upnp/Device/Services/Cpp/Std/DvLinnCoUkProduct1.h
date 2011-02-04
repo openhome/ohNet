@@ -55,25 +55,25 @@ protected:
     /**
      * Signal that the action Room is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoRoom must be overridden if this is called.
+     * Room must be overridden if this is called.
      */
     void EnableActionRoom();
     /**
      * Signal that the action SetRoom is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetRoom must be overridden if this is called.
+     * SetRoom must be overridden if this is called.
      */
     void EnableActionSetRoom();
     /**
      * Signal that the action Standby is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStandby must be overridden if this is called.
+     * Standby must be overridden if this is called.
      */
     void EnableActionStandby();
     /**
      * Signal that the action SetStandby is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetStandby must be overridden if this is called.
+     * SetStandby must be overridden if this is called.
      */
     void EnableActionSetStandby();
 private:

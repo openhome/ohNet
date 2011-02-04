@@ -7,6 +7,7 @@ cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LI
 objdir = Build/Obj/Posix/
 inc_build = Build/Include
 includes = -IBuild/Include/ -IBuild/Include/Cpp/
+bundle_build = Build/Bundles
 osdir = Posix
 objext = o
 libprefix = lib
@@ -129,3 +130,19 @@ docs:
 	doxygen DoxyfileCs
 	mkdir -p Build/Docs/Js
 	perl ./JsDoc/jsdoc.pl -d Build/Docs/Js ControlPoint/Services/Js
+
+bundle: tt
+	mkdir -p $(bundle_build)
+ifeq ($(targetplatform),)
+	echo Usage: make bundle targetplatform=Linux-x86
+else
+	python bundle_binaries.py Posix $(targetplatform)
+endif
+
+bundle-dev: tt
+	mkdir -p $(bundle_build)
+ifeq ($(targetplatform),)
+	echo Usage: make bundle-dev targetplatform=Linux-x86
+else
+	python bundle_binaries.py --dev Posix $(targetplatform)
+endif

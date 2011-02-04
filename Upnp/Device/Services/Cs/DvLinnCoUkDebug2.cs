@@ -34,7 +34,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetDebugLevel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetDebugLevel must be overridden if this is called.</remarks>
+        /// SetDebugLevel must be overridden if this is called.</remarks>
         protected void EnableActionSetDebugLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDebugLevel");
@@ -47,7 +47,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DebugLevel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDebugLevel must be overridden if this is called.</remarks>
+        /// DebugLevel must be overridden if this is called.</remarks>
         protected void EnableActionDebugLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DebugLevel");
@@ -60,7 +60,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action MemWrite is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoMemWrite must be overridden if this is called.</remarks>
+        /// MemWrite must be overridden if this is called.</remarks>
         protected void EnableActionMemWrite()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("MemWrite");
@@ -108,7 +108,7 @@ namespace Zapp.Device.Providers
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aaMemAddress"></param>
         /// <param name="aaMemData"></param>
-        protected virtual void MemWrite(uint aVersion, uint aaMemAddress, string aaMemData)
+        protected virtual void MemWrite(uint aVersion, uint aaMemAddress, byte[] aaMemData)
         {
             throw (new ActionDisabledError());
         }
@@ -199,7 +199,7 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
             uint aMemAddress;
-            string aMemData;
+            byte[] aMemData;
             try
             {
                 invocation.ReadStart();

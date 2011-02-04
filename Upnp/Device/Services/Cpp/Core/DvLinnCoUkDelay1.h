@@ -53,55 +53,55 @@ protected:
     /**
      * Signal that the action PresetXml is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPresetXml must be overridden if this is called.
+     * PresetXml must be overridden if this is called.
      */
     void EnableActionPresetXml();
     /**
      * Signal that the action PresetIndex is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPresetIndex must be overridden if this is called.
+     * PresetIndex must be overridden if this is called.
      */
     void EnableActionPresetIndex();
     /**
      * Signal that the action SetPresetIndex is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetPresetIndex must be overridden if this is called.
+     * SetPresetIndex must be overridden if this is called.
      */
     void EnableActionSetPresetIndex();
     /**
      * Signal that the action SetPresetDelay is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetPresetDelay must be overridden if this is called.
+     * SetPresetDelay must be overridden if this is called.
      */
     void EnableActionSetPresetDelay();
     /**
      * Signal that the action SetPresetVisible is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetPresetVisible must be overridden if this is called.
+     * SetPresetVisible must be overridden if this is called.
      */
     void EnableActionSetPresetVisible();
     /**
      * Signal that the action SetPresetName is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetPresetName must be overridden if this is called.
+     * SetPresetName must be overridden if this is called.
      */
     void EnableActionSetPresetName();
     /**
      * Signal that the action DelayMinimum is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDelayMinimum must be overridden if this is called.
+     * DelayMinimum must be overridden if this is called.
      */
     void EnableActionDelayMinimum();
     /**
      * Signal that the action DelayMaximum is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDelayMaximum must be overridden if this is called.
+     * DelayMaximum must be overridden if this is called.
      */
     void EnableActionDelayMaximum();
     /**
      * Signal that the action PresetCount is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPresetCount must be overridden if this is called.
+     * PresetCount must be overridden if this is called.
      */
     void EnableActionPresetCount();
 private:

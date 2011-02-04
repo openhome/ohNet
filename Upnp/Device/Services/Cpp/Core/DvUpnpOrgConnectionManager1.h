@@ -63,31 +63,31 @@ protected:
     /**
      * Signal that the action GetProtocolInfo is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetProtocolInfo must be overridden if this is called.
+     * GetProtocolInfo must be overridden if this is called.
      */
     void EnableActionGetProtocolInfo();
     /**
      * Signal that the action PrepareForConnection is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPrepareForConnection must be overridden if this is called.
+     * PrepareForConnection must be overridden if this is called.
      */
     void EnableActionPrepareForConnection();
     /**
      * Signal that the action ConnectionComplete is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoConnectionComplete must be overridden if this is called.
+     * ConnectionComplete must be overridden if this is called.
      */
     void EnableActionConnectionComplete();
     /**
      * Signal that the action GetCurrentConnectionIDs is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetCurrentConnectionIDs must be overridden if this is called.
+     * GetCurrentConnectionIDs must be overridden if this is called.
      */
     void EnableActionGetCurrentConnectionIDs();
     /**
      * Signal that the action GetCurrentConnectionInfo is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetCurrentConnectionInfo must be overridden if this is called.
+     * GetCurrentConnectionInfo must be overridden if this is called.
      */
     void EnableActionGetCurrentConnectionInfo();
 private:

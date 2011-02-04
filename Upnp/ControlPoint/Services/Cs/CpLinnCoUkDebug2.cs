@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -15,8 +16,8 @@ namespace Zapp.ControlPoint.Proxies
         void SyncDebugLevel(out uint aDebugLevel);
         void BeginDebugLevel(CpProxy.CallbackAsyncComplete aCallback);
         void EndDebugLevel(IntPtr aAsyncHandle, out uint aDebugLevel);
-        void SyncMemWrite(uint aMemAddress, String aMemData);
-        void BeginMemWrite(uint aMemAddress, String aMemData, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncMemWrite(uint aMemAddress, byte[] aMemData);
+        void BeginMemWrite(uint aMemAddress, byte[] aMemData, CpProxy.CallbackAsyncComplete aCallback);
         void EndMemWrite(IntPtr aAsyncHandle);
     }
 
@@ -75,6 +76,7 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionSetDebugLevel;
         private Zapp.Core.Action iActionDebugLevel;
         private Zapp.Core.Action iActionMemWrite;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -99,6 +101,8 @@ namespace Zapp.ControlPoint.Proxies
             iActionMemWrite.AddInputParameter(param);
             param = new ParameterBinary("aMemData");
             iActionMemWrite.AddInputParameter(param);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -191,7 +195,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMemAddress"></param>
         /// <param name="aaMemData"></param>
-        public void SyncMemWrite(uint aMemAddress, String aMemData)
+        public void SyncMemWrite(uint aMemAddress, byte[] aMemData)
         {
             SyncMemWriteLinnCoUkDebug2 sync = new SyncMemWriteLinnCoUkDebug2(this);
             BeginMemWrite(aMemAddress, aMemData, sync.AsyncComplete());
@@ -209,7 +213,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMemData"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginMemWrite(uint aMemAddress, String aMemData, CallbackAsyncComplete aCallback)
+        public void BeginMemWrite(uint aMemAddress, byte[] aMemData, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionMemWrite, aCallback);
             int inIndex = 0;

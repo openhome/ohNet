@@ -45,223 +45,223 @@ protected:
     /**
      * Signal that the action ListPresets is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoListPresets must be overridden if this is called.
+     * ListPresets must be overridden if this is called.
      */
     void EnableActionListPresets();
     /**
      * Signal that the action SelectPreset is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSelectPreset must be overridden if this is called.
+     * SelectPreset must be overridden if this is called.
      */
     void EnableActionSelectPreset();
     /**
      * Signal that the action GetBrightness is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetBrightness must be overridden if this is called.
+     * GetBrightness must be overridden if this is called.
      */
     void EnableActionGetBrightness();
     /**
      * Signal that the action SetBrightness is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetBrightness must be overridden if this is called.
+     * SetBrightness must be overridden if this is called.
      */
     void EnableActionSetBrightness();
     /**
      * Signal that the action GetContrast is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetContrast must be overridden if this is called.
+     * GetContrast must be overridden if this is called.
      */
     void EnableActionGetContrast();
     /**
      * Signal that the action SetContrast is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetContrast must be overridden if this is called.
+     * SetContrast must be overridden if this is called.
      */
     void EnableActionSetContrast();
     /**
      * Signal that the action GetSharpness is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetSharpness must be overridden if this is called.
+     * GetSharpness must be overridden if this is called.
      */
     void EnableActionGetSharpness();
     /**
      * Signal that the action SetSharpness is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetSharpness must be overridden if this is called.
+     * SetSharpness must be overridden if this is called.
      */
     void EnableActionSetSharpness();
     /**
      * Signal that the action GetRedVideoGain is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetRedVideoGain must be overridden if this is called.
+     * GetRedVideoGain must be overridden if this is called.
      */
     void EnableActionGetRedVideoGain();
     /**
      * Signal that the action SetRedVideoGain is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetRedVideoGain must be overridden if this is called.
+     * SetRedVideoGain must be overridden if this is called.
      */
     void EnableActionSetRedVideoGain();
     /**
      * Signal that the action GetGreenVideoGain is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetGreenVideoGain must be overridden if this is called.
+     * GetGreenVideoGain must be overridden if this is called.
      */
     void EnableActionGetGreenVideoGain();
     /**
      * Signal that the action SetGreenVideoGain is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetGreenVideoGain must be overridden if this is called.
+     * SetGreenVideoGain must be overridden if this is called.
      */
     void EnableActionSetGreenVideoGain();
     /**
      * Signal that the action GetBlueVideoGain is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetBlueVideoGain must be overridden if this is called.
+     * GetBlueVideoGain must be overridden if this is called.
      */
     void EnableActionGetBlueVideoGain();
     /**
      * Signal that the action SetBlueVideoGain is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetBlueVideoGain must be overridden if this is called.
+     * SetBlueVideoGain must be overridden if this is called.
      */
     void EnableActionSetBlueVideoGain();
     /**
      * Signal that the action GetRedVideoBlackLevel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetRedVideoBlackLevel must be overridden if this is called.
+     * GetRedVideoBlackLevel must be overridden if this is called.
      */
     void EnableActionGetRedVideoBlackLevel();
     /**
      * Signal that the action SetRedVideoBlackLevel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetRedVideoBlackLevel must be overridden if this is called.
+     * SetRedVideoBlackLevel must be overridden if this is called.
      */
     void EnableActionSetRedVideoBlackLevel();
     /**
      * Signal that the action GetGreenVideoBlackLevel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetGreenVideoBlackLevel must be overridden if this is called.
+     * GetGreenVideoBlackLevel must be overridden if this is called.
      */
     void EnableActionGetGreenVideoBlackLevel();
     /**
      * Signal that the action SetGreenVideoBlackLevel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetGreenVideoBlackLevel must be overridden if this is called.
+     * SetGreenVideoBlackLevel must be overridden if this is called.
      */
     void EnableActionSetGreenVideoBlackLevel();
     /**
      * Signal that the action GetBlueVideoBlackLevel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetBlueVideoBlackLevel must be overridden if this is called.
+     * GetBlueVideoBlackLevel must be overridden if this is called.
      */
     void EnableActionGetBlueVideoBlackLevel();
     /**
      * Signal that the action SetBlueVideoBlackLevel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetBlueVideoBlackLevel must be overridden if this is called.
+     * SetBlueVideoBlackLevel must be overridden if this is called.
      */
     void EnableActionSetBlueVideoBlackLevel();
     /**
      * Signal that the action GetColorTemperature is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetColorTemperature must be overridden if this is called.
+     * GetColorTemperature must be overridden if this is called.
      */
     void EnableActionGetColorTemperature();
     /**
      * Signal that the action SetColorTemperature is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetColorTemperature must be overridden if this is called.
+     * SetColorTemperature must be overridden if this is called.
      */
     void EnableActionSetColorTemperature();
     /**
      * Signal that the action GetHorizontalKeystone is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetHorizontalKeystone must be overridden if this is called.
+     * GetHorizontalKeystone must be overridden if this is called.
      */
     void EnableActionGetHorizontalKeystone();
     /**
      * Signal that the action SetHorizontalKeystone is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetHorizontalKeystone must be overridden if this is called.
+     * SetHorizontalKeystone must be overridden if this is called.
      */
     void EnableActionSetHorizontalKeystone();
     /**
      * Signal that the action GetVerticalKeystone is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetVerticalKeystone must be overridden if this is called.
+     * GetVerticalKeystone must be overridden if this is called.
      */
     void EnableActionGetVerticalKeystone();
     /**
      * Signal that the action SetVerticalKeystone is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetVerticalKeystone must be overridden if this is called.
+     * SetVerticalKeystone must be overridden if this is called.
      */
     void EnableActionSetVerticalKeystone();
     /**
      * Signal that the action GetMute is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetMute must be overridden if this is called.
+     * GetMute must be overridden if this is called.
      */
     void EnableActionGetMute();
     /**
      * Signal that the action SetMute is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetMute must be overridden if this is called.
+     * SetMute must be overridden if this is called.
      */
     void EnableActionSetMute();
     /**
      * Signal that the action GetVolume is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetVolume must be overridden if this is called.
+     * GetVolume must be overridden if this is called.
      */
     void EnableActionGetVolume();
     /**
      * Signal that the action SetVolume is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetVolume must be overridden if this is called.
+     * SetVolume must be overridden if this is called.
      */
     void EnableActionSetVolume();
     /**
      * Signal that the action GetVolumeDB is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetVolumeDB must be overridden if this is called.
+     * GetVolumeDB must be overridden if this is called.
      */
     void EnableActionGetVolumeDB();
     /**
      * Signal that the action SetVolumeDB is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetVolumeDB must be overridden if this is called.
+     * SetVolumeDB must be overridden if this is called.
      */
     void EnableActionSetVolumeDB();
     /**
      * Signal that the action GetVolumeDBRange is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetVolumeDBRange must be overridden if this is called.
+     * GetVolumeDBRange must be overridden if this is called.
      */
     void EnableActionGetVolumeDBRange();
     /**
      * Signal that the action GetLoudness is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetLoudness must be overridden if this is called.
+     * GetLoudness must be overridden if this is called.
      */
     void EnableActionGetLoudness();
     /**
      * Signal that the action SetLoudness is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetLoudness must be overridden if this is called.
+     * SetLoudness must be overridden if this is called.
      */
     void EnableActionSetLoudness();
     /**
      * Signal that the action GetStateVariables is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetStateVariables must be overridden if this is called.
+     * GetStateVariables must be overridden if this is called.
      */
     void EnableActionGetStateVariables();
     /**
      * Signal that the action SetStateVariables is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetStateVariables must be overridden if this is called.
+     * SetStateVariables must be overridden if this is called.
      */
     void EnableActionSetStateVariables();
 private:

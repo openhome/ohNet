@@ -66,13 +66,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        bool SetPropertyVarBin(string aValue);
+        bool SetPropertyVarBin(byte[] aValue);
 
         /// <summary>
         /// Get a copy of the value of the VarBin property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        string PropertyVarBin();
+        byte[] PropertyVarBin();
         
     }
     /// <summary>
@@ -208,7 +208,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public bool SetPropertyVarBin(string aValue)
+        public bool SetPropertyVarBin(byte[] aValue)
         {
             return SetPropertyBinary(iPropertyVarBin, aValue);
         }
@@ -217,7 +217,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the VarBin property
         /// </summary>
         /// <returns>The value of the property</returns>
-        public string PropertyVarBin()
+        public byte[] PropertyVarBin()
         {
             return iPropertyVarBin.Value();
         }
@@ -226,7 +226,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Increment is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoIncrement must be overridden if this is called.</remarks>
+        /// Increment must be overridden if this is called.</remarks>
         protected void EnableActionIncrement()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Increment");
@@ -240,7 +240,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Decrement is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDecrement must be overridden if this is called.</remarks>
+        /// Decrement must be overridden if this is called.</remarks>
         protected void EnableActionDecrement()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Decrement");
@@ -254,7 +254,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Toggle is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoToggle must be overridden if this is called.</remarks>
+        /// Toggle must be overridden if this is called.</remarks>
         protected void EnableActionToggle()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Toggle");
@@ -268,7 +268,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action EchoString is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoEchoString must be overridden if this is called.</remarks>
+        /// EchoString must be overridden if this is called.</remarks>
         protected void EnableActionEchoString()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("EchoString");
@@ -283,7 +283,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action EchoBinary is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoEchoBinary must be overridden if this is called.</remarks>
+        /// EchoBinary must be overridden if this is called.</remarks>
         protected void EnableActionEchoBinary()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("EchoBinary");
@@ -297,7 +297,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetUint is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetUint must be overridden if this is called.</remarks>
+        /// SetUint must be overridden if this is called.</remarks>
         protected void EnableActionSetUint()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetUint");
@@ -310,7 +310,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetUint is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetUint must be overridden if this is called.</remarks>
+        /// GetUint must be overridden if this is called.</remarks>
         protected void EnableActionGetUint()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetUint");
@@ -323,7 +323,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetInt is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetInt must be overridden if this is called.</remarks>
+        /// SetInt must be overridden if this is called.</remarks>
         protected void EnableActionSetInt()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetInt");
@@ -336,7 +336,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetInt is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetInt must be overridden if this is called.</remarks>
+        /// GetInt must be overridden if this is called.</remarks>
         protected void EnableActionGetInt()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetInt");
@@ -349,7 +349,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetBool is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetBool must be overridden if this is called.</remarks>
+        /// SetBool must be overridden if this is called.</remarks>
         protected void EnableActionSetBool()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBool");
@@ -362,7 +362,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetBool is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetBool must be overridden if this is called.</remarks>
+        /// GetBool must be overridden if this is called.</remarks>
         protected void EnableActionGetBool()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetBool");
@@ -375,7 +375,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetMultiple is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetMultiple must be overridden if this is called.</remarks>
+        /// SetMultiple must be overridden if this is called.</remarks>
         protected void EnableActionSetMultiple()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetMultiple");
@@ -390,7 +390,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetString is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetString must be overridden if this is called.</remarks>
+        /// SetString must be overridden if this is called.</remarks>
         protected void EnableActionSetString()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetString");
@@ -403,7 +403,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetString is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetString must be overridden if this is called.</remarks>
+        /// GetString must be overridden if this is called.</remarks>
         protected void EnableActionGetString()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetString");
@@ -416,7 +416,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetBinary is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetBinary must be overridden if this is called.</remarks>
+        /// SetBinary must be overridden if this is called.</remarks>
         protected void EnableActionSetBinary()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetBinary");
@@ -429,7 +429,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetBinary is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetBinary must be overridden if this is called.</remarks>
+        /// GetBinary must be overridden if this is called.</remarks>
         protected void EnableActionGetBinary()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetBinary");
@@ -442,7 +442,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ToggleBool is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoToggleBool must be overridden if this is called.</remarks>
+        /// ToggleBool must be overridden if this is called.</remarks>
         protected void EnableActionToggleBool()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ToggleBool");
@@ -454,7 +454,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action WriteFile is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoWriteFile must be overridden if this is called.</remarks>
+        /// WriteFile must be overridden if this is called.</remarks>
         protected void EnableActionWriteFile()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("WriteFile");
@@ -469,7 +469,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Shutdown is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoShutdown must be overridden if this is called.</remarks>
+        /// Shutdown must be overridden if this is called.</remarks>
         protected void EnableActionShutdown()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Shutdown");
@@ -547,7 +547,7 @@ namespace Zapp.Device.Providers
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
-        protected virtual void EchoBinary(uint aVersion, string aValue, out string aResult)
+        protected virtual void EchoBinary(uint aVersion, byte[] aValue, out byte[] aResult)
         {
             throw (new ActionDisabledError());
         }
@@ -689,7 +689,7 @@ namespace Zapp.Device.Providers
         /// Must be implemented iff EnableActionSetBinary was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aValueBin"></param>
-        protected virtual void SetBinary(uint aVersion, string aValueBin)
+        protected virtual void SetBinary(uint aVersion, byte[] aValueBin)
         {
             throw (new ActionDisabledError());
         }
@@ -703,7 +703,7 @@ namespace Zapp.Device.Providers
         /// Must be implemented iff EnableActionGetBinary was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aValueBin"></param>
-        protected virtual void GetBinary(uint aVersion, out string aValueBin)
+        protected virtual void GetBinary(uint aVersion, out byte[] aValueBin)
         {
             throw (new ActionDisabledError());
         }
@@ -922,8 +922,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            string value;
-            string result;
+            byte[] value;
+            byte[] result;
             try
             {
                 invocation.ReadStart();
@@ -1328,7 +1328,7 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            string valueBin;
+            byte[] valueBin;
             try
             {
                 invocation.ReadStart();
@@ -1368,7 +1368,7 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            string valueBin;
+            byte[] valueBin;
             try
             {
                 invocation.ReadStart();

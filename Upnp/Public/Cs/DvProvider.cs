@@ -14,7 +14,7 @@ namespace Zapp.Device
     public class DvProvider
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr DvProviderCreate(IntPtr aDevice, char* aDomain, char* aType, uint aVersion);
+        static extern unsafe IntPtr DvProviderCreate(IntPtr aDevice, IntPtr aDomain, IntPtr aType, uint aVersion);
         [DllImport("ZappUpnp")]
         static extern void DvProviderDestroy(IntPtr aProvider);
         [DllImport("ZappUpnp")]
@@ -32,9 +32,9 @@ namespace Zapp.Device
         [DllImport("ZappUpnp")]
         static extern unsafe int DvProviderSetPropertyBool(IntPtr aProvider, IntPtr aProperty, uint aValue, uint* aChanged);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvProviderSetPropertyString(IntPtr aProvider, IntPtr aProperty, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderSetPropertyString(IntPtr aProvider, IntPtr aProperty, IntPtr aValue, uint* aChanged);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvProviderSetPropertyBinary(IntPtr aProvider, IntPtr aProperty, char* aData, uint aLen, uint* aChanged);
+        static extern unsafe int DvProviderSetPropertyBinary(IntPtr aProvider, IntPtr aProperty, byte* aData, uint aLen, uint* aChanged);
 
         protected delegate int ActionDelegate(IntPtr aPtr, IntPtr aInvocation, uint aVersion);
 
@@ -75,11 +75,11 @@ namespace Zapp.Device
         /// <param name="aVersion">Version number of the service</param>
         protected unsafe DvProvider(DvDevice aDevice, String aDomain, String aType, uint aVersion)
         {
-            char* domain = (char*)Marshal.StringToHGlobalAnsi(aDomain);
-            char* type = (char*)Marshal.StringToHGlobalAnsi(aType);
+            IntPtr domain = Marshal.StringToHGlobalAnsi(aDomain);
+            IntPtr type = Marshal.StringToHGlobalAnsi(aType);
             iHandle = DvProviderCreate(aDevice.Handle(), domain, type, aVersion);
-            Marshal.FreeHGlobal((IntPtr)type);
-            Marshal.FreeHGlobal((IntPtr)domain);
+            Marshal.FreeHGlobal(type);
+            Marshal.FreeHGlobal(domain);
             iActions = new List<Zapp.Core.Action>();
             iProperties = new List<Zapp.Core.Property>();
         }
@@ -185,9 +185,9 @@ namespace Zapp.Device
         protected unsafe bool SetPropertyString(PropertyString aProperty, String aValue)
         {
             uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
+            IntPtr value = Marshal.StringToHGlobalAnsi(aValue);
             int err = DvProviderSetPropertyString(iHandle, aProperty.Handle(), value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
+            Marshal.FreeHGlobal(value);
             if (err != 0)
             {
                 throw new PropertyUpdateError();
@@ -203,12 +203,14 @@ namespace Zapp.Device
         /// <param name="aProperty">Property to be updated</param>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the property's value has changed (aValue was different to the previous value)</returns>
-        protected unsafe bool SetPropertyBinary(PropertyBinary aProperty, String aValue)
+        protected unsafe bool SetPropertyBinary(PropertyBinary aProperty, byte[] aValue)
         {
             uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderSetPropertyBinary(iHandle, aProperty.Handle(), value, (uint)aValue.Length, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
+            int err;
+            fixed (byte* pValue = aValue)
+            {
+                err = DvProviderSetPropertyBinary(iHandle, aProperty.Handle(), pValue, (uint)aValue.Length, &changed);
+            }
             if (err != 0)
             {
                 throw new PropertyUpdateError();
@@ -243,39 +245,39 @@ namespace Zapp.Device
         [DllImport("ZappUpnp")]
         static extern int DvInvocationReadStart(IntPtr aInvocation);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationReadInt(IntPtr aInvocation, char* aName, int* aValue);
+        static extern unsafe int DvInvocationReadInt(IntPtr aInvocation, IntPtr aName, int* aValue);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationReadUint(IntPtr aInvocation, char* aName, uint* aValue);
+        static extern unsafe int DvInvocationReadUint(IntPtr aInvocation, IntPtr aName, uint* aValue);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationReadBool(IntPtr aInvocation, char* aName, uint* aValue);
+        static extern unsafe int DvInvocationReadBool(IntPtr aInvocation, IntPtr aName, uint* aValue);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationReadString(IntPtr aInvocation, char* aName, char** aValue);
+        static extern unsafe int DvInvocationReadString(IntPtr aInvocation, IntPtr aName, IntPtr* aValue);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationReadBinary(IntPtr aInvocation, char* aName, char** aData, uint* aLen);
+        static extern unsafe int DvInvocationReadBinary(IntPtr aInvocation, IntPtr aName, IntPtr* aData, uint* aLen);
         [DllImport("ZappUpnp")]
         static extern int DvInvocationReadEnd(IntPtr aInvocation);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationReportError(IntPtr aInvocation, uint aCode, char* aDescription);
+        static extern unsafe int DvInvocationReportError(IntPtr aInvocation, uint aCode, IntPtr aDescription);
         [DllImport("ZappUpnp")]
         static extern int DvInvocationWriteStart(IntPtr aInvocation);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationWriteInt(IntPtr aInvocation, char* aName, int aValue);
+        static extern unsafe int DvInvocationWriteInt(IntPtr aInvocation, IntPtr aName, int aValue);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationWriteUint(IntPtr aInvocation, char* aName, uint aValue);
+        static extern unsafe int DvInvocationWriteUint(IntPtr aInvocation, IntPtr aName, uint aValue);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationWriteBool(IntPtr aInvocation, char* aName, uint aValue);
+        static extern unsafe int DvInvocationWriteBool(IntPtr aInvocation, IntPtr aName, uint aValue);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationWriteStringStart(IntPtr aInvocation, char* aName);
+        static extern unsafe int DvInvocationWriteStringStart(IntPtr aInvocation, IntPtr aName);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationWriteString(IntPtr aInvocation, char* aValue);
+        static extern unsafe int DvInvocationWriteString(IntPtr aInvocation, IntPtr aValue);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationWriteStringEnd(IntPtr aInvocation, char* aName);
+        static extern unsafe int DvInvocationWriteStringEnd(IntPtr aInvocation, IntPtr aName);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationWriteBinaryStart(IntPtr aInvocation, char* aName);
+        static extern unsafe int DvInvocationWriteBinaryStart(IntPtr aInvocation, IntPtr aName);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationWriteBinary(IntPtr aInvocation, char* aData, uint aLen);
+        static extern unsafe int DvInvocationWriteBinary(IntPtr aInvocation, byte* aData, uint aLen);
         [DllImport("ZappUpnp")]
-        static extern unsafe int DvInvocationWriteBinaryEnd(IntPtr aInvocation, char* aName);
+        static extern unsafe int DvInvocationWriteBinaryEnd(IntPtr aInvocation, IntPtr aName);
         [DllImport("ZappUpnp")]
         static extern int DvInvocationWriteEnd(IntPtr aInvocation);
         [DllImport("ZappUpnp")]
@@ -307,10 +309,10 @@ namespace Zapp.Device
         /// <returns>Value of the input argument</returns>
         public unsafe int ReadInt(String aName)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             int val;
             int err = DvInvocationReadInt(iHandle, name, &val);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
             CheckError(err);
             return val;
         }
@@ -321,10 +323,10 @@ namespace Zapp.Device
         /// <returns>Value of the input argument</returns>
         public unsafe uint ReadUint(String aName)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             uint val;
             int err = DvInvocationReadUint(iHandle, name, &val);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
             CheckError(err);
             return val;
         }
@@ -335,10 +337,10 @@ namespace Zapp.Device
         /// <returns>Value of the input argument</returns>
         public unsafe bool ReadBool(String aName)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             uint val;
             int err = DvInvocationReadBool(iHandle, name, &val);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
             CheckError(err);
             return (val != 0);
         }
@@ -349,10 +351,10 @@ namespace Zapp.Device
         /// <returns>Value of the input argument</returns>
         public unsafe String ReadString(String aName)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
-            char* cStr;
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr cStr;
             int err = DvInvocationReadString(iHandle, name, &cStr);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
             String str = Marshal.PtrToStringAnsi((IntPtr)cStr);
             ZappFree((IntPtr)cStr);
             CheckError(err);
@@ -363,14 +365,16 @@ namespace Zapp.Device
         /// </summary>
         /// <param name="aName">Name of the parameter associated with this input argument</param>
         /// <returns>Value of the input argument</returns>
-        public unsafe String ReadBinary(String aName)
+        public unsafe byte[] ReadBinary(String aName)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
-            char* data;
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr data;
             uint len;
             int err = DvInvocationReadBinary(iHandle, name, &data, &len);
-            Marshal.FreeHGlobal((IntPtr)name);
-            String bin = Marshal.PtrToStringAnsi((IntPtr)data, (int)len);
+            Marshal.FreeHGlobal(name);
+
+            byte[] bin = new byte[len];
+            Marshal.Copy(data, bin, 0, (int)len);
             ZappFree((IntPtr)data);
             CheckError(err);
             return bin;
@@ -394,10 +398,10 @@ namespace Zapp.Device
         /// <param name="aDescription">Error description</param>
         public unsafe void ReportError(uint aCode, String aDescription)
         {
-            char* desc = (char*)Marshal.StringToHGlobalAnsi(aDescription);
+            IntPtr desc = Marshal.StringToHGlobalAnsi(aDescription);
             // no point in propogating any error - client code can't cope with error reporting failing
             DvInvocationReportError(iHandle, aCode, desc);
-            Marshal.FreeHGlobal((IntPtr)desc);
+            Marshal.FreeHGlobal(desc);
         }
         /// <summary>
         /// Begin reading (output arguments for) an invocation
@@ -415,9 +419,9 @@ namespace Zapp.Device
         /// <param name="aValue">Value of the output argument</param>
         public unsafe void WriteInt(String aName, int aValue)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             int err = DvInvocationWriteInt(iHandle, name, aValue);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
             CheckError(err);
         }
         /// <summary>
@@ -427,9 +431,9 @@ namespace Zapp.Device
         /// <param name="aValue">Value of the output argument</param>
         public unsafe void WriteUint(String aName, uint aValue)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             int err = DvInvocationWriteUint(iHandle, name, aValue);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
             CheckError(err);
         }
         /// <summary>
@@ -439,10 +443,10 @@ namespace Zapp.Device
         /// <param name="aValue">Value of the output argument</param>
         public unsafe void WriteBool(String aName, bool aValue)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             uint val = (aValue? 1u : 0u);
             int err = DvInvocationWriteBool(iHandle, name, val);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
             CheckError(err);
         }
         /// <summary>
@@ -452,19 +456,19 @@ namespace Zapp.Device
         /// <param name="aValue">Value of the output argument</param>
         public unsafe void WriteString(String aName, String aValue)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr value = Marshal.StringToHGlobalAnsi(aValue);
             int err = DvInvocationWriteStringStart(iHandle, name);
             if (err == 0)
             {
                 err = DvInvocationWriteString(iHandle, value);
             }
-            Marshal.FreeHGlobal((IntPtr)value);
+            Marshal.FreeHGlobal(value);
             if (err == 0)
             {
                 err = DvInvocationWriteStringEnd(iHandle, name);
             }
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
             CheckError(err);
         }
         /// <summary>
@@ -472,21 +476,24 @@ namespace Zapp.Device
         /// </summary>
         /// <param name="aName">Name of the parameter associated with this output argument</param>
         /// <param name="aValue">Value of the output argument</param>
-        public unsafe void WriteBinary(String aName, String aData)
+        public unsafe void WriteBinary(String aName, byte[] aData)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
-            char* data = (char*)Marshal.StringToHGlobalAnsi(aData).ToPointer();
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            //IntPtr data = Marshal.StringToHGlobalAnsi(aData);
             int err = DvInvocationWriteBinaryStart(iHandle, name);
             if (err == 0)
             {
-                err = DvInvocationWriteBinary(iHandle, data, (uint)aData.Length);
+                fixed (byte* data = aData)
+                {
+                    err = DvInvocationWriteBinary(iHandle, data, (uint)aData.Length);
+                }
             }
-            Marshal.FreeHGlobal((IntPtr)data);
+            //Marshal.FreeHGlobal(data);
             if (err == 0)
             {
                 err = DvInvocationWriteBinaryEnd(iHandle, name);
             }
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
             CheckError(err);
         }
         /// <summary>

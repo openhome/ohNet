@@ -145,7 +145,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetPresetPrefix is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetPresetPrefix must be overridden if this is called.</remarks>
+        /// SetPresetPrefix must be overridden if this is called.</remarks>
         protected void EnableActionSetPresetPrefix()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetPresetPrefix");
@@ -158,7 +158,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action PresetPrefix is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPresetPrefix must be overridden if this is called.</remarks>
+        /// PresetPrefix must be overridden if this is called.</remarks>
         protected void EnableActionPresetPrefix()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PresetPrefix");
@@ -171,7 +171,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetAlbumArtFileName is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetAlbumArtFileName must be overridden if this is called.</remarks>
+        /// SetAlbumArtFileName must be overridden if this is called.</remarks>
         protected void EnableActionSetAlbumArtFileName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetAlbumArtFileName");
@@ -184,7 +184,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action AlbumArtFileName is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoAlbumArtFileName must be overridden if this is called.</remarks>
+        /// AlbumArtFileName must be overridden if this is called.</remarks>
         protected void EnableActionAlbumArtFileName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("AlbumArtFileName");
@@ -197,7 +197,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetCurrentPreset is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetCurrentPreset must be overridden if this is called.</remarks>
+        /// SetCurrentPreset must be overridden if this is called.</remarks>
         protected void EnableActionSetCurrentPreset()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetCurrentPreset");
@@ -210,7 +210,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action CurrentPreset is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoCurrentPreset must be overridden if this is called.</remarks>
+        /// CurrentPreset must be overridden if this is called.</remarks>
         protected void EnableActionCurrentPreset()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CurrentPreset");
@@ -223,7 +223,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action PresetMetaData is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPresetMetaData must be overridden if this is called.</remarks>
+        /// PresetMetaData must be overridden if this is called.</remarks>
         protected void EnableActionPresetMetaData()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PresetMetaData");
@@ -238,7 +238,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action LoadManifest is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoLoadManifest must be overridden if this is called.</remarks>
+        /// LoadManifest must be overridden if this is called.</remarks>
         protected void EnableActionLoadManifest()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("LoadManifest");

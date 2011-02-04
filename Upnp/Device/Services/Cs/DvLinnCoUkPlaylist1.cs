@@ -14,13 +14,13 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        bool SetPropertyIdArray(string aValue);
+        bool SetPropertyIdArray(byte[] aValue);
 
         /// <summary>
         /// Get a copy of the value of the IdArray property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        string PropertyIdArray();
+        byte[] PropertyIdArray();
 
         /// <summary>
         /// Set the value of the Repeat property
@@ -108,7 +108,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public bool SetPropertyIdArray(string aValue)
+        public bool SetPropertyIdArray(byte[] aValue)
         {
             return SetPropertyBinary(iPropertyIdArray, aValue);
         }
@@ -117,7 +117,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the IdArray property
         /// </summary>
         /// <returns>The value of the property</returns>
-        public string PropertyIdArray()
+        public byte[] PropertyIdArray()
         {
             return iPropertyIdArray.Value();
         }
@@ -183,7 +183,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Read is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoRead must be overridden if this is called.</remarks>
+        /// Read must be overridden if this is called.</remarks>
         protected void EnableActionRead()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Read");
@@ -199,7 +199,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ReadList is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoReadList must be overridden if this is called.</remarks>
+        /// ReadList must be overridden if this is called.</remarks>
         protected void EnableActionReadList()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ReadList");
@@ -214,7 +214,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Insert is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoInsert must be overridden if this is called.</remarks>
+        /// Insert must be overridden if this is called.</remarks>
         protected void EnableActionInsert()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Insert");
@@ -231,7 +231,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Delete is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDelete must be overridden if this is called.</remarks>
+        /// Delete must be overridden if this is called.</remarks>
         protected void EnableActionDelete()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Delete");
@@ -244,7 +244,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action DeleteAll is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDeleteAll must be overridden if this is called.</remarks>
+        /// DeleteAll must be overridden if this is called.</remarks>
         protected void EnableActionDeleteAll()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DeleteAll");
@@ -256,7 +256,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetRepeat is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetRepeat must be overridden if this is called.</remarks>
+        /// SetRepeat must be overridden if this is called.</remarks>
         protected void EnableActionSetRepeat()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRepeat");
@@ -269,7 +269,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Repeat is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoRepeat must be overridden if this is called.</remarks>
+        /// Repeat must be overridden if this is called.</remarks>
         protected void EnableActionRepeat()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Repeat");
@@ -282,7 +282,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetShuffle is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetShuffle must be overridden if this is called.</remarks>
+        /// SetShuffle must be overridden if this is called.</remarks>
         protected void EnableActionSetShuffle()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetShuffle");
@@ -295,7 +295,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Shuffle is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoShuffle must be overridden if this is called.</remarks>
+        /// Shuffle must be overridden if this is called.</remarks>
         protected void EnableActionShuffle()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Shuffle");
@@ -308,7 +308,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action TracksMax is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoTracksMax must be overridden if this is called.</remarks>
+        /// TracksMax must be overridden if this is called.</remarks>
         protected void EnableActionTracksMax()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("TracksMax");
@@ -321,7 +321,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action IdArray is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoIdArray must be overridden if this is called.</remarks>
+        /// IdArray must be overridden if this is called.</remarks>
         protected void EnableActionIdArray()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("IdArray");
@@ -335,7 +335,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action IdArrayChanged is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoIdArrayChanged must be overridden if this is called.</remarks>
+        /// IdArrayChanged must be overridden if this is called.</remarks>
         protected void EnableActionIdArrayChanged()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("IdArrayChanged");
@@ -500,7 +500,7 @@ namespace Zapp.Device.Providers
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArray"></param>
-        protected virtual void IdArray(uint aVersion, out uint aaIdArrayToken, out string aaIdArray)
+        protected virtual void IdArray(uint aVersion, out uint aaIdArrayToken, out byte[] aaIdArray)
         {
             throw (new ActionDisabledError());
         }
@@ -936,7 +936,7 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
             uint aIdArrayToken;
-            string aIdArray;
+            byte[] aIdArray;
             try
             {
                 invocation.ReadStart();

@@ -68,7 +68,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetLevel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetLevel must be overridden if this is called.</remarks>
+        /// GetLevel must be overridden if this is called.</remarks>
         protected void EnableActionGetLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetLevel");
@@ -81,7 +81,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetLevel is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetLevel must be overridden if this is called.</remarks>
+        /// SetLevel must be overridden if this is called.</remarks>
         protected void EnableActionSetLevel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetLevel");

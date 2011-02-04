@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -183,6 +184,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iSourceProtocolInfoChanged;
         private CallbackPropertyChanged iSinkProtocolInfoChanged;
         private CallbackPropertyChanged iCurrentConnectionIDsChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -261,6 +263,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iSinkProtocolInfo);
             iCurrentConnectionIDs = new PropertyString("CurrentConnectionIDs", CurrentConnectionIDsPropertyChanged);
             AddProperty(iCurrentConnectionIDs);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -545,7 +549,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSourceProtocolInfoChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySourceProtocolInfoChanged(CallbackPropertyChanged aSourceProtocolInfoChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iSourceProtocolInfoChanged = aSourceProtocolInfoChanged;
             }
@@ -553,7 +557,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void SourceProtocolInfoPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iSourceProtocolInfoChanged != null)
                 {
@@ -570,7 +574,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSinkProtocolInfoChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySinkProtocolInfoChanged(CallbackPropertyChanged aSinkProtocolInfoChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iSinkProtocolInfoChanged = aSinkProtocolInfoChanged;
             }
@@ -578,7 +582,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void SinkProtocolInfoPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iSinkProtocolInfoChanged != null)
                 {
@@ -595,7 +599,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCurrentConnectionIDsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyCurrentConnectionIDsChanged(CallbackPropertyChanged aCurrentConnectionIDsChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iCurrentConnectionIDsChanged = aCurrentConnectionIDsChanged;
             }
@@ -603,7 +607,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void CurrentConnectionIDsPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iCurrentConnectionIDsChanged != null)
                 {

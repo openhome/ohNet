@@ -35,25 +35,25 @@ protected:
     /**
      * Signal that the action GetName is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetName must be overridden if this is called.
+     * GetName must be overridden if this is called.
      */
     void EnableActionGetName();
     /**
      * Signal that the action SetColor is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetColor must be overridden if this is called.
+     * SetColor must be overridden if this is called.
      */
     void EnableActionSetColor();
     /**
      * Signal that the action GetColor is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetColor must be overridden if this is called.
+     * GetColor must be overridden if this is called.
      */
     void EnableActionGetColor();
     /**
      * Signal that the action GetMaxColors is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetMaxColors must be overridden if this is called.
+     * GetMaxColors must be overridden if this is called.
      */
     void EnableActionGetMaxColors();
 private:

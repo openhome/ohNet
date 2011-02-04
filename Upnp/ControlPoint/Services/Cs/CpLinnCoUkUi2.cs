@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -102,7 +103,7 @@ namespace Zapp.ControlPoint.Proxies
         void SetPropertyTerminalInputNameChanged(CpProxy.CallbackPropertyChanged aTerminalInputNameChanged);
         String PropertyTerminalInputName();
         void SetPropertyDisplayPixelsChanged(CpProxy.CallbackPropertyChanged aDisplayPixelsChanged);
-        String PropertyDisplayPixels();
+        byte[] PropertyDisplayPixels();
     }
 
     internal class SyncDisplayTestPatternLinnCoUkUi2 : SyncProxyAction
@@ -537,6 +538,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iTerminalInputCodeChanged;
         private CallbackPropertyChanged iTerminalInputNameChanged;
         private CallbackPropertyChanged iDisplayPixelsChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -683,6 +685,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iTerminalInputName);
             iDisplayPixels = new PropertyBinary("DisplayPixels", DisplayPixelsPropertyChanged);
             AddProperty(iDisplayPixels);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -1672,7 +1676,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplayBrightnessChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplayBrightnessChanged(CallbackPropertyChanged aDisplayBrightnessChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDisplayBrightnessChanged = aDisplayBrightnessChanged;
             }
@@ -1680,7 +1684,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DisplayBrightnessPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDisplayBrightnessChanged != null)
                 {
@@ -1697,7 +1701,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplayBrightnessAutoChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplayBrightnessAutoChanged(CallbackPropertyChanged aDisplayBrightnessAutoChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDisplayBrightnessAutoChanged = aDisplayBrightnessAutoChanged;
             }
@@ -1705,7 +1709,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DisplayBrightnessAutoPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDisplayBrightnessAutoChanged != null)
                 {
@@ -1722,7 +1726,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInfraredCommandsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyInfraredCommandsChanged(CallbackPropertyChanged aInfraredCommandsChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iInfraredCommandsChanged = aInfraredCommandsChanged;
             }
@@ -1730,7 +1734,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void InfraredCommandsPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iInfraredCommandsChanged != null)
                 {
@@ -1747,7 +1751,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInfraredTerminalCommandsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyInfraredTerminalCommandsChanged(CallbackPropertyChanged aInfraredTerminalCommandsChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iInfraredTerminalCommandsChanged = aInfraredTerminalCommandsChanged;
             }
@@ -1755,7 +1759,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void InfraredTerminalCommandsPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iInfraredTerminalCommandsChanged != null)
                 {
@@ -1772,7 +1776,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplayUpsideDownChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplayUpsideDownChanged(CallbackPropertyChanged aDisplayUpsideDownChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDisplayUpsideDownChanged = aDisplayUpsideDownChanged;
             }
@@ -1780,7 +1784,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DisplayUpsideDownPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDisplayUpsideDownChanged != null)
                 {
@@ -1797,7 +1801,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplayScrollTextChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplayScrollTextChanged(CallbackPropertyChanged aDisplayScrollTextChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDisplayScrollTextChanged = aDisplayScrollTextChanged;
             }
@@ -1805,7 +1809,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DisplayScrollTextPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDisplayScrollTextChanged != null)
                 {
@@ -1822,7 +1826,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplaySleepChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplaySleepChanged(CallbackPropertyChanged aDisplaySleepChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDisplaySleepChanged = aDisplaySleepChanged;
             }
@@ -1830,7 +1834,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DisplaySleepPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDisplaySleepChanged != null)
                 {
@@ -1847,7 +1851,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplayLedOffChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplayLedOffChanged(CallbackPropertyChanged aDisplayLedOffChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDisplayLedOffChanged = aDisplayLedOffChanged;
             }
@@ -1855,7 +1859,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DisplayLedOffPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDisplayLedOffChanged != null)
                 {
@@ -1872,7 +1876,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTerminalInputCodeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTerminalInputCodeChanged(CallbackPropertyChanged aTerminalInputCodeChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTerminalInputCodeChanged = aTerminalInputCodeChanged;
             }
@@ -1880,7 +1884,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TerminalInputCodePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTerminalInputCodeChanged != null)
                 {
@@ -1897,7 +1901,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTerminalInputNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTerminalInputNameChanged(CallbackPropertyChanged aTerminalInputNameChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTerminalInputNameChanged = aTerminalInputNameChanged;
             }
@@ -1905,7 +1909,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TerminalInputNamePropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTerminalInputNameChanged != null)
                 {
@@ -1922,7 +1926,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplayPixelsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplayPixelsChanged(CallbackPropertyChanged aDisplayPixelsChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iDisplayPixelsChanged = aDisplayPixelsChanged;
             }
@@ -1930,7 +1934,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void DisplayPixelsPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iDisplayPixelsChanged != null)
                 {
@@ -2066,7 +2070,7 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aDisplayPixels">Will be set to the value of the property</param>
-        public String PropertyDisplayPixels()
+        public byte[] PropertyDisplayPixels()
         {
             return iDisplayPixels.Value();
         }

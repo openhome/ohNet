@@ -8,6 +8,7 @@ objdirbare = Build\Obj\Windows
 objdir = $(objdirbare)^\
 inc_build = Build\Include
 includes = -IBuild\Include -IBuild\Include\Cpp
+bundle_build = Build\Bundles
 osdir = Windows
 objext = obj
 libprefix = 
@@ -112,3 +113,12 @@ uninstall :
 	if exist "$(installincludedir)" rmdir /s /q "$(installincludedir)"
 	rmdir "$(installdir)"
 
+bundle: tt
+	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
+	if "$(targetplatform)"=="" echo "Usage: make bundle targetplatform=Windows-x86" && exit /b 1
+	python bundle_binaries.py Windows $(targetplatform)
+
+bundle-dev: tt
+	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
+	if "$(targetplatform)"=="" echo "Usage: make bundle_dev targetplatform=Windows-x86" && exit /b 1
+	python bundle_binaries.py --dev Windows $(targetplatform)

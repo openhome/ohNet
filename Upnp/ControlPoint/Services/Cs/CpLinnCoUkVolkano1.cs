@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -259,6 +260,7 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionBoardType;
         private Zapp.Core.Action iActionMaxBoards;
         private Zapp.Core.Action iActionSoftwareVersion;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -323,6 +325,8 @@ namespace Zapp.ControlPoint.Proxies
             iActionSoftwareVersion = new Zapp.Core.Action("SoftwareVersion");
             param = new ParameterString("aSoftwareVersion", allowedValues);
             iActionSoftwareVersion.AddOutputParameter(param);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>

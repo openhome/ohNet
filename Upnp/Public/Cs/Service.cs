@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Zapp.Core
 {
@@ -29,7 +30,7 @@ namespace Zapp.Core
     public class ParameterInt : Parameter
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr ServiceParameterCreateInt(char* aName, int aMinValue, int aMaxValue, int aStep);
+        static extern unsafe IntPtr ServiceParameterCreateInt(IntPtr aName, int aMinValue, int aMaxValue, int aStep);
 
         /// <summary>
         /// Constructor
@@ -40,9 +41,9 @@ namespace Zapp.Core
         /// <param name="aStep">Gap between allowed values</param>
         public unsafe ParameterInt(String aName, int aMinValue = Int32.MinValue, int aMaxValue = Int32.MaxValue, int aStep = 1)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             iHandle = ServiceParameterCreateInt(name, aMinValue, aMaxValue, aStep);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
         }
     }
 
@@ -52,7 +53,7 @@ namespace Zapp.Core
     public class ParameterUint : Parameter
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr ServiceParameterCreateUint(char* aName, uint aMinValue, uint aMaxValue, uint aStep);
+        static extern unsafe IntPtr ServiceParameterCreateUint(IntPtr aName, uint aMinValue, uint aMaxValue, uint aStep);
 
         /// <summary>
         /// Constructor
@@ -63,9 +64,9 @@ namespace Zapp.Core
         /// <param name="aStep">Gap between allowed values</param>
         public unsafe ParameterUint(String aName, uint aMinValue = 0, uint aMaxValue = uint.MaxValue, uint aStep = 1)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             iHandle = ServiceParameterCreateUint(name, aMinValue, aMaxValue, aStep);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
         }
     }
 
@@ -75,7 +76,7 @@ namespace Zapp.Core
     public class ParameterBool : Parameter
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr ServiceParameterCreateBool(char* aName);
+        static extern unsafe IntPtr ServiceParameterCreateBool(IntPtr aName);
 
         /// <summary>
         /// Constructor
@@ -83,9 +84,9 @@ namespace Zapp.Core
         /// <param name="aName">Parameter name</param>
         public unsafe ParameterBool(String aName)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             iHandle = ServiceParameterCreateBool(name);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
         }
     }
 
@@ -95,7 +96,7 @@ namespace Zapp.Core
     public class ParameterString : Parameter
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr ServiceParameterCreateString(char* aName, char** aAllowedValues, uint aCount);
+        static extern unsafe IntPtr ServiceParameterCreateString(IntPtr aName, IntPtr* aAllowedValues, uint aCount);
 
         /// <summary>
         /// 
@@ -104,21 +105,17 @@ namespace Zapp.Core
         /// <param name="aAllowedValues">List of allowed values for the string</param>
         public unsafe ParameterString(String aName, List<String> aAllowedValues)
         {
-            // !!!! assumes sizeof(IntPtr) == 4
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
-            char** allowed = (char**)Marshal.AllocHGlobal(4 * aAllowedValues.Count);
-            for (int i = 0; i < aAllowedValues.Count; i++)
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
+            IntPtr[] allowed = aAllowedValues.Select<string, IntPtr>(Marshal.StringToHGlobalAnsi).ToArray();
+            fixed (IntPtr* pAllowed = allowed)
             {
-                char* val = (char*)Marshal.StringToHGlobalAnsi(aAllowedValues[i]);
-                allowed[i] = val;
+                iHandle = ServiceParameterCreateString(name, pAllowed, (uint)aAllowedValues.Count);
             }
-            iHandle = ServiceParameterCreateString(name, allowed, (uint)aAllowedValues.Count);
-            for (uint i = 0; i < aAllowedValues.Count; i++)
+            foreach (IntPtr allowedValue in allowed)
             {
-                Marshal.FreeHGlobal((IntPtr)allowed[i]);
+                Marshal.FreeHGlobal(allowedValue);
             }
-            Marshal.FreeHGlobal((IntPtr)allowed);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
         }
     }
 
@@ -128,7 +125,7 @@ namespace Zapp.Core
     public class ParameterBinary : Parameter
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr ServiceParameterCreateBinary(char* aName);
+        static extern unsafe IntPtr ServiceParameterCreateBinary(IntPtr aName);
 
         /// <summary>
         /// Constructor
@@ -136,22 +133,22 @@ namespace Zapp.Core
         /// <param name="aName">Parameter name</param>
         public unsafe ParameterBinary(String aName)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             iHandle = ServiceParameterCreateBinary(name);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
         }
     }
 
     public class ParameterRelated : Parameter
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr ServiceParameterCreateRelated(char* aName, IntPtr aProperty);
+        static extern unsafe IntPtr ServiceParameterCreateRelated(IntPtr aName, IntPtr aProperty);
 
         public unsafe ParameterRelated(String aName, Zapp.Core.Property aProperty)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             iHandle = ServiceParameterCreateRelated(name, aProperty.Handle());
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
         }
     }
 
@@ -205,7 +202,7 @@ namespace Zapp.Core
     public class PropertyInt : Property
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr ServicePropertyCreateIntCp(char* aName, Callback aCallback, IntPtr aPtr);
+        static extern unsafe IntPtr ServicePropertyCreateIntCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern IntPtr ServicePropertyCreateIntDv(IntPtr aParameterHandle);
         [DllImport("ZappUpnp")]
@@ -220,9 +217,9 @@ namespace Zapp.Core
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             iHandle = ServicePropertyCreateIntCp(name, iCallbackValueChanged, ptr);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
         }
 
         /// <summary>
@@ -250,7 +247,7 @@ namespace Zapp.Core
     public class PropertyUint : Property
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr ServicePropertyCreateUintCp(char* aName, Callback aCallback, IntPtr aPtr);
+        static extern unsafe IntPtr ServicePropertyCreateUintCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern IntPtr ServicePropertyCreateUintDv(IntPtr aParameterHandle);
         [DllImport("ZappUpnp")]
@@ -265,9 +262,9 @@ namespace Zapp.Core
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             iHandle = ServicePropertyCreateUintCp(name, iCallbackValueChanged, ptr);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
         }
 
         /// <summary>
@@ -295,7 +292,7 @@ namespace Zapp.Core
     public class PropertyBool : Property
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr ServicePropertyCreateBoolCp(char* aName, Callback aCallback, IntPtr aPtr);
+        static extern unsafe IntPtr ServicePropertyCreateBoolCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern IntPtr ServicePropertyCreateBoolDv(IntPtr aParameterHandle);
         [DllImport("ZappUpnp")]
@@ -310,9 +307,9 @@ namespace Zapp.Core
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             iHandle = ServicePropertyCreateBoolCp(name, iCallbackValueChanged, ptr);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
         }
 
         /// <summary>
@@ -341,11 +338,11 @@ namespace Zapp.Core
     public class PropertyString : Property
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr ServicePropertyCreateStringCp(char* aName, Callback aCallback, IntPtr aPtr);
+        static extern unsafe IntPtr ServicePropertyCreateStringCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern IntPtr ServicePropertyCreateStringDv(IntPtr aParameterHandle);
         [DllImport("ZappUpnp")]
-        static extern unsafe char* ServicePropertyValueString(IntPtr aHandle);
+        static extern unsafe IntPtr ServicePropertyValueString(IntPtr aHandle);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(IntPtr aPtr);
 
@@ -358,9 +355,9 @@ namespace Zapp.Core
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             iHandle = ServicePropertyCreateStringCp(name, iCallbackValueChanged, ptr);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
         }
 
         /// <summary>
@@ -378,9 +375,9 @@ namespace Zapp.Core
         /// <returns>String property value</returns>
         public unsafe String Value()
         {
-            char* cStr = ServicePropertyValueString(iHandle);
-            String str = Marshal.PtrToStringAnsi((IntPtr)cStr);
-            ZappFree((IntPtr)cStr);
+            IntPtr cStr = ServicePropertyValueString(iHandle);
+            String str = Marshal.PtrToStringAnsi(cStr);
+            ZappFree(cStr);
             return str;
         }
     }
@@ -391,11 +388,11 @@ namespace Zapp.Core
     public class PropertyBinary : Property
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr ServicePropertyCreateBinaryCp(char* aName, Callback aCallback, IntPtr aPtr);
+        static extern unsafe IntPtr ServicePropertyCreateBinaryCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern IntPtr ServicePropertyCreateBinaryDv(IntPtr aParameterHandle);
         [DllImport("ZappUpnp")]
-        static extern unsafe char* ServicePropertyGetValueBinary(IntPtr aHandle, char** aData, uint* aLen);
+        static extern unsafe byte* ServicePropertyGetValueBinary(IntPtr aHandle, IntPtr* aData, uint* aLen);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(IntPtr aPtr);
 
@@ -408,9 +405,9 @@ namespace Zapp.Core
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             iHandle = ServicePropertyCreateBinaryCp(name, iCallbackValueChanged, ptr);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
         }
 
         /// <summary>
@@ -426,14 +423,15 @@ namespace Zapp.Core
         /// Query the value of the property
         /// </summary>
         /// <returns>Binary property value</returns>
-        public unsafe String Value()
+        public unsafe byte[] Value()
         {
-            char* data;
+            IntPtr pData;
             uint len;
-            ServicePropertyGetValueBinary(iHandle, &data, &len);
-            String bin = Marshal.PtrToStringAnsi((IntPtr)data, (int)len);
-            ZappFree((IntPtr)data);
-            return bin;
+            ServicePropertyGetValueBinary(iHandle, &pData, &len);
+            byte[] data = new byte[len];
+            Marshal.Copy(pData, data, 0, (int)len);
+            ZappFree(pData);
+            return data;
         }
     }
 
@@ -445,7 +443,7 @@ namespace Zapp.Core
     public class Action : IDisposable
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr ServiceActionCreate(char* aName);
+        static extern unsafe IntPtr ServiceActionCreate(IntPtr aName);
         [DllImport("ZappUpnp")]
         static extern void ServiceActionDestroy(IntPtr aAction);
         [DllImport("ZappUpnp")]
@@ -453,7 +451,7 @@ namespace Zapp.Core
         [DllImport("ZappUpnp")]
         static extern void ServiceActionAddOutputParameter(IntPtr aAction, IntPtr aParameter);
         [DllImport("ZappUpnp")]
-        static extern unsafe char* ServiceActionName(IntPtr aAction);
+        static extern unsafe IntPtr ServiceActionName(IntPtr aAction);
 
         private IntPtr iHandle;
         private List<Parameter> iInputParameters;
@@ -465,9 +463,9 @@ namespace Zapp.Core
         /// <param name="aName">Action name</param>
         public unsafe Action(String aName)
         {
-            char* name = (char*)Marshal.StringToHGlobalAnsi(aName);
+            IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             iHandle = ServiceActionCreate(name);
-            Marshal.FreeHGlobal((IntPtr)name);
+            Marshal.FreeHGlobal(name);
             iInputParameters = new List<Parameter>();
             iOutputParameters = new List<Parameter>();
         }
@@ -518,8 +516,8 @@ namespace Zapp.Core
         /// <returns>Action name</returns>
         public unsafe String Name()
         {
-            char* str = ServiceActionName(iHandle);
-            return Marshal.PtrToStringAnsi((IntPtr)str);
+            IntPtr str = ServiceActionName(iHandle);
+            return Marshal.PtrToStringAnsi(str);
         }
 
         internal IntPtr Handle()

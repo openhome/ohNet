@@ -35,7 +35,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetName is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetName must be overridden if this is called.</remarks>
+        /// GetName must be overridden if this is called.</remarks>
         protected void EnableActionGetName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetName");
@@ -49,7 +49,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetColor is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetColor must be overridden if this is called.</remarks>
+        /// SetColor must be overridden if this is called.</remarks>
         protected void EnableActionSetColor()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetColor");
@@ -64,7 +64,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetColor is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetColor must be overridden if this is called.</remarks>
+        /// GetColor must be overridden if this is called.</remarks>
         protected void EnableActionGetColor()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetColor");
@@ -79,7 +79,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetMaxColors is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetMaxColors must be overridden if this is called.</remarks>
+        /// GetMaxColors must be overridden if this is called.</remarks>
         protected void EnableActionGetMaxColors()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetMaxColors");

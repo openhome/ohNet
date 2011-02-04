@@ -172,15 +172,15 @@ def JsOnly():
     jsfailed = open("xout/ProxyJsTest.xml", "w")
     jsfailed.writelines('<?xml version="1.0" encoding="UTF-8"?><testsuites><testsuite name="Test Proxy" tests="1" failures="1" time="0.01"><testcase name="No Results Output" time="0.01"><failure message="No XML Results Output from JS Proxy Tests."><![CDATA[No XML Results Output from JS Proxy Tests.]]></failure></testcase></testsuite></testsuites>')
     jsfailed.close()
-    LocalAppData = os.environ.get('LOCALAPPDATA')
+    LocalAppData = os.environ.get('ProgramFiles')
     WorkSpace = os.environ.get('WORKSPACE')
     UIPath = os.path.join(WorkSpace, 'Upnp\Public\Js\Zapp.Web.UI.Tests')
-    Chrome = os.path.join(LocalAppData, 'Google\chrome\Application\8.0.552.215\Chrome.exe')
+    Chrome = os.path.join(LocalAppData, 'Safari\Safari.exe')
     TestBasic = "Build\Obj\Windows\TestDvTestBasic.exe"
     TestDeviceFinder = "Build\Obj\Windows\TestDeviceFinder.exe"
     testbasic = subprocess.Popen([TestBasic, '-l', '-c', UIPath])
     devfinder = subprocess.Popen([TestDeviceFinder, '-l', '-s', 'zapp.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    devfinder_out = devfinder.communicate() 
+    devfinder_out = devfinder.communicate()[1].rstrip()
     subprocess.call([Chrome, devfinder_out])
     os.kill(testbasic.pid, signal.SIGTERM)
 

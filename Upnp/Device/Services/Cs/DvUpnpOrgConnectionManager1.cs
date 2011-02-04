@@ -142,7 +142,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetProtocolInfo is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetProtocolInfo must be overridden if this is called.</remarks>
+        /// GetProtocolInfo must be overridden if this is called.</remarks>
         protected void EnableActionGetProtocolInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetProtocolInfo");
@@ -156,7 +156,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action PrepareForConnection is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPrepareForConnection must be overridden if this is called.</remarks>
+        /// PrepareForConnection must be overridden if this is called.</remarks>
         protected void EnableActionPrepareForConnection()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PrepareForConnection");
@@ -179,7 +179,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ConnectionComplete is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoConnectionComplete must be overridden if this is called.</remarks>
+        /// ConnectionComplete must be overridden if this is called.</remarks>
         protected void EnableActionConnectionComplete()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ConnectionComplete");
@@ -192,7 +192,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetCurrentConnectionIDs is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetCurrentConnectionIDs must be overridden if this is called.</remarks>
+        /// GetCurrentConnectionIDs must be overridden if this is called.</remarks>
         protected void EnableActionGetCurrentConnectionIDs()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetCurrentConnectionIDs");
@@ -205,7 +205,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action GetCurrentConnectionInfo is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoGetCurrentConnectionInfo must be overridden if this is called.</remarks>
+        /// GetCurrentConnectionInfo must be overridden if this is called.</remarks>
         protected void EnableActionGetCurrentConnectionInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetCurrentConnectionInfo");

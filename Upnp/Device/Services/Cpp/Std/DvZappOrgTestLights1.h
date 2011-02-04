@@ -35,43 +35,43 @@ protected:
     /**
      * Signal that the action GetCount is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetCount must be overridden if this is called.
+     * GetCount must be overridden if this is called.
      */
     void EnableActionGetCount();
     /**
      * Signal that the action GetRoom is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetRoom must be overridden if this is called.
+     * GetRoom must be overridden if this is called.
      */
     void EnableActionGetRoom();
     /**
      * Signal that the action GetName is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetName must be overridden if this is called.
+     * GetName must be overridden if this is called.
      */
     void EnableActionGetName();
     /**
      * Signal that the action GetPosition is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetPosition must be overridden if this is called.
+     * GetPosition must be overridden if this is called.
      */
     void EnableActionGetPosition();
     /**
      * Signal that the action SetColor is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetColor must be overridden if this is called.
+     * SetColor must be overridden if this is called.
      */
     void EnableActionSetColor();
     /**
      * Signal that the action GetColor is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetColor must be overridden if this is called.
+     * GetColor must be overridden if this is called.
      */
     void EnableActionGetColor();
     /**
      * Signal that the action GetColorComponents is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetColorComponents must be overridden if this is called.
+     * GetColorComponents must be overridden if this is called.
      */
     void EnableActionGetColorComponents();
 private:

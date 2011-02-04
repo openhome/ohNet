@@ -110,6 +110,7 @@ private:
     Functor iDisableComplete;
     Timer* iAliveTimer;
     TUint iUpdateCount;
+    bool iSuppressScheduledEvents;
 };
 
 class DviDeviceUpnpXmlWriter : public IResourceWriter

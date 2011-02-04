@@ -43,109 +43,109 @@ protected:
     /**
      * Signal that the action GetSortCapabilities is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetSortCapabilities must be overridden if this is called.
+     * GetSortCapabilities must be overridden if this is called.
      */
     void EnableActionGetSortCapabilities();
     /**
      * Signal that the action GetPropertyList is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetPropertyList must be overridden if this is called.
+     * GetPropertyList must be overridden if this is called.
      */
     void EnableActionGetPropertyList();
     /**
      * Signal that the action GetAllowedValues is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetAllowedValues must be overridden if this is called.
+     * GetAllowedValues must be overridden if this is called.
      */
     void EnableActionGetAllowedValues();
     /**
      * Signal that the action GetStateUpdateID is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetStateUpdateID must be overridden if this is called.
+     * GetStateUpdateID must be overridden if this is called.
      */
     void EnableActionGetStateUpdateID();
     /**
      * Signal that the action BrowseRecordSchedules is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoBrowseRecordSchedules must be overridden if this is called.
+     * BrowseRecordSchedules must be overridden if this is called.
      */
     void EnableActionBrowseRecordSchedules();
     /**
      * Signal that the action BrowseRecordTasks is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoBrowseRecordTasks must be overridden if this is called.
+     * BrowseRecordTasks must be overridden if this is called.
      */
     void EnableActionBrowseRecordTasks();
     /**
      * Signal that the action CreateRecordSchedule is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoCreateRecordSchedule must be overridden if this is called.
+     * CreateRecordSchedule must be overridden if this is called.
      */
     void EnableActionCreateRecordSchedule();
     /**
      * Signal that the action DeleteRecordSchedule is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDeleteRecordSchedule must be overridden if this is called.
+     * DeleteRecordSchedule must be overridden if this is called.
      */
     void EnableActionDeleteRecordSchedule();
     /**
      * Signal that the action GetRecordSchedule is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetRecordSchedule must be overridden if this is called.
+     * GetRecordSchedule must be overridden if this is called.
      */
     void EnableActionGetRecordSchedule();
     /**
      * Signal that the action EnableRecordSchedule is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoEnableRecordSchedule must be overridden if this is called.
+     * EnableRecordSchedule must be overridden if this is called.
      */
     void EnableActionEnableRecordSchedule();
     /**
      * Signal that the action DisableRecordSchedule is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDisableRecordSchedule must be overridden if this is called.
+     * DisableRecordSchedule must be overridden if this is called.
      */
     void EnableActionDisableRecordSchedule();
     /**
      * Signal that the action DeleteRecordTask is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDeleteRecordTask must be overridden if this is called.
+     * DeleteRecordTask must be overridden if this is called.
      */
     void EnableActionDeleteRecordTask();
     /**
      * Signal that the action GetRecordTask is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetRecordTask must be overridden if this is called.
+     * GetRecordTask must be overridden if this is called.
      */
     void EnableActionGetRecordTask();
     /**
      * Signal that the action EnableRecordTask is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoEnableRecordTask must be overridden if this is called.
+     * EnableRecordTask must be overridden if this is called.
      */
     void EnableActionEnableRecordTask();
     /**
      * Signal that the action DisableRecordTask is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoDisableRecordTask must be overridden if this is called.
+     * DisableRecordTask must be overridden if this is called.
      */
     void EnableActionDisableRecordTask();
     /**
      * Signal that the action ResetRecordTask is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoResetRecordTask must be overridden if this is called.
+     * ResetRecordTask must be overridden if this is called.
      */
     void EnableActionResetRecordTask();
     /**
      * Signal that the action GetRecordScheduleConflicts is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetRecordScheduleConflicts must be overridden if this is called.
+     * GetRecordScheduleConflicts must be overridden if this is called.
      */
     void EnableActionGetRecordScheduleConflicts();
     /**
      * Signal that the action GetRecordTaskConflicts is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetRecordTaskConflicts must be overridden if this is called.
+     * GetRecordTaskConflicts must be overridden if this is called.
      */
     void EnableActionGetRecordTaskConflicts();
 private:

@@ -79,7 +79,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Echo is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoEcho must be overridden if this is called.</remarks>
+        /// Echo must be overridden if this is called.</remarks>
         protected void EnableActionEcho()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Echo");
@@ -94,7 +94,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ElfFile is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoElfFile must be overridden if this is called.</remarks>
+        /// ElfFile must be overridden if this is called.</remarks>
         protected void EnableActionElfFile()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ElfFile");
@@ -108,7 +108,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ElfFingerprint is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoElfFingerprint must be overridden if this is called.</remarks>
+        /// ElfFingerprint must be overridden if this is called.</remarks>
         protected void EnableActionElfFingerprint()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ElfFingerprint");
@@ -122,7 +122,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action CrashDataStatus is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoCrashDataStatus must be overridden if this is called.</remarks>
+        /// CrashDataStatus must be overridden if this is called.</remarks>
         protected void EnableActionCrashDataStatus()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CrashDataStatus");
@@ -136,7 +136,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action CrashDataFetch is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoCrashDataFetch must be overridden if this is called.</remarks>
+        /// CrashDataFetch must be overridden if this is called.</remarks>
         protected void EnableActionCrashDataFetch()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CrashDataFetch");
@@ -149,7 +149,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action CrashDataClear is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoCrashDataClear must be overridden if this is called.</remarks>
+        /// CrashDataClear must be overridden if this is called.</remarks>
         protected void EnableActionCrashDataClear()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("CrashDataClear");
@@ -161,7 +161,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SysLog is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSysLog must be overridden if this is called.</remarks>
+        /// SysLog must be overridden if this is called.</remarks>
         protected void EnableActionSysLog()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SysLog");
@@ -174,7 +174,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Diagnostic is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoDiagnostic must be overridden if this is called.</remarks>
+        /// Diagnostic must be overridden if this is called.</remarks>
         protected void EnableActionDiagnostic()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Diagnostic");
@@ -189,7 +189,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action StateVariable is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStateVariable must be overridden if this is called.</remarks>
+        /// StateVariable must be overridden if this is called.</remarks>
         protected void EnableActionStateVariable()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StateVariable");
@@ -202,7 +202,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetStateVariable is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetStateVariable must be overridden if this is called.</remarks>
+        /// SetStateVariable must be overridden if this is called.</remarks>
         protected void EnableActionSetStateVariable()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStateVariable");
@@ -215,7 +215,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action StateVariablePeriod is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStateVariablePeriod must be overridden if this is called.</remarks>
+        /// StateVariablePeriod must be overridden if this is called.</remarks>
         protected void EnableActionStateVariablePeriod()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("StateVariablePeriod");
@@ -228,7 +228,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SetStateVariablePeriod is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSetStateVariablePeriod must be overridden if this is called.</remarks>
+        /// SetStateVariablePeriod must be overridden if this is called.</remarks>
         protected void EnableActionSetStateVariablePeriod()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetStateVariablePeriod");
@@ -241,7 +241,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Reboot is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoReboot must be overridden if this is called.</remarks>
+        /// Reboot must be overridden if this is called.</remarks>
         protected void EnableActionReboot()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Reboot");
@@ -316,7 +316,7 @@ namespace Zapp.Device.Providers
         /// Must be implemented iff EnableActionCrashDataFetch was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aaCrashData"></param>
-        protected virtual void CrashDataFetch(uint aVersion, out string aaCrashData)
+        protected virtual void CrashDataFetch(uint aVersion, out byte[] aaCrashData)
         {
             throw (new ActionDisabledError());
         }
@@ -343,7 +343,7 @@ namespace Zapp.Device.Providers
         /// Must be implemented iff EnableActionSysLog was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aaSysLog"></param>
-        protected virtual void SysLog(uint aVersion, out string aaSysLog)
+        protected virtual void SysLog(uint aVersion, out byte[] aaSysLog)
         {
             throw (new ActionDisabledError());
         }
@@ -600,7 +600,7 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            string aCrashData;
+            byte[] aCrashData;
             try
             {
                 invocation.ReadStart();
@@ -678,7 +678,7 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            string aSysLog;
+            byte[] aSysLog;
             try
             {
                 invocation.ReadStart();

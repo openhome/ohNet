@@ -362,7 +362,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Play is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPlay must be overridden if this is called.</remarks>
+        /// Play must be overridden if this is called.</remarks>
         protected void EnableActionPlay()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Play");
@@ -374,7 +374,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Pause is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoPause must be overridden if this is called.</remarks>
+        /// Pause must be overridden if this is called.</remarks>
         protected void EnableActionPause()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Pause");
@@ -386,7 +386,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action Stop is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoStop must be overridden if this is called.</remarks>
+        /// Stop must be overridden if this is called.</remarks>
         protected void EnableActionStop()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Stop");
@@ -398,7 +398,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SeekSecondAbsolute is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSeekSecondAbsolute must be overridden if this is called.</remarks>
+        /// SeekSecondAbsolute must be overridden if this is called.</remarks>
         protected void EnableActionSeekSecondAbsolute()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SeekSecondAbsolute");
@@ -411,7 +411,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SeekSecondRelative is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSeekSecondRelative must be overridden if this is called.</remarks>
+        /// SeekSecondRelative must be overridden if this is called.</remarks>
         protected void EnableActionSeekSecondRelative()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SeekSecondRelative");
@@ -424,7 +424,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SeekTrackId is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSeekTrackId must be overridden if this is called.</remarks>
+        /// SeekTrackId must be overridden if this is called.</remarks>
         protected void EnableActionSeekTrackId()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SeekTrackId");
@@ -437,7 +437,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SeekTrackAbsolute is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSeekTrackAbsolute must be overridden if this is called.</remarks>
+        /// SeekTrackAbsolute must be overridden if this is called.</remarks>
         protected void EnableActionSeekTrackAbsolute()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SeekTrackAbsolute");
@@ -450,7 +450,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action SeekTrackRelative is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoSeekTrackRelative must be overridden if this is called.</remarks>
+        /// SeekTrackRelative must be overridden if this is called.</remarks>
         protected void EnableActionSeekTrackRelative()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SeekTrackRelative");
@@ -463,7 +463,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action State is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoState must be overridden if this is called.</remarks>
+        /// State must be overridden if this is called.</remarks>
         protected void EnableActionState()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("State");
@@ -483,7 +483,7 @@ namespace Zapp.Device.Providers
         /// Signal that the action ProtocolInfo is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// DoProtocolInfo must be overridden if this is called.</remarks>
+        /// ProtocolInfo must be overridden if this is called.</remarks>
         protected void EnableActionProtocolInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ProtocolInfo");

@@ -83,127 +83,127 @@ protected:
     /**
      * Signal that the action SetLoadLevelTarget is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetLoadLevelTarget must be overridden if this is called.
+     * SetLoadLevelTarget must be overridden if this is called.
      */
     void EnableActionSetLoadLevelTarget();
     /**
      * Signal that the action GetLoadLevelTarget is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetLoadLevelTarget must be overridden if this is called.
+     * GetLoadLevelTarget must be overridden if this is called.
      */
     void EnableActionGetLoadLevelTarget();
     /**
      * Signal that the action GetLoadLevelStatus is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetLoadLevelStatus must be overridden if this is called.
+     * GetLoadLevelStatus must be overridden if this is called.
      */
     void EnableActionGetLoadLevelStatus();
     /**
      * Signal that the action SetOnEffectLevel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetOnEffectLevel must be overridden if this is called.
+     * SetOnEffectLevel must be overridden if this is called.
      */
     void EnableActionSetOnEffectLevel();
     /**
      * Signal that the action SetOnEffect is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetOnEffect must be overridden if this is called.
+     * SetOnEffect must be overridden if this is called.
      */
     void EnableActionSetOnEffect();
     /**
      * Signal that the action GetOnEffectParameters is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetOnEffectParameters must be overridden if this is called.
+     * GetOnEffectParameters must be overridden if this is called.
      */
     void EnableActionGetOnEffectParameters();
     /**
      * Signal that the action StepUp is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStepUp must be overridden if this is called.
+     * StepUp must be overridden if this is called.
      */
     void EnableActionStepUp();
     /**
      * Signal that the action StepDown is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStepDown must be overridden if this is called.
+     * StepDown must be overridden if this is called.
      */
     void EnableActionStepDown();
     /**
      * Signal that the action StartRampUp is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStartRampUp must be overridden if this is called.
+     * StartRampUp must be overridden if this is called.
      */
     void EnableActionStartRampUp();
     /**
      * Signal that the action StartRampDown is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStartRampDown must be overridden if this is called.
+     * StartRampDown must be overridden if this is called.
      */
     void EnableActionStartRampDown();
     /**
      * Signal that the action StopRamp is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStopRamp must be overridden if this is called.
+     * StopRamp must be overridden if this is called.
      */
     void EnableActionStopRamp();
     /**
      * Signal that the action StartRampToLevel is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStartRampToLevel must be overridden if this is called.
+     * StartRampToLevel must be overridden if this is called.
      */
     void EnableActionStartRampToLevel();
     /**
      * Signal that the action SetStepDelta is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetStepDelta must be overridden if this is called.
+     * SetStepDelta must be overridden if this is called.
      */
     void EnableActionSetStepDelta();
     /**
      * Signal that the action GetStepDelta is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetStepDelta must be overridden if this is called.
+     * GetStepDelta must be overridden if this is called.
      */
     void EnableActionGetStepDelta();
     /**
      * Signal that the action SetRampRate is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetRampRate must be overridden if this is called.
+     * SetRampRate must be overridden if this is called.
      */
     void EnableActionSetRampRate();
     /**
      * Signal that the action GetRampRate is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetRampRate must be overridden if this is called.
+     * GetRampRate must be overridden if this is called.
      */
     void EnableActionGetRampRate();
     /**
      * Signal that the action PauseRamp is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPauseRamp must be overridden if this is called.
+     * PauseRamp must be overridden if this is called.
      */
     void EnableActionPauseRamp();
     /**
      * Signal that the action ResumeRamp is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoResumeRamp must be overridden if this is called.
+     * ResumeRamp must be overridden if this is called.
      */
     void EnableActionResumeRamp();
     /**
      * Signal that the action GetIsRamping is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetIsRamping must be overridden if this is called.
+     * GetIsRamping must be overridden if this is called.
      */
     void EnableActionGetIsRamping();
     /**
      * Signal that the action GetRampPaused is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetRampPaused must be overridden if this is called.
+     * GetRampPaused must be overridden if this is called.
      */
     void EnableActionGetRampPaused();
     /**
      * Signal that the action GetRampTime is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoGetRampTime must be overridden if this is called.
+     * GetRampTime must be overridden if this is called.
      */
     void EnableActionGetRampTime();
 private:

@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using Zapp.Core;
 using Zapp.ControlPoint;
 
@@ -375,6 +376,7 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iTransferIDsChanged;
         private CallbackPropertyChanged iSystemUpdateIDChanged;
         private CallbackPropertyChanged iContainerUpdateIDsChanged;
+        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -521,6 +523,8 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(iSystemUpdateID);
             iContainerUpdateIDs = new PropertyString("ContainerUpdateIDs", ContainerUpdateIDsPropertyChanged);
             AddProperty(iContainerUpdateIDs);
+            
+            iPropertyLock = new Mutex();
         }
 
         /// <summary>
@@ -1242,7 +1246,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferIDsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTransferIDsChanged(CallbackPropertyChanged aTransferIDsChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iTransferIDsChanged = aTransferIDsChanged;
             }
@@ -1250,7 +1254,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void TransferIDsPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iTransferIDsChanged != null)
                 {
@@ -1267,7 +1271,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSystemUpdateIDChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySystemUpdateIDChanged(CallbackPropertyChanged aSystemUpdateIDChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iSystemUpdateIDChanged = aSystemUpdateIDChanged;
             }
@@ -1275,7 +1279,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void SystemUpdateIDPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iSystemUpdateIDChanged != null)
                 {
@@ -1292,7 +1296,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aContainerUpdateIDsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyContainerUpdateIDsChanged(CallbackPropertyChanged aContainerUpdateIDsChanged)
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 iContainerUpdateIDsChanged = aContainerUpdateIDsChanged;
             }
@@ -1300,7 +1304,7 @@ namespace Zapp.ControlPoint.Proxies
 
         private void ContainerUpdateIDsPropertyChanged()
         {
-            lock (this)
+            lock (iPropertyLock)
             {
                 if (iContainerUpdateIDsChanged != null)
                 {
