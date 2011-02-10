@@ -69,7 +69,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderUpnpOrgConnectionManager1(DvDevice aDevice)
-            : base(aDevice, "schemas-upnp-org", "ConnectionManager", 1)
+            : base(aDevice, "upnp.org", "ConnectionManager", 1)
         {
             iGch = GCHandle.Alloc(this);
             List<String> allowedValues = new List<String>();

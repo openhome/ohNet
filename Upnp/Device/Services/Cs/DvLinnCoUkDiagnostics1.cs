@@ -49,7 +49,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkDiagnostics1(DvDevice aDevice)
-            : base(aDevice, "linn-co-uk", "Diagnostics", 1)
+            : base(aDevice, "linn.co.uk", "Diagnostics", 1)
         {
             iGch = GCHandle.Alloc(this);
             iPropertyaStateVariable = new PropertyUint(new ParameterUint("aStateVariable"));

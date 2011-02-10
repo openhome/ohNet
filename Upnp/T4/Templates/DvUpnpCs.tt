@@ -22,13 +22,6 @@
         throw (new ArgumentException("Invalid version number specified"));
     }
 
-    string upnpdomain = domain.Replace(".", "-");
-
-    if (upnpdomain.StartsWith("upnp-"))
-    {
-        upnpdomain = "schemas-" + upnpdomain;
-    }
-
     string fileName = "";
     char[] charSeparators = new char[] {'.'};
     string[] res = domain.Split(charSeparators, StringSplitOptions.None);
@@ -95,7 +88,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected <#=className#>(DvDevice aDevice)
-            : base(aDevice, "<#=upnpdomain#>", "<#=type#>", <#=version#>)
+            : base(aDevice, "<#=domain#>", "<#=type#>", <#=version#>)
         {
             iGch = GCHandle.Alloc(this);<#=DeclareAllowedValuesForProperties(u)#>
 <#  foreach (Variable s in u.evented) #>

@@ -38,7 +38,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderZappOrgTestDimmableLight1(DvDevice aDevice)
-            : base(aDevice, "zapp-org", "TestDimmableLight", 1)
+            : base(aDevice, "zapp.org", "TestDimmableLight", 1)
         {
             iGch = GCHandle.Alloc(this);
             iPropertyA_ARG_Level = new PropertyUint(new ParameterUint("A_ARG_Level"));

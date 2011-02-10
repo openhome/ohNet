@@ -29,7 +29,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderZappOrgTestLights1(DvDevice aDevice)
-            : base(aDevice, "zapp-org", "TestLights", 1)
+            : base(aDevice, "zapp.org", "TestLights", 1)
         {
             iGch = GCHandle.Alloc(this);
         }

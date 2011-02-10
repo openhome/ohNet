@@ -25,7 +25,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkPtest1(DvDevice aDevice)
-            : base(aDevice, "linn-co-uk", "Ptest", 1)
+            : base(aDevice, "linn.co.uk", "Ptest", 1)
         {
             iGch = GCHandle.Alloc(this);
         }

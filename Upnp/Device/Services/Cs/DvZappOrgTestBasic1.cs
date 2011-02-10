@@ -111,7 +111,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderZappOrgTestBasic1(DvDevice aDevice)
-            : base(aDevice, "zapp-org", "TestBasic", 1)
+            : base(aDevice, "zapp.org", "TestBasic", 1)
         {
             iGch = GCHandle.Alloc(this);
             List<String> allowedValues = new List<String>();
