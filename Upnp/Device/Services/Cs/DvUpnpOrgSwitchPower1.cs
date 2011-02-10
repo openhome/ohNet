@@ -39,7 +39,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderUpnpOrgSwitchPower1(DvDevice aDevice)
-            : base(aDevice, "schemas-upnp-org", "SwitchPower", 1)
+            : base(aDevice, "upnp.org", "SwitchPower", 1)
         {
             iGch = GCHandle.Alloc(this);
             iPropertyStatus = new PropertyBool(new ParameterBool("Status"));

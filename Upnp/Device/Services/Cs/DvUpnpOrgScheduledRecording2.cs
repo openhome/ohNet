@@ -54,7 +54,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderUpnpOrgScheduledRecording2(DvDevice aDevice)
-            : base(aDevice, "schemas-upnp-org", "ScheduledRecording", 2)
+            : base(aDevice, "upnp.org", "ScheduledRecording", 2)
         {
             iGch = GCHandle.Alloc(this);
             List<String> allowedValues = new List<String>();

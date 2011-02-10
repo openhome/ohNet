@@ -26,7 +26,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderOpenhomeOrgTestColorLight1(DvDevice aDevice)
-            : base(aDevice, "openhome-org", "TestColorLight", 1)
+            : base(aDevice, "openhome.org", "TestColorLight", 1)
         {
             iGch = GCHandle.Alloc(this);
         }

@@ -113,7 +113,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderUpnpOrgDimming1(DvDevice aDevice)
-            : base(aDevice, "schemas-upnp-org", "Dimming", 1)
+            : base(aDevice, "upnp.org", "Dimming", 1)
         {
             iGch = GCHandle.Alloc(this);
             iPropertyLoadLevelStatus = new PropertyUint(new ParameterUint("LoadLevelStatus", 0, 100));

@@ -37,6 +37,8 @@ public:
     void Cancel();
     ~Timer();
 private:
+    void DoCancel();
+private:
     Functor iFunctor;
 };
 
@@ -47,6 +49,8 @@ public:
     TimerManager();
     void Stop();
     ~TimerManager();
+    void CallbackLock();
+    void CallbackUnlock();
 private:
     void Run();
     void Fire();

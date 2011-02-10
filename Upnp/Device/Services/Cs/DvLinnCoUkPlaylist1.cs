@@ -90,7 +90,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkPlaylist1(DvDevice aDevice)
-            : base(aDevice, "linn-co-uk", "Playlist", 1)
+            : base(aDevice, "linn.co.uk", "Playlist", 1)
         {
             iGch = GCHandle.Alloc(this);
             iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));

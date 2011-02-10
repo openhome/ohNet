@@ -72,7 +72,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkJukebox1(DvDevice aDevice)
-            : base(aDevice, "linn-co-uk", "Jukebox", 1)
+            : base(aDevice, "linn.co.uk", "Jukebox", 1)
         {
             iGch = GCHandle.Alloc(this);
             List<String> allowedValues = new List<String>();

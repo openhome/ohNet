@@ -120,7 +120,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkPreamp4(DvDevice aDevice)
-            : base(aDevice, "linn-co-uk", "Preamp", 4)
+            : base(aDevice, "linn.co.uk", "Preamp", 4)
         {
             iGch = GCHandle.Alloc(this);
             iPropertyVolume = new PropertyUint(new ParameterUint("Volume"));

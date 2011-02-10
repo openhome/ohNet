@@ -65,7 +65,7 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkTime1(DvDevice aDevice)
-            : base(aDevice, "linn-co-uk", "Time", 1)
+            : base(aDevice, "linn.co.uk", "Time", 1)
         {
             iGch = GCHandle.Alloc(this);
             iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
