@@ -1,28 +1,23 @@
  
 
 /**
-* Service Proxy for linn.co.uk:Jukebox:1
+* Service Proxy for linn-co-uk:Jukebox:1
 * @module Zapp
 * @class Jukebox
 */
+	
+var CpProxyLinnCoUkJukebox1 = function(udn){	
 
-var ServiceJukebox = function(udn){	
-
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Jukebox-1/control";  // upnp control url
-	this.domain = "linn.co.uk";
-	if (this.domain == "upnp.org") {
-		this.domain = "schemas.upnp.org";
-    }
-	this.domain = this.domain.replace(/\./,"-");
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Jukebox-1/control";  // upnp control url
+	this.domain = "linn-co-uk";
 	this.type = "Jukebox";
 	this.version = "1";
-	this.serviceName = "linn.co.uk-Jukebox-1";
+	this.serviceName = "CpProxyLinnCoUkJukebox1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["MetaData"] = new Zapp.ServiceProperty("MetaData");
 	this.serviceProperties["CurrentPreset"] = new Zapp.ServiceProperty("CurrentPreset");
 	this.serviceProperties["PresetPrefix"] = new Zapp.ServiceProperty("PresetPrefix");
 	this.serviceProperties["AlbumArtFileName"] = new Zapp.ServiceProperty("AlbumArtFileName");
@@ -35,7 +30,7 @@ var ServiceJukebox = function(udn){
 * @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
-ServiceJukebox.prototype.subscribe = function (serviceAddedFunction) {
+CpProxyLinnCoUkJukebox1.prototype.subscribe = function (serviceAddedFunction) {
     Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
@@ -44,58 +39,45 @@ ServiceJukebox.prototype.subscribe = function (serviceAddedFunction) {
 * Unsubscribes the service from the subscription manager to stop listening for property change events
 * @method Unsubscribe
 */
-ServiceJukebox.prototype.unsubscribe = function () {
+CpProxyLinnCoUkJukebox1.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
-
-
-/**
-* Adds a listener to handle "MetaData" property change events
-* @method MetaData_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceJukebox.prototype.MetaData_Changed = function (stateChangedFunction) {
-    this.serviceProperties.MetaData.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
+	
 
 /**
 * Adds a listener to handle "CurrentPreset" property change events
 * @method CurrentPreset_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceJukebox.prototype.CurrentPreset_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkJukebox1.prototype.CurrentPreset_Changed = function (stateChangedFunction) {
     this.serviceProperties.CurrentPreset.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "PresetPrefix" property change events
 * @method PresetPrefix_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceJukebox.prototype.PresetPrefix_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkJukebox1.prototype.PresetPrefix_Changed = function (stateChangedFunction) {
     this.serviceProperties.PresetPrefix.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "AlbumArtFileName" property change events
 * @method AlbumArtFileName_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceJukebox.prototype.AlbumArtFileName_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkJukebox1.prototype.AlbumArtFileName_Changed = function (stateChangedFunction) {
     this.serviceProperties.AlbumArtFileName.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
@@ -110,7 +92,7 @@ ServiceJukebox.prototype.AlbumArtFileName_Changed = function (stateChangedFuncti
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceJukebox.prototype.SetPresetPrefix = function(aUri, successFunction, errorFunction){	
+CpProxyLinnCoUkJukebox1.prototype.SetPresetPrefix = function(aUri, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetPresetPrefix", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("aUri", aUri);
     request.send(function(result){
@@ -130,7 +112,7 @@ ServiceJukebox.prototype.SetPresetPrefix = function(aUri, successFunction, error
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceJukebox.prototype.PresetPrefix = function(successFunction, errorFunction){	
+CpProxyLinnCoUkJukebox1.prototype.PresetPrefix = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("PresetPrefix", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aUri"] = Zapp.SoapRequest.readStringParameter(result["aUri"]);	
@@ -151,7 +133,7 @@ ServiceJukebox.prototype.PresetPrefix = function(successFunction, errorFunction)
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceJukebox.prototype.SetAlbumArtFileName = function(aName, successFunction, errorFunction){	
+CpProxyLinnCoUkJukebox1.prototype.SetAlbumArtFileName = function(aName, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetAlbumArtFileName", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("aName", aName);
     request.send(function(result){
@@ -171,7 +153,7 @@ ServiceJukebox.prototype.SetAlbumArtFileName = function(aName, successFunction, 
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceJukebox.prototype.AlbumArtFileName = function(successFunction, errorFunction){	
+CpProxyLinnCoUkJukebox1.prototype.AlbumArtFileName = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("AlbumArtFileName", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aName"] = Zapp.SoapRequest.readStringParameter(result["aName"]);	
@@ -192,7 +174,7 @@ ServiceJukebox.prototype.AlbumArtFileName = function(successFunction, errorFunct
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceJukebox.prototype.SetCurrentPreset = function(aPreset, successFunction, errorFunction){	
+CpProxyLinnCoUkJukebox1.prototype.SetCurrentPreset = function(aPreset, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetCurrentPreset", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aPreset", aPreset);
     request.send(function(result){
@@ -212,7 +194,7 @@ ServiceJukebox.prototype.SetCurrentPreset = function(aPreset, successFunction, e
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceJukebox.prototype.CurrentPreset = function(successFunction, errorFunction){	
+CpProxyLinnCoUkJukebox1.prototype.CurrentPreset = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("CurrentPreset", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aPreset"] = Zapp.SoapRequest.readIntParameter(result["aPreset"]);	
@@ -233,7 +215,7 @@ ServiceJukebox.prototype.CurrentPreset = function(successFunction, errorFunction
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceJukebox.prototype.PresetMetaData = function(aPreset, successFunction, errorFunction){	
+CpProxyLinnCoUkJukebox1.prototype.PresetMetaData = function(aPreset, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("PresetMetaData", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aPreset", aPreset);
     request.send(function(result){
@@ -254,7 +236,7 @@ ServiceJukebox.prototype.PresetMetaData = function(aPreset, successFunction, err
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceJukebox.prototype.LoadManifest = function(successFunction, errorFunction){	
+CpProxyLinnCoUkJukebox1.prototype.LoadManifest = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("LoadManifest", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aTotalPresets"] = Zapp.SoapRequest.readIntParameter(result["aTotalPresets"]);	

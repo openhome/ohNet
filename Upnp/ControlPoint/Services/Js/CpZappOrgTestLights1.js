@@ -1,41 +1,23 @@
  
 
 /**
-* Service Proxy for zapp.org:TestLights:1
+* Service Proxy for zapp-org:TestLights:1
 * @module Zapp
 * @class TestLights
 */
+	
+var CpProxyZappOrgTestLights1 = function(udn){	
 
-var ServiceTestLights = function(udn){	
-
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp.org-TestLights-1/control";  // upnp control url
-	this.domain = "zapp.org";
-	if (this.domain == "upnp.org") {
-		this.domain = "schemas.upnp.org";
-    }
-	this.domain = this.domain.replace(/\./,"-");
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp-org-TestLights-1/control";  // upnp control url
+	this.domain = "zapp-org";
 	this.type = "TestLights";
 	this.version = "1";
-	this.serviceName = "zapp.org-TestLights-1";
+	this.serviceName = "CpProxyZappOrgTestLights1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["A_ARG_GetCount_Count"] = new Zapp.ServiceProperty("A_ARG_GetCount_Count");
-	this.serviceProperties["A_ARG_Index"] = new Zapp.ServiceProperty("A_ARG_Index");
-	this.serviceProperties["A_ARG_GetRoom_RoomName"] = new Zapp.ServiceProperty("A_ARG_GetRoom_RoomName");
-	this.serviceProperties["A_ARG_GetName_FriendlyName"] = new Zapp.ServiceProperty("A_ARG_GetName_FriendlyName");
-	this.serviceProperties["A_ARG_GetPosition_X"] = new Zapp.ServiceProperty("A_ARG_GetPosition_X");
-	this.serviceProperties["A_ARG_GetPosition_Y"] = new Zapp.ServiceProperty("A_ARG_GetPosition_Y");
-	this.serviceProperties["A_ARG_GetPosition_Z"] = new Zapp.ServiceProperty("A_ARG_GetPosition_Z");
-	this.serviceProperties["A_ARG_SetColor_Color"] = new Zapp.ServiceProperty("A_ARG_SetColor_Color");
-	this.serviceProperties["A_ARG_GetColor_Color"] = new Zapp.ServiceProperty("A_ARG_GetColor_Color");
-	this.serviceProperties["A_ARG_GetColorComponents_Color"] = new Zapp.ServiceProperty("A_ARG_GetColorComponents_Color");
-	this.serviceProperties["A_ARG_GetColorComponents_Brightness"] = new Zapp.ServiceProperty("A_ARG_GetColorComponents_Brightness");
-	this.serviceProperties["A_ARG_GetColorComponents_Red"] = new Zapp.ServiceProperty("A_ARG_GetColorComponents_Red");
-	this.serviceProperties["A_ARG_GetColorComponents_Green"] = new Zapp.ServiceProperty("A_ARG_GetColorComponents_Green");
-	this.serviceProperties["A_ARG_GetColorComponents_Blue"] = new Zapp.ServiceProperty("A_ARG_GetColorComponents_Blue");
 }
 
 
@@ -45,7 +27,7 @@ var ServiceTestLights = function(udn){
 * @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
-ServiceTestLights.prototype.subscribe = function (serviceAddedFunction) {
+CpProxyZappOrgTestLights1.prototype.subscribe = function (serviceAddedFunction) {
     Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
@@ -54,193 +36,11 @@ ServiceTestLights.prototype.subscribe = function (serviceAddedFunction) {
 * Unsubscribes the service from the subscription manager to stop listening for property change events
 * @method Unsubscribe
 */
-ServiceTestLights.prototype.unsubscribe = function () {
+CpProxyZappOrgTestLights1.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
-
-
-/**
-* Adds a listener to handle "A_ARG_GetCount_Count" property change events
-* @method A_ARG_GetCount_Count_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_GetCount_Count_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_GetCount_Count.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_Index" property change events
-* @method A_ARG_Index_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_Index_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_Index.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_GetRoom_RoomName" property change events
-* @method A_ARG_GetRoom_RoomName_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_GetRoom_RoomName_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_GetRoom_RoomName.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_GetName_FriendlyName" property change events
-* @method A_ARG_GetName_FriendlyName_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_GetName_FriendlyName_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_GetName_FriendlyName.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_GetPosition_X" property change events
-* @method A_ARG_GetPosition_X_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_GetPosition_X_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_GetPosition_X.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_GetPosition_Y" property change events
-* @method A_ARG_GetPosition_Y_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_GetPosition_Y_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_GetPosition_Y.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_GetPosition_Z" property change events
-* @method A_ARG_GetPosition_Z_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_GetPosition_Z_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_GetPosition_Z.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_SetColor_Color" property change events
-* @method A_ARG_SetColor_Color_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_SetColor_Color_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_SetColor_Color.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_GetColor_Color" property change events
-* @method A_ARG_GetColor_Color_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_GetColor_Color_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_GetColor_Color.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_GetColorComponents_Color" property change events
-* @method A_ARG_GetColorComponents_Color_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_GetColorComponents_Color_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_GetColorComponents_Color.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_GetColorComponents_Brightness" property change events
-* @method A_ARG_GetColorComponents_Brightness_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_GetColorComponents_Brightness_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_GetColorComponents_Brightness.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_GetColorComponents_Red" property change events
-* @method A_ARG_GetColorComponents_Red_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_GetColorComponents_Red_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_GetColorComponents_Red.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_GetColorComponents_Green" property change events
-* @method A_ARG_GetColorComponents_Green_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_GetColorComponents_Green_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_GetColorComponents_Green.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_GetColorComponents_Blue" property change events
-* @method A_ARG_GetColorComponents_Blue_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestLights.prototype.A_ARG_GetColorComponents_Blue_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_GetColorComponents_Blue.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
 
 
 /**
@@ -249,7 +49,7 @@ ServiceTestLights.prototype.A_ARG_GetColorComponents_Blue_Changed = function (st
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestLights.prototype.GetCount = function(successFunction, errorFunction){	
+CpProxyZappOrgTestLights1.prototype.GetCount = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetCount", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["Count"] = Zapp.SoapRequest.readIntParameter(result["Count"]);	
@@ -270,7 +70,7 @@ ServiceTestLights.prototype.GetCount = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestLights.prototype.GetRoom = function(Index, successFunction, errorFunction){	
+CpProxyZappOrgTestLights1.prototype.GetRoom = function(Index, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetRoom", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.send(function(result){
@@ -292,7 +92,7 @@ ServiceTestLights.prototype.GetRoom = function(Index, successFunction, errorFunc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestLights.prototype.GetName = function(Index, successFunction, errorFunction){	
+CpProxyZappOrgTestLights1.prototype.GetName = function(Index, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetName", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.send(function(result){
@@ -314,7 +114,7 @@ ServiceTestLights.prototype.GetName = function(Index, successFunction, errorFunc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestLights.prototype.GetPosition = function(Index, successFunction, errorFunction){	
+CpProxyZappOrgTestLights1.prototype.GetPosition = function(Index, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetPosition", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.send(function(result){
@@ -339,7 +139,7 @@ ServiceTestLights.prototype.GetPosition = function(Index, successFunction, error
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestLights.prototype.SetColor = function(Index, Color, successFunction, errorFunction){	
+CpProxyZappOrgTestLights1.prototype.SetColor = function(Index, Color, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetColor", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.writeIntParameter("Color", Color);
@@ -361,7 +161,7 @@ ServiceTestLights.prototype.SetColor = function(Index, Color, successFunction, e
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestLights.prototype.GetColor = function(Index, successFunction, errorFunction){	
+CpProxyZappOrgTestLights1.prototype.GetColor = function(Index, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetColor", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.send(function(result){
@@ -383,7 +183,7 @@ ServiceTestLights.prototype.GetColor = function(Index, successFunction, errorFun
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestLights.prototype.GetColorComponents = function(Color, successFunction, errorFunction){	
+CpProxyZappOrgTestLights1.prototype.GetColorComponents = function(Color, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetColorComponents", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Color", Color);
     request.send(function(result){

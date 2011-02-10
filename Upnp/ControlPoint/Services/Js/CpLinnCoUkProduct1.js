@@ -1,22 +1,18 @@
  
 
 /**
-* Service Proxy for linn.co.uk:Product:1
+* Service Proxy for linn-co-uk:Product:1
 * @module Zapp
 * @class Product
 */
+	
+var CpProxyLinnCoUkProduct1 = function(udn){	
 
-var ServiceProduct = function(udn){	
-
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Product-1/control";  // upnp control url
-	this.domain = "linn.co.uk";
-	if (this.domain == "upnp.org") {
-		this.domain = "schemas.upnp.org";
-    }
-	this.domain = this.domain.replace(/\./,"-");
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Product-1/control";  // upnp control url
+	this.domain = "linn-co-uk";
 	this.type = "Product";
 	this.version = "1";
-	this.serviceName = "linn.co.uk-Product-1";
+	this.serviceName = "CpProxyLinnCoUkProduct1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -33,7 +29,7 @@ var ServiceProduct = function(udn){
 * @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
-ServiceProduct.prototype.subscribe = function (serviceAddedFunction) {
+CpProxyLinnCoUkProduct1.prototype.subscribe = function (serviceAddedFunction) {
     Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
@@ -42,32 +38,32 @@ ServiceProduct.prototype.subscribe = function (serviceAddedFunction) {
 * Unsubscribes the service from the subscription manager to stop listening for property change events
 * @method Unsubscribe
 */
-ServiceProduct.prototype.unsubscribe = function () {
+CpProxyLinnCoUkProduct1.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
-
+	
 
 /**
 * Adds a listener to handle "Room" property change events
 * @method Room_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.Room_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct1.prototype.Room_Changed = function (stateChangedFunction) {
     this.serviceProperties.Room.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "Standby" property change events
 * @method Standby_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.Standby_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct1.prototype.Standby_Changed = function (stateChangedFunction) {
     this.serviceProperties.Standby.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
@@ -81,7 +77,7 @@ ServiceProduct.prototype.Standby_Changed = function (stateChangedFunction) {
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.Room = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProduct1.prototype.Room = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Room", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aRoom"] = Zapp.SoapRequest.readStringParameter(result["aRoom"]);	
@@ -102,7 +98,7 @@ ServiceProduct.prototype.Room = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SetRoom = function(aRoom, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct1.prototype.SetRoom = function(aRoom, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetRoom", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("aRoom", aRoom);
     request.send(function(result){
@@ -122,7 +118,7 @@ ServiceProduct.prototype.SetRoom = function(aRoom, successFunction, errorFunctio
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.Standby = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProduct1.prototype.Standby = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Standby", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aStandby"] = Zapp.SoapRequest.readBoolParameter(result["aStandby"]);	
@@ -143,7 +139,7 @@ ServiceProduct.prototype.Standby = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SetStandby = function(aStandby, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct1.prototype.SetStandby = function(aStandby, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetStandby", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("aStandby", aStandby);
     request.send(function(result){

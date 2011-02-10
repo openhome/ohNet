@@ -1,22 +1,18 @@
  
 
 /**
-* Service Proxy for linn.co.uk:Product:3
+* Service Proxy for linn-co-uk:Product:3
 * @module Zapp
 * @class Product
 */
+	
+var CpProxyLinnCoUkProduct3 = function(udn){	
 
-var ServiceProduct = function(udn){	
-
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Product-3/control";  // upnp control url
-	this.domain = "linn.co.uk";
-	if (this.domain == "upnp.org") {
-		this.domain = "schemas.upnp.org";
-    }
-	this.domain = this.domain.replace(/\./,"-");
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Product-3/control";  // upnp control url
+	this.domain = "linn-co-uk";
 	this.type = "Product";
 	this.version = "3";
-	this.serviceName = "linn.co.uk-Product-3";
+	this.serviceName = "CpProxyLinnCoUkProduct3";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -32,9 +28,6 @@ var ServiceProduct = function(udn){
 	this.serviceProperties["ProductSourceXml"] = new Zapp.ServiceProperty("ProductSourceXml");
 	this.serviceProperties["StartupSourceIndex"] = new Zapp.ServiceProperty("StartupSourceIndex");
 	this.serviceProperties["StartupSourceEnabled"] = new Zapp.ServiceProperty("StartupSourceEnabled");
-	this.serviceProperties["ProductSourceType"] = new Zapp.ServiceProperty("ProductSourceType");
-	this.serviceProperties["ProductSourceName"] = new Zapp.ServiceProperty("ProductSourceName");
-	this.serviceProperties["ProductSourceVisible"] = new Zapp.ServiceProperty("ProductSourceVisible");
 	this.serviceProperties["ProductAnySourceName"] = new Zapp.ServiceProperty("ProductAnySourceName");
 	this.serviceProperties["ProductAnySourceVisible"] = new Zapp.ServiceProperty("ProductAnySourceVisible");
 	this.serviceProperties["ProductAnySourceType"] = new Zapp.ServiceProperty("ProductAnySourceType");
@@ -47,7 +40,7 @@ var ServiceProduct = function(udn){
 * @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
-ServiceProduct.prototype.subscribe = function (serviceAddedFunction) {
+CpProxyLinnCoUkProduct3.prototype.subscribe = function (serviceAddedFunction) {
     Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
@@ -56,214 +49,175 @@ ServiceProduct.prototype.subscribe = function (serviceAddedFunction) {
 * Unsubscribes the service from the subscription manager to stop listening for property change events
 * @method Unsubscribe
 */
-ServiceProduct.prototype.unsubscribe = function () {
+CpProxyLinnCoUkProduct3.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
-
+	
 
 /**
 * Adds a listener to handle "ProductType" property change events
 * @method ProductType_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.ProductType_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct3.prototype.ProductType_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductType.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "ProductModel" property change events
 * @method ProductModel_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.ProductModel_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct3.prototype.ProductModel_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductModel.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "ProductName" property change events
 * @method ProductName_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.ProductName_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct3.prototype.ProductName_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductName.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "ProductRoom" property change events
 * @method ProductRoom_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.ProductRoom_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct3.prototype.ProductRoom_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductRoom.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "ProductStandby" property change events
 * @method ProductStandby_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.ProductStandby_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct3.prototype.ProductStandby_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductStandby.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "ProductSourceIndex" property change events
 * @method ProductSourceIndex_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.ProductSourceIndex_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct3.prototype.ProductSourceIndex_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductSourceIndex.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "ProductSourceCount" property change events
 * @method ProductSourceCount_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.ProductSourceCount_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct3.prototype.ProductSourceCount_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductSourceCount.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "ProductSourceXml" property change events
 * @method ProductSourceXml_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.ProductSourceXml_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct3.prototype.ProductSourceXml_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductSourceXml.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "StartupSourceIndex" property change events
 * @method StartupSourceIndex_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.StartupSourceIndex_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct3.prototype.StartupSourceIndex_Changed = function (stateChangedFunction) {
     this.serviceProperties.StartupSourceIndex.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "StartupSourceEnabled" property change events
 * @method StartupSourceEnabled_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.StartupSourceEnabled_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct3.prototype.StartupSourceEnabled_Changed = function (stateChangedFunction) {
     this.serviceProperties.StartupSourceEnabled.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-
-
-/**
-* Adds a listener to handle "ProductSourceType" property change events
-* @method ProductSourceType_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceProduct.prototype.ProductSourceType_Changed = function (stateChangedFunction) {
-    this.serviceProperties.ProductSourceType.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "ProductSourceName" property change events
-* @method ProductSourceName_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceProduct.prototype.ProductSourceName_Changed = function (stateChangedFunction) {
-    this.serviceProperties.ProductSourceName.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "ProductSourceVisible" property change events
-* @method ProductSourceVisible_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceProduct.prototype.ProductSourceVisible_Changed = function (stateChangedFunction) {
-    this.serviceProperties.ProductSourceVisible.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
-	});
-}
-
+	
 
 /**
 * Adds a listener to handle "ProductAnySourceName" property change events
 * @method ProductAnySourceName_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.ProductAnySourceName_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct3.prototype.ProductAnySourceName_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductAnySourceName.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "ProductAnySourceVisible" property change events
 * @method ProductAnySourceVisible_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.ProductAnySourceVisible_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct3.prototype.ProductAnySourceVisible_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductAnySourceVisible.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "ProductAnySourceType" property change events
 * @method ProductAnySourceType_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProduct.prototype.ProductAnySourceType_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProduct3.prototype.ProductAnySourceType_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductAnySourceType.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
@@ -277,7 +231,7 @@ ServiceProduct.prototype.ProductAnySourceType_Changed = function (stateChangedFu
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.Type = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.Type = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Type", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aType"] = Zapp.SoapRequest.readStringParameter(result["aType"]);	
@@ -297,7 +251,7 @@ ServiceProduct.prototype.Type = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.Model = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.Model = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Model", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aModel"] = Zapp.SoapRequest.readStringParameter(result["aModel"]);	
@@ -317,7 +271,7 @@ ServiceProduct.prototype.Model = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.Name = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.Name = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Name", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aName"] = Zapp.SoapRequest.readStringParameter(result["aName"]);	
@@ -338,7 +292,7 @@ ServiceProduct.prototype.Name = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SetName = function(aName, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SetName = function(aName, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetName", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("aName", aName);
     request.send(function(result){
@@ -358,7 +312,7 @@ ServiceProduct.prototype.SetName = function(aName, successFunction, errorFunctio
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.Room = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.Room = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Room", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aRoom"] = Zapp.SoapRequest.readStringParameter(result["aRoom"]);	
@@ -379,7 +333,7 @@ ServiceProduct.prototype.Room = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SetRoom = function(aRoom, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SetRoom = function(aRoom, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetRoom", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("aRoom", aRoom);
     request.send(function(result){
@@ -399,7 +353,7 @@ ServiceProduct.prototype.SetRoom = function(aRoom, successFunction, errorFunctio
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.Standby = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.Standby = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Standby", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aStandby"] = Zapp.SoapRequest.readBoolParameter(result["aStandby"]);	
@@ -420,7 +374,7 @@ ServiceProduct.prototype.Standby = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SetStandby = function(aStandby, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SetStandby = function(aStandby, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetStandby", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("aStandby", aStandby);
     request.send(function(result){
@@ -440,7 +394,7 @@ ServiceProduct.prototype.SetStandby = function(aStandby, successFunction, errorF
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SourceCount = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SourceCount = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SourceCount", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aSourceCount"] = Zapp.SoapRequest.readIntParameter(result["aSourceCount"]);	
@@ -460,7 +414,7 @@ ServiceProduct.prototype.SourceCount = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SourceXml = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SourceXml = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SourceXml", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aSourceXml"] = Zapp.SoapRequest.readStringParameter(result["aSourceXml"]);	
@@ -480,7 +434,7 @@ ServiceProduct.prototype.SourceXml = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SourceIndex = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SourceIndex = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SourceIndex", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aSourceIndex"] = Zapp.SoapRequest.readIntParameter(result["aSourceIndex"]);	
@@ -501,7 +455,7 @@ ServiceProduct.prototype.SourceIndex = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SetSourceIndex = function(aSourceIndex, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SetSourceIndex = function(aSourceIndex, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetSourceIndex", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.send(function(result){
@@ -522,7 +476,7 @@ ServiceProduct.prototype.SetSourceIndex = function(aSourceIndex, successFunction
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SetSourceIndexByName = function(aSourceName, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SetSourceIndexByName = function(aSourceName, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetSourceIndexByName", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("aSourceName", aSourceName);
     request.send(function(result){
@@ -543,7 +497,7 @@ ServiceProduct.prototype.SetSourceIndexByName = function(aSourceName, successFun
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SetStartupSourceIndexByName = function(aSourceName, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SetStartupSourceIndexByName = function(aSourceName, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetStartupSourceIndexByName", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("aSourceName", aSourceName);
     request.send(function(result){
@@ -563,7 +517,7 @@ ServiceProduct.prototype.SetStartupSourceIndexByName = function(aSourceName, suc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.StartupSourceIndex = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.StartupSourceIndex = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("StartupSourceIndex", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aSourceIndex"] = Zapp.SoapRequest.readIntParameter(result["aSourceIndex"]);	
@@ -584,7 +538,7 @@ ServiceProduct.prototype.StartupSourceIndex = function(successFunction, errorFun
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SetStartupSourceIndex = function(aSourceIndex, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SetStartupSourceIndex = function(aSourceIndex, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetStartupSourceIndex", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.send(function(result){
@@ -604,7 +558,7 @@ ServiceProduct.prototype.SetStartupSourceIndex = function(aSourceIndex, successF
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.StartupSourceEnabled = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.StartupSourceEnabled = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("StartupSourceEnabled", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aStartupSourceEnabled"] = Zapp.SoapRequest.readBoolParameter(result["aStartupSourceEnabled"]);	
@@ -625,7 +579,7 @@ ServiceProduct.prototype.StartupSourceEnabled = function(successFunction, errorF
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SetStartupSourceEnabled = function(aStartupSourceEnabled, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SetStartupSourceEnabled = function(aStartupSourceEnabled, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetStartupSourceEnabled", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("aStartupSourceEnabled", aStartupSourceEnabled);
     request.send(function(result){
@@ -646,7 +600,7 @@ ServiceProduct.prototype.SetStartupSourceEnabled = function(aStartupSourceEnable
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SourceSystemName = function(aSourceIndex, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SourceSystemName = function(aSourceIndex, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SourceSystemName", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.send(function(result){
@@ -668,7 +622,7 @@ ServiceProduct.prototype.SourceSystemName = function(aSourceIndex, successFuncti
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SourceName = function(aSourceIndex, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SourceName = function(aSourceIndex, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SourceName", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.send(function(result){
@@ -691,7 +645,7 @@ ServiceProduct.prototype.SourceName = function(aSourceIndex, successFunction, er
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SetSourceName = function(aSourceIndex, aSourceName, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SetSourceName = function(aSourceIndex, aSourceName, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetSourceName", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.writeStringParameter("aSourceName", aSourceName);
@@ -713,7 +667,7 @@ ServiceProduct.prototype.SetSourceName = function(aSourceIndex, aSourceName, suc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SourceType = function(aSourceIndex, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SourceType = function(aSourceIndex, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SourceType", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.send(function(result){
@@ -735,7 +689,7 @@ ServiceProduct.prototype.SourceType = function(aSourceIndex, successFunction, er
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SourceVisible = function(aSourceIndex, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SourceVisible = function(aSourceIndex, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SourceVisible", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.send(function(result){
@@ -758,7 +712,7 @@ ServiceProduct.prototype.SourceVisible = function(aSourceIndex, successFunction,
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProduct.prototype.SetSourceVisible = function(aSourceIndex, aSourceVisible, successFunction, errorFunction){	
+CpProxyLinnCoUkProduct3.prototype.SetSourceVisible = function(aSourceIndex, aSourceVisible, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetSourceVisible", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.writeBoolParameter("aSourceVisible", aSourceVisible);

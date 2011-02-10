@@ -78,7 +78,7 @@
 
 	Document u = new Document(xml);
 	
-	serviceName = ConvertToPascalCase("CpProxy "+domain.Replace("-"," ")+type+version);
+	serviceName = ConvertToPascalCase("CpProxy-"+domain+type+version);
 
 #>
 /**
@@ -99,13 +99,13 @@ var <#=serviceName#> = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-<#  foreach (Variable s in u.variables) #>
+<#  foreach (Variable s in u.evented) #>
 <#  { #>
 	this.serviceProperties["<#=s.prettyname#>"] = new Zapp.ServiceProperty("<#=s.prettyname#>");
 <#  } #>
 }
 
-<#  foreach (Variable s in u.variables) #>
+<#  foreach (Variable s in u.evented) #>
 <#  { #>
 <#      foreach (string v in s.values) #>
 <#      { #>
@@ -133,9 +133,9 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 }
 
 
-<#  foreach (Variable s in u.variables) #>
+<#  foreach (Variable s in u.evented) #>
 <#  { #>
-
+	
 
 /**
 * Adds a listener to handle "<#=s.prettyname#>" property change events
@@ -381,15 +381,12 @@ string TemplateArgument(string aName)
 
 string ConvertToPascalCase(string str)
 {
-    //if nothing is proivided throw a null argument exception
-    if (str == null) throw new ArgumentNullException("str", "Null text cannot be converted!");
-
+    if (str == null) throw new ArgumentNullException("str", "Null text cannot be converted to Pascal Case");
     if (str.Length == 0) return str;
-
+	
     //split the provided string into an array of words
-    string[] words = str.Split(' ');
+    string[] words = str.Split('-');
     
-    //loop through each word in the array
     for (int i = 0; i < words.Length; i++)
     {
         //if the current word is greater than 1 character long
@@ -397,19 +394,14 @@ string ConvertToPascalCase(string str)
         {
             //grab the current word
             string word = words[i];
-
             //convert the first letter in the word to uppercase
             char firstLetter = char.ToUpper(word[0]);
-
             //concantenate the uppercase letter to the rest of the word
             words[i] = firstLetter + word.Substring(1);
         }
     }
-
     //return the converted text
     return string.Join(string.Empty, words);
-	
-	return "hello";
 }
 
 #>

@@ -1,22 +1,18 @@
  
 
 /**
-* Service Proxy for linn.co.uk:ProxyManager:1
+* Service Proxy for linn-co-uk:ProxyManager:1
 * @module Zapp
 * @class ProxyManager
 */
+	
+var CpProxyLinnCoUkProxyManager1 = function(udn){	
 
-var ServiceProxyManager = function(udn){	
-
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-ProxyManager-1/control";  // upnp control url
-	this.domain = "linn.co.uk";
-	if (this.domain == "upnp.org") {
-		this.domain = "schemas.upnp.org";
-    }
-	this.domain = this.domain.replace(/\./,"-");
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-ProxyManager-1/control";  // upnp control url
+	this.domain = "linn-co-uk";
 	this.type = "ProxyManager";
 	this.version = "1";
-	this.serviceName = "linn.co.uk-ProxyManager-1";
+	this.serviceName = "CpProxyLinnCoUkProxyManager1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -26,8 +22,6 @@ var ServiceProxyManager = function(udn){
 	this.serviceProperties["KontrolProductComPort"] = new Zapp.ServiceProperty("KontrolProductComPort");
 	this.serviceProperties["DiscPlayerConnected"] = new Zapp.ServiceProperty("DiscPlayerConnected");
 	this.serviceProperties["DiscPlayerComPort"] = new Zapp.ServiceProperty("DiscPlayerComPort");
-	this.serviceProperties["Bool"] = new Zapp.ServiceProperty("Bool");
-	this.serviceProperties["ComPort"] = new Zapp.ServiceProperty("ComPort");
 }
 
 ServiceProxyManager.kKontrolProductConnectedNone = "None";
@@ -57,7 +51,7 @@ ServiceProxyManager.kDiscPlayerConnectedClassikMusic = "Classik Music";
 * @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
-ServiceProxyManager.prototype.subscribe = function (serviceAddedFunction) {
+CpProxyLinnCoUkProxyManager1.prototype.subscribe = function (serviceAddedFunction) {
     Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
@@ -66,85 +60,59 @@ ServiceProxyManager.prototype.subscribe = function (serviceAddedFunction) {
 * Unsubscribes the service from the subscription manager to stop listening for property change events
 * @method Unsubscribe
 */
-ServiceProxyManager.prototype.unsubscribe = function () {
+CpProxyLinnCoUkProxyManager1.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
-
+	
 
 /**
 * Adds a listener to handle "KontrolProductConnected" property change events
 * @method KontrolProductConnected_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProxyManager.prototype.KontrolProductConnected_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProxyManager1.prototype.KontrolProductConnected_Changed = function (stateChangedFunction) {
     this.serviceProperties.KontrolProductConnected.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "KontrolProductComPort" property change events
 * @method KontrolProductComPort_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProxyManager.prototype.KontrolProductComPort_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProxyManager1.prototype.KontrolProductComPort_Changed = function (stateChangedFunction) {
     this.serviceProperties.KontrolProductComPort.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "DiscPlayerConnected" property change events
 * @method DiscPlayerConnected_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProxyManager.prototype.DiscPlayerConnected_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProxyManager1.prototype.DiscPlayerConnected_Changed = function (stateChangedFunction) {
     this.serviceProperties.DiscPlayerConnected.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "DiscPlayerComPort" property change events
 * @method DiscPlayerComPort_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceProxyManager.prototype.DiscPlayerComPort_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkProxyManager1.prototype.DiscPlayerComPort_Changed = function (stateChangedFunction) {
     this.serviceProperties.DiscPlayerComPort.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "Bool" property change events
-* @method Bool_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceProxyManager.prototype.Bool_Changed = function (stateChangedFunction) {
-    this.serviceProperties.Bool.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "ComPort" property change events
-* @method ComPort_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceProxyManager.prototype.ComPort_Changed = function (stateChangedFunction) {
-    this.serviceProperties.ComPort.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
@@ -157,7 +125,7 @@ ServiceProxyManager.prototype.ComPort_Changed = function (stateChangedFunction) 
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProxyManager.prototype.KontrolProductConnected = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProxyManager1.prototype.KontrolProductConnected = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("KontrolProductConnected", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aConnected"] = Zapp.SoapRequest.readStringParameter(result["aConnected"]);	
@@ -178,7 +146,7 @@ ServiceProxyManager.prototype.KontrolProductConnected = function(successFunction
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProxyManager.prototype.SetKontrolProductConnected = function(aConnected, successFunction, errorFunction){	
+CpProxyLinnCoUkProxyManager1.prototype.SetKontrolProductConnected = function(aConnected, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetKontrolProductConnected", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("aConnected", aConnected);
     request.send(function(result){
@@ -198,7 +166,7 @@ ServiceProxyManager.prototype.SetKontrolProductConnected = function(aConnected, 
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProxyManager.prototype.KontrolProductComPort = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProxyManager1.prototype.KontrolProductComPort = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("KontrolProductComPort", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aPort"] = Zapp.SoapRequest.readIntParameter(result["aPort"]);	
@@ -219,7 +187,7 @@ ServiceProxyManager.prototype.KontrolProductComPort = function(successFunction, 
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProxyManager.prototype.SetKontrolProductComPort = function(aConnected, successFunction, errorFunction){	
+CpProxyLinnCoUkProxyManager1.prototype.SetKontrolProductComPort = function(aConnected, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetKontrolProductComPort", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aConnected", aConnected);
     request.send(function(result){
@@ -239,7 +207,7 @@ ServiceProxyManager.prototype.SetKontrolProductComPort = function(aConnected, su
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProxyManager.prototype.DiscPlayerConnected = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProxyManager1.prototype.DiscPlayerConnected = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("DiscPlayerConnected", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aConnected"] = Zapp.SoapRequest.readStringParameter(result["aConnected"]);	
@@ -260,7 +228,7 @@ ServiceProxyManager.prototype.DiscPlayerConnected = function(successFunction, er
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProxyManager.prototype.SetDiscPlayerConnected = function(aConnected, successFunction, errorFunction){	
+CpProxyLinnCoUkProxyManager1.prototype.SetDiscPlayerConnected = function(aConnected, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetDiscPlayerConnected", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("aConnected", aConnected);
     request.send(function(result){
@@ -280,7 +248,7 @@ ServiceProxyManager.prototype.SetDiscPlayerConnected = function(aConnected, succ
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProxyManager.prototype.DiscPlayerComPort = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProxyManager1.prototype.DiscPlayerComPort = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("DiscPlayerComPort", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aPort"] = Zapp.SoapRequest.readIntParameter(result["aPort"]);	
@@ -301,7 +269,7 @@ ServiceProxyManager.prototype.DiscPlayerComPort = function(successFunction, erro
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProxyManager.prototype.SetDiscPlayerComPort = function(aConnected, successFunction, errorFunction){	
+CpProxyLinnCoUkProxyManager1.prototype.SetDiscPlayerComPort = function(aConnected, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetDiscPlayerComPort", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aConnected", aConnected);
     request.send(function(result){
@@ -321,7 +289,7 @@ ServiceProxyManager.prototype.SetDiscPlayerComPort = function(aConnected, succes
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProxyManager.prototype.TestKontrolProductConnection = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProxyManager1.prototype.TestKontrolProductConnection = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("TestKontrolProductConnection", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aResult"] = Zapp.SoapRequest.readBoolParameter(result["aResult"]);	
@@ -341,7 +309,7 @@ ServiceProxyManager.prototype.TestKontrolProductConnection = function(successFun
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceProxyManager.prototype.TestDiscPlayerConnection = function(successFunction, errorFunction){	
+CpProxyLinnCoUkProxyManager1.prototype.TestDiscPlayerConnection = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("TestDiscPlayerConnection", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aResult"] = Zapp.SoapRequest.readBoolParameter(result["aResult"]);	
