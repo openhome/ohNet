@@ -65,9 +65,17 @@ void Timer::FireAt(TUint aTime)
 
 void Timer::Cancel()
 {
-    LOG(kTimer, ">Timer::Cancel()\n");
+    TimerManager& mgr = Stack::TimerManager();
+    mgr.CallbackLock();
+    DoCancel();
+    mgr.CallbackUnlock();
+}
+
+void Timer::DoCancel()
+{
+    LOG(kTimer, ">Timer::DoCancel()\n");
     Zapp::Stack::TimerManager().Remove(*this);
-    LOG(kTimer, "<Timer::Cancel()\n");
+    LOG(kTimer, "<Timer::DoCancel()\n");
 }
 
 Timer::~Timer()
@@ -75,11 +83,11 @@ Timer::~Timer()
     TimerManager& mgr = Stack::TimerManager();
     TBool lock = (Thread::Current() != mgr.Thread());
     if (lock) {
-        mgr.iCallbackMutex.Wait();
+        mgr.CallbackLock();
     }
-    Cancel();
+    DoCancel();
     if (lock) {
-        mgr.iCallbackMutex.Signal();
+        mgr.CallbackUnlock();
     }
 }
 
@@ -129,6 +137,16 @@ void TimerManager::Stop()
     }
     
     LOG(kTimer, "<TimerManager::Stop()\n");
+}
+
+void TimerManager::CallbackLock()
+{
+    iCallbackMutex.Wait();
+}
+
+void TimerManager::CallbackUnlock()
+{
+    iCallbackMutex.Signal();
 }
 
 // Called when the head item in the base timer queue changes
@@ -194,7 +212,7 @@ void TimerManager::Fire()
     // item to become the head after the dummy now entry has
     // been removed gets to prime the timer driver
 
-    iCallbackMutex.Wait();
+    CallbackLock();
     for (;;) {
         Timer& head = RemoveHead();
         if(&head == &iNow) {
@@ -204,7 +222,7 @@ void TimerManager::Fire()
         head.iFunctor(); // run the timer's callback
         LOG(kTimer, "-TimerManager::Fire() signaling consumer\n");
     }
-    iCallbackMutex.Signal();
+    CallbackUnlock();
 }
 
 Zapp::Thread* TimerManager::Thread() const
