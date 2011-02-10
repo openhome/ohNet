@@ -692,7 +692,10 @@ SocketUdpMulticast::SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl, TI
 SocketUdpMulticast::~SocketUdpMulticast()
 {
     LOGF(kNetwork, "> SocketUdpMulticast::~SocketUdpMulticast\n");
-    Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iEndpoint);
+    try {
+        Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iEndpoint);
+    }
+    catch (NetworkError&) {}
     LOGF(kNetwork, "< SocketUdpMulticast::~SocketUdpMulticast\n");
 }
 
