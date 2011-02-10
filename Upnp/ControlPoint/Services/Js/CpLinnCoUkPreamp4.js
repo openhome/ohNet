@@ -1,22 +1,18 @@
  
 
 /**
-* Service Proxy for linn.co.uk:Preamp:4
+* Service Proxy for linn-co-uk:Preamp:4
 * @module Zapp
 * @class Preamp
 */
+	
+var CpProxyLinnCoUkPreamp4 = function(udn){	
 
-var ServicePreamp = function(udn){	
-
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Preamp-4/control";  // upnp control url
-	this.domain = "linn.co.uk";
-	if (this.domain == "upnp.org") {
-		this.domain = "schemas.upnp.org";
-    }
-	this.domain = this.domain.replace(/\./,"-");
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Preamp-4/control";  // upnp control url
+	this.domain = "linn-co-uk";
 	this.type = "Preamp";
 	this.version = "4";
-	this.serviceName = "linn.co.uk-Preamp-4";
+	this.serviceName = "CpProxyLinnCoUkPreamp4";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -28,10 +24,6 @@ var ServicePreamp = function(udn){
 	this.serviceProperties["VolumeLimit"] = new Zapp.ServiceProperty("VolumeLimit");
 	this.serviceProperties["StartupVolume"] = new Zapp.ServiceProperty("StartupVolume");
 	this.serviceProperties["StartupVolumeEnabled"] = new Zapp.ServiceProperty("StartupVolumeEnabled");
-	this.serviceProperties["typeString"] = new Zapp.ServiceProperty("typeString");
-	this.serviceProperties["typeBool"] = new Zapp.ServiceProperty("typeBool");
-	this.serviceProperties["typeI4"] = new Zapp.ServiceProperty("typeI4");
-	this.serviceProperties["typeUi4"] = new Zapp.ServiceProperty("typeUi4");
 }
 
 
@@ -41,7 +33,7 @@ var ServicePreamp = function(udn){
 * @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
-ServicePreamp.prototype.subscribe = function (serviceAddedFunction) {
+CpProxyLinnCoUkPreamp4.prototype.subscribe = function (serviceAddedFunction) {
     Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
@@ -50,139 +42,87 @@ ServicePreamp.prototype.subscribe = function (serviceAddedFunction) {
 * Unsubscribes the service from the subscription manager to stop listening for property change events
 * @method Unsubscribe
 */
-ServicePreamp.prototype.unsubscribe = function () {
+CpProxyLinnCoUkPreamp4.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
-
+	
 
 /**
 * Adds a listener to handle "Volume" property change events
 * @method Volume_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServicePreamp.prototype.Volume_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkPreamp4.prototype.Volume_Changed = function (stateChangedFunction) {
     this.serviceProperties.Volume.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "Mute" property change events
 * @method Mute_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServicePreamp.prototype.Mute_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkPreamp4.prototype.Mute_Changed = function (stateChangedFunction) {
     this.serviceProperties.Mute.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "Balance" property change events
 * @method Balance_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServicePreamp.prototype.Balance_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkPreamp4.prototype.Balance_Changed = function (stateChangedFunction) {
     this.serviceProperties.Balance.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "VolumeLimit" property change events
 * @method VolumeLimit_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServicePreamp.prototype.VolumeLimit_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkPreamp4.prototype.VolumeLimit_Changed = function (stateChangedFunction) {
     this.serviceProperties.VolumeLimit.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "StartupVolume" property change events
 * @method StartupVolume_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServicePreamp.prototype.StartupVolume_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkPreamp4.prototype.StartupVolume_Changed = function (stateChangedFunction) {
     this.serviceProperties.StartupVolume.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "StartupVolumeEnabled" property change events
 * @method StartupVolumeEnabled_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServicePreamp.prototype.StartupVolumeEnabled_Changed = function (stateChangedFunction) {
+CpProxyLinnCoUkPreamp4.prototype.StartupVolumeEnabled_Changed = function (stateChangedFunction) {
     this.serviceProperties.StartupVolumeEnabled.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "typeString" property change events
-* @method typeString_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServicePreamp.prototype.typeString_Changed = function (stateChangedFunction) {
-    this.serviceProperties.typeString.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "typeBool" property change events
-* @method typeBool_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServicePreamp.prototype.typeBool_Changed = function (stateChangedFunction) {
-    this.serviceProperties.typeBool.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "typeI4" property change events
-* @method typeI4_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServicePreamp.prototype.typeI4_Changed = function (stateChangedFunction) {
-    this.serviceProperties.typeI4.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "typeUi4" property change events
-* @method typeUi4_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServicePreamp.prototype.typeUi4_Changed = function (stateChangedFunction) {
-    this.serviceProperties.typeUi4.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
 
@@ -193,7 +133,7 @@ ServicePreamp.prototype.typeUi4_Changed = function (stateChangedFunction) {
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.VolumeInc = function(successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.VolumeInc = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("VolumeInc", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
@@ -212,7 +152,7 @@ ServicePreamp.prototype.VolumeInc = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.VolumeDec = function(successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.VolumeDec = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("VolumeDec", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
@@ -232,7 +172,7 @@ ServicePreamp.prototype.VolumeDec = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.SetVolume = function(aVolume, successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.SetVolume = function(aVolume, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetVolume", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aVolume", aVolume);
     request.send(function(result){
@@ -252,7 +192,7 @@ ServicePreamp.prototype.SetVolume = function(aVolume, successFunction, errorFunc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.Volume = function(successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.Volume = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Volume", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aVolume"] = Zapp.SoapRequest.readIntParameter(result["aVolume"]);	
@@ -273,7 +213,7 @@ ServicePreamp.prototype.Volume = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.SetMute = function(aMute, successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.SetMute = function(aMute, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetMute", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("aMute", aMute);
     request.send(function(result){
@@ -293,7 +233,7 @@ ServicePreamp.prototype.SetMute = function(aMute, successFunction, errorFunction
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.Mute = function(successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.Mute = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Mute", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aMute"] = Zapp.SoapRequest.readBoolParameter(result["aMute"]);	
@@ -314,7 +254,7 @@ ServicePreamp.prototype.Mute = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.SetBalance = function(aBalance, successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.SetBalance = function(aBalance, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetBalance", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aBalance", aBalance);
     request.send(function(result){
@@ -334,7 +274,7 @@ ServicePreamp.prototype.SetBalance = function(aBalance, successFunction, errorFu
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.Balance = function(successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.Balance = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Balance", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aBalance"] = Zapp.SoapRequest.readIntParameter(result["aBalance"]);	
@@ -355,7 +295,7 @@ ServicePreamp.prototype.Balance = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.SetVolumeLimit = function(aVolumeLimit, successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.SetVolumeLimit = function(aVolumeLimit, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetVolumeLimit", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aVolumeLimit", aVolumeLimit);
     request.send(function(result){
@@ -375,7 +315,7 @@ ServicePreamp.prototype.SetVolumeLimit = function(aVolumeLimit, successFunction,
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.VolumeLimit = function(successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.VolumeLimit = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("VolumeLimit", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aVolumeLimit"] = Zapp.SoapRequest.readIntParameter(result["aVolumeLimit"]);	
@@ -396,7 +336,7 @@ ServicePreamp.prototype.VolumeLimit = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.SetStartupVolume = function(aStartupVolume, successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.SetStartupVolume = function(aStartupVolume, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetStartupVolume", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aStartupVolume", aStartupVolume);
     request.send(function(result){
@@ -416,7 +356,7 @@ ServicePreamp.prototype.SetStartupVolume = function(aStartupVolume, successFunct
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.StartupVolume = function(successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.StartupVolume = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("StartupVolume", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aStartupVolume"] = Zapp.SoapRequest.readIntParameter(result["aStartupVolume"]);	
@@ -437,7 +377,7 @@ ServicePreamp.prototype.StartupVolume = function(successFunction, errorFunction)
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.SetStartupVolumeEnabled = function(aStartupVolumeEnabled, successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.SetStartupVolumeEnabled = function(aStartupVolumeEnabled, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetStartupVolumeEnabled", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("aStartupVolumeEnabled", aStartupVolumeEnabled);
     request.send(function(result){
@@ -457,7 +397,7 @@ ServicePreamp.prototype.SetStartupVolumeEnabled = function(aStartupVolumeEnabled
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServicePreamp.prototype.StartupVolumeEnabled = function(successFunction, errorFunction){	
+CpProxyLinnCoUkPreamp4.prototype.StartupVolumeEnabled = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("StartupVolumeEnabled", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aStartupVolumeEnabled"] = Zapp.SoapRequest.readBoolParameter(result["aStartupVolumeEnabled"]);	

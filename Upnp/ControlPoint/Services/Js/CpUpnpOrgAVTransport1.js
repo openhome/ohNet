@@ -1,66 +1,26 @@
  
 
 /**
-* Service Proxy for upnp.org:AVTransport:1
+* Service Proxy for schemas-upnp-org:AVTransport:1
 * @module Zapp
 * @class AVTransport
 */
+	
+var CpProxySchemasUpnpOrgAVTransport1 = function(udn){	
 
-var ServiceAVTransport = function(udn){	
-
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-AVTransport-1/control";  // upnp control url
-	this.domain = "upnp.org";
-	if (this.domain == "upnp.org") {
-		this.domain = "schemas.upnp.org";
-    }
-	this.domain = this.domain.replace(/\./,"-");
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/schemas-upnp-org-AVTransport-1/control";  // upnp control url
+	this.domain = "schemas-upnp-org";
 	this.type = "AVTransport";
 	this.version = "1";
-	this.serviceName = "upnp.org-AVTransport-1";
+	this.serviceName = "CpProxySchemasUpnpOrgAVTransport1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["TransportState"] = new Zapp.ServiceProperty("TransportState");
-	this.serviceProperties["TransportStatus"] = new Zapp.ServiceProperty("TransportStatus");
-	this.serviceProperties["PlaybackStorageMedium"] = new Zapp.ServiceProperty("PlaybackStorageMedium");
-	this.serviceProperties["RecordStorageMedium"] = new Zapp.ServiceProperty("RecordStorageMedium");
-	this.serviceProperties["PossiblePlaybackStorageMedia"] = new Zapp.ServiceProperty("PossiblePlaybackStorageMedia");
-	this.serviceProperties["PossibleRecordStorageMedia"] = new Zapp.ServiceProperty("PossibleRecordStorageMedia");
-	this.serviceProperties["CurrentPlayMode"] = new Zapp.ServiceProperty("CurrentPlayMode");
-	this.serviceProperties["TransportPlaySpeed"] = new Zapp.ServiceProperty("TransportPlaySpeed");
-	this.serviceProperties["RecordMediumWriteStatus"] = new Zapp.ServiceProperty("RecordMediumWriteStatus");
-	this.serviceProperties["CurrentRecordQualityMode"] = new Zapp.ServiceProperty("CurrentRecordQualityMode");
-	this.serviceProperties["PossibleRecordQualityModes"] = new Zapp.ServiceProperty("PossibleRecordQualityModes");
-	this.serviceProperties["NumberOfTracks"] = new Zapp.ServiceProperty("NumberOfTracks");
-	this.serviceProperties["CurrentTrack"] = new Zapp.ServiceProperty("CurrentTrack");
-	this.serviceProperties["CurrentTrackDuration"] = new Zapp.ServiceProperty("CurrentTrackDuration");
-	this.serviceProperties["CurrentMediaDuration"] = new Zapp.ServiceProperty("CurrentMediaDuration");
-	this.serviceProperties["CurrentTrackMetaData"] = new Zapp.ServiceProperty("CurrentTrackMetaData");
-	this.serviceProperties["CurrentTrackURI"] = new Zapp.ServiceProperty("CurrentTrackURI");
-	this.serviceProperties["AVTransportURI"] = new Zapp.ServiceProperty("AVTransportURI");
-	this.serviceProperties["AVTransportURIMetaData"] = new Zapp.ServiceProperty("AVTransportURIMetaData");
-	this.serviceProperties["NextAVTransportURI"] = new Zapp.ServiceProperty("NextAVTransportURI");
-	this.serviceProperties["NextAVTransportURIMetaData"] = new Zapp.ServiceProperty("NextAVTransportURIMetaData");
-	this.serviceProperties["RelativeTimePosition"] = new Zapp.ServiceProperty("RelativeTimePosition");
-	this.serviceProperties["AbsoluteTimePosition"] = new Zapp.ServiceProperty("AbsoluteTimePosition");
-	this.serviceProperties["RelativeCounterPosition"] = new Zapp.ServiceProperty("RelativeCounterPosition");
-	this.serviceProperties["AbsoluteCounterPosition"] = new Zapp.ServiceProperty("AbsoluteCounterPosition");
-	this.serviceProperties["CurrentTransportActions"] = new Zapp.ServiceProperty("CurrentTransportActions");
 	this.serviceProperties["LastChange"] = new Zapp.ServiceProperty("LastChange");
-	this.serviceProperties["SeekMode"] = new Zapp.ServiceProperty("SeekMode");
-	this.serviceProperties["SeekTarget"] = new Zapp.ServiceProperty("SeekTarget");
-	this.serviceProperties["InstanceID"] = new Zapp.ServiceProperty("InstanceID");
 }
 
-ServiceAVTransport.kTransportStateStopped = "STOPPED";
-ServiceAVTransport.kTransportStatePlaying = "PLAYING";
-ServiceAVTransport.kTransportStatusOk = "OK";
-ServiceAVTransport.kTransportStatusErrorOccurred = "ERROR_OCCURRED";
-ServiceAVTransport.kCurrentPlayModeNormal = "NORMAL";
-ServiceAVTransport.kTransportPlaySpeed1 = "1";
-ServiceAVTransport.kSeekModeTrackNr = "TRACK_NR";
 
 
 /**
@@ -68,7 +28,7 @@ ServiceAVTransport.kSeekModeTrackNr = "TRACK_NR";
 * @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
-ServiceAVTransport.prototype.subscribe = function (serviceAddedFunction) {
+CpProxySchemasUpnpOrgAVTransport1.prototype.subscribe = function (serviceAddedFunction) {
     Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
@@ -77,399 +37,22 @@ ServiceAVTransport.prototype.subscribe = function (serviceAddedFunction) {
 * Unsubscribes the service from the subscription manager to stop listening for property change events
 * @method Unsubscribe
 */
-ServiceAVTransport.prototype.unsubscribe = function () {
+CpProxySchemasUpnpOrgAVTransport1.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
-
-
-/**
-* Adds a listener to handle "TransportState" property change events
-* @method TransportState_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.TransportState_Changed = function (stateChangedFunction) {
-    this.serviceProperties.TransportState.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "TransportStatus" property change events
-* @method TransportStatus_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.TransportStatus_Changed = function (stateChangedFunction) {
-    this.serviceProperties.TransportStatus.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "PlaybackStorageMedium" property change events
-* @method PlaybackStorageMedium_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.PlaybackStorageMedium_Changed = function (stateChangedFunction) {
-    this.serviceProperties.PlaybackStorageMedium.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "RecordStorageMedium" property change events
-* @method RecordStorageMedium_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.RecordStorageMedium_Changed = function (stateChangedFunction) {
-    this.serviceProperties.RecordStorageMedium.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "PossiblePlaybackStorageMedia" property change events
-* @method PossiblePlaybackStorageMedia_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.PossiblePlaybackStorageMedia_Changed = function (stateChangedFunction) {
-    this.serviceProperties.PossiblePlaybackStorageMedia.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "PossibleRecordStorageMedia" property change events
-* @method PossibleRecordStorageMedia_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.PossibleRecordStorageMedia_Changed = function (stateChangedFunction) {
-    this.serviceProperties.PossibleRecordStorageMedia.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "CurrentPlayMode" property change events
-* @method CurrentPlayMode_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.CurrentPlayMode_Changed = function (stateChangedFunction) {
-    this.serviceProperties.CurrentPlayMode.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "TransportPlaySpeed" property change events
-* @method TransportPlaySpeed_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.TransportPlaySpeed_Changed = function (stateChangedFunction) {
-    this.serviceProperties.TransportPlaySpeed.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "RecordMediumWriteStatus" property change events
-* @method RecordMediumWriteStatus_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.RecordMediumWriteStatus_Changed = function (stateChangedFunction) {
-    this.serviceProperties.RecordMediumWriteStatus.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "CurrentRecordQualityMode" property change events
-* @method CurrentRecordQualityMode_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.CurrentRecordQualityMode_Changed = function (stateChangedFunction) {
-    this.serviceProperties.CurrentRecordQualityMode.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "PossibleRecordQualityModes" property change events
-* @method PossibleRecordQualityModes_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.PossibleRecordQualityModes_Changed = function (stateChangedFunction) {
-    this.serviceProperties.PossibleRecordQualityModes.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "NumberOfTracks" property change events
-* @method NumberOfTracks_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.NumberOfTracks_Changed = function (stateChangedFunction) {
-    this.serviceProperties.NumberOfTracks.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "CurrentTrack" property change events
-* @method CurrentTrack_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.CurrentTrack_Changed = function (stateChangedFunction) {
-    this.serviceProperties.CurrentTrack.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "CurrentTrackDuration" property change events
-* @method CurrentTrackDuration_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.CurrentTrackDuration_Changed = function (stateChangedFunction) {
-    this.serviceProperties.CurrentTrackDuration.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "CurrentMediaDuration" property change events
-* @method CurrentMediaDuration_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.CurrentMediaDuration_Changed = function (stateChangedFunction) {
-    this.serviceProperties.CurrentMediaDuration.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "CurrentTrackMetaData" property change events
-* @method CurrentTrackMetaData_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.CurrentTrackMetaData_Changed = function (stateChangedFunction) {
-    this.serviceProperties.CurrentTrackMetaData.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "CurrentTrackURI" property change events
-* @method CurrentTrackURI_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.CurrentTrackURI_Changed = function (stateChangedFunction) {
-    this.serviceProperties.CurrentTrackURI.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "AVTransportURI" property change events
-* @method AVTransportURI_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.AVTransportURI_Changed = function (stateChangedFunction) {
-    this.serviceProperties.AVTransportURI.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "AVTransportURIMetaData" property change events
-* @method AVTransportURIMetaData_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.AVTransportURIMetaData_Changed = function (stateChangedFunction) {
-    this.serviceProperties.AVTransportURIMetaData.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "NextAVTransportURI" property change events
-* @method NextAVTransportURI_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.NextAVTransportURI_Changed = function (stateChangedFunction) {
-    this.serviceProperties.NextAVTransportURI.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "NextAVTransportURIMetaData" property change events
-* @method NextAVTransportURIMetaData_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.NextAVTransportURIMetaData_Changed = function (stateChangedFunction) {
-    this.serviceProperties.NextAVTransportURIMetaData.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "RelativeTimePosition" property change events
-* @method RelativeTimePosition_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.RelativeTimePosition_Changed = function (stateChangedFunction) {
-    this.serviceProperties.RelativeTimePosition.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "AbsoluteTimePosition" property change events
-* @method AbsoluteTimePosition_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.AbsoluteTimePosition_Changed = function (stateChangedFunction) {
-    this.serviceProperties.AbsoluteTimePosition.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "RelativeCounterPosition" property change events
-* @method RelativeCounterPosition_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.RelativeCounterPosition_Changed = function (stateChangedFunction) {
-    this.serviceProperties.RelativeCounterPosition.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "AbsoluteCounterPosition" property change events
-* @method AbsoluteCounterPosition_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.AbsoluteCounterPosition_Changed = function (stateChangedFunction) {
-    this.serviceProperties.AbsoluteCounterPosition.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "CurrentTransportActions" property change events
-* @method CurrentTransportActions_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.CurrentTransportActions_Changed = function (stateChangedFunction) {
-    this.serviceProperties.CurrentTransportActions.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
+	
 
 /**
 * Adds a listener to handle "LastChange" property change events
 * @method LastChange_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceAVTransport.prototype.LastChange_Changed = function (stateChangedFunction) {
+CpProxySchemasUpnpOrgAVTransport1.prototype.LastChange_Changed = function (stateChangedFunction) {
     this.serviceProperties.LastChange.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "SeekMode" property change events
-* @method SeekMode_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.SeekMode_Changed = function (stateChangedFunction) {
-    this.serviceProperties.SeekMode.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "SeekTarget" property change events
-* @method SeekTarget_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.SeekTarget_Changed = function (stateChangedFunction) {
-    this.serviceProperties.SeekTarget.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "InstanceID" property change events
-* @method InstanceID_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceAVTransport.prototype.InstanceID_Changed = function (stateChangedFunction) {
-    this.serviceProperties.InstanceID.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
 
@@ -483,7 +66,7 @@ ServiceAVTransport.prototype.InstanceID_Changed = function (stateChangedFunction
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.SetAVTransportURI = function(InstanceID, CurrentURI, CurrentURIMetaData, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.SetAVTransportURI = function(InstanceID, CurrentURI, CurrentURIMetaData, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetAVTransportURI", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("CurrentURI", CurrentURI);
@@ -508,7 +91,7 @@ ServiceAVTransport.prototype.SetAVTransportURI = function(InstanceID, CurrentURI
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.SetNextAVTransportURI = function(InstanceID, NextURI, NextURIMetaData, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.SetNextAVTransportURI = function(InstanceID, NextURI, NextURIMetaData, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetNextAVTransportURI", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("NextURI", NextURI);
@@ -531,7 +114,7 @@ ServiceAVTransport.prototype.SetNextAVTransportURI = function(InstanceID, NextUR
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.GetMediaInfo = function(InstanceID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.GetMediaInfo = function(InstanceID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetMediaInfo", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
@@ -561,7 +144,7 @@ ServiceAVTransport.prototype.GetMediaInfo = function(InstanceID, successFunction
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.GetTransportInfo = function(InstanceID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.GetTransportInfo = function(InstanceID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetTransportInfo", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
@@ -585,7 +168,7 @@ ServiceAVTransport.prototype.GetTransportInfo = function(InstanceID, successFunc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.GetPositionInfo = function(InstanceID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.GetPositionInfo = function(InstanceID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetPositionInfo", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
@@ -614,7 +197,7 @@ ServiceAVTransport.prototype.GetPositionInfo = function(InstanceID, successFunct
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.GetDeviceCapabilities = function(InstanceID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.GetDeviceCapabilities = function(InstanceID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetDeviceCapabilities", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
@@ -638,7 +221,7 @@ ServiceAVTransport.prototype.GetDeviceCapabilities = function(InstanceID, succes
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.GetTransportSettings = function(InstanceID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.GetTransportSettings = function(InstanceID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetTransportSettings", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
@@ -661,7 +244,7 @@ ServiceAVTransport.prototype.GetTransportSettings = function(InstanceID, success
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.Stop = function(InstanceID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.Stop = function(InstanceID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Stop", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
@@ -683,7 +266,7 @@ ServiceAVTransport.prototype.Stop = function(InstanceID, successFunction, errorF
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.Play = function(InstanceID, Speed, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.Play = function(InstanceID, Speed, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Play", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Speed", Speed);
@@ -705,7 +288,7 @@ ServiceAVTransport.prototype.Play = function(InstanceID, Speed, successFunction,
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.Pause = function(InstanceID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.Pause = function(InstanceID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Pause", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
@@ -726,7 +309,7 @@ ServiceAVTransport.prototype.Pause = function(InstanceID, successFunction, error
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.Record = function(InstanceID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.Record = function(InstanceID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Record", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
@@ -749,7 +332,7 @@ ServiceAVTransport.prototype.Record = function(InstanceID, successFunction, erro
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.Seek = function(InstanceID, Unit, Target, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.Seek = function(InstanceID, Unit, Target, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Seek", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Unit", Unit);
@@ -772,7 +355,7 @@ ServiceAVTransport.prototype.Seek = function(InstanceID, Unit, Target, successFu
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.Next = function(InstanceID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.Next = function(InstanceID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Next", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
@@ -793,7 +376,7 @@ ServiceAVTransport.prototype.Next = function(InstanceID, successFunction, errorF
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.Previous = function(InstanceID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.Previous = function(InstanceID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Previous", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
@@ -815,7 +398,7 @@ ServiceAVTransport.prototype.Previous = function(InstanceID, successFunction, er
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.SetPlayMode = function(InstanceID, NewPlayMode, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.SetPlayMode = function(InstanceID, NewPlayMode, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetPlayMode", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("NewPlayMode", NewPlayMode);
@@ -838,7 +421,7 @@ ServiceAVTransport.prototype.SetPlayMode = function(InstanceID, NewPlayMode, suc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.SetRecordQualityMode = function(InstanceID, NewRecordQualityMode, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.SetRecordQualityMode = function(InstanceID, NewRecordQualityMode, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetRecordQualityMode", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("NewRecordQualityMode", NewRecordQualityMode);
@@ -860,7 +443,7 @@ ServiceAVTransport.prototype.SetRecordQualityMode = function(InstanceID, NewReco
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceAVTransport.prototype.GetCurrentTransportActions = function(InstanceID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgAVTransport1.prototype.GetCurrentTransportActions = function(InstanceID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetCurrentTransportActions", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){

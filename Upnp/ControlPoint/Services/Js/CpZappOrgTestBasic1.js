@@ -1,43 +1,28 @@
  
 
 /**
-* Service Proxy for zapp.org:TestBasic:1
+* Service Proxy for zapp-org:TestBasic:1
 * @module Zapp
 * @class TestBasic
 */
+	
+var CpProxyZappOrgTestBasic1 = function(udn){	
 
-var ServiceTestBasic = function(udn){	
-
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp.org-TestBasic-1/control";  // upnp control url
-	this.domain = "zapp.org";
-	if (this.domain == "upnp.org") {
-		this.domain = "schemas.upnp.org";
-    }
-	this.domain = this.domain.replace(/\./,"-");
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp-org-TestBasic-1/control";  // upnp control url
+	this.domain = "zapp-org";
 	this.type = "TestBasic";
 	this.version = "1";
-	this.serviceName = "zapp.org-TestBasic-1";
+	this.serviceName = "CpProxyZappOrgTestBasic1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["A_ARG_Increment_Value"] = new Zapp.ServiceProperty("A_ARG_Increment_Value");
-	this.serviceProperties["A_ARG_Increment_Result"] = new Zapp.ServiceProperty("A_ARG_Increment_Result");
-	this.serviceProperties["A_ARG_Decrement_Value"] = new Zapp.ServiceProperty("A_ARG_Decrement_Value");
-	this.serviceProperties["A_ARG_Decrement_Result"] = new Zapp.ServiceProperty("A_ARG_Decrement_Result");
-	this.serviceProperties["A_ARG_Toggle_Value"] = new Zapp.ServiceProperty("A_ARG_Toggle_Value");
-	this.serviceProperties["A_ARG_Toggle_Result"] = new Zapp.ServiceProperty("A_ARG_Toggle_Result");
-	this.serviceProperties["A_ARG_EchoString_Value"] = new Zapp.ServiceProperty("A_ARG_EchoString_Value");
-	this.serviceProperties["A_ARG_EchoString_Result"] = new Zapp.ServiceProperty("A_ARG_EchoString_Result");
-	this.serviceProperties["A_ARG_EchoBinary_Value"] = new Zapp.ServiceProperty("A_ARG_EchoBinary_Value");
-	this.serviceProperties["A_ARG_EchoBinary_Result"] = new Zapp.ServiceProperty("A_ARG_EchoBinary_Result");
 	this.serviceProperties["VarUint"] = new Zapp.ServiceProperty("VarUint");
 	this.serviceProperties["VarInt"] = new Zapp.ServiceProperty("VarInt");
 	this.serviceProperties["VarBool"] = new Zapp.ServiceProperty("VarBool");
 	this.serviceProperties["VarStr"] = new Zapp.ServiceProperty("VarStr");
 	this.serviceProperties["VarBin"] = new Zapp.ServiceProperty("VarBin");
-	this.serviceProperties["A_ARG_WriteData"] = new Zapp.ServiceProperty("A_ARG_WriteData");
 }
 
 
@@ -47,7 +32,7 @@ var ServiceTestBasic = function(udn){
 * @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
-ServiceTestBasic.prototype.subscribe = function (serviceAddedFunction) {
+CpProxyZappOrgTestBasic1.prototype.subscribe = function (serviceAddedFunction) {
     Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
@@ -56,217 +41,74 @@ ServiceTestBasic.prototype.subscribe = function (serviceAddedFunction) {
 * Unsubscribes the service from the subscription manager to stop listening for property change events
 * @method Unsubscribe
 */
-ServiceTestBasic.prototype.unsubscribe = function () {
+CpProxyZappOrgTestBasic1.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
-
-
-/**
-* Adds a listener to handle "A_ARG_Increment_Value" property change events
-* @method A_ARG_Increment_Value_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestBasic.prototype.A_ARG_Increment_Value_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_Increment_Value.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_Increment_Result" property change events
-* @method A_ARG_Increment_Result_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestBasic.prototype.A_ARG_Increment_Result_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_Increment_Result.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_Decrement_Value" property change events
-* @method A_ARG_Decrement_Value_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestBasic.prototype.A_ARG_Decrement_Value_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_Decrement_Value.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_Decrement_Result" property change events
-* @method A_ARG_Decrement_Result_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestBasic.prototype.A_ARG_Decrement_Result_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_Decrement_Result.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_Toggle_Value" property change events
-* @method A_ARG_Toggle_Value_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestBasic.prototype.A_ARG_Toggle_Value_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_Toggle_Value.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_Toggle_Result" property change events
-* @method A_ARG_Toggle_Result_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestBasic.prototype.A_ARG_Toggle_Result_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_Toggle_Result.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_EchoString_Value" property change events
-* @method A_ARG_EchoString_Value_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestBasic.prototype.A_ARG_EchoString_Value_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_EchoString_Value.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_EchoString_Result" property change events
-* @method A_ARG_EchoString_Result_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestBasic.prototype.A_ARG_EchoString_Result_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_EchoString_Result.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_EchoBinary_Value" property change events
-* @method A_ARG_EchoBinary_Value_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestBasic.prototype.A_ARG_EchoBinary_Value_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_EchoBinary_Value.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBinaryParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_EchoBinary_Result" property change events
-* @method A_ARG_EchoBinary_Result_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestBasic.prototype.A_ARG_EchoBinary_Result_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_EchoBinary_Result.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBinaryParameter(state)); 
-	});
-}
-
+	
 
 /**
 * Adds a listener to handle "VarUint" property change events
 * @method VarUint_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceTestBasic.prototype.VarUint_Changed = function (stateChangedFunction) {
+CpProxyZappOrgTestBasic1.prototype.VarUint_Changed = function (stateChangedFunction) {
     this.serviceProperties.VarUint.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "VarInt" property change events
 * @method VarInt_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceTestBasic.prototype.VarInt_Changed = function (stateChangedFunction) {
+CpProxyZappOrgTestBasic1.prototype.VarInt_Changed = function (stateChangedFunction) {
     this.serviceProperties.VarInt.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "VarBool" property change events
 * @method VarBool_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceTestBasic.prototype.VarBool_Changed = function (stateChangedFunction) {
+CpProxyZappOrgTestBasic1.prototype.VarBool_Changed = function (stateChangedFunction) {
     this.serviceProperties.VarBool.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "VarStr" property change events
 * @method VarStr_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceTestBasic.prototype.VarStr_Changed = function (stateChangedFunction) {
+CpProxyZappOrgTestBasic1.prototype.VarStr_Changed = function (stateChangedFunction) {
     this.serviceProperties.VarStr.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "VarBin" property change events
 * @method VarBin_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceTestBasic.prototype.VarBin_Changed = function (stateChangedFunction) {
+CpProxyZappOrgTestBasic1.prototype.VarBin_Changed = function (stateChangedFunction) {
     this.serviceProperties.VarBin.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readBinaryParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "A_ARG_WriteData" property change events
-* @method A_ARG_WriteData_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceTestBasic.prototype.A_ARG_WriteData_Changed = function (stateChangedFunction) {
-    this.serviceProperties.A_ARG_WriteData.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
 
@@ -278,7 +120,7 @@ ServiceTestBasic.prototype.A_ARG_WriteData_Changed = function (stateChangedFunct
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.Increment = function(Value, successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.Increment = function(Value, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Increment", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
@@ -300,7 +142,7 @@ ServiceTestBasic.prototype.Increment = function(Value, successFunction, errorFun
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.Decrement = function(Value, successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.Decrement = function(Value, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Decrement", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
@@ -322,7 +164,7 @@ ServiceTestBasic.prototype.Decrement = function(Value, successFunction, errorFun
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.Toggle = function(Value, successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.Toggle = function(Value, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Toggle", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("Value", Value);
     request.send(function(result){
@@ -344,7 +186,7 @@ ServiceTestBasic.prototype.Toggle = function(Value, successFunction, errorFuncti
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.EchoString = function(Value, successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.EchoString = function(Value, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("EchoString", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("Value", Value);
     request.send(function(result){
@@ -366,7 +208,7 @@ ServiceTestBasic.prototype.EchoString = function(Value, successFunction, errorFu
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.EchoBinary = function(Value, successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.EchoBinary = function(Value, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("EchoBinary", this.url, this.domain, this.type, this.version);		
     request.writeBinaryParameter("Value", Value);
     request.send(function(result){
@@ -388,7 +230,7 @@ ServiceTestBasic.prototype.EchoBinary = function(Value, successFunction, errorFu
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.SetUint = function(ValueUint, successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.SetUint = function(ValueUint, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetUint", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("ValueUint", ValueUint);
     request.send(function(result){
@@ -408,7 +250,7 @@ ServiceTestBasic.prototype.SetUint = function(ValueUint, successFunction, errorF
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.GetUint = function(successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.GetUint = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetUint", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["ValueUint"] = Zapp.SoapRequest.readIntParameter(result["ValueUint"]);	
@@ -429,7 +271,7 @@ ServiceTestBasic.prototype.GetUint = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.SetInt = function(ValueInt, successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.SetInt = function(ValueInt, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetInt", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("ValueInt", ValueInt);
     request.send(function(result){
@@ -449,7 +291,7 @@ ServiceTestBasic.prototype.SetInt = function(ValueInt, successFunction, errorFun
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.GetInt = function(successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.GetInt = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetInt", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["ValueInt"] = Zapp.SoapRequest.readIntParameter(result["ValueInt"]);	
@@ -470,7 +312,7 @@ ServiceTestBasic.prototype.GetInt = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.SetBool = function(ValueBool, successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.SetBool = function(ValueBool, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetBool", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("ValueBool", ValueBool);
     request.send(function(result){
@@ -490,7 +332,7 @@ ServiceTestBasic.prototype.SetBool = function(ValueBool, successFunction, errorF
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.GetBool = function(successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.GetBool = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetBool", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["ValueBool"] = Zapp.SoapRequest.readBoolParameter(result["ValueBool"]);	
@@ -513,7 +355,7 @@ ServiceTestBasic.prototype.GetBool = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.SetMultiple = function(ValueUint, ValueInt, ValueBool, successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.SetMultiple = function(ValueUint, ValueInt, ValueBool, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetMultiple", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("ValueUint", ValueUint);
     request.writeIntParameter("ValueInt", ValueInt);
@@ -536,7 +378,7 @@ ServiceTestBasic.prototype.SetMultiple = function(ValueUint, ValueInt, ValueBool
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.SetString = function(ValueStr, successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.SetString = function(ValueStr, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetString", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("ValueStr", ValueStr);
     request.send(function(result){
@@ -556,7 +398,7 @@ ServiceTestBasic.prototype.SetString = function(ValueStr, successFunction, error
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.GetString = function(successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.GetString = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetString", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["ValueStr"] = Zapp.SoapRequest.readStringParameter(result["ValueStr"]);	
@@ -577,7 +419,7 @@ ServiceTestBasic.prototype.GetString = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.SetBinary = function(ValueBin, successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.SetBinary = function(ValueBin, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("SetBinary", this.url, this.domain, this.type, this.version);		
     request.writeBinaryParameter("ValueBin", ValueBin);
     request.send(function(result){
@@ -597,7 +439,7 @@ ServiceTestBasic.prototype.SetBinary = function(ValueBin, successFunction, error
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.GetBinary = function(successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.GetBinary = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetBinary", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["ValueBin"] = Zapp.SoapRequest.readBinaryParameter(result["ValueBin"]);	
@@ -617,7 +459,7 @@ ServiceTestBasic.prototype.GetBinary = function(successFunction, errorFunction){
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.ToggleBool = function(successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.ToggleBool = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("ToggleBool", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
@@ -638,7 +480,7 @@ ServiceTestBasic.prototype.ToggleBool = function(successFunction, errorFunction)
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.WriteFile = function(Data, FileFullName, successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.WriteFile = function(Data, FileFullName, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("WriteFile", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("Data", Data);
     request.writeStringParameter("FileFullName", FileFullName);
@@ -659,7 +501,7 @@ ServiceTestBasic.prototype.WriteFile = function(Data, FileFullName, successFunct
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestBasic.prototype.Shutdown = function(successFunction, errorFunction){	
+CpProxyZappOrgTestBasic1.prototype.Shutdown = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Shutdown", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	

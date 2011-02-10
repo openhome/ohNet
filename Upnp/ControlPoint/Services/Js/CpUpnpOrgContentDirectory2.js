@@ -1,57 +1,28 @@
  
 
 /**
-* Service Proxy for upnp.org:ContentDirectory:2
+* Service Proxy for schemas-upnp-org:ContentDirectory:2
 * @module Zapp
 * @class ContentDirectory
 */
+	
+var CpProxySchemasUpnpOrgContentDirectory2 = function(udn){	
 
-var ServiceContentDirectory = function(udn){	
-
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-ContentDirectory-2/control";  // upnp control url
-	this.domain = "upnp.org";
-	if (this.domain == "upnp.org") {
-		this.domain = "schemas.upnp.org";
-    }
-	this.domain = this.domain.replace(/\./,"-");
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/schemas-upnp-org-ContentDirectory-2/control";  // upnp control url
+	this.domain = "schemas-upnp-org";
 	this.type = "ContentDirectory";
 	this.version = "2";
-	this.serviceName = "upnp.org-ContentDirectory-2";
+	this.serviceName = "CpProxySchemasUpnpOrgContentDirectory2";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["SearchCapabilities"] = new Zapp.ServiceProperty("SearchCapabilities");
-	this.serviceProperties["SortCapabilities"] = new Zapp.ServiceProperty("SortCapabilities");
-	this.serviceProperties["SortExtensionCapabilities"] = new Zapp.ServiceProperty("SortExtensionCapabilities");
 	this.serviceProperties["SystemUpdateID"] = new Zapp.ServiceProperty("SystemUpdateID");
 	this.serviceProperties["ContainerUpdateIDs"] = new Zapp.ServiceProperty("ContainerUpdateIDs");
 	this.serviceProperties["TransferIDs"] = new Zapp.ServiceProperty("TransferIDs");
-	this.serviceProperties["FeatureList"] = new Zapp.ServiceProperty("FeatureList");
-	this.serviceProperties["ObjectID"] = new Zapp.ServiceProperty("ObjectID");
-	this.serviceProperties["Result"] = new Zapp.ServiceProperty("Result");
-	this.serviceProperties["SearchCriteria"] = new Zapp.ServiceProperty("SearchCriteria");
-	this.serviceProperties["BrowseFlag"] = new Zapp.ServiceProperty("BrowseFlag");
-	this.serviceProperties["Filter"] = new Zapp.ServiceProperty("Filter");
-	this.serviceProperties["SortCriteria"] = new Zapp.ServiceProperty("SortCriteria");
-	this.serviceProperties["Index"] = new Zapp.ServiceProperty("Index");
-	this.serviceProperties["Count"] = new Zapp.ServiceProperty("Count");
-	this.serviceProperties["UpdateID"] = new Zapp.ServiceProperty("UpdateID");
-	this.serviceProperties["TransferID"] = new Zapp.ServiceProperty("TransferID");
-	this.serviceProperties["TransferStatus"] = new Zapp.ServiceProperty("TransferStatus");
-	this.serviceProperties["TransferLength"] = new Zapp.ServiceProperty("TransferLength");
-	this.serviceProperties["TransferTotal"] = new Zapp.ServiceProperty("TransferTotal");
-	this.serviceProperties["TagValueList"] = new Zapp.ServiceProperty("TagValueList");
-	this.serviceProperties["URI"] = new Zapp.ServiceProperty("URI");
 }
 
-ServiceContentDirectory.kBrowseFlagBrowseMetadata = "BrowseMetadata";
-ServiceContentDirectory.kBrowseFlagBrowseDirectChildren = "BrowseDirectChildren";
-ServiceContentDirectory.kTransferStatusCompleted = "COMPLETED";
-ServiceContentDirectory.kTransferStatusError = "ERROR";
-ServiceContentDirectory.kTransferStatusInProgress = "IN_PROGRESS";
-ServiceContentDirectory.kTransferStatusStopped = "STOPPED";
 
 
 /**
@@ -59,7 +30,7 @@ ServiceContentDirectory.kTransferStatusStopped = "STOPPED";
 * @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
-ServiceContentDirectory.prototype.subscribe = function (serviceAddedFunction) {
+CpProxySchemasUpnpOrgContentDirectory2.prototype.subscribe = function (serviceAddedFunction) {
     Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
@@ -68,293 +39,46 @@ ServiceContentDirectory.prototype.subscribe = function (serviceAddedFunction) {
 * Unsubscribes the service from the subscription manager to stop listening for property change events
 * @method Unsubscribe
 */
-ServiceContentDirectory.prototype.unsubscribe = function () {
+CpProxySchemasUpnpOrgContentDirectory2.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
-
-
-/**
-* Adds a listener to handle "SearchCapabilities" property change events
-* @method SearchCapabilities_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.SearchCapabilities_Changed = function (stateChangedFunction) {
-    this.serviceProperties.SearchCapabilities.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "SortCapabilities" property change events
-* @method SortCapabilities_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.SortCapabilities_Changed = function (stateChangedFunction) {
-    this.serviceProperties.SortCapabilities.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "SortExtensionCapabilities" property change events
-* @method SortExtensionCapabilities_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.SortExtensionCapabilities_Changed = function (stateChangedFunction) {
-    this.serviceProperties.SortExtensionCapabilities.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
+	
 
 /**
 * Adds a listener to handle "SystemUpdateID" property change events
 * @method SystemUpdateID_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceContentDirectory.prototype.SystemUpdateID_Changed = function (stateChangedFunction) {
+CpProxySchemasUpnpOrgContentDirectory2.prototype.SystemUpdateID_Changed = function (stateChangedFunction) {
     this.serviceProperties.SystemUpdateID.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "ContainerUpdateIDs" property change events
 * @method ContainerUpdateIDs_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceContentDirectory.prototype.ContainerUpdateIDs_Changed = function (stateChangedFunction) {
+CpProxySchemasUpnpOrgContentDirectory2.prototype.ContainerUpdateIDs_Changed = function (stateChangedFunction) {
     this.serviceProperties.ContainerUpdateIDs.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-
+	
 
 /**
 * Adds a listener to handle "TransferIDs" property change events
 * @method TransferIDs_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-ServiceContentDirectory.prototype.TransferIDs_Changed = function (stateChangedFunction) {
+CpProxySchemasUpnpOrgContentDirectory2.prototype.TransferIDs_Changed = function (stateChangedFunction) {
     this.serviceProperties.TransferIDs.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "FeatureList" property change events
-* @method FeatureList_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.FeatureList_Changed = function (stateChangedFunction) {
-    this.serviceProperties.FeatureList.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "ObjectID" property change events
-* @method ObjectID_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.ObjectID_Changed = function (stateChangedFunction) {
-    this.serviceProperties.ObjectID.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "Result" property change events
-* @method Result_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.Result_Changed = function (stateChangedFunction) {
-    this.serviceProperties.Result.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "SearchCriteria" property change events
-* @method SearchCriteria_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.SearchCriteria_Changed = function (stateChangedFunction) {
-    this.serviceProperties.SearchCriteria.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "BrowseFlag" property change events
-* @method BrowseFlag_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.BrowseFlag_Changed = function (stateChangedFunction) {
-    this.serviceProperties.BrowseFlag.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "Filter" property change events
-* @method Filter_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.Filter_Changed = function (stateChangedFunction) {
-    this.serviceProperties.Filter.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "SortCriteria" property change events
-* @method SortCriteria_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.SortCriteria_Changed = function (stateChangedFunction) {
-    this.serviceProperties.SortCriteria.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "Index" property change events
-* @method Index_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.Index_Changed = function (stateChangedFunction) {
-    this.serviceProperties.Index.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "Count" property change events
-* @method Count_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.Count_Changed = function (stateChangedFunction) {
-    this.serviceProperties.Count.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "UpdateID" property change events
-* @method UpdateID_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.UpdateID_Changed = function (stateChangedFunction) {
-    this.serviceProperties.UpdateID.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "TransferID" property change events
-* @method TransferID_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.TransferID_Changed = function (stateChangedFunction) {
-    this.serviceProperties.TransferID.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "TransferStatus" property change events
-* @method TransferStatus_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.TransferStatus_Changed = function (stateChangedFunction) {
-    this.serviceProperties.TransferStatus.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "TransferLength" property change events
-* @method TransferLength_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.TransferLength_Changed = function (stateChangedFunction) {
-    this.serviceProperties.TransferLength.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "TransferTotal" property change events
-* @method TransferTotal_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.TransferTotal_Changed = function (stateChangedFunction) {
-    this.serviceProperties.TransferTotal.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "TagValueList" property change events
-* @method TagValueList_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.TagValueList_Changed = function (stateChangedFunction) {
-    this.serviceProperties.TagValueList.addListener(function (state) 
-	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
-	});
-}
-
-
-/**
-* Adds a listener to handle "URI" property change events
-* @method URI_Changed
-* @param {Function} stateChangedFunction The handler for state changes
-*/
-ServiceContentDirectory.prototype.URI_Changed = function (stateChangedFunction) {
-    this.serviceProperties.URI.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
@@ -367,7 +91,7 @@ ServiceContentDirectory.prototype.URI_Changed = function (stateChangedFunction) 
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.GetSearchCapabilities = function(successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.GetSearchCapabilities = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetSearchCapabilities", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["SearchCaps"] = Zapp.SoapRequest.readStringParameter(result["SearchCaps"]);	
@@ -387,7 +111,7 @@ ServiceContentDirectory.prototype.GetSearchCapabilities = function(successFuncti
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.GetSortCapabilities = function(successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.GetSortCapabilities = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetSortCapabilities", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["SortCaps"] = Zapp.SoapRequest.readStringParameter(result["SortCaps"]);	
@@ -407,7 +131,7 @@ ServiceContentDirectory.prototype.GetSortCapabilities = function(successFunction
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.GetSortExtensionCapabilities = function(successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.GetSortExtensionCapabilities = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetSortExtensionCapabilities", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["SortExtensionCaps"] = Zapp.SoapRequest.readStringParameter(result["SortExtensionCaps"]);	
@@ -427,7 +151,7 @@ ServiceContentDirectory.prototype.GetSortExtensionCapabilities = function(succes
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.GetFeatureList = function(successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.GetFeatureList = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetFeatureList", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["FeatureList"] = Zapp.SoapRequest.readStringParameter(result["FeatureList"]);	
@@ -447,7 +171,7 @@ ServiceContentDirectory.prototype.GetFeatureList = function(successFunction, err
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.GetSystemUpdateID = function(successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.GetSystemUpdateID = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetSystemUpdateID", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["Id"] = Zapp.SoapRequest.readIntParameter(result["Id"]);	
@@ -473,7 +197,7 @@ ServiceContentDirectory.prototype.GetSystemUpdateID = function(successFunction, 
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.Browse = function(ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.Browse = function(ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Browse", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("ObjectID", ObjectID);
     request.writeStringParameter("BrowseFlag", BrowseFlag);
@@ -508,7 +232,7 @@ ServiceContentDirectory.prototype.Browse = function(ObjectID, BrowseFlag, Filter
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.Search = function(ContainerID, SearchCriteria, Filter, StartingIndex, RequestedCount, SortCriteria, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.Search = function(ContainerID, SearchCriteria, Filter, StartingIndex, RequestedCount, SortCriteria, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("Search", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("ContainerID", ContainerID);
     request.writeStringParameter("SearchCriteria", SearchCriteria);
@@ -539,7 +263,7 @@ ServiceContentDirectory.prototype.Search = function(ContainerID, SearchCriteria,
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.CreateObject = function(ContainerID, Elements, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.CreateObject = function(ContainerID, Elements, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("CreateObject", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("ContainerID", ContainerID);
     request.writeStringParameter("Elements", Elements);
@@ -563,7 +287,7 @@ ServiceContentDirectory.prototype.CreateObject = function(ContainerID, Elements,
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.DestroyObject = function(ObjectID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.DestroyObject = function(ObjectID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("DestroyObject", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("ObjectID", ObjectID);
     request.send(function(result){
@@ -586,7 +310,7 @@ ServiceContentDirectory.prototype.DestroyObject = function(ObjectID, successFunc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.UpdateObject = function(ObjectID, CurrentTagValue, NewTagValue, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.UpdateObject = function(ObjectID, CurrentTagValue, NewTagValue, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("UpdateObject", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("ObjectID", ObjectID);
     request.writeStringParameter("CurrentTagValue", CurrentTagValue);
@@ -610,7 +334,7 @@ ServiceContentDirectory.prototype.UpdateObject = function(ObjectID, CurrentTagVa
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.MoveObject = function(ObjectID, NewParentID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.MoveObject = function(ObjectID, NewParentID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("MoveObject", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("ObjectID", ObjectID);
     request.writeStringParameter("NewParentID", NewParentID);
@@ -634,7 +358,7 @@ ServiceContentDirectory.prototype.MoveObject = function(ObjectID, NewParentID, s
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.ImportResource = function(SourceURI, DestinationURI, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.ImportResource = function(SourceURI, DestinationURI, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("ImportResource", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("SourceURI", SourceURI);
     request.writeStringParameter("DestinationURI", DestinationURI);
@@ -658,7 +382,7 @@ ServiceContentDirectory.prototype.ImportResource = function(SourceURI, Destinati
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.ExportResource = function(SourceURI, DestinationURI, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.ExportResource = function(SourceURI, DestinationURI, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("ExportResource", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("SourceURI", SourceURI);
     request.writeStringParameter("DestinationURI", DestinationURI);
@@ -681,7 +405,7 @@ ServiceContentDirectory.prototype.ExportResource = function(SourceURI, Destinati
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.DeleteResource = function(ResourceURI, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.DeleteResource = function(ResourceURI, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("DeleteResource", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("ResourceURI", ResourceURI);
     request.send(function(result){
@@ -702,7 +426,7 @@ ServiceContentDirectory.prototype.DeleteResource = function(ResourceURI, success
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.StopTransferResource = function(TransferID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.StopTransferResource = function(TransferID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("StopTransferResource", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("TransferID", TransferID);
     request.send(function(result){
@@ -723,7 +447,7 @@ ServiceContentDirectory.prototype.StopTransferResource = function(TransferID, su
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.GetTransferProgress = function(TransferID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.GetTransferProgress = function(TransferID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("GetTransferProgress", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("TransferID", TransferID);
     request.send(function(result){
@@ -748,7 +472,7 @@ ServiceContentDirectory.prototype.GetTransferProgress = function(TransferID, suc
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceContentDirectory.prototype.CreateReference = function(ContainerID, ObjectID, successFunction, errorFunction){	
+CpProxySchemasUpnpOrgContentDirectory2.prototype.CreateReference = function(ContainerID, ObjectID, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("CreateReference", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("ContainerID", ContainerID);
     request.writeStringParameter("ObjectID", ObjectID);
