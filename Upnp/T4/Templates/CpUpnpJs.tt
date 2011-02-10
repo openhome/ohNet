@@ -1,4 +1,4 @@
-<#@ template language="C#v3.5" debug="true" hostSpecific="true" #>
+﻿<#@ template language="C#v3.5" debug="true" hostSpecific="true" #>
 <#@ output extension=".js" #>
 <#@ Assembly Name="System.Core.dll" #>
 <#@ Assembly Name="System.Windows.Forms.dll" #>
@@ -21,6 +21,16 @@
 	string xml = xmlArg;
 	string domain = domainArg;
 	string type = typeArg;
+	string serviceName = "";
+	
+	if( domain.Equals("upnp.org") ) 
+	{
+	 	domain = "schemas-upnp-org"; 
+	} 
+	else 
+	{ 
+		domain = domain.Replace(".","-");
+	} 
 	
  	if (String.IsNullOrEmpty(xml))
     {
@@ -67,6 +77,8 @@
     Initialise();
 
 	Document u = new Document(xml);
+	
+	serviceName = ConvertToPascalCase("CpProxy "+domain.Replace("-"," ")+type+version);
 
 #>
 /**
@@ -74,18 +86,14 @@
 * @module Zapp
 * @class <#=type#>
 */
-
-var Service<#=type#> = function(udn){	
+	
+var <#=serviceName#> = function(udn){	
 
 	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/<#=domain#>-<#=type#>-<#=version#>/control";  // upnp control url
 	this.domain = "<#=domain#>";
-	if (this.domain == "upnp.org") {
-		this.domain = "schemas.upnp.org";
-    }
-	this.domain = this.domain.replace(/\./,"-");
 	this.type = "<#=type#>";
 	this.version = "<#=version.ToString()#>";
-	this.serviceName = "<#=domain#>-<#=type#>-<#=version#>";
+	this.serviceName = "<#=serviceName#>";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -111,7 +119,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 * @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
-Service<#=type#>.prototype.subscribe = function (serviceAddedFunction) {
+<#=serviceName#>.prototype.subscribe = function (serviceAddedFunction) {
     Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
@@ -120,7 +128,7 @@ Service<#=type#>.prototype.subscribe = function (serviceAddedFunction) {
 * Unsubscribes the service from the subscription manager to stop listening for property change events
 * @method Unsubscribe
 */
-Service<#=type#>.prototype.unsubscribe = function () {
+<#=serviceName#>.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
 }
 
@@ -134,7 +142,7 @@ Service<#=type#>.prototype.unsubscribe = function () {
 * @method <#=s.prettyname#>_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-Service<#=type#>.prototype.<#=s.prettyname#>_Changed = function (stateChangedFunction) {
+<#=serviceName#>.prototype.<#=s.prettyname#>_Changed = function (stateChangedFunction) {
     this.serviceProperties.<#=s.prettyname#>.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.read<#=svtype[s.type]#>Parameter(state)); 
@@ -155,7 +163,7 @@ Service<#=type#>.prototype.<#=s.prettyname#>_Changed = function (stateChangedFun
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-Service<#=type#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){	
+<#=serviceName#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){	
 	var request = new Zapp.SoapRequest("<#=a.name#>", this.url, this.domain, this.type, this.version);		
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
@@ -369,6 +377,39 @@ string TemplateArgument(string aName)
 	}
 	
 	throw (new ArgumentException(aName + " not specified"));
+}
+
+string ConvertToPascalCase(string str)
+{
+    //if nothing is proivided throw a null argument exception
+    if (str == null) throw new ArgumentNullException("str", "Null text cannot be converted!");
+
+    if (str.Length == 0) return str;
+
+    //split the provided string into an array of words
+    string[] words = str.Split(' ');
+    
+    //loop through each word in the array
+    for (int i = 0; i < words.Length; i++)
+    {
+        //if the current word is greater than 1 character long
+        if (words[i].Length > 0)
+        {
+            //grab the current word
+            string word = words[i];
+
+            //convert the first letter in the word to uppercase
+            char firstLetter = char.ToUpper(word[0]);
+
+            //concantenate the uppercase letter to the rest of the word
+            words[i] = firstLetter + word.Substring(1);
+        }
+    }
+
+    //return the converted text
+    return string.Join(string.Empty, words);
+	
+	return "hello";
 }
 
 #>
