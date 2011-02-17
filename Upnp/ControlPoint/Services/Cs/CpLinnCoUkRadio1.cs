@@ -1197,10 +1197,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iChannelUriChanged != null)
-                {
-                    iChannelUriChanged();
-                }
+                ReportEvent(iChannelUriChanged);
             }
         }
 
@@ -1222,10 +1219,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iChannelMetadataChanged != null)
-                {
-                    iChannelMetadataChanged();
-                }
+                ReportEvent(iChannelMetadataChanged);
             }
         }
 
@@ -1247,10 +1241,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTransportStateChanged != null)
-                {
-                    iTransportStateChanged();
-                }
+                ReportEvent(iTransportStateChanged);
             }
         }
 
@@ -1272,10 +1263,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProtocolInfoChanged != null)
-                {
-                    iProtocolInfoChanged();
-                }
+                ReportEvent(iProtocolInfoChanged);
             }
         }
 
@@ -1297,10 +1285,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iIdChanged != null)
-                {
-                    iIdChanged();
-                }
+                ReportEvent(iIdChanged);
             }
         }
 
@@ -1322,10 +1307,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iIdArrayChanged != null)
-                {
-                    iIdArrayChanged();
-                }
+                ReportEvent(iIdArrayChanged);
             }
         }
 
@@ -1347,10 +1329,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iIdsMaxChanged != null)
-                {
-                    iIdsMaxChanged();
-                }
+                ReportEvent(iIdsMaxChanged);
             }
         }
 

@@ -991,10 +991,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iVolumeChanged != null)
-                {
-                    iVolumeChanged();
-                }
+                ReportEvent(iVolumeChanged);
             }
         }
 
@@ -1016,10 +1013,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iMuteChanged != null)
-                {
-                    iMuteChanged();
-                }
+                ReportEvent(iMuteChanged);
             }
         }
 
@@ -1041,10 +1035,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iBalanceChanged != null)
-                {
-                    iBalanceChanged();
-                }
+                ReportEvent(iBalanceChanged);
             }
         }
 
@@ -1066,10 +1057,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iVolumeLimitChanged != null)
-                {
-                    iVolumeLimitChanged();
-                }
+                ReportEvent(iVolumeLimitChanged);
             }
         }
 
@@ -1091,10 +1079,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iStartupVolumeChanged != null)
-                {
-                    iStartupVolumeChanged();
-                }
+                ReportEvent(iStartupVolumeChanged);
             }
         }
 
@@ -1116,10 +1101,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iStartupVolumeEnabledChanged != null)
-                {
-                    iStartupVolumeEnabledChanged();
-                }
+                ReportEvent(iStartupVolumeEnabledChanged);
             }
         }
 

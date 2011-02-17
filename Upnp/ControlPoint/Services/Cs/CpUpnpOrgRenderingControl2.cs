@@ -2819,10 +2819,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iLastChangeChanged != null)
-                {
-                    iLastChangeChanged();
-                }
+                ReportEvent(iLastChangeChanged);
             }
         }
 

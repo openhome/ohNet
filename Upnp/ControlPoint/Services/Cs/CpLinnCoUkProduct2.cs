@@ -890,10 +890,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductNameChanged != null)
-                {
-                    iProductNameChanged();
-                }
+                ReportEvent(iProductNameChanged);
             }
         }
 
@@ -915,10 +912,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductRoomChanged != null)
-                {
-                    iProductRoomChanged();
-                }
+                ReportEvent(iProductRoomChanged);
             }
         }
 
@@ -940,10 +934,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductStandbyChanged != null)
-                {
-                    iProductStandbyChanged();
-                }
+                ReportEvent(iProductStandbyChanged);
             }
         }
 
@@ -965,10 +956,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductSourceIndexChanged != null)
-                {
-                    iProductSourceIndexChanged();
-                }
+                ReportEvent(iProductSourceIndexChanged);
             }
         }
 

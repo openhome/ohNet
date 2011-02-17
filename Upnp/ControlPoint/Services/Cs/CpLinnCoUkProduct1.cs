@@ -328,10 +328,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iRoomChanged != null)
-                {
-                    iRoomChanged();
-                }
+                ReportEvent(iRoomChanged);
             }
         }
 
@@ -353,10 +350,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iStandbyChanged != null)
-                {
-                    iStandbyChanged();
-                }
+                ReportEvent(iStandbyChanged);
             }
         }
 

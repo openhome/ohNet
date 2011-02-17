@@ -612,10 +612,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iCurrentPresetChanged != null)
-                {
-                    iCurrentPresetChanged();
-                }
+                ReportEvent(iCurrentPresetChanged);
             }
         }
 
@@ -637,10 +634,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iPresetPrefixChanged != null)
-                {
-                    iPresetPrefixChanged();
-                }
+                ReportEvent(iPresetPrefixChanged);
             }
         }
 
@@ -662,10 +656,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iAlbumArtFileNameChanged != null)
-                {
-                    iAlbumArtFileNameChanged();
-                }
+                ReportEvent(iAlbumArtFileNameChanged);
             }
         }
 

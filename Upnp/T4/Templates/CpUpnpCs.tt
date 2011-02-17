@@ -286,10 +286,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (i<#=s.name#>Changed != null)
-                {
-                    i<#=s.name#>Changed();
-                }
+                ReportEvent(i<#=s.name#>Changed);
             }
         }
 <#  } #>

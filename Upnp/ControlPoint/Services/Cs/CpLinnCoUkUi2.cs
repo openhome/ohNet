@@ -1686,10 +1686,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDisplayBrightnessChanged != null)
-                {
-                    iDisplayBrightnessChanged();
-                }
+                ReportEvent(iDisplayBrightnessChanged);
             }
         }
 
@@ -1711,10 +1708,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDisplayBrightnessAutoChanged != null)
-                {
-                    iDisplayBrightnessAutoChanged();
-                }
+                ReportEvent(iDisplayBrightnessAutoChanged);
             }
         }
 
@@ -1736,10 +1730,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iInfraredCommandsChanged != null)
-                {
-                    iInfraredCommandsChanged();
-                }
+                ReportEvent(iInfraredCommandsChanged);
             }
         }
 
@@ -1761,10 +1752,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iInfraredTerminalCommandsChanged != null)
-                {
-                    iInfraredTerminalCommandsChanged();
-                }
+                ReportEvent(iInfraredTerminalCommandsChanged);
             }
         }
 
@@ -1786,10 +1774,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDisplayUpsideDownChanged != null)
-                {
-                    iDisplayUpsideDownChanged();
-                }
+                ReportEvent(iDisplayUpsideDownChanged);
             }
         }
 
@@ -1811,10 +1796,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDisplayScrollTextChanged != null)
-                {
-                    iDisplayScrollTextChanged();
-                }
+                ReportEvent(iDisplayScrollTextChanged);
             }
         }
 
@@ -1836,10 +1818,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDisplaySleepChanged != null)
-                {
-                    iDisplaySleepChanged();
-                }
+                ReportEvent(iDisplaySleepChanged);
             }
         }
 
@@ -1861,10 +1840,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDisplayLedOffChanged != null)
-                {
-                    iDisplayLedOffChanged();
-                }
+                ReportEvent(iDisplayLedOffChanged);
             }
         }
 
@@ -1886,10 +1862,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTerminalInputCodeChanged != null)
-                {
-                    iTerminalInputCodeChanged();
-                }
+                ReportEvent(iTerminalInputCodeChanged);
             }
         }
 
@@ -1911,10 +1884,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTerminalInputNameChanged != null)
-                {
-                    iTerminalInputNameChanged();
-                }
+                ReportEvent(iTerminalInputNameChanged);
             }
         }
 
@@ -1936,10 +1906,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDisplayPixelsChanged != null)
-                {
-                    iDisplayPixelsChanged();
-                }
+                ReportEvent(iDisplayPixelsChanged);
             }
         }
 

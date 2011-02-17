@@ -813,10 +813,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iSupportedProtocolsChanged != null)
-                {
-                    iSupportedProtocolsChanged();
-                }
+                ReportEvent(iSupportedProtocolsChanged);
             }
         }
 
@@ -838,10 +835,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTrackDurationChanged != null)
-                {
-                    iTrackDurationChanged();
-                }
+                ReportEvent(iTrackDurationChanged);
             }
         }
 
@@ -863,10 +857,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTrackBitRateChanged != null)
-                {
-                    iTrackBitRateChanged();
-                }
+                ReportEvent(iTrackBitRateChanged);
             }
         }
 
@@ -888,10 +879,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTrackLosslessChanged != null)
-                {
-                    iTrackLosslessChanged();
-                }
+                ReportEvent(iTrackLosslessChanged);
             }
         }
 
@@ -913,10 +901,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTrackBitDepthChanged != null)
-                {
-                    iTrackBitDepthChanged();
-                }
+                ReportEvent(iTrackBitDepthChanged);
             }
         }
 
@@ -938,10 +923,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTrackSampleRateChanged != null)
-                {
-                    iTrackSampleRateChanged();
-                }
+                ReportEvent(iTrackSampleRateChanged);
             }
         }
 
@@ -963,10 +945,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTrackCodecNameChanged != null)
-                {
-                    iTrackCodecNameChanged();
-                }
+                ReportEvent(iTrackCodecNameChanged);
             }
         }
 
@@ -988,10 +967,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTrackIdChanged != null)
-                {
-                    iTrackIdChanged();
-                }
+                ReportEvent(iTrackIdChanged);
             }
         }
 
@@ -1013,10 +989,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTransportStateChanged != null)
-                {
-                    iTransportStateChanged();
-                }
+                ReportEvent(iTransportStateChanged);
             }
         }
 

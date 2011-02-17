@@ -677,10 +677,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iPresetXmlChanged != null)
-                {
-                    iPresetXmlChanged();
-                }
+                ReportEvent(iPresetXmlChanged);
             }
         }
 
@@ -702,10 +699,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iPresetIndexChanged != null)
-                {
-                    iPresetIndexChanged();
-                }
+                ReportEvent(iPresetIndexChanged);
             }
         }
 

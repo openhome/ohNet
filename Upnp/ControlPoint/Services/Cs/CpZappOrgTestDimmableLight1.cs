@@ -189,10 +189,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iA_ARG_LevelChanged != null)
-                {
-                    iA_ARG_LevelChanged();
-                }
+                ReportEvent(iA_ARG_LevelChanged);
             }
         }
 

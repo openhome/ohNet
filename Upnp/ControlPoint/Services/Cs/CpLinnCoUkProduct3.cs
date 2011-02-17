@@ -1764,10 +1764,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductTypeChanged != null)
-                {
-                    iProductTypeChanged();
-                }
+                ReportEvent(iProductTypeChanged);
             }
         }
 
@@ -1789,10 +1786,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductModelChanged != null)
-                {
-                    iProductModelChanged();
-                }
+                ReportEvent(iProductModelChanged);
             }
         }
 
@@ -1814,10 +1808,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductNameChanged != null)
-                {
-                    iProductNameChanged();
-                }
+                ReportEvent(iProductNameChanged);
             }
         }
 
@@ -1839,10 +1830,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductRoomChanged != null)
-                {
-                    iProductRoomChanged();
-                }
+                ReportEvent(iProductRoomChanged);
             }
         }
 
@@ -1864,10 +1852,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductStandbyChanged != null)
-                {
-                    iProductStandbyChanged();
-                }
+                ReportEvent(iProductStandbyChanged);
             }
         }
 
@@ -1889,10 +1874,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductSourceIndexChanged != null)
-                {
-                    iProductSourceIndexChanged();
-                }
+                ReportEvent(iProductSourceIndexChanged);
             }
         }
 
@@ -1914,10 +1896,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductSourceCountChanged != null)
-                {
-                    iProductSourceCountChanged();
-                }
+                ReportEvent(iProductSourceCountChanged);
             }
         }
 
@@ -1939,10 +1918,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductSourceXmlChanged != null)
-                {
-                    iProductSourceXmlChanged();
-                }
+                ReportEvent(iProductSourceXmlChanged);
             }
         }
 
@@ -1964,10 +1940,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iStartupSourceIndexChanged != null)
-                {
-                    iStartupSourceIndexChanged();
-                }
+                ReportEvent(iStartupSourceIndexChanged);
             }
         }
 
@@ -1989,10 +1962,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iStartupSourceEnabledChanged != null)
-                {
-                    iStartupSourceEnabledChanged();
-                }
+                ReportEvent(iStartupSourceEnabledChanged);
             }
         }
 
@@ -2014,10 +1984,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductAnySourceNameChanged != null)
-                {
-                    iProductAnySourceNameChanged();
-                }
+                ReportEvent(iProductAnySourceNameChanged);
             }
         }
 
@@ -2039,10 +2006,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductAnySourceVisibleChanged != null)
-                {
-                    iProductAnySourceVisibleChanged();
-                }
+                ReportEvent(iProductAnySourceVisibleChanged);
             }
         }
 
@@ -2064,10 +2028,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iProductAnySourceTypeChanged != null)
-                {
-                    iProductAnySourceTypeChanged();
-                }
+                ReportEvent(iProductAnySourceTypeChanged);
             }
         }
 

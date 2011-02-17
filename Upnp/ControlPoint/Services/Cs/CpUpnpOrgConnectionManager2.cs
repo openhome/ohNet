@@ -559,10 +559,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iSourceProtocolInfoChanged != null)
-                {
-                    iSourceProtocolInfoChanged();
-                }
+                ReportEvent(iSourceProtocolInfoChanged);
             }
         }
 
@@ -584,10 +581,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iSinkProtocolInfoChanged != null)
-                {
-                    iSinkProtocolInfoChanged();
-                }
+                ReportEvent(iSinkProtocolInfoChanged);
             }
         }
 
@@ -609,10 +603,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iCurrentConnectionIDsChanged != null)
-                {
-                    iCurrentConnectionIDsChanged();
-                }
+                ReportEvent(iCurrentConnectionIDsChanged);
             }
         }
 

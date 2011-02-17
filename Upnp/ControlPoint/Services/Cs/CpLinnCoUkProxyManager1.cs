@@ -788,10 +788,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iKontrolProductConnectedChanged != null)
-                {
-                    iKontrolProductConnectedChanged();
-                }
+                ReportEvent(iKontrolProductConnectedChanged);
             }
         }
 
@@ -813,10 +810,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iKontrolProductComPortChanged != null)
-                {
-                    iKontrolProductComPortChanged();
-                }
+                ReportEvent(iKontrolProductComPortChanged);
             }
         }
 
@@ -838,10 +832,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDiscPlayerConnectedChanged != null)
-                {
-                    iDiscPlayerConnectedChanged();
-                }
+                ReportEvent(iDiscPlayerConnectedChanged);
             }
         }
 
@@ -863,10 +854,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDiscPlayerComPortChanged != null)
-                {
-                    iDiscPlayerComPortChanged();
-                }
+                ReportEvent(iDiscPlayerComPortChanged);
             }
         }
 

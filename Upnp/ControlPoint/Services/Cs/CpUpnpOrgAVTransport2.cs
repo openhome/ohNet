@@ -1946,10 +1946,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iLastChangeChanged != null)
-                {
-                    iLastChangeChanged();
-                }
+                ReportEvent(iLastChangeChanged);
             }
         }
 
@@ -1971,10 +1968,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDRMStateChanged != null)
-                {
-                    iDRMStateChanged();
-                }
+                ReportEvent(iDRMStateChanged);
             }
         }
 

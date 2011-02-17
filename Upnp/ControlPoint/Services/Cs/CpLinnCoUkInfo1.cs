@@ -500,10 +500,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTrackCountChanged != null)
-                {
-                    iTrackCountChanged();
-                }
+                ReportEvent(iTrackCountChanged);
             }
         }
 
@@ -525,10 +522,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDetailsCountChanged != null)
-                {
-                    iDetailsCountChanged();
-                }
+                ReportEvent(iDetailsCountChanged);
             }
         }
 
@@ -550,10 +544,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iMetatextCountChanged != null)
-                {
-                    iMetatextCountChanged();
-                }
+                ReportEvent(iMetatextCountChanged);
             }
         }
 
@@ -575,10 +566,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iUriChanged != null)
-                {
-                    iUriChanged();
-                }
+                ReportEvent(iUriChanged);
             }
         }
 
@@ -600,10 +588,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iMetadataChanged != null)
-                {
-                    iMetadataChanged();
-                }
+                ReportEvent(iMetadataChanged);
             }
         }
 
@@ -625,10 +610,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDurationChanged != null)
-                {
-                    iDurationChanged();
-                }
+                ReportEvent(iDurationChanged);
             }
         }
 
@@ -650,10 +632,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iBitRateChanged != null)
-                {
-                    iBitRateChanged();
-                }
+                ReportEvent(iBitRateChanged);
             }
         }
 
@@ -675,10 +654,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iBitDepthChanged != null)
-                {
-                    iBitDepthChanged();
-                }
+                ReportEvent(iBitDepthChanged);
             }
         }
 
@@ -700,10 +676,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iSampleRateChanged != null)
-                {
-                    iSampleRateChanged();
-                }
+                ReportEvent(iSampleRateChanged);
             }
         }
 
@@ -725,10 +698,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iLosslessChanged != null)
-                {
-                    iLosslessChanged();
-                }
+                ReportEvent(iLosslessChanged);
             }
         }
 
@@ -750,10 +720,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iCodecNameChanged != null)
-                {
-                    iCodecNameChanged();
-                }
+                ReportEvent(iCodecNameChanged);
             }
         }
 
@@ -775,10 +742,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iMetatextChanged != null)
-                {
-                    iMetatextChanged();
-                }
+                ReportEvent(iMetatextChanged);
             }
         }
 

@@ -1373,10 +1373,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iVarUintChanged != null)
-                {
-                    iVarUintChanged();
-                }
+                ReportEvent(iVarUintChanged);
             }
         }
 
@@ -1398,10 +1395,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iVarIntChanged != null)
-                {
-                    iVarIntChanged();
-                }
+                ReportEvent(iVarIntChanged);
             }
         }
 
@@ -1423,10 +1417,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iVarBoolChanged != null)
-                {
-                    iVarBoolChanged();
-                }
+                ReportEvent(iVarBoolChanged);
             }
         }
 
@@ -1448,10 +1439,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iVarStrChanged != null)
-                {
-                    iVarStrChanged();
-                }
+                ReportEvent(iVarStrChanged);
             }
         }
 
@@ -1473,10 +1461,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iVarBinChanged != null)
-                {
-                    iVarBinChanged();
-                }
+                ReportEvent(iVarBinChanged);
             }
         }
 

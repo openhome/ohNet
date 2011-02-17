@@ -276,10 +276,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iConfigurationXmlChanged != null)
-                {
-                    iConfigurationXmlChanged();
-                }
+                ReportEvent(iConfigurationXmlChanged);
             }
         }
 
@@ -301,10 +298,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iParameterXmlChanged != null)
-                {
-                    iParameterXmlChanged();
-                }
+                ReportEvent(iParameterXmlChanged);
             }
         }
 

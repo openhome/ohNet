@@ -70,6 +70,13 @@ namespace Zapp.ControlPoint
         public delegate void CallbackAsyncComplete(IntPtr aAsyncHandle);
         public delegate void CallbackActionComplete(IntPtr aPtr, IntPtr aAsyncHandle);
         public delegate void Callback(IntPtr aPtr);
+
+        enum SubscriptionStatus
+        {
+            eNotSubscribed,
+            eSubscribing,
+            eSubscribed
+        };
         
         protected IntPtr iHandle;
         protected CpService iService;
@@ -78,14 +85,23 @@ namespace Zapp.ControlPoint
         private Callback iCallbackPropertyChanged;
         private CallbackPropertyChanged iInitialEvent;
         private Callback iCallbackInitialEvent;
+        private SubscriptionStatus iSubscriptionStatus = SubscriptionStatus.eNotSubscribed;
 
         public void Subscribe()
         {
+            lock (this)
+            {
+                iSubscriptionStatus = SubscriptionStatus.eSubscribing;
+            }
             CpProxySubscribe(iHandle);
         }
 
         public void Unsubscribe()
         {
+            lock (this)
+            {
+                iSubscriptionStatus = SubscriptionStatus.eNotSubscribed;
+            }
             CpProxyUnsubscribe(iHandle);
         }
 
@@ -127,6 +143,21 @@ namespace Zapp.ControlPoint
             CpProxyPropertyReadUnlock(iHandle);
         }
         
+        protected void ReportEvent(CallbackPropertyChanged aCallback)
+        {
+            lock (this)
+            {
+                if (iSubscriptionStatus == SubscriptionStatus.eSubscribing)
+                {
+                    iSubscriptionStatus = SubscriptionStatus.eSubscribed;
+                }
+                if (iSubscriptionStatus == SubscriptionStatus.eSubscribed && aCallback != null)
+                {
+                    aCallback();
+                }
+            }
+        }
+
         protected void AddProperty(Property aProperty)
         {
             CpProxyAddProperty(iHandle, aProperty.Handle());

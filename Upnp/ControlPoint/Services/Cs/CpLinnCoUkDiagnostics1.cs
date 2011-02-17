@@ -942,10 +942,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iaStateVariableChanged != null)
-                {
-                    iaStateVariableChanged();
-                }
+                ReportEvent(iaStateVariableChanged);
             }
         }
 

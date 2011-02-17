@@ -1721,10 +1721,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iSystemUpdateIDChanged != null)
-                {
-                    iSystemUpdateIDChanged();
-                }
+                ReportEvent(iSystemUpdateIDChanged);
             }
         }
 
@@ -1746,10 +1743,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iContainerUpdateIDsChanged != null)
-                {
-                    iContainerUpdateIDsChanged();
-                }
+                ReportEvent(iContainerUpdateIDsChanged);
             }
         }
 
@@ -1771,10 +1765,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iLastChangeChanged != null)
-                {
-                    iLastChangeChanged();
-                }
+                ReportEvent(iLastChangeChanged);
             }
         }
 
@@ -1796,10 +1787,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTransferIDsChanged != null)
-                {
-                    iTransferIDsChanged();
-                }
+                ReportEvent(iTransferIDsChanged);
             }
         }
 

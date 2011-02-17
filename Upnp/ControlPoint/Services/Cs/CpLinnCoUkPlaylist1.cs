@@ -936,10 +936,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iIdArrayChanged != null)
-                {
-                    iIdArrayChanged();
-                }
+                ReportEvent(iIdArrayChanged);
             }
         }
 
@@ -961,10 +958,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iRepeatChanged != null)
-                {
-                    iRepeatChanged();
-                }
+                ReportEvent(iRepeatChanged);
             }
         }
 
@@ -986,10 +980,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iShuffleChanged != null)
-                {
-                    iShuffleChanged();
-                }
+                ReportEvent(iShuffleChanged);
             }
         }
 
@@ -1011,10 +1002,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTracksMaxChanged != null)
-                {
-                    iTracksMaxChanged();
-                }
+                ReportEvent(iTracksMaxChanged);
             }
         }
 

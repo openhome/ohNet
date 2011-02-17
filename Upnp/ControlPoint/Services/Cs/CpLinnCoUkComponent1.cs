@@ -810,10 +810,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iAmplifierEnabledChanged != null)
-                {
-                    iAmplifierEnabledChanged();
-                }
+                ReportEvent(iAmplifierEnabledChanged);
             }
         }
 
@@ -835,10 +832,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iAmplifierAttenuationChanged != null)
-                {
-                    iAmplifierAttenuationChanged();
-                }
+                ReportEvent(iAmplifierAttenuationChanged);
             }
         }
 
@@ -860,10 +854,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iVolumeControlEnabledChanged != null)
-                {
-                    iVolumeControlEnabledChanged();
-                }
+                ReportEvent(iVolumeControlEnabledChanged);
             }
         }
 
@@ -885,10 +876,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDigitalAudioOutputRawChanged != null)
-                {
-                    iDigitalAudioOutputRawChanged();
-                }
+                ReportEvent(iDigitalAudioOutputRawChanged);
             }
         }
 

@@ -1431,10 +1431,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iLoadLevelStatusChanged != null)
-                {
-                    iLoadLevelStatusChanged();
-                }
+                ReportEvent(iLoadLevelStatusChanged);
             }
         }
 
@@ -1456,10 +1453,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iStepDeltaChanged != null)
-                {
-                    iStepDeltaChanged();
-                }
+                ReportEvent(iStepDeltaChanged);
             }
         }
 
@@ -1481,10 +1475,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iRampRateChanged != null)
-                {
-                    iRampRateChanged();
-                }
+                ReportEvent(iRampRateChanged);
             }
         }
 
@@ -1506,10 +1497,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iIsRampingChanged != null)
-                {
-                    iIsRampingChanged();
-                }
+                ReportEvent(iIsRampingChanged);
             }
         }
 
@@ -1531,10 +1519,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iRampPausedChanged != null)
-                {
-                    iRampPausedChanged();
-                }
+                ReportEvent(iRampPausedChanged);
             }
         }
 

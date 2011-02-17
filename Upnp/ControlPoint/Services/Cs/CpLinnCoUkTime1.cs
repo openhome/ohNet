@@ -163,10 +163,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iTrackCountChanged != null)
-                {
-                    iTrackCountChanged();
-                }
+                ReportEvent(iTrackCountChanged);
             }
         }
 
@@ -188,10 +185,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iDurationChanged != null)
-                {
-                    iDurationChanged();
-                }
+                ReportEvent(iDurationChanged);
             }
         }
 
@@ -213,10 +207,7 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (iPropertyLock)
             {
-                if (iSecondsChanged != null)
-                {
-                    iSecondsChanged();
-                }
+                ReportEvent(iSecondsChanged);
             }
         }
 
