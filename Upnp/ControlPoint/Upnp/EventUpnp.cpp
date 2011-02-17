@@ -63,10 +63,10 @@ void EventSessionUpnp::Run()
 {
     CpiSubscription* subscription = NULL;
     iErrorStatus = &HttpStatus::kOk;
-    iReaderRequest->Flush();
-    iReaderRequest->Read();
-    // check headers
     try {
+        iReaderRequest->Flush();
+        iReaderRequest->Read();
+        // check headers
         if (iReaderRequest->MethodNotAllowed()) {
             Error(HttpStatus::kBadRequest);
         }
