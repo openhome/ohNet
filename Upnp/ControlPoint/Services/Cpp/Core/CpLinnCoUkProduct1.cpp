@@ -259,18 +259,18 @@ void CpProxyLinnCoUkProduct1::SetPropertyStandbyChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkProduct1::PropertyRoom(Brhz& aRoom) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aRoom.Set(iRoom->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct1::PropertyStandby(TBool& aStandby) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStandby = iStandby->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct1::RoomPropertyChanged()

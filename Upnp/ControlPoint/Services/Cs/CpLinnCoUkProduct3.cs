@@ -2080,7 +2080,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductType">Will be set to the value of the property</param>
         public String PropertyProductType()
         {
-            return iProductType.Value();
+            PropertyReadLock();
+            String val = iProductType.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2092,7 +2095,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductModel">Will be set to the value of the property</param>
         public String PropertyProductModel()
         {
-            return iProductModel.Value();
+            PropertyReadLock();
+            String val = iProductModel.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2104,7 +2110,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductName">Will be set to the value of the property</param>
         public String PropertyProductName()
         {
-            return iProductName.Value();
+            PropertyReadLock();
+            String val = iProductName.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2116,7 +2125,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductRoom">Will be set to the value of the property</param>
         public String PropertyProductRoom()
         {
-            return iProductRoom.Value();
+            PropertyReadLock();
+            String val = iProductRoom.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2128,7 +2140,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductStandby">Will be set to the value of the property</param>
         public bool PropertyProductStandby()
         {
-            return iProductStandby.Value();
+            PropertyReadLock();
+            bool val = iProductStandby.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2140,7 +2155,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductSourceIndex">Will be set to the value of the property</param>
         public uint PropertyProductSourceIndex()
         {
-            return iProductSourceIndex.Value();
+            PropertyReadLock();
+            uint val = iProductSourceIndex.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2152,7 +2170,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductSourceCount">Will be set to the value of the property</param>
         public uint PropertyProductSourceCount()
         {
-            return iProductSourceCount.Value();
+            PropertyReadLock();
+            uint val = iProductSourceCount.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2164,7 +2185,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductSourceXml">Will be set to the value of the property</param>
         public String PropertyProductSourceXml()
         {
-            return iProductSourceXml.Value();
+            PropertyReadLock();
+            String val = iProductSourceXml.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2176,7 +2200,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStartupSourceIndex">Will be set to the value of the property</param>
         public uint PropertyStartupSourceIndex()
         {
-            return iStartupSourceIndex.Value();
+            PropertyReadLock();
+            uint val = iStartupSourceIndex.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2188,7 +2215,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStartupSourceEnabled">Will be set to the value of the property</param>
         public bool PropertyStartupSourceEnabled()
         {
-            return iStartupSourceEnabled.Value();
+            PropertyReadLock();
+            bool val = iStartupSourceEnabled.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2200,7 +2230,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductAnySourceName">Will be set to the value of the property</param>
         public uint PropertyProductAnySourceName()
         {
-            return iProductAnySourceName.Value();
+            PropertyReadLock();
+            uint val = iProductAnySourceName.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2212,7 +2245,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductAnySourceVisible">Will be set to the value of the property</param>
         public uint PropertyProductAnySourceVisible()
         {
-            return iProductAnySourceVisible.Value();
+            PropertyReadLock();
+            uint val = iProductAnySourceVisible.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2224,7 +2260,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductAnySourceType">Will be set to the value of the property</param>
         public uint PropertyProductAnySourceType()
         {
-            return iProductAnySourceType.Value();
+            PropertyReadLock();
+            uint val = iProductAnySourceType.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

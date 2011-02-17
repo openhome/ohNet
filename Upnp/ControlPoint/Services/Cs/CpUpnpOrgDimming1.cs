@@ -1547,7 +1547,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLoadLevelStatus">Will be set to the value of the property</param>
         public uint PropertyLoadLevelStatus()
         {
-            return iLoadLevelStatus.Value();
+            PropertyReadLock();
+            uint val = iLoadLevelStatus.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1559,7 +1562,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStepDelta">Will be set to the value of the property</param>
         public uint PropertyStepDelta()
         {
-            return iStepDelta.Value();
+            PropertyReadLock();
+            uint val = iStepDelta.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1571,7 +1577,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRampRate">Will be set to the value of the property</param>
         public uint PropertyRampRate()
         {
-            return iRampRate.Value();
+            PropertyReadLock();
+            uint val = iRampRate.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1583,7 +1592,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIsRamping">Will be set to the value of the property</param>
         public bool PropertyIsRamping()
         {
-            return iIsRamping.Value();
+            PropertyReadLock();
+            bool val = iIsRamping.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1595,7 +1607,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRampPaused">Will be set to the value of the property</param>
         public bool PropertyRampPaused()
         {
-            return iRampPaused.Value();
+            PropertyReadLock();
+            bool val = iRampPaused.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

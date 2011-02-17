@@ -53,7 +53,6 @@ public:
 private:
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionGetCount;
     Action* iActionGetRoom;
     Action* iActionGetName;
@@ -228,7 +227,6 @@ void SyncGetColorComponentsZappOrgTestLights1C::CompleteRequest(IAsync& aAsync)
 CpProxyZappOrgTestLights1C::CpProxyZappOrgTestLights1C(CpDeviceC aDevice)
     : CpProxyC("zapp-org", "TestLights", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 

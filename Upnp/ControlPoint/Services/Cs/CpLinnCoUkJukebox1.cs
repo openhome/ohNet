@@ -678,7 +678,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCurrentPreset">Will be set to the value of the property</param>
         public uint PropertyCurrentPreset()
         {
-            return iCurrentPreset.Value();
+            PropertyReadLock();
+            uint val = iCurrentPreset.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -690,7 +693,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aPresetPrefix">Will be set to the value of the property</param>
         public String PropertyPresetPrefix()
         {
-            return iPresetPrefix.Value();
+            PropertyReadLock();
+            String val = iPresetPrefix.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -702,7 +708,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAlbumArtFileName">Will be set to the value of the property</param>
         public String PropertyAlbumArtFileName()
         {
-            return iAlbumArtFileName.Value();
+            PropertyReadLock();
+            String val = iAlbumArtFileName.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

@@ -752,34 +752,34 @@ void CpProxyLinnCoUkPlaylist1::SetPropertyTracksMaxChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkPlaylist1::PropertyIdArray(Brh& aIdArray) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aIdArray.Set(iIdArray->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPlaylist1::PropertyRepeat(TBool& aRepeat) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aRepeat = iRepeat->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPlaylist1::PropertyShuffle(TBool& aShuffle) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aShuffle = iShuffle->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPlaylist1::PropertyTracksMax(TUint& aTracksMax) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTracksMax = iTracksMax->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPlaylist1::IdArrayPropertyChanged()

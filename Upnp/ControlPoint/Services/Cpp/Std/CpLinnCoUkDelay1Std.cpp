@@ -549,19 +549,19 @@ void CpProxyLinnCoUkDelay1Cpp::SetPropertyPresetIndexChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkDelay1Cpp::PropertyPresetXml(std::string& aPresetXml) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iPresetXml->Value();
     aPresetXml.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDelay1Cpp::PropertyPresetIndex(uint32_t& aPresetIndex) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aPresetIndex = iPresetIndex->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDelay1Cpp::PresetXmlPropertyChanged()

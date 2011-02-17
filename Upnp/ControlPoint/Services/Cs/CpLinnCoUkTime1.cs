@@ -229,7 +229,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackCount">Will be set to the value of the property</param>
         public uint PropertyTrackCount()
         {
-            return iTrackCount.Value();
+            PropertyReadLock();
+            uint val = iTrackCount.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -241,7 +244,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDuration">Will be set to the value of the property</param>
         public uint PropertyDuration()
         {
-            return iDuration.Value();
+            PropertyReadLock();
+            uint val = iDuration.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -253,7 +259,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSeconds">Will be set to the value of the property</param>
         public uint PropertySeconds()
         {
-            return iSeconds.Value();
+            PropertyReadLock();
+            uint val = iSeconds.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

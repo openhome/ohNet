@@ -2335,11 +2335,11 @@ void CpProxyUpnpOrgRenderingControl2Cpp::SetPropertyLastChangeChanged(Functor& a
 
 void CpProxyUpnpOrgRenderingControl2Cpp::PropertyLastChange(std::string& aLastChange) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iLastChange->Value();
     aLastChange.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgRenderingControl2Cpp::LastChangePropertyChanged()

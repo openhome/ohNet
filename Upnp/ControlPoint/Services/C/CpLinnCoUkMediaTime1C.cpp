@@ -32,7 +32,6 @@ private:
     void SecondsPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionSeconds;
     PropertyUint* iSeconds;
     Functor iSecondsChanged;
@@ -63,7 +62,6 @@ void SyncSecondsLinnCoUkMediaTime1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkMediaTime1C::CpProxyLinnCoUkMediaTime1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "MediaTime", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -121,10 +119,10 @@ void CpProxyLinnCoUkMediaTime1C::SetPropertySecondsChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkMediaTime1C::PropertySeconds(TUint& aSeconds) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aSeconds = iSeconds->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkMediaTime1C::SecondsPropertyChanged()

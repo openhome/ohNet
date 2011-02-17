@@ -305,7 +305,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="a<#=s.name#>">Will be set to the value of the property</param>
         public <#=argtype[s.type]#> Property<#=s.name#>()
         {
-            return i<#=s.name#>.Value();
+            PropertyReadLock();
+            <#=argtype[s.type]#> val = i<#=s.name#>.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
 <#  } #>

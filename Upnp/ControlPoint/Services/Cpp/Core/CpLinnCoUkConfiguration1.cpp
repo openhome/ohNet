@@ -213,18 +213,18 @@ void CpProxyLinnCoUkConfiguration1::SetPropertyParameterXmlChanged(Functor& aFun
 
 void CpProxyLinnCoUkConfiguration1::PropertyConfigurationXml(Brhz& aConfigurationXml) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aConfigurationXml.Set(iConfigurationXml->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkConfiguration1::PropertyParameterXml(Brhz& aParameterXml) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aParameterXml.Set(iParameterXml->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkConfiguration1::ConfigurationXmlPropertyChanged()

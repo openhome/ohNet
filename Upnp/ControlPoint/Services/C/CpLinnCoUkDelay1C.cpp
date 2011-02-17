@@ -67,7 +67,6 @@ private:
     void PresetIndexPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionPresetXml;
     Action* iActionPresetIndex;
     Action* iActionSetPresetIndex;
@@ -276,7 +275,6 @@ void SyncPresetCountLinnCoUkDelay1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkDelay1C::CpProxyLinnCoUkDelay1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Delay", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -617,18 +615,18 @@ void CpProxyLinnCoUkDelay1C::SetPropertyPresetIndexChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkDelay1C::PropertyPresetXml(Brhz& aPresetXml) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aPresetXml.Set(iPresetXml->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDelay1C::PropertyPresetIndex(TUint& aPresetIndex) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aPresetIndex = iPresetIndex->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDelay1C::PresetXmlPropertyChanged()

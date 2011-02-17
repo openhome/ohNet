@@ -102,7 +102,6 @@ private:
     void TransferIDsPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionGetSearchCapabilities;
     Action* iActionGetSortCapabilities;
     Action* iActionGetSortExtensionCapabilities;
@@ -515,7 +514,6 @@ void SyncCreateReferenceUpnpOrgContentDirectory2C::CompleteRequest(IAsync& aAsyn
 CpProxyUpnpOrgContentDirectory2C::CpProxyUpnpOrgContentDirectory2C(CpDeviceC aDevice)
     : CpProxyC("schemas-upnp-org", "ContentDirectory", 2, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
     TChar** allowedValues;
@@ -1270,26 +1268,26 @@ void CpProxyUpnpOrgContentDirectory2C::SetPropertyTransferIDsChanged(Functor& aF
 
 void CpProxyUpnpOrgContentDirectory2C::PropertySystemUpdateID(TUint& aSystemUpdateID) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aSystemUpdateID = iSystemUpdateID->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory2C::PropertyContainerUpdateIDs(Brhz& aContainerUpdateIDs) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aContainerUpdateIDs.Set(iContainerUpdateIDs->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory2C::PropertyTransferIDs(Brhz& aTransferIDs) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aTransferIDs.Set(iTransferIDs->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory2C::SystemUpdateIDPropertyChanged()

@@ -231,20 +231,20 @@ void CpProxyLinnCoUkConfiguration1Cpp::SetPropertyParameterXmlChanged(Functor& a
 
 void CpProxyLinnCoUkConfiguration1Cpp::PropertyConfigurationXml(std::string& aConfigurationXml) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iConfigurationXml->Value();
     aConfigurationXml.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkConfiguration1Cpp::PropertyParameterXml(std::string& aParameterXml) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iParameterXml->Value();
     aParameterXml.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkConfiguration1Cpp::ConfigurationXmlPropertyChanged()

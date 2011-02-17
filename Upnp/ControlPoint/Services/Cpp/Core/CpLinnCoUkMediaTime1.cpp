@@ -89,10 +89,10 @@ void CpProxyLinnCoUkMediaTime1::SetPropertySecondsChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkMediaTime1::PropertySeconds(TUint& aSeconds) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSeconds = iSeconds->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkMediaTime1::SecondsPropertyChanged()

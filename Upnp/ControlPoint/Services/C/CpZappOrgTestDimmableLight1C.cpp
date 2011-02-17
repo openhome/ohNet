@@ -36,7 +36,6 @@ private:
     void A_ARG_LevelPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionGetLevel;
     Action* iActionSetLevel;
     PropertyUint* iA_ARG_Level;
@@ -88,7 +87,6 @@ void SyncSetLevelZappOrgTestDimmableLight1C::CompleteRequest(IAsync& aAsync)
 CpProxyZappOrgTestDimmableLight1C::CpProxyZappOrgTestDimmableLight1C(CpDeviceC aDevice)
     : CpProxyC("zapp-org", "TestDimmableLight", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -178,10 +176,10 @@ void CpProxyZappOrgTestDimmableLight1C::SetPropertyA_ARG_LevelChanged(Functor& a
 
 void CpProxyZappOrgTestDimmableLight1C::PropertyA_ARG_Level(TUint& aA_ARG_Level) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aA_ARG_Level = iA_ARG_Level->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyZappOrgTestDimmableLight1C::A_ARG_LevelPropertyChanged()

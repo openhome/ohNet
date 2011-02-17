@@ -1027,7 +1027,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIdArray">Will be set to the value of the property</param>
         public byte[] PropertyIdArray()
         {
-            return iIdArray.Value();
+            PropertyReadLock();
+            byte[] val = iIdArray.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1039,7 +1042,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRepeat">Will be set to the value of the property</param>
         public bool PropertyRepeat()
         {
-            return iRepeat.Value();
+            PropertyReadLock();
+            bool val = iRepeat.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1051,7 +1057,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aShuffle">Will be set to the value of the property</param>
         public bool PropertyShuffle()
         {
-            return iShuffle.Value();
+            PropertyReadLock();
+            bool val = iShuffle.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1063,7 +1072,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTracksMax">Will be set to the value of the property</param>
         public uint PropertyTracksMax()
         {
-            return iTracksMax.Value();
+            PropertyReadLock();
+            uint val = iTracksMax.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

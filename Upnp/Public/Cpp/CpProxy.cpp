@@ -26,7 +26,8 @@ CpProxy::CpProxy(const TChar* aDomain, const TChar* aName, TUint aVersion, CpiDe
     iService = new CpiService(aDomain, aName, aVersion, aDevice);
     iCpSubscriptionStatus = eNotSubscribed;
     iLock = new Mutex("PRX1");
-    iPropertyLock = new Mutex("PRX2");
+    iPropertyReadLock = new Mutex("PRX2");
+    iPropertyWriteLock = new Mutex("PRX3");
     iInitialEventDelivered = false;
 }
 
@@ -34,7 +35,8 @@ CpProxy::~CpProxy()
 {
     delete iService;
     delete iLock;
-    delete iPropertyLock;
+    delete iPropertyReadLock;
+    delete iPropertyWriteLock;
 	PropertyMap::iterator it = iProperties.begin();
     while (it != iProperties.end()) {
         delete it->second;
@@ -72,6 +74,16 @@ void CpProxy::SetPropertyInitialEvent(Functor& aFunctor)
     iLock->Signal();
 }
 
+void CpProxy::PropertyReadLock() const
+{
+    iPropertyReadLock->Wait();
+}
+
+void CpProxy::PropertyReadUnlock() const
+{
+    iPropertyReadLock->Signal();
+}
+
 void CpProxy::ReportEvent(Functor aFunctor)
 {
     iLock->Wait();
@@ -86,7 +98,8 @@ void CpProxy::ReportEvent(Functor aFunctor)
 
 void CpProxy::EventUpdateStart()
 {
-    iPropertyLock->Wait();
+    iPropertyWriteLock->Wait();
+    PropertyReadLock();
 }
 
 void CpProxy::EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor)
@@ -102,7 +115,7 @@ void CpProxy::EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor&
 
 void CpProxy::EventUpdateEnd()
 {
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
     TBool changed = false;
     PropertyMap::iterator it = iProperties.begin();
     while (it != iProperties.end()) {
@@ -122,4 +135,5 @@ void CpProxy::EventUpdateEnd()
         }
         iLock->Signal();
     }
+    iPropertyWriteLock->Signal();
 }

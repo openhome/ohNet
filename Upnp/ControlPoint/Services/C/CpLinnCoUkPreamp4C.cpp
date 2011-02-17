@@ -99,7 +99,6 @@ private:
     void StartupVolumeEnabledPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionVolumeInc;
     Action* iActionVolumeDec;
     Action* iActionSetVolume;
@@ -423,7 +422,6 @@ void SyncStartupVolumeEnabledLinnCoUkPreamp4C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkPreamp4C::CpProxyLinnCoUkPreamp4C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Preamp", 4, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -947,50 +945,50 @@ void CpProxyLinnCoUkPreamp4C::SetPropertyStartupVolumeEnabledChanged(Functor& aF
 
 void CpProxyLinnCoUkPreamp4C::PropertyVolume(TUint& aVolume) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aVolume = iVolume->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPreamp4C::PropertyMute(TBool& aMute) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aMute = iMute->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPreamp4C::PropertyBalance(TInt& aBalance) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aBalance = iBalance->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPreamp4C::PropertyVolumeLimit(TUint& aVolumeLimit) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aVolumeLimit = iVolumeLimit->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPreamp4C::PropertyStartupVolume(TUint& aStartupVolume) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aStartupVolume = iStartupVolume->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPreamp4C::PropertyStartupVolumeEnabled(TBool& aStartupVolumeEnabled) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aStartupVolumeEnabled = iStartupVolumeEnabled->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPreamp4C::VolumePropertyChanged()

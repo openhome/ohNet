@@ -828,50 +828,50 @@ void CpProxyLinnCoUkPreamp4Cpp::SetPropertyStartupVolumeEnabledChanged(Functor& 
 
 void CpProxyLinnCoUkPreamp4Cpp::PropertyVolume(uint32_t& aVolume) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolume = iVolume->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPreamp4Cpp::PropertyMute(bool& aMute) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aMute = iMute->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPreamp4Cpp::PropertyBalance(int32_t& aBalance) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aBalance = iBalance->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPreamp4Cpp::PropertyVolumeLimit(uint32_t& aVolumeLimit) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeLimit = iVolumeLimit->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPreamp4Cpp::PropertyStartupVolume(uint32_t& aStartupVolume) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStartupVolume = iStartupVolume->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPreamp4Cpp::PropertyStartupVolumeEnabled(bool& aStartupVolumeEnabled) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStartupVolumeEnabled = iStartupVolumeEnabled->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPreamp4Cpp::VolumePropertyChanged()

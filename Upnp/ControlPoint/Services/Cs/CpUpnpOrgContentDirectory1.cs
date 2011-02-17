@@ -1322,7 +1322,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferIDs">Will be set to the value of the property</param>
         public String PropertyTransferIDs()
         {
-            return iTransferIDs.Value();
+            PropertyReadLock();
+            String val = iTransferIDs.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1334,7 +1337,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSystemUpdateID">Will be set to the value of the property</param>
         public uint PropertySystemUpdateID()
         {
-            return iSystemUpdateID.Value();
+            PropertyReadLock();
+            uint val = iSystemUpdateID.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1346,7 +1352,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aContainerUpdateIDs">Will be set to the value of the property</param>
         public String PropertyContainerUpdateIDs()
         {
-            return iContainerUpdateIDs.Value();
+            PropertyReadLock();
+            String val = iContainerUpdateIDs.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

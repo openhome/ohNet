@@ -92,7 +92,6 @@ private:
     void TransportStatePropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionPlay;
     Action* iActionPause;
     Action* iActionStop;
@@ -344,7 +343,6 @@ void SyncProtocolInfoLinnCoUkDs1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkDs1C::CpProxyLinnCoUkDs1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Ds", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
     TChar** allowedValues;
@@ -794,74 +792,74 @@ void CpProxyLinnCoUkDs1C::SetPropertyTransportStateChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkDs1C::PropertySupportedProtocols(Brhz& aSupportedProtocols) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aSupportedProtocols.Set(iSupportedProtocols->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1C::PropertyTrackDuration(TUint& aTrackDuration) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aTrackDuration = iTrackDuration->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1C::PropertyTrackBitRate(TUint& aTrackBitRate) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aTrackBitRate = iTrackBitRate->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1C::PropertyTrackLossless(TBool& aTrackLossless) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aTrackLossless = iTrackLossless->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1C::PropertyTrackBitDepth(TUint& aTrackBitDepth) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aTrackBitDepth = iTrackBitDepth->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1C::PropertyTrackSampleRate(TUint& aTrackSampleRate) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aTrackSampleRate = iTrackSampleRate->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1C::PropertyTrackCodecName(Brhz& aTrackCodecName) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aTrackCodecName.Set(iTrackCodecName->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1C::PropertyTrackId(TUint& aTrackId) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aTrackId = iTrackId->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1C::PropertyTransportState(Brhz& aTransportState) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aTransportState.Set(iTransportState->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1C::SupportedProtocolsPropertyChanged()

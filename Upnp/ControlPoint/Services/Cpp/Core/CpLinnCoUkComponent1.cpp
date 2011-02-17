@@ -670,34 +670,34 @@ void CpProxyLinnCoUkComponent1::SetPropertyDigitalAudioOutputRawChanged(Functor&
 
 void CpProxyLinnCoUkComponent1::PropertyAmplifierEnabled(TBool& aAmplifierEnabled) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aAmplifierEnabled = iAmplifierEnabled->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkComponent1::PropertyAmplifierAttenuation(Brhz& aAmplifierAttenuation) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aAmplifierAttenuation.Set(iAmplifierAttenuation->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkComponent1::PropertyVolumeControlEnabled(TBool& aVolumeControlEnabled) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeControlEnabled = iVolumeControlEnabled->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkComponent1::PropertyDigitalAudioOutputRaw(TBool& aDigitalAudioOutputRaw) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDigitalAudioOutputRaw = iDigitalAudioOutputRaw->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkComponent1::AmplifierEnabledPropertyChanged()

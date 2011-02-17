@@ -41,7 +41,6 @@ public:
 private:
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionGetName;
     Action* iActionSetColor;
     Action* iActionGetColor;
@@ -145,7 +144,6 @@ void SyncGetMaxColorsOpenhomeOrgTestColorLight1C::CompleteRequest(IAsync& aAsync
 CpProxyOpenhomeOrgTestColorLight1C::CpProxyOpenhomeOrgTestColorLight1C(CpDeviceC aDevice)
     : CpProxyC("openhome-org", "TestColorLight", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 

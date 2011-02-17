@@ -689,77 +689,77 @@ void CpProxyLinnCoUkDs1Cpp::SetPropertyTransportStateChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkDs1Cpp::PropertySupportedProtocols(std::string& aSupportedProtocols) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iSupportedProtocols->Value();
     aSupportedProtocols.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1Cpp::PropertyTrackDuration(uint32_t& aTrackDuration) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackDuration = iTrackDuration->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1Cpp::PropertyTrackBitRate(uint32_t& aTrackBitRate) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackBitRate = iTrackBitRate->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1Cpp::PropertyTrackLossless(bool& aTrackLossless) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackLossless = iTrackLossless->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1Cpp::PropertyTrackBitDepth(uint32_t& aTrackBitDepth) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackBitDepth = iTrackBitDepth->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1Cpp::PropertyTrackSampleRate(uint32_t& aTrackSampleRate) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackSampleRate = iTrackSampleRate->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1Cpp::PropertyTrackCodecName(std::string& aTrackCodecName) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iTrackCodecName->Value();
     aTrackCodecName.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1Cpp::PropertyTrackId(uint32_t& aTrackId) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackId = iTrackId->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1Cpp::PropertyTransportState(std::string& aTransportState) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iTransportState->Value();
     aTransportState.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDs1Cpp::SupportedProtocolsPropertyChanged()

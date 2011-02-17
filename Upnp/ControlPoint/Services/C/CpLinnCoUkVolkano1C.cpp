@@ -69,7 +69,6 @@ public:
 private:
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionReboot;
     Action* iActionBootMode;
     Action* iActionSetBootMode;
@@ -324,7 +323,6 @@ void SyncSoftwareVersionLinnCoUkVolkano1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkVolkano1C::CpProxyLinnCoUkVolkano1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Volkano", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
     TChar** allowedValues;

@@ -85,6 +85,20 @@ DllExport void CpProxySetPropertyChanged(THandle aHandle, ZappCallback aCallback
 DllExport void CpProxySetPropertyInitialEvent(THandle aHandle, ZappCallback aCallback, void* aPtr);
 
 /**
+ * Must be called before reading the value of a property.
+ *
+ * @param[in] aHandle    Returned from [service]CreateEvented
+ */
+DllExport void CpProxyPropertyReadLock(THandle aHandle);
+
+/**
+ * Must be called once for each call to CpProxyReadLock() (after reading the value of a property).
+ *
+ * @param[in] aHandle    Returned from [service]CreateEvented
+ */
+DllExport void CpProxyPropertyReadUnlock(THandle aHandle);
+
+/**
  * Add a property to a service.
  * Will normally only be called by auto-generated code.
  *

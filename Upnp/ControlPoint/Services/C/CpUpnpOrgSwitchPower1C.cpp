@@ -40,7 +40,6 @@ private:
     void StatusPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionSetTarget;
     Action* iActionGetTarget;
     Action* iActionGetStatus;
@@ -115,7 +114,6 @@ void SyncGetStatusUpnpOrgSwitchPower1C::CompleteRequest(IAsync& aAsync)
 CpProxyUpnpOrgSwitchPower1C::CpProxyUpnpOrgSwitchPower1C(CpDeviceC aDevice)
     : CpProxyC("schemas-upnp-org", "SwitchPower", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -239,10 +237,10 @@ void CpProxyUpnpOrgSwitchPower1C::SetPropertyStatusChanged(Functor& aFunctor)
 
 void CpProxyUpnpOrgSwitchPower1C::PropertyStatus(TBool& aStatus) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aStatus = iStatus->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgSwitchPower1C::StatusPropertyChanged()

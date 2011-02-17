@@ -38,7 +38,6 @@ private:
     void SecondsPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionTime;
     PropertyUint* iTrackCount;
     PropertyUint* iDuration;
@@ -77,7 +76,6 @@ void SyncTimeLinnCoUkTime1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkTime1C::CpProxyLinnCoUkTime1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Time", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -163,26 +161,26 @@ void CpProxyLinnCoUkTime1C::SetPropertySecondsChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkTime1C::PropertyTrackCount(TUint& aTrackCount) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aTrackCount = iTrackCount->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkTime1C::PropertyDuration(TUint& aDuration) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aDuration = iDuration->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkTime1C::PropertySeconds(TUint& aSeconds) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aSeconds = iSeconds->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkTime1C::TrackCountPropertyChanged()

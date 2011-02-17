@@ -85,7 +85,6 @@ private:
     void TracksMaxPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionRead;
     Action* iActionReadList;
     Action* iActionInsert;
@@ -371,7 +370,6 @@ void SyncIdArrayChangedLinnCoUkPlaylist1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkPlaylist1C::CpProxyLinnCoUkPlaylist1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Playlist", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -854,34 +852,34 @@ void CpProxyLinnCoUkPlaylist1C::SetPropertyTracksMaxChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkPlaylist1C::PropertyIdArray(Brh& aIdArray) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aIdArray.Set(iIdArray->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPlaylist1C::PropertyRepeat(TBool& aRepeat) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aRepeat = iRepeat->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPlaylist1C::PropertyShuffle(TBool& aShuffle) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aShuffle = iShuffle->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPlaylist1C::PropertyTracksMax(TUint& aTracksMax) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aTracksMax = iTracksMax->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPlaylist1C::IdArrayPropertyChanged()

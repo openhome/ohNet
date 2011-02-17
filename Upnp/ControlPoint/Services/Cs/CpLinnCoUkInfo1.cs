@@ -791,7 +791,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackCount">Will be set to the value of the property</param>
         public uint PropertyTrackCount()
         {
-            return iTrackCount.Value();
+            PropertyReadLock();
+            uint val = iTrackCount.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -803,7 +806,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDetailsCount">Will be set to the value of the property</param>
         public uint PropertyDetailsCount()
         {
-            return iDetailsCount.Value();
+            PropertyReadLock();
+            uint val = iDetailsCount.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -815,7 +821,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aMetatextCount">Will be set to the value of the property</param>
         public uint PropertyMetatextCount()
         {
-            return iMetatextCount.Value();
+            PropertyReadLock();
+            uint val = iMetatextCount.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -827,7 +836,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aUri">Will be set to the value of the property</param>
         public String PropertyUri()
         {
-            return iUri.Value();
+            PropertyReadLock();
+            String val = iUri.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -839,7 +851,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aMetadata">Will be set to the value of the property</param>
         public String PropertyMetadata()
         {
-            return iMetadata.Value();
+            PropertyReadLock();
+            String val = iMetadata.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -851,7 +866,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDuration">Will be set to the value of the property</param>
         public uint PropertyDuration()
         {
-            return iDuration.Value();
+            PropertyReadLock();
+            uint val = iDuration.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -863,7 +881,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aBitRate">Will be set to the value of the property</param>
         public uint PropertyBitRate()
         {
-            return iBitRate.Value();
+            PropertyReadLock();
+            uint val = iBitRate.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -875,7 +896,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aBitDepth">Will be set to the value of the property</param>
         public uint PropertyBitDepth()
         {
-            return iBitDepth.Value();
+            PropertyReadLock();
+            uint val = iBitDepth.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -887,7 +911,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSampleRate">Will be set to the value of the property</param>
         public uint PropertySampleRate()
         {
-            return iSampleRate.Value();
+            PropertyReadLock();
+            uint val = iSampleRate.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -899,7 +926,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLossless">Will be set to the value of the property</param>
         public bool PropertyLossless()
         {
-            return iLossless.Value();
+            PropertyReadLock();
+            bool val = iLossless.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -911,7 +941,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCodecName">Will be set to the value of the property</param>
         public String PropertyCodecName()
         {
-            return iCodecName.Value();
+            PropertyReadLock();
+            String val = iCodecName.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -923,7 +956,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aMetatext">Will be set to the value of the property</param>
         public String PropertyMetatext()
         {
-            return iMetatext.Value();
+            PropertyReadLock();
+            String val = iMetatext.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

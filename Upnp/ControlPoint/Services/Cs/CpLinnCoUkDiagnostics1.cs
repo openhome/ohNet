@@ -958,7 +958,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStateVariable">Will be set to the value of the property</param>
         public uint PropertyaStateVariable()
         {
-            return iaStateVariable.Value();
+            PropertyReadLock();
+            uint val = iaStateVariable.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

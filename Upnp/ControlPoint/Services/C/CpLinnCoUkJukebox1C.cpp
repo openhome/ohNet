@@ -66,7 +66,6 @@ private:
     void AlbumArtFileNamePropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionSetPresetPrefix;
     Action* iActionPresetPrefix;
     Action* iActionSetAlbumArtFileName;
@@ -256,7 +255,6 @@ void SyncLoadManifestLinnCoUkJukebox1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkJukebox1C::CpProxyLinnCoUkJukebox1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Jukebox", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -571,26 +569,26 @@ void CpProxyLinnCoUkJukebox1C::SetPropertyAlbumArtFileNameChanged(Functor& aFunc
 
 void CpProxyLinnCoUkJukebox1C::PropertyCurrentPreset(TUint& aCurrentPreset) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aCurrentPreset = iCurrentPreset->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkJukebox1C::PropertyPresetPrefix(Brhz& aPresetPrefix) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aPresetPrefix.Set(iPresetPrefix->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkJukebox1C::PropertyAlbumArtFileName(Brhz& aAlbumArtFileName) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aAlbumArtFileName.Set(iAlbumArtFileName->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkJukebox1C::CurrentPresetPropertyChanged()

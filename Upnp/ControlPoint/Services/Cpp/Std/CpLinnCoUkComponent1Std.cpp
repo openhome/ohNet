@@ -679,35 +679,35 @@ void CpProxyLinnCoUkComponent1Cpp::SetPropertyDigitalAudioOutputRawChanged(Funct
 
 void CpProxyLinnCoUkComponent1Cpp::PropertyAmplifierEnabled(bool& aAmplifierEnabled) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aAmplifierEnabled = iAmplifierEnabled->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkComponent1Cpp::PropertyAmplifierAttenuation(std::string& aAmplifierAttenuation) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iAmplifierAttenuation->Value();
     aAmplifierAttenuation.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkComponent1Cpp::PropertyVolumeControlEnabled(bool& aVolumeControlEnabled) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeControlEnabled = iVolumeControlEnabled->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkComponent1Cpp::PropertyDigitalAudioOutputRaw(bool& aDigitalAudioOutputRaw) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDigitalAudioOutputRaw = iDigitalAudioOutputRaw->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkComponent1Cpp::AmplifierEnabledPropertyChanged()

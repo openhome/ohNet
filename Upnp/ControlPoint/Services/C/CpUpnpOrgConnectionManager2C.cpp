@@ -54,7 +54,6 @@ private:
     void CurrentConnectionIDsPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionGetProtocolInfo;
     Action* iActionPrepareForConnection;
     Action* iActionConnectionComplete;
@@ -197,7 +196,6 @@ void SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2C::CompleteRequest(IAs
 CpProxyUpnpOrgConnectionManager2C::CpProxyUpnpOrgConnectionManager2C(CpDeviceC aDevice)
     : CpProxyC("schemas-upnp-org", "ConnectionManager", 2, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
     TChar** allowedValues;
@@ -484,26 +482,26 @@ void CpProxyUpnpOrgConnectionManager2C::SetPropertyCurrentConnectionIDsChanged(F
 
 void CpProxyUpnpOrgConnectionManager2C::PropertySourceProtocolInfo(Brhz& aSourceProtocolInfo) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aSourceProtocolInfo.Set(iSourceProtocolInfo->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgConnectionManager2C::PropertySinkProtocolInfo(Brhz& aSinkProtocolInfo) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aSinkProtocolInfo.Set(iSinkProtocolInfo->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgConnectionManager2C::PropertyCurrentConnectionIDs(Brhz& aCurrentConnectionIDs) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aCurrentConnectionIDs.Set(iCurrentConnectionIDs->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgConnectionManager2C::SourceProtocolInfoPropertyChanged()

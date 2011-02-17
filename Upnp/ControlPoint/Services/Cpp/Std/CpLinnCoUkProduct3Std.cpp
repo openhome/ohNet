@@ -1525,111 +1525,111 @@ void CpProxyLinnCoUkProduct3Cpp::SetPropertyProductAnySourceTypeChanged(Functor&
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductType(std::string& aProductType) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductType->Value();
     aProductType.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductModel(std::string& aProductModel) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductModel->Value();
     aProductModel.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductName(std::string& aProductName) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductName->Value();
     aProductName.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductRoom(std::string& aProductRoom) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductRoom->Value();
     aProductRoom.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductStandby(bool& aProductStandby) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductStandby = iProductStandby->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductSourceIndex(uint32_t& aProductSourceIndex) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductSourceIndex = iProductSourceIndex->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductSourceCount(uint32_t& aProductSourceCount) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductSourceCount = iProductSourceCount->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductSourceXml(std::string& aProductSourceXml) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductSourceXml->Value();
     aProductSourceXml.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyStartupSourceIndex(uint32_t& aStartupSourceIndex) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStartupSourceIndex = iStartupSourceIndex->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyStartupSourceEnabled(bool& aStartupSourceEnabled) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStartupSourceEnabled = iStartupSourceEnabled->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductAnySourceName(uint32_t& aProductAnySourceName) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductAnySourceName = iProductAnySourceName->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductAnySourceVisible(uint32_t& aProductAnySourceVisible) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductAnySourceVisible = iProductAnySourceVisible->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductAnySourceType(uint32_t& aProductAnySourceType) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductAnySourceType = iProductAnySourceType->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::ProductTypePropertyChanged()

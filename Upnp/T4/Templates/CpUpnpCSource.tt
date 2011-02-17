@@ -95,7 +95,6 @@ private:
 <#  } #>
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
 <#  foreach (Method a in u.methods) #>
 <#  { #>
     Action* iAction<#=a.name#>;
@@ -144,7 +143,6 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
 <#=className#>C::<#=className#>C(CpDeviceC aDevice)
     : CpProxyC("<#=upnpdomain#>", "<#=type#>", <#=version#>, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     <#=DeclareConstructLocalVars(u)#>
 <#  foreach (Method a in u.methods) #>
@@ -284,7 +282,7 @@ void <#=className#>C::SetProperty<#=s.name#>Changed(Functor& aFunctor)
 
 void <#=className#>C::Property<#=s.name#>(<#=propArgType[s.type]#> a<#=s.name#>) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
 <#      if (s.type=="string" || s.type=="bin.base64" || s.type=="uri") #>
 <#      { #>
@@ -294,7 +292,7 @@ void <#=className#>C::Property<#=s.name#>(<#=propArgType[s.type]#> a<#=s.name#>)
 <#      { #>
     a<#=s.name#> = i<#=s.name#>->Value();
 <#      } #>
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 <#  } #>
 <#  foreach (Variable s in u.evented) #>

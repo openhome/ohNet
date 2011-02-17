@@ -540,18 +540,18 @@ void CpProxyLinnCoUkDelay1::SetPropertyPresetIndexChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkDelay1::PropertyPresetXml(Brhz& aPresetXml) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aPresetXml.Set(iPresetXml->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDelay1::PropertyPresetIndex(TUint& aPresetIndex) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aPresetIndex = iPresetIndex->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDelay1::PresetXmlPropertyChanged()

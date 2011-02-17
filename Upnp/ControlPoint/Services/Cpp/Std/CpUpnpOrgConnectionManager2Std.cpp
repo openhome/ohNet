@@ -455,29 +455,29 @@ void CpProxyUpnpOrgConnectionManager2Cpp::SetPropertyCurrentConnectionIDsChanged
 
 void CpProxyUpnpOrgConnectionManager2Cpp::PropertySourceProtocolInfo(std::string& aSourceProtocolInfo) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iSourceProtocolInfo->Value();
     aSourceProtocolInfo.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgConnectionManager2Cpp::PropertySinkProtocolInfo(std::string& aSinkProtocolInfo) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iSinkProtocolInfo->Value();
     aSinkProtocolInfo.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgConnectionManager2Cpp::PropertyCurrentConnectionIDs(std::string& aCurrentConnectionIDs) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iCurrentConnectionIDs->Value();
     aCurrentConnectionIDs.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgConnectionManager2Cpp::SourceProtocolInfoPropertyChanged()

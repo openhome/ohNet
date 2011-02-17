@@ -1343,34 +1343,34 @@ void CpProxyUpnpOrgContentDirectory3::SetPropertyTransferIDsChanged(Functor& aFu
 
 void CpProxyUpnpOrgContentDirectory3::PropertySystemUpdateID(TUint& aSystemUpdateID) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSystemUpdateID = iSystemUpdateID->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory3::PropertyContainerUpdateIDs(Brhz& aContainerUpdateIDs) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aContainerUpdateIDs.Set(iContainerUpdateIDs->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory3::PropertyLastChange(Brhz& aLastChange) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aLastChange.Set(iLastChange->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory3::PropertyTransferIDs(Brhz& aTransferIDs) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTransferIDs.Set(iTransferIDs->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory3::SystemUpdateIDPropertyChanged()

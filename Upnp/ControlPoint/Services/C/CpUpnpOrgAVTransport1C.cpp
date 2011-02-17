@@ -96,7 +96,6 @@ private:
     void LastChangePropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionSetAVTransportURI;
     Action* iActionSetNextAVTransportURI;
     Action* iActionGetMediaInfo;
@@ -513,7 +512,6 @@ void SyncGetCurrentTransportActionsUpnpOrgAVTransport1C::CompleteRequest(IAsync&
 CpProxyUpnpOrgAVTransport1C::CpProxyUpnpOrgAVTransport1C(CpDeviceC aDevice)
     : CpProxyC("schemas-upnp-org", "AVTransport", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
     TChar** allowedValues;
@@ -1262,10 +1260,10 @@ void CpProxyUpnpOrgAVTransport1C::SetPropertyLastChangeChanged(Functor& aFunctor
 
 void CpProxyUpnpOrgAVTransport1C::PropertyLastChange(Brhz& aLastChange) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aLastChange.Set(iLastChange->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgAVTransport1C::LastChangePropertyChanged()

@@ -369,7 +369,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRoom">Will be set to the value of the property</param>
         public String PropertyRoom()
         {
-            return iRoom.Value();
+            PropertyReadLock();
+            String val = iRoom.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -381,7 +384,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStandby">Will be set to the value of the property</param>
         public bool PropertyStandby()
         {
-            return iStandby.Value();
+            PropertyReadLock();
+            bool val = iStandby.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

@@ -750,10 +750,10 @@ void CpProxyLinnCoUkDiagnostics1::SetPropertyaStateVariableChanged(Functor& aFun
 
 void CpProxyLinnCoUkDiagnostics1::PropertyaStateVariable(TUint& aaStateVariable) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aaStateVariable = iaStateVariable->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDiagnostics1::aStateVariablePropertyChanged()

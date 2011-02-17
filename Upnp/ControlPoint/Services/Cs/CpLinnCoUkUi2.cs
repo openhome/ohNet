@@ -1952,7 +1952,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplayBrightness">Will be set to the value of the property</param>
         public uint PropertyDisplayBrightness()
         {
-            return iDisplayBrightness.Value();
+            PropertyReadLock();
+            uint val = iDisplayBrightness.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1964,7 +1967,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplayBrightnessAuto">Will be set to the value of the property</param>
         public bool PropertyDisplayBrightnessAuto()
         {
-            return iDisplayBrightnessAuto.Value();
+            PropertyReadLock();
+            bool val = iDisplayBrightnessAuto.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1976,7 +1982,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInfraredCommands">Will be set to the value of the property</param>
         public String PropertyInfraredCommands()
         {
-            return iInfraredCommands.Value();
+            PropertyReadLock();
+            String val = iInfraredCommands.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1988,7 +1997,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInfraredTerminalCommands">Will be set to the value of the property</param>
         public String PropertyInfraredTerminalCommands()
         {
-            return iInfraredTerminalCommands.Value();
+            PropertyReadLock();
+            String val = iInfraredTerminalCommands.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2000,7 +2012,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplayUpsideDown">Will be set to the value of the property</param>
         public bool PropertyDisplayUpsideDown()
         {
-            return iDisplayUpsideDown.Value();
+            PropertyReadLock();
+            bool val = iDisplayUpsideDown.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2012,7 +2027,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplayScrollText">Will be set to the value of the property</param>
         public bool PropertyDisplayScrollText()
         {
-            return iDisplayScrollText.Value();
+            PropertyReadLock();
+            bool val = iDisplayScrollText.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2024,7 +2042,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplaySleep">Will be set to the value of the property</param>
         public bool PropertyDisplaySleep()
         {
-            return iDisplaySleep.Value();
+            PropertyReadLock();
+            bool val = iDisplaySleep.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2036,7 +2057,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplayLedOff">Will be set to the value of the property</param>
         public bool PropertyDisplayLedOff()
         {
-            return iDisplayLedOff.Value();
+            PropertyReadLock();
+            bool val = iDisplayLedOff.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2048,7 +2072,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTerminalInputCode">Will be set to the value of the property</param>
         public uint PropertyTerminalInputCode()
         {
-            return iTerminalInputCode.Value();
+            PropertyReadLock();
+            uint val = iTerminalInputCode.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2060,7 +2087,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTerminalInputName">Will be set to the value of the property</param>
         public String PropertyTerminalInputName()
         {
-            return iTerminalInputName.Value();
+            PropertyReadLock();
+            String val = iTerminalInputName.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -2072,7 +2102,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDisplayPixels">Will be set to the value of the property</param>
         public byte[] PropertyDisplayPixels()
         {
-            return iDisplayPixels.Value();
+            PropertyReadLock();
+            byte[] val = iDisplayPixels.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

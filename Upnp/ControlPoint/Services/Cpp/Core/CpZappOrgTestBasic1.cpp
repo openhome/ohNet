@@ -1125,42 +1125,42 @@ void CpProxyZappOrgTestBasic1::SetPropertyVarBinChanged(Functor& aFunctor)
 
 void CpProxyZappOrgTestBasic1::PropertyVarUint(TUint& aVarUint) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarUint = iVarUint->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyZappOrgTestBasic1::PropertyVarInt(TInt& aVarInt) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarInt = iVarInt->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyZappOrgTestBasic1::PropertyVarBool(TBool& aVarBool) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarBool = iVarBool->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyZappOrgTestBasic1::PropertyVarStr(Brhz& aVarStr) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarStr.Set(iVarStr->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyZappOrgTestBasic1::PropertyVarBin(Brh& aVarBin) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarBin.Set(iVarBin->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyZappOrgTestBasic1::VarUintPropertyChanged()

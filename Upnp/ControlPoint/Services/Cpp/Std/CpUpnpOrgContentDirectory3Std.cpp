@@ -1469,37 +1469,37 @@ void CpProxyUpnpOrgContentDirectory3Cpp::SetPropertyTransferIDsChanged(Functor& 
 
 void CpProxyUpnpOrgContentDirectory3Cpp::PropertySystemUpdateID(uint32_t& aSystemUpdateID) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSystemUpdateID = iSystemUpdateID->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory3Cpp::PropertyContainerUpdateIDs(std::string& aContainerUpdateIDs) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iContainerUpdateIDs->Value();
     aContainerUpdateIDs.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory3Cpp::PropertyLastChange(std::string& aLastChange) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iLastChange->Value();
     aLastChange.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory3Cpp::PropertyTransferIDs(std::string& aTransferIDs) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iTransferIDs->Value();
     aTransferIDs.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory3Cpp::SystemUpdateIDPropertyChanged()

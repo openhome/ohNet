@@ -1148,26 +1148,26 @@ void CpProxyUpnpOrgContentDirectory2::SetPropertyTransferIDsChanged(Functor& aFu
 
 void CpProxyUpnpOrgContentDirectory2::PropertySystemUpdateID(TUint& aSystemUpdateID) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSystemUpdateID = iSystemUpdateID->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory2::PropertyContainerUpdateIDs(Brhz& aContainerUpdateIDs) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aContainerUpdateIDs.Set(iContainerUpdateIDs->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory2::PropertyTransferIDs(Brhz& aTransferIDs) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTransferIDs.Set(iTransferIDs->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgContentDirectory2::SystemUpdateIDPropertyChanged()

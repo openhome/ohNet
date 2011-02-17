@@ -981,7 +981,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductName">Will be set to the value of the property</param>
         public String PropertyProductName()
         {
-            return iProductName.Value();
+            PropertyReadLock();
+            String val = iProductName.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -993,7 +996,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductRoom">Will be set to the value of the property</param>
         public String PropertyProductRoom()
         {
-            return iProductRoom.Value();
+            PropertyReadLock();
+            String val = iProductRoom.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1005,7 +1011,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductStandby">Will be set to the value of the property</param>
         public bool PropertyProductStandby()
         {
-            return iProductStandby.Value();
+            PropertyReadLock();
+            bool val = iProductStandby.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1017,7 +1026,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductSourceIndex">Will be set to the value of the property</param>
         public uint PropertyProductSourceIndex()
         {
-            return iProductSourceIndex.Value();
+            PropertyReadLock();
+            uint val = iProductSourceIndex.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

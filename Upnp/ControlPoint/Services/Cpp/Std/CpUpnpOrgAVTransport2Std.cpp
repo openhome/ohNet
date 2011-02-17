@@ -1630,20 +1630,20 @@ void CpProxyUpnpOrgAVTransport2Cpp::SetPropertyDRMStateChanged(Functor& aFunctor
 
 void CpProxyUpnpOrgAVTransport2Cpp::PropertyLastChange(std::string& aLastChange) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iLastChange->Value();
     aLastChange.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::PropertyDRMState(std::string& aDRMState) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iDRMState->Value();
     aDRMState.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::LastChangePropertyChanged()

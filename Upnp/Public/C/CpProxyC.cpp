@@ -76,6 +76,20 @@ void CpProxySetPropertyInitialEvent(THandle aHandle, ZappCallback aCallback, voi
     proxyC->SetPropertyInitialEvent(functor);
 }
 
+void CpProxyPropertyReadLock(THandle aHandle)
+{
+    CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
+    ASSERT(proxyC != NULL);
+    proxyC->PropertyReadLock();
+}
+
+void CpProxyPropertyReadUnlock(THandle aHandle)
+{
+    CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
+    ASSERT(proxyC != NULL);
+    proxyC->PropertyReadUnlock();
+}
+
 void CpProxyAddProperty(THandle aHandle, ServiceProperty aProperty)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);

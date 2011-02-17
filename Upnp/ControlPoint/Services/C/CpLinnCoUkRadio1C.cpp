@@ -110,7 +110,6 @@ private:
     void IdsMaxPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionPlay;
     Action* iActionPause;
     Action* iActionStop;
@@ -488,7 +487,6 @@ void SyncIdsMaxLinnCoUkRadio1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkRadio1C::CpProxyLinnCoUkRadio1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Radio", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
     TChar** allowedValues;
@@ -1125,58 +1123,58 @@ void CpProxyLinnCoUkRadio1C::SetPropertyIdsMaxChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkRadio1C::PropertyChannelUri(Brhz& aChannelUri) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aChannelUri.Set(iChannelUri->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkRadio1C::PropertyChannelMetadata(Brhz& aChannelMetadata) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aChannelMetadata.Set(iChannelMetadata->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkRadio1C::PropertyTransportState(Brhz& aTransportState) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aTransportState.Set(iTransportState->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkRadio1C::PropertyProtocolInfo(Brhz& aProtocolInfo) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProtocolInfo.Set(iProtocolInfo->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkRadio1C::PropertyId(TUint& aId) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aId = iId->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkRadio1C::PropertyIdArray(Brh& aIdArray) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aIdArray.Set(iIdArray->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkRadio1C::PropertyIdsMax(TUint& aIdsMax) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aIdsMax = iIdsMax->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkRadio1C::ChannelUriPropertyChanged()

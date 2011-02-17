@@ -124,26 +124,26 @@ void CpProxyLinnCoUkTime1Cpp::SetPropertySecondsChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkTime1Cpp::PropertyTrackCount(uint32_t& aTrackCount) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackCount = iTrackCount->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkTime1Cpp::PropertyDuration(uint32_t& aDuration) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDuration = iDuration->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkTime1Cpp::PropertySeconds(uint32_t& aSeconds) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSeconds = iSeconds->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkTime1Cpp::TrackCountPropertyChanged()

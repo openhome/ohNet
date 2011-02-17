@@ -60,6 +60,10 @@ namespace Zapp.ControlPoint
         [DllImport("ZappUpnp")]
         static extern void CpProxySetPropertyInitialEvent(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
+        static extern void CpProxyPropertyReadLock(IntPtr aHandle);
+        [DllImport("ZappUpnp")]
+        static extern void CpProxyPropertyReadUnlock(IntPtr aHandle);
+        [DllImport("ZappUpnp")]
         static extern void CpProxyAddProperty(IntPtr aHandle, IntPtr aProperty);
 
         public delegate void CallbackPropertyChanged();
@@ -113,6 +117,16 @@ namespace Zapp.ControlPoint
             iGchProxy = GCHandle.Alloc(this);
         }
 
+        protected void PropertyReadLock()
+        {
+            CpProxyPropertyReadLock(iHandle);
+        }
+
+        protected void PropertyReadUnlock()
+        {
+            CpProxyPropertyReadUnlock(iHandle);
+        }
+        
         protected void AddProperty(Property aProperty)
         {
             CpProxyAddProperty(iHandle, aProperty.Handle());

@@ -168,7 +168,6 @@ private:
     void LastChangePropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionListPresets;
     Action* iActionSelectPreset;
     Action* iActionGetBrightness;
@@ -949,7 +948,6 @@ void SyncSetLoudnessUpnpOrgRenderingControl1C::CompleteRequest(IAsync& aAsync)
 CpProxyUpnpOrgRenderingControl1C::CpProxyUpnpOrgRenderingControl1C(CpDeviceC aDevice)
     : CpProxyC("schemas-upnp-org", "RenderingControl", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
     TChar** allowedValues;
@@ -2343,10 +2341,10 @@ void CpProxyUpnpOrgRenderingControl1C::SetPropertyLastChangeChanged(Functor& aFu
 
 void CpProxyUpnpOrgRenderingControl1C::PropertyLastChange(Brhz& aLastChange) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aLastChange.Set(iLastChange->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgRenderingControl1C::LastChangePropertyChanged()

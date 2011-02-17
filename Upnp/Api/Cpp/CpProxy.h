@@ -68,6 +68,15 @@ protected:
     DllExport virtual ~CpProxy();
 
     /**
+     * Lock properties for reading.  Intended for use before reading a property's value.
+     */
+    DllExport void PropertyReadLock() const;
+    /**
+     * Signal that reading of a property's value has completed.
+     * Must be called once for each call to PropertyReadLock().
+     */
+    DllExport void PropertyReadUnlock() const;
+    /**
      * Add a property (aka state variable) to the service
      * Passes ownership of aProperty
      * Properties should ideally be added on construction of a Service.  Properties
@@ -96,13 +105,14 @@ protected:
     IInvocable& iInvocable;
     Mutex* iLock;
     SubscriptionStatus iCpSubscriptionStatus;
-    Mutex* iPropertyLock;
 private:
     Functor iPropertyChanged;
     TBool iInitialEventDelivered;
     Functor iInitialEvent;
     typedef std::map<Brn,Property*,BufferCmp> PropertyMap;
     PropertyMap iProperties;
+    mutable Mutex* iPropertyReadLock;
+    Mutex* iPropertyWriteLock;
 
     friend class CpProxyC;
 };

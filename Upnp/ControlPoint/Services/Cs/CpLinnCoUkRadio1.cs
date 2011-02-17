@@ -1363,7 +1363,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aChannelUri">Will be set to the value of the property</param>
         public String PropertyChannelUri()
         {
-            return iChannelUri.Value();
+            PropertyReadLock();
+            String val = iChannelUri.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1375,7 +1378,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aChannelMetadata">Will be set to the value of the property</param>
         public String PropertyChannelMetadata()
         {
-            return iChannelMetadata.Value();
+            PropertyReadLock();
+            String val = iChannelMetadata.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1387,7 +1393,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransportState">Will be set to the value of the property</param>
         public String PropertyTransportState()
         {
-            return iTransportState.Value();
+            PropertyReadLock();
+            String val = iTransportState.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1399,7 +1408,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProtocolInfo">Will be set to the value of the property</param>
         public String PropertyProtocolInfo()
         {
-            return iProtocolInfo.Value();
+            PropertyReadLock();
+            String val = iProtocolInfo.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1411,7 +1423,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aId">Will be set to the value of the property</param>
         public uint PropertyId()
         {
-            return iId.Value();
+            PropertyReadLock();
+            uint val = iId.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1423,7 +1438,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIdArray">Will be set to the value of the property</param>
         public byte[] PropertyIdArray()
         {
-            return iIdArray.Value();
+            PropertyReadLock();
+            byte[] val = iIdArray.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1435,7 +1453,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aIdsMax">Will be set to the value of the property</param>
         public uint PropertyIdsMax()
         {
-            return iIdsMax.Value();
+            PropertyReadLock();
+            uint val = iIdsMax.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

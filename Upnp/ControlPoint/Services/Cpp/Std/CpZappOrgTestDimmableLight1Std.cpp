@@ -144,10 +144,10 @@ void CpProxyZappOrgTestDimmableLight1Cpp::SetPropertyA_ARG_LevelChanged(Functor&
 
 void CpProxyZappOrgTestDimmableLight1Cpp::PropertyA_ARG_Level(uint32_t& aA_ARG_Level) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aA_ARG_Level = iA_ARG_Level->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyZappOrgTestDimmableLight1Cpp::A_ARG_LevelPropertyChanged()

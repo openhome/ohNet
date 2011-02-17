@@ -1029,7 +1029,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSupportedProtocols">Will be set to the value of the property</param>
         public String PropertySupportedProtocols()
         {
-            return iSupportedProtocols.Value();
+            PropertyReadLock();
+            String val = iSupportedProtocols.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1041,7 +1044,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackDuration">Will be set to the value of the property</param>
         public uint PropertyTrackDuration()
         {
-            return iTrackDuration.Value();
+            PropertyReadLock();
+            uint val = iTrackDuration.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1053,7 +1059,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackBitRate">Will be set to the value of the property</param>
         public uint PropertyTrackBitRate()
         {
-            return iTrackBitRate.Value();
+            PropertyReadLock();
+            uint val = iTrackBitRate.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1065,7 +1074,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackLossless">Will be set to the value of the property</param>
         public bool PropertyTrackLossless()
         {
-            return iTrackLossless.Value();
+            PropertyReadLock();
+            bool val = iTrackLossless.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1077,7 +1089,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackBitDepth">Will be set to the value of the property</param>
         public uint PropertyTrackBitDepth()
         {
-            return iTrackBitDepth.Value();
+            PropertyReadLock();
+            uint val = iTrackBitDepth.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1089,7 +1104,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackSampleRate">Will be set to the value of the property</param>
         public uint PropertyTrackSampleRate()
         {
-            return iTrackSampleRate.Value();
+            PropertyReadLock();
+            uint val = iTrackSampleRate.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1101,7 +1119,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackCodecName">Will be set to the value of the property</param>
         public String PropertyTrackCodecName()
         {
-            return iTrackCodecName.Value();
+            PropertyReadLock();
+            String val = iTrackCodecName.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1113,7 +1134,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackId">Will be set to the value of the property</param>
         public uint PropertyTrackId()
         {
-            return iTrackId.Value();
+            PropertyReadLock();
+            uint val = iTrackId.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1125,7 +1149,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransportState">Will be set to the value of the property</param>
         public String PropertyTransportState()
         {
-            return iTransportState.Value();
+            PropertyReadLock();
+            String val = iTransportState.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

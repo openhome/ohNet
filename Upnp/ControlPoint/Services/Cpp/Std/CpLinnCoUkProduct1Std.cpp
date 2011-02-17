@@ -268,19 +268,19 @@ void CpProxyLinnCoUkProduct1Cpp::SetPropertyStandbyChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkProduct1Cpp::PropertyRoom(std::string& aRoom) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iRoom->Value();
     aRoom.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct1Cpp::PropertyStandby(bool& aStandby) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStandby = iStandby->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct1Cpp::RoomPropertyChanged()

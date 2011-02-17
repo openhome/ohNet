@@ -47,7 +47,6 @@ private:
     void StandbyPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionRoom;
     Action* iActionSetRoom;
     Action* iActionStandby;
@@ -145,7 +144,6 @@ void SyncSetStandbyLinnCoUkProduct1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkProduct1C::CpProxyLinnCoUkProduct1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Product", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -311,18 +309,18 @@ void CpProxyLinnCoUkProduct1C::SetPropertyStandbyChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkProduct1C::PropertyRoom(Brhz& aRoom) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aRoom.Set(iRoom->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct1C::PropertyStandby(TBool& aStandby) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aStandby = iStandby->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct1C::RoomPropertyChanged()

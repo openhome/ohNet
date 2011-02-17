@@ -661,34 +661,34 @@ void CpProxyLinnCoUkProxyManager1::SetPropertyDiscPlayerComPortChanged(Functor& 
 
 void CpProxyLinnCoUkProxyManager1::PropertyKontrolProductConnected(Brhz& aKontrolProductConnected) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aKontrolProductConnected.Set(iKontrolProductConnected->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProxyManager1::PropertyKontrolProductComPort(TUint& aKontrolProductComPort) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aKontrolProductComPort = iKontrolProductComPort->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProxyManager1::PropertyDiscPlayerConnected(Brhz& aDiscPlayerConnected) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDiscPlayerConnected.Set(iDiscPlayerConnected->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProxyManager1::PropertyDiscPlayerComPort(TUint& aDiscPlayerComPort) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDiscPlayerComPort = iDiscPlayerComPort->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProxyManager1::KontrolProductConnectedPropertyChanged()

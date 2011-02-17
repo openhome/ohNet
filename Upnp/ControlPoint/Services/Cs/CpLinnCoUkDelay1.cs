@@ -718,7 +718,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aPresetXml">Will be set to the value of the property</param>
         public String PropertyPresetXml()
         {
-            return iPresetXml.Value();
+            PropertyReadLock();
+            String val = iPresetXml.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -730,7 +733,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aPresetIndex">Will be set to the value of the property</param>
         public uint PropertyPresetIndex()
         {
-            return iPresetIndex.Value();
+            PropertyReadLock();
+            uint val = iPresetIndex.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

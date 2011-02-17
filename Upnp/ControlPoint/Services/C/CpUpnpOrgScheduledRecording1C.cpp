@@ -100,7 +100,6 @@ private:
     void LastChangePropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionGetSortCapabilities;
     Action* iActionGetPropertyList;
     Action* iActionGetAllowedValues;
@@ -534,7 +533,6 @@ void SyncGetRecordTaskConflictsUpnpOrgScheduledRecording1C::CompleteRequest(IAsy
 CpProxyUpnpOrgScheduledRecording1C::CpProxyUpnpOrgScheduledRecording1C(CpDeviceC aDevice)
     : CpProxyC("schemas-upnp-org", "ScheduledRecording", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
     TChar** allowedValues;
@@ -1297,10 +1295,10 @@ void CpProxyUpnpOrgScheduledRecording1C::SetPropertyLastChangeChanged(Functor& a
 
 void CpProxyUpnpOrgScheduledRecording1C::PropertyLastChange(Brhz& aLastChange) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aLastChange.Set(iLastChange->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgScheduledRecording1C::LastChangePropertyChanged()

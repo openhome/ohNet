@@ -160,7 +160,6 @@ private:
     void ProductAnySourceTypePropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionType;
     Action* iActionModel;
     Action* iActionName;
@@ -724,7 +723,6 @@ void SyncSetSourceVisibleLinnCoUkProduct3C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkProduct3C::CpProxyLinnCoUkProduct3C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Product", 3, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -1690,106 +1688,106 @@ void CpProxyLinnCoUkProduct3C::SetPropertyProductAnySourceTypeChanged(Functor& a
 
 void CpProxyLinnCoUkProduct3C::PropertyProductType(Brhz& aProductType) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductType.Set(iProductType->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3C::PropertyProductModel(Brhz& aProductModel) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductModel.Set(iProductModel->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3C::PropertyProductName(Brhz& aProductName) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductName.Set(iProductName->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3C::PropertyProductRoom(Brhz& aProductRoom) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductRoom.Set(iProductRoom->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3C::PropertyProductStandby(TBool& aProductStandby) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductStandby = iProductStandby->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3C::PropertyProductSourceIndex(TUint& aProductSourceIndex) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductSourceIndex = iProductSourceIndex->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3C::PropertyProductSourceCount(TUint& aProductSourceCount) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductSourceCount = iProductSourceCount->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3C::PropertyProductSourceXml(Brhz& aProductSourceXml) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductSourceXml.Set(iProductSourceXml->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3C::PropertyStartupSourceIndex(TUint& aStartupSourceIndex) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aStartupSourceIndex = iStartupSourceIndex->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3C::PropertyStartupSourceEnabled(TBool& aStartupSourceEnabled) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aStartupSourceEnabled = iStartupSourceEnabled->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3C::PropertyProductAnySourceName(TUint& aProductAnySourceName) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductAnySourceName = iProductAnySourceName->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3C::PropertyProductAnySourceVisible(TUint& aProductAnySourceVisible) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductAnySourceVisible = iProductAnySourceVisible->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3C::PropertyProductAnySourceType(TUint& aProductAnySourceType) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductAnySourceType = iProductAnySourceType->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct3C::ProductTypePropertyChanged()

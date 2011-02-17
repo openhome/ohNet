@@ -77,7 +77,6 @@ private:
     void MetatextPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionCounters;
     Action* iActionTrack;
     Action* iActionDetails;
@@ -215,7 +214,6 @@ void SyncMetatextLinnCoUkInfo1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkInfo1C::CpProxyLinnCoUkInfo1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Info", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -517,98 +515,98 @@ void CpProxyLinnCoUkInfo1C::SetPropertyMetatextChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkInfo1C::PropertyTrackCount(TUint& aTrackCount) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aTrackCount = iTrackCount->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkInfo1C::PropertyDetailsCount(TUint& aDetailsCount) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aDetailsCount = iDetailsCount->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkInfo1C::PropertyMetatextCount(TUint& aMetatextCount) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aMetatextCount = iMetatextCount->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkInfo1C::PropertyUri(Brhz& aUri) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aUri.Set(iUri->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkInfo1C::PropertyMetadata(Brhz& aMetadata) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aMetadata.Set(iMetadata->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkInfo1C::PropertyDuration(TUint& aDuration) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aDuration = iDuration->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkInfo1C::PropertyBitRate(TUint& aBitRate) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aBitRate = iBitRate->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkInfo1C::PropertyBitDepth(TUint& aBitDepth) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aBitDepth = iBitDepth->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkInfo1C::PropertySampleRate(TUint& aSampleRate) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aSampleRate = iSampleRate->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkInfo1C::PropertyLossless(TBool& aLossless) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aLossless = iLossless->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkInfo1C::PropertyCodecName(Brhz& aCodecName) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aCodecName.Set(iCodecName->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkInfo1C::PropertyMetatext(Brhz& aMetatext) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aMetatext.Set(iMetatext->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkInfo1C::TrackCountPropertyChanged()

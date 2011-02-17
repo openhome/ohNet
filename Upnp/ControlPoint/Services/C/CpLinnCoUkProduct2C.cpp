@@ -85,7 +85,6 @@ private:
     void ProductSourceIndexPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionType;
     Action* iActionModel;
     Action* iActionName;
@@ -367,7 +366,6 @@ void SyncSourceTypeLinnCoUkProduct2C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkProduct2C::CpProxyLinnCoUkProduct2C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Product", 2, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -826,34 +824,34 @@ void CpProxyLinnCoUkProduct2C::SetPropertyProductSourceIndexChanged(Functor& aFu
 
 void CpProxyLinnCoUkProduct2C::PropertyProductName(Brhz& aProductName) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductName.Set(iProductName->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct2C::PropertyProductRoom(Brhz& aProductRoom) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductRoom.Set(iProductRoom->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct2C::PropertyProductStandby(TBool& aProductStandby) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductStandby = iProductStandby->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct2C::PropertyProductSourceIndex(TUint& aProductSourceIndex) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aProductSourceIndex = iProductSourceIndex->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct2C::ProductNamePropertyChanged()

@@ -116,7 +116,6 @@ private:
     void VarBinPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionIncrement;
     Action* iActionDecrement;
     Action* iActionToggle;
@@ -551,7 +550,6 @@ void SyncShutdownZappOrgTestBasic1C::CompleteRequest(IAsync& aAsync)
 CpProxyZappOrgTestBasic1C::CpProxyZappOrgTestBasic1C(CpDeviceC aDevice)
     : CpProxyC("zapp-org", "TestBasic", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -1267,42 +1265,42 @@ void CpProxyZappOrgTestBasic1C::SetPropertyVarBinChanged(Functor& aFunctor)
 
 void CpProxyZappOrgTestBasic1C::PropertyVarUint(TUint& aVarUint) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aVarUint = iVarUint->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyZappOrgTestBasic1C::PropertyVarInt(TInt& aVarInt) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aVarInt = iVarInt->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyZappOrgTestBasic1C::PropertyVarBool(TBool& aVarBool) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aVarBool = iVarBool->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyZappOrgTestBasic1C::PropertyVarStr(Brhz& aVarStr) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aVarStr.Set(iVarStr->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyZappOrgTestBasic1C::PropertyVarBin(Brh& aVarBin) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aVarBin.Set(iVarBin->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyZappOrgTestBasic1C::VarUintPropertyChanged()

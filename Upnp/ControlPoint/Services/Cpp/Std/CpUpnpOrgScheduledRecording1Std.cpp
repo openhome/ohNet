@@ -1282,11 +1282,11 @@ void CpProxyUpnpOrgScheduledRecording1Cpp::SetPropertyLastChangeChanged(Functor&
 
 void CpProxyUpnpOrgScheduledRecording1Cpp::PropertyLastChange(std::string& aLastChange) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iLastChange->Value();
     aLastChange.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgScheduledRecording1Cpp::LastChangePropertyChanged()

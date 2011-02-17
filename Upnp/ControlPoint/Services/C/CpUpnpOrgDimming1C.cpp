@@ -124,7 +124,6 @@ private:
     void RampPausedPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionSetLoadLevelTarget;
     Action* iActionGetLoadLevelTarget;
     Action* iActionGetLoadLevelStatus;
@@ -599,7 +598,6 @@ void SyncGetRampTimeUpnpOrgDimming1C::CompleteRequest(IAsync& aAsync)
 CpProxyUpnpOrgDimming1C::CpProxyUpnpOrgDimming1C(CpDeviceC aDevice)
     : CpProxyC("schemas-upnp-org", "Dimming", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
     TChar** allowedValues;
@@ -1337,42 +1335,42 @@ void CpProxyUpnpOrgDimming1C::SetPropertyRampPausedChanged(Functor& aFunctor)
 
 void CpProxyUpnpOrgDimming1C::PropertyLoadLevelStatus(TUint& aLoadLevelStatus) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aLoadLevelStatus = iLoadLevelStatus->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgDimming1C::PropertyStepDelta(TUint& aStepDelta) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aStepDelta = iStepDelta->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgDimming1C::PropertyRampRate(TUint& aRampRate) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aRampRate = iRampRate->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgDimming1C::PropertyIsRamping(TBool& aIsRamping) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aIsRamping = iIsRamping->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgDimming1C::PropertyRampPaused(TBool& aRampPaused) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aRampPaused = iRampPaused->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgDimming1C::LoadLevelStatusPropertyChanged()

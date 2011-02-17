@@ -143,7 +143,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSeconds">Will be set to the value of the property</param>
         public uint PropertySeconds()
         {
-            return iSeconds.Value();
+            PropertyReadLock();
+            uint val = iSeconds.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

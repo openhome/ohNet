@@ -676,36 +676,36 @@ void CpProxyLinnCoUkProxyManager1Cpp::SetPropertyDiscPlayerComPortChanged(Functo
 
 void CpProxyLinnCoUkProxyManager1Cpp::PropertyKontrolProductConnected(std::string& aKontrolProductConnected) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iKontrolProductConnected->Value();
     aKontrolProductConnected.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::PropertyKontrolProductComPort(uint32_t& aKontrolProductComPort) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aKontrolProductComPort = iKontrolProductComPort->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::PropertyDiscPlayerConnected(std::string& aDiscPlayerConnected) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iDiscPlayerConnected->Value();
     aDiscPlayerConnected.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::PropertyDiscPlayerComPort(uint32_t& aDiscPlayerComPort) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDiscPlayerComPort = iDiscPlayerComPort->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::KontrolProductConnectedPropertyChanged()

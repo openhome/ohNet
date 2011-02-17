@@ -80,7 +80,6 @@ private:
     void aStateVariablePropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionEcho;
     Action* iActionElfFile;
     Action* iActionElfFingerprint;
@@ -379,7 +378,6 @@ void SyncRebootLinnCoUkDiagnostics1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkDiagnostics1C::CpProxyLinnCoUkDiagnostics1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Diagnostics", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -842,10 +840,10 @@ void CpProxyLinnCoUkDiagnostics1C::SetPropertyaStateVariableChanged(Functor& aFu
 
 void CpProxyLinnCoUkDiagnostics1C::PropertyaStateVariable(TUint& aaStateVariable) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aaStateVariable = iaStateVariable->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkDiagnostics1C::aStateVariablePropertyChanged()

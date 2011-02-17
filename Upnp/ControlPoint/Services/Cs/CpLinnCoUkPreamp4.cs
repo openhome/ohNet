@@ -1132,7 +1132,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVolume">Will be set to the value of the property</param>
         public uint PropertyVolume()
         {
-            return iVolume.Value();
+            PropertyReadLock();
+            uint val = iVolume.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1144,7 +1147,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aMute">Will be set to the value of the property</param>
         public bool PropertyMute()
         {
-            return iMute.Value();
+            PropertyReadLock();
+            bool val = iMute.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1156,7 +1162,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aBalance">Will be set to the value of the property</param>
         public int PropertyBalance()
         {
-            return iBalance.Value();
+            PropertyReadLock();
+            int val = iBalance.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1168,7 +1177,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVolumeLimit">Will be set to the value of the property</param>
         public uint PropertyVolumeLimit()
         {
-            return iVolumeLimit.Value();
+            PropertyReadLock();
+            uint val = iVolumeLimit.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1180,7 +1192,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStartupVolume">Will be set to the value of the property</param>
         public uint PropertyStartupVolume()
         {
-            return iStartupVolume.Value();
+            PropertyReadLock();
+            uint val = iStartupVolume.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1192,7 +1207,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStartupVolumeEnabled">Will be set to the value of the property</param>
         public bool PropertyStartupVolumeEnabled()
         {
-            return iStartupVolumeEnabled.Value();
+            PropertyReadLock();
+            bool val = iStartupVolumeEnabled.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

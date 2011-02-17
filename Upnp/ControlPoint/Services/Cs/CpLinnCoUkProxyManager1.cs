@@ -879,7 +879,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aKontrolProductConnected">Will be set to the value of the property</param>
         public String PropertyKontrolProductConnected()
         {
-            return iKontrolProductConnected.Value();
+            PropertyReadLock();
+            String val = iKontrolProductConnected.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -891,7 +894,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aKontrolProductComPort">Will be set to the value of the property</param>
         public uint PropertyKontrolProductComPort()
         {
-            return iKontrolProductComPort.Value();
+            PropertyReadLock();
+            uint val = iKontrolProductComPort.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -903,7 +909,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDiscPlayerConnected">Will be set to the value of the property</param>
         public String PropertyDiscPlayerConnected()
         {
-            return iDiscPlayerConnected.Value();
+            PropertyReadLock();
+            String val = iDiscPlayerConnected.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -915,7 +924,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDiscPlayerComPort">Will be set to the value of the property</param>
         public uint PropertyDiscPlayerComPort()
         {
-            return iDiscPlayerComPort.Value();
+            PropertyReadLock();
+            uint val = iDiscPlayerComPort.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

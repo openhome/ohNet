@@ -81,7 +81,6 @@ private:
     void DigitalAudioOutputRawPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionAmplifierEnabled;
     Action* iActionSetAmplifierEnabled;
     Action* iActionAmplifierAttenuation;
@@ -338,7 +337,6 @@ void SyncLocateLinnCoUkComponent1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkComponent1C::CpProxyLinnCoUkComponent1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Component", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
     TChar** allowedValues;
@@ -767,34 +765,34 @@ void CpProxyLinnCoUkComponent1C::SetPropertyDigitalAudioOutputRawChanged(Functor
 
 void CpProxyLinnCoUkComponent1C::PropertyAmplifierEnabled(TBool& aAmplifierEnabled) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aAmplifierEnabled = iAmplifierEnabled->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkComponent1C::PropertyAmplifierAttenuation(Brhz& aAmplifierAttenuation) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aAmplifierAttenuation.Set(iAmplifierAttenuation->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkComponent1C::PropertyVolumeControlEnabled(TBool& aVolumeControlEnabled) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aVolumeControlEnabled = iVolumeControlEnabled->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkComponent1C::PropertyDigitalAudioOutputRaw(TBool& aDigitalAudioOutputRaw) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aDigitalAudioOutputRaw = iDigitalAudioOutputRaw->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkComponent1C::AmplifierEnabledPropertyChanged()

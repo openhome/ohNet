@@ -275,7 +275,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStatus">Will be set to the value of the property</param>
         public bool PropertyStatus()
         {
-            return iStatus.Value();
+            PropertyReadLock();
+            bool val = iStatus.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

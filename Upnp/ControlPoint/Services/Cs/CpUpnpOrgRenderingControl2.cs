@@ -2835,7 +2835,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLastChange">Will be set to the value of the property</param>
         public String PropertyLastChange()
         {
-            return iLastChange.Value();
+            PropertyReadLock();
+            String val = iLastChange.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

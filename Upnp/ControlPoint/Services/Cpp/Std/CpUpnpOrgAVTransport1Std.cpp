@@ -1246,11 +1246,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::SetPropertyLastChangeChanged(Functor& aFunct
 
 void CpProxyUpnpOrgAVTransport1Cpp::PropertyLastChange(std::string& aLastChange) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iLastChange->Value();
     aLastChange.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgAVTransport1Cpp::LastChangePropertyChanged()

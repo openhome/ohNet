@@ -625,7 +625,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSourceProtocolInfo">Will be set to the value of the property</param>
         public String PropertySourceProtocolInfo()
         {
-            return iSourceProtocolInfo.Value();
+            PropertyReadLock();
+            String val = iSourceProtocolInfo.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -637,7 +640,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSinkProtocolInfo">Will be set to the value of the property</param>
         public String PropertySinkProtocolInfo()
         {
-            return iSinkProtocolInfo.Value();
+            PropertyReadLock();
+            String val = iSinkProtocolInfo.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -649,7 +655,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCurrentConnectionIDs">Will be set to the value of the property</param>
         public String PropertyCurrentConnectionIDs()
         {
-            return iCurrentConnectionIDs.Value();
+            PropertyReadLock();
+            String val = iCurrentConnectionIDs.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

@@ -1489,7 +1489,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarUint">Will be set to the value of the property</param>
         public uint PropertyVarUint()
         {
-            return iVarUint.Value();
+            PropertyReadLock();
+            uint val = iVarUint.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1501,7 +1504,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarInt">Will be set to the value of the property</param>
         public int PropertyVarInt()
         {
-            return iVarInt.Value();
+            PropertyReadLock();
+            int val = iVarInt.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1513,7 +1519,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarBool">Will be set to the value of the property</param>
         public bool PropertyVarBool()
         {
-            return iVarBool.Value();
+            PropertyReadLock();
+            bool val = iVarBool.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1525,7 +1534,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarStr">Will be set to the value of the property</param>
         public String PropertyVarStr()
         {
-            return iVarStr.Value();
+            PropertyReadLock();
+            String val = iVarStr.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -1537,7 +1549,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarBin">Will be set to the value of the property</param>
         public byte[] PropertyVarBin()
         {
-            return iVarBin.Value();
+            PropertyReadLock();
+            byte[] val = iVarBin.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

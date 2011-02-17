@@ -776,35 +776,35 @@ void CpProxyLinnCoUkPlaylist1Cpp::SetPropertyTracksMaxChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkPlaylist1Cpp::PropertyIdArray(std::string& aIdArray) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iIdArray->Value();
     aIdArray.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::PropertyRepeat(bool& aRepeat) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aRepeat = iRepeat->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::PropertyShuffle(bool& aShuffle) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aShuffle = iShuffle->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::PropertyTracksMax(uint32_t& aTracksMax) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTracksMax = iTracksMax->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::IdArrayPropertyChanged()

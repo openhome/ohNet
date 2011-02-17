@@ -43,7 +43,6 @@ private:
     void ParameterXmlPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionConfigurationXml;
     Action* iActionParameterXml;
     Action* iActionSetParameter;
@@ -120,7 +119,6 @@ void SyncSetParameterLinnCoUkConfiguration1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkConfiguration1C::CpProxyLinnCoUkConfiguration1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Configuration", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 
@@ -260,18 +258,18 @@ void CpProxyLinnCoUkConfiguration1C::SetPropertyParameterXmlChanged(Functor& aFu
 
 void CpProxyLinnCoUkConfiguration1C::PropertyConfigurationXml(Brhz& aConfigurationXml) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aConfigurationXml.Set(iConfigurationXml->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkConfiguration1C::PropertyParameterXml(Brhz& aParameterXml) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aParameterXml.Set(iParameterXml->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkConfiguration1C::ConfigurationXmlPropertyChanged()

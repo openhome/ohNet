@@ -901,7 +901,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAmplifierEnabled">Will be set to the value of the property</param>
         public bool PropertyAmplifierEnabled()
         {
-            return iAmplifierEnabled.Value();
+            PropertyReadLock();
+            bool val = iAmplifierEnabled.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -913,7 +916,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAmplifierAttenuation">Will be set to the value of the property</param>
         public String PropertyAmplifierAttenuation()
         {
-            return iAmplifierAttenuation.Value();
+            PropertyReadLock();
+            String val = iAmplifierAttenuation.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -925,7 +931,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVolumeControlEnabled">Will be set to the value of the property</param>
         public bool PropertyVolumeControlEnabled()
         {
-            return iVolumeControlEnabled.Value();
+            PropertyReadLock();
+            bool val = iVolumeControlEnabled.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -937,7 +946,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDigitalAudioOutputRaw">Will be set to the value of the property</param>
         public bool PropertyDigitalAudioOutputRaw()
         {
-            return iDigitalAudioOutputRaw.Value();
+            PropertyReadLock();
+            bool val = iDigitalAudioOutputRaw.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

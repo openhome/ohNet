@@ -20,6 +20,8 @@ public:
     DllExport void SetPropertyInitialEvent(Functor& aFunctor) { iProxy->SetPropertyInitialEvent(aFunctor); }
     DllExport CpiService* Service() const { return iProxy->iService; }
     DllExport void AddProperty(Property* aProperty) { iProxy->AddProperty(aProperty); }
+    DllExport void PropertyReadLock() const { iProxy->PropertyReadLock(); }
+    DllExport void PropertyReadUnlock() const { iProxy->PropertyReadUnlock(); }
 protected:
     DllExport CpProxyC(CpiDevice& aDevice);
     DllExport void DestroyService() { iProxy->DestroyService(); }

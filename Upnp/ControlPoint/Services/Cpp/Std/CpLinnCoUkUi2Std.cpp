@@ -1452,94 +1452,94 @@ void CpProxyLinnCoUkUi2Cpp::SetPropertyDisplayPixelsChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplayBrightness(uint32_t& aDisplayBrightness) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDisplayBrightness = iDisplayBrightness->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplayBrightnessAuto(bool& aDisplayBrightnessAuto) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDisplayBrightnessAuto = iDisplayBrightnessAuto->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyInfraredCommands(std::string& aInfraredCommands) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iInfraredCommands->Value();
     aInfraredCommands.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyInfraredTerminalCommands(std::string& aInfraredTerminalCommands) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iInfraredTerminalCommands->Value();
     aInfraredTerminalCommands.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplayUpsideDown(bool& aDisplayUpsideDown) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDisplayUpsideDown = iDisplayUpsideDown->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplayScrollText(bool& aDisplayScrollText) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDisplayScrollText = iDisplayScrollText->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplaySleep(bool& aDisplaySleep) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDisplaySleep = iDisplaySleep->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplayLedOff(bool& aDisplayLedOff) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDisplayLedOff = iDisplayLedOff->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyTerminalInputCode(uint32_t& aTerminalInputCode) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTerminalInputCode = iTerminalInputCode->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyTerminalInputName(std::string& aTerminalInputName) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iTerminalInputName->Value();
     aTerminalInputName.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplayPixels(std::string& aDisplayPixels) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iDisplayPixels->Value();
     aDisplayPixels.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkUi2Cpp::DisplayBrightnessPropertyChanged()

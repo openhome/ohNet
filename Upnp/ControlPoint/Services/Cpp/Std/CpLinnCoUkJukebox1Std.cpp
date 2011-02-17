@@ -512,28 +512,28 @@ void CpProxyLinnCoUkJukebox1Cpp::SetPropertyAlbumArtFileNameChanged(Functor& aFu
 
 void CpProxyLinnCoUkJukebox1Cpp::PropertyCurrentPreset(uint32_t& aCurrentPreset) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aCurrentPreset = iCurrentPreset->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::PropertyPresetPrefix(std::string& aPresetPrefix) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iPresetPrefix->Value();
     aPresetPrefix.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::PropertyAlbumArtFileName(std::string& aAlbumArtFileName) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iAlbumArtFileName->Value();
     aAlbumArtFileName.assign((const char*)val.Ptr(), val.Bytes());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::CurrentPresetPropertyChanged()

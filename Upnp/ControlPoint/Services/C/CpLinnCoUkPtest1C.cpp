@@ -37,7 +37,6 @@ public:
 private:
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionTestComPort;
     Action* iActionLedsOn;
     Action* iActionLedsOff;
@@ -108,7 +107,6 @@ void SyncLedsOffLinnCoUkPtest1C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkPtest1C::CpProxyLinnCoUkPtest1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Ptest", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 

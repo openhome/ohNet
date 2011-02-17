@@ -37,7 +37,6 @@ public:
 private:
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionSetDebugLevel;
     Action* iActionDebugLevel;
     Action* iActionMemWrite;
@@ -108,7 +107,6 @@ void SyncMemWriteLinnCoUkDebug2C::CompleteRequest(IAsync& aAsync)
 CpProxyLinnCoUkDebug2C::CpProxyLinnCoUkDebug2C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "Debug", 2, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
 

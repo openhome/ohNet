@@ -200,10 +200,10 @@ void CpProxyUpnpOrgSwitchPower1Cpp::SetPropertyStatusChanged(Functor& aFunctor)
 
 void CpProxyUpnpOrgSwitchPower1Cpp::PropertyStatus(bool& aStatus) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStatus = iStatus->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgSwitchPower1Cpp::StatusPropertyChanged()

@@ -422,26 +422,26 @@ void CpProxyUpnpOrgConnectionManager1::SetPropertyCurrentConnectionIDsChanged(Fu
 
 void CpProxyUpnpOrgConnectionManager1::PropertySourceProtocolInfo(Brhz& aSourceProtocolInfo) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSourceProtocolInfo.Set(iSourceProtocolInfo->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgConnectionManager1::PropertySinkProtocolInfo(Brhz& aSinkProtocolInfo) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSinkProtocolInfo.Set(iSinkProtocolInfo->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgConnectionManager1::PropertyCurrentConnectionIDs(Brhz& aCurrentConnectionIDs) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aCurrentConnectionIDs.Set(iCurrentConnectionIDs->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgConnectionManager1::SourceProtocolInfoPropertyChanged()

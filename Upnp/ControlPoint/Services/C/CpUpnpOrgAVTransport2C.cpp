@@ -115,7 +115,6 @@ private:
     void DRMStatePropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionSetAVTransportURI;
     Action* iActionSetNextAVTransportURI;
     Action* iActionGetMediaInfo;
@@ -644,7 +643,6 @@ void SyncSetStateVariablesUpnpOrgAVTransport2C::CompleteRequest(IAsync& aAsync)
 CpProxyUpnpOrgAVTransport2C::CpProxyUpnpOrgAVTransport2C(CpDeviceC aDevice)
     : CpProxyC("schemas-upnp-org", "AVTransport", 2, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
     TChar** allowedValues;
@@ -1620,18 +1618,18 @@ void CpProxyUpnpOrgAVTransport2C::SetPropertyDRMStateChanged(Functor& aFunctor)
 
 void CpProxyUpnpOrgAVTransport2C::PropertyLastChange(Brhz& aLastChange) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aLastChange.Set(iLastChange->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgAVTransport2C::PropertyDRMState(Brhz& aDRMState) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aDRMState.Set(iDRMState->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyUpnpOrgAVTransport2C::LastChangePropertyChanged()

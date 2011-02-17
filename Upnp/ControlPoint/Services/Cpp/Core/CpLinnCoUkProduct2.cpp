@@ -724,34 +724,34 @@ void CpProxyLinnCoUkProduct2::SetPropertyProductSourceIndexChanged(Functor& aFun
 
 void CpProxyLinnCoUkProduct2::PropertyProductName(Brhz& aProductName) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductName.Set(iProductName->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct2::PropertyProductRoom(Brhz& aProductRoom) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductRoom.Set(iProductRoom->Value());
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct2::PropertyProductStandby(TBool& aProductStandby) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductStandby = iProductStandby->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct2::PropertyProductSourceIndex(TUint& aProductSourceIndex) const
 {
-    iPropertyLock->Wait();
+    PropertyReadLock();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductSourceIndex = iProductSourceIndex->Value();
-    iPropertyLock->Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProduct2::ProductNamePropertyChanged()

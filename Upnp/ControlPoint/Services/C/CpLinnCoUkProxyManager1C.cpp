@@ -77,7 +77,6 @@ private:
     void DiscPlayerComPortPropertyChanged();
 private:
     Mutex iLock;
-    mutable Mutex iPropertyLock;
     Action* iActionKontrolProductConnected;
     Action* iActionSetKontrolProductConnected;
     Action* iActionKontrolProductComPort;
@@ -313,7 +312,6 @@ void SyncTestDiscPlayerConnectionLinnCoUkProxyManager1C::CompleteRequest(IAsync&
 CpProxyLinnCoUkProxyManager1C::CpProxyLinnCoUkProxyManager1C(CpDeviceC aDevice)
     : CpProxyC("linn-co-uk", "ProxyManager", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
-    , iPropertyLock("MPCP")
 {
     Zapp::Parameter* param;
     TChar** allowedValues;
@@ -753,34 +751,34 @@ void CpProxyLinnCoUkProxyManager1C::SetPropertyDiscPlayerComPortChanged(Functor&
 
 void CpProxyLinnCoUkProxyManager1C::PropertyKontrolProductConnected(Brhz& aKontrolProductConnected) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aKontrolProductConnected.Set(iKontrolProductConnected->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProxyManager1C::PropertyKontrolProductComPort(TUint& aKontrolProductComPort) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aKontrolProductComPort = iKontrolProductComPort->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProxyManager1C::PropertyDiscPlayerConnected(Brhz& aDiscPlayerConnected) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aDiscPlayerConnected.Set(iDiscPlayerConnected->Value());
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProxyManager1C::PropertyDiscPlayerComPort(TUint& aDiscPlayerComPort) const
 {
-    iPropertyLock.Wait();
+    PropertyReadLock();
     ASSERT(IsSubscribed());
     aDiscPlayerComPort = iDiscPlayerComPort->Value();
-    iPropertyLock.Signal();
+    PropertyReadUnlock();
 }
 
 void CpProxyLinnCoUkProxyManager1C::KontrolProductConnectedPropertyChanged()

@@ -205,7 +205,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aA_ARG_Level">Will be set to the value of the property</param>
         public uint PropertyA_ARG_Level()
         {
-            return iA_ARG_Level.Value();
+            PropertyReadLock();
+            uint val = iA_ARG_Level.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>

@@ -317,7 +317,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aConfigurationXml">Will be set to the value of the property</param>
         public String PropertyConfigurationXml()
         {
-            return iConfigurationXml.Value();
+            PropertyReadLock();
+            String val = iConfigurationXml.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
@@ -329,7 +332,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aParameterXml">Will be set to the value of the property</param>
         public String PropertyParameterXml()
         {
-            return iParameterXml.Value();
+            PropertyReadLock();
+            String val = iParameterXml.Value();
+            PropertyReadUnlock();
+            return val;
         }
 
         /// <summary>
