@@ -41,7 +41,7 @@ installpkgconfdir = $(prefix)/lib/pkgconfig
 mkdir = mkdir -p
 rmdir = rm -rf
 
-all: $(objdir)/WavSender.exe $(objdir)/Receiver.exe
+all: $(objdir)/WavSender.exe 
 
 $(objdir)/WavSender.exe :
 	mkdir -p $(objdir)
