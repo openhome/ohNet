@@ -62,9 +62,11 @@ public:
 public:
     static const TUint8 kMsgTypeJoin = 0;
     static const TUint8 kMsgTypeListen = 1;
-    static const TUint8 kMsgTypeAudio = 2;
-    static const TUint8 kMsgTypeTrack = 3;
-    static const TUint8 kMsgTypeMetatext = 4;
+    static const TUint8 kMsgTypeLeave = 2;
+    static const TUint8 kMsgTypeAudio = 3;
+    static const TUint8 kMsgTypeTrack = 4;
+    static const TUint8 kMsgTypeMetatext = 5;
+    static const TUint8 kMsgTypeSlave = 6;
 
 public:
     OhmHeader();

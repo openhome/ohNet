@@ -73,37 +73,37 @@ protected:
     /**
      * Signal that the action Play is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPlay must be overridden if this is called.
+     * Play must be overridden if this is called.
      */
     void EnableActionPlay();
     /**
      * Signal that the action Stop is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStop must be overridden if this is called.
+     * Stop must be overridden if this is called.
      */
     void EnableActionStop();
     /**
      * Signal that the action SetSender is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetSender must be overridden if this is called.
+     * SetSender must be overridden if this is called.
      */
     void EnableActionSetSender();
     /**
      * Signal that the action Sender is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSender must be overridden if this is called.
+     * Sender must be overridden if this is called.
      */
     void EnableActionSender();
     /**
      * Signal that the action ProtocolInfo is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoProtocolInfo must be overridden if this is called.
+     * ProtocolInfo must be overridden if this is called.
      */
     void EnableActionProtocolInfo();
     /**
      * Signal that the action TransportState is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoTransportState must be overridden if this is called.
+     * TransportState must be overridden if this is called.
      */
     void EnableActionTransportState();
 private:

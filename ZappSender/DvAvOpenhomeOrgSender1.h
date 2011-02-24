@@ -83,31 +83,31 @@ protected:
     /**
      * Signal that the action PresentationUrl is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoPresentationUrl must be overridden if this is called.
+     * PresentationUrl must be overridden if this is called.
      */
     void EnableActionPresentationUrl();
     /**
      * Signal that the action Metadata is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoMetadata must be overridden if this is called.
+     * Metadata must be overridden if this is called.
      */
     void EnableActionMetadata();
     /**
      * Signal that the action Audio is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoAudio must be overridden if this is called.
+     * Audio must be overridden if this is called.
      */
     void EnableActionAudio();
     /**
      * Signal that the action Status is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStatus must be overridden if this is called.
+     * Status must be overridden if this is called.
      */
     void EnableActionStatus();
     /**
      * Signal that the action Attributes is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoAttributes must be overridden if this is called.
+     * Attributes must be overridden if this is called.
      */
     void EnableActionAttributes();
 private:

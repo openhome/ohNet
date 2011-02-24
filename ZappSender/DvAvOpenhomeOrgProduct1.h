@@ -213,79 +213,79 @@ protected:
     /**
      * Signal that the action Manufacturer is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoManufacturer must be overridden if this is called.
+     * Manufacturer must be overridden if this is called.
      */
     void EnableActionManufacturer();
     /**
      * Signal that the action Model is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoModel must be overridden if this is called.
+     * Model must be overridden if this is called.
      */
     void EnableActionModel();
     /**
      * Signal that the action Product is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoProduct must be overridden if this is called.
+     * Product must be overridden if this is called.
      */
     void EnableActionProduct();
     /**
      * Signal that the action Standby is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoStandby must be overridden if this is called.
+     * Standby must be overridden if this is called.
      */
     void EnableActionStandby();
     /**
      * Signal that the action SetStandby is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetStandby must be overridden if this is called.
+     * SetStandby must be overridden if this is called.
      */
     void EnableActionSetStandby();
     /**
      * Signal that the action SourceCount is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSourceCount must be overridden if this is called.
+     * SourceCount must be overridden if this is called.
      */
     void EnableActionSourceCount();
     /**
      * Signal that the action SourceXml is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSourceXml must be overridden if this is called.
+     * SourceXml must be overridden if this is called.
      */
     void EnableActionSourceXml();
     /**
      * Signal that the action SourceIndex is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSourceIndex must be overridden if this is called.
+     * SourceIndex must be overridden if this is called.
      */
     void EnableActionSourceIndex();
     /**
      * Signal that the action SetSourceIndex is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetSourceIndex must be overridden if this is called.
+     * SetSourceIndex must be overridden if this is called.
      */
     void EnableActionSetSourceIndex();
     /**
      * Signal that the action SetSourceIndexByName is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSetSourceIndexByName must be overridden if this is called.
+     * SetSourceIndexByName must be overridden if this is called.
      */
     void EnableActionSetSourceIndexByName();
     /**
      * Signal that the action Source is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSource must be overridden if this is called.
+     * Source must be overridden if this is called.
      */
     void EnableActionSource();
     /**
      * Signal that the action Attributes is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoAttributes must be overridden if this is called.
+     * Attributes must be overridden if this is called.
      */
     void EnableActionAttributes();
     /**
      * Signal that the action SourceXmlChangeCount is supported.
      * The action's availability will be published in the device's service.xml.
-     * DoSourceXmlChangeCount must be overridden if this is called.
+     * SourceXmlChangeCount must be overridden if this is called.
      */
     void EnableActionSourceXmlChangeCount();
 private:
