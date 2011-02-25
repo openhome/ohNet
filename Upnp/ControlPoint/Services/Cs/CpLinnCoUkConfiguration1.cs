@@ -165,6 +165,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConfigurationXml"></param>
         public void EndConfigurationXml(IntPtr aAsyncHandle, out String aConfigurationXml)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aConfigurationXml = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -208,6 +212,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaParameterXml"></param>
         public void EndParameterXml(IntPtr aAsyncHandle, out String aParameterXml)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aParameterXml = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -256,6 +264,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetParameter(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>

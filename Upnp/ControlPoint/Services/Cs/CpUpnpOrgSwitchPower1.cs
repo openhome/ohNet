@@ -153,6 +153,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetTarget(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -194,6 +198,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRetTargetValue"></param>
         public void EndGetTarget(IntPtr aAsyncHandle, out bool aRetTargetValue)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aRetTargetValue = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -237,6 +245,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aResultStatus"></param>
         public void EndGetStatus(IntPtr aAsyncHandle, out bool aResultStatus)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aResultStatus = Invocation.OutputBool(aAsyncHandle, index++);
         }

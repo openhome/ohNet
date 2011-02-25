@@ -163,14 +163,6 @@ namespace Zapp.ControlPoint
             CpProxyAddProperty(iHandle, aProperty.Handle());
         }
         
-        protected void ActionComplete(IntPtr aPtr, IntPtr aAsyncHandle)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CallbackAsyncComplete cb = (CallbackAsyncComplete)gch.Target;
-            gch.Free();
-            cb(aAsyncHandle);
-        }
-
         private void PropertyChanged(IntPtr aPtr)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);

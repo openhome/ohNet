@@ -183,6 +183,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRoom"></param>
         public void EndRoom(IntPtr aAsyncHandle, out String aRoom)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aRoom = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -225,6 +229,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetRoom(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -266,6 +274,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStandby"></param>
         public void EndStandby(IntPtr aAsyncHandle, out bool aStandby)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aStandby = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -308,6 +320,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetStandby(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>

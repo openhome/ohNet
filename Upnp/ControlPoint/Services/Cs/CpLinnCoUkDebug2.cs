@@ -143,6 +143,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetDebugLevel(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -184,6 +188,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaDebugLevel"></param>
         public void EndDebugLevel(IntPtr aAsyncHandle, out uint aDebugLevel)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aDebugLevel = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -229,6 +237,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndMemWrite(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>

@@ -255,6 +255,10 @@ namespace Zapp.ControlPoint.Proxies
 <#      } #>
         public void End<#=a.name#>(IntPtr aAsyncHandle<#=OutArgsFull(a, true)#>)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
 <#      if (a.outargs.Count > 0) #>
 <#      { #>
             uint index = 0;

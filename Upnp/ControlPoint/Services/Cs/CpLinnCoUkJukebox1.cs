@@ -293,6 +293,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetPresetPrefix(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -334,6 +338,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUri"></param>
         public void EndPresetPrefix(IntPtr aAsyncHandle, out String aUri)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aUri = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -376,6 +384,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetAlbumArtFileName(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -417,6 +429,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaName"></param>
         public void EndAlbumArtFileName(IntPtr aAsyncHandle, out String aName)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aName = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -459,6 +475,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetCurrentPreset(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -500,6 +520,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPreset"></param>
         public void EndCurrentPreset(IntPtr aAsyncHandle, out uint aPreset)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aPreset = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -547,6 +571,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetaData"></param>
         public void EndPresetMetaData(IntPtr aAsyncHandle, out String aMetaData)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aMetaData = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -590,6 +618,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTotalPresets"></param>
         public void EndLoadManifest(IntPtr aAsyncHandle, out uint aTotalPresets)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aTotalPresets = Invocation.OutputUint(aAsyncHandle, index++);
         }

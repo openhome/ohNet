@@ -127,6 +127,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLevel"></param>
         public void EndGetLevel(IntPtr aAsyncHandle, out uint aLevel)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aLevel = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -169,6 +173,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetLevel(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>

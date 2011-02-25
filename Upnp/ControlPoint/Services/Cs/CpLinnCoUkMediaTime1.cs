@@ -105,6 +105,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSeconds"></param>
         public void EndSeconds(IntPtr aAsyncHandle, out uint aSeconds)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aSeconds = Invocation.OutputUint(aAsyncHandle, index++);
         }

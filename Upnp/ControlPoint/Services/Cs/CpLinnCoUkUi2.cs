@@ -727,6 +727,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndDisplayTestPattern(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -763,6 +767,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndDisplayFill(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -799,6 +807,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndDisplayClear(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -839,6 +851,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetTestModeEnabled(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -879,6 +895,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSimulateInfraredInput(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -919,6 +939,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSimulateButtonInput(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -959,6 +983,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSimulateLightSensor(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -1000,6 +1028,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaLightLevel"></param>
         public void EndGetLightSensorData(IntPtr aAsyncHandle, out uint aLightLevel)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aLightLevel = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -1042,6 +1074,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetDisplayBrightness(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -1082,6 +1118,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetDisplayBrightnessAuto(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -1122,6 +1162,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetInfraredCommands(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -1163,6 +1207,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaCommands"></param>
         public void EndInfraredCommands(IntPtr aAsyncHandle, out String aCommands)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aCommands = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -1205,6 +1253,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetInfraredTerminalCommands(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -1246,6 +1298,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaCommands"></param>
         public void EndInfraredTerminalCommands(IntPtr aAsyncHandle, out String aCommands)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aCommands = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -1289,6 +1345,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBrightness"></param>
         public void EndDisplayBrightness(IntPtr aAsyncHandle, out uint aBrightness)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aBrightness = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -1332,6 +1392,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBrightnessAuto"></param>
         public void EndDisplayBrightnessAuto(IntPtr aAsyncHandle, out bool aBrightnessAuto)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aBrightnessAuto = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -1375,6 +1439,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUpsideDown"></param>
         public void EndDisplayUpsideDown(IntPtr aAsyncHandle, out bool aUpsideDown)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aUpsideDown = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -1417,6 +1485,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetDisplayUpsideDown(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -1457,6 +1529,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetDisplayScrollText(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -1498,6 +1574,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaDisplayScrollTextEnabled"></param>
         public void EndDisplayScrollText(IntPtr aAsyncHandle, out bool aDisplayScrollTextEnabled)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aDisplayScrollTextEnabled = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -1540,6 +1620,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetDisplaySleep(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -1581,6 +1665,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaEnabled"></param>
         public void EndDisplaySleep(IntPtr aAsyncHandle, out bool aEnabled)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aEnabled = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -1623,6 +1711,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetDisplayLedOff(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -1664,6 +1756,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaOff"></param>
         public void EndDisplayLedOff(IntPtr aAsyncHandle, out bool aOff)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aOff = Invocation.OutputBool(aAsyncHandle, index++);
         }

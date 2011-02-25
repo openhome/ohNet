@@ -139,6 +139,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSeconds"></param>
         public void EndTime(IntPtr aAsyncHandle, out uint aTrackCount, out uint aDuration, out uint aSeconds)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aTrackCount = Invocation.OutputUint(aAsyncHandle, index++);
             aDuration = Invocation.OutputUint(aAsyncHandle, index++);

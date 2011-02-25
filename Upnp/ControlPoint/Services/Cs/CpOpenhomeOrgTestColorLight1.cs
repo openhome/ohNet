@@ -207,6 +207,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aFriendlyName"></param>
         public void EndGetName(IntPtr aAsyncHandle, out String aFriendlyName)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aFriendlyName = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -255,6 +259,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetColor(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -304,6 +312,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aBlue"></param>
         public void EndGetColor(IntPtr aAsyncHandle, out uint aRed, out uint aGreen, out uint aBlue)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aRed = Invocation.OutputUint(aAsyncHandle, index++);
             aGreen = Invocation.OutputUint(aAsyncHandle, index++);
@@ -357,6 +369,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aBlue"></param>
         public void EndGetMaxColors(IntPtr aAsyncHandle, out uint aRed, out uint aGreen, out uint aBlue)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aRed = Invocation.OutputUint(aAsyncHandle, index++);
             aGreen = Invocation.OutputUint(aAsyncHandle, index++);

@@ -317,6 +317,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetatextCount"></param>
         public void EndCounters(IntPtr aAsyncHandle, out uint aTrackCount, out uint aDetailsCount, out uint aMetatextCount)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aTrackCount = Invocation.OutputUint(aAsyncHandle, index++);
             aDetailsCount = Invocation.OutputUint(aAsyncHandle, index++);
@@ -366,6 +370,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetadata"></param>
         public void EndTrack(IntPtr aAsyncHandle, out String aUri, out String aMetadata)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aUri = Invocation.OutputString(aAsyncHandle, index++);
             aMetadata = Invocation.OutputString(aAsyncHandle, index++);
@@ -430,6 +438,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaCodecName"></param>
         public void EndDetails(IntPtr aAsyncHandle, out uint aDuration, out uint aBitRate, out uint aBitDepth, out uint aSampleRate, out bool aLossless, out String aCodecName)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aDuration = Invocation.OutputUint(aAsyncHandle, index++);
             aBitRate = Invocation.OutputUint(aAsyncHandle, index++);
@@ -478,6 +490,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetatext"></param>
         public void EndMetatext(IntPtr aAsyncHandle, out String aMetatext)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aMetatext = Invocation.OutputString(aAsyncHandle, index++);
         }

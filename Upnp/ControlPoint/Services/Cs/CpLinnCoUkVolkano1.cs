@@ -363,6 +363,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndReboot(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -404,6 +408,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMode"></param>
         public void EndBootMode(IntPtr aAsyncHandle, out String aMode)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aMode = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -446,6 +454,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetBootMode(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -487,6 +499,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBspType"></param>
         public void EndBspType(IntPtr aAsyncHandle, out String aBspType)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aBspType = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -530,6 +546,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUglyName"></param>
         public void EndUglyName(IntPtr aAsyncHandle, out String aUglyName)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aUglyName = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -573,6 +593,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMacAddress"></param>
         public void EndMacAddress(IntPtr aAsyncHandle, out String aMacAddress)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aMacAddress = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -616,6 +640,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaProductNumber"></param>
         public void EndProductId(IntPtr aAsyncHandle, out String aProductNumber)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aProductNumber = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -663,6 +691,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBoardNumber"></param>
         public void EndBoardId(IntPtr aAsyncHandle, out String aBoardNumber)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aBoardNumber = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -710,6 +742,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBoardNumber"></param>
         public void EndBoardType(IntPtr aAsyncHandle, out String aBoardNumber)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aBoardNumber = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -753,6 +789,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMaxBoards"></param>
         public void EndMaxBoards(IntPtr aAsyncHandle, out uint aMaxBoards)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aMaxBoards = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -796,6 +836,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSoftwareVersion"></param>
         public void EndSoftwareVersion(IntPtr aAsyncHandle, out String aSoftwareVersion)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aSoftwareVersion = Invocation.OutputString(aAsyncHandle, index++);
         }

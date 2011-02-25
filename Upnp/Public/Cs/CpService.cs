@@ -360,9 +360,9 @@ namespace Zapp.ControlPoint
         /// </summary>
         /// <remarks>Only intended for use in the invocation complete callback</remarks>
         /// <returns>true if the invocation failed; false if it succeeded</returns>
-        public bool Error()
+        public static bool Error(IntPtr aHandle)
         {
-            uint err = CpInvocationError(iHandle);
+            uint err = CpInvocationError(aHandle);
             return (err != 0);
         }
 

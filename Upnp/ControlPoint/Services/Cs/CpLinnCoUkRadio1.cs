@@ -530,6 +530,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndPlay(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -566,6 +570,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndPause(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -602,6 +610,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndStop(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -642,6 +654,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSeekSecondAbsolute(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -682,6 +698,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSeekSecondRelative(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -727,6 +747,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetadata"></param>
         public void EndChannel(IntPtr aAsyncHandle, out String aUri, out String aMetadata)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aUri = Invocation.OutputString(aAsyncHandle, index++);
             aMetadata = Invocation.OutputString(aAsyncHandle, index++);
@@ -773,6 +797,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetChannel(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -814,6 +842,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaInfo"></param>
         public void EndProtocolInfo(IntPtr aAsyncHandle, out String aInfo)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aInfo = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -857,6 +889,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaState"></param>
         public void EndTransportState(IntPtr aAsyncHandle, out String aState)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aState = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -900,6 +936,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaId"></param>
         public void EndId(IntPtr aAsyncHandle, out uint aId)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aId = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -945,6 +985,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetId(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -990,6 +1034,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetadata"></param>
         public void EndRead(IntPtr aAsyncHandle, out String aMetadata)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aMetadata = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -1037,6 +1085,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetadataList"></param>
         public void EndReadList(IntPtr aAsyncHandle, out String aMetadataList)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aMetadataList = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -1084,6 +1136,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIdArray"></param>
         public void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out byte[] aIdArray)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aIdArrayToken = Invocation.OutputUint(aAsyncHandle, index++);
             aIdArray = Invocation.OutputBinary(aAsyncHandle, index++);
@@ -1132,6 +1188,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIdArrayChanged"></param>
         public void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aIdArrayChanged)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aIdArrayChanged = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -1175,6 +1235,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIdsMax"></param>
         public void EndIdsMax(IntPtr aAsyncHandle, out uint aIdsMax)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aIdsMax = Invocation.OutputUint(aAsyncHandle, index++);
         }

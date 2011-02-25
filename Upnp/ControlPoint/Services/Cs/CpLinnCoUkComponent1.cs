@@ -377,6 +377,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaEnabled"></param>
         public void EndAmplifierEnabled(IntPtr aAsyncHandle, out bool aEnabled)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aEnabled = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -419,6 +423,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetAmplifierEnabled(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -460,6 +468,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaAttenuation"></param>
         public void EndAmplifierAttenuation(IntPtr aAsyncHandle, out String aAttenuation)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aAttenuation = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -502,6 +514,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetAmplifierAttenuation(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -542,6 +558,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetVolumeControlEnabled(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -583,6 +603,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaEnabled"></param>
         public void EndVolumeControlEnabled(IntPtr aAsyncHandle, out bool aEnabled)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aEnabled = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -625,6 +649,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetDigitalAudioOutputRaw(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -666,6 +694,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRaw"></param>
         public void EndDigitalAudioOutputRaw(IntPtr aAsyncHandle, out bool aRaw)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aRaw = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -709,6 +741,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaOverTemperature"></param>
         public void EndAmplifierOverTemperature(IntPtr aAsyncHandle, out bool aOverTemperature)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aOverTemperature = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -752,6 +788,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaLinkConnected"></param>
         public void EndEthernetLinkConnected(IntPtr aAsyncHandle, out bool aLinkConnected)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aLinkConnected = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -790,6 +830,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndLocate(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>

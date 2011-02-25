@@ -416,6 +416,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaOut"></param>
         public void EndEcho(IntPtr aAsyncHandle, out String aOut)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aOut = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -459,6 +463,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaElfFile"></param>
         public void EndElfFile(IntPtr aAsyncHandle, out String aElfFile)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aElfFile = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -502,6 +510,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaElfFileFingerprint"></param>
         public void EndElfFingerprint(IntPtr aAsyncHandle, out String aElfFileFingerprint)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aElfFileFingerprint = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -545,6 +557,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaCrashDataStatus"></param>
         public void EndCrashDataStatus(IntPtr aAsyncHandle, out String aCrashDataStatus)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aCrashDataStatus = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -588,6 +604,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaCrashData"></param>
         public void EndCrashDataFetch(IntPtr aAsyncHandle, out byte[] aCrashData)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aCrashData = Invocation.OutputBinary(aAsyncHandle, index++);
         }
@@ -626,6 +646,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndCrashDataClear(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -667,6 +691,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSysLog"></param>
         public void EndSysLog(IntPtr aAsyncHandle, out byte[] aSysLog)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aSysLog = Invocation.OutputBinary(aAsyncHandle, index++);
         }
@@ -714,6 +742,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaDiagnosticInfo"></param>
         public void EndDiagnostic(IntPtr aAsyncHandle, out String aDiagnosticInfo)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aDiagnosticInfo = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -757,6 +789,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStateVariable"></param>
         public void EndStateVariable(IntPtr aAsyncHandle, out uint aStateVariable)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aStateVariable = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -799,6 +835,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetStateVariable(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -840,6 +880,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPeriod"></param>
         public void EndStateVariablePeriod(IntPtr aAsyncHandle, out uint aPeriod)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aPeriod = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -882,6 +926,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetStateVariablePeriod(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -922,6 +970,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndReboot(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>

@@ -391,6 +391,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         public void EndKontrolProductConnected(IntPtr aAsyncHandle, out String aConnected)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aConnected = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -433,6 +437,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetKontrolProductConnected(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -474,6 +482,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPort"></param>
         public void EndKontrolProductComPort(IntPtr aAsyncHandle, out uint aPort)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aPort = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -516,6 +528,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetKontrolProductComPort(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -557,6 +573,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         public void EndDiscPlayerConnected(IntPtr aAsyncHandle, out String aConnected)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aConnected = Invocation.OutputString(aAsyncHandle, index++);
         }
@@ -599,6 +619,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetDiscPlayerConnected(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -640,6 +664,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPort"></param>
         public void EndDiscPlayerComPort(IntPtr aAsyncHandle, out uint aPort)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aPort = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -682,6 +710,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetDiscPlayerComPort(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -723,6 +755,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaResult"></param>
         public void EndTestKontrolProductConnection(IntPtr aAsyncHandle, out bool aResult)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aResult = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -766,6 +802,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaResult"></param>
         public void EndTestDiscPlayerConnection(IntPtr aAsyncHandle, out bool aResult)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aResult = Invocation.OutputBool(aAsyncHandle, index++);
         }

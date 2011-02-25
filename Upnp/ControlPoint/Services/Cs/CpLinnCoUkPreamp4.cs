@@ -437,6 +437,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndVolumeInc(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -473,6 +477,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndVolumeDec(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -513,6 +521,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetVolume(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -554,6 +566,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaVolume"></param>
         public void EndVolume(IntPtr aAsyncHandle, out uint aVolume)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aVolume = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -596,6 +612,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetMute(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -637,6 +657,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMute"></param>
         public void EndMute(IntPtr aAsyncHandle, out bool aMute)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aMute = Invocation.OutputBool(aAsyncHandle, index++);
         }
@@ -679,6 +703,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetBalance(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -720,6 +748,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBalance"></param>
         public void EndBalance(IntPtr aAsyncHandle, out int aBalance)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aBalance = Invocation.OutputInt(aAsyncHandle, index++);
         }
@@ -762,6 +794,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetVolumeLimit(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -803,6 +839,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaVolumeLimit"></param>
         public void EndVolumeLimit(IntPtr aAsyncHandle, out uint aVolumeLimit)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aVolumeLimit = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -845,6 +885,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetStartupVolume(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -886,6 +930,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStartupVolume"></param>
         public void EndStartupVolume(IntPtr aAsyncHandle, out uint aStartupVolume)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aStartupVolume = Invocation.OutputUint(aAsyncHandle, index++);
         }
@@ -928,6 +976,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndSetStartupVolumeEnabled(IntPtr aAsyncHandle)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
         }
 
         /// <summary>
@@ -969,6 +1021,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStartupVolumeEnabled"></param>
         public void EndStartupVolumeEnabled(IntPtr aAsyncHandle, out bool aStartupVolumeEnabled)
         {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
             uint index = 0;
             aStartupVolumeEnabled = Invocation.OutputBool(aAsyncHandle, index++);
         }
