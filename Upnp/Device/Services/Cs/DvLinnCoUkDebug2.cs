@@ -128,17 +128,17 @@ namespace Zapp.Device.Providers
             }
             catch (ActionError)
             {
-                invocation.ReportError(501, "Invalid XML"); ;
+                invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
             catch (ActionDisabledError)
             {
-                invocation.ReportError(501, "Action not implemented"); ;
+                invocation.ReportError(501, "Action not implemented");
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML"); ;
+                invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
             try
@@ -167,17 +167,17 @@ namespace Zapp.Device.Providers
             }
             catch (ActionError)
             {
-                invocation.ReportError(501, "Invalid XML"); ;
+                invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
             catch (ActionDisabledError)
             {
-                invocation.ReportError(501, "Action not implemented"); ;
+                invocation.ReportError(501, "Action not implemented");
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML"); ;
+                invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
             try
@@ -210,17 +210,17 @@ namespace Zapp.Device.Providers
             }
             catch (ActionError)
             {
-                invocation.ReportError(501, "Invalid XML"); ;
+                invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
             catch (ActionDisabledError)
             {
-                invocation.ReportError(501, "Action not implemented"); ;
+                invocation.ReportError(501, "Action not implemented");
                 return -1;
             }
             catch (PropertyUpdateError)
             {
-                invocation.ReportError(501, "Invalid XML"); ;
+                invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
             try
