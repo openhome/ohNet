@@ -29,18 +29,18 @@ const Brx& CpiSubscription::Sid() const
 
 void CpiSubscription::AddRef()
 {
-    iLock.Wait();
+    Stack::Mutex().Wait();
     iRefCount++;
-    iLock.Signal();
+    Stack::Mutex().Signal();
 }
 
 void CpiSubscription::RemoveRef()
 {
     TBool dead;
-    iLock.Wait();
+    Stack::Mutex().Wait();
     ASSERT(iRefCount != 0);
     dead = (--iRefCount == 0);
-    iLock.Signal();
+    Stack::Mutex().Signal();
     if (dead) {
         delete this;
     }
@@ -85,9 +85,9 @@ void CpiSubscription::SetInterruptHandler(IInterruptHandler* aHandler)
 
 void CpiSubscription::SetSid(Brh& aSid)
 {
-    iLock.Wait();
+    Stack::Mutex().Wait();
     aSid.TransferTo(iSid);
-    iLock.Signal();
+    Stack::Mutex().Signal();
 }
 
 const Zapp::ServiceType& CpiSubscription::ServiceType() const
@@ -97,9 +97,9 @@ const Zapp::ServiceType& CpiSubscription::ServiceType() const
 
 void CpiSubscription::RunInSubscriber()
 {
-    iLock.Wait();
+    Stack::Mutex().Wait();
     EOperation op = iPendingOperation;
-    iLock.Signal();
+    Stack::Mutex().Signal();
 
     switch (op)
     {
@@ -139,21 +139,21 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
 CpiSubscription::~CpiSubscription()
 {
     iTimer->Cancel();
-    iLock.Wait();
+    Stack::Mutex().Wait();
     if (iSid.Bytes() > 0) {
         CpiSubscriptionManager::Remove(*this);
     }
-    iLock.Signal();
+    Stack::Mutex().Signal();
     iDevice.RemoveRef();
     delete iTimer;
 }
 
 void CpiSubscription::Schedule(EOperation aOperation)
 {
-    iLock.Wait();
+    Stack::Mutex().Wait();
     iRefCount++;
     iPendingOperation = aOperation;
-    iLock.Signal();
+    Stack::Mutex().Signal();
     CpiSubscriptionManager::Schedule(*this);
 }
 
@@ -252,9 +252,9 @@ void CpiSubscription::DoUnsubscribe()
     iTimer->Cancel();
     CpiSubscriptionManager::Remove(*this);
     Brh sid;
-    iLock.Wait();
+    Stack::Mutex().Wait();
     iSid.TransferTo(sid);
-    iLock.Signal();
+    Stack::Mutex().Signal();
     iDevice.Unsubscribe(*this, sid);
 
     LOG(kEvent, "Unsubscribed sid ");
@@ -264,7 +264,7 @@ void CpiSubscription::DoUnsubscribe()
 
 void CpiSubscription::EventUpdateStart()
 {
-	AutoMutex a(iLock);
+	iLock.Wait();
 	if (iEventProcessor != NULL) {
 		iEventProcessor->EventUpdateStart();
 	}
@@ -272,7 +272,6 @@ void CpiSubscription::EventUpdateStart()
 
 void CpiSubscription::EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor)
 {
-	AutoMutex a(iLock);
 	if (iEventProcessor != NULL) {
 		iEventProcessor->EventUpdate(aName, aValue, aProcessor);
 	}
@@ -280,10 +279,10 @@ void CpiSubscription::EventUpdate(const Brx& aName, const Brx& aValue, IOutputPr
 
 void CpiSubscription::EventUpdateEnd()
 {
-	AutoMutex a(iLock);
 	if (iEventProcessor != NULL) {
 		iEventProcessor->EventUpdateEnd();
 	}
+	iLock.Signal();
 }
 
 
