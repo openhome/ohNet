@@ -46,6 +46,7 @@ public:
     TBool HasExpired() const;
 private:
     ~DviSubscription();
+    IPropertyWriter* CreateWriter();
     void Expired();
 private:
     mutable Mutex iLock;

@@ -14,6 +14,29 @@
 
 using namespace Zapp;
 
+// AutoPropertiesLock
+
+class AutoPropertiesLock : INonCopyable
+{
+public:
+    AutoPropertiesLock(DviService& aService);
+    ~AutoPropertiesLock();
+private:
+    DviService& iService;
+};
+
+AutoPropertiesLock::AutoPropertiesLock(DviService& aService)
+    : iService(aService)
+{
+    iService.PropertiesLock();
+}
+
+AutoPropertiesLock::~AutoPropertiesLock()
+{
+    iService.PropertiesUnlock();
+}
+
+
 // DviSubscription
 
 DviSubscription::DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
@@ -73,63 +96,66 @@ void DviSubscription::Renew(TUint& aSeconds)
 
 void DviSubscription::WriteChanges()
 {
+    IPropertyWriter* writer = NULL;
+    try {
+        writer = CreateWriter();
+        if (writer != NULL) {
+			writer->PropertyWriteEnd();
+            delete writer;
+        }
+    }
+	catch(NetworkTimeout&) {}
+	catch(NetworkError&) {}
+	catch(HttpError&) {}
+	catch(WriterError&) {}
+	catch(ReaderError&) {}
+}
+
+IPropertyWriter* DviSubscription::CreateWriter()
+{
     AutoMutex a(iLock);
     LOG(kDvEvent, "WriteChanges for subscription ");
     LOG(kDvEvent, iSid);
     LOG(kDvEvent, " seq - %u\n", iSequenceNumber);
     if (!iDevice.Enabled()) {
         LOG(kDvEvent, "Device disabled; defer publishing changes\n");
-        return;
+        return NULL;
     }
 
-    iService->PropertiesLock();
+    ASSERT(iService != NULL); // null service => not Start()ed
+    AutoPropertiesLock b(*iService);
     if (iExpired) {
         LOG(kDvEvent, "Subscription expired; don't publish changes\n");
-        iService->PropertiesUnlock();
-        return;
+        return NULL;
     }
-    TBool first = true;
     IPropertyWriter* writer = NULL;
-    ASSERT(iService != NULL); // null service => not Start()ed
     const DviService::VectorProperties& properties = iService->Properties();
     ASSERT(properties.size() == iPropertySequenceNumbers.size()); // services can't change definition after first advertisement
-	try {
-		for (TUint i=0; i<properties.size(); i++) {
-			Property* prop = properties[i];
-			TUint seq = prop->SequenceNumber();
-			ASSERT(seq != 0); // => implementor hasn't initialised the property
-			if (seq != iPropertySequenceNumbers[i]) {
-				if (first) {
-					writer = iWriterFactory.CreateWriter(iUserData, iSid, iSequenceNumber);
-                    if (writer == NULL) {
-                        THROW(WriterError);
-                    }
-					if (iSequenceNumber == UINT32_MAX) {
-						iSequenceNumber = 1;
-					}
-					else {
-						iSequenceNumber++;
-					}
-					first = false;
+	for (TUint i=0; i<properties.size(); i++) {
+		Property* prop = properties[i];
+		TUint seq = prop->SequenceNumber();
+		ASSERT(seq != 0); // => implementor hasn't initialised the property
+		if (seq != iPropertySequenceNumbers[i]) {
+			if (writer == NULL) {
+				writer = iWriterFactory.CreateWriter(iUserData, iSid, iSequenceNumber);
+                if (writer == NULL) {
+                    THROW(WriterError);
+                }
+				if (iSequenceNumber == UINT32_MAX) {
+					iSequenceNumber = 1;
 				}
-				prop->Write(*writer);
-				iPropertySequenceNumbers[i] = seq;
+				else {
+					iSequenceNumber++;
+				}
 			}
-		}
-		if (first) {
-			LOG(kDvEvent, "Found no changes to publish\n");
-		}
-		else {
-			writer->PropertyWriteEnd();
+			prop->Write(*writer);
+			iPropertySequenceNumbers[i] = seq;
 		}
 	}
-	catch(NetworkTimeout&) {}
-	catch(NetworkError&) {}
-	catch(HttpError&) {}
-	catch(WriterError&) {}
-	catch(ReaderError&) {}
-	delete writer;
-    iService->PropertiesUnlock();
+    if (writer == NULL) {
+		LOG(kDvEvent, "Found no changes to publish\n");
+    }
+    return writer;
 }
 
 const Brx& DviSubscription::Sid() const
