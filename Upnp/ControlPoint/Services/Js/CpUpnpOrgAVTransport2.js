@@ -1,18 +1,18 @@
  
 
 /**
-* Service Proxy for schemas-upnp-org:AVTransport:2
+* Service Proxy for CpProxySchemasUpnpOrgAVTransport2
 * @module Zapp
 * @class AVTransport
 */
 	
 var CpProxySchemasUpnpOrgAVTransport2 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/schemas-upnp-org-AVTransport-2/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-AVTransport-2/control";  // upnp control url
 	this.domain = "schemas-upnp-org";
 	this.type = "AVTransport";
 	this.version = "2";
-	this.serviceName = "CpProxySchemasUpnpOrgAVTransport2";
+	this.serviceName = "upnp.org-AVTransport-2";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -82,7 +82,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.DRMState_Changed = function (stateCh
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.SetAVTransportURI = function(InstanceID, CurrentURI, CurrentURIMetaData, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetAVTransportURI", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetAVTransportURI", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("CurrentURI", CurrentURI);
     request.writeStringParameter("CurrentURIMetaData", CurrentURIMetaData);
@@ -107,7 +107,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.SetAVTransportURI = function(Instanc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.SetNextAVTransportURI = function(InstanceID, NextURI, NextURIMetaData, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetNextAVTransportURI", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetNextAVTransportURI", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("NextURI", NextURI);
     request.writeStringParameter("NextURIMetaData", NextURIMetaData);
@@ -130,7 +130,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.SetNextAVTransportURI = function(Ins
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetMediaInfo = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetMediaInfo", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetMediaInfo", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["NrTracks"] = Zapp.SoapRequest.readIntParameter(result["NrTracks"]);	
@@ -160,7 +160,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetMediaInfo = function(InstanceID, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetMediaInfo_Ext = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetMediaInfo_Ext", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetMediaInfo_Ext", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentType"] = Zapp.SoapRequest.readStringParameter(result["CurrentType"]);	
@@ -191,7 +191,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetMediaInfo_Ext = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetTransportInfo = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetTransportInfo", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetTransportInfo", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentTransportState"] = Zapp.SoapRequest.readStringParameter(result["CurrentTransportState"]);	
@@ -215,7 +215,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetTransportInfo = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetPositionInfo = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetPositionInfo", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetPositionInfo", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["Track"] = Zapp.SoapRequest.readIntParameter(result["Track"]);	
@@ -244,7 +244,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetPositionInfo = function(InstanceI
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetDeviceCapabilities = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetDeviceCapabilities", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetDeviceCapabilities", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["PlayMedia"] = Zapp.SoapRequest.readStringParameter(result["PlayMedia"]);	
@@ -268,7 +268,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetDeviceCapabilities = function(Ins
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetTransportSettings = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetTransportSettings", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetTransportSettings", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["PlayMode"] = Zapp.SoapRequest.readStringParameter(result["PlayMode"]);	
@@ -291,7 +291,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetTransportSettings = function(Inst
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Stop = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Stop", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Stop", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -313,7 +313,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Stop = function(InstanceID, successF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Play = function(InstanceID, Speed, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Play", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Play", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Speed", Speed);
     request.send(function(result){
@@ -335,7 +335,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Play = function(InstanceID, Speed, s
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Pause = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Pause", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Pause", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -356,7 +356,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Pause = function(InstanceID, success
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Record = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Record", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Record", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -379,7 +379,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Record = function(InstanceID, succes
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Seek = function(InstanceID, Unit, Target, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Seek", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Seek", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Unit", Unit);
     request.writeStringParameter("Target", Target);
@@ -402,7 +402,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Seek = function(InstanceID, Unit, Ta
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Next = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Next", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Next", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -423,7 +423,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Next = function(InstanceID, successF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Previous = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Previous", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Previous", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -445,7 +445,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Previous = function(InstanceID, succ
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.SetPlayMode = function(InstanceID, NewPlayMode, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetPlayMode", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetPlayMode", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("NewPlayMode", NewPlayMode);
     request.send(function(result){
@@ -468,7 +468,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.SetPlayMode = function(InstanceID, N
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.SetRecordQualityMode = function(InstanceID, NewRecordQualityMode, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetRecordQualityMode", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetRecordQualityMode", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("NewRecordQualityMode", NewRecordQualityMode);
     request.send(function(result){
@@ -490,7 +490,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.SetRecordQualityMode = function(Inst
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetCurrentTransportActions = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetCurrentTransportActions", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetCurrentTransportActions", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["Actions"] = Zapp.SoapRequest.readStringParameter(result["Actions"]);	
@@ -512,7 +512,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetCurrentTransportActions = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetDRMState = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetDRMState", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetDRMState", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentDRMState"] = Zapp.SoapRequest.readStringParameter(result["CurrentDRMState"]);	
@@ -535,7 +535,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetDRMState = function(InstanceID, s
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetStateVariables = function(InstanceID, StateVariableList, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetStateVariables", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetStateVariables", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("StateVariableList", StateVariableList);
     request.send(function(result){
@@ -562,7 +562,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetStateVariables = function(Instanc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.SetStateVariables = function(InstanceID, AVTransportUDN, ServiceType, ServiceId, StateVariableValuePairs, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetStateVariables", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetStateVariables", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("AVTransportUDN", AVTransportUDN);
     request.writeStringParameter("ServiceType", ServiceType);

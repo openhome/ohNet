@@ -1,18 +1,18 @@
  
 
 /**
-* Service Proxy for zapp-org:TestBasic:1
+* Service Proxy for CpProxyZappOrgTestBasic1
 * @module Zapp
 * @class TestBasic
 */
 	
 var CpProxyZappOrgTestBasic1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp-org-TestBasic-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp.org-TestBasic-1/control";  // upnp control url
 	this.domain = "zapp-org";
 	this.type = "TestBasic";
 	this.version = "1";
-	this.serviceName = "CpProxyZappOrgTestBasic1";
+	this.serviceName = "zapp.org-TestBasic-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -121,7 +121,7 @@ CpProxyZappOrgTestBasic1.prototype.VarBin_Changed = function (stateChangedFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.Increment = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Increment", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Increment", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
 		result["Result"] = Zapp.SoapRequest.readIntParameter(result["Result"]);	
@@ -143,7 +143,7 @@ CpProxyZappOrgTestBasic1.prototype.Increment = function(Value, successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.Decrement = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Decrement", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Decrement", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
 		result["Result"] = Zapp.SoapRequest.readIntParameter(result["Result"]);	
@@ -165,7 +165,7 @@ CpProxyZappOrgTestBasic1.prototype.Decrement = function(Value, successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.Toggle = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Toggle", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Toggle", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("Value", Value);
     request.send(function(result){
 		result["Result"] = Zapp.SoapRequest.readBoolParameter(result["Result"]);	
@@ -187,7 +187,7 @@ CpProxyZappOrgTestBasic1.prototype.Toggle = function(Value, successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.EchoString = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("EchoString", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("EchoString", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("Value", Value);
     request.send(function(result){
 		result["Result"] = Zapp.SoapRequest.readStringParameter(result["Result"]);	
@@ -209,7 +209,7 @@ CpProxyZappOrgTestBasic1.prototype.EchoString = function(Value, successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.EchoBinary = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("EchoBinary", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("EchoBinary", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBinaryParameter("Value", Value);
     request.send(function(result){
 		result["Result"] = Zapp.SoapRequest.readBinaryParameter(result["Result"]);	
@@ -231,7 +231,7 @@ CpProxyZappOrgTestBasic1.prototype.EchoBinary = function(Value, successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.SetUint = function(ValueUint, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetUint", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetUint", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("ValueUint", ValueUint);
     request.send(function(result){
 	
@@ -251,7 +251,7 @@ CpProxyZappOrgTestBasic1.prototype.SetUint = function(ValueUint, successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.GetUint = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetUint", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetUint", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["ValueUint"] = Zapp.SoapRequest.readIntParameter(result["ValueUint"]);	
 	
@@ -272,7 +272,7 @@ CpProxyZappOrgTestBasic1.prototype.GetUint = function(successFunction, errorFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.SetInt = function(ValueInt, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetInt", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetInt", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("ValueInt", ValueInt);
     request.send(function(result){
 	
@@ -292,7 +292,7 @@ CpProxyZappOrgTestBasic1.prototype.SetInt = function(ValueInt, successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.GetInt = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetInt", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetInt", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["ValueInt"] = Zapp.SoapRequest.readIntParameter(result["ValueInt"]);	
 	
@@ -313,7 +313,7 @@ CpProxyZappOrgTestBasic1.prototype.GetInt = function(successFunction, errorFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.SetBool = function(ValueBool, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetBool", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetBool", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("ValueBool", ValueBool);
     request.send(function(result){
 	
@@ -333,7 +333,7 @@ CpProxyZappOrgTestBasic1.prototype.SetBool = function(ValueBool, successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.GetBool = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetBool", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetBool", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["ValueBool"] = Zapp.SoapRequest.readBoolParameter(result["ValueBool"]);	
 	
@@ -356,7 +356,7 @@ CpProxyZappOrgTestBasic1.prototype.GetBool = function(successFunction, errorFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.SetMultiple = function(ValueUint, ValueInt, ValueBool, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetMultiple", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetMultiple", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("ValueUint", ValueUint);
     request.writeIntParameter("ValueInt", ValueInt);
     request.writeBoolParameter("ValueBool", ValueBool);
@@ -379,7 +379,7 @@ CpProxyZappOrgTestBasic1.prototype.SetMultiple = function(ValueUint, ValueInt, V
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.SetString = function(ValueStr, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetString", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetString", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("ValueStr", ValueStr);
     request.send(function(result){
 	
@@ -399,7 +399,7 @@ CpProxyZappOrgTestBasic1.prototype.SetString = function(ValueStr, successFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.GetString = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetString", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetString", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["ValueStr"] = Zapp.SoapRequest.readStringParameter(result["ValueStr"]);	
 	
@@ -420,7 +420,7 @@ CpProxyZappOrgTestBasic1.prototype.GetString = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.SetBinary = function(ValueBin, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetBinary", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetBinary", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBinaryParameter("ValueBin", ValueBin);
     request.send(function(result){
 	
@@ -440,7 +440,7 @@ CpProxyZappOrgTestBasic1.prototype.SetBinary = function(ValueBin, successFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.GetBinary = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetBinary", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetBinary", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["ValueBin"] = Zapp.SoapRequest.readBinaryParameter(result["ValueBin"]);	
 	
@@ -460,7 +460,7 @@ CpProxyZappOrgTestBasic1.prototype.GetBinary = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.ToggleBool = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ToggleBool", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ToggleBool", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -481,7 +481,7 @@ CpProxyZappOrgTestBasic1.prototype.ToggleBool = function(successFunction, errorF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.WriteFile = function(Data, FileFullName, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("WriteFile", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("WriteFile", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("Data", Data);
     request.writeStringParameter("FileFullName", FileFullName);
     request.send(function(result){
@@ -502,7 +502,7 @@ CpProxyZappOrgTestBasic1.prototype.WriteFile = function(Data, FileFullName, succ
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestBasic1.prototype.Shutdown = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Shutdown", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Shutdown", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){

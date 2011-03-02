@@ -20,16 +20,17 @@
 	
 	string xml = xmlArg;
 	string domain = domainArg;
+	string formattedDomain = domain;
 	string type = typeArg;
-	string serviceName = "";
+	string className = "";
 	
 	if( domain.Equals("upnp.org") ) 
 	{
-	 	domain = "schemas-upnp-org"; 
+	 	formattedDomain = "schemas-upnp-org"; 
 	} 
 	else 
 	{ 
-		domain = domain.Replace(".","-");
+		formattedDomain = domain.Replace(".","-");
 	} 
 	
  	if (String.IsNullOrEmpty(xml))
@@ -78,22 +79,22 @@
 
 	Document u = new Document(xml);
 	
-	serviceName = ConvertToPascalCase("CpProxy-"+domain+type+version);
+	className = ConvertToPascalCase("CpProxy-"+formattedDomain+type+version);
 
 #>
 /**
-* Service Proxy for <#=domain#>:<#=type#>:<#=version#>
+* Service Proxy for <#=className#>
 * @module Zapp
 * @class <#=type#>
 */
 	
-var <#=serviceName#> = function(udn){	
+var <#=className#> = function(udn){	
 
 	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/<#=domain#>-<#=type#>-<#=version#>/control";  // upnp control url
-	this.domain = "<#=domain#>";
+	this.domain = "<#=formattedDomain#>";
 	this.type = "<#=type#>";
 	this.version = "<#=version.ToString()#>";
-	this.serviceName = "<#=serviceName#>";
+	this.serviceName = "<#=domain#>-<#=type#>-<#=version#>";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -119,7 +120,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 * @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
-<#=serviceName#>.prototype.subscribe = function (serviceAddedFunction) {
+<#=className#>.prototype.subscribe = function (serviceAddedFunction) {
     Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
@@ -128,7 +129,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 * Unsubscribes the service from the subscription manager to stop listening for property change events
 * @method Unsubscribe
 */
-<#=serviceName#>.prototype.unsubscribe = function () {
+<#=className#>.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
 }
 
@@ -142,7 +143,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 * @method <#=s.prettyname#>_Changed
 * @param {Function} stateChangedFunction The handler for state changes
 */
-<#=serviceName#>.prototype.<#=s.prettyname#>_Changed = function (stateChangedFunction) {
+<#=className#>.prototype.<#=s.prettyname#>_Changed = function (stateChangedFunction) {
     this.serviceProperties.<#=s.prettyname#>.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.read<#=svtype[s.type]#>Parameter(state)); 
@@ -163,8 +164,8 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-<#=serviceName#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){	
-	var request = new Zapp.SoapRequest("<#=a.name#>", this.url, this.domain, this.type, this.version);		
+<#=className#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){	
+	var request = new Zapp.SoapRequest("<#=a.name#>", this.url, this.formattedDomain, this.type, this.version);		
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
     request.write<#=svtype[i.variable.type]#>Parameter("<#=i.name#>", <#=i.name#>);

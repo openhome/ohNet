@@ -1,18 +1,18 @@
  
 
 /**
-* Service Proxy for schemas-upnp-org:ContentDirectory:2
+* Service Proxy for CpProxySchemasUpnpOrgContentDirectory2
 * @module Zapp
 * @class ContentDirectory
 */
 	
 var CpProxySchemasUpnpOrgContentDirectory2 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/schemas-upnp-org-ContentDirectory-2/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-ContentDirectory-2/control";  // upnp control url
 	this.domain = "schemas-upnp-org";
 	this.type = "ContentDirectory";
 	this.version = "2";
-	this.serviceName = "CpProxySchemasUpnpOrgContentDirectory2";
+	this.serviceName = "upnp.org-ContentDirectory-2";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -92,7 +92,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.TransferIDs_Changed = function 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.GetSearchCapabilities = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetSearchCapabilities", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetSearchCapabilities", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["SearchCaps"] = Zapp.SoapRequest.readStringParameter(result["SearchCaps"]);	
 	
@@ -112,7 +112,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.GetSearchCapabilities = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.GetSortCapabilities = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetSortCapabilities", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetSortCapabilities", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["SortCaps"] = Zapp.SoapRequest.readStringParameter(result["SortCaps"]);	
 	
@@ -132,7 +132,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.GetSortCapabilities = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.GetSortExtensionCapabilities = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetSortExtensionCapabilities", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetSortExtensionCapabilities", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["SortExtensionCaps"] = Zapp.SoapRequest.readStringParameter(result["SortExtensionCaps"]);	
 	
@@ -152,7 +152,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.GetSortExtensionCapabilities = 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.GetFeatureList = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetFeatureList", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetFeatureList", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["FeatureList"] = Zapp.SoapRequest.readStringParameter(result["FeatureList"]);	
 	
@@ -172,7 +172,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.GetFeatureList = function(succe
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.GetSystemUpdateID = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetSystemUpdateID", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetSystemUpdateID", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["Id"] = Zapp.SoapRequest.readIntParameter(result["Id"]);	
 	
@@ -198,7 +198,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.GetSystemUpdateID = function(su
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.Browse = function(ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Browse", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Browse", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("ObjectID", ObjectID);
     request.writeStringParameter("BrowseFlag", BrowseFlag);
     request.writeStringParameter("Filter", Filter);
@@ -233,7 +233,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.Browse = function(ObjectID, Bro
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.Search = function(ContainerID, SearchCriteria, Filter, StartingIndex, RequestedCount, SortCriteria, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Search", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Search", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("ContainerID", ContainerID);
     request.writeStringParameter("SearchCriteria", SearchCriteria);
     request.writeStringParameter("Filter", Filter);
@@ -264,7 +264,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.Search = function(ContainerID, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.CreateObject = function(ContainerID, Elements, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("CreateObject", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("CreateObject", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("ContainerID", ContainerID);
     request.writeStringParameter("Elements", Elements);
     request.send(function(result){
@@ -288,7 +288,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.CreateObject = function(Contain
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.DestroyObject = function(ObjectID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DestroyObject", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DestroyObject", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("ObjectID", ObjectID);
     request.send(function(result){
 	
@@ -311,7 +311,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.DestroyObject = function(Object
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.UpdateObject = function(ObjectID, CurrentTagValue, NewTagValue, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("UpdateObject", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("UpdateObject", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("ObjectID", ObjectID);
     request.writeStringParameter("CurrentTagValue", CurrentTagValue);
     request.writeStringParameter("NewTagValue", NewTagValue);
@@ -335,7 +335,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.UpdateObject = function(ObjectI
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.MoveObject = function(ObjectID, NewParentID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("MoveObject", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("MoveObject", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("ObjectID", ObjectID);
     request.writeStringParameter("NewParentID", NewParentID);
     request.send(function(result){
@@ -359,7 +359,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.MoveObject = function(ObjectID,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.ImportResource = function(SourceURI, DestinationURI, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ImportResource", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ImportResource", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("SourceURI", SourceURI);
     request.writeStringParameter("DestinationURI", DestinationURI);
     request.send(function(result){
@@ -383,7 +383,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.ImportResource = function(Sourc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.ExportResource = function(SourceURI, DestinationURI, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ExportResource", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ExportResource", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("SourceURI", SourceURI);
     request.writeStringParameter("DestinationURI", DestinationURI);
     request.send(function(result){
@@ -406,7 +406,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.ExportResource = function(Sourc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.DeleteResource = function(ResourceURI, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DeleteResource", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DeleteResource", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("ResourceURI", ResourceURI);
     request.send(function(result){
 	
@@ -427,7 +427,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.DeleteResource = function(Resou
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.StopTransferResource = function(TransferID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StopTransferResource", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("StopTransferResource", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("TransferID", TransferID);
     request.send(function(result){
 	
@@ -448,7 +448,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.StopTransferResource = function
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.GetTransferProgress = function(TransferID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetTransferProgress", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetTransferProgress", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("TransferID", TransferID);
     request.send(function(result){
 		result["TransferStatus"] = Zapp.SoapRequest.readStringParameter(result["TransferStatus"]);	
@@ -473,7 +473,7 @@ CpProxySchemasUpnpOrgContentDirectory2.prototype.GetTransferProgress = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgContentDirectory2.prototype.CreateReference = function(ContainerID, ObjectID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("CreateReference", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("CreateReference", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("ContainerID", ContainerID);
     request.writeStringParameter("ObjectID", ObjectID);
     request.send(function(result){

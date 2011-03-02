@@ -1,18 +1,18 @@
  
 
 /**
-* Service Proxy for linn-co-uk:Ui:2
+* Service Proxy for CpProxyLinnCoUkUi2
 * @module Zapp
 * @class Ui
 */
 	
 var CpProxyLinnCoUkUi2 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Ui-2/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Ui-2/control";  // upnp control url
 	this.domain = "linn-co-uk";
 	this.type = "Ui";
 	this.version = "2";
-	this.serviceName = "CpProxyLinnCoUkUi2";
+	this.serviceName = "linn.co.uk-Ui-2";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -213,7 +213,7 @@ CpProxyLinnCoUkUi2.prototype.DisplayPixels_Changed = function (stateChangedFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.DisplayTestPattern = function(aTestPattern, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DisplayTestPattern", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DisplayTestPattern", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aTestPattern", aTestPattern);
     request.send(function(result){
 	
@@ -233,7 +233,7 @@ CpProxyLinnCoUkUi2.prototype.DisplayTestPattern = function(aTestPattern, success
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.DisplayFill = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DisplayFill", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DisplayFill", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -252,7 +252,7 @@ CpProxyLinnCoUkUi2.prototype.DisplayFill = function(successFunction, errorFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.DisplayClear = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DisplayClear", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DisplayClear", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -272,7 +272,7 @@ CpProxyLinnCoUkUi2.prototype.DisplayClear = function(successFunction, errorFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.SetTestModeEnabled = function(aEnabled, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetTestModeEnabled", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetTestModeEnabled", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("aEnabled", aEnabled);
     request.send(function(result){
 	
@@ -293,7 +293,7 @@ CpProxyLinnCoUkUi2.prototype.SetTestModeEnabled = function(aEnabled, successFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.SimulateInfraredInput = function(aCode, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SimulateInfraredInput", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SimulateInfraredInput", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aCode", aCode);
     request.send(function(result){
 	
@@ -314,7 +314,7 @@ CpProxyLinnCoUkUi2.prototype.SimulateInfraredInput = function(aCode, successFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.SimulateButtonInput = function(aCode, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SimulateButtonInput", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SimulateButtonInput", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aCode", aCode);
     request.send(function(result){
 	
@@ -335,7 +335,7 @@ CpProxyLinnCoUkUi2.prototype.SimulateButtonInput = function(aCode, successFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.SimulateLightSensor = function(aLightLevel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SimulateLightSensor", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SimulateLightSensor", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aLightLevel", aLightLevel);
     request.send(function(result){
 	
@@ -355,7 +355,7 @@ CpProxyLinnCoUkUi2.prototype.SimulateLightSensor = function(aLightLevel, success
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.GetLightSensorData = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetLightSensorData", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetLightSensorData", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aLightLevel"] = Zapp.SoapRequest.readIntParameter(result["aLightLevel"]);	
 	
@@ -376,7 +376,7 @@ CpProxyLinnCoUkUi2.prototype.GetLightSensorData = function(successFunction, erro
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.SetDisplayBrightness = function(aBrightness, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetDisplayBrightness", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetDisplayBrightness", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aBrightness", aBrightness);
     request.send(function(result){
 	
@@ -397,7 +397,7 @@ CpProxyLinnCoUkUi2.prototype.SetDisplayBrightness = function(aBrightness, succes
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.SetDisplayBrightnessAuto = function(aBrightnessAuto, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetDisplayBrightnessAuto", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetDisplayBrightnessAuto", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("aBrightnessAuto", aBrightnessAuto);
     request.send(function(result){
 	
@@ -418,7 +418,7 @@ CpProxyLinnCoUkUi2.prototype.SetDisplayBrightnessAuto = function(aBrightnessAuto
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.SetInfraredCommands = function(aCommands, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetInfraredCommands", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetInfraredCommands", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("aCommands", aCommands);
     request.send(function(result){
 	
@@ -438,7 +438,7 @@ CpProxyLinnCoUkUi2.prototype.SetInfraredCommands = function(aCommands, successFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.InfraredCommands = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("InfraredCommands", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("InfraredCommands", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aCommands"] = Zapp.SoapRequest.readStringParameter(result["aCommands"]);	
 	
@@ -459,7 +459,7 @@ CpProxyLinnCoUkUi2.prototype.InfraredCommands = function(successFunction, errorF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.SetInfraredTerminalCommands = function(aCommands, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetInfraredTerminalCommands", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetInfraredTerminalCommands", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("aCommands", aCommands);
     request.send(function(result){
 	
@@ -479,7 +479,7 @@ CpProxyLinnCoUkUi2.prototype.SetInfraredTerminalCommands = function(aCommands, s
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.InfraredTerminalCommands = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("InfraredTerminalCommands", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("InfraredTerminalCommands", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aCommands"] = Zapp.SoapRequest.readStringParameter(result["aCommands"]);	
 	
@@ -499,7 +499,7 @@ CpProxyLinnCoUkUi2.prototype.InfraredTerminalCommands = function(successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.DisplayBrightness = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DisplayBrightness", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DisplayBrightness", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aBrightness"] = Zapp.SoapRequest.readIntParameter(result["aBrightness"]);	
 	
@@ -519,7 +519,7 @@ CpProxyLinnCoUkUi2.prototype.DisplayBrightness = function(successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.DisplayBrightnessAuto = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DisplayBrightnessAuto", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DisplayBrightnessAuto", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aBrightnessAuto"] = Zapp.SoapRequest.readBoolParameter(result["aBrightnessAuto"]);	
 	
@@ -539,7 +539,7 @@ CpProxyLinnCoUkUi2.prototype.DisplayBrightnessAuto = function(successFunction, e
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.DisplayUpsideDown = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DisplayUpsideDown", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DisplayUpsideDown", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aUpsideDown"] = Zapp.SoapRequest.readBoolParameter(result["aUpsideDown"]);	
 	
@@ -560,7 +560,7 @@ CpProxyLinnCoUkUi2.prototype.DisplayUpsideDown = function(successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.SetDisplayUpsideDown = function(aUpsideDown, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetDisplayUpsideDown", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetDisplayUpsideDown", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("aUpsideDown", aUpsideDown);
     request.send(function(result){
 	
@@ -581,7 +581,7 @@ CpProxyLinnCoUkUi2.prototype.SetDisplayUpsideDown = function(aUpsideDown, succes
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.SetDisplayScrollText = function(aDisplayScrollText, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetDisplayScrollText", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetDisplayScrollText", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("aDisplayScrollText", aDisplayScrollText);
     request.send(function(result){
 	
@@ -601,7 +601,7 @@ CpProxyLinnCoUkUi2.prototype.SetDisplayScrollText = function(aDisplayScrollText,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.DisplayScrollText = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DisplayScrollText", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DisplayScrollText", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aDisplayScrollTextEnabled"] = Zapp.SoapRequest.readBoolParameter(result["aDisplayScrollTextEnabled"]);	
 	
@@ -622,7 +622,7 @@ CpProxyLinnCoUkUi2.prototype.DisplayScrollText = function(successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.SetDisplaySleep = function(aEnabled, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetDisplaySleep", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetDisplaySleep", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("aEnabled", aEnabled);
     request.send(function(result){
 	
@@ -642,7 +642,7 @@ CpProxyLinnCoUkUi2.prototype.SetDisplaySleep = function(aEnabled, successFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.DisplaySleep = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DisplaySleep", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DisplaySleep", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aEnabled"] = Zapp.SoapRequest.readBoolParameter(result["aEnabled"]);	
 	
@@ -663,7 +663,7 @@ CpProxyLinnCoUkUi2.prototype.DisplaySleep = function(successFunction, errorFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.SetDisplayLedOff = function(aOff, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetDisplayLedOff", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetDisplayLedOff", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("aOff", aOff);
     request.send(function(result){
 	
@@ -683,7 +683,7 @@ CpProxyLinnCoUkUi2.prototype.SetDisplayLedOff = function(aOff, successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkUi2.prototype.DisplayLedOff = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DisplayLedOff", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DisplayLedOff", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aOff"] = Zapp.SoapRequest.readBoolParameter(result["aOff"]);	
 	

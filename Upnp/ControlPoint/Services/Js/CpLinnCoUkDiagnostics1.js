@@ -1,18 +1,18 @@
  
 
 /**
-* Service Proxy for linn-co-uk:Diagnostics:1
+* Service Proxy for CpProxyLinnCoUkDiagnostics1
 * @module Zapp
 * @class Diagnostics
 */
 	
 var CpProxyLinnCoUkDiagnostics1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Diagnostics-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Diagnostics-1/control";  // upnp control url
 	this.domain = "linn-co-uk";
 	this.type = "Diagnostics";
 	this.version = "1";
-	this.serviceName = "CpProxyLinnCoUkDiagnostics1";
+	this.serviceName = "linn.co.uk-Diagnostics-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -65,7 +65,7 @@ CpProxyLinnCoUkDiagnostics1.prototype.aStateVariable_Changed = function (stateCh
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDiagnostics1.prototype.Echo = function(aIn, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Echo", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Echo", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("aIn", aIn);
     request.send(function(result){
 		result["aOut"] = Zapp.SoapRequest.readStringParameter(result["aOut"]);	
@@ -86,7 +86,7 @@ CpProxyLinnCoUkDiagnostics1.prototype.Echo = function(aIn, successFunction, erro
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDiagnostics1.prototype.ElfFile = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ElfFile", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ElfFile", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aElfFile"] = Zapp.SoapRequest.readStringParameter(result["aElfFile"]);	
 	
@@ -106,7 +106,7 @@ CpProxyLinnCoUkDiagnostics1.prototype.ElfFile = function(successFunction, errorF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDiagnostics1.prototype.ElfFingerprint = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ElfFingerprint", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ElfFingerprint", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aElfFileFingerprint"] = Zapp.SoapRequest.readStringParameter(result["aElfFileFingerprint"]);	
 	
@@ -126,7 +126,7 @@ CpProxyLinnCoUkDiagnostics1.prototype.ElfFingerprint = function(successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDiagnostics1.prototype.CrashDataStatus = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("CrashDataStatus", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("CrashDataStatus", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aCrashDataStatus"] = Zapp.SoapRequest.readStringParameter(result["aCrashDataStatus"]);	
 	
@@ -146,7 +146,7 @@ CpProxyLinnCoUkDiagnostics1.prototype.CrashDataStatus = function(successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDiagnostics1.prototype.CrashDataFetch = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("CrashDataFetch", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("CrashDataFetch", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aCrashData"] = Zapp.SoapRequest.readBinaryParameter(result["aCrashData"]);	
 	
@@ -166,7 +166,7 @@ CpProxyLinnCoUkDiagnostics1.prototype.CrashDataFetch = function(successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDiagnostics1.prototype.CrashDataClear = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("CrashDataClear", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("CrashDataClear", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -185,7 +185,7 @@ CpProxyLinnCoUkDiagnostics1.prototype.CrashDataClear = function(successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDiagnostics1.prototype.SysLog = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SysLog", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SysLog", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aSysLog"] = Zapp.SoapRequest.readBinaryParameter(result["aSysLog"]);	
 	
@@ -206,7 +206,7 @@ CpProxyLinnCoUkDiagnostics1.prototype.SysLog = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDiagnostics1.prototype.Diagnostic = function(aDiagnosticType, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Diagnostic", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Diagnostic", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("aDiagnosticType", aDiagnosticType);
     request.send(function(result){
 		result["aDiagnosticInfo"] = Zapp.SoapRequest.readStringParameter(result["aDiagnosticInfo"]);	
@@ -227,7 +227,7 @@ CpProxyLinnCoUkDiagnostics1.prototype.Diagnostic = function(aDiagnosticType, suc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDiagnostics1.prototype.StateVariable = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StateVariable", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("StateVariable", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aStateVariable"] = Zapp.SoapRequest.readIntParameter(result["aStateVariable"]);	
 	
@@ -248,7 +248,7 @@ CpProxyLinnCoUkDiagnostics1.prototype.StateVariable = function(successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDiagnostics1.prototype.SetStateVariable = function(aStateVariable, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetStateVariable", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetStateVariable", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aStateVariable", aStateVariable);
     request.send(function(result){
 	
@@ -268,7 +268,7 @@ CpProxyLinnCoUkDiagnostics1.prototype.SetStateVariable = function(aStateVariable
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDiagnostics1.prototype.StateVariablePeriod = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StateVariablePeriod", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("StateVariablePeriod", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aPeriod"] = Zapp.SoapRequest.readIntParameter(result["aPeriod"]);	
 	
@@ -289,7 +289,7 @@ CpProxyLinnCoUkDiagnostics1.prototype.StateVariablePeriod = function(successFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDiagnostics1.prototype.SetStateVariablePeriod = function(aPeriod, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetStateVariablePeriod", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetStateVariablePeriod", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aPeriod", aPeriod);
     request.send(function(result){
 	
@@ -310,7 +310,7 @@ CpProxyLinnCoUkDiagnostics1.prototype.SetStateVariablePeriod = function(aPeriod,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDiagnostics1.prototype.Reboot = function(aDelay, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Reboot", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Reboot", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aDelay", aDelay);
     request.send(function(result){
 	

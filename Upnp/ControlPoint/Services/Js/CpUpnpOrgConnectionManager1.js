@@ -1,18 +1,18 @@
  
 
 /**
-* Service Proxy for schemas-upnp-org:ConnectionManager:1
+* Service Proxy for CpProxySchemasUpnpOrgConnectionManager1
 * @module Zapp
 * @class ConnectionManager
 */
 	
 var CpProxySchemasUpnpOrgConnectionManager1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/schemas-upnp-org-ConnectionManager-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-ConnectionManager-1/control";  // upnp control url
 	this.domain = "schemas-upnp-org";
 	this.type = "ConnectionManager";
 	this.version = "1";
-	this.serviceName = "CpProxySchemasUpnpOrgConnectionManager1";
+	this.serviceName = "upnp.org-ConnectionManager-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -92,7 +92,7 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.CurrentConnectionIDs_Changed =
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager1.prototype.GetProtocolInfo = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetProtocolInfo", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetProtocolInfo", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["Source"] = Zapp.SoapRequest.readStringParameter(result["Source"]);	
 		result["Sink"] = Zapp.SoapRequest.readStringParameter(result["Sink"]);	
@@ -117,7 +117,7 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.GetProtocolInfo = function(suc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager1.prototype.PrepareForConnection = function(RemoteProtocolInfo, PeerConnectionManager, PeerConnectionID, Direction, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("PrepareForConnection", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("PrepareForConnection", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("RemoteProtocolInfo", RemoteProtocolInfo);
     request.writeStringParameter("PeerConnectionManager", PeerConnectionManager);
     request.writeIntParameter("PeerConnectionID", PeerConnectionID);
@@ -144,7 +144,7 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.PrepareForConnection = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager1.prototype.ConnectionComplete = function(ConnectionID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ConnectionComplete", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ConnectionComplete", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("ConnectionID", ConnectionID);
     request.send(function(result){
 	
@@ -164,7 +164,7 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.ConnectionComplete = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager1.prototype.GetCurrentConnectionIDs = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetCurrentConnectionIDs", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetCurrentConnectionIDs", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["ConnectionIDs"] = Zapp.SoapRequest.readStringParameter(result["ConnectionIDs"]);	
 	
@@ -185,7 +185,7 @@ CpProxySchemasUpnpOrgConnectionManager1.prototype.GetCurrentConnectionIDs = func
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager1.prototype.GetCurrentConnectionInfo = function(ConnectionID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetCurrentConnectionInfo", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetCurrentConnectionInfo", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("ConnectionID", ConnectionID);
     request.send(function(result){
 		result["RcsID"] = Zapp.SoapRequest.readIntParameter(result["RcsID"]);	

@@ -1,18 +1,18 @@
  
 
 /**
-* Service Proxy for zapp-org:TestDimmableLight:1
+* Service Proxy for CpProxyZappOrgTestDimmableLight1
 * @module Zapp
 * @class TestDimmableLight
 */
 	
 var CpProxyZappOrgTestDimmableLight1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp-org-TestDimmableLight-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp.org-TestDimmableLight-1/control";  // upnp control url
 	this.domain = "zapp-org";
 	this.type = "TestDimmableLight";
 	this.version = "1";
-	this.serviceName = "CpProxyZappOrgTestDimmableLight1";
+	this.serviceName = "zapp.org-TestDimmableLight-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -64,7 +64,7 @@ CpProxyZappOrgTestDimmableLight1.prototype.A_ARG_Level_Changed = function (state
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestDimmableLight1.prototype.GetLevel = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetLevel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetLevel", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["Level"] = Zapp.SoapRequest.readIntParameter(result["Level"]);	
 	
@@ -85,7 +85,7 @@ CpProxyZappOrgTestDimmableLight1.prototype.GetLevel = function(successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestDimmableLight1.prototype.SetLevel = function(Level, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetLevel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetLevel", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("Level", Level);
     request.send(function(result){
 	

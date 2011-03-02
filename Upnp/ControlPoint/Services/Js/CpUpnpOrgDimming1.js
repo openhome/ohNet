@@ -1,18 +1,18 @@
  
 
 /**
-* Service Proxy for schemas-upnp-org:Dimming:1
+* Service Proxy for CpProxySchemasUpnpOrgDimming1
 * @module Zapp
 * @class Dimming
 */
 	
 var CpProxySchemasUpnpOrgDimming1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/schemas-upnp-org-Dimming-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-Dimming-1/control";  // upnp control url
 	this.domain = "schemas-upnp-org";
 	this.type = "Dimming";
 	this.version = "1";
-	this.serviceName = "CpProxySchemasUpnpOrgDimming1";
+	this.serviceName = "upnp.org-Dimming-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -121,7 +121,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.RampPaused_Changed = function (stateChan
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.SetLoadLevelTarget = function(newLoadlevelTarget, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetLoadLevelTarget", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetLoadLevelTarget", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("newLoadlevelTarget", newLoadlevelTarget);
     request.send(function(result){
 	
@@ -141,7 +141,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.SetLoadLevelTarget = function(newLoadlev
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetLoadLevelTarget = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetLoadLevelTarget", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetLoadLevelTarget", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["GetLoadlevelTarget"] = Zapp.SoapRequest.readIntParameter(result["GetLoadlevelTarget"]);	
 	
@@ -161,7 +161,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetLoadLevelTarget = function(successFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetLoadLevelStatus = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetLoadLevelStatus", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetLoadLevelStatus", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["retLoadlevelStatus"] = Zapp.SoapRequest.readIntParameter(result["retLoadlevelStatus"]);	
 	
@@ -182,7 +182,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetLoadLevelStatus = function(successFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.SetOnEffectLevel = function(newOnEffectLevel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetOnEffectLevel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetOnEffectLevel", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("newOnEffectLevel", newOnEffectLevel);
     request.send(function(result){
 	
@@ -203,7 +203,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.SetOnEffectLevel = function(newOnEffectL
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.SetOnEffect = function(newOnEffect, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetOnEffect", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetOnEffect", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("newOnEffect", newOnEffect);
     request.send(function(result){
 	
@@ -223,7 +223,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.SetOnEffect = function(newOnEffect, succ
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetOnEffectParameters = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetOnEffectParameters", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetOnEffectParameters", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["retOnEffect"] = Zapp.SoapRequest.readStringParameter(result["retOnEffect"]);	
 		result["retOnEffectLevel"] = Zapp.SoapRequest.readIntParameter(result["retOnEffectLevel"]);	
@@ -244,7 +244,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetOnEffectParameters = function(success
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.StepUp = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StepUp", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("StepUp", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -263,7 +263,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.StepUp = function(successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.StepDown = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StepDown", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("StepDown", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -282,7 +282,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.StepDown = function(successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.StartRampUp = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StartRampUp", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("StartRampUp", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -301,7 +301,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.StartRampUp = function(successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.StartRampDown = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StartRampDown", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("StartRampDown", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -320,7 +320,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.StartRampDown = function(successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.StopRamp = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StopRamp", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("StopRamp", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -341,7 +341,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.StopRamp = function(successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.StartRampToLevel = function(newLoadLevelTarget, newRampTime, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StartRampToLevel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("StartRampToLevel", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("newLoadLevelTarget", newLoadLevelTarget);
     request.writeIntParameter("newRampTime", newRampTime);
     request.send(function(result){
@@ -363,7 +363,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.StartRampToLevel = function(newLoadLevel
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.SetStepDelta = function(newStepDelta, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetStepDelta", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetStepDelta", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("newStepDelta", newStepDelta);
     request.send(function(result){
 	
@@ -383,7 +383,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.SetStepDelta = function(newStepDelta, su
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetStepDelta = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetStepDelta", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetStepDelta", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["retStepDelta"] = Zapp.SoapRequest.readIntParameter(result["retStepDelta"]);	
 	
@@ -404,7 +404,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetStepDelta = function(successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.SetRampRate = function(newRampRate, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetRampRate", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetRampRate", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("newRampRate", newRampRate);
     request.send(function(result){
 	
@@ -424,7 +424,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.SetRampRate = function(newRampRate, succ
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetRampRate = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRampRate", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetRampRate", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["retRampRate"] = Zapp.SoapRequest.readIntParameter(result["retRampRate"]);	
 	
@@ -444,7 +444,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetRampRate = function(successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.PauseRamp = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("PauseRamp", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("PauseRamp", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -463,7 +463,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.PauseRamp = function(successFunction, er
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.ResumeRamp = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ResumeRamp", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ResumeRamp", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -482,7 +482,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.ResumeRamp = function(successFunction, e
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetIsRamping = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetIsRamping", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetIsRamping", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["retIsRamping"] = Zapp.SoapRequest.readBoolParameter(result["retIsRamping"]);	
 	
@@ -502,7 +502,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetIsRamping = function(successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetRampPaused = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRampPaused", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetRampPaused", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["retRampPaused"] = Zapp.SoapRequest.readBoolParameter(result["retRampPaused"]);	
 	
@@ -522,7 +522,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetRampPaused = function(successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetRampTime = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRampTime", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetRampTime", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["retRampTime"] = Zapp.SoapRequest.readIntParameter(result["retRampTime"]);	
 	

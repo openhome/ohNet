@@ -1,18 +1,18 @@
  
 
 /**
-* Service Proxy for schemas-upnp-org:RenderingControl:2
+* Service Proxy for CpProxySchemasUpnpOrgRenderingControl2
 * @module Zapp
 * @class RenderingControl
 */
 	
 var CpProxySchemasUpnpOrgRenderingControl2 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/schemas-upnp-org-RenderingControl-2/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-RenderingControl-2/control";  // upnp control url
 	this.domain = "schemas-upnp-org";
 	this.type = "RenderingControl";
 	this.version = "2";
-	this.serviceName = "CpProxySchemasUpnpOrgRenderingControl2";
+	this.serviceName = "upnp.org-RenderingControl-2";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -65,7 +65,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.LastChange_Changed = function (
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.ListPresets = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ListPresets", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ListPresets", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentPresetNameList"] = Zapp.SoapRequest.readStringParameter(result["CurrentPresetNameList"]);	
@@ -88,7 +88,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.ListPresets = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SelectPreset = function(InstanceID, PresetName, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SelectPreset", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SelectPreset", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("PresetName", PresetName);
     request.send(function(result){
@@ -110,7 +110,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SelectPreset = function(Instanc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetBrightness = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetBrightness", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetBrightness", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentBrightness"] = Zapp.SoapRequest.readIntParameter(result["CurrentBrightness"]);	
@@ -133,7 +133,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetBrightness = function(Instan
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetBrightness = function(InstanceID, DesiredBrightness, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetBrightness", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetBrightness", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredBrightness", DesiredBrightness);
     request.send(function(result){
@@ -155,7 +155,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetBrightness = function(Instan
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetContrast = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetContrast", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetContrast", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentContrast"] = Zapp.SoapRequest.readIntParameter(result["CurrentContrast"]);	
@@ -178,7 +178,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetContrast = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetContrast = function(InstanceID, DesiredContrast, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetContrast", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetContrast", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredContrast", DesiredContrast);
     request.send(function(result){
@@ -200,7 +200,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetContrast = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetSharpness = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetSharpness", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetSharpness", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentSharpness"] = Zapp.SoapRequest.readIntParameter(result["CurrentSharpness"]);	
@@ -223,7 +223,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetSharpness = function(Instanc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetSharpness = function(InstanceID, DesiredSharpness, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetSharpness", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetSharpness", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredSharpness", DesiredSharpness);
     request.send(function(result){
@@ -245,7 +245,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetSharpness = function(Instanc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetRedVideoGain = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRedVideoGain", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetRedVideoGain", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentRedVideoGain"] = Zapp.SoapRequest.readIntParameter(result["CurrentRedVideoGain"]);	
@@ -268,7 +268,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetRedVideoGain = function(Inst
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetRedVideoGain = function(InstanceID, DesiredRedVideoGain, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetRedVideoGain", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetRedVideoGain", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredRedVideoGain", DesiredRedVideoGain);
     request.send(function(result){
@@ -290,7 +290,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetRedVideoGain = function(Inst
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetGreenVideoGain = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetGreenVideoGain", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetGreenVideoGain", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentGreenVideoGain"] = Zapp.SoapRequest.readIntParameter(result["CurrentGreenVideoGain"]);	
@@ -313,7 +313,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetGreenVideoGain = function(In
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetGreenVideoGain = function(InstanceID, DesiredGreenVideoGain, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetGreenVideoGain", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetGreenVideoGain", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredGreenVideoGain", DesiredGreenVideoGain);
     request.send(function(result){
@@ -335,7 +335,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetGreenVideoGain = function(In
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetBlueVideoGain = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetBlueVideoGain", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetBlueVideoGain", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentBlueVideoGain"] = Zapp.SoapRequest.readIntParameter(result["CurrentBlueVideoGain"]);	
@@ -358,7 +358,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetBlueVideoGain = function(Ins
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetBlueVideoGain = function(InstanceID, DesiredBlueVideoGain, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetBlueVideoGain", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetBlueVideoGain", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredBlueVideoGain", DesiredBlueVideoGain);
     request.send(function(result){
@@ -380,7 +380,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetBlueVideoGain = function(Ins
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetRedVideoBlackLevel = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRedVideoBlackLevel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetRedVideoBlackLevel", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentRedVideoBlackLevel"] = Zapp.SoapRequest.readIntParameter(result["CurrentRedVideoBlackLevel"]);	
@@ -403,7 +403,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetRedVideoBlackLevel = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetRedVideoBlackLevel = function(InstanceID, DesiredRedVideoBlackLevel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetRedVideoBlackLevel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetRedVideoBlackLevel", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredRedVideoBlackLevel", DesiredRedVideoBlackLevel);
     request.send(function(result){
@@ -425,7 +425,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetRedVideoBlackLevel = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetGreenVideoBlackLevel = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetGreenVideoBlackLevel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetGreenVideoBlackLevel", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentGreenVideoBlackLevel"] = Zapp.SoapRequest.readIntParameter(result["CurrentGreenVideoBlackLevel"]);	
@@ -448,7 +448,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetGreenVideoBlackLevel = funct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetGreenVideoBlackLevel = function(InstanceID, DesiredGreenVideoBlackLevel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetGreenVideoBlackLevel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetGreenVideoBlackLevel", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredGreenVideoBlackLevel", DesiredGreenVideoBlackLevel);
     request.send(function(result){
@@ -470,7 +470,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetGreenVideoBlackLevel = funct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetBlueVideoBlackLevel = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetBlueVideoBlackLevel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetBlueVideoBlackLevel", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentBlueVideoBlackLevel"] = Zapp.SoapRequest.readIntParameter(result["CurrentBlueVideoBlackLevel"]);	
@@ -493,7 +493,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetBlueVideoBlackLevel = functi
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetBlueVideoBlackLevel = function(InstanceID, DesiredBlueVideoBlackLevel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetBlueVideoBlackLevel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetBlueVideoBlackLevel", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredBlueVideoBlackLevel", DesiredBlueVideoBlackLevel);
     request.send(function(result){
@@ -515,7 +515,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetBlueVideoBlackLevel = functi
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetColorTemperature = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetColorTemperature", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetColorTemperature", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentColorTemperature"] = Zapp.SoapRequest.readIntParameter(result["CurrentColorTemperature"]);	
@@ -538,7 +538,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetColorTemperature = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetColorTemperature = function(InstanceID, DesiredColorTemperature, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetColorTemperature", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetColorTemperature", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredColorTemperature", DesiredColorTemperature);
     request.send(function(result){
@@ -560,7 +560,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetColorTemperature = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetHorizontalKeystone = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetHorizontalKeystone", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetHorizontalKeystone", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentHorizontalKeystone"] = Zapp.SoapRequest.readIntParameter(result["CurrentHorizontalKeystone"]);	
@@ -583,7 +583,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetHorizontalKeystone = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetHorizontalKeystone = function(InstanceID, DesiredHorizontalKeystone, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetHorizontalKeystone", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetHorizontalKeystone", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredHorizontalKeystone", DesiredHorizontalKeystone);
     request.send(function(result){
@@ -605,7 +605,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetHorizontalKeystone = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetVerticalKeystone = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetVerticalKeystone", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetVerticalKeystone", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 		result["CurrentVerticalKeystone"] = Zapp.SoapRequest.readIntParameter(result["CurrentVerticalKeystone"]);	
@@ -628,7 +628,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetVerticalKeystone = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetVerticalKeystone = function(InstanceID, DesiredVerticalKeystone, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetVerticalKeystone", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetVerticalKeystone", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredVerticalKeystone", DesiredVerticalKeystone);
     request.send(function(result){
@@ -651,7 +651,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetVerticalKeystone = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetMute = function(InstanceID, Channel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetMute", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetMute", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.send(function(result){
@@ -676,7 +676,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetMute = function(InstanceID, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetMute = function(InstanceID, Channel, DesiredMute, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetMute", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetMute", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.writeBoolParameter("DesiredMute", DesiredMute);
@@ -700,7 +700,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetMute = function(InstanceID, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetVolume = function(InstanceID, Channel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetVolume", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetVolume", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.send(function(result){
@@ -725,7 +725,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetVolume = function(InstanceID
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetVolume = function(InstanceID, Channel, DesiredVolume, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetVolume", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetVolume", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.writeIntParameter("DesiredVolume", DesiredVolume);
@@ -749,7 +749,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetVolume = function(InstanceID
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetVolumeDB = function(InstanceID, Channel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetVolumeDB", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetVolumeDB", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.send(function(result){
@@ -774,7 +774,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetVolumeDB = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetVolumeDB = function(InstanceID, Channel, DesiredVolume, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetVolumeDB", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetVolumeDB", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.writeIntParameter("DesiredVolume", DesiredVolume);
@@ -798,7 +798,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetVolumeDB = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetVolumeDBRange = function(InstanceID, Channel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetVolumeDBRange", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetVolumeDBRange", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.send(function(result){
@@ -823,7 +823,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetVolumeDBRange = function(Ins
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetLoudness = function(InstanceID, Channel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetLoudness", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetLoudness", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.send(function(result){
@@ -848,7 +848,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetLoudness = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetLoudness = function(InstanceID, Channel, DesiredLoudness, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetLoudness", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetLoudness", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.writeBoolParameter("DesiredLoudness", DesiredLoudness);
@@ -872,7 +872,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.SetLoudness = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.GetStateVariables = function(InstanceID, StateVariableList, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetStateVariables", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetStateVariables", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("StateVariableList", StateVariableList);
     request.send(function(result){
@@ -899,7 +899,7 @@ CpProxySchemasUpnpOrgRenderingControl2.prototype.GetStateVariables = function(In
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl2.prototype.SetStateVariables = function(InstanceID, RenderingControlUDN, ServiceType, ServiceId, StateVariableValuePairs, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetStateVariables", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetStateVariables", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("RenderingControlUDN", RenderingControlUDN);
     request.writeStringParameter("ServiceType", ServiceType);
