@@ -162,7 +162,6 @@ void Socket::Close()
     TInt err = Zapp::Os::NetworkClose(iHandle);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Socket::Close H = %d, RETURN VALUE = %d\n", iHandle, err);
-        THROW(NetworkError);
     }
     iHandle = kHandleNull;
 }
