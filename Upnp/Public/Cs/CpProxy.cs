@@ -86,10 +86,11 @@ namespace Zapp.ControlPoint
         private CallbackPropertyChanged iInitialEvent;
         private Callback iCallbackInitialEvent;
         private SubscriptionStatus iSubscriptionStatus = SubscriptionStatus.eNotSubscribed;
+        private Mutex iSubscriptionStatusLock;
 
         public void Subscribe()
         {
-            lock (this)
+            lock (iSubscriptionStatusLock)
             {
                 iSubscriptionStatus = SubscriptionStatus.eSubscribing;
             }
@@ -98,7 +99,7 @@ namespace Zapp.ControlPoint
 
         public void Unsubscribe()
         {
-            lock (this)
+            lock (iSubscriptionStatusLock)
             {
                 iSubscriptionStatus = SubscriptionStatus.eNotSubscribed;
             }
@@ -131,6 +132,7 @@ namespace Zapp.ControlPoint
             IntPtr serviceHandle = CpProxyService(iHandle);
             iService = new CpService(serviceHandle);
             iGchProxy = GCHandle.Alloc(this);
+            iSubscriptionStatusLock = new Mutex();
         }
 
         protected void PropertyReadLock()
@@ -145,7 +147,7 @@ namespace Zapp.ControlPoint
         
         protected void ReportEvent(CallbackPropertyChanged aCallback)
         {
-            lock (this)
+            lock (iSubscriptionStatusLock)
             {
                 if (iSubscriptionStatus == SubscriptionStatus.eSubscribing)
                 {
