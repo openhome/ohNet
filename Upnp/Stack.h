@@ -14,6 +14,7 @@
 #include <NetworkInterfaceList.h>
 #include <Discovery.h>
 #include <Zapp.h>
+#include <Printer.h>
 
 #include <vector>
 
