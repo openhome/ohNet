@@ -46,7 +46,6 @@ void DviDevice::Construct(const Brx& aUdn)
 
 DviDevice::~DviDevice()
 {
-    DviDeviceMap::Remove(*this);
     delete iProtocols[0];
     for (TUint i=0; i<iServices.size(); i++) {
         iServices[i]->RemoveRef();
@@ -57,6 +56,7 @@ DviDevice::~DviDevice()
 void DviDevice::Destroy()
 {
     iLock.Wait();
+    DviDeviceMap::Remove(*this);
     for (TUint i=0; i<iDevices.size(); i++) {
         iDevices[i]->Destroy();
     }

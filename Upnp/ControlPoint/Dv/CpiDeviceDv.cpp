@@ -8,6 +8,7 @@
 #include <Stream.h>
 #include <CpProxy.h>
 #include <Printer.h>
+#include <Stack.h>
 
 using namespace Zapp;
 
@@ -18,6 +19,7 @@ CpiDeviceDv::CpiDeviceDv(DviDevice& aDevice)
     , iSubscriptionDv(NULL)
     , iSubscriptionCp(NULL)
 {
+    iDeviceDv.AddWeakRef();
     iDeviceCp = new CpiDevice(iDeviceDv.Udn(), *this, *this, NULL);
     iDeviceCp->SetReady();
 }
@@ -102,6 +104,7 @@ void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
 
 void CpiDeviceDv::Release()
 {
+    iDeviceDv.RemoveWeakRef();
     iDeviceCp = NULL; // device will delete itself when this returns;
     delete this;
 }
