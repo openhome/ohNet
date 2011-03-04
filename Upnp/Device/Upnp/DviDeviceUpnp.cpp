@@ -94,8 +94,10 @@ void DviDeviceUpnp::MsgSchedulerComplete(DeviceMsgScheduler* aScheduler)
     // this method to try to delete themselves. I consider it a hack
     // and I would recommend that we review this code and try to fix
     // it in a cleaner manner. --AW
+    bool shouldDelete = false;
     if (!iSuppressScheduledEvents)
     {
+        shouldDelete = true;
         for (TUint i=0; i<iMsgSchedulers.size(); i++) {
             DeviceMsgScheduler* scheduler = iMsgSchedulers[i];
             if (scheduler == aScheduler) {
@@ -105,7 +107,15 @@ void DviDeviceUpnp::MsgSchedulerComplete(DeviceMsgScheduler* aScheduler)
         }
     }
     iLock.Signal();
-    delete aScheduler;
+    // If iSuppressScheduledEvents was set while we held the lock, we
+    // are not responsible here for deleting the scheduler - that will be
+    // taken care of in our destructor. If iSuppressScheduledEvents *was*
+    // set, we have now removed the scheduler from the list and so we know
+    // that it is safe for us to delete it here.
+    if (shouldDelete)
+    {
+        delete aScheduler;
+    }
 }
 
 void DviDeviceUpnp::AddListener(const NetworkInterface& aNif)
