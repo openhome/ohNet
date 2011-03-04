@@ -255,6 +255,7 @@ int32_t DvInvocationReportError(DvInvocationC aInvocation, uint32_t aCode, const
     catch (WriterError&) {
         return -1;
     }
+    catch (InvocationError&) {}
     return 0;
 }
 
