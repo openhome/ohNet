@@ -356,7 +356,7 @@ namespace Zapp.Device
             int err = DvInvocationReadString(iHandle, name, &cStr);
             Marshal.FreeHGlobal(name);
             String str = "";
-            if (cStr != null)
+            if (cStr != IntPtr.Zero)
             {
                 str = Marshal.PtrToStringAnsi((IntPtr)cStr);
             }
