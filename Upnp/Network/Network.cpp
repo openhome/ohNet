@@ -151,7 +151,6 @@ void Socket::Interrupt(TBool aInterrupt)
     TInt err = Zapp::Os::NetworkInterrupt(iHandle, aInterrupt);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Socket::Interrupt H = %d, RETURN VALUE = %d\n", iHandle, err);
-        THROW(NetworkError);
     }
 }
 
