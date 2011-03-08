@@ -401,10 +401,10 @@ DviSubscription* DviSubscriptionManager::Find(const Brx& aSid)
 void DviSubscriptionManager::QueueUpdate(DviSubscription& aSubscription)
 {
     DviSubscriptionManager& self = DviSubscriptionManager::Self();
-    self.iLock.Wait();
-    self.iList.push_back(&aSubscription);
     ASSERT(aSubscription.PropertiesInitialised());
     aSubscription.AddRef();
+    self.iLock.Wait();
+    self.iList.push_back(&aSubscription);
     self.Signal();
     self.iLock.Signal();
 }
