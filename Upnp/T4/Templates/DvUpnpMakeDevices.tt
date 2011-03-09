@@ -21,21 +21,21 @@ objects_devices = \
 
 # Devices have well controlled dependencies so we can document a more limited set of headers
 headers_device = $(inc_build)/Cpp/ZappTypes.h \
-                $(inc_build)/DviService.h \
-                $(inc_build)/Cpp/Functor.h \
-                $(inc_build)/Service.h \
-                $(inc_build)/FunctorDviInvocation.h
+                 $(inc_build)/DviService.h \
+                 $(inc_build)/Cpp/Functor.h \
+                 $(inc_build)/Service.h \
+                 $(inc_build)/FunctorDviInvocation.h
 
 device_dotnet_assemblies = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-		Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
+        Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
 <#  } #>
 
 device_dotnet_assemblies_with_path = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-		$(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
+        $(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
 <#  } #>
 
 devices : upnp_core $(objects_devices)

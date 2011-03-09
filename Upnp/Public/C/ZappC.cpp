@@ -10,6 +10,9 @@ using namespace Zapp;
 
 int32_t ZappLibraryInitialise(ZappHandleInitParams aInitParams)
 {
+    if (Stack::IsInitialised()) {
+        return -1;
+    }
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aInitParams);
     try {
         UpnpLibrary::Initialise(ip);
@@ -22,6 +25,9 @@ int32_t ZappLibraryInitialise(ZappHandleInitParams aInitParams)
 
 int32_t ZappLibraryInitialiseMinimal(ZappHandleInitParams aInitParams)
 {
+    if (Stack::IsInitialised()) {
+        return -1;
+    }
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aInitParams);
     try {
         UpnpLibrary::InitialiseMinimal(ip);

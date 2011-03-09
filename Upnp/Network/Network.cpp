@@ -151,7 +151,6 @@ void Socket::Interrupt(TBool aInterrupt)
     TInt err = Zapp::Os::NetworkInterrupt(iHandle, aInterrupt);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Socket::Interrupt H = %d, RETURN VALUE = %d\n", iHandle, err);
-        THROW(NetworkError);
     }
 }
 
@@ -162,7 +161,6 @@ void Socket::Close()
     TInt err = Zapp::Os::NetworkClose(iHandle);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Socket::Close H = %d, RETURN VALUE = %d\n", iHandle, err);
-        THROW(NetworkError);
     }
     iHandle = kHandleNull;
 }

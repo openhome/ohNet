@@ -35,13 +35,13 @@ headers_proxy = $(inc_build)/Cpp/Buffer.h \
 proxy_dotnet_assemblies = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-		Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
+        Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
 <#  } #>
 
 proxy_dotnet_assemblies_with_path = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-		$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
+        $(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
 <#  } #>
 
 

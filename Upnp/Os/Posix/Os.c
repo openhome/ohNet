@@ -130,7 +130,7 @@ void OsSemaphoreDestroy(THandle aSem)
         return;
     }
     (void)pthread_mutex_destroy(&data->iLock);
-    (void)pthread_cond_destroy(&data->iCond);
+    (void)TEMP_FAILURE_RETRY(pthread_cond_destroy(&data->iCond));
     free(data);
 }
 
@@ -164,7 +164,7 @@ int32_t OsSemaphoreTimedWait(THandle aSem, uint32_t aTimeoutMs)
         goto exit;
     }
     while (data->iValue == 0 && timeout == 0 && status == 0) {
-        status = pthread_cond_timedwait(&data->iCond, &data->iLock, &timeToWait);
+        status = TEMP_FAILURE_RETRY(pthread_cond_timedwait(&data->iCond, &data->iLock, &timeToWait));
         if (status==ETIMEDOUT) {
             timeout = 1;
             status = 0;
@@ -403,7 +403,7 @@ THandle OsNetworkCreate(OsNetworkSocketType aSocketType)
     int32_t socketH = socket(2, aSocketType, 0);
     OsNetworkHandle* handle = CreateHandle(socketH);
     if (handle == kHandleNull) {
-        close(socketH);
+        TEMP_FAILURE_RETRY(close(socketH));
     }
     return (THandle)handle;
 }
@@ -465,7 +465,8 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
     tv.tv_sec = aTimeoutMs / 1000;
     tv.tv_usec = (aTimeoutMs % 1000) * 1000;
 
-    if (select(nfds(handle), &read, &write, &error, &tv) > 0 && FD_ISSET(handle->iSocket, &write)) {
+    int32_t selectErr = TEMP_FAILURE_RETRY(select(nfds(handle), &read, &write, &error, &tv));
+    if (selectErr > 0 && FD_ISSET(handle->iSocket, &write)) {
         err = 0;
     }
     SetFdBlocking(handle->iSocket);
@@ -478,7 +479,7 @@ int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
     if (SocketInterrupted(handle)) {
         return -1;
     }
-    int32_t sent = send(handle->iSocket, aBuffer, aBytes, 0);
+    int32_t sent = TEMP_FAILURE_RETRY(send(handle->iSocket, aBuffer, aBytes, 0));
     return sent;
 }
 
@@ -490,7 +491,7 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
     }
     struct sockaddr_in addr;
     sockaddrFromEndpoint(&addr, aAddress, aPort);
-    int32_t sent = sendto(handle->iSocket, aBuffer, aBytes, 0, (struct sockaddr*)&addr, sizeof(addr));
+    int32_t sent = TEMP_FAILURE_RETRY(sendto(handle->iSocket, aBuffer, aBytes, 0, (struct sockaddr*)&addr, sizeof(addr)));
     return sent;
 }
 
@@ -510,11 +511,11 @@ int32_t OsNetworkReceive(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes)
     FD_ZERO(&error);
     FD_SET(handle->iSocket, &error);
 
-    int32_t received = recv(handle->iSocket, aBuffer, aBytes, 0);
+    int32_t received = TEMP_FAILURE_RETRY(recv(handle->iSocket, aBuffer, aBytes, 0));
     if (received==-1 && errno==EWOULDBLOCK) {
         if (select(nfds(handle), &read, NULL, &error, NULL) > 0 &&
             FD_ISSET(handle->iSocket, &read)) {
-            received = recv(handle->iSocket, aBuffer, aBytes, 0);
+            received = TEMP_FAILURE_RETRY(recv(handle->iSocket, aBuffer, aBytes, 0));
         }
     }
 
@@ -542,11 +543,11 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
     FD_ZERO(&error);
     FD_SET(handle->iSocket, &error);
 
-    int32_t received = recvfrom(handle->iSocket, aBuffer, aBytes, 0, (struct sockaddr*)&addr, &addrLen);
+    int32_t received = TEMP_FAILURE_RETRY(recvfrom(handle->iSocket, aBuffer, aBytes, 0, (struct sockaddr*)&addr, &addrLen));
     if (received==-1 && errno==EWOULDBLOCK) {
         if (select(nfds(handle), &read, NULL, &error, NULL) > 0 &&
             FD_ISSET(handle->iSocket, &read)) {
-            received = recvfrom(handle->iSocket, aBuffer, aBytes, 0, (struct sockaddr*)&addr, &addrLen);
+            received = TEMP_FAILURE_RETRY(recvfrom(handle->iSocket, aBuffer, aBytes, 0, (struct sockaddr*)&addr, &addrLen));
         }
     }
     SetFdBlocking(handle->iSocket);
@@ -568,7 +569,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
         }
     }
     else {
-        while (read(handle->iPipe[0], &val, sizeof(val)) > 0) {
+        while (TEMP_FAILURE_RETRY(read(handle->iPipe[0], &val, sizeof(val))) > 0) {
             ;
         }
     }
@@ -581,9 +582,9 @@ int32_t OsNetworkClose(THandle aHandle)
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     int32_t err = 0;
     if (handle != NULL) {
-        err = close(handle->iSocket);
-        err |= close(handle->iPipe[0]);
-        err |= close(handle->iPipe[1]);
+        err  = TEMP_FAILURE_RETRY(close(handle->iSocket));
+        err |= TEMP_FAILURE_RETRY(close(handle->iPipe[0]));
+        err |= TEMP_FAILURE_RETRY(close(handle->iPipe[1]));
         free(handle);
     }
     return err;
@@ -619,11 +620,11 @@ THandle OsNetworkAccept(THandle aHandle)
     FD_ZERO(&error);
     FD_SET(handle->iSocket, &error);
 
-    int32_t h = accept(handle->iSocket, (struct sockaddr*)&addr, &len);
+    int32_t h = TEMP_FAILURE_RETRY(accept(handle->iSocket, (struct sockaddr*)&addr, &len));
     if (h==-1 && errno==EWOULDBLOCK) {
         if (select(nfds(handle), &read, NULL, &error, NULL) > 0 &&
             FD_ISSET(handle->iSocket, &read)) {
-            h = accept(handle->iSocket, (struct sockaddr*)&addr, &len);
+            h = TEMP_FAILURE_RETRY(accept(handle->iSocket, (struct sockaddr*)&addr, &len));
         }
     }
     SetFdBlocking(handle->iSocket);
@@ -748,7 +749,7 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
     struct ifaddrs* iter;
     int32_t includeLoopback = 1;
     *aInterfaces = NULL;
-    if (getifaddrs(&networkIf) == -1) {
+    if (TEMP_FAILURE_RETRY(getifaddrs(&networkIf)) == -1) {
         return -1;
     }
     TIpAddress loopbackAddr = MakeIpAddress(127, 0, 0, 1);

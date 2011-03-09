@@ -355,7 +355,11 @@ namespace Zapp.Device
             IntPtr cStr;
             int err = DvInvocationReadString(iHandle, name, &cStr);
             Marshal.FreeHGlobal(name);
-            String str = Marshal.PtrToStringAnsi((IntPtr)cStr);
+            String str = "";
+            if (cStr != IntPtr.Zero)
+            {
+                str = Marshal.PtrToStringAnsi((IntPtr)cStr);
+            }
             ZappFree((IntPtr)cStr);
             CheckError(err);
             return str;
@@ -374,7 +378,10 @@ namespace Zapp.Device
             Marshal.FreeHGlobal(name);
 
             byte[] bin = new byte[len];
-            Marshal.Copy(data, bin, 0, (int)len);
+            if (len > 0)
+            {
+                Marshal.Copy(data, bin, 0, (int)len);
+            }
             ZappFree((IntPtr)data);
             CheckError(err);
             return bin;

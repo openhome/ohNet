@@ -8,6 +8,7 @@
 #include <Stream.h>
 #include <CpProxy.h>
 #include <Printer.h>
+#include <Stack.h>
 
 using namespace Zapp;
 
@@ -18,6 +19,7 @@ CpiDeviceDv::CpiDeviceDv(DviDevice& aDevice)
     , iSubscriptionDv(NULL)
     , iSubscriptionCp(NULL)
 {
+    iDeviceDv.AddWeakRef();
     iDeviceCp = new CpiDevice(iDeviceDv.Udn(), *this, *this, NULL);
     iDeviceCp->SetReady();
 }
@@ -102,6 +104,7 @@ void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
 
 void CpiDeviceDv::Release()
 {
+    iDeviceDv.RemoveWeakRef();
     iDeviceCp = NULL; // device will delete itself when this returns;
     delete this;
 }
@@ -360,9 +363,8 @@ void PropertyWriterDv::PropertyWriteEnd()
 
 void OutputProcessorDv::ProcessString(const Brx& aBuffer, Brhz& aVal)
 {
-    TUint bytes = aBuffer.Bytes() + aVal.Bytes();
+    TUint bytes = aBuffer.Bytes();
     Bwh tmp(bytes + 1);
-    tmp.Append(aVal);
     tmp.Append(aBuffer);
     tmp.Append((TByte)0);
     tmp.SetBytes(bytes);
@@ -389,8 +391,7 @@ void OutputProcessorDv::ProcessBool(const Brx& aBuffer, TBool& aVal)
 
 void OutputProcessorDv::ProcessBinary(const Brx& aBuffer, Brh& aVal)
 {
-    Bwh tmp(aBuffer.Bytes() + aVal.Bytes());
-    tmp.Append(aVal);
+    Bwh tmp(aBuffer.Bytes());
     tmp.Append(aBuffer);
     tmp.TransferTo(aVal);
 }
