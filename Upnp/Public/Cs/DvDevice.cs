@@ -124,6 +124,7 @@ namespace Zapp.Device
         private IntPtr iHandle;
         private GCHandle iGch;
         private IResourceManager iResourceManager;
+        private CallbackResourceManager iCallbackResourceManager;
 
         /// <summary>
         /// Constructor.  Creates a device capable of operating on any of the protocols the device
@@ -149,7 +150,8 @@ namespace Zapp.Device
             iGch = GCHandle.Alloc(this);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
             char* udn = (char*)Marshal.StringToHGlobalAnsi(aUdn).ToPointer();
-            iHandle = DvDeviceCreate(udn, WriteResource, ptr);
+            iCallbackResourceManager = new CallbackResourceManager(WriteResource);
+            iHandle = DvDeviceCreate(udn, iCallbackResourceManager, ptr);
             Marshal.FreeHGlobal((IntPtr)udn);
         }
 
