@@ -297,6 +297,57 @@ DllExport const char* ServicePropertyValueString(ServiceProperty aProperty);
  */
 DllExport void ServicePropertyGetValueBinary(ServiceProperty aProperty, const uint8_t** aData, uint32_t* aLen);
 
+/**
+ * Set the current value of an integer property
+ *
+ * @param[in] aProperty  Returned by ServicePropertyCreateString[Cp|Dv]
+ * @param[in] aValue     New value for the property
+ *
+ * @return    1 if the value of the property has changed; 0 otherwise
+ */
+DllExport uint32_t ServicePropertySetValueInt(ServiceProperty aProperty, int32_t aValue);
+
+/**
+ * Set the current value of an unsigned integer property
+ *
+ * @param[in] aProperty  Returned by ServicePropertyCreateString[Cp|Dv]
+ * @param[in] aValue     New value for the property
+ *
+ * @return    1 if the value of the property has changed; 0 otherwise
+ */
+DllExport uint32_t ServicePropertySetValueUint(ServiceProperty aProperty, uint32_t aValue);
+
+/**
+ * Set the current value of a boolean property
+ *
+ * @param[in] aProperty  Returned by ServicePropertyCreateString[Cp|Dv]
+ * @param[in] aValue     New value for the property (non-zero for true)
+ *
+ * @return    1 if the value of the property has changed; 0 otherwise
+ */
+DllExport uint32_t ServicePropertySetValueBool(ServiceProperty aProperty, uint32_t aValue);
+
+/**
+ * Set the current value of a string property
+ *
+ * @param[in] aProperty  Returned by ServicePropertyCreateString[Cp|Dv]
+ * @param[in] aValue     New value for the property
+ *
+ * @return    1 if the value of the property has changed; 0 otherwise
+ */
+DllExport uint32_t ServicePropertySetValueString(ServiceProperty aProperty, const char* aValue);
+
+/**
+ * Set the current value of a binary property
+ *
+ * @param[in] aProperty  Returned by ServicePropertyCreateString[Cp|Dv]
+ * @param[in] aValue     Pointer to new value for the property
+ * @param[in] aLen       Length of data pointed to by aValue
+ *
+ * @return    1 if the value of the property has changed; 0 otherwise
+ */
+DllExport uint32_t ServicePropertySetValueBinary(ServiceProperty aProperty, uint8_t* aValue, uint32_t aLen);
+
 /* @} */
 
 /**
