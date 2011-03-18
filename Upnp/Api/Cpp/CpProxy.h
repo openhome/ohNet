@@ -113,6 +113,7 @@ private:
     PropertyMap iProperties;
     mutable Mutex* iPropertyReadLock;
     Mutex* iPropertyWriteLock;
+    Mutex* iInitialEventLock;
 
     friend class CpProxyC;
 };
