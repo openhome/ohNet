@@ -34,7 +34,7 @@ def main():
     outputdir = "Build/Bundles"
     t4dir = "Build/" + osname + "/Tools"
     templateDir = "T4/Templates"
-    uisdkDir = "ControlPoint/Services/Js"
+    uisdkDir = "Public/Js/WebUIsdk"
 
     bundle_fileprefix = "zapp-%s%s" % (targetname, "-dev" if options.dev else "")
     bundle_filename = bundle_fileprefix + ".tar.gz"
