@@ -18,8 +18,8 @@ var CpProxyLinnCoUkConfiguration1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["ConfigurationXml"] = new Zapp.ServiceProperty("ConfigurationXml");
-	this.serviceProperties["ParameterXml"] = new Zapp.ServiceProperty("ParameterXml");
+	this.serviceProperties["ConfigurationXml"] = new Zapp.ServiceProperty("ConfigurationXml","string");
+	this.serviceProperties["ParameterXml"] = new Zapp.ServiceProperty("ParameterXml","string");
 }
 
 

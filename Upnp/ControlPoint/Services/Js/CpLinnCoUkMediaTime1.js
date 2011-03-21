@@ -18,7 +18,7 @@ var CpProxyLinnCoUkMediaTime1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["Seconds"] = new Zapp.ServiceProperty("Seconds");
+	this.serviceProperties["Seconds"] = new Zapp.ServiceProperty("Seconds","int");
 }
 
 

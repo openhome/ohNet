@@ -18,9 +18,9 @@ var CpProxyLinnCoUkJukebox1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["CurrentPreset"] = new Zapp.ServiceProperty("CurrentPreset");
-	this.serviceProperties["PresetPrefix"] = new Zapp.ServiceProperty("PresetPrefix");
-	this.serviceProperties["AlbumArtFileName"] = new Zapp.ServiceProperty("AlbumArtFileName");
+	this.serviceProperties["CurrentPreset"] = new Zapp.ServiceProperty("CurrentPreset","int");
+	this.serviceProperties["PresetPrefix"] = new Zapp.ServiceProperty("PresetPrefix","string");
+	this.serviceProperties["AlbumArtFileName"] = new Zapp.ServiceProperty("AlbumArtFileName","string");
 }
 
 

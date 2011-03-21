@@ -102,7 +102,7 @@ var <#=className#> = function(udn){
 	this.serviceProperties = {};
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
-	this.serviceProperties["<#=s.prettyname#>"] = new Zapp.ServiceProperty("<#=s.prettyname#>");
+	this.serviceProperties["<#=s.prettyname#>"] = new Zapp.ServiceProperty("<#=s.prettyname#>","<#=svtype[s.type].ToLower()#>");
 <#  } #>
 }
 

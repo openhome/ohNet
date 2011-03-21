@@ -18,7 +18,7 @@ var CpProxyLinnCoUkDiagnostics1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["aStateVariable"] = new Zapp.ServiceProperty("aStateVariable");
+	this.serviceProperties["aStateVariable"] = new Zapp.ServiceProperty("aStateVariable","int");
 }
 
 

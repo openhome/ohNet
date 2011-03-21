@@ -18,15 +18,15 @@ var CpProxyLinnCoUkDs1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["SupportedProtocols"] = new Zapp.ServiceProperty("SupportedProtocols");
-	this.serviceProperties["TrackDuration"] = new Zapp.ServiceProperty("TrackDuration");
-	this.serviceProperties["TrackBitRate"] = new Zapp.ServiceProperty("TrackBitRate");
-	this.serviceProperties["TrackLossless"] = new Zapp.ServiceProperty("TrackLossless");
-	this.serviceProperties["TrackBitDepth"] = new Zapp.ServiceProperty("TrackBitDepth");
-	this.serviceProperties["TrackSampleRate"] = new Zapp.ServiceProperty("TrackSampleRate");
-	this.serviceProperties["TrackCodecName"] = new Zapp.ServiceProperty("TrackCodecName");
-	this.serviceProperties["TrackId"] = new Zapp.ServiceProperty("TrackId");
-	this.serviceProperties["TransportState"] = new Zapp.ServiceProperty("TransportState");
+	this.serviceProperties["SupportedProtocols"] = new Zapp.ServiceProperty("SupportedProtocols","string");
+	this.serviceProperties["TrackDuration"] = new Zapp.ServiceProperty("TrackDuration","int");
+	this.serviceProperties["TrackBitRate"] = new Zapp.ServiceProperty("TrackBitRate","int");
+	this.serviceProperties["TrackLossless"] = new Zapp.ServiceProperty("TrackLossless","bool");
+	this.serviceProperties["TrackBitDepth"] = new Zapp.ServiceProperty("TrackBitDepth","int");
+	this.serviceProperties["TrackSampleRate"] = new Zapp.ServiceProperty("TrackSampleRate","int");
+	this.serviceProperties["TrackCodecName"] = new Zapp.ServiceProperty("TrackCodecName","string");
+	this.serviceProperties["TrackId"] = new Zapp.ServiceProperty("TrackId","int");
+	this.serviceProperties["TransportState"] = new Zapp.ServiceProperty("TransportState","string");
 }
 
 ServiceDs.kTransportStatePlaying = "Playing";

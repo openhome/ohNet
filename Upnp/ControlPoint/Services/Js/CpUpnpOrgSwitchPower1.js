@@ -18,7 +18,7 @@ var CpProxySchemasUpnpOrgSwitchPower1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["Status"] = new Zapp.ServiceProperty("Status");
+	this.serviceProperties["Status"] = new Zapp.ServiceProperty("Status","bool");
 }
 
 

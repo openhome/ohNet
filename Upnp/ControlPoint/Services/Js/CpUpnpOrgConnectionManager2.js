@@ -18,9 +18,9 @@ var CpProxySchemasUpnpOrgConnectionManager2 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["SourceProtocolInfo"] = new Zapp.ServiceProperty("SourceProtocolInfo");
-	this.serviceProperties["SinkProtocolInfo"] = new Zapp.ServiceProperty("SinkProtocolInfo");
-	this.serviceProperties["CurrentConnectionIDs"] = new Zapp.ServiceProperty("CurrentConnectionIDs");
+	this.serviceProperties["SourceProtocolInfo"] = new Zapp.ServiceProperty("SourceProtocolInfo","string");
+	this.serviceProperties["SinkProtocolInfo"] = new Zapp.ServiceProperty("SinkProtocolInfo","string");
+	this.serviceProperties["CurrentConnectionIDs"] = new Zapp.ServiceProperty("CurrentConnectionIDs","string");
 }
 
 

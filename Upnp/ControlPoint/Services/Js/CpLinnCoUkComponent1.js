@@ -18,10 +18,10 @@ var CpProxyLinnCoUkComponent1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["AmplifierEnabled"] = new Zapp.ServiceProperty("AmplifierEnabled");
-	this.serviceProperties["AmplifierAttenuation"] = new Zapp.ServiceProperty("AmplifierAttenuation");
-	this.serviceProperties["VolumeControlEnabled"] = new Zapp.ServiceProperty("VolumeControlEnabled");
-	this.serviceProperties["DigitalAudioOutputRaw"] = new Zapp.ServiceProperty("DigitalAudioOutputRaw");
+	this.serviceProperties["AmplifierEnabled"] = new Zapp.ServiceProperty("AmplifierEnabled","bool");
+	this.serviceProperties["AmplifierAttenuation"] = new Zapp.ServiceProperty("AmplifierAttenuation","string");
+	this.serviceProperties["VolumeControlEnabled"] = new Zapp.ServiceProperty("VolumeControlEnabled","bool");
+	this.serviceProperties["DigitalAudioOutputRaw"] = new Zapp.ServiceProperty("DigitalAudioOutputRaw","bool");
 }
 
 ServiceComponent.kAmplifierAttenuation12Db = "-12dB";

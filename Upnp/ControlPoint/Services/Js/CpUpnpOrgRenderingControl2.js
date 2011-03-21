@@ -18,7 +18,7 @@ var CpProxySchemasUpnpOrgRenderingControl2 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["LastChange"] = new Zapp.ServiceProperty("LastChange");
+	this.serviceProperties["LastChange"] = new Zapp.ServiceProperty("LastChange","string");
 }
 
 

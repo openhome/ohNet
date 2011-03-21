@@ -18,8 +18,8 @@ var CpProxySchemasUpnpOrgAVTransport2 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["LastChange"] = new Zapp.ServiceProperty("LastChange");
-	this.serviceProperties["DRMState"] = new Zapp.ServiceProperty("DRMState");
+	this.serviceProperties["LastChange"] = new Zapp.ServiceProperty("LastChange","string");
+	this.serviceProperties["DRMState"] = new Zapp.ServiceProperty("DRMState","string");
 }
 
 ServiceAVTransport.kDRMStateOk = "OK";

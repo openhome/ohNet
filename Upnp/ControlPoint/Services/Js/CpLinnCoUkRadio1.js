@@ -18,13 +18,13 @@ var CpProxyLinnCoUkRadio1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["ChannelUri"] = new Zapp.ServiceProperty("ChannelUri");
-	this.serviceProperties["ChannelMetadata"] = new Zapp.ServiceProperty("ChannelMetadata");
-	this.serviceProperties["TransportState"] = new Zapp.ServiceProperty("TransportState");
-	this.serviceProperties["ProtocolInfo"] = new Zapp.ServiceProperty("ProtocolInfo");
-	this.serviceProperties["Id"] = new Zapp.ServiceProperty("Id");
-	this.serviceProperties["IdArray"] = new Zapp.ServiceProperty("IdArray");
-	this.serviceProperties["IdsMax"] = new Zapp.ServiceProperty("IdsMax");
+	this.serviceProperties["ChannelUri"] = new Zapp.ServiceProperty("ChannelUri","string");
+	this.serviceProperties["ChannelMetadata"] = new Zapp.ServiceProperty("ChannelMetadata","string");
+	this.serviceProperties["TransportState"] = new Zapp.ServiceProperty("TransportState","string");
+	this.serviceProperties["ProtocolInfo"] = new Zapp.ServiceProperty("ProtocolInfo","string");
+	this.serviceProperties["Id"] = new Zapp.ServiceProperty("Id","int");
+	this.serviceProperties["IdArray"] = new Zapp.ServiceProperty("IdArray","binary");
+	this.serviceProperties["IdsMax"] = new Zapp.ServiceProperty("IdsMax","int");
 }
 
 ServiceRadio.kTransportStateStopped = "Stopped";

@@ -18,8 +18,8 @@ var CpProxyLinnCoUkDelay1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["PresetXml"] = new Zapp.ServiceProperty("PresetXml");
-	this.serviceProperties["PresetIndex"] = new Zapp.ServiceProperty("PresetIndex");
+	this.serviceProperties["PresetXml"] = new Zapp.ServiceProperty("PresetXml","string");
+	this.serviceProperties["PresetIndex"] = new Zapp.ServiceProperty("PresetIndex","int");
 }
 
 

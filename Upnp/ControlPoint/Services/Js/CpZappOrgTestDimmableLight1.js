@@ -18,7 +18,7 @@ var CpProxyZappOrgTestDimmableLight1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["A_ARG_Level"] = new Zapp.ServiceProperty("A_ARG_Level");
+	this.serviceProperties["A_ARG_Level"] = new Zapp.ServiceProperty("A_ARG_Level","int");
 }
 
 

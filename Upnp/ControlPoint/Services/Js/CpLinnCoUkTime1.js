@@ -18,9 +18,9 @@ var CpProxyLinnCoUkTime1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["TrackCount"] = new Zapp.ServiceProperty("TrackCount");
-	this.serviceProperties["Duration"] = new Zapp.ServiceProperty("Duration");
-	this.serviceProperties["Seconds"] = new Zapp.ServiceProperty("Seconds");
+	this.serviceProperties["TrackCount"] = new Zapp.ServiceProperty("TrackCount","int");
+	this.serviceProperties["Duration"] = new Zapp.ServiceProperty("Duration","int");
+	this.serviceProperties["Seconds"] = new Zapp.ServiceProperty("Seconds","int");
 }
 
 

@@ -18,10 +18,10 @@ var CpProxyLinnCoUkProduct2 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["ProductName"] = new Zapp.ServiceProperty("ProductName");
-	this.serviceProperties["ProductRoom"] = new Zapp.ServiceProperty("ProductRoom");
-	this.serviceProperties["ProductStandby"] = new Zapp.ServiceProperty("ProductStandby");
-	this.serviceProperties["ProductSourceIndex"] = new Zapp.ServiceProperty("ProductSourceIndex");
+	this.serviceProperties["ProductName"] = new Zapp.ServiceProperty("ProductName","string");
+	this.serviceProperties["ProductRoom"] = new Zapp.ServiceProperty("ProductRoom","string");
+	this.serviceProperties["ProductStandby"] = new Zapp.ServiceProperty("ProductStandby","bool");
+	this.serviceProperties["ProductSourceIndex"] = new Zapp.ServiceProperty("ProductSourceIndex","int");
 }
 
 

@@ -18,10 +18,10 @@ var CpProxyLinnCoUkProxyManager1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["KontrolProductConnected"] = new Zapp.ServiceProperty("KontrolProductConnected");
-	this.serviceProperties["KontrolProductComPort"] = new Zapp.ServiceProperty("KontrolProductComPort");
-	this.serviceProperties["DiscPlayerConnected"] = new Zapp.ServiceProperty("DiscPlayerConnected");
-	this.serviceProperties["DiscPlayerComPort"] = new Zapp.ServiceProperty("DiscPlayerComPort");
+	this.serviceProperties["KontrolProductConnected"] = new Zapp.ServiceProperty("KontrolProductConnected","string");
+	this.serviceProperties["KontrolProductComPort"] = new Zapp.ServiceProperty("KontrolProductComPort","int");
+	this.serviceProperties["DiscPlayerConnected"] = new Zapp.ServiceProperty("DiscPlayerConnected","string");
+	this.serviceProperties["DiscPlayerComPort"] = new Zapp.ServiceProperty("DiscPlayerComPort","int");
 }
 
 ServiceProxyManager.kKontrolProductConnectedNone = "None";

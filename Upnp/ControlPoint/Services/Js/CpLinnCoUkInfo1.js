@@ -18,18 +18,18 @@ var CpProxyLinnCoUkInfo1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["TrackCount"] = new Zapp.ServiceProperty("TrackCount");
-	this.serviceProperties["DetailsCount"] = new Zapp.ServiceProperty("DetailsCount");
-	this.serviceProperties["MetatextCount"] = new Zapp.ServiceProperty("MetatextCount");
-	this.serviceProperties["Uri"] = new Zapp.ServiceProperty("Uri");
-	this.serviceProperties["Metadata"] = new Zapp.ServiceProperty("Metadata");
-	this.serviceProperties["Duration"] = new Zapp.ServiceProperty("Duration");
-	this.serviceProperties["BitRate"] = new Zapp.ServiceProperty("BitRate");
-	this.serviceProperties["BitDepth"] = new Zapp.ServiceProperty("BitDepth");
-	this.serviceProperties["SampleRate"] = new Zapp.ServiceProperty("SampleRate");
-	this.serviceProperties["Lossless"] = new Zapp.ServiceProperty("Lossless");
-	this.serviceProperties["CodecName"] = new Zapp.ServiceProperty("CodecName");
-	this.serviceProperties["Metatext"] = new Zapp.ServiceProperty("Metatext");
+	this.serviceProperties["TrackCount"] = new Zapp.ServiceProperty("TrackCount","int");
+	this.serviceProperties["DetailsCount"] = new Zapp.ServiceProperty("DetailsCount","int");
+	this.serviceProperties["MetatextCount"] = new Zapp.ServiceProperty("MetatextCount","int");
+	this.serviceProperties["Uri"] = new Zapp.ServiceProperty("Uri","string");
+	this.serviceProperties["Metadata"] = new Zapp.ServiceProperty("Metadata","string");
+	this.serviceProperties["Duration"] = new Zapp.ServiceProperty("Duration","int");
+	this.serviceProperties["BitRate"] = new Zapp.ServiceProperty("BitRate","int");
+	this.serviceProperties["BitDepth"] = new Zapp.ServiceProperty("BitDepth","int");
+	this.serviceProperties["SampleRate"] = new Zapp.ServiceProperty("SampleRate","int");
+	this.serviceProperties["Lossless"] = new Zapp.ServiceProperty("Lossless","bool");
+	this.serviceProperties["CodecName"] = new Zapp.ServiceProperty("CodecName","string");
+	this.serviceProperties["Metatext"] = new Zapp.ServiceProperty("Metatext","string");
 }
 
 

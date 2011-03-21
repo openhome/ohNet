@@ -18,10 +18,10 @@ var CpProxyLinnCoUkPlaylist1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["IdArray"] = new Zapp.ServiceProperty("IdArray");
-	this.serviceProperties["Repeat"] = new Zapp.ServiceProperty("Repeat");
-	this.serviceProperties["Shuffle"] = new Zapp.ServiceProperty("Shuffle");
-	this.serviceProperties["TracksMax"] = new Zapp.ServiceProperty("TracksMax");
+	this.serviceProperties["IdArray"] = new Zapp.ServiceProperty("IdArray","binary");
+	this.serviceProperties["Repeat"] = new Zapp.ServiceProperty("Repeat","bool");
+	this.serviceProperties["Shuffle"] = new Zapp.ServiceProperty("Shuffle","bool");
+	this.serviceProperties["TracksMax"] = new Zapp.ServiceProperty("TracksMax","int");
 }
 
 

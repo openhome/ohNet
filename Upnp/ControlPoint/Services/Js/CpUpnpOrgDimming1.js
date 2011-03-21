@@ -18,11 +18,11 @@ var CpProxySchemasUpnpOrgDimming1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["LoadLevelStatus"] = new Zapp.ServiceProperty("LoadLevelStatus");
-	this.serviceProperties["StepDelta"] = new Zapp.ServiceProperty("StepDelta");
-	this.serviceProperties["RampRate"] = new Zapp.ServiceProperty("RampRate");
-	this.serviceProperties["IsRamping"] = new Zapp.ServiceProperty("IsRamping");
-	this.serviceProperties["RampPaused"] = new Zapp.ServiceProperty("RampPaused");
+	this.serviceProperties["LoadLevelStatus"] = new Zapp.ServiceProperty("LoadLevelStatus","int");
+	this.serviceProperties["StepDelta"] = new Zapp.ServiceProperty("StepDelta","int");
+	this.serviceProperties["RampRate"] = new Zapp.ServiceProperty("RampRate","int");
+	this.serviceProperties["IsRamping"] = new Zapp.ServiceProperty("IsRamping","bool");
+	this.serviceProperties["RampPaused"] = new Zapp.ServiceProperty("RampPaused","bool");
 }
 
 

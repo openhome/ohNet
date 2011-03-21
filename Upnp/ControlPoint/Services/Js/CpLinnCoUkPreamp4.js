@@ -18,12 +18,12 @@ var CpProxyLinnCoUkPreamp4 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["Volume"] = new Zapp.ServiceProperty("Volume");
-	this.serviceProperties["Mute"] = new Zapp.ServiceProperty("Mute");
-	this.serviceProperties["Balance"] = new Zapp.ServiceProperty("Balance");
-	this.serviceProperties["VolumeLimit"] = new Zapp.ServiceProperty("VolumeLimit");
-	this.serviceProperties["StartupVolume"] = new Zapp.ServiceProperty("StartupVolume");
-	this.serviceProperties["StartupVolumeEnabled"] = new Zapp.ServiceProperty("StartupVolumeEnabled");
+	this.serviceProperties["Volume"] = new Zapp.ServiceProperty("Volume","int");
+	this.serviceProperties["Mute"] = new Zapp.ServiceProperty("Mute","bool");
+	this.serviceProperties["Balance"] = new Zapp.ServiceProperty("Balance","int");
+	this.serviceProperties["VolumeLimit"] = new Zapp.ServiceProperty("VolumeLimit","int");
+	this.serviceProperties["StartupVolume"] = new Zapp.ServiceProperty("StartupVolume","int");
+	this.serviceProperties["StartupVolumeEnabled"] = new Zapp.ServiceProperty("StartupVolumeEnabled","bool");
 }
 
 

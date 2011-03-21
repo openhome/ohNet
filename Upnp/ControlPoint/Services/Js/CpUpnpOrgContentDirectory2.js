@@ -18,9 +18,9 @@ var CpProxySchemasUpnpOrgContentDirectory2 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["SystemUpdateID"] = new Zapp.ServiceProperty("SystemUpdateID");
-	this.serviceProperties["ContainerUpdateIDs"] = new Zapp.ServiceProperty("ContainerUpdateIDs");
-	this.serviceProperties["TransferIDs"] = new Zapp.ServiceProperty("TransferIDs");
+	this.serviceProperties["SystemUpdateID"] = new Zapp.ServiceProperty("SystemUpdateID","int");
+	this.serviceProperties["ContainerUpdateIDs"] = new Zapp.ServiceProperty("ContainerUpdateIDs","string");
+	this.serviceProperties["TransferIDs"] = new Zapp.ServiceProperty("TransferIDs","string");
 }
 
 

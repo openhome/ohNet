@@ -18,17 +18,17 @@ var CpProxyLinnCoUkUi2 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["DisplayBrightness"] = new Zapp.ServiceProperty("DisplayBrightness");
-	this.serviceProperties["DisplayBrightnessAuto"] = new Zapp.ServiceProperty("DisplayBrightnessAuto");
-	this.serviceProperties["InfraredCommands"] = new Zapp.ServiceProperty("InfraredCommands");
-	this.serviceProperties["InfraredTerminalCommands"] = new Zapp.ServiceProperty("InfraredTerminalCommands");
-	this.serviceProperties["DisplayUpsideDown"] = new Zapp.ServiceProperty("DisplayUpsideDown");
-	this.serviceProperties["DisplayScrollText"] = new Zapp.ServiceProperty("DisplayScrollText");
-	this.serviceProperties["DisplaySleep"] = new Zapp.ServiceProperty("DisplaySleep");
-	this.serviceProperties["DisplayLedOff"] = new Zapp.ServiceProperty("DisplayLedOff");
-	this.serviceProperties["TerminalInputCode"] = new Zapp.ServiceProperty("TerminalInputCode");
-	this.serviceProperties["TerminalInputName"] = new Zapp.ServiceProperty("TerminalInputName");
-	this.serviceProperties["DisplayPixels"] = new Zapp.ServiceProperty("DisplayPixels");
+	this.serviceProperties["DisplayBrightness"] = new Zapp.ServiceProperty("DisplayBrightness","int");
+	this.serviceProperties["DisplayBrightnessAuto"] = new Zapp.ServiceProperty("DisplayBrightnessAuto","bool");
+	this.serviceProperties["InfraredCommands"] = new Zapp.ServiceProperty("InfraredCommands","string");
+	this.serviceProperties["InfraredTerminalCommands"] = new Zapp.ServiceProperty("InfraredTerminalCommands","string");
+	this.serviceProperties["DisplayUpsideDown"] = new Zapp.ServiceProperty("DisplayUpsideDown","bool");
+	this.serviceProperties["DisplayScrollText"] = new Zapp.ServiceProperty("DisplayScrollText","bool");
+	this.serviceProperties["DisplaySleep"] = new Zapp.ServiceProperty("DisplaySleep","bool");
+	this.serviceProperties["DisplayLedOff"] = new Zapp.ServiceProperty("DisplayLedOff","bool");
+	this.serviceProperties["TerminalInputCode"] = new Zapp.ServiceProperty("TerminalInputCode","int");
+	this.serviceProperties["TerminalInputName"] = new Zapp.ServiceProperty("TerminalInputName","string");
+	this.serviceProperties["DisplayPixels"] = new Zapp.ServiceProperty("DisplayPixels","binary");
 }
 
 ServiceUi.kInfraredCommandsNone = "None";

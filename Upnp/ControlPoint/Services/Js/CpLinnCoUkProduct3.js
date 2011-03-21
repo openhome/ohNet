@@ -18,19 +18,19 @@ var CpProxyLinnCoUkProduct3 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["ProductType"] = new Zapp.ServiceProperty("ProductType");
-	this.serviceProperties["ProductModel"] = new Zapp.ServiceProperty("ProductModel");
-	this.serviceProperties["ProductName"] = new Zapp.ServiceProperty("ProductName");
-	this.serviceProperties["ProductRoom"] = new Zapp.ServiceProperty("ProductRoom");
-	this.serviceProperties["ProductStandby"] = new Zapp.ServiceProperty("ProductStandby");
-	this.serviceProperties["ProductSourceIndex"] = new Zapp.ServiceProperty("ProductSourceIndex");
-	this.serviceProperties["ProductSourceCount"] = new Zapp.ServiceProperty("ProductSourceCount");
-	this.serviceProperties["ProductSourceXml"] = new Zapp.ServiceProperty("ProductSourceXml");
-	this.serviceProperties["StartupSourceIndex"] = new Zapp.ServiceProperty("StartupSourceIndex");
-	this.serviceProperties["StartupSourceEnabled"] = new Zapp.ServiceProperty("StartupSourceEnabled");
-	this.serviceProperties["ProductAnySourceName"] = new Zapp.ServiceProperty("ProductAnySourceName");
-	this.serviceProperties["ProductAnySourceVisible"] = new Zapp.ServiceProperty("ProductAnySourceVisible");
-	this.serviceProperties["ProductAnySourceType"] = new Zapp.ServiceProperty("ProductAnySourceType");
+	this.serviceProperties["ProductType"] = new Zapp.ServiceProperty("ProductType","string");
+	this.serviceProperties["ProductModel"] = new Zapp.ServiceProperty("ProductModel","string");
+	this.serviceProperties["ProductName"] = new Zapp.ServiceProperty("ProductName","string");
+	this.serviceProperties["ProductRoom"] = new Zapp.ServiceProperty("ProductRoom","string");
+	this.serviceProperties["ProductStandby"] = new Zapp.ServiceProperty("ProductStandby","bool");
+	this.serviceProperties["ProductSourceIndex"] = new Zapp.ServiceProperty("ProductSourceIndex","int");
+	this.serviceProperties["ProductSourceCount"] = new Zapp.ServiceProperty("ProductSourceCount","int");
+	this.serviceProperties["ProductSourceXml"] = new Zapp.ServiceProperty("ProductSourceXml","string");
+	this.serviceProperties["StartupSourceIndex"] = new Zapp.ServiceProperty("StartupSourceIndex","int");
+	this.serviceProperties["StartupSourceEnabled"] = new Zapp.ServiceProperty("StartupSourceEnabled","bool");
+	this.serviceProperties["ProductAnySourceName"] = new Zapp.ServiceProperty("ProductAnySourceName","int");
+	this.serviceProperties["ProductAnySourceVisible"] = new Zapp.ServiceProperty("ProductAnySourceVisible","int");
+	this.serviceProperties["ProductAnySourceType"] = new Zapp.ServiceProperty("ProductAnySourceType","int");
 }
 
 
