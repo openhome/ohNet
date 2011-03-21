@@ -392,6 +392,8 @@ void OutputProcessorDv::ProcessBool(const Brx& aBuffer, TBool& aVal)
 void OutputProcessorDv::ProcessBinary(const Brx& aBuffer, Brh& aVal)
 {
     Bwh tmp(aBuffer.Bytes());
-    tmp.Append(aBuffer);
+    if (aBuffer.Bytes() > 0) {
+        tmp.Append(aBuffer);
+    }
     tmp.TransferTo(aVal);
 }

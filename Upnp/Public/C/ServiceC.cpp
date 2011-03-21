@@ -137,6 +137,60 @@ void ServicePropertyGetValueBinary(ServiceProperty aProperty, const uint8_t** aD
     *aData = (const uint8_t*)val.Extract();
 }
 
+uint32_t ServicePropertySetValueInt(ServiceProperty aProperty, int32_t aValue)
+{
+    PropertyInt* prop = reinterpret_cast<PropertyInt*>(aProperty);
+    ASSERT(prop != NULL);
+    if (prop->SetValue(aValue)) {
+        return 1;
+    }
+    return 0;
+}
+
+uint32_t ServicePropertySetValueUint(ServiceProperty aProperty, uint32_t aValue)
+{
+    PropertyUint* prop = reinterpret_cast<PropertyUint*>(aProperty);
+    ASSERT(prop != NULL);
+    if (prop->SetValue(aValue)) {
+        return 1;
+    }
+    return 0;
+}
+
+uint32_t ServicePropertySetValueBool(ServiceProperty aProperty, uint32_t aValue)
+{
+    PropertyBool* prop = reinterpret_cast<PropertyBool*>(aProperty);
+    ASSERT(prop != NULL);
+    TBool val = (aValue != 0);
+    if (prop->SetValue(val)) {
+        return 1;
+    }
+    return 0;
+}
+
+uint32_t ServicePropertySetValueString(ServiceProperty aProperty, const char* aValue)
+{
+    PropertyString* prop = reinterpret_cast<PropertyString*>(aProperty);
+    ASSERT(prop != NULL);
+    Brhz val(aValue);
+    if (prop->SetValue(val)) {
+        return 1;
+    }
+    return 0;
+}
+
+uint32_t ServicePropertySetValueBinary(ServiceProperty aProperty, uint8_t* aValue, uint32_t aLen)
+{
+    PropertyBinary* prop = reinterpret_cast<PropertyBinary*>(aProperty);
+    ASSERT(prop != NULL);
+    Brh data;
+    data.Set(aValue, aLen);
+    if (prop->SetValue(data)) {
+        return 1;
+    }
+    return 0;
+}
+
 ServiceAction ServiceActionCreate(const char* aName)
 {
     return (ServiceAction)new Zapp::Action(aName);

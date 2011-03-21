@@ -6,6 +6,9 @@ using namespace Zapp;
 
 void CpProxy::Subscribe()
 {
+    if (iInitialEventLock == NULL) {
+        iInitialEventLock = new Mutex("PRX4");
+    }
     iLock->Wait();
     iCpSubscriptionStatus = eSubscribing;
     iLock->Signal();
@@ -29,6 +32,7 @@ CpProxy::CpProxy(const TChar* aDomain, const TChar* aName, TUint aVersion, CpiDe
     iPropertyReadLock = new Mutex("PRX2");
     iPropertyWriteLock = new Mutex("PRX3");
     iInitialEventDelivered = false;
+    iInitialEventLock = NULL;
 }
 
 CpProxy::~CpProxy()
@@ -37,6 +41,7 @@ CpProxy::~CpProxy()
     delete iLock;
     delete iPropertyReadLock;
     delete iPropertyWriteLock;
+    delete iInitialEventLock;
 	PropertyMap::iterator it = iProperties.begin();
     while (it != iProperties.end()) {
         delete it->second;
@@ -127,13 +132,17 @@ void CpProxy::EventUpdateEnd()
         if (iPropertyChanged) {
             iPropertyChanged();
         }
+        iLock->Signal();
         if (!iInitialEventDelivered) {
             iInitialEventDelivered = true;
+            iInitialEventLock->Wait();
             if (iInitialEvent) {
                 iInitialEvent();
             }
+            iInitialEventLock->Signal();
+            delete iInitialEventLock;
+            iInitialEventLock = NULL;
         }
-        iLock->Signal();
     }
     iPropertyWriteLock->Signal();
 }

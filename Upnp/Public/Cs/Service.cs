@@ -169,6 +169,7 @@ namespace Zapp.Core
         public void Dispose()
         {
             iGch.Free();
+            // !!!! aren't we leaking the underlying property?
         }
 
         internal IntPtr Handle()
@@ -207,6 +208,8 @@ namespace Zapp.Core
         static extern IntPtr ServicePropertyCreateIntDv(IntPtr aParameterHandle);
         [DllImport("ZappUpnp")]
         static extern int ServicePropertyValueInt(IntPtr aHandle);
+        [DllImport("ZappUpnp")]
+        static extern uint ServicePropertySetValueInt(IntPtr aHandle, int aValue);
 
         /// <summary>
         /// Constructor suitable for use by clients of the control point stack
@@ -239,6 +242,17 @@ namespace Zapp.Core
         {
             return ServicePropertyValueInt(iHandle);
         }
+
+        /// <summary>
+        /// Set the value of the property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>True if the property's value was changed; false otherwise</returns>
+        public bool SetValue(int aValue)
+        {
+            uint changed = ServicePropertySetValueInt(iHandle, aValue);
+            return (changed != 0);
+        }
     }
 
     /// <summary>
@@ -252,6 +266,8 @@ namespace Zapp.Core
         static extern IntPtr ServicePropertyCreateUintDv(IntPtr aParameterHandle);
         [DllImport("ZappUpnp")]
         static extern uint ServicePropertyValueUint(IntPtr aHandle);
+        [DllImport("ZappUpnp")]
+        static extern uint ServicePropertySetValueUint(IntPtr aHandle, uint aValue);
 
         /// <summary>
         /// Constructor suitable for use by clients of the control point stack
@@ -284,6 +300,17 @@ namespace Zapp.Core
         {
             return ServicePropertyValueUint(iHandle);
         }
+
+        /// <summary>
+        /// Set the value of the property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>True if the property's value was changed; false otherwise</returns>
+        public bool SetValue(uint aValue)
+        {
+            uint changed = ServicePropertySetValueUint(iHandle, aValue);
+            return (changed != 0);
+        }
     }
 
     /// <summary>
@@ -297,6 +324,8 @@ namespace Zapp.Core
         static extern IntPtr ServicePropertyCreateBoolDv(IntPtr aParameterHandle);
         [DllImport("ZappUpnp")]
         static extern uint ServicePropertyValueBool(IntPtr aHandle);
+        [DllImport("ZappUpnp")]
+        static extern uint ServicePropertySetValueBool(IntPtr aHandle, uint aValue);
 
         /// <summary>
         /// Constructor suitable for use by clients of the control point stack
@@ -330,6 +359,18 @@ namespace Zapp.Core
             uint val = ServicePropertyValueBool(iHandle);
             return (val != 0);
         }
+
+        /// <summary>
+        /// Set the value of the property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>True if the property's value was changed; false otherwise</returns>
+        public bool SetValue(bool aValue)
+        {
+            uint val = (aValue ? 1u : 0u);
+            uint changed = ServicePropertySetValueBool(iHandle, val);
+            return (changed != 0);
+        }
     }
 
     /// <summary>
@@ -345,6 +386,8 @@ namespace Zapp.Core
         static extern unsafe IntPtr ServicePropertyValueString(IntPtr aHandle);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(IntPtr aPtr);
+        [DllImport("ZappUpnp")]
+        static extern uint ServicePropertySetValueString(IntPtr aHandle, IntPtr aValue);
 
         /// <summary>
         /// Constructor suitable for use by clients of the control point stack
@@ -380,6 +423,19 @@ namespace Zapp.Core
             ZappFree(cStr);
             return str;
         }
+
+        /// <summary>
+        /// Set the value of the property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>True if the property's value was changed; false otherwise</returns>
+        public bool SetValue(string aValue)
+        {
+            IntPtr val = Marshal.StringToHGlobalAnsi(aValue);
+            uint changed = ServicePropertySetValueString(iHandle, val);
+            Marshal.FreeHGlobal(val);
+            return (changed != 0);
+        }
     }
 
     /// <summary>
@@ -393,6 +449,8 @@ namespace Zapp.Core
         static extern IntPtr ServicePropertyCreateBinaryDv(IntPtr aParameterHandle);
         [DllImport("ZappUpnp")]
         static extern unsafe byte* ServicePropertyGetValueBinary(IntPtr aHandle, IntPtr* aData, uint* aLen);
+        [DllImport("ZappUpnp")]
+        static extern uint ServicePropertySetValueBinary(IntPtr aHandle, IntPtr aData, uint aLen);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(IntPtr aPtr);
 
@@ -432,6 +490,21 @@ namespace Zapp.Core
             Marshal.Copy(pData, data, 0, (int)len);
             ZappFree(pData);
             return data;
+        }
+
+        /// <summary>
+        /// Set the value of the property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>True if the property's value was changed; false otherwise</returns>
+        public unsafe bool SetValue(byte[] aData)
+        {
+            uint changed;
+            fixed (byte* data = aData)
+            {
+                changed = ServicePropertySetValueBinary(iHandle, new IntPtr(data), (uint)aData.Length);
+            }
+            return (changed != 0);
         }
     }
 
