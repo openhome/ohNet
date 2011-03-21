@@ -34,6 +34,7 @@ def main():
     outputdir = "Build/Bundles"
     t4dir = "Build/" + osname + "/Tools"
     templateDir = "T4/Templates"
+    uisdkDir = "ControlPoint/Services/Js"
 
     bundle_fileprefix = "zapp-%s%s" % (targetname, "-dev" if options.dev else "")
     bundle_filename = bundle_fileprefix + ".tar.gz"
@@ -48,6 +49,7 @@ def main():
         #tf.add(includedir, bundle_fileprefix + "/include/zapp")
         recursively_add_directory(tf, t4dir, bundle_fileprefix + "/lib/t4")
         recursively_add_directory(tf, templateDir, bundle_fileprefix + "/lib/t4")
+        recursively_add_directory(tf, uisdkDir, bundle_fileprefix + "/lib/ui")
 
 if __name__ == "__main__":
     main()
