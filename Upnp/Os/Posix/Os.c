@@ -479,7 +479,16 @@ int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
     if (SocketInterrupted(handle)) {
         return -1;
     }
-    int32_t sent = TEMP_FAILURE_RETRY(send(handle->iSocket, aBuffer, aBytes, 0));
+
+    int32_t sent = 0;
+    int32_t bytes = 0;
+    do {
+        bytes = TEMP_FAILURE_RETRY(send(handle->iSocket, &aBuffer[sent], aBytes-sent, 0));
+        if (bytes != -1) {
+            sent += bytes;
+        }
+    } while(bytes != -1 && sent < aBytes);    
+    
     return sent;
 }
 
@@ -491,7 +500,14 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
     }
     struct sockaddr_in addr;
     sockaddrFromEndpoint(&addr, aAddress, aPort);
-    int32_t sent = TEMP_FAILURE_RETRY(sendto(handle->iSocket, aBuffer, aBytes, 0, (struct sockaddr*)&addr, sizeof(addr)));
+    int32_t sent = 0;
+    int32_t bytes = 0;
+    do {
+        bytes = TEMP_FAILURE_RETRY(sendto(handle->iSocket, &aBuffer[sent], aBytes-sent, 0, (struct sockaddr*)&addr, sizeof(addr)));
+        if (bytes != -1) {
+            sent += bytes;
+        }
+    } while(bytes != -1 && sent < aBytes);    
     return sent;
 }
 
