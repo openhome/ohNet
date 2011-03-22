@@ -1,30 +1,30 @@
  
 
 /**
-* Service Proxy for linn-co-uk:Radio:1
+* Service Proxy for CpProxyLinnCoUkRadio1
 * @module Zapp
 * @class Radio
 */
 	
 var CpProxyLinnCoUkRadio1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Radio-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Radio-1/control";  // upnp control url
 	this.domain = "linn-co-uk";
 	this.type = "Radio";
 	this.version = "1";
-	this.serviceName = "CpProxyLinnCoUkRadio1";
+	this.serviceName = "linn.co.uk-Radio-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["ChannelUri"] = new Zapp.ServiceProperty("ChannelUri");
-	this.serviceProperties["ChannelMetadata"] = new Zapp.ServiceProperty("ChannelMetadata");
-	this.serviceProperties["TransportState"] = new Zapp.ServiceProperty("TransportState");
-	this.serviceProperties["ProtocolInfo"] = new Zapp.ServiceProperty("ProtocolInfo");
-	this.serviceProperties["Id"] = new Zapp.ServiceProperty("Id");
-	this.serviceProperties["IdArray"] = new Zapp.ServiceProperty("IdArray");
-	this.serviceProperties["IdsMax"] = new Zapp.ServiceProperty("IdsMax");
+	this.serviceProperties["ChannelUri"] = new Zapp.ServiceProperty("ChannelUri","string");
+	this.serviceProperties["ChannelMetadata"] = new Zapp.ServiceProperty("ChannelMetadata","string");
+	this.serviceProperties["TransportState"] = new Zapp.ServiceProperty("TransportState","string");
+	this.serviceProperties["ProtocolInfo"] = new Zapp.ServiceProperty("ProtocolInfo","string");
+	this.serviceProperties["Id"] = new Zapp.ServiceProperty("Id","int");
+	this.serviceProperties["IdArray"] = new Zapp.ServiceProperty("IdArray","binary");
+	this.serviceProperties["IdsMax"] = new Zapp.ServiceProperty("IdsMax","int");
 }
 
 ServiceRadio.kTransportStateStopped = "Stopped";
@@ -152,7 +152,7 @@ CpProxyLinnCoUkRadio1.prototype.IdsMax_Changed = function (stateChangedFunction)
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.Play = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Play", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Play", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -171,7 +171,7 @@ CpProxyLinnCoUkRadio1.prototype.Play = function(successFunction, errorFunction){
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.Pause = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Pause", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Pause", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -190,7 +190,7 @@ CpProxyLinnCoUkRadio1.prototype.Pause = function(successFunction, errorFunction)
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.Stop = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Stop", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Stop", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -210,7 +210,7 @@ CpProxyLinnCoUkRadio1.prototype.Stop = function(successFunction, errorFunction){
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.SeekSecondAbsolute = function(aSecond, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SeekSecondAbsolute", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SeekSecondAbsolute", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aSecond", aSecond);
     request.send(function(result){
 	
@@ -231,7 +231,7 @@ CpProxyLinnCoUkRadio1.prototype.SeekSecondAbsolute = function(aSecond, successFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.SeekSecondRelative = function(aSecond, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SeekSecondRelative", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SeekSecondRelative", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aSecond", aSecond);
     request.send(function(result){
 	
@@ -251,7 +251,7 @@ CpProxyLinnCoUkRadio1.prototype.SeekSecondRelative = function(aSecond, successFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.Channel = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Channel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Channel", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aUri"] = Zapp.SoapRequest.readStringParameter(result["aUri"]);	
 		result["aMetadata"] = Zapp.SoapRequest.readStringParameter(result["aMetadata"]);	
@@ -274,7 +274,7 @@ CpProxyLinnCoUkRadio1.prototype.Channel = function(successFunction, errorFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.SetChannel = function(aUri, aMetadata, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetChannel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetChannel", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("aUri", aUri);
     request.writeStringParameter("aMetadata", aMetadata);
     request.send(function(result){
@@ -295,7 +295,7 @@ CpProxyLinnCoUkRadio1.prototype.SetChannel = function(aUri, aMetadata, successFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.ProtocolInfo = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ProtocolInfo", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ProtocolInfo", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aInfo"] = Zapp.SoapRequest.readStringParameter(result["aInfo"]);	
 	
@@ -315,7 +315,7 @@ CpProxyLinnCoUkRadio1.prototype.ProtocolInfo = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.TransportState = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("TransportState", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("TransportState", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aState"] = Zapp.SoapRequest.readStringParameter(result["aState"]);	
 	
@@ -335,7 +335,7 @@ CpProxyLinnCoUkRadio1.prototype.TransportState = function(successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.Id = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Id", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Id", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aId"] = Zapp.SoapRequest.readIntParameter(result["aId"]);	
 	
@@ -357,7 +357,7 @@ CpProxyLinnCoUkRadio1.prototype.Id = function(successFunction, errorFunction){
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.SetId = function(aId, aUri, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetId", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetId", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aId", aId);
     request.writeStringParameter("aUri", aUri);
     request.send(function(result){
@@ -379,7 +379,7 @@ CpProxyLinnCoUkRadio1.prototype.SetId = function(aId, aUri, successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.Read = function(aId, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Read", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Read", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aId", aId);
     request.send(function(result){
 		result["aMetadata"] = Zapp.SoapRequest.readStringParameter(result["aMetadata"]);	
@@ -401,7 +401,7 @@ CpProxyLinnCoUkRadio1.prototype.Read = function(aId, successFunction, errorFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.ReadList = function(aIdList, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ReadList", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ReadList", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("aIdList", aIdList);
     request.send(function(result){
 		result["aMetadataList"] = Zapp.SoapRequest.readStringParameter(result["aMetadataList"]);	
@@ -422,7 +422,7 @@ CpProxyLinnCoUkRadio1.prototype.ReadList = function(aIdList, successFunction, er
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.IdArray = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("IdArray", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("IdArray", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aIdArrayToken"] = Zapp.SoapRequest.readIntParameter(result["aIdArrayToken"]);	
 		result["aIdArray"] = Zapp.SoapRequest.readBinaryParameter(result["aIdArray"]);	
@@ -444,7 +444,7 @@ CpProxyLinnCoUkRadio1.prototype.IdArray = function(successFunction, errorFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.IdArrayChanged = function(aIdArrayToken, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("IdArrayChanged", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("IdArrayChanged", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aIdArrayToken", aIdArrayToken);
     request.send(function(result){
 		result["aIdArrayChanged"] = Zapp.SoapRequest.readBoolParameter(result["aIdArrayChanged"]);	
@@ -465,7 +465,7 @@ CpProxyLinnCoUkRadio1.prototype.IdArrayChanged = function(aIdArrayToken, success
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkRadio1.prototype.IdsMax = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("IdsMax", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("IdsMax", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aIdsMax"] = Zapp.SoapRequest.readIntParameter(result["aIdsMax"]);	
 	

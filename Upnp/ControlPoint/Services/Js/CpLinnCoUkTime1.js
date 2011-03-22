@@ -1,26 +1,26 @@
  
 
 /**
-* Service Proxy for linn-co-uk:Time:1
+* Service Proxy for CpProxyLinnCoUkTime1
 * @module Zapp
 * @class Time
 */
 	
 var CpProxyLinnCoUkTime1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Time-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Time-1/control";  // upnp control url
 	this.domain = "linn-co-uk";
 	this.type = "Time";
 	this.version = "1";
-	this.serviceName = "CpProxyLinnCoUkTime1";
+	this.serviceName = "linn.co.uk-Time-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["TrackCount"] = new Zapp.ServiceProperty("TrackCount");
-	this.serviceProperties["Duration"] = new Zapp.ServiceProperty("Duration");
-	this.serviceProperties["Seconds"] = new Zapp.ServiceProperty("Seconds");
+	this.serviceProperties["TrackCount"] = new Zapp.ServiceProperty("TrackCount","int");
+	this.serviceProperties["Duration"] = new Zapp.ServiceProperty("Duration","int");
+	this.serviceProperties["Seconds"] = new Zapp.ServiceProperty("Seconds","int");
 }
 
 
@@ -92,7 +92,7 @@ CpProxyLinnCoUkTime1.prototype.Seconds_Changed = function (stateChangedFunction)
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkTime1.prototype.Time = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Time", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Time", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aTrackCount"] = Zapp.SoapRequest.readIntParameter(result["aTrackCount"]);	
 		result["aDuration"] = Zapp.SoapRequest.readIntParameter(result["aDuration"]);	

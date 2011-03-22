@@ -1,18 +1,18 @@
  
 
 /**
-* Service Proxy for zapp-org:TestLights:1
+* Service Proxy for CpProxyZappOrgTestLights1
 * @module Zapp
 * @class TestLights
 */
 	
 var CpProxyZappOrgTestLights1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp-org-TestLights-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp.org-TestLights-1/control";  // upnp control url
 	this.domain = "zapp-org";
 	this.type = "TestLights";
 	this.version = "1";
-	this.serviceName = "CpProxyZappOrgTestLights1";
+	this.serviceName = "zapp.org-TestLights-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -50,7 +50,7 @@ CpProxyZappOrgTestLights1.prototype.unsubscribe = function () {
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestLights1.prototype.GetCount = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetCount", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetCount", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["Count"] = Zapp.SoapRequest.readIntParameter(result["Count"]);	
 	
@@ -71,7 +71,7 @@ CpProxyZappOrgTestLights1.prototype.GetCount = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestLights1.prototype.GetRoom = function(Index, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRoom", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetRoom", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.send(function(result){
 		result["RoomName"] = Zapp.SoapRequest.readStringParameter(result["RoomName"]);	
@@ -93,7 +93,7 @@ CpProxyZappOrgTestLights1.prototype.GetRoom = function(Index, successFunction, e
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestLights1.prototype.GetName = function(Index, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetName", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetName", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.send(function(result){
 		result["FriendlyName"] = Zapp.SoapRequest.readStringParameter(result["FriendlyName"]);	
@@ -115,7 +115,7 @@ CpProxyZappOrgTestLights1.prototype.GetName = function(Index, successFunction, e
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestLights1.prototype.GetPosition = function(Index, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetPosition", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetPosition", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.send(function(result){
 		result["X"] = Zapp.SoapRequest.readIntParameter(result["X"]);	
@@ -140,7 +140,7 @@ CpProxyZappOrgTestLights1.prototype.GetPosition = function(Index, successFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestLights1.prototype.SetColor = function(Index, Color, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetColor", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetColor", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.writeIntParameter("Color", Color);
     request.send(function(result){
@@ -162,7 +162,7 @@ CpProxyZappOrgTestLights1.prototype.SetColor = function(Index, Color, successFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestLights1.prototype.GetColor = function(Index, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetColor", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetColor", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.send(function(result){
 		result["Color"] = Zapp.SoapRequest.readIntParameter(result["Color"]);	
@@ -184,7 +184,7 @@ CpProxyZappOrgTestLights1.prototype.GetColor = function(Index, successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestLights1.prototype.GetColorComponents = function(Color, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetColorComponents", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetColorComponents", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("Color", Color);
     request.send(function(result){
 		result["Brightness"] = Zapp.SoapRequest.readIntParameter(result["Brightness"]);	

@@ -1,18 +1,18 @@
  
 
 /**
-* Service Proxy for linn-co-uk:Debug:2
+* Service Proxy for CpProxyLinnCoUkDebug2
 * @module Zapp
 * @class Debug
 */
 	
 var CpProxyLinnCoUkDebug2 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Debug-2/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Debug-2/control";  // upnp control url
 	this.domain = "linn-co-uk";
 	this.type = "Debug";
 	this.version = "2";
-	this.serviceName = "CpProxyLinnCoUkDebug2";
+	this.serviceName = "linn.co.uk-Debug-2";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -51,7 +51,7 @@ CpProxyLinnCoUkDebug2.prototype.unsubscribe = function () {
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDebug2.prototype.SetDebugLevel = function(aDebugLevel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetDebugLevel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetDebugLevel", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aDebugLevel", aDebugLevel);
     request.send(function(result){
 	
@@ -71,7 +71,7 @@ CpProxyLinnCoUkDebug2.prototype.SetDebugLevel = function(aDebugLevel, successFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDebug2.prototype.DebugLevel = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DebugLevel", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DebugLevel", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aDebugLevel"] = Zapp.SoapRequest.readIntParameter(result["aDebugLevel"]);	
 	
@@ -93,7 +93,7 @@ CpProxyLinnCoUkDebug2.prototype.DebugLevel = function(successFunction, errorFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDebug2.prototype.MemWrite = function(aMemAddress, aMemData, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("MemWrite", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("MemWrite", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aMemAddress", aMemAddress);
     request.writeBinaryParameter("aMemData", aMemData);
     request.send(function(result){

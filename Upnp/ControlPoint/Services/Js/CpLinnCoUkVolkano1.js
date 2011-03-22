@@ -1,18 +1,18 @@
  
 
 /**
-* Service Proxy for linn-co-uk:Volkano:1
+* Service Proxy for CpProxyLinnCoUkVolkano1
 * @module Zapp
 * @class Volkano
 */
 	
 var CpProxyLinnCoUkVolkano1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Volkano-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Volkano-1/control";  // upnp control url
 	this.domain = "linn-co-uk";
 	this.type = "Volkano";
 	this.version = "1";
-	this.serviceName = "CpProxyLinnCoUkVolkano1";
+	this.serviceName = "linn.co.uk-Volkano-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
@@ -50,7 +50,7 @@ CpProxyLinnCoUkVolkano1.prototype.unsubscribe = function () {
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkVolkano1.prototype.Reboot = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Reboot", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Reboot", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -69,7 +69,7 @@ CpProxyLinnCoUkVolkano1.prototype.Reboot = function(successFunction, errorFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkVolkano1.prototype.BootMode = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("BootMode", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("BootMode", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aMode"] = Zapp.SoapRequest.readStringParameter(result["aMode"]);	
 	
@@ -90,7 +90,7 @@ CpProxyLinnCoUkVolkano1.prototype.BootMode = function(successFunction, errorFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkVolkano1.prototype.SetBootMode = function(aMode, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetBootMode", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetBootMode", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("aMode", aMode);
     request.send(function(result){
 	
@@ -110,7 +110,7 @@ CpProxyLinnCoUkVolkano1.prototype.SetBootMode = function(aMode, successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkVolkano1.prototype.BspType = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("BspType", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("BspType", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aBspType"] = Zapp.SoapRequest.readStringParameter(result["aBspType"]);	
 	
@@ -130,7 +130,7 @@ CpProxyLinnCoUkVolkano1.prototype.BspType = function(successFunction, errorFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkVolkano1.prototype.UglyName = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("UglyName", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("UglyName", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aUglyName"] = Zapp.SoapRequest.readStringParameter(result["aUglyName"]);	
 	
@@ -150,7 +150,7 @@ CpProxyLinnCoUkVolkano1.prototype.UglyName = function(successFunction, errorFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkVolkano1.prototype.MacAddress = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("MacAddress", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("MacAddress", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aMacAddress"] = Zapp.SoapRequest.readStringParameter(result["aMacAddress"]);	
 	
@@ -170,7 +170,7 @@ CpProxyLinnCoUkVolkano1.prototype.MacAddress = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkVolkano1.prototype.ProductId = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ProductId", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ProductId", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aProductNumber"] = Zapp.SoapRequest.readStringParameter(result["aProductNumber"]);	
 	
@@ -191,7 +191,7 @@ CpProxyLinnCoUkVolkano1.prototype.ProductId = function(successFunction, errorFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkVolkano1.prototype.BoardId = function(aIndex, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("BoardId", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("BoardId", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aIndex", aIndex);
     request.send(function(result){
 		result["aBoardNumber"] = Zapp.SoapRequest.readStringParameter(result["aBoardNumber"]);	
@@ -213,7 +213,7 @@ CpProxyLinnCoUkVolkano1.prototype.BoardId = function(aIndex, successFunction, er
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkVolkano1.prototype.BoardType = function(aIndex, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("BoardType", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("BoardType", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aIndex", aIndex);
     request.send(function(result){
 		result["aBoardNumber"] = Zapp.SoapRequest.readStringParameter(result["aBoardNumber"]);	
@@ -234,7 +234,7 @@ CpProxyLinnCoUkVolkano1.prototype.BoardType = function(aIndex, successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkVolkano1.prototype.MaxBoards = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("MaxBoards", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("MaxBoards", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aMaxBoards"] = Zapp.SoapRequest.readIntParameter(result["aMaxBoards"]);	
 	
@@ -254,7 +254,7 @@ CpProxyLinnCoUkVolkano1.prototype.MaxBoards = function(successFunction, errorFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkVolkano1.prototype.SoftwareVersion = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SoftwareVersion", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SoftwareVersion", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aSoftwareVersion"] = Zapp.SoapRequest.readStringParameter(result["aSoftwareVersion"]);	
 	

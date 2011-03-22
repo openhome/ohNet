@@ -1,32 +1,32 @@
  
 
 /**
-* Service Proxy for linn-co-uk:Ds:1
+* Service Proxy for CpProxyLinnCoUkDs1
 * @module Zapp
 * @class Ds
 */
 	
 var CpProxyLinnCoUkDs1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Ds-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Ds-1/control";  // upnp control url
 	this.domain = "linn-co-uk";
 	this.type = "Ds";
 	this.version = "1";
-	this.serviceName = "CpProxyLinnCoUkDs1";
+	this.serviceName = "linn.co.uk-Ds-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["SupportedProtocols"] = new Zapp.ServiceProperty("SupportedProtocols");
-	this.serviceProperties["TrackDuration"] = new Zapp.ServiceProperty("TrackDuration");
-	this.serviceProperties["TrackBitRate"] = new Zapp.ServiceProperty("TrackBitRate");
-	this.serviceProperties["TrackLossless"] = new Zapp.ServiceProperty("TrackLossless");
-	this.serviceProperties["TrackBitDepth"] = new Zapp.ServiceProperty("TrackBitDepth");
-	this.serviceProperties["TrackSampleRate"] = new Zapp.ServiceProperty("TrackSampleRate");
-	this.serviceProperties["TrackCodecName"] = new Zapp.ServiceProperty("TrackCodecName");
-	this.serviceProperties["TrackId"] = new Zapp.ServiceProperty("TrackId");
-	this.serviceProperties["TransportState"] = new Zapp.ServiceProperty("TransportState");
+	this.serviceProperties["SupportedProtocols"] = new Zapp.ServiceProperty("SupportedProtocols","string");
+	this.serviceProperties["TrackDuration"] = new Zapp.ServiceProperty("TrackDuration","int");
+	this.serviceProperties["TrackBitRate"] = new Zapp.ServiceProperty("TrackBitRate","int");
+	this.serviceProperties["TrackLossless"] = new Zapp.ServiceProperty("TrackLossless","bool");
+	this.serviceProperties["TrackBitDepth"] = new Zapp.ServiceProperty("TrackBitDepth","int");
+	this.serviceProperties["TrackSampleRate"] = new Zapp.ServiceProperty("TrackSampleRate","int");
+	this.serviceProperties["TrackCodecName"] = new Zapp.ServiceProperty("TrackCodecName","string");
+	this.serviceProperties["TrackId"] = new Zapp.ServiceProperty("TrackId","int");
+	this.serviceProperties["TransportState"] = new Zapp.ServiceProperty("TransportState","string");
 }
 
 ServiceDs.kTransportStatePlaying = "Playing";
@@ -180,7 +180,7 @@ CpProxyLinnCoUkDs1.prototype.TransportState_Changed = function (stateChangedFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDs1.prototype.Play = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Play", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Play", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -199,7 +199,7 @@ CpProxyLinnCoUkDs1.prototype.Play = function(successFunction, errorFunction){
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDs1.prototype.Pause = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Pause", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Pause", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -218,7 +218,7 @@ CpProxyLinnCoUkDs1.prototype.Pause = function(successFunction, errorFunction){
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDs1.prototype.Stop = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Stop", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Stop", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -238,7 +238,7 @@ CpProxyLinnCoUkDs1.prototype.Stop = function(successFunction, errorFunction){
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDs1.prototype.SeekSecondAbsolute = function(aSecond, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SeekSecondAbsolute", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SeekSecondAbsolute", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aSecond", aSecond);
     request.send(function(result){
 	
@@ -259,7 +259,7 @@ CpProxyLinnCoUkDs1.prototype.SeekSecondAbsolute = function(aSecond, successFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDs1.prototype.SeekSecondRelative = function(aSecond, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SeekSecondRelative", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SeekSecondRelative", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aSecond", aSecond);
     request.send(function(result){
 	
@@ -280,7 +280,7 @@ CpProxyLinnCoUkDs1.prototype.SeekSecondRelative = function(aSecond, successFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDs1.prototype.SeekTrackId = function(aTrackId, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SeekTrackId", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SeekTrackId", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aTrackId", aTrackId);
     request.send(function(result){
 	
@@ -301,7 +301,7 @@ CpProxyLinnCoUkDs1.prototype.SeekTrackId = function(aTrackId, successFunction, e
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDs1.prototype.SeekTrackAbsolute = function(aTrack, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SeekTrackAbsolute", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SeekTrackAbsolute", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aTrack", aTrack);
     request.send(function(result){
 	
@@ -322,7 +322,7 @@ CpProxyLinnCoUkDs1.prototype.SeekTrackAbsolute = function(aTrack, successFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDs1.prototype.SeekTrackRelative = function(aTrack, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SeekTrackRelative", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SeekTrackRelative", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aTrack", aTrack);
     request.send(function(result){
 	
@@ -342,7 +342,7 @@ CpProxyLinnCoUkDs1.prototype.SeekTrackRelative = function(aTrack, successFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDs1.prototype.State = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("State", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("State", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aTransportState"] = Zapp.SoapRequest.readStringParameter(result["aTransportState"]);	
 		result["aTrackDuration"] = Zapp.SoapRequest.readIntParameter(result["aTrackDuration"]);	
@@ -369,7 +369,7 @@ CpProxyLinnCoUkDs1.prototype.State = function(successFunction, errorFunction){
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDs1.prototype.ProtocolInfo = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ProtocolInfo", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ProtocolInfo", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aSupportedProtocols"] = Zapp.SoapRequest.readStringParameter(result["aSupportedProtocols"]);	
 	

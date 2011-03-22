@@ -1,36 +1,36 @@
  
 
 /**
-* Service Proxy for linn-co-uk:Product:3
+* Service Proxy for CpProxyLinnCoUkProduct3
 * @module Zapp
 * @class Product
 */
 	
 var CpProxyLinnCoUkProduct3 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Product-3/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Product-3/control";  // upnp control url
 	this.domain = "linn-co-uk";
 	this.type = "Product";
 	this.version = "3";
-	this.serviceName = "CpProxyLinnCoUkProduct3";
+	this.serviceName = "linn.co.uk-Product-3";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["ProductType"] = new Zapp.ServiceProperty("ProductType");
-	this.serviceProperties["ProductModel"] = new Zapp.ServiceProperty("ProductModel");
-	this.serviceProperties["ProductName"] = new Zapp.ServiceProperty("ProductName");
-	this.serviceProperties["ProductRoom"] = new Zapp.ServiceProperty("ProductRoom");
-	this.serviceProperties["ProductStandby"] = new Zapp.ServiceProperty("ProductStandby");
-	this.serviceProperties["ProductSourceIndex"] = new Zapp.ServiceProperty("ProductSourceIndex");
-	this.serviceProperties["ProductSourceCount"] = new Zapp.ServiceProperty("ProductSourceCount");
-	this.serviceProperties["ProductSourceXml"] = new Zapp.ServiceProperty("ProductSourceXml");
-	this.serviceProperties["StartupSourceIndex"] = new Zapp.ServiceProperty("StartupSourceIndex");
-	this.serviceProperties["StartupSourceEnabled"] = new Zapp.ServiceProperty("StartupSourceEnabled");
-	this.serviceProperties["ProductAnySourceName"] = new Zapp.ServiceProperty("ProductAnySourceName");
-	this.serviceProperties["ProductAnySourceVisible"] = new Zapp.ServiceProperty("ProductAnySourceVisible");
-	this.serviceProperties["ProductAnySourceType"] = new Zapp.ServiceProperty("ProductAnySourceType");
+	this.serviceProperties["ProductType"] = new Zapp.ServiceProperty("ProductType","string");
+	this.serviceProperties["ProductModel"] = new Zapp.ServiceProperty("ProductModel","string");
+	this.serviceProperties["ProductName"] = new Zapp.ServiceProperty("ProductName","string");
+	this.serviceProperties["ProductRoom"] = new Zapp.ServiceProperty("ProductRoom","string");
+	this.serviceProperties["ProductStandby"] = new Zapp.ServiceProperty("ProductStandby","bool");
+	this.serviceProperties["ProductSourceIndex"] = new Zapp.ServiceProperty("ProductSourceIndex","int");
+	this.serviceProperties["ProductSourceCount"] = new Zapp.ServiceProperty("ProductSourceCount","int");
+	this.serviceProperties["ProductSourceXml"] = new Zapp.ServiceProperty("ProductSourceXml","string");
+	this.serviceProperties["StartupSourceIndex"] = new Zapp.ServiceProperty("StartupSourceIndex","int");
+	this.serviceProperties["StartupSourceEnabled"] = new Zapp.ServiceProperty("StartupSourceEnabled","bool");
+	this.serviceProperties["ProductAnySourceName"] = new Zapp.ServiceProperty("ProductAnySourceName","int");
+	this.serviceProperties["ProductAnySourceVisible"] = new Zapp.ServiceProperty("ProductAnySourceVisible","int");
+	this.serviceProperties["ProductAnySourceType"] = new Zapp.ServiceProperty("ProductAnySourceType","int");
 }
 
 
@@ -232,7 +232,7 @@ CpProxyLinnCoUkProduct3.prototype.ProductAnySourceType_Changed = function (state
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.Type = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Type", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Type", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aType"] = Zapp.SoapRequest.readStringParameter(result["aType"]);	
 	
@@ -252,7 +252,7 @@ CpProxyLinnCoUkProduct3.prototype.Type = function(successFunction, errorFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.Model = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Model", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Model", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aModel"] = Zapp.SoapRequest.readStringParameter(result["aModel"]);	
 	
@@ -272,7 +272,7 @@ CpProxyLinnCoUkProduct3.prototype.Model = function(successFunction, errorFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.Name = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Name", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Name", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aName"] = Zapp.SoapRequest.readStringParameter(result["aName"]);	
 	
@@ -293,7 +293,7 @@ CpProxyLinnCoUkProduct3.prototype.Name = function(successFunction, errorFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SetName = function(aName, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetName", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetName", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("aName", aName);
     request.send(function(result){
 	
@@ -313,7 +313,7 @@ CpProxyLinnCoUkProduct3.prototype.SetName = function(aName, successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.Room = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Room", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Room", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aRoom"] = Zapp.SoapRequest.readStringParameter(result["aRoom"]);	
 	
@@ -334,7 +334,7 @@ CpProxyLinnCoUkProduct3.prototype.Room = function(successFunction, errorFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SetRoom = function(aRoom, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetRoom", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetRoom", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("aRoom", aRoom);
     request.send(function(result){
 	
@@ -354,7 +354,7 @@ CpProxyLinnCoUkProduct3.prototype.SetRoom = function(aRoom, successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.Standby = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Standby", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Standby", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aStandby"] = Zapp.SoapRequest.readBoolParameter(result["aStandby"]);	
 	
@@ -375,7 +375,7 @@ CpProxyLinnCoUkProduct3.prototype.Standby = function(successFunction, errorFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SetStandby = function(aStandby, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetStandby", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetStandby", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("aStandby", aStandby);
     request.send(function(result){
 	
@@ -395,7 +395,7 @@ CpProxyLinnCoUkProduct3.prototype.SetStandby = function(aStandby, successFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SourceCount = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SourceCount", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SourceCount", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aSourceCount"] = Zapp.SoapRequest.readIntParameter(result["aSourceCount"]);	
 	
@@ -415,7 +415,7 @@ CpProxyLinnCoUkProduct3.prototype.SourceCount = function(successFunction, errorF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SourceXml = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SourceXml", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SourceXml", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aSourceXml"] = Zapp.SoapRequest.readStringParameter(result["aSourceXml"]);	
 	
@@ -435,7 +435,7 @@ CpProxyLinnCoUkProduct3.prototype.SourceXml = function(successFunction, errorFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SourceIndex = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SourceIndex", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SourceIndex", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aSourceIndex"] = Zapp.SoapRequest.readIntParameter(result["aSourceIndex"]);	
 	
@@ -456,7 +456,7 @@ CpProxyLinnCoUkProduct3.prototype.SourceIndex = function(successFunction, errorF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SetSourceIndex = function(aSourceIndex, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetSourceIndex", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetSourceIndex", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.send(function(result){
 	
@@ -477,7 +477,7 @@ CpProxyLinnCoUkProduct3.prototype.SetSourceIndex = function(aSourceIndex, succes
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SetSourceIndexByName = function(aSourceName, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetSourceIndexByName", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetSourceIndexByName", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("aSourceName", aSourceName);
     request.send(function(result){
 	
@@ -498,7 +498,7 @@ CpProxyLinnCoUkProduct3.prototype.SetSourceIndexByName = function(aSourceName, s
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SetStartupSourceIndexByName = function(aSourceName, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetStartupSourceIndexByName", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetStartupSourceIndexByName", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("aSourceName", aSourceName);
     request.send(function(result){
 	
@@ -518,7 +518,7 @@ CpProxyLinnCoUkProduct3.prototype.SetStartupSourceIndexByName = function(aSource
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.StartupSourceIndex = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StartupSourceIndex", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("StartupSourceIndex", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aSourceIndex"] = Zapp.SoapRequest.readIntParameter(result["aSourceIndex"]);	
 	
@@ -539,7 +539,7 @@ CpProxyLinnCoUkProduct3.prototype.StartupSourceIndex = function(successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SetStartupSourceIndex = function(aSourceIndex, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetStartupSourceIndex", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetStartupSourceIndex", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.send(function(result){
 	
@@ -559,7 +559,7 @@ CpProxyLinnCoUkProduct3.prototype.SetStartupSourceIndex = function(aSourceIndex,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.StartupSourceEnabled = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StartupSourceEnabled", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("StartupSourceEnabled", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aStartupSourceEnabled"] = Zapp.SoapRequest.readBoolParameter(result["aStartupSourceEnabled"]);	
 	
@@ -580,7 +580,7 @@ CpProxyLinnCoUkProduct3.prototype.StartupSourceEnabled = function(successFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SetStartupSourceEnabled = function(aStartupSourceEnabled, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetStartupSourceEnabled", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetStartupSourceEnabled", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("aStartupSourceEnabled", aStartupSourceEnabled);
     request.send(function(result){
 	
@@ -601,7 +601,7 @@ CpProxyLinnCoUkProduct3.prototype.SetStartupSourceEnabled = function(aStartupSou
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SourceSystemName = function(aSourceIndex, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SourceSystemName", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SourceSystemName", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.send(function(result){
 		result["aSourceName"] = Zapp.SoapRequest.readStringParameter(result["aSourceName"]);	
@@ -623,7 +623,7 @@ CpProxyLinnCoUkProduct3.prototype.SourceSystemName = function(aSourceIndex, succ
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SourceName = function(aSourceIndex, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SourceName", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SourceName", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.send(function(result){
 		result["aSourceName"] = Zapp.SoapRequest.readStringParameter(result["aSourceName"]);	
@@ -646,7 +646,7 @@ CpProxyLinnCoUkProduct3.prototype.SourceName = function(aSourceIndex, successFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SetSourceName = function(aSourceIndex, aSourceName, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetSourceName", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetSourceName", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.writeStringParameter("aSourceName", aSourceName);
     request.send(function(result){
@@ -668,7 +668,7 @@ CpProxyLinnCoUkProduct3.prototype.SetSourceName = function(aSourceIndex, aSource
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SourceType = function(aSourceIndex, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SourceType", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SourceType", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.send(function(result){
 		result["aSourceType"] = Zapp.SoapRequest.readStringParameter(result["aSourceType"]);	
@@ -690,7 +690,7 @@ CpProxyLinnCoUkProduct3.prototype.SourceType = function(aSourceIndex, successFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SourceVisible = function(aSourceIndex, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SourceVisible", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SourceVisible", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.send(function(result){
 		result["aSourceVisible"] = Zapp.SoapRequest.readBoolParameter(result["aSourceVisible"]);	
@@ -713,7 +713,7 @@ CpProxyLinnCoUkProduct3.prototype.SourceVisible = function(aSourceIndex, success
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct3.prototype.SetSourceVisible = function(aSourceIndex, aSourceVisible, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetSourceVisible", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetSourceVisible", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aSourceIndex", aSourceIndex);
     request.writeBoolParameter("aSourceVisible", aSourceVisible);
     request.send(function(result){

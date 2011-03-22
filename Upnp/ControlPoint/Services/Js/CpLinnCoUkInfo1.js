@@ -1,35 +1,35 @@
  
 
 /**
-* Service Proxy for linn-co-uk:Info:1
+* Service Proxy for CpProxyLinnCoUkInfo1
 * @module Zapp
 * @class Info
 */
 	
 var CpProxyLinnCoUkInfo1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Info-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Info-1/control";  // upnp control url
 	this.domain = "linn-co-uk";
 	this.type = "Info";
 	this.version = "1";
-	this.serviceName = "CpProxyLinnCoUkInfo1";
+	this.serviceName = "linn.co.uk-Info-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["TrackCount"] = new Zapp.ServiceProperty("TrackCount");
-	this.serviceProperties["DetailsCount"] = new Zapp.ServiceProperty("DetailsCount");
-	this.serviceProperties["MetatextCount"] = new Zapp.ServiceProperty("MetatextCount");
-	this.serviceProperties["Uri"] = new Zapp.ServiceProperty("Uri");
-	this.serviceProperties["Metadata"] = new Zapp.ServiceProperty("Metadata");
-	this.serviceProperties["Duration"] = new Zapp.ServiceProperty("Duration");
-	this.serviceProperties["BitRate"] = new Zapp.ServiceProperty("BitRate");
-	this.serviceProperties["BitDepth"] = new Zapp.ServiceProperty("BitDepth");
-	this.serviceProperties["SampleRate"] = new Zapp.ServiceProperty("SampleRate");
-	this.serviceProperties["Lossless"] = new Zapp.ServiceProperty("Lossless");
-	this.serviceProperties["CodecName"] = new Zapp.ServiceProperty("CodecName");
-	this.serviceProperties["Metatext"] = new Zapp.ServiceProperty("Metatext");
+	this.serviceProperties["TrackCount"] = new Zapp.ServiceProperty("TrackCount","int");
+	this.serviceProperties["DetailsCount"] = new Zapp.ServiceProperty("DetailsCount","int");
+	this.serviceProperties["MetatextCount"] = new Zapp.ServiceProperty("MetatextCount","int");
+	this.serviceProperties["Uri"] = new Zapp.ServiceProperty("Uri","string");
+	this.serviceProperties["Metadata"] = new Zapp.ServiceProperty("Metadata","string");
+	this.serviceProperties["Duration"] = new Zapp.ServiceProperty("Duration","int");
+	this.serviceProperties["BitRate"] = new Zapp.ServiceProperty("BitRate","int");
+	this.serviceProperties["BitDepth"] = new Zapp.ServiceProperty("BitDepth","int");
+	this.serviceProperties["SampleRate"] = new Zapp.ServiceProperty("SampleRate","int");
+	this.serviceProperties["Lossless"] = new Zapp.ServiceProperty("Lossless","bool");
+	this.serviceProperties["CodecName"] = new Zapp.ServiceProperty("CodecName","string");
+	this.serviceProperties["Metatext"] = new Zapp.ServiceProperty("Metatext","string");
 }
 
 
@@ -218,7 +218,7 @@ CpProxyLinnCoUkInfo1.prototype.Metatext_Changed = function (stateChangedFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkInfo1.prototype.Counters = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Counters", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Counters", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aTrackCount"] = Zapp.SoapRequest.readIntParameter(result["aTrackCount"]);	
 		result["aDetailsCount"] = Zapp.SoapRequest.readIntParameter(result["aDetailsCount"]);	
@@ -240,7 +240,7 @@ CpProxyLinnCoUkInfo1.prototype.Counters = function(successFunction, errorFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkInfo1.prototype.Track = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Track", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Track", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aUri"] = Zapp.SoapRequest.readStringParameter(result["aUri"]);	
 		result["aMetadata"] = Zapp.SoapRequest.readStringParameter(result["aMetadata"]);	
@@ -261,7 +261,7 @@ CpProxyLinnCoUkInfo1.prototype.Track = function(successFunction, errorFunction){
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkInfo1.prototype.Details = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Details", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Details", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aDuration"] = Zapp.SoapRequest.readIntParameter(result["aDuration"]);	
 		result["aBitRate"] = Zapp.SoapRequest.readIntParameter(result["aBitRate"]);	
@@ -286,7 +286,7 @@ CpProxyLinnCoUkInfo1.prototype.Details = function(successFunction, errorFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkInfo1.prototype.Metatext = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Metatext", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Metatext", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aMetatext"] = Zapp.SoapRequest.readStringParameter(result["aMetatext"]);	
 	

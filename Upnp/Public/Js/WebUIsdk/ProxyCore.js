@@ -83,7 +83,6 @@ Zapp.SubscriptionManager = (function () {
         if (DEBUG) {
             console.log("subscribeMessage/message: " + message);
         }
-
         return message;
     };
 
@@ -273,7 +272,7 @@ Zapp.SubscriptionManager = (function () {
 
         var properties = xmlDoc.getElementsByTagNameNS("*", "property"); // NON-IE
         if (properties) {
-            for (var i = properties.length - 1; i > -1; i--) {
+            for (var i = 0, count = properties.length; i < count; i++) {
                 var property = properties[i].childNodes[0];
                 if (property) {
                     setPropertyUpdate(subscriptionId, property.tagName, property.textContent);
@@ -343,9 +342,10 @@ Zapp.SubscriptionManager = (function () {
     * @method onSocketError
     */
     var onSocketError = function () {
-        if (DEBUG) {
-            console.log("onSocketError");
-        }
+        //   if (DEBUG) {
+        console.log("onSocketError");
+        alert("Socket Error");
+        //    }
     };
 
 
@@ -354,9 +354,12 @@ Zapp.SubscriptionManager = (function () {
     * @method onSocketClose
     */
     var onSocketClose = function () {
-        if (DEBUG) {
-            console.log("onSocketClose");
-        }
+
+        // if (DEBUG) {
+        console.log("onSocketClose");
+        stop();
+        alert("Lost Connection to Node");
+        //    }
     };
 
     /**
@@ -401,11 +404,10 @@ Zapp.SubscriptionManager = (function () {
         var websocketSupported = ("WebSocket" in window);
         if (websocketSupported) { // NON-IE check if Websockets is supported
             var websocketServerLocation = "ws://" + window.location.hostname + ":54321/";
-            websocket = new WebSocket(websocketServerLocation, "upnp:event"); // TODO : Needs to acquire the port
-
             if (DEBUG) {
                 console.log("start/websocketServerLocation: " + websocketServerLocation);
             }
+            websocket = new WebSocket(websocketServerLocation, "upnp:event"); // TODO : Needs to acquire the port
 
             websocket.onmessage = onSocketMessage;
             websocket.onerror = onSocketError;
@@ -437,7 +439,7 @@ Zapp.SubscriptionManager = (function () {
                     console.log("stop/service.subscriptionId: " + service.subscriptionId);
                 }
 
-                this.RemoveService(service.subscriptionId);
+                removeService(service.subscriptionId);
             }
             else {
                 if (DEBUG) {
@@ -528,8 +530,9 @@ Zapp.SubscriptionManager = (function () {
 * @namespace Zapp
 * @class ServiceProperty
 */
-Zapp.ServiceProperty = function (name) {
+Zapp.ServiceProperty = function (name, type) {
     this.name = name; // The name of the property
+    this.type = type;
     this.value = null; // The value of the property
     this.listeners = []; // A collection of listeners to notify of property value changes
 }
@@ -540,8 +543,37 @@ Zapp.ServiceProperty = function (name) {
 * @param {String | Int | Boolean} value The new value for the property
 */
 Zapp.ServiceProperty.prototype.setValue = function (value) {
+   
     if (this.value != value) {
-        this.value = value;
+
+        switch (this.type) {
+
+            case "int":
+                {
+                    this.value = Zapp.SoapRequest.readIntParameter(value);
+                    break;
+                }
+            case "string":
+                {
+                    this.value = Zapp.SoapRequest.readStringParameter(value);
+                    break;
+                }
+            case "boolean":
+                {
+                    this.value = Zapp.SoapRequest.readBoolParameter(value);
+                    break;
+                }
+            case "binary":
+                {
+                    this.value = Zapp.SoapRequest.readBinaryParameter(value);
+                    break;
+                }
+            default:
+                {
+                    throw "Invalid Property Type: '" + this.type+"'";
+                }
+        }
+
         for (var i = this.listeners.length - 1; i > -1; i--) {
             try {
                 this.listeners[i].call(this, value);
@@ -657,7 +689,9 @@ Zapp.SoapRequest.prototype.send = function (successFunction, errorFunction) {
 		            }
 		            result[outParameters[i].nodeName] = (nodeValue != "" ? nodeValue : null);
 		        }
+
 		        successFunction(result);
+
 		    }
 		},
 		function (transport) {
@@ -689,7 +723,6 @@ Zapp.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorF
                 dataType: 'text/xml; charset=\"utf-8\"'
             }
         };
-
         Y.io(_this.url, cfg);
 
         Y.on('io:success', onSuccess, Y, true);
@@ -704,11 +737,13 @@ Zapp.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorF
                     try {
                         successFunction(response);
                     } catch (e) {
-                        console.log("createAjaxRequest: " + e.message);
-                        if (errorFunction) { errorFunction(textStatus); };
+                        alert(_this.envelope);
+                        console.log("createAjaxRequest: " + e);
+                        if (errorFunction) { errorFunction(response); };
                     }
                 }
             } else {
+                alert(_this.envelope);
                 console.log("createAjaxRequest: " + _this.url);
                 if (errorFunction) { errorFunction(); };
             }
@@ -724,6 +759,7 @@ Zapp.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorF
             //           or "abort" depending on the mode of 
             //           termination.
             // arguments: String "Transaction Failed".
+
             if (errorFunction) {
                 errorFunction(response);
             }
@@ -884,7 +920,7 @@ Zapp.SoapRequest.readStringParameter = function (value) {
 * @return {String} The binary value converted from base64
 */
 Zapp.SoapRequest.readBinaryParameter = function (value) {
-    return atob(value); // NON-IE
+    return atob(value);
 }
 
 /**
@@ -927,6 +963,7 @@ Zapp.SoapRequest.prototype.writeBinaryParameter = function (tagName, value) {
     this.writeParameter(tagName, (value ? btoa(value) : ""));
 }
 
+
 /**
 * Helper to format the tag and value into a xml tag and insert into the SOAP enveloper
 * @method writeParameter
@@ -936,3 +973,6 @@ Zapp.SoapRequest.prototype.writeBinaryParameter = function (tagName, value) {
 Zapp.SoapRequest.prototype.writeParameter = function (tagName, value) {
     this.envelope += "<" + tagName + ">" + value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</" + tagName + ">";
 }
+
+
+

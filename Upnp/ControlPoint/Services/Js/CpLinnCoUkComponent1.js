@@ -1,27 +1,27 @@
  
 
 /**
-* Service Proxy for linn-co-uk:Component:1
+* Service Proxy for CpProxyLinnCoUkComponent1
 * @module Zapp
 * @class Component
 */
 	
 var CpProxyLinnCoUkComponent1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Component-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Component-1/control";  // upnp control url
 	this.domain = "linn-co-uk";
 	this.type = "Component";
 	this.version = "1";
-	this.serviceName = "CpProxyLinnCoUkComponent1";
+	this.serviceName = "linn.co.uk-Component-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["AmplifierEnabled"] = new Zapp.ServiceProperty("AmplifierEnabled");
-	this.serviceProperties["AmplifierAttenuation"] = new Zapp.ServiceProperty("AmplifierAttenuation");
-	this.serviceProperties["VolumeControlEnabled"] = new Zapp.ServiceProperty("VolumeControlEnabled");
-	this.serviceProperties["DigitalAudioOutputRaw"] = new Zapp.ServiceProperty("DigitalAudioOutputRaw");
+	this.serviceProperties["AmplifierEnabled"] = new Zapp.ServiceProperty("AmplifierEnabled","bool");
+	this.serviceProperties["AmplifierAttenuation"] = new Zapp.ServiceProperty("AmplifierAttenuation","string");
+	this.serviceProperties["VolumeControlEnabled"] = new Zapp.ServiceProperty("VolumeControlEnabled","bool");
+	this.serviceProperties["DigitalAudioOutputRaw"] = new Zapp.ServiceProperty("DigitalAudioOutputRaw","bool");
 }
 
 ServiceComponent.kAmplifierAttenuation12Db = "-12dB";
@@ -110,7 +110,7 @@ CpProxyLinnCoUkComponent1.prototype.DigitalAudioOutputRaw_Changed = function (st
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkComponent1.prototype.AmplifierEnabled = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("AmplifierEnabled", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("AmplifierEnabled", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aEnabled"] = Zapp.SoapRequest.readBoolParameter(result["aEnabled"]);	
 	
@@ -131,7 +131,7 @@ CpProxyLinnCoUkComponent1.prototype.AmplifierEnabled = function(successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkComponent1.prototype.SetAmplifierEnabled = function(aEnabled, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetAmplifierEnabled", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetAmplifierEnabled", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("aEnabled", aEnabled);
     request.send(function(result){
 	
@@ -151,7 +151,7 @@ CpProxyLinnCoUkComponent1.prototype.SetAmplifierEnabled = function(aEnabled, suc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkComponent1.prototype.AmplifierAttenuation = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("AmplifierAttenuation", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("AmplifierAttenuation", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aAttenuation"] = Zapp.SoapRequest.readStringParameter(result["aAttenuation"]);	
 	
@@ -172,7 +172,7 @@ CpProxyLinnCoUkComponent1.prototype.AmplifierAttenuation = function(successFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkComponent1.prototype.SetAmplifierAttenuation = function(aAttenuation, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetAmplifierAttenuation", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetAmplifierAttenuation", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("aAttenuation", aAttenuation);
     request.send(function(result){
 	
@@ -193,7 +193,7 @@ CpProxyLinnCoUkComponent1.prototype.SetAmplifierAttenuation = function(aAttenuat
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkComponent1.prototype.SetVolumeControlEnabled = function(aEnabled, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetVolumeControlEnabled", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetVolumeControlEnabled", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("aEnabled", aEnabled);
     request.send(function(result){
 	
@@ -213,7 +213,7 @@ CpProxyLinnCoUkComponent1.prototype.SetVolumeControlEnabled = function(aEnabled,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkComponent1.prototype.VolumeControlEnabled = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("VolumeControlEnabled", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("VolumeControlEnabled", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aEnabled"] = Zapp.SoapRequest.readBoolParameter(result["aEnabled"]);	
 	
@@ -234,7 +234,7 @@ CpProxyLinnCoUkComponent1.prototype.VolumeControlEnabled = function(successFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkComponent1.prototype.SetDigitalAudioOutputRaw = function(aRaw, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetDigitalAudioOutputRaw", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetDigitalAudioOutputRaw", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("aRaw", aRaw);
     request.send(function(result){
 	
@@ -254,7 +254,7 @@ CpProxyLinnCoUkComponent1.prototype.SetDigitalAudioOutputRaw = function(aRaw, su
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkComponent1.prototype.DigitalAudioOutputRaw = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DigitalAudioOutputRaw", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DigitalAudioOutputRaw", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aRaw"] = Zapp.SoapRequest.readBoolParameter(result["aRaw"]);	
 	
@@ -274,7 +274,7 @@ CpProxyLinnCoUkComponent1.prototype.DigitalAudioOutputRaw = function(successFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkComponent1.prototype.AmplifierOverTemperature = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("AmplifierOverTemperature", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("AmplifierOverTemperature", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aOverTemperature"] = Zapp.SoapRequest.readBoolParameter(result["aOverTemperature"]);	
 	
@@ -294,7 +294,7 @@ CpProxyLinnCoUkComponent1.prototype.AmplifierOverTemperature = function(successF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkComponent1.prototype.EthernetLinkConnected = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("EthernetLinkConnected", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("EthernetLinkConnected", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aLinkConnected"] = Zapp.SoapRequest.readBoolParameter(result["aLinkConnected"]);	
 	
@@ -314,7 +314,7 @@ CpProxyLinnCoUkComponent1.prototype.EthernetLinkConnected = function(successFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkComponent1.prototype.Locate = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Locate", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Locate", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){

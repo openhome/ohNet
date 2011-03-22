@@ -1,27 +1,27 @@
  
 
 /**
-* Service Proxy for linn-co-uk:Playlist:1
+* Service Proxy for CpProxyLinnCoUkPlaylist1
 * @module Zapp
 * @class Playlist
 */
 	
 var CpProxyLinnCoUkPlaylist1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-Playlist-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Playlist-1/control";  // upnp control url
 	this.domain = "linn-co-uk";
 	this.type = "Playlist";
 	this.version = "1";
-	this.serviceName = "CpProxyLinnCoUkPlaylist1";
+	this.serviceName = "linn.co.uk-Playlist-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["IdArray"] = new Zapp.ServiceProperty("IdArray");
-	this.serviceProperties["Repeat"] = new Zapp.ServiceProperty("Repeat");
-	this.serviceProperties["Shuffle"] = new Zapp.ServiceProperty("Shuffle");
-	this.serviceProperties["TracksMax"] = new Zapp.ServiceProperty("TracksMax");
+	this.serviceProperties["IdArray"] = new Zapp.ServiceProperty("IdArray","binary");
+	this.serviceProperties["Repeat"] = new Zapp.ServiceProperty("Repeat","bool");
+	this.serviceProperties["Shuffle"] = new Zapp.ServiceProperty("Shuffle","bool");
+	this.serviceProperties["TracksMax"] = new Zapp.ServiceProperty("TracksMax","int");
 }
 
 
@@ -107,7 +107,7 @@ CpProxyLinnCoUkPlaylist1.prototype.TracksMax_Changed = function (stateChangedFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPlaylist1.prototype.Read = function(aId, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Read", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Read", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aId", aId);
     request.send(function(result){
 		result["aUri"] = Zapp.SoapRequest.readStringParameter(result["aUri"]);	
@@ -130,7 +130,7 @@ CpProxyLinnCoUkPlaylist1.prototype.Read = function(aId, successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPlaylist1.prototype.ReadList = function(aIdList, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ReadList", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ReadList", this.url, this.formattedDomain, this.type, this.version);		
     request.writeStringParameter("aIdList", aIdList);
     request.send(function(result){
 		result["aMetaDataList"] = Zapp.SoapRequest.readStringParameter(result["aMetaDataList"]);	
@@ -154,7 +154,7 @@ CpProxyLinnCoUkPlaylist1.prototype.ReadList = function(aIdList, successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPlaylist1.prototype.Insert = function(aAfterId, aUri, aMetaData, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Insert", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Insert", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aAfterId", aAfterId);
     request.writeStringParameter("aUri", aUri);
     request.writeStringParameter("aMetaData", aMetaData);
@@ -178,7 +178,7 @@ CpProxyLinnCoUkPlaylist1.prototype.Insert = function(aAfterId, aUri, aMetaData, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPlaylist1.prototype.Delete = function(aId, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Delete", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Delete", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aId", aId);
     request.send(function(result){
 	
@@ -198,7 +198,7 @@ CpProxyLinnCoUkPlaylist1.prototype.Delete = function(aId, successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPlaylist1.prototype.DeleteAll = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DeleteAll", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DeleteAll", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -218,7 +218,7 @@ CpProxyLinnCoUkPlaylist1.prototype.DeleteAll = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPlaylist1.prototype.SetRepeat = function(aRepeat, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetRepeat", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetRepeat", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("aRepeat", aRepeat);
     request.send(function(result){
 	
@@ -238,7 +238,7 @@ CpProxyLinnCoUkPlaylist1.prototype.SetRepeat = function(aRepeat, successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPlaylist1.prototype.Repeat = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Repeat", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Repeat", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aRepeat"] = Zapp.SoapRequest.readBoolParameter(result["aRepeat"]);	
 	
@@ -259,7 +259,7 @@ CpProxyLinnCoUkPlaylist1.prototype.Repeat = function(successFunction, errorFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPlaylist1.prototype.SetShuffle = function(aShuffle, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetShuffle", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetShuffle", this.url, this.formattedDomain, this.type, this.version);		
     request.writeBoolParameter("aShuffle", aShuffle);
     request.send(function(result){
 	
@@ -279,7 +279,7 @@ CpProxyLinnCoUkPlaylist1.prototype.SetShuffle = function(aShuffle, successFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPlaylist1.prototype.Shuffle = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Shuffle", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Shuffle", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aShuffle"] = Zapp.SoapRequest.readBoolParameter(result["aShuffle"]);	
 	
@@ -299,7 +299,7 @@ CpProxyLinnCoUkPlaylist1.prototype.Shuffle = function(successFunction, errorFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPlaylist1.prototype.TracksMax = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("TracksMax", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("TracksMax", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aTracksMax"] = Zapp.SoapRequest.readIntParameter(result["aTracksMax"]);	
 	
@@ -319,7 +319,7 @@ CpProxyLinnCoUkPlaylist1.prototype.TracksMax = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPlaylist1.prototype.IdArray = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("IdArray", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("IdArray", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aIdArrayToken"] = Zapp.SoapRequest.readIntParameter(result["aIdArrayToken"]);	
 		result["aIdArray"] = Zapp.SoapRequest.readBinaryParameter(result["aIdArray"]);	
@@ -341,7 +341,7 @@ CpProxyLinnCoUkPlaylist1.prototype.IdArray = function(successFunction, errorFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPlaylist1.prototype.IdArrayChanged = function(aIdArrayToken, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("IdArrayChanged", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("IdArrayChanged", this.url, this.formattedDomain, this.type, this.version);		
     request.writeIntParameter("aIdArrayToken", aIdArrayToken);
     request.send(function(result){
 		result["aIdArrayChanged"] = Zapp.SoapRequest.readBoolParameter(result["aIdArrayChanged"]);	

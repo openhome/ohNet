@@ -1,24 +1,24 @@
  
 
 /**
-* Service Proxy for linn-co-uk:MediaTime:1
+* Service Proxy for CpProxyLinnCoUkMediaTime1
 * @module Zapp
 * @class MediaTime
 */
 	
 var CpProxyLinnCoUkMediaTime1 = function(udn){	
 
-	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn-co-uk-MediaTime-1/control";  // upnp control url
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-MediaTime-1/control";  // upnp control url
 	this.domain = "linn-co-uk";
 	this.type = "MediaTime";
 	this.version = "1";
-	this.serviceName = "CpProxyLinnCoUkMediaTime1";
+	this.serviceName = "linn.co.uk-MediaTime-1";
 	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
 	this.udn = udn;   // device name
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["Seconds"] = new Zapp.ServiceProperty("Seconds");
+	this.serviceProperties["Seconds"] = new Zapp.ServiceProperty("Seconds","int");
 }
 
 
@@ -64,7 +64,7 @@ CpProxyLinnCoUkMediaTime1.prototype.Seconds_Changed = function (stateChangedFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkMediaTime1.prototype.Seconds = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Seconds", this.url, this.domain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Seconds", this.url, this.formattedDomain, this.type, this.version);		
     request.send(function(result){
 		result["aSeconds"] = Zapp.SoapRequest.readIntParameter(result["aSeconds"]);	
 	
