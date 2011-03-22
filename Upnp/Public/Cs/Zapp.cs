@@ -49,6 +49,8 @@ namespace Zapp.Core
         [DllImport("ZappUpnp")]
         static extern void ZappInitParamsSetDvMaxUpdateTime(IntPtr aParams, uint aSecs);
         [DllImport("ZappUpnp")]
+        static extern void ZappInitParamsSetDvNumServerThreads(IntPtr aParams, uint aNumThreads);
+        [DllImport("ZappUpnp")]
         static extern void ZappInitParamsSetDvNumPublisherThreads(IntPtr aParams, uint aNumThreads);
         [DllImport("ZappUpnp")]
         static extern void ZappInitParamsSetDvNumWebSocketThreads(IntPtr aParams, uint aNumThreads);
@@ -74,6 +76,8 @@ namespace Zapp.Core
         static extern int ZappInitParamsPendingSubscriptionTimeoutMs(IntPtr aParams);
         [DllImport("ZappUpnp")]
         static extern int ZappInitParamsDvMaxUpdateTimeSecs(IntPtr aParams);
+        [DllImport("ZappUpnp")]
+        static extern int ZappInitParamsDvNumServerThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
         static extern int ZappInitParamsDvNumPublisherThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
@@ -241,6 +245,17 @@ namespace Zapp.Core
         }
 
         /// <summary>
+        /// Set the number of threads which should be dedicated to processing
+        /// control/eventing/presentation requests.
+        /// </summary>
+        /// <remarks>A higher number of threads may allow faster response to multiple clients
+        /// making concurrent requests but will also require more system resources.</remarks>
+        /// <param name="aNumThreads">Number of threads.  Must be greater than 0.</param>
+        public void SetDvNumServerThreads(uint aNumThreads)
+        {
+            ZappInitParamsSetDvNumServerThreads(iHandle, aNumThreads);
+        }
+        /// <summary>
         /// Set the number of threads which should be dedicated to publishing
         /// changes to state variables on a service + device
         /// </summary>
@@ -322,6 +337,11 @@ namespace Zapp.Core
         public int DvMaxUpdateTimeSecs()
         {
             return ZappInitParamsDvMaxUpdateTimeSecs(iHandle);
+        }
+
+        public int DvNumServerThreads()
+        {
+            return ZappInitParamsDvNumServerThreads(iHandle);
         }
 
         public int DvNumPublisherThreads()

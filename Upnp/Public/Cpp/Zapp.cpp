@@ -198,6 +198,11 @@ void InitialisationParams::SetDvMaxUpdateTime(uint32_t aSecs)
 	iDvMaxUpdateTimeSecs = aSecs;
 }
 
+void InitialisationParams::SetDvNumServerThreads(uint32_t aNumThreads)
+{
+    iDvNumServerThreads = aNumThreads;
+}
+
 void InitialisationParams::SetDvNumPublisherThreads(uint32_t aNumThreads)
 {
     ASSERT(aNumThreads > 0 && aNumThreads < 100);
@@ -305,6 +310,11 @@ uint32_t InitialisationParams::DvMaxUpdateTimeSecs() const
 	return iDvMaxUpdateTimeSecs;
 }
 
+uint32_t InitialisationParams::DvNumServerThreads() const
+{
+    return iDvNumServerThreads;
+}
+
 uint32_t InitialisationParams::DvNumPublisherThreads() const
 {
 	return iDvNumPublisherThreads;
@@ -329,6 +339,7 @@ InitialisationParams::InitialisationParams()
     , iFreeExternal(NULL)
     , iUseLoopbackNetworkInterface(false)
 	, iDvMaxUpdateTimeSecs(1800)
+    , iDvNumServerThreads(4)
 	, iDvNumPublisherThreads(4)
     , iDvNumWebSocketThreads(0)
 {

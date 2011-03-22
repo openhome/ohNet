@@ -179,6 +179,12 @@ void ZappInitParamsSetDvMaxUpdateTime(ZappHandleInitParams aParams, uint32_t aSe
     ip->SetDvMaxUpdateTime(aSecs);
 }
 
+void ZappInitParamsSetDvNumServerThreads(ZappHandleInitParams aParams, uint32_t aNumThreads)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+	ip->SetDvNumServerThreads(aNumThreads);
+}
+
 void ZappInitParamsSetDvNumPublisherThreads(ZappHandleInitParams aParams, uint32_t aNumThreads)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
@@ -249,6 +255,12 @@ uint32_t ZappInitParamsDvMaxUpdateTimeSecs(ZappHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     return ip->DvMaxUpdateTimeSecs();
+}
+
+uint32_t ZappInitParamsDvNumServerThreads(ZappHandleInitParams aParams)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+	return ip->DvNumServerThreads();
 }
 
 uint32_t ZappInitParamsDvNumPublisherThreads(ZappHandleInitParams aParams)

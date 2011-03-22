@@ -177,6 +177,13 @@ public:
 	 */
 	void SetDvMaxUpdateTime(uint32_t aSecs);
     /**
+     * Set the number of threads which should be dedicated to processing
+     * control/eventing/presentation requests.
+     * A higher number of threads may allow faster response to multiple clients
+     * making concurrent requests but will also require more system resources.
+     */
+    void SetDvNumServerThreads(uint32_t aNumThreads);
+    /**
      * Set the number of threads which should be dedicated to publishing
      * changes to state variables on a service + device.
      * A higher number of threads will allow faster publication of changes
@@ -211,6 +218,7 @@ public:
 	ZappCallbackFreeExternal FreeExternal() const;
     bool UseLoopbackNetworkInterface() const;
 	uint32_t DvMaxUpdateTimeSecs() const;
+    uint32_t DvNumServerThreads() const;
     uint32_t DvNumPublisherThreads() const;
     uint32_t DvNumWebSocketThreads() const;
 private:
@@ -238,6 +246,7 @@ private:
 	ZappCallbackFreeExternal iFreeExternal;
     bool iUseLoopbackNetworkInterface;
 	uint32_t iDvMaxUpdateTimeSecs;
+    uint32_t iDvNumServerThreads;
 	uint32_t iDvNumPublisherThreads;
     uint32_t iDvNumWebSocketThreads;
 };

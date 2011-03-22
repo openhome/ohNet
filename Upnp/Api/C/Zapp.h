@@ -302,6 +302,18 @@ DllExport void ZappInitParamsSetUseLoopbackNetworkInterface(ZappHandleInitParams
 DllExport void ZappInitParamsSetDvMaxUpdateTime(ZappHandleInitParams aParams, uint32_t aSecs);
 
 /**
+ * Set the number of threads which should be dedicated to processing
+ * control/eventing/presentation requests.
+ *
+ * A higher number of threads may allow faster response to multiple clients
+ * making concurrent requests but will also require more system resources.
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aNumThreads      Number of threads.  Must be greater than zero.
+ */
+DllExport void ZappInitParamsSetDvNumServerThreads(ZappHandleInitParams aParams, uint32_t aNumThreads);
+
+/**
  * Set the number of threads which should be dedicated to publishing changes
  * to state variables on a service + device.
  *
@@ -415,6 +427,15 @@ DllExport uint32_t ZappInitParamsPendingSubscriptionTimeoutMs(ZappHandleInitPara
  * @return  maximum delay (in seconds)
  */
 DllExport uint32_t ZappInitParamsDvMaxUpdateTimeSecs(ZappHandleInitParams aParams);
+
+/**
+ * Query the number of device stack server threads
+ *
+ * @param[in] aParams          Initialisation params
+ *
+ * @return  number of threads
+ */
+DllExport uint32_t ZappInitParamsDvNumServerThreads(ZappHandleInitParams aParams);
 
 /**
  * Query the number of device stack publisher threads
