@@ -352,10 +352,11 @@ DviInvocationManager::DviInvocationManager()
     : Thread("DNVM")
     , iLock("DNVM")
     , iWaitingInvocations(kNumInvocations)
-    , iFreeInvokers(kNumInvokerThreads)
+    , iFreeInvokers(Stack::InitParams().DvNumServerThreads())
 {
     TUint i;
-    const TUint numInvokerThreads = kNumInvokerThreads;
+    const TUint numInvokerThreads = Stack::InitParams().DvNumServerThreads(); /* !!!! its possible some clients would want to vary this independently.
+                                                                                 For most, it'd just be a hassle to need to remember to update them more or less in sync though... */
 #ifndef _WIN32
     ASSERT(numInvokerThreads <= 99);
 #endif
@@ -383,7 +384,8 @@ DviInvocationManager::~DviInvocationManager()
     Join();
 
     TUint i;
-    for (i=0; i<kNumInvokerThreads; i++) {
+    const TUint numInvokerThreads = Stack::InitParams().DvNumServerThreads();
+    for (i=0; i<numInvokerThreads; i++) {
         delete iInvokers[i];
     }
     free(iInvokers);

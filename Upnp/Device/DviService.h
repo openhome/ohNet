@@ -193,7 +193,6 @@ private:
  */
 class DviInvocationManager : public Thread
 {
-    static const TUint kNumInvokerThreads = 4; // !!!! config param
     static const TUint kNumInvocations = 20; // !!!! config param
 public:
     DviInvocationManager();
