@@ -678,7 +678,7 @@ InvocationManager::InvocationManager()
     , iFreeInvokers(Stack::InitParams().NumActionInvokerThreads())
 {
     TUint i;
-    TChar thName[5] = "INV ";
+    TChar thName[5] = "IN  ";
 #ifndef _WIN32
     ASSERT(Stack::InitParams().NumActionInvokerThreads() <= 9);
 #endif
