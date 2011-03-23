@@ -679,9 +679,6 @@ InvocationManager::InvocationManager()
 {
     TUint i;
     TChar thName[5] = "IN  ";
-#ifndef _WIN32
-    ASSERT(Stack::InitParams().NumActionInvokerThreads() <= 9);
-#endif
     iInvokers = (Invoker**)malloc(sizeof(*iInvokers) * Stack::InitParams().NumActionInvokerThreads());
     for (i=0; i<Stack::InitParams().NumActionInvokerThreads(); i++) {
         thName[3] = (TChar)('0'+i);
