@@ -873,21 +873,21 @@ void DviDeviceUpnpXmlWriter::Write(TIpAddress aInterface)
         iWriter.Write("presentationURL");
         iWriter.Write('>');
     }
-    WriteTag("friendlyName", "FriendlyName");
-    WriteTag("manufacturer", "Manufacturer");
-    WriteTag("manufacturerURL", "ManufacturerUrl");
-    WriteTag("modelDescription", "ModelDescription");
-    WriteTag("modelName", "ModelName");
-    WriteTag("modelNumber", "ModelNumber");
-    WriteTag("modelURL", "ModelUrl");
-    WriteTag("serialNumber", "SerialNumber");
+    WriteTag("friendlyName", "FriendlyName", eTagMandatory);
+    WriteTag("manufacturer", "Manufacturer", eTagMandatory);
+    WriteTag("manufacturerURL", "ManufacturerUrl", eTagOptional);
+    WriteTag("modelDescription", "ModelDescription", eTagRecommended);
+    WriteTag("modelName", "ModelName", eTagMandatory);
+    WriteTag("modelNumber", "ModelNumber", eTagRecommended);
+    WriteTag("modelURL", "ModelUrl", eTagOptional);
+    WriteTag("serialNumber", "SerialNumber", eTagRecommended);
 
     iWriter.Write("<UDN>");
     iWriter.Write("uuid:");
     iWriter.Write(iDeviceUpnp.iDevice.Udn());
     iWriter.Write("</UDN>");
 
-    WriteTag("UPC", "Upc");
+    WriteTag("UPC", "Upc", eTagOptional);
 
     const TUint serviceCount = iDeviceUpnp.iDevice.ServiceCount();
     if (serviceCount > 0) {
@@ -956,16 +956,11 @@ void DviDeviceUpnpXmlWriter::TransferTo(Brh& aBuf)
     iWriter.TransferTo(aBuf);
 }
 
-void DviDeviceUpnpXmlWriter::WriteTag(const TChar* aTagName, const TChar* aAttributeKey)
+void DviDeviceUpnpXmlWriter::WriteTag(const TChar* aTagName, const TChar* aAttributeKey, ETagRequirementLevel aRequirementLevel)
 {
     const TChar* val;
     iDeviceUpnp.GetAttribute(aAttributeKey, &val);
-    if (val == NULL) {
-        iWriter.Write('<');
-        iWriter.Write(aTagName);
-        iWriter.Write("/>");
-    }
-    else {
+    if (val != NULL) {
         iWriter.Write('<');
         iWriter.Write(aTagName);
         iWriter.Write('>');
@@ -974,6 +969,11 @@ void DviDeviceUpnpXmlWriter::WriteTag(const TChar* aTagName, const TChar* aAttri
         iWriter.Write("</");
         iWriter.Write(aTagName);
         iWriter.Write('>');
+    }
+    else if (aRequirementLevel == eTagMandatory) {
+        iWriter.Write('<');
+        iWriter.Write(aTagName);
+        iWriter.Write("/>");
     }
 }
 

@@ -120,7 +120,14 @@ public:
     void Write(TIpAddress aInterface);
     void TransferTo(Brh& aBuf);
 private:
-    void WriteTag(const TChar* aTagName, const TChar* aAttributeKey);
+    enum ETagRequirementLevel
+    {
+        eTagMandatory
+       ,eTagRecommended
+       ,eTagOptional
+    };
+private:
+    void WriteTag(const TChar* aTagName, const TChar* aAttributeKey, ETagRequirementLevel aRequirementLevel);
     void WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeType);
     void WriteResource(const TByte* aData, TUint aBytes);
     void WriteResourceEnd();
