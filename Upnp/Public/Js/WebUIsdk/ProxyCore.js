@@ -543,7 +543,7 @@ Zapp.ServiceProperty = function (name, type) {
 * @param {String | Int | Boolean} value The new value for the property
 */
 Zapp.ServiceProperty.prototype.setValue = function (value) {
-   
+
     if (this.value != value) {
 
         switch (this.type) {
@@ -570,7 +570,7 @@ Zapp.ServiceProperty.prototype.setValue = function (value) {
                 }
             default:
                 {
-                    throw "Invalid Property Type: '" + this.type+"'";
+                    throw "Invalid Property Type: '" + this.type + "'";
                 }
         }
 
@@ -676,6 +676,7 @@ Zapp.SoapRequest.prototype.send = function (successFunction, errorFunction) {
 		    if (transport.responseXML.getElementsByTagName("faultcode").length > 0) {
 		        errorFunction(_this.getTransportErrorMessage(transport), transport);
 		    } else {
+
 		        var outParameters = transport.responseXML.getElementsByTagNameNS("*", _this.action + "Response")[0].childNodes;
 
 		        // Parse the output
@@ -689,7 +690,6 @@ Zapp.SoapRequest.prototype.send = function (successFunction, errorFunction) {
 		            }
 		            result[outParameters[i].nodeName] = (nodeValue != "" ? nodeValue : null);
 		        }
-
 		        successFunction(result);
 
 		    }
@@ -714,57 +714,43 @@ Zapp.SoapRequest.prototype.send = function (successFunction, errorFunction) {
 */
 Zapp.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorFunction) {
     var _this = this;
-    YUI().use("io-base", function (Y) {
-        var cfg = {
-            method: "POST",
-            data: _this.envelope,
-            headers: { 'SOAPAction': _this.getSoapAction() },
-            xdr: {
-                dataType: 'text/xml; charset=\"utf-8\"'
-            }
-        };
-        Y.io(_this.url, cfg);
-
-        Y.on('io:success', onSuccess, Y, true);
-        Y.on('io:failure', onFailure, Y, 'Transaction Failed');
-
-        function onSuccess(transactionid, response, arguments) {
-            // transactionid : The transaction's ID.
-            // response: The response object.
-            // arguments: Boolean value "true".
-            if (response.status) {
+    x$(document).xhr(_this.url,
+    {
+        async: true,
+        method: 'POST',
+        callback: function () {
+            if (this.status) {
                 if (successFunction) {
                     try {
-                        successFunction(response);
+                        successFunction(this);
                     } catch (e) {
-                        alert(_this.envelope);
                         console.log("createAjaxRequest: " + e);
-                        if (errorFunction) { errorFunction(response); };
+                        if (errorFunction) { errorFunction(this); };
                     }
                 }
             } else {
-                alert(_this.envelope);
-                console.log("createAjaxRequest: " + _this.url);
+                console.log("Invalid Status createAjaxRequest: " + _this.url);
                 if (errorFunction) { errorFunction(); };
             }
-        }
-
-        function onFailure(transactionid, response, arguments) {
-            // transactionid : The transaction's ID.
-            // response: The response object.  Only status and 
-            //           statusText are populated when the 
-            //           transaction is terminated due to abort 
-            //           or timeout.  The status will read
-            //           0, and statusText will return "timeout" 
-            //           or "abort" depending on the mode of 
-            //           termination.
-            // arguments: String "Transaction Failed".
-
+        },
+        headers:
+           [{ name: "SOAPAction", value: _this.getSoapAction() },
+            { name: "Content-Type", value: "application/x-www-form-urlencoded; charset=UTF-8"}]
+        ,
+        data: _this.envelope,
+        error: function () {
             if (errorFunction) {
-                errorFunction(response);
+                errorFunction(this);
+            }
+            else {
+                console.log('SOAP Message ERROR: ' + this.responseText);
             }
         }
     });
+
+
+
+
 
     //    var _this = this;
 
@@ -833,7 +819,7 @@ Zapp.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorF
     //        },
     //        contentType: "text/xml; charset=\"utf-8\""
     //    });
-};
+}
 
 
 /**
