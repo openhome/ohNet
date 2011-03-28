@@ -126,15 +126,13 @@ IPropertyWriter* CpiDeviceDv::CreateWriter(const IDviSubscriptionUserData* /*aUs
 InvocationDv::InvocationDv(Invocation& aInvocation, DviService& aService)
     : iInvocation(aInvocation)
     , iService(aService)
-    , iSem("IDVS", 0)
     , iWriteArg(NULL)
 {
 }
 
 void InvocationDv::Start()
 {
-    DviInvocationManager::Queue(this);
-    iSem.Wait();
+    Invoke();
 }
 
 void InvocationDv::Invoke()
@@ -145,6 +143,9 @@ void InvocationDv::Invoke()
         iService.Invoke(*this, version, actionName);
     }
     catch (InvocationError&) {}
+    catch (ParameterValidationError&) {
+        InvocationReportError(Error::eCodeParameterInvalid, Error::kDescriptionParameterInvalid);
+    }
 }
 
 void InvocationDv::InvocationReadStart()
@@ -189,7 +190,6 @@ void InvocationDv::InvocationReadEnd()
 void InvocationDv::InvocationReportError(TUint aCode, const Brx& aDescription)
 {
     iInvocation.SetError(Error::eUpnp, aCode, aDescription);
-    iSem.Signal();
 }
 
 void InvocationDv::InvocationWriteStart()
@@ -270,7 +270,6 @@ void InvocationDv::InvocationWriteStringEnd(const TChar* /*aName*/)
 
 void InvocationDv::InvocationWriteEnd()
 {
-    iSem.Signal();
 }
 
 Zapp::Argument* InvocationDv::InputArgument(const TChar* aName)

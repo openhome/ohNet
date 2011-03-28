@@ -29,7 +29,6 @@ public:
     static DviServerUpnp& ServerUpnp();
     static DviDeviceMap& DeviceMap();
     static DviSubscriptionManager& SubscriptionManager();
-    static DviInvocationManager& InvocationManager();
 private:
     ~DviStack();
     static DviStack* Self();
@@ -40,7 +39,6 @@ private:
     DviDeviceMap* iDviDeviceMap;
     DviSubscriptionManager* iSubscriptionManager;
     DviServerWebSocket* iDviServerWebSocket;
-    DviInvocationManager* iInvocationManager;
 };
 
 } // namespace Zapp

@@ -42,7 +42,7 @@ private:
 
 class Argument;
 
-class InvocationDv : public IDviInvocation
+class InvocationDv : public IDviInvocation, private INonCopyable
 {
 public:
     InvocationDv(Invocation& aInvocation, DviService& aService);
@@ -81,7 +81,6 @@ private:
 private:
     Invocation& iInvocation;
     DviService& iService;
-    Semaphore iSem;
     TUint iReadIndex;
     TUint iWriteIndex;
     Zapp::Argument* iWriteArg; // used for binary & string writing only

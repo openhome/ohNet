@@ -168,46 +168,6 @@ private:
 	TBool iFirst;
 };
 
-/**
- * Dedicated thread which processes action invocations
- *
- * Intended for internal use only
- */
-class DviInvoker : public Thread
-{
-public:
-    DviInvoker(const TChar* aName, Fifo<DviInvoker*>& aFree);
-    ~DviInvoker();
-    void Invoke(IDviInvocation* aInvocation);
-private:
-    void LogError(const TChar* aErr);
-    void Run();
-private:
-    Fifo<DviInvoker*>& iFree;
-    IDviInvocation* iInvocation;
-    Mutex iLock;
-};
-
-/**
- * Singleton which manages the pools of IDviInvocation and DviInvoker instances
- */
-class DviInvocationManager : public Thread
-{
-    static const TUint kNumInvocations = 20; // !!!! config param
-public:
-    DviInvocationManager();
-    ~DviInvocationManager();
-    static void Queue(IDviInvocation* aInvocation);
-private: // Thread
-    void Run();
-private:
-    Mutex iLock;
-    Fifo<IDviInvocation*> iWaitingInvocations;
-    Fifo<DviInvoker*> iFreeInvokers;
-    DviInvoker** iInvokers;
-    TBool iActive;
-};
-
 } // namespace Zapp
 
 #endif // HEADER_DVISERVICE

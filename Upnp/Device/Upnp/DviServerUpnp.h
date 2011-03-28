@@ -105,6 +105,7 @@ private:
     void Renew();
     void ParseRequestUri(const Brx& aUrlTail, DviDevice** aDevice, DviService** aService);
 	void WriteServerHeader(IWriterHttpHeader& aWriter);
+    void InvocationReportErrorNoThrow(TUint aCode, const Brx& aDescription);
 private: // IResourceWriter
     void WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeType);
     void WriteResource(const TByte* aData, TUint aBytes);
@@ -159,7 +160,6 @@ private:
     TBool iResponseEnded;
     Brn iSoapRequest;
     DviService* iInvocationService;
-    Semaphore iInvocationSem;
 	TBool iResourceWriterHeadersOnly;
     Semaphore iShutdownSem;
 };
