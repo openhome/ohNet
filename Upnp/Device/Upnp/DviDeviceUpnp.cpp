@@ -299,9 +299,10 @@ void DviDeviceUpnp::Enable()
         DviDeviceUpnp::MulticastListener* listener = iListeners[i];
         Bwh uriBase;
         DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
+        listener->UpdateServerPort(*iServer);
         root->GetUriBase(uriBase, listener->Interface(), listener->ServerPort(), *this);
-        iListeners[i]->UpdateUriBase(uriBase);
-        iListeners[i]->ClearDeviceXml();
+        listener->UpdateUriBase(uriBase);
+        listener->ClearDeviceXml();
     }
     iLock.Signal();
     SendAliveNotifications();
@@ -741,6 +742,11 @@ const Brx& DviDeviceUpnp::MulticastListener::UriBase() const
 {
     ASSERT(iUriBase.Bytes() > 0);
     return iUriBase;
+}
+
+void DviDeviceUpnp::MulticastListener::UpdateServerPort(DviServerUpnp& aServer)
+{
+    iServerPort = aServer.Port(iInterface);
 }
 
 void DviDeviceUpnp::MulticastListener::UpdateUriBase(Bwh& aUriBase)

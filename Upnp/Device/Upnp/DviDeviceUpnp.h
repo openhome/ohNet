@@ -77,6 +77,7 @@ private:
         TIpAddress Interface() const;
         TIpAddress Subnet() const;
         const Brx& UriBase() const;
+        void UpdateServerPort(DviServerUpnp& aServer);
         void UpdateUriBase(Bwh& aUriBase);
         TUint ServerPort() const;
         const Brx& DeviceXml() const;
