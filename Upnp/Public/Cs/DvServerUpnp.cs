@@ -3,6 +3,16 @@ using System.Runtime.InteropServices;
 
 namespace Zapp.Device
 {
+    /// <summary>
+    /// UPnP device server.
+    /// </summary>
+    /// <remarks>Publishes DvDevices as UPnP devices, serves UIs (depending on device configuration) and
+    /// manages subscriptions.  This works automatically across all active network interfaces.
+    /// One of these servers is setup automatically by the device stack.  This default instance
+    /// will be used automatically by all devices.
+    /// Additional servers should not be requried for normal use of the device stack.  They may
+    /// however be necessary for unusual * cases where a provider is required to make blocking
+    /// calls to a proxy.</remarks>
     public class DvServerUpnp : IDisposable
     {
         [DllImport("ZappUpnp")]
@@ -19,6 +29,10 @@ namespace Zapp.Device
             iHandle = DvServerUpnpCreate();
         }
 
+        /// <summary>
+        /// Instruct a device to publish itself using (only) this server.
+        /// </summary>
+        /// <param name="aDevice"></param>
         public void AddDevice(DvDevice aDevice)
         {
             DvServerUpnpAddDevice(iHandle, aDevice.Handle());
