@@ -11,6 +11,7 @@
 #include <Timer.h>
 #include <Ssdp.h>
 #include <Functor.h>
+#include <DviServerUpnp.h>
 
 #include <vector>
 
@@ -59,6 +60,7 @@ public:
     void Disable(Functor& aComplete);
     void GetAttribute(const TChar* aKey, const TChar** aValue) const;
     void SetAttribute(const TChar* aKey, const TChar* aValue);
+    void SetCustomData(const TChar* aTag, void* aData);
 private:
     void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aInterface);
     void SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAddress aInterface);
@@ -111,6 +113,7 @@ private:
     Timer* iAliveTimer;
     TUint iUpdateCount;
     TBool iSuppressScheduledEvents;
+    DviServerUpnp* iServer;
 };
 
 class DviDeviceUpnpXmlWriter : public IResourceWriter

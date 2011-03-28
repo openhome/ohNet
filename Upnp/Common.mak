@@ -47,6 +47,8 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)DviSubscription.$(objext) \
     		   $(objdir)DvProvider.$(objext) \
     		   $(objdir)DvProviderC.$(objext) \
+    		   $(objdir)DvServerUpnp.$(objext) \
+    		   $(objdir)DvServerUpnpC.$(objext) \
     		   $(objdir)DeviceXml.$(objext) \
     		   $(objdir)Error.$(objext) \
     		   $(objdir)EventUpnp.$(objext) \
@@ -244,6 +246,10 @@ $(objdir)DvProvider.$(objext) : Public/Cpp/DvProvider.cpp $(headers)
 	$(compiler)DvProvider.$(objext) -c $(cflags) $(includes) Public/Cpp/DvProvider.cpp
 $(objdir)DvProviderC.$(objext) : Public/C/DvProviderC.cpp $(headers)
 	$(compiler)DvProviderC.$(objext) -c $(cflags) $(includes) Public/C/DvProviderC.cpp
+$(objdir)DvServerUpnp.$(objext) : Public/Cpp/DvServerUpnp.cpp $(headers)
+	$(compiler)DvServerUpnp.$(objext) -c $(cflags) $(includes) Public/Cpp/DvServerUpnp.cpp
+$(objdir)DvServerUpnpC.$(objext) : Public/C/DvServerUpnpC.cpp $(headers)
+	$(compiler)DvServerUpnpC.$(objext) -c $(cflags) $(includes) Public/C/DvServerUpnpC.cpp
 $(objdir)DeviceXml.$(objext) : ControlPoint/Upnp/DeviceXml.cpp $(headers)
 	$(compiler)DeviceXml.$(objext) -c $(cflags) $(includes) ControlPoint/Upnp/DeviceXml.cpp
 $(objdir)Error.$(objext) : Utils/Error.cpp $(headers)
@@ -570,6 +576,7 @@ $(objdir)Zapp.net.dll: \
 	$(publiccsdir)DvDevice.cs \
 	$(publiccsdir)DvProvider.cs \
 	$(publiccsdir)DvProviderErrors.cs \
+	$(publiccsdir)DvServerUpnp.cs \
 	$(publiccsdir)Zapp.cs \
 	$(publiccsdir)CpDeviceDv.cs
 	$(csharp) /unsafe /t:library /debug+\
@@ -581,6 +588,7 @@ $(objdir)Zapp.net.dll: \
 		$(publiccsdir)DvDevice.cs \
 		$(publiccsdir)DvProvider.cs \
 		$(publiccsdir)DvProviderErrors.cs \
+		$(publiccsdir)DvServerUpnp.cs \
 		$(publiccsdir)Service.cs \
 		$(publiccsdir)Zapp.cs \
 		$(publiccsdir)CpDeviceDv.cs

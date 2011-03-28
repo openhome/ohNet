@@ -275,6 +275,18 @@ IResourceManager* DviDevice::ResourceManager()
     return iResourceManager;
 }
 
+void DviDevice::SetCustomData(const TChar* aProtocol, const TChar* aTag, void* aData)
+{
+    Brn protocolName(aProtocol);
+    for (TUint i=0; i<kNumProtocols; i++) {
+        IDvProtocol* protocol = iProtocols[i];
+        if (protocol->ProtocolName() == protocolName) {
+            protocol->SetCustomData(aTag, aData);
+            break;
+        }
+    }
+}
+
 void DviDevice::SetParent(DviDevice* aParent)
 {
     ASSERT(!Enabled());

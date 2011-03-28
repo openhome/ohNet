@@ -32,6 +32,7 @@ DviDeviceUpnp::DviDeviceUpnp(DviDevice& aDevice)
     , iSuppressScheduledEvents(false)
 {
     iLock.Wait();
+    iServer = &DviStack::ServerUpnp();
     NetworkInterfaceList& nifList = Stack::NetworkInterfaceList();
     Functor functor = MakeFunctor(*this, &DviDeviceUpnp::SubnetListChanged);
     iSubnetChangeListenerId = nifList.AddSubnetChangeListener(functor);
@@ -122,7 +123,7 @@ void DviDeviceUpnp::AddListener(const NetworkInterface& aNif)
 {
     TIpAddress addr = aNif.Address();
     Bwh uriBase;
-    TUint port = DviStack::ServerUpnp().Port(addr);
+    TUint port = iServer->Port(addr);
     DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
     root->GetUriBase(uriBase, addr, port, *this);
     DviDeviceUpnp::MulticastListener* listener = new DviDeviceUpnp::MulticastListener(*this, aNif, uriBase, port);
@@ -338,6 +339,14 @@ void DviDeviceUpnp::SetAttribute(const TChar* aKey, const TChar* aValue)
     }
 
     iAttributeMap.Set(aKey, aValue);
+}
+
+void DviDeviceUpnp::SetCustomData(const TChar* aTag, void* aData)
+{
+    Brn tag(aTag);
+    if (tag == Brn("Server")) {
+        iServer = reinterpret_cast<DviServerUpnp*>(aData);
+    }
 }
 
 void DviDeviceUpnp::SubnetDisabled()

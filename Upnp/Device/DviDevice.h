@@ -21,6 +21,7 @@ public:
     virtual void Disable(Functor& aComplete) = 0;
     virtual void GetAttribute(const TChar* aKey, const TChar** aValue) const = 0;
     virtual void SetAttribute(const TChar* aKey, const TChar* aValue) = 0;
+    virtual void SetCustomData(const TChar* aTag, void* aData) = 0;
 };
 
 class DviSubscription;
@@ -56,6 +57,7 @@ public:
     TUint ConfigId();
     void CreateSid(Brh& aSid);
     IResourceManager* ResourceManager();
+    void SetCustomData(const TChar* aProtocol, const TChar* Tag, void* aData);
 private:
     ~DviDevice();
     void Construct(const Brx& aUdn);
