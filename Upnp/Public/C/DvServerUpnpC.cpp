@@ -1,5 +1,5 @@
 #include <C/DvServerUpnp.h>
-#include <Core/DvServerUpnp.h>
+#include <DvServerUpnp.h>
 #include <C/DviDeviceC.h>
 
 using namespace Zapp;
