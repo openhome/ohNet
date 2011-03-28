@@ -242,13 +242,7 @@ DeviceLights::DeviceLights(TUint aMode, const Brx& aConfigDir)
     iDevice->SetAttribute("Upnp.Version", "1");
     iDevice->SetAttribute("Upnp.FriendlyName", "__Zapp Lights");
     iDevice->SetAttribute("Upnp.Manufacturer", "None");
-    iDevice->SetAttribute("Upnp.ManufacturerUrl", "http://www.linn.co.uk");
-    iDevice->SetAttribute("Upnp.ModelDescription", "Demo lighting service, enabling simple UI development");
     iDevice->SetAttribute("Upnp.ModelName", "Zapp Lights v1");
-    iDevice->SetAttribute("Upnp.ModelNumber", "1");
-    iDevice->SetAttribute("Upnp.ModelUrl", "http://www.linn.co.uk");
-    iDevice->SetAttribute("Upnp.SerialNumber", "123456");
-    iDevice->SetAttribute("Upnp.Upc", "123456654321");
     iLights = new ProviderLights(*iDevice, aMode);
     iDevice->SetEnabled();
 }

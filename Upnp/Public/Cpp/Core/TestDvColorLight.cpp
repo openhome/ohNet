@@ -94,13 +94,7 @@ DeviceColorLight::DeviceColorLight(const Brx& aConfigDir)
     iDevice->SetAttribute("Upnp.Version", "1");
     iDevice->SetAttribute("Upnp.FriendlyName", "_OpenhomeTestColorLight");
     iDevice->SetAttribute("Upnp.Manufacturer", "None");
-    iDevice->SetAttribute("Upnp.ManufacturerUrl", "http://www.openhome.org");
-    iDevice->SetAttribute("Upnp.ModelDescription", "Test zigbee light");
     iDevice->SetAttribute("Upnp.ModelName", "Test zigbee light");
-    iDevice->SetAttribute("Upnp.ModelNumber", "1");
-    iDevice->SetAttribute("Upnp.ModelUrl", "http://www.openhome.org");
-    iDevice->SetAttribute("Upnp.SerialNumber", "123456");
-    iDevice->SetAttribute("Upnp.Upc", "123456654321");
     iColorLight = new ProviderColorLight(*iDevice);
     iDevice->SetEnabled();
 }

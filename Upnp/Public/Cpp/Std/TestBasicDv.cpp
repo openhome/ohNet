@@ -175,13 +175,7 @@ DeviceBasic::DeviceBasic()
     iDevice->SetAttribute("Upnp.Version", "1");
     iDevice->SetAttribute("Upnp.FriendlyName", "ZappTestDevice");
     iDevice->SetAttribute("Upnp.Manufacturer", "None");
-    iDevice->SetAttribute("Upnp.ManufacturerUrl", "http://www.linn.co.uk");
-    iDevice->SetAttribute("Upnp.ModelDescription", "Test service");
     iDevice->SetAttribute("Upnp.ModelName", "Zapp test device");
-    iDevice->SetAttribute("Upnp.ModelNumber", "1");
-    iDevice->SetAttribute("Upnp.ModelUrl", "http://www.linn.co.uk");
-    iDevice->SetAttribute("Upnp.SerialNumber", "123456");
-    iDevice->SetAttribute("Upnp.Upc", "123456654321");
     iTestBasic = new ProviderTestBasic(*iDevice);
     iDevice->SetEnabled();
 }

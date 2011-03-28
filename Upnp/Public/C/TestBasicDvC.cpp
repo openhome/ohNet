@@ -147,13 +147,7 @@ DeviceBasicC::DeviceBasicC()
     DvDeviceSetAttribute(iDevice, "Upnp.Version", "1");
     DvDeviceSetAttribute(iDevice, "Upnp.FriendlyName", "ZappTestDevice");
     DvDeviceSetAttribute(iDevice, "Upnp.Manufacturer", "None");
-    DvDeviceSetAttribute(iDevice, "Upnp.ManufacturerUrl", "http://www.linn.co.uk");
-    DvDeviceSetAttribute(iDevice, "Upnp.ModelDescription", "Test service");
     DvDeviceSetAttribute(iDevice, "Upnp.ModelName", "Zapp test device");
-    DvDeviceSetAttribute(iDevice, "Upnp.ModelNumber", "1");
-    DvDeviceSetAttribute(iDevice, "Upnp.ModelUrl", "http://www.linn.co.uk");
-    DvDeviceSetAttribute(iDevice, "Upnp.SerialNumber", "123456");
-    DvDeviceSetAttribute(iDevice, "Upnp.Upc", "123456654321");
     iTestBasic = DvProviderZappOrgTestBasic1Create(iDevice);
 
     uint32_t ignore;
