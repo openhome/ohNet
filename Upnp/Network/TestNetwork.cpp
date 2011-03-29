@@ -530,7 +530,7 @@ void SuiteMulticast::Test()
     iSender.Wait();
     iSender.Wait();
 
-    SocketUdp send(1);
+    SocketUdp send;
 
     Bwn buf(iExp);
     TUint i;
@@ -691,7 +691,7 @@ private:
 
 void MainTestThread::Run()
 {
-    Debug::SetLevel(Debug::kNetwork);
+    //Debug::SetLevel(Debug::kNetwork);
     Runner runner("Network System");
     runner.Add(new SuiteTcpClient(iInterface));
     runner.Add(new SuiteSocketServer(iInterface));
