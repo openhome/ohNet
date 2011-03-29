@@ -211,7 +211,7 @@ void Socket::Send(const Brx& aBuffer)
 
 void Socket::SendTo(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
-    LOGF(kNetwork, "Socket::SendTo  H = %d, BC = %d\n", iHandle, aBuffer.Bytes());
+    LOGF(kNetwork, "Socket::SendTo  H = %d, BC = %d, E = %x:%d\n", iHandle, aBuffer.Bytes(), aEndpoint.Address(), aEndpoint.Port());
     Log("Socket::SendTo, sending\n", aBuffer);
     TInt sent = Zapp::Os::NetworkSendTo(iHandle, aBuffer, aEndpoint);
     if(sent < 0) {
@@ -613,104 +613,113 @@ SocketTcpSession::~SocketTcpSession()
     LOGF(kNetwork, "<SocketTcpSession::~SocketTcpSession\n");
 }
 
-// SocketUdpClient
+// SocketUdp
 
-SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint)
-    : iEndpoint(aEndpoint)
-    , iPort(0)
+SocketUdp::SocketUdp()
 {
-    LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient\n");
+    LOGF(kNetwork, "> SocketUdp::SocketUdp\n");
     iHandle = SocketCreate(eSocketTypeDatagram);
-    LOGF(kNetwork, "< SocketUdpClient::SocketUdpClient H = %d, P = %d\n", iHandle, iPort);
-}
-
-SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl)
-    : iEndpoint(aEndpoint)
-    , iPort(0)
-{
-    LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient aTtl=%d\n", aTtl);
-    iHandle = SocketCreate(eSocketTypeDatagram);
-    Zapp::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
-    LOGF(kNetwork, "< SocketUdpClient::SocketUdpClient H = %d, P = %d\n", iHandle, iPort);
-}
-
-SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface)
-    : iEndpoint(aEndpoint)
-{
-    LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient aTtl=%d\n", aTtl);
-    iHandle = SocketCreate(eSocketTypeDatagram);
-    Zapp::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
     Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
-    Bind(Endpoint(0, aInterface));
+    Bind(Endpoint(0, 0));
     GetPort(iPort);
-    LOGF(kNetwork, "< SocketUdpClient::SocketUdpClient H = %d, P = %d\n", iHandle, iPort);
+    LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
 }
 
-SocketUdpClient::~SocketUdpClient()
+SocketUdp::SocketUdp(TUint aPort)
+{
+    LOGF(kNetwork, "> SocketUdp::SocketUdp P = %d\n", aPort);
+    iHandle = SocketCreate(eSocketTypeDatagram);
+    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
+    Bind(Endpoint(aPort, 0));
+    GetPort(iPort);
+    LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
+}
+
+SocketUdp::SocketUdp(TUint aPort, TIpAddress aInterface)
+{
+    LOGF(kNetwork, "> SocketUdp::SocketUdp P = %d, I = %x\n", aPort, aInterface);
+    iHandle = SocketCreate(eSocketTypeDatagram);
+    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
+    Bind(Endpoint(aPort, aInterface));
+    GetPort(iPort);
+    LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
+}
+
+void SocketUdp::SetTtl(TUint aTtl)
+{
+    LOGF(kNetwork, "> SocketUdp::SetTtl T = %d\n", aTtl);
+    Zapp::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
+    LOGF(kNetwork, "< SocketUdp::SetTtl\n");
+}
+
+SocketUdp::~SocketUdp()
 {
     Close();
 }
 
-TUint SocketUdpClient::Port() const
+TUint SocketUdp::Port() const
 {
     return iPort;;
 }
 
-void SocketUdpClient::Send(const Brx& aBuffer)
+void SocketUdp::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
-    LOGF(kNetwork, "> SocketUdpClient::Send\n");
-    SendTo(aBuffer, iEndpoint);
+    LOGF(kNetwork, "> SocketUdp::Send\n");
+    SendTo(aBuffer, aEndpoint);
 }
 
-Endpoint SocketUdpClient::Receive(Bwx& aBuffer)
+Endpoint SocketUdp::Receive(Bwx& aBuffer)
 {
-    LOGF(kNetwork, "> SocketUdpClient::Receive\n");
+    LOGF(kNetwork, "> SocketUdp::Receive\n");
     Endpoint endpoint;
     ReceiveFrom(aBuffer, endpoint);
-    LOGF(kNetwork, "< SocketUdpClient::Receive\n");
+    LOGF(kNetwork, "< SocketUdp::Receive\n");
     return endpoint;
 }
 
 // SocketUdpMulticast
 
-SocketUdpMulticast::SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface)
-    : SocketUdpClient(aEndpoint)
+SocketUdpMulticast::SocketUdpMulticast(TIpAddress aInterface, TIpAddress aAddress)
+    : SocketUdp(0)
     , iInterface(aInterface)
+    , iAddress(aAddress)
 {
-    LOGF(kNetwork, "> SocketUdpMulticast::SocketUdpMulticast\n");
-    Zapp::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
-    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
-    Bind(Endpoint(iEndpoint.Port(), 0));
-    GetPort(iPort);
-    iEndpoint.SetPort(iPort);
-    Zapp::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iEndpoint);
-    LOGF(kNetwork, "< SocketUdpMulticast::SocketUdpMulticast H = %d, P = %d\n", iHandle, iPort);
+    LOGF(kNetwork, "> SocketUdpMulticast::SocketUdpMulticast I = %x, A = %x\n", iInterface, iAddress);
+    Zapp::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iAddress);
+    LOGF(kNetwork, "< SocketUdpMulticast::SocketUdpMulticast H = %d, I = %x, A = %x, P = %d\n", iHandle, iInterface, iAddress, iPort);
+}
+
+SocketUdpMulticast::SocketUdpMulticast(TIpAddress aInterface, const Endpoint& aEndpoint)
+    : SocketUdp(aEndpoint.Port())
+    , iInterface(aInterface)
+    , iAddress(aEndpoint.Address())
+{
+    LOGF(kNetwork, "> SocketUdpMulticast::SocketUdpMulticast I = %x, E = %x:%d\n", iInterface, iAddress, iPort);
+    Zapp::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iAddress);
+    LOGF(kNetwork, "< SocketUdpMulticast::SocketUdpMulticast H = %d, I = %x, A = %x, P = %d\n", iHandle, iInterface, iAddress, iPort);
 }
 
 SocketUdpMulticast::~SocketUdpMulticast()
 {
     LOGF(kNetwork, "> SocketUdpMulticast::~SocketUdpMulticast\n");
-    try {
-        Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iEndpoint);
-    }
-    catch (NetworkError&) {}
+    Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iAddress);
     LOGF(kNetwork, "< SocketUdpMulticast::~SocketUdpMulticast\n");
 }
 
-// UdpControllerReader
+// UdpReader
 
-UdpControllerReader::UdpControllerReader(SocketUdpClient& aSocket)
+UdpReader::UdpReader(SocketUdp& aSocket)
     : iSocket(aSocket)
     , iOpen(true)
 {
 }
 
-Endpoint UdpControllerReader::Sender() const
+Endpoint UdpReader::Sender() const
 {
     return iSender;
 }
 
-void UdpControllerReader::Read(Bwx& aBuffer)
+void UdpReader::Read(Bwx& aBuffer)
 {
     if (iOpen) {
         try {
@@ -726,34 +735,35 @@ void UdpControllerReader::Read(Bwx& aBuffer)
     }
 }
 
-void UdpControllerReader::ReadFlush()
+void UdpReader::ReadFlush()
 {
     iOpen = true;
 }
 
-void UdpControllerReader::ReadInterrupt()
+void UdpReader::ReadInterrupt()
 {
     iSocket.Interrupt(true);
 }
 
-// UdpControllerWriter
+// UdpWriter
 
-UdpControllerWriter::UdpControllerWriter(SocketUdpClient& aSocket)
+UdpWriter::UdpWriter(SocketUdp& aSocket, const Endpoint& aEndpoint)
     : iSocket(aSocket)
+    , iEndpoint(aEndpoint)
     , iOpen(true)
 {
 }
 
-void UdpControllerWriter::Write(TByte /*aValue*/)
+void UdpWriter::Write(TByte /*aValue*/)
 {
     ASSERTS();
 }
 
-void UdpControllerWriter::Write(const Brx& aBuffer)
+void UdpWriter::Write(const Brx& aBuffer)
 {
     if (iOpen) {
         try {
-            iSocket.Send(aBuffer);
+            iSocket.Send(aBuffer, iEndpoint);
             iOpen = false;
         }
         catch (NetworkError&) {
@@ -765,7 +775,7 @@ void UdpControllerWriter::Write(const Brx& aBuffer)
     }
 }
 
-void UdpControllerWriter::WriteFlush()
+void UdpWriter::WriteFlush()
 {
     iOpen = true;
 }

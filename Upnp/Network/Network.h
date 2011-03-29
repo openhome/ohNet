@@ -193,30 +193,33 @@ private:
     TIpAddress iInterface;
 };
 
-// general udp socket; can be used to send multcast & receive unicast
-class SocketUdpClient : public Socket
+// general udp socket;
+
+class SocketUdp : public Socket
 {
 public:
-    SocketUdpClient(const Endpoint& aEndpoint);
-    SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl); // deprecated
-    SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface); // assumes aEndpoint is multicast
-    ~SocketUdpClient();
-    TUint Port() const;
-    void Send(const Brx& aBuffer);
+    SocketUdp();
+    SocketUdp(TUint aPort);
+    SocketUdp(TUint aPort, TIpAddress aInterface);
+    void SetTtl(TUint aTtl); // use if sending multicast
+    void Send(const Brx& aBuffer, const Endpoint& aEndpoint);
     Endpoint Receive(Bwx& aBuffer);
+    TUint Port() const;
+    ~SocketUdp();
 protected:
-    Endpoint iEndpoint; // endpoint to send to
     TUint iPort;
 };
 
 // multicast receiver
-class SocketUdpMulticast : public SocketUdpClient
+class SocketUdpMulticast : public SocketUdp
 {
 public:
-    SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface);
+    SocketUdpMulticast(TIpAddress aInterface, TIpAddress aAddress);
+    SocketUdpMulticast(TIpAddress aInterface, const Endpoint& aEndpoint);
     ~SocketUdpMulticast();
 private:
     TIpAddress iInterface;
+    TIpAddress iAddress;
 };
 
 /**
@@ -224,16 +227,16 @@ private:
  * This class may be useful to subclasses of SocketUdpClient or
  * SocketUdpMulticast but its use is entirely optional
  */
-class UdpControllerReader : public IReaderSource, public INonCopyable
+class UdpReader : public IReaderSource, public INonCopyable
 {
 public:
-    UdpControllerReader(SocketUdpClient& aSocket);
+    UdpReader(SocketUdp& aSocket);
     Endpoint Sender() const; // sender of last completed Read()
     virtual void Read(Bwx& aBuffer);
     virtual void ReadFlush();
     virtual void ReadInterrupt();
 protected:
-    SocketUdpClient& iSocket;
+    SocketUdp& iSocket;
 private:
     Endpoint iSender;
     TBool iOpen;
@@ -241,18 +244,18 @@ private:
 
 /**
  * Utility class which enforces the Write() - WriteFlush() useage pattern
- * This class may be useful to subclasses of SocketUdpClient or SocketUdpMulticast
- * but its use is entirely optional
+ * This class may be useful to subclasses of SocketUdp or SocketUdpMulticast
  */
-class UdpControllerWriter : public IWriter, public INonCopyable
+class UdpWriter : public IWriter, public INonCopyable
 {
 public:
-    UdpControllerWriter(SocketUdpClient& aSocket);
+    UdpWriter(SocketUdp& aSocket, const Endpoint& aEndpoint);
     virtual void Write(TByte aValue);
     virtual void Write(const Brx& aBuffer);
     virtual void WriteFlush();
 private:
-    SocketUdpClient& iSocket;
+    SocketUdp& iSocket;
+    Endpoint iEndpoint;
     TBool iOpen;
 };
 

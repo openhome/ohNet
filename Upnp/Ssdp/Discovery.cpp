@@ -7,10 +7,11 @@ using namespace Zapp;
 
 // SsdpSocketReader
 
-SsdpSocketReader::SsdpSocketReader(const Endpoint& aMulticast, TIpAddress aInterface)
-    : SocketUdpMulticast(aMulticast, Stack::InitParams().MsearchTtl(), aInterface)
+SsdpSocketReader::SsdpSocketReader(TIpAddress aInterface, const Endpoint& aMulticast)
+    : SocketUdpMulticast(aInterface, aMulticast)
 {
-    iReader = new UdpControllerReader(*this);
+    SetTtl(Stack::InitParams().MsearchTtl()); 
+    iReader = new UdpReader(*this);
 }
 
 SsdpSocketReader::~SsdpSocketReader()
@@ -54,7 +55,7 @@ SsdpListenerMulticast::SsdpListenerMulticast(TIpAddress aInterface)
     : iLock("LMCM")
     , iNextHandlerId(0)
     , iInterface(aInterface)
-    , iSocket(Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress), aInterface)
+    , iSocket(aInterface, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
     , iBuffer(iSocket)
     , iReaderRequest(iBuffer)
 {
@@ -395,14 +396,15 @@ void SsdpListenerMulticast::EraseDisabled(VectorMsearchHandler& aVector)
 
 SsdpListenerUnicast::SsdpListenerUnicast(ISsdpNotifyHandler& aNotifyHandler, TIpAddress aInterface)
     : iNotifyHandler(aNotifyHandler)
-    , iSocket(Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress), Stack::InitParams().MsearchTtl(), aInterface)
-    , iSocketWriter(iSocket)
+    , iSocket(0, aInterface)
+    , iSocketWriter(iSocket, Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress))
     , iSocketReader(iSocket)
     , iWriteBuffer(iSocketWriter)
     , iWriter(iWriteBuffer)
     , iReadBuffer(iSocketReader)
     , iReaderResponse(iReadBuffer)
 {
+    iSocket.SetTtl(Stack::InitParams().MsearchTtl());
     iSocket.SetRecvBufBytes(kRecvBufBytes);
     iReaderResponse.AddHeader(iHeaderCacheControl);
     iReaderResponse.AddHeader(iHeaderExt);

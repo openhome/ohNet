@@ -24,14 +24,23 @@ public:
 
 class OhmSocket : public IReaderSource, public IWriter, public INonCopyable
 {
-    static const TUint kSendBufBytes = 32 * 1024;
+    static const TUint kDefaultTtl = 4;
+    static const TUint kSendBufBytes = 16392;
 
 public:
-    OhmSocket(TUint aTtl, TIpAddress aInterface);
+    OhmSocket(TIpAddress aInterface);
 
-    void AddMembership(Endpoint& aEndpoint);
-    void DropMembership();
-    
+    TIpAddress Interface() const;
+
+    void OpenUnicast();
+    void OpenMulticast(const Endpoint& aEndpoint);
+    void OpenMulticast(const Endpoint& aEndpoint, TUint aTtl);
+    void Close();
+
+    TBool Multicast() const;
+    const Endpoint& Endpoint() const;
+    TUint Ttl() const;
+        
     // IReaderSource
     virtual void Read(Bwx& aBuffer);
     virtual void ReadFlush();
@@ -45,10 +54,12 @@ public:
     ~OhmSocket();
     
 private:
-    TUint iTtl;
     TIpAddress iInterface;
-    SocketUdpMulticast* iSocket;
-    UdpControllerReader* iReader;
+    TBool iMulticast;
+    Endpoint iEndpoint;
+    TUint iTtl;
+    SocketUdpClient* iSocket;
+    UdpControllerReader* iReader
     UdpControllerWriter* iWriter;
 };
 
