@@ -198,9 +198,9 @@ private:
 class SocketUdp : public Socket
 {
 public:
-    SocketUdp();
-    SocketUdp(TUint aPort);
-    SocketUdp(TUint aPort, TIpAddress aInterface);
+    SocketUdp(); // lets the os select a port
+    SocketUdp(TUint aPort); // stipulate a port
+    SocketUdp(TUint aPort, TIpAddress aInterface); // stipulate a port and an interface
     void SetTtl(TUint aTtl); // use if sending multicast
     void Send(const Brx& aBuffer, const Endpoint& aEndpoint);
     Endpoint Receive(Bwx& aBuffer);
@@ -214,7 +214,6 @@ protected:
 class SocketUdpMulticast : public SocketUdp
 {
 public:
-    SocketUdpMulticast(TIpAddress aInterface, TIpAddress aAddress);
     SocketUdpMulticast(TIpAddress aInterface, const Endpoint& aEndpoint);
     ~SocketUdpMulticast();
 private:

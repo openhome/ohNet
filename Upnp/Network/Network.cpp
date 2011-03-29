@@ -679,16 +679,6 @@ Endpoint SocketUdp::Receive(Bwx& aBuffer)
 
 // SocketUdpMulticast
 
-SocketUdpMulticast::SocketUdpMulticast(TIpAddress aInterface, TIpAddress aAddress)
-    : SocketUdp(0)
-    , iInterface(aInterface)
-    , iAddress(aAddress)
-{
-    LOGF(kNetwork, "> SocketUdpMulticast::SocketUdpMulticast I = %x, A = %x\n", iInterface, iAddress);
-    Zapp::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iAddress);
-    LOGF(kNetwork, "< SocketUdpMulticast::SocketUdpMulticast H = %d, I = %x, A = %x, P = %d\n", iHandle, iInterface, iAddress, iPort);
-}
-
 SocketUdpMulticast::SocketUdpMulticast(TIpAddress aInterface, const Endpoint& aEndpoint)
     : SocketUdp(aEndpoint.Port())
     , iInterface(aInterface)
