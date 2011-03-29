@@ -248,6 +248,8 @@ void SuiteAlive::Test()
     TInt listenerId = listenerMulticast->AddNotifyHandler(listener);
     listenerMulticast->Start();
 
+    Print("1\n");
+    
     DviDevice* device = new DviDevice(gNameDevice1);
     device->SetAttribute("Upnp.Domain", "a.b.c");
     device->SetAttribute("Upnp.Type", "type1");
@@ -715,7 +717,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartDv();
 
-    //Debug::SetLevel(Debug::kNetwork);
+    Debug::SetLevel(Debug::kNetwork);
     Runner runner("SSDP discovery\n");
     runner.Add(new SuiteAlive());
     runner.Add(new SuiteMsearch());

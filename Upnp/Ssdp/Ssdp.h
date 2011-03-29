@@ -267,8 +267,8 @@ private:
     static const TUint kMaxBufferBytes = 1024;
     static const TUint kTimeToLive = 4;
 private:
-    SocketUdpClient iSocket;
-    UdpControllerWriter iSocketWriter;
+    SocketUdp iSocket;
+    UdpWriter iSocketWriter;
     Sws<kMaxBufferBytes> iBuffer;
     WriterHttpRequest iWriter;
     TIpAddress iInterface;

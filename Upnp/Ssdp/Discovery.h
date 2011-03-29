@@ -42,7 +42,7 @@ public:
 class SsdpSocketReader : public SocketUdpMulticast, public IReaderSource
 {
 public:
-    SsdpSocketReader(const Endpoint& aMulticast, TIpAddress aInterface);
+    SsdpSocketReader(TIpAddress aInterface, const Endpoint& aMulticast);
     ~SsdpSocketReader();
     Endpoint Sender() const; // endpoint of the sender to the multicast address
     // IReaderSource
@@ -50,7 +50,7 @@ public:
     virtual void ReadFlush();
     virtual void ReadInterrupt();
 private:
-    UdpControllerReader* iReader;
+    UdpReader* iReader;
 };
 
 // SsdpListener - base class for ListenerMulticast and ListenerUnicast
@@ -159,9 +159,9 @@ private:
     void Run();
 private:
     ISsdpNotifyHandler& iNotifyHandler;
-    SocketUdpClient iSocket;
-    UdpControllerWriter iSocketWriter;
-    UdpControllerReader iSocketReader;
+    SocketUdp iSocket;
+    UdpWriter iSocketWriter;
+    UdpReader iSocketReader;
     Sws<kMaxBufferBytes> iWriteBuffer;
     SsdpWriterMsearchRequest iWriter;
     Srs<kMaxBufferBytes> iReadBuffer;

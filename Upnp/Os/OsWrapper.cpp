@@ -130,18 +130,18 @@ void Zapp::Os::NetworkSocketSetMulticastTtl(THandle aHandle, TUint8 aTtl)
     }
 }
 
-void Zapp::Os::NetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, Endpoint& aEndpoint)
+void Zapp::Os::NetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress)
 {
-    int32_t err = OsNetworkSocketMulticastAddMembership(aHandle, aInterface, aEndpoint.Address());
+    int32_t err = OsNetworkSocketMulticastAddMembership(aHandle, aInterface, aAddress);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Os::OsNetworkSocketMulticastAddMembership H = %d, RETURN VALUE = %d\n", aHandle, err);
         THROW(NetworkError);
     }
 }
 
-void Zapp::Os::NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, Endpoint& aEndpoint)
+void Zapp::Os::NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress)
 {
-    int32_t err = OsNetworkSocketMulticastDropMembership(aHandle, aInterface, aEndpoint.Address());
+    int32_t err = OsNetworkSocketMulticastDropMembership(aHandle, aInterface, aAddress);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Os::OsNetworkSocketMulticastDropMembership H = %d, RETURN VALUE = %d\n", aHandle, err);
         THROW(NetworkError);

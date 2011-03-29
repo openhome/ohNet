@@ -181,29 +181,50 @@ void WriterBinary::WriteUint64Be(TUint64 aValue)
 
 // OhmSocket
 
-OhmSocket::OhmSocket(TUint aTtl, TIpAddress aInterface)
-    : iTtl(aTtl)
-    , iInterface(aInterface)
+OhmSocket::OhmSocket(TIpAddress aInterface)
+    : iInterface(aInterface)
     , iSocket(0)
 {
 }
 
-void OhmSocket::AddMembership(Endpoint& aEndpoint)
+void OhmSocket::OpenUnicast()
 {
-    ASSERT(iSocket == 0);
-    iSocket = new SocketUdpMulticast(aEndpoint, iTtl, iInterface);
+    ASSERT(!iSocket);
+    iTtl = 0;
+    iSocket = new SocketUdpClient(iEndpoint, iTtl, iInterface);
     iSocket->SetSendBufBytes(kSendBufBytes);
     iReader = new UdpControllerReader(*iSocket);
     iWriter = new UdpControllerWriter(*iSocket);
+    iMulticast = true;
 }
 
-void OhmSocket::DropMembership()
+void OhmSocket::OpenMulticast(const Endpoint& aEndpoint)
 {
-    ASSERT(iSocket != 0);
+    OpenMulticast(aEndpoint, kDefaultTtl);
+}
+
+void OhmSocket::OpenMulticast(const Endpoint& aEndpoint, TUint aTtl)
+{
+    ASSERT(!iOpen);
+    iEndpoint.Replace(aEndpoint);
+    iTtl = aTtl;
+    iSocketMulticast = new SocketUdpMulticast(iEndpoint, iTtl, iInterface);
+    iSocketMulticast->SetSendBufBytes(kSendBufBytes);
+    iReader = new UdpControllerReader(*iSocketMulticast);
+    iWriter = new UdpControllerWriter(*iSocketMulticast);
+    iMulticast = true;
+    iOpen = true;
+}
+
+void OhmSocket::Close()
+{
+    ASSERT(iOpen);
     delete (iWriter);
     delete (iReader);
-    delete (iSocket);
-    iSocket = 0;
+    delete (iSocketMulticast);
+    delete (iSocketUnicast);
+    iSocketMulticast = 0;
+    iSocketUnicast = 0;
 }
     
 void OhmSocket::Read(Bwx& aBuffer)

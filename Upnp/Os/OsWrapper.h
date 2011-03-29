@@ -58,8 +58,8 @@ public:
     static void NetworkTcpSetNoDelay(THandle aHandle);
     static void NetworkSocketSetReuseAddress(THandle aHandle);
     static void NetworkSocketSetMulticastTtl(THandle aHandle, TUint8 aTtl);
-    static void NetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, Endpoint& aEndpoint);
-    static void NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, Endpoint& aEndpoint);
+    static void NetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddrsss);
+    static void NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress);
     static std::vector<NetworkInterface*>* NetworkListInterfaces(TBool aUseLoopback);
     inline static void NetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* aArg);
 };

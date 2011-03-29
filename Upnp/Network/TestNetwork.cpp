@@ -488,8 +488,8 @@ private:
     Semaphore iReceiver;
     ThreadFunctor* iThread0;
     ThreadFunctor* iThread1;
-    TUint iPort;
     Mutex iPortLock;
+    TUint iPort;
 
     static const TUint kBufBytes = 1004;
     static const TUint kMsgBytes = 1000;
@@ -502,8 +502,8 @@ SuiteMulticast::SuiteMulticast() :
     Suite("Multicast Tests")
     , iSender("MCTS", 0)
     , iReceiver("MCTR", 0)
-    , iPort(0)
     , iPortLock("MPRT")
+    , iPort(0)
     , iExp(kBufBytes)
 {
     iThread0 = new ThreadFunctor("MUL1", MakeFunctor(*this, &SuiteMulticast::Receiver));
@@ -530,7 +530,7 @@ void SuiteMulticast::Test()
     iSender.Wait();
     iSender.Wait();
 
-    SocketUdpClient send(Endpoint(iPort, kMulticastAddress), 1);
+    SocketUdp send(1);
 
     Bwn buf(iExp);
     TUint i;
@@ -538,7 +538,7 @@ void SuiteMulticast::Test()
         buf.SetBytes(0);
         AppendUint32(buf, i); //num of bytes in this message
         buf.SetBytes(i + sizeof(TUint)); //use prefilled values
-        send.Send(buf);
+        send.Send(buf, Endpoint(iPort, kMulticastAddress));
         // assume that a delay of 500ms without response implies that the message wasn't delivered
         try {
             iSender.Wait(500);
@@ -547,6 +547,7 @@ void SuiteMulticast::Test()
         catch (Timeout&) {
             Log::Print("SuiteMulticast - message(s) not delivered\n");
             TEST(1 == 0);
+            return; // temp
         }
 
         if (iSender.Clear()) {
@@ -557,7 +558,7 @@ void SuiteMulticast::Test()
 
     buf.SetBytes(0);
     AppendUint32(buf, kQuit);
-    send.Send(buf);
+    send.Send(buf, Endpoint(iPort, kMulticastAddress));
 
     try {
         iSender.Wait(500);
@@ -571,7 +572,7 @@ void SuiteMulticast::Test()
 void SuiteMulticast::Receiver()
 {
     iPortLock.Wait();
-    SocketUdpMulticast recv(Endpoint(iPort, kMulticastAddress), 1, 0);
+    SocketUdpMulticast recv(0, Endpoint(iPort, kMulticastAddress));
     iPort = recv.Port();
     iPortLock.Signal();
 
@@ -608,20 +609,22 @@ private:
     static const TUint kQuit = 0xFFFFFFFF;
     static const TUint kTestIterations = 1000;
 private:
-    SocketUdpClient* iSender;
-    SocketUdpClient* iReceiver;
+    SocketUdp* iSender;
+    SocketUdp* iReceiver;
     ThreadFunctor* iReceiverThread;
     TUint iSendVal;
     TUint iLastVal;
+    Endpoint iEndpoint;
 };
 
 SuiteUnicast::SuiteUnicast(TIpAddress aInterface)
     : Suite("Unicast Tests")
 {
-    iReceiver = new SocketUdpClient(Endpoint());
+    iReceiver = new SocketUdp();
     iReceiver->SetRecvBufBytes(kMsgBytes * kTestIterations * 2);
+    iEndpoint = Endpoint(iReceiver->Port(), aInterface);
     Log::Print("Receiver running at port %u\n", iReceiver->Port());
-    iSender = new SocketUdpClient(Endpoint(iReceiver->Port(), aInterface));
+    iSender = new SocketUdp();
     iReceiverThread = new ThreadFunctor("UNIC", MakeFunctor(*this, &SuiteUnicast::Receiver));
     iReceiverThread->Start();
 }
@@ -649,7 +652,7 @@ void SuiteUnicast::Send(TUint aVal)
         AppendUint32(buf, aVal);
     }
     iSendVal = aVal;
-    iSender->Send(buf);
+    iSender->Send(buf, iEndpoint);
 }
 
 void SuiteUnicast::Receiver()
@@ -688,7 +691,7 @@ private:
 
 void MainTestThread::Run()
 {
-//    Debug::SetLevel(Debug::kError);
+    Debug::SetLevel(Debug::kNetwork);
     Runner runner("Network System");
     runner.Add(new SuiteTcpClient(iInterface));
     runner.Add(new SuiteSocketServer(iInterface));
