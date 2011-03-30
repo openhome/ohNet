@@ -151,7 +151,7 @@ TInt OptionBool::ExpectedArgCount() const
     return 0;
 }
 
-TBool OptionBool::IsSet() const
+TBool OptionBool::Value() const
 {
     return iValue;
 }
@@ -225,7 +225,7 @@ TBool OptionParser::Parse(TInt aArgc, TChar* aArgv[])
     }
 
     // Check if help option has been set
-    if (iHelpOption.IsSet()) {
+    if (iHelpOption.Value()) {
         DisplayHelp();
         return (false);
     }
@@ -235,7 +235,7 @@ TBool OptionParser::Parse(TInt aArgc, TChar* aArgv[])
 
 TBool OptionParser::HelpDisplayed()
 {
-    return iHelpOption.IsSet();
+    return iHelpOption.Value();
 }
 
 void OptionParser::DisplayHelp()

@@ -149,11 +149,11 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     SsdpNotifyLogger logger;
     SsdpListenerUnicast* uListener = new SsdpListenerUnicast(logger, NetworkIf(adapter.Value()));
     uListener->Start();
-    if (all.IsSet()) {
+    if (all.Value()) {
         Print("Search all...\n");
         uListener->MsearchAll();
     }
-    else if (root.IsSet()) {
+    else if (root.Value()) {
         Print("Search root...\n");
         uListener->MsearchRoot();
     }

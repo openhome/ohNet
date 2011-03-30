@@ -18,11 +18,9 @@ namespace Zapp {
 	    
 	    void SetMetadata(const Brx& aValue);
 	    
-	    void SetStatusReady();
-	    void SetStatusSending();
-	    void SetStatusBlocked();
-	    void SetStatusInactive();
+	    void SetStatusEnabled();
 	    void SetStatusDisabled();
+        void SetStatusBlocked();
 	    
 	    void InformAudioPresent();
 	    
@@ -64,7 +62,7 @@ ProviderSender::ProviderSender(DvDevice& aDevice)
     SetPropertyPresentationUrl(Brx::Empty());
     SetPropertyMetadata(Brx::Empty());
     SetPropertyAudio(false);
-    SetStatusInactive();
+    SetStatusDisabled();
     SetPropertyAttributes(Brx::Empty());
 }
 
@@ -122,35 +120,23 @@ void ProviderSender::SetMetadata(const Brx& aValue)
 	SetPropertyMetadata(aValue);
 }
 
-static const Brn kStatusReady("Ready");
-static const Brn kStatusSending("Sending");
-static const Brn kStatusBlocked("Blocked");
-static const Brn kStatusInactive("Inactive");
+static const Brn kStatusEnabled("Enabled");
 static const Brn kStatusDisabled("Disabled");
+static const Brn kStatusBlocked("Blocked");
 
-void ProviderSender::SetStatusReady()
+void ProviderSender::SetStatusEnabled()
 {
-    SetPropertyStatus(kStatusReady);
-}
-
-void ProviderSender::SetStatusSending()
-{
-    SetPropertyStatus(kStatusSending);
-}
-
-void ProviderSender::SetStatusBlocked()
-{
-    SetPropertyStatus(kStatusBlocked);
-}
-
-void ProviderSender::SetStatusInactive()
-{
-    SetPropertyStatus(kStatusInactive);
+    SetPropertyStatus(kStatusEnabled);
 }
 
 void ProviderSender::SetStatusDisabled()
 {
     SetPropertyStatus(kStatusDisabled);
+}
+
+void ProviderSender::SetStatusBlocked()
+{
+    SetPropertyStatus(kStatusBlocked);
 }
 
 void ProviderSender::InformAudioPresent()
@@ -167,12 +153,13 @@ void ProviderSender::TimerAudioPresentExpired()
 
 // OhmSender
 
-OhmSender::OhmSender(DvDevice& aDevice, TIpAddress aInterface, const Brx& aName, TUint aChannel)
+OhmSender::OhmSender(DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled)
     : iDevice(aDevice)
     , iName(aName)
     , iChannel(aChannel)
-    , iEnabled(false)
-    , iSocket(kTtl, aInterface)
+    , iInterface(aInterface)
+    , iTtl(aTtl)
+    , iMulticast(aMulticast)
     , iRxBuffer(iSocket)
     , iMutexStartStop("OHMS")
     , iMutexActive("OHMA")
@@ -194,6 +181,8 @@ OhmSender::OhmSender(DvDevice& aDevice, TIpAddress aInterface, const Brx& aName,
 
     iThreadNetwork = new ThreadFunctor("MPAU", MakeFunctor(*this, &OhmSender::RunNetwork), kThreadPriorityAudio, kThreadStackBytesAudio);
     iThreadNetwork->Start();
+    
+    SetEnabled(aEnabled);
 }
 
 void OhmSender::SetName(const Brx& aValue)
@@ -223,6 +212,101 @@ void OhmSender::SetChannel(TUint aValue)
     }
     
     iMutexStartStop.Signal();
+}
+
+void OhmSender::SetInterface(TIpAddress aValue)
+{
+    iMutexStartStop.Wait();
+    
+    if (iStarted) {
+        Stop();
+        iInterface = aValue;
+        Start();
+    }
+    else {
+        iInterface = aValue;
+    }
+    
+    iMutexStartStop.Signal();
+}
+
+void OhmSender::SetTtl(TUint aValue)
+{
+    iMutexStartStop.Wait();
+    
+    if (iStarted) {
+        Stop();
+        iTtl = aValue;
+        Start();
+    }
+    else {
+        iTtl = aValue;
+    }
+    
+    iMutexStartStop.Signal();
+}
+
+void OhmSender::SetMulticast(TBool aValue)
+{
+    iMutexStartStop.Wait();
+    
+    if (iStarted) {
+        Stop();
+        iMulticast = aValue;
+        Start();
+    }
+    else {
+        iMulticast = aValue;
+    }
+    
+    iMutexStartStop.Signal();
+}
+
+void OhmSender::SetEnabled(TBool aValue)
+{
+    iMutexStartStop.Wait();
+    
+    iEnabled = aValue;
+    
+    if (iEnabled) {
+        Start();
+    }
+    else {
+        Stop();
+    }
+
+    iMutexStartStop.Signal();
+}
+
+// Start always called with the start/stop mutex locked
+
+void OhmSender::Start()
+{
+    if (!iStarted) {
+        iFrame = 0;
+        
+        if (iMulticast) {
+            iSocket.OpenMulticast(iInterface, iTtl, iEndpoint);
+        }
+        else {
+            iSocket.OpenUnicast(iInterface, iTtl);
+        }
+        
+        iThreadNetwork->Signal();
+
+        iStarted = true;
+    }
+}
+
+// Stop always called with the start/stop mutex locked
+
+void OhmSender::Stop()
+{
+    if (iStarted) {
+        iSocket.ReadInterrupt();
+        iNetworkAudioDeactivated.Wait();
+        iStarted = false;
+    }
 }
 
 void OhmSender::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName)
@@ -348,36 +432,6 @@ OhmSender::~OhmSender()
     delete iThreadNetwork;
 }
 
-// Start always called with the start/stop mutex locked
-
-void OhmSender::Start()
-{
-    if (!iStarted) {
-        iFrame = 0;
-        try {
-	        iSocket.AddMembership(iEndpoint);
-	    }
-	    catch (NetworkError&) {
-	    	printf("Start network error %x:%d\n", iEndpoint.Address(), iEndpoint.Port());
-	    	throw;
-	    }
-        iThreadNetwork->Signal();
-        iStarted = true;
-    }
-}
-
-// Stop always called with the start/stop mutex locked
-
-void OhmSender::Stop()
-{
-    if (iStarted) {
-        iSocket.ReadInterrupt();
-        iNetworkAudioDeactivated.Wait();
-        iSocket.DropMembership();
-        iStarted = false;
-    }
-}
-
 /*
 void OhmSender::Play(const Brx& aAudioBuffer)
 {
@@ -416,7 +470,7 @@ void OhmSender::RunNetwork()
         
         iThreadNetwork->Wait();
 
-        iProvider->SetStatusReady();
+        iProvider->SetStatusEnabled();
         
         try {
             while (true) {
@@ -443,8 +497,6 @@ void OhmSender::RunNetwork()
                         iTimerAliveJoin.FireIn(kTimerAliveJoinTimeoutMs);
 
                         iMutexActive.Signal();
-                        
-                        iProvider->SetStatusSending();
                     }
                     else {
                         // LOG(kMedia, "OhmSender::RunNetwork audio received\n");
@@ -480,9 +532,11 @@ void OhmSender::RunNetwork()
         iActive = false;
         iMutexActive.Signal();
         
+        iTimerAliveJoin.Cancel();
+        iTimerAliveAudio.Cancel();
+        iProvider->SetStatusDisabled();
+
         iNetworkAudioDeactivated.Signal();
-        
-        iProvider->SetStatusInactive();
     }
 }
 
@@ -491,12 +545,7 @@ void OhmSender::TimerAliveJoinExpired()
     iMutexActive.Wait();
     iActive = false;
     iAliveJoined = false;
-    TBool blocked = iAliveBlocked;
     iMutexActive.Signal();
-    
-    if (!blocked) {
-        iProvider->SetStatusReady();
-    }
 }
 
 void OhmSender::TimerAliveAudioExpired()
@@ -506,13 +555,7 @@ void OhmSender::TimerAliveAudioExpired()
     iActive = joined;
     iAliveBlocked = false;
     iMutexActive.Signal();
-
-    if (joined) {
-        iProvider->SetStatusSending();
-    }
-    else {
-        iProvider->SetStatusReady();
-    }
+    iProvider->SetStatusEnabled();
 }
 
 /*
@@ -609,22 +652,6 @@ void OhmSender::UpdateMetadata()
     iMetadata.Append("</DIDL-Lite>");
 
 	iProvider->SetMetadata(iMetadata);
-}
-
-void OhmSender::SetEnabled(TBool aValue)
-{
-    iMutexStartStop.Wait();
-    
-    iEnabled = aValue;
-    
-    if (iEnabled) {
-        Start();
-    }
-    else {
-        Stop();
-    }
-
-    iMutexStartStop.Signal();
 }
 
 // SendTrack called with alive mutex locked;

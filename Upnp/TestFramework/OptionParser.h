@@ -78,7 +78,7 @@ public:
     void Process(TInt aArgc, TChar* aArgv[]);
     void Reset();
     TInt ExpectedArgCount() const;
-    TBool IsSet() const;
+    TBool Value() const;
 private:
     TBool iValue;
 };

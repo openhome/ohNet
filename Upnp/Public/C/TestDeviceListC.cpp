@@ -75,10 +75,10 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     TBool block = true;
     HandleCpDeviceList deviceList = kHandleNull;
     Mutex* mutex = new Mutex("TDLM");
-    if (all.IsSet()) {
+    if (all.Value()) {
         deviceList = CpDeviceListCreateUpnpAll(added, mutex, removed, mutex);
     }
-    else if (root.IsSet()) {
+    else if (root.Value()) {
         Print("Search root...\n");
         deviceList = CpDeviceListCreateUpnpRoot(added, mutex, removed, mutex);
     }
@@ -119,7 +119,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         blocker->Wait(aInitParams->MsearchTimeSecs());
         delete blocker;
     }
-    if (refresh.IsSet()) {
+    if (refresh.Value()) {
         Blocker* blocker = new Blocker;
         blocker->Wait(mx.Value());
         Print("\nRefreshing...\n\n");

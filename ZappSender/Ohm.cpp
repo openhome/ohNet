@@ -4,7 +4,6 @@ using namespace Zapp;
 
 namespace Zapp
 {
-
 	class ReaderBinary 
 	{
 	public:
@@ -33,7 +32,6 @@ namespace Zapp
 	private:
 	    IWriter& iWriter;
 	};
-
 }
 
 // ReaderBinary
@@ -181,55 +179,58 @@ void WriterBinary::WriteUint64Be(TUint64 aValue)
 
 // OhmSocket
 
-OhmSocket::OhmSocket(TIpAddress aInterface)
-    : iInterface(aInterface)
-    , iSocket(0)
+OhmSocket::OhmSocket()
+    : iSocket(0)
 {
 }
 
-void OhmSocket::OpenUnicast()
+void OhmSocket::OpenUnicast(TIpAddress aInterface, TUint aTtl)
 {
     ASSERT(!iSocket);
-    iTtl = 0;
-    iSocket = new SocketUdpClient(iEndpoint, iTtl, iInterface);
+    iSocket = new SocketUdp(0, aInterface);
+    iSocket->SetTtl(aTtl);
     iSocket->SetSendBufBytes(kSendBufBytes);
-    iReader = new UdpControllerReader(*iSocket);
-    iWriter = new UdpControllerWriter(*iSocket);
-    iMulticast = true;
+    iReader = new UdpReader(*iSocket);
 }
 
-void OhmSocket::OpenMulticast(const Endpoint& aEndpoint)
+void OhmSocket::OpenWriter(const Endpoint& aEndpoint)
 {
-    OpenMulticast(aEndpoint, kDefaultTtl);
+    ASSERT(iSocket);
+    ASSERT(!iWriter);
+    iWriter = new UdpWriter(*iSocket, aEndpoint);
 }
 
-void OhmSocket::OpenMulticast(const Endpoint& aEndpoint, TUint aTtl)
+void OhmSocket::CloseWriter()
 {
-    ASSERT(!iOpen);
-    iEndpoint.Replace(aEndpoint);
-    iTtl = aTtl;
-    iSocketMulticast = new SocketUdpMulticast(iEndpoint, iTtl, iInterface);
-    iSocketMulticast->SetSendBufBytes(kSendBufBytes);
-    iReader = new UdpControllerReader(*iSocketMulticast);
-    iWriter = new UdpControllerWriter(*iSocketMulticast);
-    iMulticast = true;
-    iOpen = true;
+    ASSERT(iSocket);
+    ASSERT(iWriter);
+    delete iWriter;
+    iWriter = 0;
+}
+
+void OhmSocket::OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
+{
+    ASSERT(!iSocket);
+    iSocket = new SocketUdpMulticast(aInterface, aEndpoint);
+    iSocket->SetTtl(aTtl);
+    iSocket->SetSendBufBytes(kSendBufBytes);
+    iReader = new UdpReader(*iSocket);
 }
 
 void OhmSocket::Close()
 {
-    ASSERT(iOpen);
+    ASSERT(iSocket);
     delete (iWriter);
     delete (iReader);
-    delete (iSocketMulticast);
-    delete (iSocketUnicast);
-    iSocketMulticast = 0;
-    iSocketUnicast = 0;
+    delete (iSocket);
+    iReader = 0;
+    iWriter = 0;
+    iSocket = 0;
 }
     
 void OhmSocket::Read(Bwx& aBuffer)
 {
-    ASSERT(iSocket != 0);
+    ASSERT(iSocket);
     iReader->Read(aBuffer);
 }
 
@@ -266,7 +267,7 @@ void OhmSocket::WriteFlush()
 OhmSocket::~OhmSocket()
 {
     if (iSocket != 0) {
-        DropMembership();
+        Close();
     }
 }
 

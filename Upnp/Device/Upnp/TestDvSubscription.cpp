@@ -360,7 +360,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
         return;
     }
-    if (loopback.IsSet()) {
+    if (loopback.Value()) {
         aInitParams->SetUseLoopbackNetworkInterface();
     }
     aInitParams->SetMsearchTime(1);

@@ -95,7 +95,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         blocker->Wait(aInitParams->MsearchTimeSecs());
         delete blocker;
     }
-    if (refresh.IsSet()) {
+    if (refresh.Value()) {
         Blocker* blocker = new Blocker;
         blocker->Wait(mx.Value());
         Print("\nRefreshing...\n\n");

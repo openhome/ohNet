@@ -91,10 +91,10 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     CpDeviceList* deviceList = NULL;
     FunctorCpDevice added = MakeFunctorCpDevice(logger, &DeviceListLogger::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(logger, &DeviceListLogger::Removed);
-    if (all.IsSet()) {
+    if (all.Value()) {
         deviceList = new CpDeviceListUpnpAll(added, removed);
     }
-    else if (root.IsSet()) {
+    else if (root.Value()) {
         Print("Search root...\n");
         deviceList = new CpDeviceListUpnpRoot(added, removed);
     }
@@ -128,7 +128,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         blocker->Wait(aInitParams->MsearchTimeSecs());
         delete blocker;
     }
-    if (refresh.IsSet()) {
+    if (refresh.Value()) {
         Blocker* blocker = new Blocker;
         blocker->Wait(mx.Value());
         Print("\nRefreshing...\n\n");

@@ -328,7 +328,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         return;
     }
 
-    if (loopback.IsSet()) {
+    if (loopback.Value()) {
         aInitParams->SetUseLoopbackNetworkInterface();
     }
     aInitParams->SetDvNumWebSocketThreads(5);

@@ -15,7 +15,6 @@ class ProviderSender;
 
 class OhmSender
 {
-    static const TUint kTtl = 4;
     static const TUint kMaxMetadataBytes = 1000;
     static const TUint kMaxAudioFrameBytes = 16 * 1024;
     static const TUint kThreadStackBytesAudio = 64 * 1024;
@@ -30,11 +29,14 @@ public:
 	static const TUint kMaxTrackMetatextBytes = Ohm::kMaxTrackMetatextBytes;
 
 public:
-    OhmSender(DvDevice& aDevice, TIpAddress aInterface, const Brx& aName, TUint aChannel);
+    OhmSender(DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled);
     ~OhmSender();
 
 	void SetName(const Brx& aValue);
 	void SetChannel(TUint aValue);
+    void SetInterface(TIpAddress aValue);
+    void SetTtl(TUint aValue);
+    void SetMulticast(TBool aValue);
 	void SetEnabled(TBool aValue);
 
     void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName);
@@ -69,6 +71,9 @@ private:
     DvDevice& iDevice;
     Bws<kMaxNameBytes> iName;
     TUint iChannel;
+    TIpAddress iInterface;
+    TUint iTtl;
+    TBool iMulticast;
     TBool iEnabled;
     OhmSocket iSocket;
     Srs<kMaxAudioFrameBytes> iRxBuffer;

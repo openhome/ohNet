@@ -206,16 +206,25 @@ int main(int aArgc, char* aArgv[])
     OptionUint optionChannel("-c", "--channel", 0, "[0..65535] sender channel");
     parser.AddOption(&optionChannel);
 
-    OptionUint adapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
-    parser.AddOption(&adapter);
+    OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
+    parser.AddOption(&optionAdapter);
+
+    OptionUint optionTtl("-t", "--ttl", 1, "[ttl] ttl");
+    parser.AddOption(&optionTtl);
+
+    OptionBool optionMulticast("-m", "--multicast", "[multicast] use multicast instead of unicast");
+    parser.AddOption(&optionMulticast);
+
+    OptionBool optionDisabled("-d", "--disabled", "[disabled] start up disabled");
+    parser.AddOption(&optionDisabled);
 
     if (!parser.Parse(aArgc, aArgv)) {
         return (1);
     }
 
     std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
-    ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
-    TIpAddress interface = (*ifs)[adapter.Value()]->Address();
+    ASSERT(ifs->size() > 0 && optionAdapter.Value() < ifs->size());
+    TIpAddress interface = (*ifs)[optionAdapter.Value()]->Address();
     for (TUint i=0; i<ifs->size(); i++) {
         delete (*ifs)[i];
     }
@@ -224,14 +233,18 @@ int main(int aArgc, char* aArgv[])
     printf("Using network interface %d.%d.%d.%d\n", interface&0xff, (interface>>8)&0xff, (interface>>16)&0xff, (interface>>24)&0xff);
 
 	Brhz file(optionFile.Value());
-    Brhz name(optionName.Value());
-    TUint channel = optionChannel.Value();
     
     if (file.Bytes() == 0) {
     	printf("No wav file specified\n");
     	return (1);
     }
     
+    Brhz name(optionName.Value());
+    TUint channel = optionChannel.Value();
+    TUint ttl = optionTtl.Value();
+    TBool multicast = optionMulticast.Value();
+    TBool disabled = optionDisabled.Value();
+
     // Read WAV file
     
     FILE* pFile = fopen(file.CString(), "r");
@@ -417,7 +430,7 @@ int main(int aArgc, char* aArgv[])
     device->SetAttribute("Upnp.SerialNumber", "Not Applicable");
     device->SetAttribute("Upnp.Upc", "Not Applicable");
 
-	OhmSender* sender = new OhmSender(*device, interface, name, channel);
+	OhmSender* sender = new OhmSender(*device, name, channel, interface, ttl, multicast, !disabled);
 	
     WavSender* wavsender = new WavSender(sender, file, data, sampleCount, sampleRate, byteRate * 8, numChannels, bitsPerSample);
     
