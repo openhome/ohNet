@@ -193,7 +193,7 @@ static void RandomiseUdn(Bwh& aUdn)
 
 int main(int aArgc, char* aArgv[])
 {
-	//Debug::SetLevel(Debug::kNetwork);
+	Debug::SetLevel(Debug::kMedia);
 	
     OptionParser parser;
     
@@ -440,7 +440,7 @@ int main(int aArgc, char* aArgv[])
 	
 	TUint speed = WavSender::kSpeedNormal;
 	
-	printf("q = quit, f = faster, s = slower, n = normal, p = pause, r = restart\n");
+	printf("q = quit, f = faster, s = slower, n = normal, p = pause, r = restart, m = toggle multicast, e = toggle enabled\n");
 	
     while (true) {
     	int key = mygetch();
@@ -479,6 +479,32 @@ int main(int aArgc, char* aArgv[])
         if (key == 'r') {
             wavsender->Restart();
             printf("restart\n");
+        }
+
+        if (key == 'm') {
+            if (multicast) {
+                multicast = false;
+                sender->SetMulticast(false);
+                printf("unicast\n");
+            }
+            else {
+                multicast = true;
+                sender->SetMulticast(true);
+                printf("multicast\n");
+            }
+        }
+
+        if (key == 'e') {
+            if (disabled) {
+                disabled = false;
+                sender->SetEnabled(true);
+                printf("enabled\n");
+            }
+            else {
+                disabled = true;
+                sender->SetEnabled(false);
+                printf("disabled\n");
+            }
         }
     }
        

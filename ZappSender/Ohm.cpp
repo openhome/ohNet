@@ -2,181 +2,6 @@
 
 using namespace Zapp;
 
-namespace Zapp
-{
-	class ReaderBinary 
-	{
-	public:
-	    ReaderBinary(IReader& aReader);
-	    const Brn Read(TUint aBytes);
-	    TUint ReadUintBe(TUint aBytes);
-	    TUint ReadUintLe(TUint aBytes);
-	    TUint64 ReadUint64Be(TUint aBytes);
-	    TUint64 ReadUint64Le(TUint aBytes);
-	    TInt ReadIntBe(TUint aBytes);
-	private:
-	    IReader& iReader;
-	};
-	
-	class WriterBinary
-	{
-	public:
-	    WriterBinary(IWriter& aWriter);
-	    void Write(const Brx& aBuffer);
-	    void WriteUint8(TUint8 aValue);
-	    void WriteUint16Be(TUint16 aValue);
-	    void WriteUint24Be(TUint32 aValue);
-	    void WriteUint32Be(TUint32 aValue);
-	    void WriteUint64Be(TUint64 aValue);
-		void WriteInt16Be(TInt16 aValue);
-	private:
-	    IWriter& iWriter;
-	};
-}
-
-// ReaderBinary
-
-ReaderBinary::ReaderBinary(IReader& aReader)
-    : iReader(aReader)
-{
-}
-
-const Brn ReaderBinary::Read(TUint aBytes)
-{
-    return (iReader.Read(aBytes));    
-}
-
-TUint ReaderBinary::ReadUintBe(TUint aBytes)
-{
-    ASSERT(aBytes > 0);
-    ASSERT(aBytes <= sizeof(TUint));
-    TUint val = 0;
-    TUint count = 0;
-    while(count < aBytes) {
-        TUint byte = iReader.Read(1).At(0);
-        val += byte << ((aBytes - count - 1)*8);
-        count++;
-    }
-    return val;
-}
-
-TInt ReaderBinary::ReadIntBe(TUint aBytes)
-{
-    ASSERT(aBytes > 0);
-    ASSERT(aBytes <= sizeof(TInt));
-    TInt val = 0;
-    TUint count = 0;
-
-    TInt sbyte = iReader.Read(1).At(0);
-    val += sbyte << ((aBytes - count - 1) * 8);
-    count++;
-
-    while(count < aBytes) {
-        TUint byte = iReader.Read(1).At(0);
-        val += byte << ((aBytes - count - 1) * 8);
-        count++;
-    }
-    return val;
-}
-
-TUint ReaderBinary::ReadUintLe(TUint aBytes)
-{
-    ASSERT(aBytes > 0);
-    ASSERT(aBytes <= sizeof(TUint));
-    TUint val = 0;
-    TUint shift = 0;
-    while(shift < aBytes) {
-        TUint byte = iReader.Read(1).At(0);
-        val += byte << (shift*8);
-        shift++;
-    }
-    return val;
-}
-
-TUint64 ReaderBinary::ReadUint64Be(TUint aBytes)
-{
-    ASSERT(aBytes > 0);
-    ASSERT(aBytes <= sizeof(TUint64));
-    TUint64 val = 0;
-    TUint count = 0;
-    while(count < aBytes) {
-        TUint byte = iReader.Read(1).At(0);
-        val += byte << ((aBytes - count - 1)*8);
-        count++;
-    }
-    return val;
-}
-
-TUint64 ReaderBinary::ReadUint64Le(TUint aBytes)
-{
-    ASSERT(aBytes > 0);
-    ASSERT(aBytes <= sizeof(TUint64));
-    TUint64 val = 0;
-    TUint shift = 0;
-    while(shift < aBytes) {
-        TUint byte = iReader.Read(1).At(0);
-        val += byte << (shift*8);
-        shift++;
-    }
-    return val;
-}
-
-// WriterBinary
-
-WriterBinary::WriterBinary(IWriter& aWriter)
-    : iWriter(aWriter)
-{
-}
-
-void WriterBinary::Write(const Brx& aBuf)
-{
-    iWriter.Write(aBuf);
-}
-
-void WriterBinary::WriteUint8(TUint8 aValue)
-{
-    iWriter.Write(aValue);
-}
-
-void WriterBinary::WriteUint16Be(TUint16 aValue)
-{
-    iWriter.Write(aValue >> 8);
-    iWriter.Write(aValue);
-}
-
-void WriterBinary::WriteInt16Be(TInt16 aValue)
-{
-    iWriter.Write(aValue >> 8);
-    iWriter.Write(aValue);
-}
-
-void WriterBinary::WriteUint24Be(TUint aValue)
-{
-    iWriter.Write(aValue >> 16);
-    iWriter.Write(aValue >> 8);
-    iWriter.Write(aValue);
-}
-
-void WriterBinary::WriteUint32Be(TUint aValue)
-{
-    iWriter.Write(aValue >> 24);
-    iWriter.Write(aValue >> 16);
-    iWriter.Write(aValue >> 8);
-    iWriter.Write(aValue);
-}
-
-void WriterBinary::WriteUint64Be(TUint64 aValue)
-{
-    iWriter.Write(aValue >> 56);
-    iWriter.Write(aValue >> 48);
-    iWriter.Write(aValue >> 40);
-    iWriter.Write(aValue >> 32);
-    iWriter.Write(aValue >> 24);
-    iWriter.Write(aValue >> 16);
-    iWriter.Write(aValue >> 8);
-    iWriter.Write(aValue);
-}
-
 // OhmSocket
 
 OhmSocket::OhmSocket()
@@ -191,21 +16,7 @@ void OhmSocket::OpenUnicast(TIpAddress aInterface, TUint aTtl)
     iSocket->SetTtl(aTtl);
     iSocket->SetSendBufBytes(kSendBufBytes);
     iReader = new UdpReader(*iSocket);
-}
-
-void OhmSocket::OpenWriter(const Endpoint& aEndpoint)
-{
-    ASSERT(iSocket);
-    ASSERT(!iWriter);
-    iWriter = new UdpWriter(*iSocket, aEndpoint);
-}
-
-void OhmSocket::CloseWriter()
-{
-    ASSERT(iSocket);
-    ASSERT(iWriter);
-    delete iWriter;
-    iWriter = 0;
+    iThis.Replace(Endpoint(iSocket->Port(), aInterface));
 }
 
 void OhmSocket::OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
@@ -215,16 +26,33 @@ void OhmSocket::OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint&
     iSocket->SetTtl(aTtl);
     iSocket->SetSendBufBytes(kSendBufBytes);
     iReader = new UdpReader(*iSocket);
+    iThis.Replace(aEndpoint);
+}
+
+void OhmSocket::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
+{
+    ASSERT(iSocket);
+    iSocket->Send(aBuffer, aEndpoint);
+}
+
+Endpoint OhmSocket::This() const
+{
+    ASSERT(iSocket);
+    return (iThis);
+}
+
+Endpoint OhmSocket::Sender() const
+{
+    ASSERT(iReader);
+    return (iReader->Sender());
 }
 
 void OhmSocket::Close()
 {
     ASSERT(iSocket);
-    delete (iWriter);
     delete (iReader);
     delete (iSocket);
     iReader = 0;
-    iWriter = 0;
     iSocket = 0;
 }
     
@@ -244,24 +72,6 @@ void OhmSocket::ReadInterrupt()
 {
     ASSERT(iSocket != 0);
     iReader->ReadInterrupt();
-}
-
-void OhmSocket::Write(TByte aValue)
-{
-    ASSERT(iSocket != 0);
-    iWriter->Write(aValue);
-}
-
-void OhmSocket::Write(const Brx& aBuffer)
-{
-    ASSERT(iSocket != 0);
-    iWriter->Write(aBuffer);
-}
-
-void OhmSocket::WriteFlush()
-{
-    ASSERT(iSocket != 0);
-    iWriter->WriteFlush();
 }
 
 OhmSocket::~OhmSocket()
@@ -523,6 +333,34 @@ void OhmHeaderMetatext::Externalise(IWriter& aWriter) const
 
     writer.WriteUint32Be(iMetatextBytes);
 }
+    
+// OhmHeaderSlave
+
+OhmHeaderSlave::OhmHeaderSlave()
+{
+}
+
+OhmHeaderSlave::OhmHeaderSlave(TUint aSlaveCount)
+    : iSlaveCount(aSlaveCount)
+{
+}
+    
+void OhmHeaderSlave::Internalise(IReader& aReader, const OhmHeader& aHeader)
+{
+    ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeSlave);
+    
+    ReaderBinary readerBinary(aReader);
+
+    iSlaveCount = readerBinary.ReadUintBe(4);
+}
+
+void OhmHeaderSlave::Externalise(IWriter& aWriter) const
+{
+    WriterBinary writer(aWriter);
+
+    writer.WriteUint32Be(iSlaveCount);
+}
+    
     
 
 ////////////////////////////////////////////////////////

@@ -18,9 +18,13 @@ class OhmSender
     static const TUint kMaxMetadataBytes = 1000;
     static const TUint kMaxAudioFrameBytes = 16 * 1024;
     static const TUint kThreadStackBytesAudio = 64 * 1024;
+    static const TUint kThreadStackBytesNetwork = 64 * 1024;
     static const TUint kThreadPriorityAudio = kPriorityNormal;
+    static const TUint kThreadPriorityNetwork = kPriorityNormal;
     static const TUint kTimerAliveJoinTimeoutMs = 10000;
     static const TUint kTimerAliveAudioTimeoutMs = 3000;
+    static const TUint kTimerExpiryTimeoutMs = 3100;
+    static const TUint kMaxSlaveCount = 4;
 
 public:
 	static const TUint kMaxNameBytes = 32;
@@ -51,7 +55,8 @@ public:
     
 private:
     void RunPipeline();
-    void RunNetwork();
+    void RunMulticast();
+    void RunUnicast();
 
     void UpdateChannel();
     void UpdateMetadata();
@@ -62,10 +67,17 @@ private:
     void ChannelChanged();
     void TimerAliveJoinExpired();
     void TimerAliveAudioExpired();
+    void TimerExpiryExpired();
+    void Send();
     void SendTrackInfo();
     void SendTrack();
     void SendMetatext();
-    void CalculateMclocksPerSample();
+    void SendSlaveList();
+    void SendListen(const Endpoint& aEndpoint);
+    void SendLeave(const Endpoint& aEndpoint);
+    TUint FindSlave(const Endpoint& aEndpoint);
+    void RemoveSlave(TUint aIndex);
+    TBool CheckSlaveExpiry();
     
 private:
     DvDevice& iDevice;
@@ -83,18 +95,22 @@ private:
     Semaphore iNetworkAudioDeactivated;
     Timer iTimerAliveJoin;
     Timer iTimerAliveAudio;
+    Timer iTimerExpiry;
     ProviderSender* iProvider;
     TBool iStarted;
     TBool iActive;
-    Endpoint iEndpoint;
+    Endpoint iMulticastEndpoint;
+    Endpoint iTargetEndpoint;
     TBool iAliveJoined;
     TBool iAliveBlocked;
-    ThreadFunctor* iThreadNetwork;
+    ThreadFunctor* iThreadMulticast;
+    ThreadFunctor* iThreadUnicast;
     TUint iFrame;
     Bws<Ohm::kMaxUriBytes> iUri;
     Bws<kMaxMetadataBytes> iMetadata;
-    TBool iSendTrack;
-    TBool iSendMetatext;
+    TUint iSlaveCount;
+    Endpoint iSlaveList[kMaxSlaveCount];
+    TUint iSlaveExpiry[kMaxSlaveCount];
     Bws<Ohm::kMaxTrackUriBytes> iTrackUri;
     Bws<Ohm::kMaxTrackMetadataBytes> iTrackMetadata;
     Bws<Ohm::kMaxTrackMetatextBytes> iTrackMetatext;
@@ -106,8 +122,6 @@ private:
     TBool iLossless;
     TUint64 iSampleStart;
     TUint64 iSamplesTotal;
-    TUint iTimestamp;
-    TUint iMclocksPerSample;
 };
 
 } // namespace Zapp

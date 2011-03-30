@@ -22,7 +22,7 @@ public:
     static const TUint kMaxCodecNameBytes = 256;
 };
 
-class OhmSocket : public IReaderSource, public IWriter, public INonCopyable
+class OhmSocket : public IReaderSource, public INonCopyable
 {
     static const TUint kSendBufBytes = 16392;
 
@@ -31,8 +31,9 @@ public:
 
     void OpenUnicast(TIpAddress aInterface, TUint aTtl);
     void OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
-    void OpenWriter(const Endpoint& aEndpoint);
-    void CloseWriter();
+    Endpoint This() const;
+    Endpoint Sender() const;
+    void Send(const Brx& aBuffer, const Endpoint& aEndpoint);
     void Close();
 
     // IReaderSource
@@ -40,17 +41,11 @@ public:
     virtual void ReadFlush();
     virtual void ReadInterrupt();
     
-    // IWriter
-    virtual void Write(TByte aValue);
-    virtual void Write(const Brx& aBuffer);
-    virtual void WriteFlush();
-
     ~OhmSocket();
-    
 private:
     SocketUdp* iSocket;
     UdpReader* iReader;
-    UdpWriter* iWriter;
+    Endpoint iThis;
 };
 
 class OhmHeader
@@ -84,8 +79,7 @@ private:
     TUint iBytes;
     
 private:
-    //OhmHeader
-    //ByteStart Bytes                   Desc
+    //Offset    Bytes                   Desc
     //0         4                       "Ohm "
     //4         1                       OhmHeader Major Version
     //5         1                       Msg Type (2 = OhmMsgAudio)
@@ -141,8 +135,7 @@ public:
     TUint MsgBytes() const {return (kHeaderBytes + iCodecName.Bytes() + iAudioBytes);}
 
 private:
-    //OhmMsgAudio
-    //ByteStart Bytes                   Desc
+    //Offset    Bytes                   Desc
     //0         1                       Msg Header Bytes (without the codec name)
     //1         1                       Flags (lsb first: halt flag, lossless flag, sync flag all other bits 0)
     //2         2                       Samples in this msg
@@ -196,8 +189,7 @@ public:
     TUint MsgBytes() const {return (kHeaderBytes + iUriBytes + iMetadataBytes);}
 
 private:
-    //OhmHeaderTrack
-    //ByteStart Bytes                   Desc
+    //Offset    Bytes                   Desc
     //0         4                       Uri Bytes (n)
     //4         4                       Metadata Bytes (m)
     //8         n                       n bytes of uri
@@ -223,12 +215,34 @@ public:
     TUint MsgBytes() const {return (kHeaderBytes + iMetatextBytes);}
 
 private:
-    //OhmMsgMetatext
-    //ByteStart Bytes                   Desc
+    //Offset    Bytes                   Desc
     //0         4                       Metatext Bytes (n)
     //4         n                       n bytes of metatext
 
     TUint iMetatextBytes;
+};
+
+class OhmHeaderSlave
+{
+public:
+    static const TUint kHeaderBytes = 4;
+
+public:
+    OhmHeaderSlave();
+    OhmHeaderSlave(TUint aSlaveCount);
+
+    void Internalise(IReader& aReader, const OhmHeader& aHeader);
+    void Externalise(IWriter& aWriter) const;
+
+    TUint SlaveCount() const {return (iSlaveCount);}
+    TUint MsgBytes() const {return (kHeaderBytes + (iSlaveCount * 6));}
+
+private:
+    //Offset    Bytes                   Desc
+    //0         4                       Slave count (n)
+    //4         6 * n                   Slave address/port list
+
+    TUint iSlaveCount;
 };
 
 class OhzHeader
@@ -257,8 +271,7 @@ private:
     TUint iBytes;
     
 private:
-    //OhzHeader
-    //ByteStart Bytes                   Desc
+    //Offset    Bytes                   Desc
     //0         4                       "Ohz "
     //4         1                       OhzHeader Major Version
     //5         1                       Msg Type (0 = Query, 1 = Uri)
@@ -281,8 +294,7 @@ public:
     TUint MsgBytes() const {return (kHeaderBytes + iZoneBytes);}
 
 private:
-    //OhzMsgQuery
-    //ByteStart Bytes                   Desc
+    //Offset    Bytes                   Desc
     //0         4                       Query Bytes (n)
     //4         n                       n bytes of zone
 
@@ -306,8 +318,7 @@ public:
     TUint MsgBytes() const {return (kHeaderBytes + iZoneBytes + iUriBytes);}
 
 private:
-    //OhzHeaderUri
-    //ByteStart Bytes                   Desc
+    //Offset    Bytes                   Desc
     //0         4                       Zone Bytes (n)
     //4         4                       Uri Bytes (m)
     //8         n                       n bytes of zone

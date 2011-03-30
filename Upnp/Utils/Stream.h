@@ -183,6 +183,39 @@ private:
     TInt iGranularity;
 };
 
+class ReaderBinary 
+{
+public:
+    ReaderBinary(IReader& aReader);
+    const Brn Read(TUint aBytes);
+    TUint ReadUintBe(TUint aBytes);
+    TUint ReadUintLe(TUint aBytes);
+    TUint64 ReadUint64Be(TUint aBytes);
+    TUint64 ReadUint64Le(TUint aBytes);
+    TInt ReadIntBe(TUint aBytes);
+private:
+    IReader& iReader;
+};
+
+class WriterBinary
+{
+public:
+    WriterBinary(IWriter& aWriter);
+    void Write(const Brx& aBuffer);
+    void WriteUint8(TUint8 aValue);
+    void WriteUint16Be(TUint16 aValue);
+    void WriteUint24Be(TUint32 aValue);
+    void WriteUint32Be(TUint32 aValue);
+    void WriteUint64Be(TUint64 aValue);
+    void WriteInt8(TInt8 aValue);
+    void WriteInt16Be(TInt16 aValue);
+    void WriteInt24Be(TInt32 aValue);
+    void WriteInt32Be(TInt32 aValue);
+    void WriteInt64Be(TInt64 aValue);
+private:
+    IWriter& iWriter;
+};
+
 } //namespace Zapp
 
 #endif // HEADER_STREAM

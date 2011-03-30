@@ -3,6 +3,7 @@
 #include <Ascii.h>
 #include <Maths.h>
 #include <Arch.h>
+#include <Debug.h>
 
 #include <stdio.h>
 
@@ -166,21 +167,22 @@ OhmSender::OhmSender(DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAdd
     , iNetworkAudioDeactivated("OHMD", 0)
     , iTimerAliveJoin(MakeFunctor(*this, &OhmSender::TimerAliveJoinExpired))
     , iTimerAliveAudio(MakeFunctor(*this, &OhmSender::TimerAliveAudioExpired))
+    , iTimerExpiry(MakeFunctor(*this, &OhmSender::TimerExpiryExpired))
     , iStarted(false)
     , iActive(false)
     , iFrame(0)
-    , iSendTrack(false)
-    , iSendMetatext(false)
     , iSampleStart(0)
     , iSamplesTotal(0)
-    , iTimestamp(0)
 {
     iProvider = new ProviderSender(iDevice);
     
     UpdateChannel();
 
-    iThreadNetwork = new ThreadFunctor("MPAU", MakeFunctor(*this, &OhmSender::RunNetwork), kThreadPriorityAudio, kThreadStackBytesAudio);
-    iThreadNetwork->Start();
+    iThreadMulticast = new ThreadFunctor("MTXM", MakeFunctor(*this, &OhmSender::RunMulticast), kThreadPriorityNetwork, kThreadStackBytesNetwork);
+    iThreadMulticast->Start();
+    
+    iThreadUnicast = new ThreadFunctor("MTXU", MakeFunctor(*this, &OhmSender::RunUnicast), kThreadPriorityNetwork, kThreadStackBytesNetwork);
+    iThreadUnicast->Start();
     
     SetEnabled(aEnabled);
 }
@@ -200,15 +202,17 @@ void OhmSender::SetChannel(TUint aValue)
 {
     iMutexStartStop.Wait();
     
-    if (iStarted) {
-        Stop();
-        iChannel = aValue;
-        UpdateChannel();
-        Start();
-    }
-    else {
-        iChannel = aValue;
-        UpdateChannel();
+    if (iMulticast) {
+        if (iStarted) {
+            Stop();
+            iChannel = aValue;
+            UpdateChannel();
+            Start();
+        }
+        else {
+            iChannel = aValue;
+            UpdateChannel();
+        }
     }
     
     iMutexStartStop.Signal();
@@ -269,10 +273,12 @@ void OhmSender::SetEnabled(TBool aValue)
     iEnabled = aValue;
     
     if (iEnabled) {
+        iProvider->SetStatusEnabled();
         Start();
     }
     else {
         Stop();
+        iProvider->SetStatusDisabled();
     }
 
     iMutexStartStop.Signal();
@@ -284,28 +290,34 @@ void OhmSender::Start()
 {
     if (!iStarted) {
         iFrame = 0;
-        
         if (iMulticast) {
-            iSocket.OpenMulticast(iInterface, iTtl, iEndpoint);
+            iSocket.OpenMulticast(iInterface, iTtl, iMulticastEndpoint);
+            iTargetEndpoint.Replace(iMulticastEndpoint);
+            iThreadMulticast->Signal();
         }
         else {
             iSocket.OpenUnicast(iInterface, iTtl);
+            iThreadUnicast->Signal();
         }
-        
-        iThreadNetwork->Signal();
-
         iStarted = true;
+        UpdateMetadata();
     }
 }
+
 
 // Stop always called with the start/stop mutex locked
 
 void OhmSender::Stop()
 {
     if (iStarted) {
+        iMutexActive.Wait();
+        iActive = false;
+        iMutexActive.Signal();
         iSocket.ReadInterrupt();
         iNetworkAudioDeactivated.Wait();
+        iSocket.Close();
         iStarted = false;
+        UpdateMetadata();
     }
 }
 
@@ -318,13 +330,7 @@ void OhmSender::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannel
     iBitDepth = aBitDepth;
     iLossless = aLossless;
     iCodecName.Replace(aCodecName);
-    CalculateMclocksPerSample();
     iMutexActive.Signal();
-}
-
-void OhmSender::CalculateMclocksPerSample()
-{
-    iMclocksPerSample = 256 * 44100 / iSampleRate;
 }
 
 void OhmSender::StartTrack(TUint64 aSampleStart)
@@ -345,8 +351,6 @@ void OhmSender::StartTrack(TUint64 aSampleStart, TUint64 aSamplesTotal, const Br
     iTrackUri.Replace(aUri);
     iTrackMetadata.Replace(aMetadata);
     iTrackMetatext.Replace(Brx::Empty());
-    iSendTrack = true;
-    iSendMetatext = true;
     iMutexActive.Signal();
 }
 
@@ -354,7 +358,6 @@ void OhmSender::SetMetatext(const Brx& aValue)
 {
     iMutexActive.Wait();
     iTrackMetatext.Replace(aValue);
-    iSendMetatext = true;
     iMutexActive.Signal();
 }
     
@@ -364,21 +367,11 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
     
 	iMutexActive.Wait();
 	
-	/*
 	if (!iActive) {
         iMutexActive.Signal();
         return;
 	}
-	*/
 	
-    if (iSendTrack) {   
-        SendTrack();
-    }
-
-    if (iSendMetatext) {   
-        SendMetatext();
-    }
-    
     TUint samples = aBytes * 8 / iChannels / iBitDepth;
     
     OhmHeaderAudio headerAudio(false,  // halt
@@ -386,7 +379,7 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
                                false, // sync
                                samples,
                                iFrame,
-                               iTimestamp,
+                               0, // timestamp
                                0, // sync timestamp
                                iSampleStart,
                                iSamplesTotal,
@@ -406,17 +399,10 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
     headerAudio.Externalise(writer);
     
     writer.Write(Brn(aData, aBytes));
-    
-    try {
-        iSocket.Write(iTxBuffer);
-        iSocket.WriteFlush();
-    }
-    catch (WriterError&) {
-	  	printf("Writer Error\n");
-    }
-    
+
+    Send();
+        
     iSampleStart += samples;
-    iTimestamp += samples * iMclocksPerSample;
 
     iFrame++;
     
@@ -429,7 +415,7 @@ OhmSender::~OhmSender()
     Stop();
     iMutexStartStop.Signal();
 
-    delete iThreadNetwork;
+    delete iThreadMulticast;
 }
 
 /*
@@ -456,42 +442,37 @@ void OhmSender::RunPipeline()
 //  The state machine ensures that iActive is only true when iAliveJoined is true and iAliveBlocked is false
 //
 
-void OhmSender::RunNetwork()
+void OhmSender::RunMulticast()
 {
     while (true) {
         iMutexActive.Wait();
-
         iAliveJoined = false;
         iAliveBlocked = false;
-        iSendTrack = false;
-        iSendMetatext = false;
-
         iMutexActive.Signal();
         
-        iThreadNetwork->Wait();
+        LOG(kMedia, "OhmSender::RunMulticast wait\n");
+        
+        iThreadMulticast->Wait();
 
-        iProvider->SetStatusEnabled();
+        LOG(kMedia, "OhmSender::RunMulticast go\n");
         
         try {
             while (true) {
                 try {
-                    printf("waiting for message\n");
-
                     OhmHeader header;
                     header.Internalise(iRxBuffer);
                     
-                    printf("message received\n");
-                    
                     if (header.MsgType() <= OhmHeader::kMsgTypeListen) {
+                        LOG(kMedia, "OhmSender::RunMulticast join/listen received\n");
                         
                         iMutexActive.Wait();
                         
                         iActive = true;
                         iAliveJoined = true;
                         
-                        if (header.MsgType() <= OhmHeader::kMsgTypeJoin) {
-                            iSendTrack = true;
-                            iSendMetatext = true;
+                        if (header.MsgType() == OhmHeader::kMsgTypeJoin) {
+                            SendTrack();
+                            SendMetatext();
                         }
                         
                         iTimerAliveJoin.FireIn(kTimerAliveJoinTimeoutMs);
@@ -499,7 +480,7 @@ void OhmSender::RunNetwork()
                         iMutexActive.Signal();
                     }
                     else {
-                        // LOG(kMedia, "OhmSender::RunNetwork audio received\n");
+                        LOG(kMedia, "OhmSender::RunMulticast audio received\n");
 
                         // The following randomisation prevents two senders from both sending,
                         // both seeing each other's audio, both backing off for the same amount of time,
@@ -512,31 +493,218 @@ void OhmSender::RunNetwork()
                         iAliveBlocked = true;
                         iTimerAliveAudio.FireIn(delay);
                         iMutexActive.Signal();
+
                         iProvider->SetStatusBlocked();
                     }
                 }
-                catch (OhmError)
+                catch (OhmError&)
                 {
                 }
                 
                 iRxBuffer.ReadFlush();
             }
         }
-        catch (ReaderError) {
-            // LOG(kMedia, "OhmSender::RunNetwork reader error\n");
+        catch (ReaderError&) {
+            LOG(kMedia, "OPhmSender::RunMulticast reader error\n");
         }
 
         iRxBuffer.ReadFlush();
 
-        iMutexActive.Wait();
-        iActive = false;
-        iMutexActive.Signal();
-        
         iTimerAliveJoin.Cancel();
         iTimerAliveAudio.Cancel();
-        iProvider->SetStatusDisabled();
+        
+        iNetworkAudioDeactivated.Signal();
+
+        LOG(kMedia, "OhmSender::RunMulticast stop\n");
+    }
+}
+
+void OhmSender::RunUnicast()
+{
+    while (true) {
+        iMutexActive.Wait();
+        iAliveJoined = false;
+        iAliveBlocked = false;
+        iMutexActive.Signal();
+        
+        LOG(kMedia, "OhmSender::RunUnicast wait\n");
+        
+        iThreadUnicast->Wait();
+
+        LOG(kMedia, "OhmSender::RunUnicast go\n");
+        
+        try {
+            while (true) {
+                // wait for first receiver to join
+                // if we receive a listen, it's probably from a temporarily physically disconnected receiver
+                // so accept them as well
+                            
+                while (true) {
+                    try {
+                        OhmHeader header;
+                        header.Internalise(iRxBuffer);
+                        
+                        if (header.MsgType() <= OhmHeader::kMsgTypeListen) {
+                            LOG(kMedia, "OhmSender::RunUnicast ready/join or listen\n");
+                            break;                        
+                        }
+                    }
+                    catch (OhmError&)
+                    {
+                    }
+                    
+                    iRxBuffer.ReadFlush();  
+                }
+    
+                iRxBuffer.ReadFlush();
+
+                iTargetEndpoint.Replace(iSocket.Sender());
+
+                SendTrack();
+                SendMetatext();
+            
+                iFrame = 0;
+                iSlaveCount = 0;
+                
+                iMutexActive.Wait();
+                iActive = true;
+                iAliveJoined = true;
+                iMutexActive.Signal();
+                
+                iTimerExpiry.FireIn(kTimerExpiryTimeoutMs);
+                
+                while (true) {
+                    try {
+                        OhmHeader header;
+                        header.Internalise(iRxBuffer);
+                        
+                        if (header.MsgType() == OhmHeader::kMsgTypeJoin) {
+                            LOG(kMedia, "OhmSender::RunUnicast sending/join\n");
+                            
+                            Endpoint sender(iSocket.Sender());
+
+                            if (sender.Equals(iTargetEndpoint)) {
+                                iTimerExpiry.FireIn(kTimerExpiryTimeoutMs);
+                            }
+                            else {
+                                TUint slave = FindSlave(sender);
+                                if (slave >= iSlaveCount) {
+                                    if (slave < kMaxSlaveCount) {
+                                        iSlaveList[slave].Replace(sender);
+                                        iSlaveExpiry[slave] = Time::Now() + kTimerExpiryTimeoutMs;
+                                        iSlaveCount++;
+                                        iMutexActive.Wait();
+                                        SendListen(sender);
+                                        iMutexActive.Signal();
+                                    }
+                                }
+                                else {
+                                    iSlaveExpiry[slave] = Time::Now() + kTimerExpiryTimeoutMs;
+                                }
+                            }
+                            iMutexActive.Wait();
+                            SendSlaveList();
+                            SendTrack();
+                            SendMetatext();
+                            iMutexActive.Signal();
+                        }
+                        else if (header.MsgType() == OhmHeader::kMsgTypeListen) {
+                            LOG(kMedia, "OhmSender::RunUnicast sending/listen\n");
+                            
+                            Endpoint sender(iSocket.Sender());
+
+                            if (sender.Equals(iTargetEndpoint)) {
+                                iTimerExpiry.FireIn(kTimerExpiryTimeoutMs);
+                                if (CheckSlaveExpiry()) {
+                                    iMutexActive.Wait();
+                                    SendSlaveList();
+                                    iMutexActive.Signal();
+                                }
+                            }
+                            else {
+                                TUint slave = FindSlave(sender);
+                                if (slave < iSlaveCount) {
+                                    iSlaveExpiry[slave] = Time::Now() + kTimerExpiryTimeoutMs;
+                                }
+                                else {
+                                    // unknown slave, probably temporarily physically disconnected receiver
+                                    if (slave < kMaxSlaveCount) {
+                                        iSlaveList[slave].Replace(sender);
+                                        iSlaveExpiry[slave] = Time::Now() + kTimerExpiryTimeoutMs;
+                                        iSlaveCount++;
+                                        iMutexActive.Wait();
+                                        SendListen(sender);
+                                        SendSlaveList();
+                                        SendTrack();
+                                        SendMetatext();
+                                        iMutexActive.Signal();
+                                    }
+                                }
+                            }
+                        }
+                        else if (header.MsgType() == OhmHeader::kMsgTypeLeave) {
+                            LOG(kMedia, "OhmSender::RunUnicast sending/leave\n");
+                            
+                            Endpoint sender(iSocket.Sender());
+
+                            if (sender.Equals(iTargetEndpoint) || sender.Equals(iSocket.This())) {
+                                if (iSlaveCount == 0) {
+                                    if (sender.Equals(iTargetEndpoint)) {
+                                        iMutexActive.Wait();
+                                        SendLeave(sender);
+                                        iMutexActive.Signal();
+                                    }
+                                    break;
+                                }
+                                else {
+                                    iMutexActive.Wait();
+                                    SendLeave(sender);
+                                    iTargetEndpoint.Replace(iSlaveList[--iSlaveCount]);
+                                    iTimerExpiry.FireAt(iSlaveExpiry[iSlaveCount]);
+                                    if (iSlaveCount > 0) {
+                                        SendSlaveList();
+                                    }
+                                    iMutexActive.Signal();
+                                }
+                            }
+                            else {
+                                TUint slave = FindSlave(sender);
+                                if (slave < iSlaveCount) {
+                                    RemoveSlave(slave);
+                                    iMutexActive.Wait();
+                                    SendLeave(sender);
+                                    SendSlaveList();
+                                    iMutexActive.Signal();
+                                }
+                            }
+                        }
+                    }
+                    catch (OhmError&)
+                    {
+                    }
+                    
+                    iRxBuffer.ReadFlush();
+                }
+
+                iRxBuffer.ReadFlush();
+
+                iMutexActive.Wait();
+                iActive = false;
+                iAliveJoined = false;               
+                iMutexActive.Signal();
+            }
+        }
+        catch (ReaderError&) {
+            LOG(kMedia, "OhmSender::RunUnicast reader error\n");
+        }
+
+        iRxBuffer.ReadFlush();
+
+        iTimerExpiry.Cancel();
 
         iNetworkAudioDeactivated.Signal();
+        
+        LOG(kMedia, "OhmSender::RunUnicast stop\n");
     }
 }
 
@@ -558,100 +726,96 @@ void OhmSender::TimerAliveAudioExpired()
     iProvider->SetStatusEnabled();
 }
 
-/*
-void OhmSender::ProcessOutMsgIbAudio(MsgIbAudio* aMsg)
+void OhmSender::TimerExpiryExpired()
 {
-    iProvider->InformAudioPresent();
+    // Send a Leave to ourselves, which is interpreted as a Leave from the receiver
+
+    LOG(kMedia, "OhmSender::TimerExpiryExpired TIMEOUT\n");
+
+    Bws<OhmHeader::kHeaderBytes> buffer;
+    WriterBuffer writer(buffer);
+
+    OhmHeader leave(OhmHeader::kMsgTypeLeave, 0);
     
+    leave.Externalise(writer);
+
     iMutexActive.Wait();
-    
-    if (iActive) {
-        if (iSendTrack) {   
-            SendTrack();
-        }
 
-        if (iSendMetatext) {   
-            SendMetatext();
-        }
-        
-        TUint txTimestampPrev = 0;
-
-        if (iFrame != 0) {
-            txTimestampPrev = 123; // TODO
-        }
-        
-        OhmHeaderAudio headerAudio(aMsg, iFrame, txTimestampPrev);
-        OhmHeader header(OhmHeader::kMsgTypeAudio, headerAudio.MsgBytes());
-        
-        WriterBuffer writer(iTxBuffer);
-        
-        writer.Flush();
-        header.Externalise(writer);
-        headerAudio.Externalise(writer);
-        
-        TByte* ptr = (TByte*)iTxBuffer.Ptr();
-        TUint max = iTxBuffer.MaxBytes();
-        TUint bytes = iTxBuffer.Bytes();
-        
-        Bwn audio(ptr + bytes, max - bytes);
-        
-        MsgIbAudio::PackBigEndian(audio, *aMsg);
-        
-        iTxBuffer.SetBytes(bytes + audio.Bytes());
-        
-        try {
-            iSocket.Write(iTxBuffer);
-            iSocket.WriteFlush();
-        }
-        catch (WriterError&) {
-            LOG(kMedia, "OhmSender::ProcessOutMsgIbAudio WriterError\n");
-        }
-        
-        iFrame++;
+    try {
+        iSocket.Send(buffer, iSocket.This());
     }
-    
-    iMutexActive.Signal();
+    catch (NetworkError&) {
+        ASSERTS();
+    }
 
-    ProcessedOutIb(aMsg);
+    iMutexActive.Signal();
 }
-*/
 
 void OhmSender::UpdateChannel()
 {
     TUint address = (iChannel & 0xffff) | 0xeffd0000; // 239.253.x.x
     
-    iEndpoint.SetAddress(Arch::BigEndian4(address));
-    iEndpoint.SetPort(Ohm::kPort);
-
-    iUri.Replace("ohm://");
-    Ascii::AppendDec(iUri, (address >> 24 & 0xff));
-    iUri.Append('.');
-    Ascii::AppendDec(iUri, (address >> 16 & 0xff));
-    iUri.Append('.');
-    Ascii::AppendDec(iUri, (address >> 8 & 0xff));
-    iUri.Append('.');
-    Ascii::AppendDec(iUri, (address & 0xff));
-    iUri.Append(':');
-    Ascii::AppendDec(iUri, Ohm::kPort);
-
-	UpdateMetadata();    
+    iMulticastEndpoint.SetAddress(Arch::BigEndian4(address));
+    iMulticastEndpoint.SetPort(Ohm::kPort);
 }
 
 void OhmSender::UpdateMetadata()
 {
-    iMetadata.Replace("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
-    iMetadata.Append("<item id=\"0\" restricted=\"True\">");
-    iMetadata.Append("<dc:title>");
-    iMetadata.Append(iName);
-    iMetadata.Append("</dc:title>");
-    iMetadata.Append("<res protocolInfo=\"ohm:*:*:*\">");
-    iMetadata.Append(iUri);
-    iMetadata.Append("</res>");
-    iMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");
-    iMetadata.Append("</item>");
-    iMetadata.Append("</DIDL-Lite>");
+    if (!iStarted) {
+        iMetadata.Replace(Brx::Empty());
+    }
+    else {
+        iMetadata.Replace("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
+        iMetadata.Append("<item id=\"0\" restricted=\"True\">");
+        iMetadata.Append("<dc:title>");
+        iMetadata.Append(iName);
+        iMetadata.Append("</dc:title>");
+        if (iMulticast) {
+            TUint address = Arch::BigEndian4(iMulticastEndpoint.Address());
+            iMetadata.Append("<res protocolInfo=\"ohm:*:*:*\">");
+            iUri.Replace("ohm://");
+            Ascii::AppendDec(iUri, (address >> 24 & 0xff));
+            iUri.Append('.');
+            Ascii::AppendDec(iUri, (address >> 16 & 0xff));
+            iUri.Append('.');
+            Ascii::AppendDec(iUri, (address >> 8 & 0xff));
+            iUri.Append('.');
+            Ascii::AppendDec(iUri, (address & 0xff));
+            iUri.Append(':');
+            Ascii::AppendDec(iUri, Ohm::kPort);
+        }
+        else {
+            TUint address = Arch::BigEndian4(iSocket.This().Address());
+            iMetadata.Append("<res protocolInfo=\"ohu:*:*:*\">");
+            iUri.Replace("ohu://");
+            Ascii::AppendDec(iUri, (address >> 24 & 0xff));
+            iUri.Append('.');
+            Ascii::AppendDec(iUri, (address >> 16 & 0xff));
+            iUri.Append('.');
+            Ascii::AppendDec(iUri, (address >> 8 & 0xff));
+            iUri.Append('.');
+            Ascii::AppendDec(iUri, (address & 0xff));
+            iUri.Append(':');
+            Ascii::AppendDec(iUri, iSocket.This().Port());
+        }
+        iMetadata.Append(iUri);
+        iMetadata.Append("</res>");
+        iMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");
+        iMetadata.Append("</item>");
+        iMetadata.Append("</DIDL-Lite>");
+    }
 
 	iProvider->SetMetadata(iMetadata);
+}
+
+void OhmSender::Send()
+{
+    try {
+        iSocket.Send(iTxBuffer, iTargetEndpoint);
+    }
+    catch (NetworkError&) {
+        ASSERTS();
+    }
 }
 
 // SendTrack called with alive mutex locked;
@@ -668,11 +832,8 @@ void OhmSender::SendTrack()
     headerTrack.Externalise(writer);
     writer.Write(iTrackUri);
     writer.Write(iTrackMetadata);
-    
-    iSocket.Write(iTxBuffer);
-    iSocket.WriteFlush();
-    
-    iSendTrack = false;
+
+    Send();    
 }
 
 // SendMetatext called with alive mutex locked;
@@ -689,8 +850,100 @@ void OhmSender::SendMetatext()
     headerMetatext.Externalise(writer);
     writer.Write(iTrackMetatext);
     
-    iSocket.Write(iTxBuffer);
-    iSocket.WriteFlush();
-
-    iSendMetatext = false;
+    Send();    
 }
+
+// SendSlaveList called with alive mutex locked;
+
+void OhmSender::SendSlaveList()
+{
+    OhmHeaderSlave headerSlave(iSlaveCount);
+    OhmHeader header(OhmHeader::kMsgTypeSlave, headerSlave.MsgBytes());
+    
+    WriterBuffer writer(iTxBuffer);
+    
+    writer.Flush();
+    header.Externalise(writer);
+    headerSlave.Externalise(writer);
+    
+    WriterBinary binary(writer);
+    
+    for (TUint i = 0; i < iSlaveCount; i++) {
+        binary.WriteUint32Be(Arch::BigEndian4(iSlaveList[i].Address()));
+        binary.WriteUint16Be(iSlaveList[i].Port());
+    }
+    
+    Send();    
+}
+
+
+// SendListen called with alive mutex locked;
+
+// Listen message is ignored by slaves, but this is sent to populate my arp tables
+// in case the slave needs to be quickly changed to master receiver.
+
+void OhmSender::SendListen(const Endpoint& aEndpoint)
+{
+    OhmHeader header(OhmHeader::kMsgTypeListen, 0);
+
+    WriterBuffer writer(iTxBuffer);
+
+    writer.Flush();
+    header.Externalise(writer);
+
+    Send();    
+}
+
+// Leave message is sent to acknowledge a Leave sent from a receiver or slave
+
+void OhmSender::SendLeave(const Endpoint& aEndpoint)
+{
+    OhmHeader header(OhmHeader::kMsgTypeLeave, 0);
+
+    WriterBuffer writer(iTxBuffer);
+
+    writer.Flush();
+    header.Externalise(writer);
+
+    Send();    
+}
+
+TBool OhmSender::CheckSlaveExpiry()
+{
+    TBool changed = false;
+
+    for (TUint i = 0; i < iSlaveCount;) {
+        if (Time::IsInPastOrNow(iSlaveExpiry[i])) {
+            RemoveSlave(i);
+            changed = true;
+            continue;
+        }
+        i++;
+    }
+    
+    return (changed);
+}
+
+void OhmSender::RemoveSlave(TUint aIndex)
+{
+    iSlaveCount--;
+    for (TUint i = aIndex; i < iSlaveCount; i++) {
+        iSlaveList[i].Replace(iSlaveList[i + 1]);
+        iSlaveExpiry[i] = iSlaveExpiry[i + 1];
+    }
+}
+
+// Returns index of supplied endpoint, or index of empty slot if not found
+// distinguish between the two by comparing returned value with iSlaveCount
+  
+TUint OhmSender::FindSlave(const Endpoint& aEndpoint)
+{
+    for (TUint i = 0; i < iSlaveCount; i++) {
+        if (aEndpoint.Equals(iSlaveList[i])) {
+            return (i);
+        }
+    }
+    
+    return (iSlaveCount);
+}
+

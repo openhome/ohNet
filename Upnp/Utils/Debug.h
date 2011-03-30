@@ -109,6 +109,7 @@ public:
     static const TUint KDvInvocation   = 1<<13;
     static const TUint kDvEvent        = 1<<14;
     static const TUint kDvWebSocket    = 1<<15;
+    static const TUint kMedia          = 1<<16;
 
     static const TUint kAll            = 0x7FFFFFFF;
     static const TUint kVerbose        = 0x80000000;

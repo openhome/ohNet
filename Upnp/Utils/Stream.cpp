@@ -408,3 +408,180 @@ void WriterBwh::Write(const Brx& aBuffer)
 void WriterBwh::WriteFlush()
 {
 }
+
+// ReaderBinary
+
+ReaderBinary::ReaderBinary(IReader& aReader)
+    : iReader(aReader)
+{
+}
+
+const Brn ReaderBinary::Read(TUint aBytes)
+{
+    return (iReader.Read(aBytes));    
+}
+
+TUint ReaderBinary::ReadUintBe(TUint aBytes)
+{
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes <= sizeof(TUint));
+    TUint val = 0;
+    TUint count = 0;
+    while(count < aBytes) {
+        TUint byte = iReader.Read(1).At(0);
+        val += byte << ((aBytes - count - 1)*8);
+        count++;
+    }
+    return val;
+}
+
+TInt ReaderBinary::ReadIntBe(TUint aBytes)
+{
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes <= sizeof(TInt));
+    TInt val = 0;
+    TUint count = 0;
+
+    TInt sbyte = iReader.Read(1).At(0);
+    val += sbyte << ((aBytes - count - 1) * 8);
+    count++;
+
+    while(count < aBytes) {
+        TUint byte = iReader.Read(1).At(0);
+        val += byte << ((aBytes - count - 1) * 8);
+        count++;
+    }
+    return val;
+}
+
+TUint ReaderBinary::ReadUintLe(TUint aBytes)
+{
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes <= sizeof(TUint));
+    TUint val = 0;
+    TUint shift = 0;
+    while(shift < aBytes) {
+        TUint byte = iReader.Read(1).At(0);
+        val += byte << (shift*8);
+        shift++;
+    }
+    return val;
+}
+
+TUint64 ReaderBinary::ReadUint64Be(TUint aBytes)
+{
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes <= sizeof(TUint64));
+    TUint64 val = 0;
+    TUint count = 0;
+    while(count < aBytes) {
+        TUint byte = iReader.Read(1).At(0);
+        val += byte << ((aBytes - count - 1)*8);
+        count++;
+    }
+    return val;
+}
+
+TUint64 ReaderBinary::ReadUint64Le(TUint aBytes)
+{
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes <= sizeof(TUint64));
+    TUint64 val = 0;
+    TUint shift = 0;
+    while(shift < aBytes) {
+        TUint byte = iReader.Read(1).At(0);
+        val += byte << (shift*8);
+        shift++;
+    }
+    return val;
+}
+
+// WriterBinary
+
+WriterBinary::WriterBinary(IWriter& aWriter)
+    : iWriter(aWriter)
+{
+}
+
+void WriterBinary::Write(const Brx& aBuf)
+{
+    iWriter.Write(aBuf);
+}
+
+void WriterBinary::WriteUint8(TUint8 aValue)
+{
+    iWriter.Write(aValue);
+}
+
+void WriterBinary::WriteUint16Be(TUint16 aValue)
+{
+    iWriter.Write(aValue >> 8);
+    iWriter.Write(aValue);
+}
+
+void WriterBinary::WriteUint24Be(TUint aValue)
+{
+    iWriter.Write(aValue >> 16);
+    iWriter.Write(aValue >> 8);
+    iWriter.Write(aValue);
+}
+
+void WriterBinary::WriteUint32Be(TUint aValue)
+{
+    iWriter.Write(aValue >> 24);
+    iWriter.Write(aValue >> 16);
+    iWriter.Write(aValue >> 8);
+    iWriter.Write(aValue);
+}
+
+void WriterBinary::WriteUint64Be(TUint64 aValue)
+{
+    iWriter.Write(aValue >> 56);
+    iWriter.Write(aValue >> 48);
+    iWriter.Write(aValue >> 40);
+    iWriter.Write(aValue >> 32);
+    iWriter.Write(aValue >> 24);
+    iWriter.Write(aValue >> 16);
+    iWriter.Write(aValue >> 8);
+    iWriter.Write(aValue);
+}
+
+void WriterBinary::WriteInt8(TInt8 aValue)
+{
+    iWriter.Write(aValue);
+}
+
+void WriterBinary::WriteInt16Be(TInt16 aValue)
+{
+    iWriter.Write(aValue >> 8);
+    iWriter.Write(aValue);
+}
+
+void WriterBinary::WriteInt24Be(TInt aValue)
+{
+    iWriter.Write(aValue >> 16);
+    iWriter.Write(aValue >> 8);
+    iWriter.Write(aValue);
+}
+
+void WriterBinary::WriteInt32Be(TInt aValue)
+{
+    iWriter.Write(aValue >> 24);
+    iWriter.Write(aValue >> 16);
+    iWriter.Write(aValue >> 8);
+    iWriter.Write(aValue);
+}
+
+void WriterBinary::WriteInt64Be(TInt64 aValue)
+{
+    iWriter.Write(aValue >> 56);
+    iWriter.Write(aValue >> 48);
+    iWriter.Write(aValue >> 40);
+    iWriter.Write(aValue >> 32);
+    iWriter.Write(aValue >> 24);
+    iWriter.Write(aValue >> 16);
+    iWriter.Write(aValue >> 8);
+    iWriter.Write(aValue);
+}
+
+
