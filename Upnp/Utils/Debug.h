@@ -106,7 +106,7 @@ public:
     static const TUint kService        = 1<<10;
     static const TUint kEvent          = 1<<11;
     static const TUint kTopology       = 1<<12;
-    static const TUint KDvInvocation   = 1<<13;
+    static const TUint kDvInvocation   = 1<<13;
     static const TUint kDvEvent        = 1<<14;
     static const TUint kDvWebSocket    = 1<<15;
     static const TUint kMedia          = 1<<16;

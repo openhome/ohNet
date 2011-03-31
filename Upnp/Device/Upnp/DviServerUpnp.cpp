@@ -408,9 +408,9 @@ void DviSessionUpnp::Get()
 
 void DviSessionUpnp::Post()
 {
-    LOG(KDvInvocation, "Action called: ");
-    LOG(KDvInvocation, iHeaderSoapAction.Action());
-    LOG(KDvInvocation, "\n");
+    LOG(kDvInvocation, "Action called: ");
+    LOG(kDvInvocation, iHeaderSoapAction.Action());
+    LOG(kDvInvocation, "\n");
 
     if (iReaderRequest->Version() == Http::eHttp11) {
         if (!iHeaderHost.Received()) {
@@ -793,9 +793,9 @@ void DviSessionUpnp::InvocationReadEnd()
 
 void DviSessionUpnp::InvocationReportErrorNoThrow(TUint aCode, const Brx& aDescription)
 {
-    LOG(KDvInvocation, "Failure processing action: ");
-    LOG(KDvInvocation, iHeaderSoapAction.Action());
-    LOG(KDvInvocation, "\n");
+    LOG(kDvInvocation, "Failure processing action: ");
+    LOG(kDvInvocation, iHeaderSoapAction.Action());
+    LOG(kDvInvocation, "\n");
 
     iResponseStarted = true;
     iWriterResponse->WriteStatus(HttpStatus::kInternalServerError, Http::eHttp11);
@@ -952,9 +952,9 @@ void DviSessionUpnp::InvocationWriteEnd()
     iWriterBuffer->Write(Brn("Response></s:Body></s:Envelope>"));
     iWriterBuffer->WriteFlush();
 
-    LOG(KDvInvocation, "Completed action: ");
-    LOG(KDvInvocation, iHeaderSoapAction.Action());
-    LOG(KDvInvocation, "\n");
+    LOG(kDvInvocation, "Completed action: ");
+    LOG(kDvInvocation, iHeaderSoapAction.Action());
+    LOG(kDvInvocation, "\n");
 }
 
 IPropertyWriter* DviSessionUpnp::CreateWriter(const IDviSubscriptionUserData* aUserData,
