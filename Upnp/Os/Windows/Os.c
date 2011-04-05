@@ -782,8 +782,8 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
             goto failure;
         }
         // warning - lossy conversion from unicode
-        for (i=0; i<len; i++) {
-            nif->iName[i] = (char)ifRow->wszName[i];
+        for (j=0; j<len; j++) {
+            nif->iName[j] = (char)ifRow->wszName[j];
         }
         nif->iName[len] = '\0';
 
