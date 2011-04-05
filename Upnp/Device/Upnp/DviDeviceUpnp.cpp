@@ -884,6 +884,7 @@ void DviDeviceUpnpXmlWriter::Write(TIpAddress aInterface)
             }
         }
         iWriter.Write(DviDevice::kResourceDir);
+        iWriter.Write('/');
         iWriter.Write("</");
         iWriter.Write("presentationURL");
         iWriter.Write('>');
