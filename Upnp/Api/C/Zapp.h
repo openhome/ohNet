@@ -338,6 +338,17 @@ DllExport void ZappInitParamsSetDvNumPublisherThreads(ZappHandleInitParams aPara
 DllExport void ZappInitParamsSetDvNumWebSocketThreads(ZappHandleInitParams aParams, uint32_t aNumThreads);
 
 /**
+ * Enable use of Bonjour.
+ * All DvDevice instances with a resource manager will be published using Bonjour.
+ * If a device sets the "Upnp.MdnsHostName" attribute, its presentation will be available via http://[hostname].local.
+ * Behaviour when more than one DvDevice sets the "MdnsHostName" attribute is undefined.
+ * Note that enabling Bonjour will cause the device stack to run a http server on port 80, requiring root privileges on linux.
+ *
+ * @param[in] aParams          Initialisation params
+ */
+DllExport void ZappInitParamsSetDvEnableBonjour(ZappHandleInitParams aParams);
+
+/**
  * Query the tcp connection timeout
  *
  * @param[in] aParams          Initialisation params
@@ -454,6 +465,15 @@ DllExport uint32_t ZappInitParamsDvNumPublisherThreads(ZappHandleInitParams aPar
  * @return  number of threads
  */
 DllExport uint32_t ZappInitParamsDvNumWebSocketThreads(ZappHandleInitParams aParams);
+
+/**
+ * Query whether Bonjour is enabled
+ *
+ * @param[in] aParams          Initialisation params
+ *
+ * @return  1 if Bonjour is enabled; 0 otherwise
+ */
+DllExport uint32_t ZappInitParamsDvIsBonjourEnabled(ZappHandleInitParams aParams);
 
 /* @} */
 

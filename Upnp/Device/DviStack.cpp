@@ -5,6 +5,8 @@
 #include <DviSubscription.h>
 #include <Printer.h>
 #include <DviServerWebSocket.h>
+#include <Bonjour.h>
+#include <MdnsProvider.h> // replace this to allow clients to set an alternative Bonjour implementation
 
 using namespace Zapp;
 
@@ -13,16 +15,21 @@ using namespace Zapp;
 DviStack::DviStack()
     : iBootId(1)
     , iNextBootId(2)
+    , iMdns(NULL)
 {
     Stack::SetDviStack(this);
     iDviServerUpnp = new DviServerUpnp;
     iDviDeviceMap = new DviDeviceMap;
     iSubscriptionManager = new DviSubscriptionManager;
     iDviServerWebSocket = new DviServerWebSocket;
+    if (Stack::InitParams().DvIsBonjourEnabled()) {
+        iMdns = new Zapp::MdnsProvider(""); // replace this to allow clients to set an alternative Bonjour implementation
+    }
 }
 
 DviStack::~DviStack()
 {
+    delete iMdns;
     delete iDviServerWebSocket;
     delete iDviServerUpnp;
     delete iDviDeviceMap;
@@ -75,6 +82,12 @@ DviSubscriptionManager& DviStack::SubscriptionManager()
 {
     DviStack* self = DviStack::Self();
     return *(self->iSubscriptionManager);
+}
+
+IMdnsProvider* DviStack::MdnsProvider()
+{
+    DviStack* self = DviStack::Self();
+    return self->iMdns;
 }
 
 DviStack* DviStack::Self()

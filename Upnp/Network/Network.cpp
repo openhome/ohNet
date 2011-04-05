@@ -121,6 +121,23 @@ void Endpoint::GetEndpoint(Bwx& aEndpoint) const
     aEndpoint.PtrZ();
 }
 
+void Endpoint::GetAddressOctets(TByte (&aOctets)[4]) const
+{
+#ifdef DEFINE_LITTLE_ENDIAN
+    aOctets[0] = iAddress&0xff;
+    aOctets[1] = (iAddress>>8)&0xff;
+    aOctets[2] = (iAddress>>16)&0xff;
+    aOctets[3] = (iAddress>>24)&0xff;
+#elif defined DEFINE_BIG_ENDIAN
+    aOctets[0] = (iAddress>>24)&0xff;
+    aOctets[1] = (iAddress>>16)&0xff;
+    aOctets[2] = (iAddress>>8)&0xff;
+    aOctets[3] = iAddress&0xff;
+#else
+# error No endianess defined
+#endif
+}
+
 // Replace the endpoint with the supplied endpoint
 void Endpoint::Replace(const Endpoint& aEndpoint)
 {

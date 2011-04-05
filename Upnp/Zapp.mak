@@ -77,6 +77,8 @@ copy_build_includes:
 	copy Api\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
 	copy Api\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
 	copy *.h $(inc_build) > nul
+	copy Bonjour\*.h $(inc_build) > nul
+	copy Bonjour\mDNSCore\*.h $(inc_build) > nul
 	copy ControlPoint\*.h $(inc_build) > nul
 	copy ControlPoint\Services\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
 	copy ControlPoint\Services\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul

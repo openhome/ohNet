@@ -17,6 +17,12 @@
 
 namespace Zapp {
 
+class IRedirector
+{
+public:
+    virtual TBool RedirectUri(const Brx& aUri, Brn& aRedirectTo) = 0;
+};
+    
 class HeaderExpect : public HttpHeader
 {
 public:
@@ -93,7 +99,7 @@ private:
 class DviSessionUpnp : public SocketTcpSession, private IResourceWriter, private IDviInvocation, private IPropertyWriterFactory
 {
 public:
-    DviSessionUpnp(TIpAddress aInterface, TUint aPort);
+    DviSessionUpnp(TIpAddress aInterface, TUint aPort, IRedirector& aRedirector);
     ~DviSessionUpnp();
 private:
     void Run();
@@ -141,6 +147,7 @@ private:
 private:
     TIpAddress iInterface;
     TUint iPort;
+    IRedirector& iRedirector;
     Srs<kMaxRequestBytes>* iReadBuffer;
     ReaderHttpRequest* iReaderRequest;
     WriterHttpChunked* iWriterChunked;
@@ -164,12 +171,18 @@ private:
     Semaphore iShutdownSem;
 };
 
-class DviServerUpnp : public DviServer
+class DviServerUpnp : public DviServer, private IRedirector
 {
 public:
     DviServerUpnp();
+    void Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo);
 protected:
     virtual SocketTcpServer* CreateServer(const NetworkInterface& aNif);
+private:
+    TBool RedirectUri(const Brx& aUri, Brn& aRedirectTo);
+private:
+    Brh iRedirectUriRequested;
+    Brh iRedirectUriRedirectedTo;
 };
 
 } // namespace Zapp

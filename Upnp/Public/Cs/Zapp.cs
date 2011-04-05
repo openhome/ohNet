@@ -55,6 +55,8 @@ namespace Zapp.Core
         [DllImport("ZappUpnp")]
         static extern void ZappInitParamsSetDvNumWebSocketThreads(IntPtr aParams, uint aNumThreads);
         [DllImport("ZappUpnp")]
+        static extern void ZappInitParamsSetDvEnableBonjour(IntPtr aParams);
+        [DllImport("ZappUpnp")]
         static extern void ZappInitParamsSetUseLoopbackNetworkInterface(IntPtr aParams);
         [DllImport("ZappUpnp")]
         static extern int ZappInitParamsTcpConnectTimeoutMs(IntPtr aParams);
@@ -82,6 +84,8 @@ namespace Zapp.Core
         static extern int ZappInitParamsDvNumPublisherThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
         static extern int ZappInitParamsDvNumWebSocketThreads(IntPtr aParams);
+        [DllImport("ZappUpnp")]
+        static extern int ZappInitParamsDvIsBonjourEnabled(IntPtr aParams);
 
         public InitParams()
         {
@@ -289,6 +293,18 @@ namespace Zapp.Core
             ZappInitParamsSetUseLoopbackNetworkInterface(iHandle);
         }
 
+        /// <summary>
+        /// Enable use of Bonjour.
+        /// </summary>
+        /// <remarks>All DvDevice instances with an IResourceManager will be published using Bonjour.
+        /// If a device sets the "Upnp.MdnsHostName" attribute, its presentation will be available via http://[hostname].local.
+        /// Behaviour when more than one DvDevice sets the "MdnsHostName" attribute is undefined.
+        /// Note that enabling Bonjour will cause the device stack to run a http server on port 80, requiring root privileges on linux.</remarks>
+        public void SetDvEnableBonjour()
+        {
+            ZappInitParamsSetDvEnableBonjour(iHandle);
+        }
+
         public int TcpConnectTimeoutMs()
         {
             return ZappInitParamsTcpConnectTimeoutMs(iHandle);
@@ -352,6 +368,11 @@ namespace Zapp.Core
         public int DvNumWebSocketThreads()
         {
             return ZappInitParamsDvNumWebSocketThreads(iHandle);
+        }
+
+        public bool DvIsBonjourEnabled()
+        {
+            return (ZappInitParamsDvIsBonjourEnabled(iHandle) != 0);
         }
 
         /// <summary>
