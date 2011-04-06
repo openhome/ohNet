@@ -144,7 +144,10 @@ def getArguments(module,nightly,arch,valgrind,os):
         args = ' -b'
 
     elif module == "upnp" and arch == 'x64':
-        args = ' -s -f -n'
+        if nightly == "1":
+            args = ' -s -f -n'
+        else:
+            args = ' -s -n'
                 
     elif module == "upnp" and arch == 'x86' and os == 'Windows':
         args = ' -s -j'
