@@ -390,7 +390,7 @@ void DviSessionUpnp::Error(const HttpStatus& aStatus)
 
 void DviSessionUpnp::Get()
 {
-#if 1
+#if 0
     Stack::Mutex().Wait();
     Log::Print("Get - ");
     Log::Print(iReaderRequest->Uri());
