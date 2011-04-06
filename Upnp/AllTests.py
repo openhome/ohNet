@@ -176,14 +176,13 @@ def JsOnly():
     baseDir = os.getcwd()
     if os.environ.has_key('WORKSPACE'):
         baseDir = os.environ.get('WORKSPACE')
-    print 'baseDir is ' + baseDir
     uiPath = os.path.join(baseDir, 'Public\Js\Zapp.Web.UI.Tests')
     browser = os.path.join(localAppData, 'Safari\Safari.exe')
     testbasic = subprocess.Popen(['Build\Obj\Windows\TestDvTestBasic.exe', '-l', '-c', uiPath])
     devfinder = subprocess.Popen(['Build\Obj\Windows\TestDeviceFinder.exe', '-l', '-s', 'zapp.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     devfinder_out = devfinder.communicate()[1].rstrip()
     subprocess.call([browser, devfinder_out])
-    os.kill(testbasic.pid, signal.SIGTERM)
+    testbasic.terminate()
 
 if gTestsOnly == 0:
     runBuilds()
