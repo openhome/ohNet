@@ -11,6 +11,7 @@
 #include <NetworkInterfaceList.h>
 #include <Zapp.h>
 
+#include <stdlib.h>
 #include <string.h>
 
 #include <mDNSEmbeddedAPI.h>
@@ -50,11 +51,11 @@ TBool MdnsPlatform::Nif::ContainsAddress(TIpAddress aAddress) const
 MdnsPlatform::MdnsPlatform(const TChar* aHost)
     : iHost(aHost)
     , iMutex("BNJ1")
-    , iInterfacesLock("BNJ2")
     , iMulticast(5353, Brn("224.0.0.251"))
     , iReader(0, iMulticast)
     , iReaderController(iReader)
     , iClient(5353)
+    , iInterfacesLock("BNJ2")
     , iServicesLock("BNJ3")
     , iStop(false)
 {
