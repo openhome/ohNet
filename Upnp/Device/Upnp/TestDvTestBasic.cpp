@@ -336,6 +336,9 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     UpnpLibrary::StartDv();
 
     Print("TestDvTestBasic - starting ('q' to quit)\n");
+    Print("ui dir is ");
+    Print(config.Value());
+    Print("\n");
     DeviceBasic* device = new DeviceBasic(config.Value());
     while (getchar() != 'q') {
         ;
