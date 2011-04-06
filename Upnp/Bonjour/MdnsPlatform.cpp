@@ -425,7 +425,7 @@ mStatus mDNSPlatformSendUDP(const mDNS* m, const void* const aMessage, const mDN
     LOG(kBonjour, "Bonjour             mDNSPlatformSendUDP\n");
     
     MdnsPlatform& platform = *(MdnsPlatform*)m->p;
-    Brn buffer((const TByte*)aMessage, (const TByte*) aEnd - (const TByte*)aMessage);
+    Brn buffer((const TByte*)aMessage, (TUint)((const TByte*)aEnd - (const TByte*)aMessage));
     ASSERT(aAddress->type == mDNSAddrType_IPv4);
     Bws<16> address;
     address.AppendPrintf("%d.%d.%d.%d",
@@ -499,7 +499,7 @@ void mDNSPlatformStrCopy(const void *src, void *dst)
 mDNSu32 mDNSPlatformStrLen(const void *src)
 {
     LOG(kBonjour, "Bonjour             mDNSPlatformStrLen\n");
-    return (strlen((char*)src));
+    return (mDNSu32)strlen((char*)src);
 }
 
 // mDNS core calls this routine to copy memory.

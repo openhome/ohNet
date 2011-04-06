@@ -1748,6 +1748,11 @@ Merge in license terms from Quinn's copy, in preparation for Darwin release
 	// The Microsoft compiler doesn't understand this convention, so in the absense of any other way to signal
 	// to the compiler that the assignment is intentional, we have to just turn this warning off completely.
 	#pragma warning(disable:4706)
+	
+	// Disable conversion from 'type1' to 'type2' of greater size
+	// Assume this code has been tested on 64-bit unix so suppressing the warning on Windows is the
+	// least disruptive approach
+    #pragma warning(disable:4306)
 #endif
 
 // ***************************************************************************
