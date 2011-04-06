@@ -392,7 +392,9 @@ void MdnsPlatform::Close()
 
 void MdnsPlatform::AppendTxtRecord(TChar* aBuffer, TUint aLength, const TChar* aKey, const TChar* aValue)
 {
-    ASSERT(strlen(aKey) + strlen(aValue) + 2 <= aLength);
+    ASSERT(strlen(aKey) + strlen(aValue) + 3 <= aLength);
+    *aBuffer = (TByte)(strlen(aKey) + strlen(aValue) + 1);
+    aBuffer++;
     (void)strcpy(aBuffer, aKey);
     (void)strncat(aBuffer, "=", 1);
     (void)strcat(aBuffer, aValue);
@@ -536,7 +538,8 @@ void LogMsg(const char *format, ...)
 #ifdef DEFINE_TRACE
     va_list args;
     va_start(args, format);
-    if(Debug::TestLevel(Debug::kBonjour)) {
+    // not all messages are errors but enough are that its handy to log everything here if we're interested in errors
+    if(Debug::TestLevel(Debug::kBonjour) || Debug::TestLevel(Debug::kError)) {
         Bws<kMaxLogMsgBytes> msg;
         TUint written = mDNS_vsnprintf((char*)msg.Ptr(), msg.MaxBytes(), format, args);
         msg.SetBytes(written);

@@ -829,12 +829,16 @@ void DviDeviceUpnp::Nif::BonjourRegister(const TChar* aName)
             }
         }
         if (iBonjourWebPage != NULL) {
-            Bwh uriBase(iUriBase.Bytes() + iDevice.kResourceDir.Bytes() + 2);
-            uriBase.Append(iUriBase);
-            uriBase.Append(iDevice.kResourceDir);
-            uriBase.Append('/');
-            uriBase.PtrZ();
-            iBonjourWebPage->SetEnabled(aName, iInterface, iServerPort, (const TChar*)uriBase.Ptr());
+            Bwh path(iDevice.Udn().Bytes() + iDeviceUpnp->kProtocolName.Bytes() + iDevice.kResourceDir.Bytes() + 5);
+            path.Append('/');
+            path.Append(iDevice.Udn());
+            path.Append('/');
+            path.Append(iDeviceUpnp->kProtocolName);
+            path.Append('/');
+            path.Append(iDevice.kResourceDir);
+            path.Append('/');
+            path.PtrZ();
+            iBonjourWebPage->SetEnabled(aName, iInterface, iServerPort, (const TChar*)path.Ptr());
         }
     }
 }
