@@ -18,11 +18,11 @@ var CpProxyZappOrgTestBasic1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["VarUint"] = new Zapp.ServiceProperty("VarUint");
-	this.serviceProperties["VarInt"] = new Zapp.ServiceProperty("VarInt");
-	this.serviceProperties["VarBool"] = new Zapp.ServiceProperty("VarBool");
-	this.serviceProperties["VarStr"] = new Zapp.ServiceProperty("VarStr");
-	this.serviceProperties["VarBin"] = new Zapp.ServiceProperty("VarBin");
+	this.serviceProperties["VarUint"] = new Zapp.ServiceProperty("VarUint","int");
+	this.serviceProperties["VarInt"] = new Zapp.ServiceProperty("VarInt","int");
+	this.serviceProperties["VarBool"] = new Zapp.ServiceProperty("VarBool","bool");
+	this.serviceProperties["VarStr"] = new Zapp.ServiceProperty("VarStr","string");
+	this.serviceProperties["VarBin"] = new Zapp.ServiceProperty("VarBin","binary");
 }
 
 
