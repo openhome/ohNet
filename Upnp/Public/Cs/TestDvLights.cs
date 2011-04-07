@@ -14,7 +14,7 @@ namespace Zapp
             // is an int 1..3 and the second is the path of a folder that'll serve a test UI
             Core.InitParams initParams = new Core.InitParams();
             Core.Library lib = new Core.Library();
-            lib.Initialise(ref initParams);
+            lib.Initialise(initParams);
             lib.StartDv();
             Console.Write("TestDvLights - starting\n");
             DeviceLights device = new DeviceLights(Convert.ToInt32(args[0]), args[1]);

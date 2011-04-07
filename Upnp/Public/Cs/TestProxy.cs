@@ -11,7 +11,7 @@ namespace Zapp
         {
             Core.InitParams initParams = new Core.InitParams();
             Core.Library lib = new Core.Library();
-            lib.Initialise(ref initParams);
+            lib.Initialise(initParams);
             lib.StartCp();
             new Runner(initParams.MsearchTimeSecs());
             lib.Close();

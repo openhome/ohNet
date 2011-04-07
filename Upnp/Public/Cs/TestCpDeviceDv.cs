@@ -17,7 +17,7 @@ namespace Zapp
             initParams.SetMsearchTime(1);
             initParams.SetUseLoopbackNetworkInterface();
             Library lib = new Library();
-            lib.Initialise(ref initParams);
+            lib.Initialise(initParams);
             lib.StartCombined();
 
             Console.Write("TestDvDeviceCs - starting\n");

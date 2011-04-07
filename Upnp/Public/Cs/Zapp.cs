@@ -409,14 +409,52 @@ namespace Zapp.Core
         public delegate void ZappCallbackAsync(IntPtr aPtr, IntPtr aAsyncHandle);
     }
 
-    public class LibraryException : ApplicationException
+    [Serializable]
+    public class LibraryException : Exception
     {
+        public LibraryException() { }
+        public LibraryException(string message) : base(message) { }
+        public LibraryException(string message, Exception inner) : base(message, inner) { }
+        protected LibraryException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context)
+            : base(info, context) { }
     }
-    
+
+
+
+    public class ControlPointStack
+    {
+        // Constructor is not public - obtain an instance from Library.
+        internal ControlPointStack()
+        {
+        }
+    }
+
+    public class DeviceStack
+    {
+        // Constructor is not public - obtain an instance from Library.
+        internal DeviceStack()
+        {
+        }
+    }
+
+    public class CombinedStack
+    {
+        public ControlPointStack ControlPointStack { get; private set; }
+        public DeviceStack DeviceStack { get; private set; }
+        // Constructor is not public - obtain an instance from Library.
+        internal CombinedStack()
+        {
+            ControlPointStack = new ControlPointStack();
+            DeviceStack = new DeviceStack();
+        }
+    }
+
     /// <summary>
     /// Initialisation and finalisation of this library, plus utility functions
     /// </summary>
-    public class Library
+    public class Library : IDisposable
     {
         [DllImport ("ZappUpnp")]
         static extern int ZappLibraryInitialise(IntPtr aInitParams);
@@ -453,6 +491,8 @@ namespace Zapp.Core
         [DllImport("ZappUpnp")]
         static extern void ZappInitParamsSetFreeExternalCallback(IntPtr aParams, CallbackFreeMemory aCallback);
 
+        private bool iIsDisposed;
+
         private delegate void CallbackFreeMemory(IntPtr aPtr);
 
         private CallbackFreeMemory iCallbackFreeMemory;
@@ -462,7 +502,7 @@ namespace Zapp.Core
         /// </summary>
         /// <remarks>Must be called before any other library function.</remarks>
         /// <param name="aParams">Initialisation options.  Ownership of these passes to the library</param>
-        public void Initialise(ref InitParams aParams)
+        public void Initialise(InitParams aParams)
         {
             iCallbackFreeMemory = new CallbackFreeMemory(FreeMemory);
             ZappInitParamsSetFreeExternalCallback(aParams.Handle, iCallbackFreeMemory);
@@ -470,6 +510,13 @@ namespace Zapp.Core
             {
                 throw new LibraryException();
             }
+        }
+
+        public static Library Create(InitParams aParams)
+        {
+            Library instance = new Library();
+            instance.Initialise(aParams);
+            return instance;
         }
 
         /// <summary>
@@ -490,25 +537,28 @@ namespace Zapp.Core
         /// <summary>
         /// Start the library as a UPnP control point stack
         /// </summary>
-        public void StartCp()
+        public ControlPointStack StartCp()
         {
             ZappLibraryStartCp();
+            return new ControlPointStack();
         }
 
         /// <summary>
         /// Start the library as a UPnP device stack
         /// </summary>
-        public void StartDv()
+        public DeviceStack StartDv()
         {
             ZappLibraryStartDv();
+            return new DeviceStack();
         }
 
         /// <summary>
         /// Start the library as both UPnP control point and device stacks
         /// </summary>
-        public void StartCombined()
+        public CombinedStack StartCombined()
         {
             ZappLibraryStartCombined();
+            return new CombinedStack();
         }
 
         /// <summary>
@@ -625,6 +675,15 @@ namespace Zapp.Core
         private void FreeMemory(IntPtr aPtr)
         {
             Marshal.FreeHGlobal(aPtr);
+        }
+
+        public void Dispose()
+        {
+            if (!iIsDisposed)
+            {
+                iIsDisposed = true;
+                Close();
+            }
         }
     }
 }

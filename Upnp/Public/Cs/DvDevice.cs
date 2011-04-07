@@ -86,6 +86,24 @@ namespace Zapp.Device
         }
     }
     
+    public interface IDvDeviceFactory
+    {
+        Zapp.Device.DvDevice CreateDevice(string aUdn);
+    }
+
+    public class DvDeviceFactory : IDvDeviceFactory
+    {
+        private Zapp.Core.DeviceStack iDeviceStack;
+        public DvDeviceFactory(Zapp.Core.DeviceStack aDeviceStack)
+        {
+            iDeviceStack = aDeviceStack;
+        }
+        public Zapp.Device.DvDevice CreateDevice(string aUdn)
+        {
+            return new DvDevice(aUdn);
+        }
+    }
+    
     public class DvDevice : IDisposable
     {
         [DllImport("ZappUpnp")]
