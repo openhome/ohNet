@@ -8,8 +8,135 @@ namespace Zapp.Core
     /// </summary>
     /// <remarks>Most options apply equally to Control Point and Device stacks.
     /// Any functions that are specific to a particular stack include either 'Cp' or 'Dv'</remarks>
-    public class InitParams :IDisposable
+    public class InitParams
     {
+        public delegate void ZappCallback(IntPtr aPtr);
+        public delegate void ZappCallbackMsg(IntPtr aPtr, string aMsg);
+        public delegate void ZappCallbackAsync(IntPtr aPtr, IntPtr aAsyncHandle);
+
+        public ZappCallbackMsg LogOutput { get; set; }
+        /// <summary>
+        /// A callback which will be run if the library encounters an error it cannot recover from
+        /// </summary>
+        /// <remarks>Suggested action if this is called is to exit the process and restart the library and its owning application.
+        /// 
+        /// The string passed to the callback is an error message so would be useful to log.</remarks>
+        public ZappCallbackMsg FatalErrorHandler { get; set; }
+        public ZappCallbackAsync AsyncBeginHandler { get; set; }
+        public ZappCallbackAsync AsyncEndHandler { get; set; }
+        public ZappCallbackAsync AsyncErrorHandler { get; set; }
+        public uint DefaultSubnet { get; set; }
+        public ZappCallback SubnetChangedListener { get; set; }
+
+        /// <summary>
+        /// A timeout for TCP connections in milliseconds. Must be >0
+        /// </summary>
+        public uint TcpConnectTimeoutMs { get; set; }
+
+        /// <summary>
+        /// The time in seconds that msearch responses should be spread out over. Should be between 1 and 5 (inclusive).
+        /// </summary>
+        public uint MsearchTimeSecs { get; set; }
+
+        /// <summary>
+        /// Set the time-to-live value for msearches
+        /// </summary>
+        public uint MsearchTtl { get; set; }
+
+        /// <summary>
+        /// Set the number of threads which should be dedicated to eventing (handling updates
+        /// to subscribed state variables).
+        /// </summary>
+        public uint NumEventSessionThreads { get; set; }
+
+        /// <summary>
+        /// Set the number of threads which should be dedicated to fetching device/service XML
+        /// </summary>
+        /// <remarks>A higher number of threads will allow faster population of device lists but
+        /// will also require more system resources</remarks>
+        public uint NumXmlFetcherThreads { get; set; }
+
+        /// <summary>
+        /// Set the number of threads which should be dedicated to invoking actions on devices
+        /// </summary>
+        /// <remarks>A higher number of threads will allow faster population of device lists
+        /// but will also require more system resources</remarks>
+        public uint NumActionInvokerThreads { get; set; }
+
+        /// <summary>
+        /// Set the number of invocations (actions) which should be pre-allocated
+        /// </summary>
+        /// <remarks>If more that this number are pending, the additional attempted invocations
+        /// will block until a pre-allocated slot becomes clear.
+        /// 
+        /// A higher number of invocations will decrease the likelihood and duration of
+        /// any UI-level delays but will also increase the peaks in RAM requirements.</remarks>
+        public uint NumInvocations { get; set; }
+
+        /// <summary>
+        /// Set the number of threads which should be dedicated to (un)subscribing
+        /// to state variables on a service + device
+        /// </summary>
+        /// <remarks>A higher number of threads will allow faster population of device lists
+        /// but will also require more system resources</remarks>
+        public uint NumSubscriberThreads { get; set; }
+
+        /// <summary>
+        /// Set the maximim time in milliseconds to wait before rejecting an event update from
+        /// an unknown source
+        /// </summary>
+        /// <remarks>It is possible for initial information on state variables to arrive before
+        /// a subscription is noted as complete.  Waiting a short while before rejecting events
+        /// from unknown sources decreases the chances of missing the initial event from a subscription</remarks>
+        public uint PendingSubscriptionTimeoutMs { get; set; }
+
+        /// <summary>
+        /// Set the maximum time in seconds between device announcements for the device stack
+        /// </summary>
+        /// <remarks>This value will appear in the maxage header for UPnP advertisements</remarks>
+        public uint DvMaxUpdateTimeSecs { get; set; }
+
+        /// <summary>
+        /// Set the number of threads which should be dedicated to processing
+        /// control/eventing/presentation requests.
+        /// </summary>
+        /// <remarks>A higher number of threads may allow faster response to multiple clients
+        /// making concurrent requests but will also require more system resources.</remarks>
+        public uint DvNumServerThreads { get; set; }
+
+        /// <summary>
+        /// Set the number of threads which should be dedicated to publishing
+        /// changes to state variables on a service + device
+        /// </summary>
+        /// <remarks>A higher number of threads will allow faster publication of changes
+        /// but will also require more system resources</remarks>
+        public uint DvNumPublisherThreads { get; set; }
+
+        /// <summary>
+        /// Set the number of threads which will be dedicated to published
+        /// changes to state variables via WebSockets
+        /// </summary>
+        /// <remarks>One thread will be used per active (web browser) connection so a higher
+        /// number of threads will allow more concurrent clients but will also
+        /// require more system resources. Can be 0 for clients who do not require HTML5
+        /// support</remarks>
+        public uint DvNumWebSocketThreads { get; set; }
+
+        /// <summary>
+        /// Limit the library to using only the loopback network interface
+        /// </summary>
+        /// <remarks>Useful for testing but not expected to be used in production code</remarks>
+        public bool UseLoopbackNetworkInterface { get; set; }
+
+        /// <summary>
+        /// Enable use of Bonjour.
+        /// </summary>
+        /// <remarks>All DvDevice instances with an IResourceManager will be published using Bonjour.
+        /// If a device sets the "Upnp.MdnsHostName" attribute, its presentation will be available via http://[hostname].local.
+        /// Behaviour when more than one DvDevice sets the "MdnsHostName" attribute is undefined.
+        /// Note that enabling Bonjour will cause the device stack to run a http server on port 80, requiring root privileges on linux.</remarks>
+        public bool DvEnableBonjour { get; set; }
+
         [DllImport ("ZappUpnp")]
         static extern IntPtr ZappInitParamsCreate();
         [DllImport ("ZappUpnp")]
@@ -59,354 +186,111 @@ namespace Zapp.Core
         [DllImport("ZappUpnp")]
         static extern void ZappInitParamsSetUseLoopbackNetworkInterface(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsTcpConnectTimeoutMs(IntPtr aParams);
+        static extern uint ZappInitParamsTcpConnectTimeoutMs(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsMsearchTimeSecs(IntPtr aParams);
+        static extern uint ZappInitParamsMsearchTimeSecs(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsMsearchTtl(IntPtr aParams);
+        static extern uint ZappInitParamsMsearchTtl(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsNumEventSessionThreads(IntPtr aParams);
+        static extern uint ZappInitParamsNumEventSessionThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsNumXmlFetcherThreads(IntPtr aParams);
+        static extern uint ZappInitParamsNumXmlFetcherThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsNumActionInvokerThreads(IntPtr aParams);
+        static extern uint ZappInitParamsNumActionInvokerThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsNumInvocations(IntPtr aParams);
+        static extern uint ZappInitParamsNumInvocations(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsNumSubscriberThreads(IntPtr aParams);
+        static extern uint ZappInitParamsNumSubscriberThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsPendingSubscriptionTimeoutMs(IntPtr aParams);
+        static extern uint ZappInitParamsPendingSubscriptionTimeoutMs(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsDvMaxUpdateTimeSecs(IntPtr aParams);
+        static extern uint ZappInitParamsDvMaxUpdateTimeSecs(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsDvNumServerThreads(IntPtr aParams);
+        static extern uint ZappInitParamsDvNumServerThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsDvNumPublisherThreads(IntPtr aParams);
+        static extern uint ZappInitParamsDvNumPublisherThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsDvNumWebSocketThreads(IntPtr aParams);
+        static extern uint ZappInitParamsDvNumWebSocketThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsDvIsBonjourEnabled(IntPtr aParams);
+        static extern uint ZappInitParamsDvIsBonjourEnabled(IntPtr aParams);
 
         public InitParams()
         {
-            iHandle = ZappInitParamsCreate();
-            iGch = GCHandle.Alloc(this);
-        }
+            IntPtr defaultParams = ZappInitParamsCreate();
+            
+            DefaultSubnet = 0; // FIXME: No getter?
+            TcpConnectTimeoutMs = ZappInitParamsTcpConnectTimeoutMs(defaultParams); 
+            MsearchTimeSecs = ZappInitParamsMsearchTimeSecs(defaultParams); 
+            MsearchTtl = ZappInitParamsMsearchTtl(defaultParams); 
+            NumEventSessionThreads = ZappInitParamsNumEventSessionThreads(defaultParams); 
+            NumXmlFetcherThreads = ZappInitParamsNumXmlFetcherThreads(defaultParams); 
+            NumActionInvokerThreads = ZappInitParamsNumActionInvokerThreads(defaultParams); 
+            NumInvocations = ZappInitParamsNumInvocations(defaultParams); 
+            NumSubscriberThreads = ZappInitParamsNumSubscriberThreads(defaultParams); 
+            PendingSubscriptionTimeoutMs = ZappInitParamsPendingSubscriptionTimeoutMs(defaultParams); 
+            DvMaxUpdateTimeSecs = ZappInitParamsDvMaxUpdateTimeSecs(defaultParams); 
+            DvNumServerThreads = ZappInitParamsDvNumServerThreads(defaultParams); 
+            DvNumPublisherThreads = ZappInitParamsDvNumPublisherThreads(defaultParams); 
+            DvNumWebSocketThreads = ZappInitParamsDvNumWebSocketThreads(defaultParams); 
+            UseLoopbackNetworkInterface = false; // FIXME: No getter?
+            DvEnableBonjour = ZappInitParamsDvIsBonjourEnabled(defaultParams) != 0; 
 
-        public void SetLogOutput(ZappCallbackMsg aCallback)
-        {
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            ZappInitParamsSetLogOutput(iHandle, aCallback, ptr);
+            ZappInitParamsDestroy(defaultParams);
         }
+        internal IntPtr AllocNativeInitParams(IntPtr aCallbackPtr)
+        {
+            IntPtr nativeParams = ZappInitParamsCreate();
 
-        /// <summary>
-        /// Set a callback which will be run if the library encounters an error it cannot recover from
-        /// </summary>
-        /// <remarks>Suggested action if this is called is to exit the process and restart the library and its owning application.
-        /// 
-        /// The string passed to the callback is an error message so would be useful to log.</remarks>
-        /// <param name="aCallback">Callback to run</param>
-        public void SetFatalErrorHandler(ZappCallbackMsg aCallback)
-        {
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            ZappInitParamsSetFatalErrorHandler(iHandle, aCallback, ptr);
-        }
-
-        public void SetAsyncBeginHandler(ZappCallbackAsync aCallback)
-        {
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            ZappInitParamsSetAsyncBeginHandler(iHandle, aCallback, ptr);
-        }
-
-        public void SetAsyncEndHandler(ZappCallbackAsync aCallback)
-        {
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            ZappInitParamsSetAsyncEndHandler(iHandle, aCallback, ptr); 
-        }
-        
-        public void SetAsyncErrorHandler(ZappCallbackAsync aCallback)
-        {
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            ZappInitParamsSetAsyncErrorHandler(iHandle, aCallback, ptr);
-        }
-
-        public void SetDefaultSubnet(uint aSubnet)
-        {
-            ZappInitParamsSetDefaultSubnet(iHandle, aSubnet);
-        }
-
-        public void SetSubnetChangedListener(ZappCallback aCallback)
-        {
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            ZappInitParamsSetSubnetChangedListener(iHandle, aCallback, ptr);
-        }
-
-        /// <summary>
-        /// Set a timeout for TCP connections
-        /// </summary>
-        /// <param name="aTimeoutMs">Timeout in milliseconds.  Must be >0</param>
-        public void SetTcpConnectTimeout(uint aTimeoutMs)
-        {
-            ZappInitParamsSetTcpConnectTimeout(iHandle, aTimeoutMs);
-        }
-
-        /// <summary>
-        /// Set the time that msearch responses should be spread out over
-        /// </summary>
-        /// <param name="aSecs">Time in seconds.  Should be between 1 and 5 (inclusive).</param>
-        public void SetMsearchTime(uint aSecs)
-        {
-            ZappInitParamsSetMsearchTime(iHandle, aSecs);
-        }
-
-        /// <summary>
-        /// Set the time-to-live value for msearches
-        /// </summary>
-        /// <param name="aTtl">Ttl value</param>
-        public void SetMsearchTtl(uint aTtl)
-        {
-            ZappInitParamsSetMsearchTtl(iHandle, aTtl);
-        }
-
-        /// <summary>
-        /// Set the number of threads which should be dedicated to eventing (handling updates
-        /// to subscribed state variables)
-        /// </summary>
-        /// <param name="aNumThreads">Number of threads.  Must be >0</param>
-        public void SetNumEventSessionThreads(uint aNumThreads)
-        {
-            ZappInitParamsSetNumEventSessionThreads(iHandle, aNumThreads);
-        }
-
-        /// <summary>
-        /// Set the number of threads which should be dedicated to fetching device/service XML
-        /// </summary>
-        /// <remarks>A higher number of threads will allow faster population of device lists but
-        /// will also require more system resources</remarks>
-        /// <param name="aNumThreads">Number of threads.  Must be >0</param>
-        public void SetNumXmlFetcherThreads(uint aNumThreads)
-        {
-            ZappInitParamsSetNumXmlFetcherThreads(iHandle, aNumThreads);
-        }
-
-        /// <summary>
-        /// Set the number of threads which should be dedicated to invoking actions on devices
-        /// </summary>
-        /// <remarks>A higher number of threads will allow faster population of device lists
-        /// but will also require more system resources</remarks>
-        /// <param name="aNumThreads">Number of threads.  Must be >0</param>
-        public void SetNumActionInvokerThreads(uint aNumThreads)
-        {
-            ZappInitParamsSetNumActionInvokerThreads(iHandle, aNumThreads);
-        }
-
-        /// <summary>
-        /// Set the number of invocations (actions) which should be pre-allocated
-        /// </summary>
-        /// <remarks>If more that this number are pending, the additional attempted invocations
-        /// will block until a pre-allocated slot becomes clear.
-        /// 
-        /// A higher number of invocations will decrease the likelihood and duration of
-        /// any UI-level delays but will also increase the peaks in RAM requirements.</remarks>
-        /// <param name="aNumInvocations">Number of invocations.  Must be >0</param>
-        public void SetNumInvocations(uint aNumInvocations)
-        {
-            ZappInitParamsSetNumInvocations(iHandle, aNumInvocations);
-        }
-
-        /// <summary>
-        /// Set the number of threads which should be dedicated to (un)subscribing
-        /// to state variables on a service + device
-        /// </summary>
-        /// <remarks>A higher number of threads will allow faster population of device lists
-        /// but will also require more system resources</remarks>
-        /// <param name="aNumThreads">Number of threads.  Must be >0</param>
-        public void SetNumSubscriberThreads(uint aNumThreads)
-        {
-            ZappInitParamsSetNumSubscriberThreads(iHandle, aNumThreads);
-        }
-
-        /// <summary>
-        /// Set the maximim time to wait before rejecting an event update from an unknown source
-        /// </summary>
-        /// <remarks>It is possible for initial information on state variables to arrive before
-        /// a subscription is noted as complete.  Waiting a short while before rejecting events
-        /// from unknown sources decreases the chances of missing the initial event from a subscription</remarks>
-        /// <param name="aTimeoutMs">Time in milliseconds to wait before rejecting events</param>
-        public void SetPendingSubscriptionTimeout(uint aTimeoutMs)
-        {
-            ZappInitParamsSetPendingSubscriptionTimeout(iHandle, aTimeoutMs);
-        }
-
-        /// <summary>
-        /// Set the maximum time between device announcements for the device stack
-        /// </summary>
-        /// <remarks>This value will appear in the maxage header for UPnP advertisements</remarks>
-        /// <param name="aSecs">Time in seconds</param>
-        public void SetDvMaxUpdateTime(uint aSecs)
-        {
-            ZappInitParamsSetDvMaxUpdateTime(iHandle, aSecs);
-        }
-
-        /// <summary>
-        /// Set the number of threads which should be dedicated to processing
-        /// control/eventing/presentation requests.
-        /// </summary>
-        /// <remarks>A higher number of threads may allow faster response to multiple clients
-        /// making concurrent requests but will also require more system resources.</remarks>
-        /// <param name="aNumThreads">Number of threads.  Must be greater than 0.</param>
-        public void SetDvNumServerThreads(uint aNumThreads)
-        {
-            ZappInitParamsSetDvNumServerThreads(iHandle, aNumThreads);
-        }
-        /// <summary>
-        /// Set the number of threads which should be dedicated to publishing
-        /// changes to state variables on a service + device
-        /// </summary>
-        /// <remarks>A higher number of threads will allow faster publication of changes
-        /// but will also require more system resources</remarks>
-        /// <param name="aNumThreads"></param>
-        public void SetDvNumPublisherThreads(uint aNumThreads)
-        {
-            ZappInitParamsSetDvNumPublisherThreads(iHandle, aNumThreads);
-        }
-
-        /// <summary>
-        /// Set the number of threads which will be dedicated to published
-        /// changes to state variables via WebSockets
-        /// </summary>
-        /// <remarks>One thread will be used per active (web browser) connection so a higher
-        /// number of threads will allow more concurrent clients but will also
-        /// require more system resources.</remarks>
-        /// <param name="aNumThreads">Number of threads.  Can be 0 for clients who do not require HTML5 support</param>
-        public void SetDvNumWebSocketThreads(uint aNumThreads)
-        {
-            ZappInitParamsSetDvNumWebSocketThreads(iHandle, aNumThreads);
-        }
-
-        /// <summary>
-        /// Limit the library to using only the loopback network interface
-        /// </summary>
-        /// <remarks>Useful for testing but not expected to be used in production code</remarks>
-        public void SetUseLoopbackNetworkInterface()
-        {
-            ZappInitParamsSetUseLoopbackNetworkInterface(iHandle);
-        }
-
-        /// <summary>
-        /// Enable use of Bonjour.
-        /// </summary>
-        /// <remarks>All DvDevice instances with an IResourceManager will be published using Bonjour.
-        /// If a device sets the "Upnp.MdnsHostName" attribute, its presentation will be available via http://[hostname].local.
-        /// Behaviour when more than one DvDevice sets the "MdnsHostName" attribute is undefined.
-        /// Note that enabling Bonjour will cause the device stack to run a http server on port 80, requiring root privileges on linux.</remarks>
-        public void SetDvEnableBonjour()
-        {
-            ZappInitParamsSetDvEnableBonjour(iHandle);
-        }
-
-        public int TcpConnectTimeoutMs()
-        {
-            return ZappInitParamsTcpConnectTimeoutMs(iHandle);
-        }
-
-        public int MsearchTimeSecs()
-        {
-            return ZappInitParamsMsearchTimeSecs(iHandle);
-        }
-
-        public int MsearchTtl()
-        {
-            return ZappInitParamsMsearchTtl(iHandle);
-        }
-
-        public int NumEventSessionThreads()
-        {
-            return ZappInitParamsNumEventSessionThreads(iHandle);
-        }
-
-        public int NumXmlFetcherThreads()
-        {
-            return ZappInitParamsNumXmlFetcherThreads(iHandle);
-        }
-
-        public int NumActionInvokerThreads()
-        {
-            return ZappInitParamsNumActionInvokerThreads(iHandle);
-        }
-
-        public int NumInvocations()
-        {
-            return ZappInitParamsNumInvocations(iHandle);
-        }
-
-        public int NumSubscriberThreads()
-        {
-            return ZappInitParamsNumSubscriberThreads(iHandle);
-        }
-
-        public int PendingSubscriptionTimeoutMs()
-        {
-            return ZappInitParamsPendingSubscriptionTimeoutMs(iHandle);
-        }
-
-        public int DvMaxUpdateTimeSecs()
-        {
-            return ZappInitParamsDvMaxUpdateTimeSecs(iHandle);
-        }
-
-        public int DvNumServerThreads()
-        {
-            return ZappInitParamsDvNumServerThreads(iHandle);
-        }
-
-        public int DvNumPublisherThreads()
-        {
-            return ZappInitParamsDvNumPublisherThreads(iHandle);
-        }
-
-        public int DvNumWebSocketThreads()
-        {
-            return ZappInitParamsDvNumWebSocketThreads(iHandle);
-        }
-
-        public bool DvIsBonjourEnabled()
-        {
-            return (ZappInitParamsDvIsBonjourEnabled(iHandle) != 0);
-        }
-
-        /// <summary>
-        /// Destroy the underlying native object.  Must be called before Core.Library.Close().
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (!this.iDisposed)
+            ZappInitParamsSetLogOutput(nativeParams, LogOutput, aCallbackPtr);
+            if (FatalErrorHandler != null)
             {
-                iGch.Free();
+                ZappInitParamsSetFatalErrorHandler(nativeParams, FatalErrorHandler, aCallbackPtr);
             }
-        }
-
-        public IntPtr Handle
-        {
-            get
+            if (AsyncBeginHandler != null)
             {
-                return iHandle;
+                ZappInitParamsSetAsyncBeginHandler(nativeParams, AsyncBeginHandler, aCallbackPtr);
             }
+            if (AsyncEndHandler != null)
+            {
+                ZappInitParamsSetAsyncEndHandler(nativeParams, AsyncEndHandler, aCallbackPtr);
+            }
+            if (AsyncErrorHandler != null)
+            {
+                ZappInitParamsSetAsyncErrorHandler(nativeParams, AsyncErrorHandler, aCallbackPtr);
+            }
+            ZappInitParamsSetDefaultSubnet(nativeParams, DefaultSubnet);
+            if (SubnetChangedListener != null)
+            {
+                ZappInitParamsSetSubnetChangedListener(nativeParams, SubnetChangedListener, aCallbackPtr);
+            }
+            ZappInitParamsSetTcpConnectTimeout(nativeParams, TcpConnectTimeoutMs);
+            ZappInitParamsSetMsearchTime(nativeParams, MsearchTimeSecs);
+            ZappInitParamsSetMsearchTtl(nativeParams, MsearchTtl);
+            ZappInitParamsSetNumEventSessionThreads(nativeParams, NumEventSessionThreads);
+            ZappInitParamsSetNumXmlFetcherThreads(nativeParams, NumXmlFetcherThreads);
+            ZappInitParamsSetNumActionInvokerThreads(nativeParams, NumActionInvokerThreads);
+            ZappInitParamsSetNumInvocations(nativeParams, NumInvocations);
+            ZappInitParamsSetNumSubscriberThreads(nativeParams, NumSubscriberThreads);
+            ZappInitParamsSetPendingSubscriptionTimeout(nativeParams, PendingSubscriptionTimeoutMs);
+            ZappInitParamsSetDvMaxUpdateTime(nativeParams, DvMaxUpdateTimeSecs);
+            ZappInitParamsSetDvNumServerThreads(nativeParams, DvNumServerThreads);
+            ZappInitParamsSetDvNumPublisherThreads(nativeParams, DvNumPublisherThreads);
+            ZappInitParamsSetDvNumWebSocketThreads(nativeParams, DvNumWebSocketThreads);
+            if (DvEnableBonjour)
+            {
+                ZappInitParamsSetDvEnableBonjour(nativeParams);
+            }
+            if (UseLoopbackNetworkInterface)
+            {
+                ZappInitParamsSetUseLoopbackNetworkInterface(nativeParams);
+            }
+            ZappInitParamsSetUseLoopbackNetworkInterface(nativeParams);
+            return nativeParams;
         }
-
-        private IntPtr iHandle;
-        protected GCHandle iGch;
-        private bool iDisposed = false;
-
-        public delegate void ZappCallback(IntPtr aPtr);
-        public delegate void ZappCallbackMsg(IntPtr aPtr, string aMsg);
-        public delegate void ZappCallbackAsync(IntPtr aPtr, IntPtr aAsyncHandle);
+        internal static void FreeNativeInitParams(IntPtr aNativeInitParams)
+        {
+            ZappInitParamsDestroy(aNativeInitParams);
+        }
     }
 
     [Serializable]
@@ -501,13 +385,14 @@ namespace Zapp.Core
         /// Initialise the library
         /// </summary>
         /// <remarks>Must be called before any other library function.</remarks>
-        /// <param name="aParams">Initialisation options.  Ownership of these passes to the library</param>
         public void Initialise(InitParams aParams)
         {
+            IntPtr nativeInitParams = aParams.AllocNativeInitParams(IntPtr.Zero);
             iCallbackFreeMemory = new CallbackFreeMemory(FreeMemory);
-            ZappInitParamsSetFreeExternalCallback(aParams.Handle, iCallbackFreeMemory);
-            if (0 != ZappLibraryInitialise(aParams.Handle))
+            ZappInitParamsSetFreeExternalCallback(nativeInitParams, iCallbackFreeMemory);
+            if (0 != ZappLibraryInitialise(nativeInitParams))
             {
+                InitParams.FreeNativeInitParams(nativeInitParams);
                 throw new LibraryException();
             }
         }

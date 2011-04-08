@@ -13,7 +13,7 @@ namespace Zapp
             Core.Library lib = new Core.Library();
             lib.Initialise(initParams);
             lib.StartCp();
-            new Runner(initParams.MsearchTimeSecs());
+            new Runner((int)initParams.MsearchTimeSecs);
             lib.Close();
         }
     }

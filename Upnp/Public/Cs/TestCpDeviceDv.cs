@@ -13,9 +13,11 @@ namespace Zapp
     {
         public static void Main(string[] args)
         {
-            InitParams initParams = new InitParams();
-            initParams.SetMsearchTime(1);
-            initParams.SetUseLoopbackNetworkInterface();
+            InitParams initParams = new InitParams
+            {
+                MsearchTimeSecs = 1,
+                UseLoopbackNetworkInterface = true
+            };
             Library lib = new Library();
             lib.Initialise(initParams);
             lib.StartCombined();
