@@ -15,7 +15,7 @@ namespace ZappSpy
                 // Nothing to set, yet!
             };
             iLibrary = new Zapp.Core.Library();
-            iLibrary.Initialise(ref initialisationParams);
+            iLibrary.Initialise(initialisationParams);
             iLibrary.StartCp();
         }
 
