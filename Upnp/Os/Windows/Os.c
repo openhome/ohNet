@@ -425,25 +425,37 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
 
 int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
 {
-    int32_t sent;
+    int32_t sent = 0;
+    int32_t bytes = 0;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     if (SocketInterrupted(handle)) {
         return -1;
     }
-	sent = send(handle->iSocket, (const char*)aBuffer, aBytes, 0);
+    do {
+        bytes = send(handle->iSocket, (const char*)aBuffer, aBytes, 0);
+        if (bytes != -1) {
+            sent += bytes;
+        }
+    } while(bytes != -1 && sent < (int32_t)aBytes);    
     return sent;
 }
 
 int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes, TIpAddress aAddress, uint16_t aPort)
 {
-    int32_t sent;
+    int32_t sent = 0;
+    int32_t bytes = 0;
     struct sockaddr_in addr;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     if (SocketInterrupted(handle)) {
         return -1;
     }
     sockaddrFromEndpoint(&addr, aAddress, aPort);
-    sent = sendto(handle->iSocket, (const char*)aBuffer, aBytes, 0, (struct sockaddr*)&addr, sizeof(addr));
+    do {
+        bytes = sendto(handle->iSocket, (const char*)aBuffer, aBytes, 0, (struct sockaddr*)&addr, sizeof(addr));
+        if (bytes != -1) {
+            sent += bytes;
+        }
+    } while(bytes != -1 && sent < (int32_t)aBytes);    
     return sent;
 }
 
