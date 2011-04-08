@@ -1,8 +1,88 @@
 using System;
 using System.Runtime.InteropServices;
+using Zapp.Core;
 
 namespace Zapp.ControlPoint
 {
+    public interface ICpUpnpDeviceListFactory
+    {
+        ICpDeviceList CreateListAll(
+            CpDeviceList.ChangeHandler aAdded,
+            CpDeviceList.ChangeHandler aRemoved);
+        ICpDeviceList CreateListRoot(
+            CpDeviceList.ChangeHandler aAdded,
+            CpDeviceList.ChangeHandler aRemoved);
+        ICpDeviceList CreateListUuid(
+            string aUuid,
+            CpDeviceList.ChangeHandler aAdded,
+            CpDeviceList.ChangeHandler aRemoved);
+        ICpDeviceList CreateListDeviceType(
+            string aDomain,
+            string aDeviceType,
+            uint aVersion,
+            CpDeviceList.ChangeHandler aAdded,
+            CpDeviceList.ChangeHandler aRemoved);
+        ICpDeviceList CreateListServiceType(
+            string aDomain,
+            string aServiceType,
+            uint aVersion,
+            CpDeviceList.ChangeHandler aAdded,
+            CpDeviceList.ChangeHandler aRemoved);
+    }
+
+    public class CpUpnpDeviceListFactory : ICpUpnpDeviceListFactory
+    {
+        private ControlPointStack iControlPointStack;
+        public CpUpnpDeviceListFactory(
+            ControlPointStack aControlPointStack)
+        {
+            if (aControlPointStack == null)
+            {
+                throw new ArgumentNullException("aControlPointStack");
+            }
+            iControlPointStack = aControlPointStack;
+        }
+
+        public ICpDeviceList CreateListAll(
+            CpDeviceList.ChangeHandler aAdded,
+            CpDeviceList.ChangeHandler aRemoved)
+        {
+            return new CpDeviceListUpnpAll(aAdded, aRemoved);
+        }
+        public ICpDeviceList CreateListRoot(
+            CpDeviceList.ChangeHandler aAdded,
+            CpDeviceList.ChangeHandler aRemoved)
+        {
+            return new CpDeviceListUpnpRoot(aAdded, aRemoved);
+        }
+        public ICpDeviceList CreateListUuid(
+            string aUuid,
+            CpDeviceList.ChangeHandler aAdded,
+            CpDeviceList.ChangeHandler aRemoved)
+        {
+            return new CpDeviceListUpnpUuid(aUuid, aAdded, aRemoved);
+        }
+        public ICpDeviceList CreateListDeviceType(
+            string aDomain,
+            string aDeviceType,
+            uint aVersion,
+            CpDeviceList.ChangeHandler aAdded,
+            CpDeviceList.ChangeHandler aRemoved)
+        {
+            return new CpDeviceListUpnpDeviceType(aDomain, aDeviceType, aVersion, aAdded, aRemoved);
+        }
+        public ICpDeviceList CreateListServiceType(
+            string aDomain,
+            string aServiceType,
+            uint aVersion,
+            CpDeviceList.ChangeHandler aAdded,
+            CpDeviceList.ChangeHandler aRemoved)
+        {
+            return new CpDeviceListUpnpServiceType(aDomain, aServiceType, aVersion, aAdded, aRemoved);
+        }
+    }
+
+
     /// <summary>
     /// List of all UPnP devices on the current subnet
     /// </summary>
