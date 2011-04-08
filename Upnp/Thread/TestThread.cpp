@@ -361,25 +361,43 @@ public:
 class SemaphoreThread : public Thread
 {
 public:
-    SemaphoreThread(Semaphore& aSem) : Thread("SEMT", kPriorityVeryLow), iSem(aSem), iWaits(0) {}
+    SemaphoreThread(Semaphore& aSem) : Thread("SEMT", kPriorityVeryLow), iSem(aSem), iWaitsGuard("SMWG", 0), iWaits(0) {}
+    ~SemaphoreThread();
     void Run();
-    TInt Waits() const { return iWaits; }
+    TInt Waits();
 private:
     Semaphore& iSem;
+    Semaphore iWaitsGuard;
     TInt iWaits;
 };
 
+SemaphoreThread::~SemaphoreThread()
+{
+    TEST(!iWaitsGuard.Clear());
+}
+
 void SemaphoreThread::Run()
 {
+    // we use iWaitsGuard to synchronise our two threads in the absense of reliable thread priorities
+    // its unfortunate that we have to rely on correct behaviour from a semaphore to test a semaphore...
+    iWaitsGuard.Signal();
+    iSem.Wait();
+    iWaits++;
+    iWaitsGuard.Signal();
     iSem.Wait();
     iWaits++;
     iSem.Wait();
     iWaits++;
     iSem.Wait();
     iWaits++;
+    iWaitsGuard.Signal();
     iSem.Wait();
-    iWaits++;
-    iSem.Wait();
+}
+
+TInt SemaphoreThread::Waits()
+{
+    iWaitsGuard.Wait();
+    return iWaits;
 }
 
 class SignalThread : public Thread
@@ -428,12 +446,10 @@ void SuiteSemaphore::Test()
     semTh->Start();
     TEST(semTh->Waits() == 0);
     sem3.Signal();
-    Thread::Current()->Sleep(kSleepMs);
     TEST(semTh->Waits() == 1);
     sem3.Signal();
     sem3.Signal();
     sem3.Signal();
-    Thread::Current()->Sleep(kSleepMs);
     TEST(semTh->Waits() == 4);
     sem3.Signal();
     delete semTh;
