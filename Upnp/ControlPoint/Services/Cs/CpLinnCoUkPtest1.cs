@@ -76,7 +76,6 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionTestComPort;
         private Zapp.Core.Action iActionLedsOn;
         private Zapp.Core.Action iActionLedsOff;
-        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -97,8 +96,6 @@ namespace Zapp.ControlPoint.Proxies
             iActionLedsOn = new Zapp.Core.Action("LedsOn");
 
             iActionLedsOff = new Zapp.Core.Action("LedsOff");
-            
-            iPropertyLock = new Mutex();
         }
 
         /// <summary>

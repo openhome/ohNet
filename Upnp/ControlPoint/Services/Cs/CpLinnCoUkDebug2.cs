@@ -76,7 +76,6 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionSetDebugLevel;
         private Zapp.Core.Action iActionDebugLevel;
         private Zapp.Core.Action iActionMemWrite;
-        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -101,8 +100,6 @@ namespace Zapp.ControlPoint.Proxies
             iActionMemWrite.AddInputParameter(param);
             param = new ParameterBinary("aMemData");
             iActionMemWrite.AddInputParameter(param);
-            
-            iPropertyLock = new Mutex();
         }
 
         /// <summary>
