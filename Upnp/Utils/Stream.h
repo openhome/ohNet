@@ -183,7 +183,7 @@ private:
     TInt iGranularity;
 };
 
-class ReaderBinary 
+class ReaderBinary : private INonCopyable
 {
 public:
     ReaderBinary(IReader& aReader);
@@ -197,7 +197,7 @@ private:
     IReader& iReader;
 };
 
-class WriterBinary
+class WriterBinary : private INonCopyable
 {
 public:
     WriterBinary(IWriter& aWriter);

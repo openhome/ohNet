@@ -2,27 +2,31 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title></title>
-    <link href="resource/css/test.css" rel="stylesheet" type="text/css" />
-    <script src="resource/scripts/ohProxyCore.js" type="text/javascript"></script>
-    <script src="resource/scripts/CpZappOrgTestBasic1.js" type="text/javascript"></script>
-    <script src="resource/scripts/yui-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/io-base-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/querystring-stringify-simple-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/yuitest-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/loader-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/substitute-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/oop-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/dom-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/event-custom-base-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/event-base-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/pluginhost-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/node-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/event-delegate-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/json-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/event-simulate-min.js" type="text/javascript"></script>
-    <script src="resource/scripts/test-min.js" type="text/javascript"></script>
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="-1">        
+    <link href="css/test.css" rel="stylesheet" type="text/css" />
+    <script src="extern/xui-2.0.0.min.js" type="text/javascript"></script>
+    <script src="extern/ProxyCore.js" type="text/javascript"></script>
+    <script src="proxy/CpZappOrgTestBasic1.js" type="text/javascript"></script>
+    <script src="scripts/yui-min.js" type="text/javascript"></script>
+    <script src="scripts/io-base-min.js" type="text/javascript"></script>
+    <script src="scripts/querystring-stringify-simple-min.js" type="text/javascript"></script>
+    <script src="scripts/yuitest-min.js" type="text/javascript"></script>
+    <script src="scripts/loader-min.js" type="text/javascript"></script>
+    <script src="scripts/substitute-min.js" type="text/javascript"></script>
+    <script src="scripts/oop-min.js" type="text/javascript"></script>
+    <script src="scripts/dom-min.js" type="text/javascript"></script>
+    <script src="scripts/event-custom-base-min.js" type="text/javascript"></script>
+    <script src="scripts/event-base-min.js" type="text/javascript"></script>
+    <script src="scripts/pluginhost-min.js" type="text/javascript"></script>
+    <script src="scripts/node-min.js" type="text/javascript"></script>
+    <script src="scripts/event-delegate-min.js" type="text/javascript"></script>
+    <script src="scripts/json-min.js" type="text/javascript"></script>
+    <script src="scripts/event-simulate-min.js" type="text/javascript"></script>
+    <script src="scripts/test-min.js" type="text/javascript"></script>
     <script type="text/javascript">
-        var kAsyncTimeoutMS = 5000; //300;
+        var outputFile = true;
+        var kAsyncTimeoutMS = 15000; //300;
         var _Y;
          var proxy;
         function pageLoad() {
@@ -352,15 +356,22 @@
 
         function onComplete(results) {
             var resultsXML = this.getResults(_Y.Test.Format.JUnitXML);
-
-            proxy.WriteFile(resultsXML,"xout\\ProxyJsTest.xml",
-            function () {
+            if(outputFile)
+            {
+                proxy.WriteFile(resultsXML,"xout\\ProxyJsTest.xml",
+                function () {
                window.close();
-            },function() {
-               window.close();
-            });
+                },function() {
+                    window.close();
+                });
+                setTimeout(function() {   window.close();  },5000); // Close window after 5 seconds as a fall back
+            }
+            else
+            {
+                console.log(resultsXML);
+            }
             
-            setTimeout(function() {   window.close();  },5000); // Close window after 5 seconds as a fall back
+           
         } 
       
     </script>

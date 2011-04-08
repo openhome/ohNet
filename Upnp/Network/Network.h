@@ -47,6 +47,7 @@ public:
     TUint16 Port() const;                                // return port as a network order uint16
     void GetAddress(Bwx& aAddress) const;
     void GetEndpoint(Bwx& aEndpoint) const;
+    void GetAddressOctets(TByte (&aOctets)[4]) const;
 private:
     TIpAddress iAddress;
     TUint16 iPort;

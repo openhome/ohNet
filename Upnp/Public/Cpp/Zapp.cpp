@@ -37,6 +37,11 @@ TIpAddress NetworkInterface::Subnet() const
     return (iAddress & iNetMask);
 }
 
+TIpAddress NetworkInterface::Mask() const
+{
+    return iNetMask;
+}
+
 bool NetworkInterface::ContainsAddress(TIpAddress aAddress)
 {
     return ((aAddress&iNetMask) == Subnet());
@@ -216,6 +221,11 @@ void InitialisationParams::SetDvNumWebSocketThreads(uint32_t aNumThreads)
     iDvNumWebSocketThreads = aNumThreads;
 }
 
+void InitialisationParams::SetDvEnableBonjour()
+{
+    iEnableBonjour = true;
+}
+
 FunctorMsg& InitialisationParams::LogOutput()
 {
     return iLogOutput;
@@ -326,6 +336,11 @@ uint32_t InitialisationParams::DvNumWebSocketThreads() const
 	return iDvNumWebSocketThreads;
 }
 
+bool InitialisationParams::DvIsBonjourEnabled() const
+{
+    return iEnableBonjour;
+}
+
 InitialisationParams::InitialisationParams()
     : iDefaultSubnet(0)
     , iTcpConnectTimeoutMs(500)
@@ -343,6 +358,7 @@ InitialisationParams::InitialisationParams()
     , iDvNumServerThreads(4)
 	, iDvNumPublisherThreads(4)
     , iDvNumWebSocketThreads(0)
+    , iEnableBonjour(false)
 {
     iDefaultLogger = new DefaultLogger;
     FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &Zapp::DefaultLogger::Log);
@@ -365,7 +381,7 @@ void UpnpLibrary::Initialise(InitialisationParams* aInitParams)
 {
     UpnpLibrary::InitialiseMinimal(aInitParams);
     new Stack(aInitParams);
-    //Debug::SetLevel(Debug::kError);
+    Debug::SetLevel(Debug::kDvInvocation);
 }
 
 void UpnpLibrary::InitialiseMinimal(InitialisationParams* aInitParams)

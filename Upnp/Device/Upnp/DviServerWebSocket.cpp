@@ -364,6 +364,29 @@ void DviSessionWebSocket::Error(const HttpStatus& aStatus)
 #ifdef WS_76_HANDSHAKE
 void DviSessionWebSocket::Handshake()
 {
+
+    // write response
+    WriterAscii writer(*iWriterBuffer);
+    writer.Write(Http::Version(Http::eHttp11));
+    writer.WriteSpace();
+    writer.WriteUint(HttpStatus::kSwitchingProtocols.Code());
+    writer.WriteSpace();
+    writer.Write(Brn("WebSocket Protocol Handshake"));
+    writer.WriteNewline();
+    iWriterResponse->WriteHeader(Brn("Upgrade"), Brn("WebSocket"));
+    iWriterResponse->WriteHeader(Brn("Connection"), Brn("Upgrade"));
+    iWriterResponse->WriteHeader(WebSocket::kHeaderProtocol, WebSocket::kValueNt);
+    if (iHeaderOrigin.Origin().Bytes() > 0) {
+        iWriterResponse->WriteHeader(WebSocket::kHeaderResponseOrigin, iHeaderOrigin.Origin());
+    }
+    Bws<1024> location;
+    location.Append("ws://");
+    location.Append(iHeaderHost.Host());
+    location.Append(iReaderRequest->Uri());
+    iWriterResponse->WriteHeader(WebSocket::kHeaderLocation, location);
+    writer.WriteNewline();
+    writer.WriteFlush();
+
     if (!iHeaderConnection.Upgrade() || iHeaderUpgrade.Upgrade() != WebSocket::kUpgradeWebSocket ||
         !iHeaderKey1.Received() || !iHeaderKey2.Received() ||
         !iHeaderProtocol.Received() || iHeaderProtocol.Protocol() != WebSocket::kValueNt) {
@@ -392,26 +415,6 @@ void DviSessionWebSocket::Handshake()
     memcpy(const_cast<TByte*>(resp.Ptr()), &digest[0], 16);
     resp.SetBytes(16);
 
-    // write response
-    WriterAscii writer(*iWriterBuffer);
-    writer.Write(Http::Version(Http::eHttp11));
-    writer.WriteSpace();
-    writer.WriteUint(HttpStatus::kSwitchingProtocols.Code());
-    writer.WriteSpace();
-    writer.Write(Brn("WebSocket Protocol Handshake"));
-    writer.WriteNewline();
-    iWriterResponse->WriteHeader(Brn("Upgrade"), Brn("WebSocket"));
-    iWriterResponse->WriteHeader(Brn("Connection"), Brn("Upgrade"));
-    iWriterResponse->WriteHeader(WebSocket::kHeaderProtocol, WebSocket::kValueNt);
-    if (iHeaderOrigin.Origin().Bytes() > 0) {
-        iWriterResponse->WriteHeader(WebSocket::kHeaderResponseOrigin, iHeaderOrigin.Origin());
-    }
-    Bws<1024> location;
-    location.Append("ws://");
-    location.Append(iHeaderHost.Host());
-    location.Append(iReaderRequest->Uri());
-    iWriterResponse->WriteHeader(WebSocket::kHeaderLocation, location);
-    writer.WriteNewline();
     writer.Write(resp);
     iWriterBuffer->WriteFlush(); /* don't use iWriterResponse as that'll append \r\n which will
                                     be treated as the (invalid) start of the first message we send */

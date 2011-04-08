@@ -7,7 +7,7 @@ using namespace Zapp;
 DviDeviceC::DviDeviceC(const char* aUdn)
 {
 	Brn udn(aUdn);
-	iDevice = new DvDevice(udn, *this);
+	iDevice = new DvDevice(udn);
 	iResourceManager = NULL;
 	iCallbackArg = NULL;
 	iResourceWriter = NULL;

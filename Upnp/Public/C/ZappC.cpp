@@ -197,6 +197,12 @@ void ZappInitParamsSetDvNumWebSocketThreads(ZappHandleInitParams aParams, uint32
 	ip->SetDvNumWebSocketThreads(aNumThreads);
 }
 
+void ZappInitParamsSetDvEnableBonjour(ZappHandleInitParams aParams)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    ip->SetDvEnableBonjour();
+}
+
 uint32_t ZappInitParamsTcpConnectTimeoutMs(ZappHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
@@ -273,6 +279,12 @@ uint32_t ZappInitParamsDvNumWebSocketThreads(ZappHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
 	return ip->DvNumWebSocketThreads();
+}
+
+uint32_t ZappInitParamsDvIsBonjourEnabled(ZappHandleInitParams aParams)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+	return (ip->DvIsBonjourEnabled()? 1 : 0);
 }
 
 TIpAddress ZappNetworkInterfaceAddress(ZappHandleNetworkInterface aNif)

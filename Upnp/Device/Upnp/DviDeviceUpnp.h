@@ -19,6 +19,7 @@ namespace Zapp {
 
 class DeviceMsgScheduler;
 class DviDeviceUpnpXmlWriter;
+class BonjourWebPage;
 
 class DviDeviceUpnp : public IDvProtocol
 {
@@ -37,7 +38,7 @@ public:
     TUint Version() const;
     void MsgSchedulerComplete(DeviceMsgScheduler* aScheduler);
 private:
-    void AddListener(const NetworkInterface& aNif);
+    void AddInterface(const NetworkInterface& aNif);
     void SubnetListChanged();
     TInt FindInterface(TIpAddress aInterface, const std::vector<NetworkInterface*>& aNifList);
     TInt FindListenerForSubnet(TIpAddress aSubnet);
@@ -68,12 +69,12 @@ private:
     void SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aInterface, const Brx& aDomain, const Brx& aType, TUint aVersion);
     void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aInterface, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
-    class MulticastListener : public ISsdpMsearchHandler, public INonCopyable
+    class Nif : public ISsdpMsearchHandler, public INonCopyable
     {
         friend class DviDeviceUpnp;
     public:
-        MulticastListener(DviDeviceUpnp& aDevice, const NetworkInterface& aNif, Bwh& aUriBase, TUint aServerPort);
-        ~MulticastListener();
+        Nif(DviDeviceUpnp& aDeviceUpnp, DviDevice& aDevice, const NetworkInterface& aNif, Bwh& aUriBase, TUint aServerPort);
+        ~Nif();
         TIpAddress Interface() const;
         TIpAddress Subnet() const;
         const Brx& UriBase() const;
@@ -84,6 +85,8 @@ private:
         void SetDeviceXml(Brh& aXml);
         void ClearDeviceXml();
 		void SetPendingDelete();
+        void BonjourRegister(const TChar* aName);
+        void BonjourDeregister();
     private:
 		DviDeviceUpnp* Device();
     private:
@@ -93,7 +96,8 @@ private:
         void SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion);
         void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion);
     private:
-        DviDeviceUpnp* iDevice;
+        DviDeviceUpnp* iDeviceUpnp;
+        DviDevice& iDevice;
         SsdpListenerMulticast* iListener;
         TInt iId;
         TIpAddress iSubnet;
@@ -101,12 +105,13 @@ private:
         Bwh iUriBase;
         TUint iServerPort;
         Brh iDeviceXml;
+        BonjourWebPage* iBonjourWebPage;
     };
 private:
     DviDevice& iDevice;
     AttributeMap iAttributeMap;
     Mutex iLock;
-    std::vector<MulticastListener*> iListeners;
+    std::vector<Nif*> iInterfaces;
     TInt iSubnetChangeListenerId;
     std::vector<DeviceMsgScheduler*> iMsgSchedulers;
     TUint iSubnetDisableCount;

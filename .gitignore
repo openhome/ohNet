@@ -5,6 +5,7 @@
 /Upnp/*.sbr
 /Upnp/Build/
 /Upnp/vgout/
+/Upnp/xout/
 /build/
 /install/
 /ZappSender/Build/

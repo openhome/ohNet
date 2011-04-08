@@ -53,6 +53,12 @@ public:
      */
     TIpAddress Subnet() const;
     /**
+     * Query the netmask of the interface
+     *
+     * @return  netmask for the interface (in network byte order)
+     */
+    TIpAddress Mask() const;
+    /**
      * Query whether the subnet this interface operates on contains a given IP address
      *
      * @param[in] aAddress  IPv4 address being queried
@@ -198,6 +204,14 @@ public:
      * require more system resources.
      */
     void SetDvNumWebSocketThreads(uint32_t aNumThreads);
+    /**
+     * Enable use of Bonjour.
+     * All DvDevice instances with an IResourceManager will be published using Bonjour.
+     * If a device sets the "Upnp.MdnsHostName" attribute, its presentation will be available via http://[hostname].local.
+     * Behaviour when more than one DvDevice sets the "MdnsHostName" attribute is undefined.
+     * Note that enabling Bonjour will cause the device stack to run a http server on port 80, requiring root privileges on linux.
+     */
+    void SetDvEnableBonjour();
 
     FunctorMsg& LogOutput();
     FunctorMsg& FatalErrorHandler();
@@ -221,6 +235,7 @@ public:
     uint32_t DvNumServerThreads() const;
     uint32_t DvNumPublisherThreads() const;
     uint32_t DvNumWebSocketThreads() const;
+    bool DvIsBonjourEnabled() const;
 private:
     InitialisationParams();
     void FatalErrorHandlerDefault(const char* aMsg);
@@ -249,6 +264,7 @@ private:
     uint32_t iDvNumServerThreads;
 	uint32_t iDvNumPublisherThreads;
     uint32_t iDvNumWebSocketThreads;
+    bool iEnableBonjour;
 };
 
 /**

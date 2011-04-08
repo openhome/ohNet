@@ -38,10 +38,15 @@ Zapp.SubscriptionManager = (function () {
     var subscriptionCounter = -1; // A unique identifier for each subscription (zero-based).
     var subscriptionTimeoutSec = -1; // The suggested timeout in seconds for each subscription.
 
+    var StartedFunction;
+    var Debug;
+    var SubscriptionTimeoutSeconds;
 
     // Public Variables
     var running = false; // A flag to state if the Subscription Manager is running
 
+    // Debug Variables
+    var connectionPreviouslyOpened = false;
 
     // Functions
 
@@ -354,12 +359,27 @@ Zapp.SubscriptionManager = (function () {
     * @method onSocketClose
     */
     var onSocketClose = function () {
-
         // if (DEBUG) {
         console.log("onSocketClose");
         stop();
-        alert("Lost Connection to Node");
+        if (connectionPreviouslyOpened)
+            alert("Lost Connection to Node: Connection had successully opened.  Reconnecting...");
+        else
+            alert("Lost Connection to Node: Connection has failed to open the websocket.  Reconnecting...");
+
+        connectionPreviouslyOpened = false;
+
+        setTimeout(function () { reconnect(); }, 1500);
         //    }
+    };
+
+
+    /** 
+    * Reconnects to the Web Socket Server
+    * @method reconnect
+    */
+    var reconnect = function () {
+        start(StartedFunction, Debug, SubscriptionTimeoutSeconds);
     };
 
     /**
@@ -367,9 +387,13 @@ Zapp.SubscriptionManager = (function () {
     * @method onSocketOpen
     */
     var onSocketOpen = function () {
-        if (DEBUG) {
-            console.log("onSocketOpen");
-        }
+
+        //if (DEBUG) {
+        console.log("onSocketOpen");
+        // }
+        connectionPreviouslyOpened = true;
+
+        StartedFunction();
     };
 
     /**
@@ -394,6 +418,9 @@ Zapp.SubscriptionManager = (function () {
     * @param {Int} subscriptionTimeoutSeconds The suggested subscription timeout value.  Overrides the default.
     */
     var start = function (startedFunction, debugMode, subscriptionTimeoutSeconds) {
+        StartedFunction = startedFunction;
+        Debug = debugMode;
+        SubscriptionTimeoutSeconds = subscriptionTimeoutSeconds;
 
         if (debugMode) {
             DEBUG = debugMode;
@@ -412,7 +439,7 @@ Zapp.SubscriptionManager = (function () {
             websocket.onmessage = onSocketMessage;
             websocket.onerror = onSocketError;
             websocket.onclose = onSocketClose;
-            websocket.onopen = startedFunction;
+            websocket.onopen = onSocketOpen;
         }
         else {
             if (DEBUG) {
@@ -558,7 +585,7 @@ Zapp.ServiceProperty.prototype.setValue = function (value) {
                     this.value = Zapp.SoapRequest.readStringParameter(value);
                     break;
                 }
-            case "boolean":
+            case "bool":
                 {
                     this.value = Zapp.SoapRequest.readBoolParameter(value);
                     break;

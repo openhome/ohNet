@@ -278,9 +278,10 @@ void PropertyWriterUpnp::PropertyWriteEnd()
 
 // DviSessionUpnp
 
-DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort)
+DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort, IRedirector& aRedirector)
     : iInterface(aInterface)
     , iPort(aPort)
+    , iRedirector(aRedirector)
     , iShutdownSem("DSUS", 1)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
@@ -390,9 +391,11 @@ void DviSessionUpnp::Error(const HttpStatus& aStatus)
 void DviSessionUpnp::Get()
 {
 #if 0
+    Stack::Mutex().Wait();
     Log::Print("Get - ");
     Log::Print(iReaderRequest->Uri());
     Log::Print("\n");
+    Stack::Mutex().Signal();
 #endif
     if (iReaderRequest->Version() == Http::eHttp11) {
         if (!iHeaderHost.Received()) {
@@ -400,7 +403,24 @@ void DviSessionUpnp::Get()
         }
     }
 
-    DviStack::DeviceMap().WriteResource(iReaderRequest->Uri(), iInterface, *this);
+    Brn redirectTo;
+    if (!iRedirector.RedirectUri(iReaderRequest->Uri(), redirectTo)) {
+        DviStack::DeviceMap().WriteResource(iReaderRequest->Uri(), iInterface, *this);
+    }
+    else {
+        iResponseStarted = true;
+        iWriterResponse->WriteStatus(HttpStatus::kMovedPermanently, Http::eHttp11);
+        IWriterAscii& writerLocation = iWriterResponse->WriteHeaderField(Http::kHeaderLocation);
+        writerLocation.Write(Brn("http://"));
+        Endpoint endpt(iPort, iInterface);
+        Bws<Endpoint::kMaxEndpointBytes> endptBuf;
+        endpt.GetEndpoint(endptBuf);
+        writerLocation.Write(endptBuf);
+        writerLocation.Write(redirectTo);
+        writerLocation.WriteFlush();
+        iWriterResponse->WriteFlush();
+        iResponseEnded = true;
+    }
     if (iResponseStarted) {
         ASSERT(iResponseEnded);
     }
@@ -408,9 +428,9 @@ void DviSessionUpnp::Get()
 
 void DviSessionUpnp::Post()
 {
-    LOG(KDvInvocation, "Action called: ");
-    LOG(KDvInvocation, iHeaderSoapAction.Action());
-    LOG(KDvInvocation, "\n");
+    LOG(kDvInvocation, "Action called: ");
+    LOG(kDvInvocation, iHeaderSoapAction.Action());
+    LOG(kDvInvocation, "\n");
 
     if (iReaderRequest->Version() == Http::eHttp11) {
         if (!iHeaderHost.Received()) {
@@ -793,9 +813,9 @@ void DviSessionUpnp::InvocationReadEnd()
 
 void DviSessionUpnp::InvocationReportErrorNoThrow(TUint aCode, const Brx& aDescription)
 {
-    LOG(KDvInvocation, "Failure processing action: ");
-    LOG(KDvInvocation, iHeaderSoapAction.Action());
-    LOG(KDvInvocation, "\n");
+    LOG(kDvInvocation, "Failure processing action: ");
+    LOG(kDvInvocation, iHeaderSoapAction.Action());
+    LOG(kDvInvocation, "\n");
 
     iResponseStarted = true;
     iWriterResponse->WriteStatus(HttpStatus::kInternalServerError, Http::eHttp11);
@@ -952,9 +972,9 @@ void DviSessionUpnp::InvocationWriteEnd()
     iWriterBuffer->Write(Brn("Response></s:Body></s:Envelope>"));
     iWriterBuffer->WriteFlush();
 
-    LOG(KDvInvocation, "Completed action: ");
-    LOG(KDvInvocation, iHeaderSoapAction.Action());
-    LOG(KDvInvocation, "\n");
+    LOG(kDvInvocation, "Completed action: ");
+    LOG(kDvInvocation, iHeaderSoapAction.Action());
+    LOG(kDvInvocation, "\n");
 }
 
 IPropertyWriter* DviSessionUpnp::CreateWriter(const IDviSubscriptionUserData* aUserData,
@@ -974,14 +994,33 @@ DviServerUpnp::DviServerUpnp()
     Initialise();
 }
 
+void DviServerUpnp::Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo)
+{
+    // could store a vector of redirections if required
+    Stack::Mutex().Wait();
+    iRedirectUriRequested.Set(aUriRequested);
+    iRedirectUriRedirectedTo.Set(aUriRedirectedTo);
+    Stack::Mutex().Signal();
+}
+
 SocketTcpServer* DviServerUpnp::CreateServer(const NetworkInterface& aNif)
 {
-    SocketTcpServer* server = new SocketTcpServer("DSVU", 0, aNif.Address());
+    TUint port = (Stack::InitParams().DvIsBonjourEnabled()? 80 : 0);
+    SocketTcpServer* server = new SocketTcpServer("DSVU", port, aNif.Address());
     TChar thName[5];
 	const TUint numWsThreads = Stack::InitParams().DvNumServerThreads();
     for (TUint i=0; i<numWsThreads; i++) {
         (void)sprintf(&thName[0], "DS%2u", i);
-        server->Add(&thName[0], new DviSessionUpnp(aNif.Address(), server->Port()));
+        server->Add(&thName[0], new DviSessionUpnp(aNif.Address(), server->Port(), *this));
     }
     return server;
+}
+
+TBool DviServerUpnp::RedirectUri(const Brx& aUri, Brn& aRedirectTo)
+{
+    if (aUri == iRedirectUriRequested) {
+        aRedirectTo.Set(iRedirectUriRedirectedTo);
+        return true;
+    }
+    return false;
 }

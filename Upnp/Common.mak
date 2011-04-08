@@ -12,6 +12,7 @@ deviceCs = Device$(dirsep)Services$(dirsep)Cs$(dirsep)
 objects_core = $(objdir)Ascii.$(objext) \
                $(objdir)AsyncC.$(objext) \
                $(objdir)AsyncPrivate.$(objext) \
+               $(objdir)Bonjour.$(objext) \
                $(objdir)Buffer.$(objext) \
       		   $(objdir)Discovery.$(objext) \
      		   $(objdir)Debug.$(objext) \
@@ -55,6 +56,12 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)Exception.$(objext) \
     		   $(objdir)Fifo.$(objext) \
     		   $(objdir)Http.$(objext) \
+    		   $(objdir)DNSCommon.$(objext) \
+    		   $(objdir)DNSDigest.$(objext) \
+    		   $(objdir)mDNS.$(objext) \
+    		   $(objdir)uDNS.$(objext) \
+    		   $(objdir)MdnsPlatform.$(objext) \
+    		   $(objdir)MdnsProvider.$(objext) \
     		   $(objdir)Maths.$(objext) \
     		   $(objdir)Md5.$(objext) \
     		   $(objdir)NetworkInterfaceList.$(objext) \
@@ -91,6 +98,7 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/Arch.h \
           $(inc_build)/C/Async.h \
           $(inc_build)/AsyncPrivate.h \
+          $(inc_build)/Bonjour.h \
           $(inc_build)/Cpp/Buffer.h \
           $(inc_build)/Cpp/Buffer.inl \
           $(inc_build)/Converter.h \
@@ -139,6 +147,9 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/FunctorCpiDevice.h \
           $(inc_build)/Cpp/FunctorMsg.h \
           $(inc_build)/Http.h \
+          $(inc_build)/Maths.h \
+          $(inc_build)/MdnsPlatform.h \
+          $(inc_build)/MdnsProvider.h \
           $(inc_build)/Network.h \
           $(inc_build)/NetworkInterfaceList.h \
           $(inc_build)/OsWrapper.h \
@@ -176,6 +187,8 @@ $(objdir)AsyncC.$(objext) : Public/C/AsyncC.cpp $(headers)
 	$(compiler)AsyncC.$(objext) -c $(cflags) $(includes) Public/C/AsyncC.cpp
 $(objdir)AsyncPrivate.$(objext) : ControlPoint/AsyncPrivate.cpp $(headers)
 	$(compiler)AsyncPrivate.$(objext) -c $(cflags) $(includes) ControlPoint/AsyncPrivate.cpp
+$(objdir)Bonjour.$(objext) : Bonjour/Bonjour.cpp $(headers)
+	$(compiler)Bonjour.$(objext) -c $(cflags) $(includes) Bonjour/Bonjour.cpp
 $(objdir)Buffer.$(objext) : Public/Cpp/Core/Buffer.cpp $(headers)
 	$(compiler)Buffer.$(objext) -c $(cflags) $(includes) Public/Cpp/Core/Buffer.cpp
 $(objdir)Converter.$(objext) : Utils/Converter.cpp $(headers)
@@ -262,6 +275,18 @@ $(objdir)Fifo.$(objext) : Utils/Fifo.cpp $(headers)
 	$(compiler)Fifo.$(objext) -c $(cflags) $(includes) Utils/Fifo.cpp
 $(objdir)Http.$(objext) : Network/Http.cpp $(headers)
 	$(compiler)Http.$(objext) -c $(cflags) $(includes) Network/Http.cpp
+$(objdir)DNSCommon.$(objext) : Bonjour/mDNSCore/DNSCommon.c $(headers)
+	$(compiler)DNSCommon.$(objext) -c $(cflags) $(includes) Bonjour/mDNSCore/DNSCommon.c
+$(objdir)DNSDigest.$(objext) : Bonjour/mDNSCore/DNSDigest.c $(headers)
+	$(compiler)DNSDigest.$(objext) -c $(cflags) $(includes) Bonjour/mDNSCore/DNSDigest.c
+$(objdir)mDNS.$(objext) : Bonjour/mDNSCore/mDNS.c $(headers)
+	$(compiler)mDNS.$(objext) -c $(cflags) $(includes) Bonjour/mDNSCore/mDNS.c
+$(objdir)uDNS.$(objext) : Bonjour/mDNSCore/uDNS.c $(headers)
+	$(compiler)uDNS.$(objext) -c $(cflags) $(includes) Bonjour/mDNSCore/uDNS.c
+$(objdir)MdnsPlatform.$(objext) : Bonjour/MdnsPlatform.cpp $(headers)
+	$(compiler)MdnsPlatform.$(objext) -c $(cflags) $(includes) Bonjour/MdnsPlatform.cpp
+$(objdir)MdnsProvider.$(objext) : Bonjour/MdnsProvider.cpp $(headers)
+	$(compiler)MdnsProvider.$(objext) -c $(cflags) $(includes) Bonjour/MdnsProvider.cpp
 $(objdir)Maths.$(objext) : Utils/Maths.cpp $(headers)
 	$(compiler)Maths.$(objext) -c $(cflags) $(includes) Utils/Maths.cpp
 $(objdir)Md5.$(objext) : Utils/md5.c $(headers)

@@ -39,7 +39,7 @@ DviDeviceUpnp::DviDeviceUpnp(DviDevice& aDevice)
     std::vector<NetworkInterface*>* subnetList = nifList.CreateSubnetList();
     for (TUint i=0; i<subnetList->size(); i++) {
         NetworkInterface* subnet = (*subnetList)[i];
-        AddListener(*subnet);
+        AddInterface(*subnet);
     }
     NetworkInterfaceList::DestroySubnetList(subnetList);
     iAliveTimer = new Timer(MakeFunctor(*this, &DviDeviceUpnp::SendAliveNotifications));
@@ -51,8 +51,8 @@ DviDeviceUpnp::~DviDeviceUpnp()
     delete iAliveTimer;
     iLock.Wait();
     Stack::NetworkInterfaceList().RemoveSubnetChangeListener(iSubnetChangeListenerId);
-    for (TUint i=0; i<iListeners.size(); i++) {
-        delete iListeners[i];
+    for (TUint i=0; i<iInterfaces.size(); i++) {
+        delete iInterfaces[i];
     }
     iSuppressScheduledEvents = true;
     iLock.Signal();
@@ -119,15 +119,15 @@ void DviDeviceUpnp::MsgSchedulerComplete(DeviceMsgScheduler* aScheduler)
     }
 }
 
-void DviDeviceUpnp::AddListener(const NetworkInterface& aNif)
+void DviDeviceUpnp::AddInterface(const NetworkInterface& aNif)
 {
     TIpAddress addr = aNif.Address();
     Bwh uriBase;
     TUint port = iServer->Port(addr);
     DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
     root->GetUriBase(uriBase, addr, port, *this);
-    DviDeviceUpnp::MulticastListener* listener = new DviDeviceUpnp::MulticastListener(*this, aNif, uriBase, port);
-    iListeners.push_back(listener);
+    DviDeviceUpnp::Nif* nif = new DviDeviceUpnp::Nif(*this, iDevice, aNif, uriBase, port);
+    iInterfaces.push_back(nif);
 }
 
 void DviDeviceUpnp::SubnetListChanged()
@@ -138,7 +138,7 @@ void DviDeviceUpnp::SubnetListChanged()
     }
 
     TBool update = false;
-	std::vector<MulticastListener*> pendingDelete;
+	std::vector<Nif*> pendingDelete;
     iLock.Wait();
     NetworkInterfaceList& interfaceList = Stack::NetworkInterfaceList();
     std::vector<NetworkInterface*>* subnetList = interfaceList.CreateSubnetList();
@@ -146,29 +146,29 @@ void DviDeviceUpnp::SubnetListChanged()
     TUint i = 0;
     iMsgSchedulers.clear();
     // remove listeners whose interface is no longer available
-    while (i<iListeners.size()) {
-        if (FindInterface(iListeners[i]->Interface(), nifList) != -1) {
+    while (i<iInterfaces.size()) {
+        if (FindInterface(iInterfaces[i]->Interface(), nifList) != -1) {
 			i++;
 		}
 		else {
-			iListeners[i]->SetPendingDelete();
-			pendingDelete.push_back(iListeners[i]);
-            iListeners.erase(iListeners.begin() + i);
+			iInterfaces[i]->SetPendingDelete();
+			pendingDelete.push_back(iInterfaces[i]);
+            iInterfaces.erase(iInterfaces.begin() + i);
         }
     }
 
 	
-	for (i=0; i<iListeners.size(); i++) {
-        if (FindInterface(iListeners[i]->Interface(), nifList) == -1) {
-            delete iListeners[i];
-            iListeners.erase(iListeners.begin() + i);
+	for (i=0; i<iInterfaces.size(); i++) {
+        if (FindInterface(iInterfaces[i]->Interface(), nifList) == -1) {
+            delete iInterfaces[i];
+            iInterfaces.erase(iInterfaces.begin() + i);
         }
     }
     // add listeners for new subnets
     for (i=0; i<subnetList->size(); i++) {
         NetworkInterface* subnet = (*subnetList)[i];
         if (FindListenerForSubnet(subnet->Subnet()) == -1) {
-            AddListener(*subnet);
+            AddInterface(*subnet);
             update = true;
         }
     }
@@ -205,8 +205,8 @@ TInt DviDeviceUpnp::FindInterface(TIpAddress aInterface, const std::vector<Netwo
 
 TInt DviDeviceUpnp::FindListenerForSubnet(TIpAddress aSubnet)
 {
-    for (TUint i=0; i<iListeners.size(); i++) {
-        if (iListeners[i]->Subnet() == aSubnet) {
+    for (TUint i=0; i<iInterfaces.size(); i++) {
+        if (iInterfaces[i]->Subnet() == aSubnet) {
             return i;
         }
     }
@@ -215,8 +215,8 @@ TInt DviDeviceUpnp::FindListenerForSubnet(TIpAddress aSubnet)
 
 TInt DviDeviceUpnp::FindListenerForInterface(TIpAddress aInterface)
 {
-    for (TUint i=0; i<iListeners.size(); i++) {
-        if (iListeners[i]->Interface() == aInterface) {
+    for (TUint i=0; i<iInterfaces.size(); i++) {
+        if (iInterfaces[i]->Interface() == aInterface) {
             return i;
         }
     }
@@ -234,7 +234,7 @@ void DviDeviceUpnp::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IR
             return;
         }
         if (iDevice.IsRoot()) {
-            const Brx& cachedXml = iListeners[index]->DeviceXml();
+            const Brx& cachedXml = iInterfaces[index]->DeviceXml();
             if (cachedXml.Bytes() > 0) {
                 xmlBuf.Set(cachedXml);
             }
@@ -242,8 +242,8 @@ void DviDeviceUpnp::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IR
         if (xmlBuf.Bytes() == 0) {
             GetDeviceXml(xml, aInterface);
             if (iDevice.IsRoot()) {
-                iListeners[index]->SetDeviceXml(xml);
-                xmlBuf.Set(iListeners[index]->DeviceXml());
+                iInterfaces[index]->SetDeviceXml(xml);
+                xmlBuf.Set(iInterfaces[index]->DeviceXml());
             }
             else {
                 xmlBuf.Set(xml);
@@ -295,14 +295,32 @@ void DviDeviceUpnp::Enable()
     ASSERT(Type().Bytes() > 0);
     ASSERT(Version() > 0);
     
-    for (TUint i=0; i<iListeners.size(); i++) {
-        DviDeviceUpnp::MulticastListener* listener = iListeners[i];
+    for (TUint i=0; i<iInterfaces.size(); i++) {
+        DviDeviceUpnp::Nif* nif = iInterfaces[i];
         Bwh uriBase;
         DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
-        listener->UpdateServerPort(*iServer);
-        root->GetUriBase(uriBase, listener->Interface(), listener->ServerPort(), *this);
-        listener->UpdateUriBase(uriBase);
-        listener->ClearDeviceXml();
+        nif->UpdateServerPort(*iServer);
+        root->GetUriBase(uriBase, nif->Interface(), nif->ServerPort(), *this);
+        nif->UpdateUriBase(uriBase);
+        nif->ClearDeviceXml();
+        if (iDevice.ResourceManager() != NULL) {
+            const TChar* name = NULL;
+            GetAttribute("FriendlyName", &name);
+            nif->BonjourRegister(name);
+            GetAttribute("MdnsHostName", &name);
+            if (name != NULL) {
+                DviStack::MdnsProvider()->MdnsSetHostName(name);
+                Bwh redirectedPath(iDevice.Udn().Bytes() + kProtocolName.Bytes() + iDevice.kResourceDir.Bytes() + 4);
+                redirectedPath.Append('/');
+                redirectedPath.Append(iDevice.Udn());
+                redirectedPath.Append('/');
+                redirectedPath.Append(kProtocolName);
+                redirectedPath.Append('/');
+                redirectedPath.Append(iDevice.kResourceDir);
+                redirectedPath.Append('/');
+                DviStack::ServerUpnp().Redirect(Brn("/"), redirectedPath);
+            }
+        }
     }
     iLock.Signal();
     SendAliveNotifications();
@@ -316,14 +334,23 @@ void DviDeviceUpnp::Disable(Functor& aComplete)
     for (i=0; i<iMsgSchedulers.size(); i++) {
         iMsgSchedulers[i]->Stop();
     }
-    iSubnetDisableCount = (TUint)iListeners.size();
+    iSubnetDisableCount = (TUint)iInterfaces.size();
     Functor functor = MakeFunctor(*this, &DviDeviceUpnp::SubnetDisabled);
     for (i=0; i<iSubnetDisableCount; i++) {
         Bwh uri;
-        GetUriDeviceXml(uri, iListeners[i]->UriBase());
-        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyByeBye(iDevice, *this, iListeners[i]->Interface(),
+        GetUriDeviceXml(uri, iInterfaces[i]->UriBase());
+        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyByeBye(iDevice, *this, iInterfaces[i]->Interface(),
                                                                     uri, iDevice.ConfigId(), functor));
     }
+    for (TUint i=0; i<iInterfaces.size(); i++) {
+        iInterfaces[i]->BonjourDeregister();
+    }
+    const TChar* name = NULL;
+    GetAttribute("MdnsHostName", &name);
+    if (name != NULL) {
+        DviStack::MdnsProvider()->MdnsSetHostName("");
+    }
+
     iLock.Signal();
 }
 
@@ -337,6 +364,10 @@ void DviDeviceUpnp::SetAttribute(const TChar* aKey, const TChar* aValue)
     if (strcmp(aKey, "TestUpdate") == 0) {
         SendUpdateNotifications();
         return;
+    }
+    if (strcmp(aKey, "MdnsHostName") == 0) {
+        ASSERT(iDevice.ResourceManager() != NULL);
+        ASSERT(DviStack::MdnsProvider() != NULL);
     }
 
     iAttributeMap.Set(aKey, aValue);
@@ -379,10 +410,10 @@ void DviDeviceUpnp::SendAliveNotifications()
         return;
     }
     iLock.Wait();
-    for (TUint i=0; i<iListeners.size(); i++) {
+    for (TUint i=0; i<iInterfaces.size(); i++) {
         Bwh uri;
-        GetUriDeviceXml(uri, iListeners[i]->UriBase());
-        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyAlive(iDevice, *this, iListeners[i]->Interface(),
+        GetUriDeviceXml(uri, iInterfaces[i]->UriBase());
+        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyAlive(iDevice, *this, iInterfaces[i]->Interface(),
                                                                    uri, iDevice.ConfigId()));
     }
     TUint maxUpdateTimeMs = Stack::InitParams().DvMaxUpdateTimeSecs() * 1000;
@@ -395,12 +426,12 @@ void DviDeviceUpnp::SendUpdateNotifications()
 {
     iLock.Wait();
     iAliveTimer->Cancel();
-    iUpdateCount = (TUint)iListeners.size();
+    iUpdateCount = (TUint)iInterfaces.size();
     Functor functor = MakeFunctor(*this, &DviDeviceUpnp::SubnetUpdated);
-    for (TUint i=0; i<iListeners.size(); i++) {
+    for (TUint i=0; i<iInterfaces.size(); i++) {
         Bwh uri;
-        GetUriDeviceXml(uri, iListeners[i]->UriBase());
-        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyUpdate(iDevice, *this, iListeners[i]->Interface(),
+        GetUriDeviceXml(uri, iInterfaces[i]->UriBase());
+        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyUpdate(iDevice, *this, iInterfaces[i]->Interface(),
                                                                     uri, iDevice.ConfigId(), functor));
     }
     iLock.Signal();
@@ -633,7 +664,7 @@ void DviDeviceUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddre
         TInt index = FindListenerForInterface(aInterface);
         if (index != -1) {
             Bwh uri;
-            GetUriDeviceXml(uri, iListeners[index]->UriBase());
+            GetUriDeviceXml(uri, iInterfaces[index]->UriBase());
             iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchAll(iDevice, *this, aEndpoint, aMx,
                                                                       uri, iDevice.ConfigId()));
         }
@@ -648,7 +679,7 @@ void DviDeviceUpnp::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAddr
         TInt index = FindListenerForInterface(aInterface);
         if (index != -1) {
             Bwh uri;
-            GetUriDeviceXml(uri, iListeners[index]->UriBase());
+            GetUriDeviceXml(uri, iInterfaces[index]->UriBase());
             iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchRoot(iDevice, *this, aEndpoint, aMx,
                                                                        uri, iDevice.ConfigId()));
         }
@@ -663,7 +694,7 @@ void DviDeviceUpnp::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAddr
         TInt index = FindListenerForInterface(aInterface);
         if (index != -1) {
             Bwh uri;
-            GetUriDeviceXml(uri, iListeners[index]->UriBase());
+            GetUriDeviceXml(uri, iInterfaces[index]->UriBase());
             iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchUuid(iDevice, *this, aEndpoint, aMx,
                                                                        uri, iDevice.ConfigId()));
         }
@@ -678,7 +709,7 @@ void DviDeviceUpnp::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, T
         TInt index = FindListenerForInterface(aInterface);
         if (index != -1) {
             Bwh uri;
-            GetUriDeviceXml(uri, iListeners[index]->UriBase());
+            GetUriDeviceXml(uri, iInterfaces[index]->UriBase());
             iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchDeviceType(iDevice, *this, aEndpoint, aMx,
                                                                              uri, iDevice.ConfigId()));
         }
@@ -697,7 +728,7 @@ void DviDeviceUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, 
                 TInt index = FindListenerForInterface(aInterface);
                 if (index != -1) {
                     Bwh uri;
-                    GetUriDeviceXml(uri, iListeners[index]->UriBase());
+                    GetUriDeviceXml(uri, iInterfaces[index]->UriBase());
                     iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchServiceType(iDevice, *this, aEndpoint, aMx, serviceType,
                                                                                       uri, iDevice.ConfigId()));
                 }
@@ -709,11 +740,13 @@ void DviDeviceUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, 
 }
 
 
-// DviDeviceUpnp::MulticastListener
+// DviDeviceUpnp::Nif
 
-DviDeviceUpnp::MulticastListener::MulticastListener(DviDeviceUpnp& aDevice, const NetworkInterface& aNif, Bwh& aUriBase, TUint aServerPort)
-    : iDevice(&aDevice)
+DviDeviceUpnp::Nif::Nif(DviDeviceUpnp& aDeviceUpnp, DviDevice& aDevice, const NetworkInterface& aNif, Bwh& aUriBase, TUint aServerPort)
+    : iDeviceUpnp(&aDeviceUpnp)
+    , iDevice(aDevice)
     , iServerPort(aServerPort)
+    , iBonjourWebPage(NULL)
 {
     iListener = &Stack::MulticastListenerClaim(aNif.Address());
     iId = iListener->AddMsearchHandler(this);
@@ -722,75 +755,110 @@ DviDeviceUpnp::MulticastListener::MulticastListener(DviDeviceUpnp& aDevice, cons
     aUriBase.TransferTo(iUriBase);
 }
 
-DviDeviceUpnp::MulticastListener::~MulticastListener()
+DviDeviceUpnp::Nif::~Nif()
 {
+    if (iBonjourWebPage != NULL) {
+        iBonjourWebPage->SetDisabled();
+        delete iBonjourWebPage;
+    }
     iListener->RemoveMsearchHandler(iId);
     Stack::MulticastListenerRelease(iInterface);
 }
 
-TIpAddress DviDeviceUpnp::MulticastListener::Interface() const
+TIpAddress DviDeviceUpnp::Nif::Interface() const
 {
     return iListener->Interface();
 }
 
-TIpAddress DviDeviceUpnp::MulticastListener::Subnet() const
+TIpAddress DviDeviceUpnp::Nif::Subnet() const
 {
     return iSubnet;
 }
 
-const Brx& DviDeviceUpnp::MulticastListener::UriBase() const
+const Brx& DviDeviceUpnp::Nif::UriBase() const
 {
     ASSERT(iUriBase.Bytes() > 0);
     return iUriBase;
 }
 
-void DviDeviceUpnp::MulticastListener::UpdateServerPort(DviServerUpnp& aServer)
+void DviDeviceUpnp::Nif::UpdateServerPort(DviServerUpnp& aServer)
 {
     iServerPort = aServer.Port(iInterface);
 }
 
-void DviDeviceUpnp::MulticastListener::UpdateUriBase(Bwh& aUriBase)
+void DviDeviceUpnp::Nif::UpdateUriBase(Bwh& aUriBase)
 {
     aUriBase.TransferTo(iUriBase);
 }
 
-TUint DviDeviceUpnp::MulticastListener::ServerPort() const
+TUint DviDeviceUpnp::Nif::ServerPort() const
 {
     return iServerPort;
 }
 
-const Brx& DviDeviceUpnp::MulticastListener::DeviceXml() const
+const Brx& DviDeviceUpnp::Nif::DeviceXml() const
 {
     return iDeviceXml;
 }
 
-void DviDeviceUpnp::MulticastListener::SetDeviceXml(Brh& aXml)
+void DviDeviceUpnp::Nif::SetDeviceXml(Brh& aXml)
 {
     aXml.TransferTo(iDeviceXml);
 }
 
-void DviDeviceUpnp::MulticastListener::ClearDeviceXml()
+void DviDeviceUpnp::Nif::ClearDeviceXml()
 {
     Brh tmp;
     iDeviceXml.TransferTo(tmp);
 }
 
-void DviDeviceUpnp::MulticastListener::SetPendingDelete()
+void DviDeviceUpnp::Nif::SetPendingDelete()
 {
 	Stack::Mutex().Wait();
-	iDevice = NULL;
+	iDeviceUpnp = NULL;
 	Stack::Mutex().Signal();
 }
 
-DviDeviceUpnp* DviDeviceUpnp::MulticastListener::Device()
+void DviDeviceUpnp::Nif::BonjourRegister(const TChar* aName)
+{
+    if (aName != NULL) {
+        if (iBonjourWebPage == NULL) {
+            IMdnsProvider* mdnsProvider = DviStack::MdnsProvider();
+            if (mdnsProvider != NULL) {
+                iBonjourWebPage = new BonjourWebPage(*mdnsProvider);
+            }
+        }
+        if (iBonjourWebPage != NULL) {
+            Bwh path(iDevice.Udn().Bytes() + iDeviceUpnp->kProtocolName.Bytes() + iDevice.kResourceDir.Bytes() + 5);
+            path.Append('/');
+            path.Append(iDevice.Udn());
+            path.Append('/');
+            path.Append(iDeviceUpnp->kProtocolName);
+            path.Append('/');
+            path.Append(iDevice.kResourceDir);
+            path.Append('/');
+            path.PtrZ();
+            iBonjourWebPage->SetEnabled(aName, iInterface, iServerPort, (const TChar*)path.Ptr());
+        }
+    }
+}
+
+void DviDeviceUpnp::Nif::BonjourDeregister()
+{
+    if (iBonjourWebPage != NULL) {
+        iBonjourWebPage->SetDisabled();
+    }
+}
+
+DviDeviceUpnp* DviDeviceUpnp::Nif::Device()
 {
 	Stack::Mutex().Wait();
-	DviDeviceUpnp* device = iDevice;
+	DviDeviceUpnp* device = iDeviceUpnp;
 	Stack::Mutex().Signal();
 	return device;
 }
 
-void DviDeviceUpnp::MulticastListener::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx)
+void DviDeviceUpnp::Nif::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx)
 {
 	DviDeviceUpnp* device = Device();
 	if (device != NULL) {
@@ -798,7 +866,7 @@ void DviDeviceUpnp::MulticastListener::SsdpSearchAll(const Endpoint& aEndpoint, 
 	}
 }
 
-void DviDeviceUpnp::MulticastListener::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx)
+void DviDeviceUpnp::Nif::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx)
 {
     DviDeviceUpnp* device = Device();
 	if (device != NULL) {
@@ -806,7 +874,7 @@ void DviDeviceUpnp::MulticastListener::SsdpSearchRoot(const Endpoint& aEndpoint,
 	}
 }
 
-void DviDeviceUpnp::MulticastListener::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, const Brx& aUuid)
+void DviDeviceUpnp::Nif::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, const Brx& aUuid)
 {
     DviDeviceUpnp* device = Device();
 	if (device != NULL) {
@@ -814,7 +882,7 @@ void DviDeviceUpnp::MulticastListener::SsdpSearchUuid(const Endpoint& aEndpoint,
 	}
 }
 
-void DviDeviceUpnp::MulticastListener::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
+void DviDeviceUpnp::Nif::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
     DviDeviceUpnp* device = Device();
 	if (device != NULL) {
@@ -822,7 +890,7 @@ void DviDeviceUpnp::MulticastListener::SsdpSearchDeviceType(const Endpoint& aEnd
 	}
 }
 
-void DviDeviceUpnp::MulticastListener::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
+void DviDeviceUpnp::Nif::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
     DviDeviceUpnp* device = Device();
 	if (device != NULL) {
@@ -877,13 +945,14 @@ void DviDeviceUpnpXmlWriter::Write(TIpAddress aInterface)
         /* UPnP spec says to publish a relative url
            Intel device spy messes up resolution of this against the base
            (device xml) url so publish an absolute url instead */
-        for (TUint i=0; i<iDeviceUpnp.iListeners.size(); i++) {
-            if (iDeviceUpnp.iListeners[i]->Interface() == aInterface) {
-                iWriter.Write(iDeviceUpnp.iListeners[i]->UriBase());
+        for (TUint i=0; i<iDeviceUpnp.iInterfaces.size(); i++) {
+            if (iDeviceUpnp.iInterfaces[i]->Interface() == aInterface) {
+                iWriter.Write(iDeviceUpnp.iInterfaces[i]->UriBase());
                 break;
             }
         }
         iWriter.Write(DviDevice::kResourceDir);
+        iWriter.Write('/');
         iWriter.Write("</");
         iWriter.Write("presentationURL");
         iWriter.Write('>');

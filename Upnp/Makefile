@@ -69,6 +69,8 @@ copy_build_includes:
 	cp -u Api/Cpp/Core/*.h $(inc_build)/Cpp/Core
 	cp -u Api/Cpp/Std/*.h $(inc_build)/Cpp/Std
 	cp -u *.h $(inc_build)
+	cp -u Bonjour/*.h $(inc_build)
+	cp -u Bonjour/mDNSCore/*.h $(inc_build)
 	cp -u ControlPoint/*.h $(inc_build)
 	cp -u ControlPoint/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
 	cp -u ControlPoint/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
