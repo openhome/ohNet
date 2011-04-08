@@ -18,7 +18,7 @@ class CpDevices
 {
     static const TUint kTestIterations = 10;
 public:
-    CpDevices(const std::string& aTargetUdn);
+    CpDevices(const std::string& aTargetUdn, Semaphore& aAddedSem);
     ~CpDevices();
     void TestActions();
     void TestSubscriptions();
@@ -28,11 +28,13 @@ private:
     Mutex iLock;
     std::string iTargetUdn;
     std::vector<CpDeviceCpp*> iList;
+    Semaphore& iAddedSem;
 };
 
-CpDevices::CpDevices(const std::string& aTargetUdn)
+CpDevices::CpDevices(const std::string& aTargetUdn, Semaphore& aAddedSem)
     : iLock("DLMX")
     , iTargetUdn(aTargetUdn)
+    , iAddedSem(aAddedSem)
 {
 }
 
@@ -67,6 +69,7 @@ void CpDevices::Added(CpDeviceCpp& aDevice)
         aDevice.AddRef();
     }
     iLock.Signal();
+    iAddedSem.Signal();
 }
 
 void CpDevices::Removed(CpDeviceCpp& /*aDevice*/)
@@ -92,8 +95,9 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
 
     Print("TestDvDeviceStd - starting\n");
 
+    Semaphore* sem = new Semaphore("SEM1", 0);
     DeviceBasic* device = new DeviceBasic;
-    CpDevices* deviceList = new CpDevices(device->Device().Udn());
+    CpDevices* deviceList = new CpDevices(device->Device().Udn(), *sem);
     FunctorCpDeviceCpp added = MakeFunctorCpDeviceCpp(*deviceList, &CpDevices::Added);
     FunctorCpDeviceCpp removed = MakeFunctorCpDeviceCpp(*deviceList, &CpDevices::Removed);
     std::string domainName("zapp.org");
@@ -101,9 +105,8 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     TUint ver = 1;
     CpDeviceListCppUpnpServiceType* list =
                 new CpDeviceListCppUpnpServiceType(domainName, serviceType, ver, added, removed);
-    Blocker* blocker = new Blocker;
-    blocker->Wait(aInitParams->MsearchTimeSecs());
-    delete blocker;
+    sem->Wait(30*1000); // allow up to 30s to find our one device
+    delete sem;
     try {
 		deviceList->TestActions();
 		deviceList->TestSubscriptions();
