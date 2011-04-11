@@ -284,7 +284,6 @@ namespace Zapp.Core
             {
                 ZappInitParamsSetUseLoopbackNetworkInterface(nativeParams);
             }
-            ZappInitParamsSetUseLoopbackNetworkInterface(nativeParams);
             return nativeParams;
         }
         internal static void FreeNativeInitParams(IntPtr aNativeInitParams)
