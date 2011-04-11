@@ -48,14 +48,14 @@ namespace Zapp.Device
     class ResourceWriter : IResourceWriter
     {
         private IntPtr iWriterData;
-        private DvDevice.CallbackWriteResourceBegin iWriteBegin;
-        private DvDevice.CallbackWriteResource iWriteResource;
-        private DvDevice.CallbackWriteResourceEnd iWriteEnd;
+        private DvDeviceStandard.CallbackWriteResourceBegin iWriteBegin;
+        private DvDeviceStandard.CallbackWriteResource iWriteResource;
+        private DvDeviceStandard.CallbackWriteResourceEnd iWriteEnd;
 
         public ResourceWriter(IntPtr aWriterData,
-                              DvDevice.CallbackWriteResourceBegin aWriteBegin,
-                              DvDevice.CallbackWriteResource aWriteResource,
-                              DvDevice.CallbackWriteResourceEnd aWriteEnd)
+                              DvDeviceStandard.CallbackWriteResourceBegin aWriteBegin,
+                              DvDeviceStandard.CallbackWriteResource aWriteResource,
+                              DvDeviceStandard.CallbackWriteResourceEnd aWriteEnd)
         {
             iWriterData = aWriterData;
             iWriteBegin = aWriteBegin;
@@ -92,19 +92,26 @@ namespace Zapp.Device
     public interface IDvDeviceFactory
     {
         /// <summary>
-        /// Creates a device capable of operating on any of the protocols the device
-        /// stack supports but with no services or attributes as yet
+        /// Constructor.  Creates a device without support for any protocol but capable of adding services or attributes.
+        /// This should only be used with CpDeviceDv.
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
         Zapp.Device.DvDevice CreateDevice(string aUdn);
 
         /// <summary>
         /// Constructor.  Creates a device capable of operating on any of the protocols the device
-        /// stack supports but with no services or attributes as yet
+        /// stack supports as standard but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.</param>
+        Zapp.Device.DvDevice CreateDeviceStandard(string aUdn);
+
+        /// <summary>
+        /// Constructor.  Creates a device capable of serving UI files and of operating on any of the
+        /// protocols the device stack supports as standard but with no services or attributes as yet
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
         /// <param name="aResourceManager">Allows the owner of a device to serve UI files.</param>
-        Zapp.Device.DvDevice CreateDevice(string aUdn, IResourceManager aResourceManager);
+        Zapp.Device.DvDevice CreateDeviceStandard(string aUdn, IResourceManager aResourceManager);
     }
 
     /// <summary>
@@ -123,8 +130,8 @@ namespace Zapp.Device
         }
 
         /// <summary>
-        /// Creates a device capable of operating on any of the protocols the device
-        /// stack supports but with no services or attributes as yet
+        /// Constructor.  Creates a device without support for any protocol but capable of adding services or attributes.
+        /// This should only be used with CpDeviceDv.
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
         public Zapp.Device.DvDevice CreateDevice(string aUdn)
@@ -133,23 +140,31 @@ namespace Zapp.Device
         }
 
         /// <summary>
-        /// Creates a device capable of operating on any of the protocols the device
-        /// stack supports but with no services or attributes as yet
+        /// Constructor.  Creates a device capable of operating on any of the protocols the device
+        /// stack supports as standard but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.</param>
+        public Zapp.Device.DvDevice CreateDeviceStandard(string aUdn)
+        {
+            return new DvDeviceStandard(aUdn);
+        }
+
+        /// <summary>
+        /// Constructor.  Creates a device capable of serving UI files and of operating on any of the
+        /// protocols the device stack supports as standard but with no services or attributes as yet
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
         /// <param name="aResourceManager">Allows the owner of a device to serve UI files</param>
-        public Zapp.Device.DvDevice CreateDevice(string aUdn, IResourceManager aResourceManager)
+        public Zapp.Device.DvDevice CreateDeviceStandard(string aUdn, IResourceManager aResourceManager)
         {
-            return new DvDevice(aUdn, aResourceManager);
+            return new DvDeviceStandard(aUdn, aResourceManager);
         }
     }
     
     public class DvDevice : IDisposable
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr DvDeviceCreateNoResources(char* aUdn);
-        [DllImport("ZappUpnp")]
-        static extern unsafe IntPtr DvDeviceCreate(char* aUdn, CallbackResourceManager aResourceManager, IntPtr aPtr);
+        static extern unsafe IntPtr DvDeviceCreate(char* aUdn);
         [DllImport("ZappUpnp")]
         static extern void DvDeviceDestroy(IntPtr aDevice);
         [DllImport("ZappUpnp")]
@@ -171,58 +186,24 @@ namespace Zapp.Device
 
         public delegate void Callback();
         private delegate void DisableCompleted(IntPtr aPtr);
-        public unsafe delegate void CallbackWriteResourceBegin(IntPtr aPtr, int aTotalBytes, char* aMimeType);
-        public delegate void CallbackWriteResource(IntPtr aPtr, byte[] aData, int aBytes);
-        public delegate void CallbackWriteResourceEnd(IntPtr aPtr);
-        private unsafe delegate void CallbackResourceManager(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aWriterData,
-                                                             CallbackWriteResourceBegin aWriteBegin,
-                                                             CallbackWriteResource aWriteResource,
-                                                             CallbackWriteResourceEnd aWriteEnd);
 
-        private IntPtr iHandle;
-        private GCHandle iGch;
-        private IResourceManager iResourceManager;
-        private CallbackResourceManager iCallbackResourceManager;
+        protected IntPtr iHandle;
+        protected GCHandle iGch;
 
         /// <summary>
-        /// Constructor.  Creates a device capable of operating on any of the protocols the device
-        /// stack supports but with no services or attributes as yet
+        /// Constructor.  Creates a device without support for any protocol but capable of adding services or attributes.
+        /// This should only be used with CpDeviceDv.
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.  The caller is responsible for calculating/assigning this</param>
         public unsafe DvDevice(string aUdn)
         {
             char* udn = (char*)Marshal.StringToHGlobalAnsi(aUdn).ToPointer();
-            iHandle = DvDeviceCreateNoResources(udn);
+            iHandle = DvDeviceCreate(udn);
             Marshal.FreeHGlobal((IntPtr)udn);
         }
 
-        /// <summary>
-        /// Constructor.  Creates a device capable of operating on any of the protocols the device
-        /// stack supports but with no services or attributes as yet
-        /// </summary>
-        /// <param name="aUdn">Universally unique identifier.  The caller is responsible for calculating/assigning this</param>
-        /// <param name="aResourceManager">Allows the owner of a device to serve UI files</param>
-        public unsafe DvDevice(string aUdn, IResourceManager aResourceManager)
+        protected DvDevice()
         {
-            iResourceManager = aResourceManager;
-            iGch = GCHandle.Alloc(this);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            char* udn = (char*)Marshal.StringToHGlobalAnsi(aUdn).ToPointer();
-            iCallbackResourceManager = new CallbackResourceManager(WriteResource);
-            iHandle = DvDeviceCreate(udn, iCallbackResourceManager, ptr);
-            Marshal.FreeHGlobal((IntPtr)udn);
-        }
-
-        private static unsafe void WriteResource(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aWriterData,
-                                                 CallbackWriteResourceBegin aWriteBegin,
-                                                 CallbackWriteResource aWriteResource,
-                                                 CallbackWriteResourceEnd aWriteEnd)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aUserData);
-            DvDevice self = (DvDevice)gch.Target;
-            string uriTail = Marshal.PtrToStringAnsi((IntPtr)aUriTail);
-            ResourceWriter writer = new ResourceWriter(aWriterData, aWriteBegin, aWriteResource, aWriteEnd);
-            writer.Write(self.iResourceManager, uriTail, aInterface);
         }
 
         /// <summary>
@@ -369,6 +350,66 @@ namespace Zapp.Device
             {
                 iGch.Free();
             }
+        }
+    }
+
+    public class DvDeviceStandard : DvDevice
+    {
+        [DllImport("ZappUpnp")]
+        static extern unsafe IntPtr DvDeviceStandardCreateNoResources(char* aUdn);
+        [DllImport("ZappUpnp")]
+        static extern unsafe IntPtr DvDeviceStandardCreate(char* aUdn, CallbackResourceManager aResourceManager, IntPtr aPtr);
+
+        public unsafe delegate void CallbackWriteResourceBegin(IntPtr aPtr, int aTotalBytes, char* aMimeType);
+        public delegate void CallbackWriteResource(IntPtr aPtr, byte[] aData, int aBytes);
+        public delegate void CallbackWriteResourceEnd(IntPtr aPtr);
+        private unsafe delegate void CallbackResourceManager(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aWriterData,
+                                                             CallbackWriteResourceBegin aWriteBegin,
+                                                             CallbackWriteResource aWriteResource,
+                                                             CallbackWriteResourceEnd aWriteEnd);
+
+        private IResourceManager iResourceManager;
+        private CallbackResourceManager iCallbackResourceManager;
+
+        /// <summary>
+        /// Constructor.  Creates a device capable of operating on any of the protocols the device
+        /// stack supports as standard but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.  The caller is responsible for calculating/assigning this</param>
+        public unsafe DvDeviceStandard(string aUdn)
+        {
+            char* udn = (char*)Marshal.StringToHGlobalAnsi(aUdn).ToPointer();
+            iHandle = DvDeviceStandardCreateNoResources(udn);
+            Marshal.FreeHGlobal((IntPtr)udn);
+        }
+
+        /// <summary>
+        /// Constructor.  Creates a device capable of serving UI files and of operating on any of the
+        /// protocols the device stack supports as standard but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.  The caller is responsible for calculating/assigning this</param>
+        /// <param name="aResourceManager">Allows the owner of a device to serve UI files</param>
+        public unsafe DvDeviceStandard(string aUdn, IResourceManager aResourceManager)
+        {
+            iResourceManager = aResourceManager;
+            iGch = GCHandle.Alloc(this);
+            IntPtr ptr = GCHandle.ToIntPtr(iGch);
+            char* udn = (char*)Marshal.StringToHGlobalAnsi(aUdn).ToPointer();
+            iCallbackResourceManager = new CallbackResourceManager(WriteResource);
+            iHandle = DvDeviceStandardCreate(udn, iCallbackResourceManager, ptr);
+            Marshal.FreeHGlobal((IntPtr)udn);
+        }
+
+        private static unsafe void WriteResource(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aWriterData,
+                                                 CallbackWriteResourceBegin aWriteBegin,
+                                                 CallbackWriteResource aWriteResource,
+                                                 CallbackWriteResourceEnd aWriteEnd)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aUserData);
+            DvDeviceStandard self = (DvDeviceStandard)gch.Target;
+            string uriTail = Marshal.PtrToStringAnsi((IntPtr)aUriTail);
+            ResourceWriter writer = new ResourceWriter(aWriterData, aWriteBegin, aWriteResource, aWriteEnd);
+            writer.Write(self.iResourceManager, uriTail, aInterface);
         }
     }
 }

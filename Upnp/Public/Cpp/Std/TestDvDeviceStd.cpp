@@ -67,9 +67,9 @@ void CpDevices::Added(CpDeviceCpp& aDevice)
     if (aDevice.Udn() == iTargetUdn) {
         iList.push_back(&aDevice);
         aDevice.AddRef();
+        iAddedSem.Signal();
     }
     iLock.Signal();
-    iAddedSem.Signal();
 }
 
 void CpDevices::Removed(CpDeviceCpp& /*aDevice*/)

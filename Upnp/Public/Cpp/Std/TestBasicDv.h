@@ -3,7 +3,7 @@
 
 namespace Zapp {
 
-class DvDeviceStd;
+class DvDeviceStdStandard;
 class ProviderTestBasic;
     
 class DeviceBasic
@@ -11,9 +11,9 @@ class DeviceBasic
 public:
     DeviceBasic();
     ~DeviceBasic();
-    DvDeviceStd& Device();
+    DvDeviceStdStandard& Device();
 private:
-    DvDeviceStd* iDevice;
+    DvDeviceStdStandard* iDevice;
     ProviderTestBasic* iTestBasic;
 };
 

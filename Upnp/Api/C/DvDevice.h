@@ -83,29 +83,15 @@ typedef void (*ZappCallbackResourceManager)(void* aUserData, const char* aUriTai
 
 
 /**
- * Constructor.  Creates a device capable of operating on any of the protocols the device
- * stack supports but with no services or attributes as yet
+ * Constructor.  Creates a device ready to have services or attributes added.
+ * Addition of any protocols to operate over is the responsibility of any sub-classes.
  *
  * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
  *                    calculating/assigning this
  *
  * @return  Handle to the new device
  */
-DllExport DvDeviceC DvDeviceCreateNoResources(const char* aUdn);
-
-/**
- * Constructor.  Creates a device capable of serving UI files an of operating on any of the
- * protocols the device stack supports but with no services or attributes as yet
- *
- * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
- *                    calculating/assigning this
- * @param[in] aResourceManager  Callback which will be run when a client requests a file the
- *                              device itself cannot deliver
- * @param[in] aPtr    Data to be passed to the aResourceManager callback
- *
- * @return  Handle to the new device
- */
-DllExport DvDeviceC DvDeviceCreate(const char* aUdn, ZappCallbackResourceManager aResourceManager, void* aPtr);
+DllExport DvDeviceC DvDeviceCreate(const char* aUdn);
 
 /**
  * Destroy a device.
@@ -189,6 +175,31 @@ DllExport void DvDeviceSetAttribute(DvDeviceC aDevice, const char* aKey, const c
  * @param[in] aXml     One or more tag+value blocks
  */
 DllExport void DvDeviceSetXmlExtension(DvDeviceC aDevice, const char* aXml);
+
+/**
+ * Constructor.  Creates a device capable of operating on any of the protocols the device
+ * stack supports as standard but with no services or attributes as yet.
+ *
+ * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
+ *                    calculating/assigning this
+ *
+ * @return  Handle to the new device
+ */
+DllExport DvDeviceC DvDeviceStandardCreateNoResources(const char* aUdn);
+
+/**
+ * Constructor.  Creates a device capable of serving UI files and of operating on any of the
+ * protocols the device stack supports as standard but with no services or attributes as yet.
+ *
+ * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
+ *                    calculating/assigning this
+ * @param[in] aResourceManager  Callback which will be run when a client requests a file the
+ *                              device itself cannot deliver
+ * @param[in] aPtr    Data to be passed to the aResourceManager callback
+ *
+ * @return  Handle to the new device
+ */
+DllExport DvDeviceC DvDeviceStandardCreate(const char* aUdn, ZappCallbackResourceManager aResourceManager, void* aPtr);
 
 /* @} */
 

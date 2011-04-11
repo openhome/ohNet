@@ -77,7 +77,7 @@ public:
 private:
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
 private:
-    DvDevice* iDevice;
+    DvDeviceStandard* iDevice;
     ProviderLights* iLights;
     Brh iConfigDir;
 };
@@ -236,7 +236,7 @@ DeviceLights::DeviceLights(TUint aMode, const Brx& aConfigDir)
     : iConfigDir(aConfigDir)
 {
     RandomiseUdn(gDeviceName);
-    iDevice = new DvDevice(gDeviceName, *this);
+    iDevice = new DvDeviceStandard(gDeviceName, *this);
     iDevice->SetAttribute("Upnp.Domain", "zapp.org");
     iDevice->SetAttribute("Upnp.Type", "TestLights");
     iDevice->SetAttribute("Upnp.Version", "1");

@@ -127,7 +127,7 @@ namespace Zapp
     class DeviceBasic : IDisposable
     {
         public static string gDeviceName = "device";
-        private DvDevice iDevice;
+        private DvDeviceStandard iDevice;
         private DvProviderZappOrgTestBasic1 iTestBasic;
 
         private static void RandomiseUdn(out string aUdn)
@@ -141,7 +141,7 @@ namespace Zapp
         public DeviceBasic()
         {
             RandomiseUdn(out gDeviceName);
-            iDevice = new DvDevice(gDeviceName);
+            iDevice = new DvDeviceStandard(gDeviceName);
             iDevice.SetAttribute("Upnp.Domain", "zapp.org");
             iDevice.SetAttribute("Upnp.Type", "Test");
             iDevice.SetAttribute("Upnp.Version", "1");

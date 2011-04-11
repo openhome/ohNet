@@ -40,7 +40,7 @@ public:
     DeviceBasic();
     ~DeviceBasic();
 private:
-    DvDevice* iDevice;
+    DvDeviceStandard* iDevice;
     ProviderTestBasic* iTestBasic;
 };
 
@@ -179,7 +179,7 @@ static void RandomiseUdn(Bwh& aUdn)
 DeviceBasic::DeviceBasic()
 {
     RandomiseUdn(gDeviceName);
-    iDevice = new DvDevice(gDeviceName);
+    iDevice = new DvDeviceStandard(gDeviceName);
     iDevice->SetAttribute("Upnp.Domain", "zapp.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
@@ -340,9 +340,9 @@ void CpDevices::Added(CpDevice& aDevice)
     if (aDevice.Udn() == gDeviceName) {
         iList.push_back(&aDevice);
         aDevice.AddRef();
+        iAddedSem.Signal();
     }
     iLock.Signal();
-    iAddedSem.Signal();
 }
 
 void CpDevices::Removed(CpDevice& /*aDevice*/)

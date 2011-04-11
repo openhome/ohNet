@@ -169,7 +169,7 @@ static void RandomiseUdn(std::string& aUdn)
 DeviceBasic::DeviceBasic()
 {
     RandomiseUdn(gDeviceName);
-    iDevice = new DvDeviceStd(gDeviceName);
+    iDevice = new DvDeviceStdStandard(gDeviceName);
     iDevice->SetAttribute("Upnp.Domain", "zapp.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
@@ -186,7 +186,7 @@ DeviceBasic::~DeviceBasic()
     delete iDevice;
 }
 
-DvDeviceStd& DeviceBasic::Device()
+DvDeviceStdStandard& DeviceBasic::Device()
 {
     return *iDevice;
 }

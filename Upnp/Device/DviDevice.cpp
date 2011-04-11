@@ -40,14 +40,22 @@ void DviDevice::Construct(const Brx& aUdn)
     iParent = NULL;
     iProtocolDisableCount = 0;
     iSubscriptionId = 0;
-    iProtocols[0] = new DviDeviceUpnp(*this);
     DviDeviceMap::Add(*this);
+}
+
+void DviDevice::AddProtocol(IDvProtocol* aProtocol)
+{
+    // Not threadsafe.  Assumed to be called only from ctor of derived devices
+    iProtocols.push_back(aProtocol);
 }
 
 DviDevice::~DviDevice()
 {
-    delete iProtocols[0];
-    for (TUint i=0; i<iServices.size(); i++) {
+    TUint i = 0;
+    for (; i<iProtocols.size(); i++) {
+        delete iProtocols[i];
+    }
+    for (i=0; i<iServices.size(); i++) {
         iServices[i]->RemoveRef();
     }
     Stack::RemoveObject(this, "DviDevice");
@@ -109,7 +117,7 @@ void DviDevice::SetEnabled()
     iConfigUpdated = false;
     iShutdownSem.Clear();
     iLock.Signal();
-    for (TUint i=0; i<kNumProtocols; i++) {
+    for (TUint i=0; i<iProtocols.size(); i++) {
         iProtocols[i]->Enable();
 		// queue updates for all service properties
 		// nothing may have changed but individual subscriptions will spot this and skip any update message
@@ -129,7 +137,7 @@ void DviDevice::GetAttribute(const TChar* aKey, const TChar** aValue) const
     Brn key(aKey);
     Parser parser(key);
     Brn name = parser.Next('.');
-    for (TUint i=0; i<kNumProtocols; i++) {
+    for (TUint i=0; i<iProtocols.size(); i++) {
         IDvProtocol* protocol = iProtocols[i];
         if (protocol->ProtocolName() == name) {
             aKey += name.Bytes() + 1;
@@ -150,7 +158,7 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
     if (strlen(aKey) <4 || strncmp(aKey, "Test", 4) != 0) {
         ASSERT(iEnabled == eDisabled);
     }
-    for (TUint i=0; i<kNumProtocols; i++) {
+    for (TUint i=0; i<iProtocols.size(); i++) {
         IDvProtocol* protocol = iProtocols[i];
         if (protocol->ProtocolName() == name) {
             protocol->SetAttribute(aKey, aValue);
@@ -224,7 +232,7 @@ void DviDevice::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResou
         }
     }
     else {
-        for (TUint i=0; i<kNumProtocols; i++) {
+        for (TUint i=0; i<iProtocols.size(); i++) {
             IDvProtocol* protocol = iProtocols[i];
             if (protocol->ProtocolName() == dir) {
                 protocol->WriteResource(parser.Remaining(), aInterface, aResourceWriter);
@@ -278,7 +286,7 @@ IResourceManager* DviDevice::ResourceManager()
 void DviDevice::SetCustomData(const TChar* aProtocol, const TChar* aTag, void* aData)
 {
     Brn protocolName(aProtocol);
-    for (TUint i=0; i<kNumProtocols; i++) {
+    for (TUint i=0; i<iProtocols.size(); i++) {
         IDvProtocol* protocol = iProtocols[i];
         if (protocol->ProtocolName() == protocolName) {
             protocol->SetCustomData(aTag, aData);
@@ -312,13 +320,21 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
     ASSERT(iEnabled == eEnabled);
     iEnabled = eDisabling;
     iDisableComplete = aCompleted;
-    iProtocolDisableCount = kNumProtocols;
+    iProtocolDisableCount = iProtocols.size();
     if (!aLocked) {
         iLock.Signal();
     }
-    Functor functor = MakeFunctor(*this, &DviDevice::ProtocolDisabled);
-    for (TUint i=0; i<kNumProtocols; i++) {
-        iProtocols[i]->Disable(functor);
+    if (iProtocolDisableCount == 0) {
+        if (iDisableComplete) {
+            iDisableComplete();
+        }
+        iShutdownSem.Signal();
+    }
+    else {
+        Functor functor = MakeFunctor(*this, &DviDevice::ProtocolDisabled);
+        for (TUint i=0; i<iProtocols.size(); i++) {
+            iProtocols[i]->Disable(functor);
+        }
     }
 }
 
@@ -417,6 +433,26 @@ void AttributeMap::Set(const TChar* aKey, const TChar* aValue)
         iMap.insert(std::pair<Brn, AttributeMap::Attribute*>(attr->Key(), attr));
     }
     iLock.Signal();
+}
+
+
+// DviDeviceStandard
+
+DviDeviceStandard::DviDeviceStandard(const Brx& aUdn)
+    : DviDevice(aUdn)
+{
+    Construct();
+}
+
+DviDeviceStandard::DviDeviceStandard(const Brx& aUdn, IResourceManager& aResourceManager)
+    : DviDevice(aUdn, aResourceManager)
+{
+    Construct();
+}
+
+void DviDeviceStandard::Construct()
+{
+    AddProtocol(new DviDeviceUpnp(*this));
 }
 
 
