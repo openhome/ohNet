@@ -173,7 +173,7 @@ def JsOnly():
     jsfailed.writelines('<?xml version="1.0" encoding="UTF-8"?><testsuites><testsuite name="Test Proxy" tests="1" failures="1" time="0.01"><testcase name="No Results Output" time="0.01"><failure message="No XML Results Output from JS Proxy Tests."><![CDATA[No XML Results Output from JS Proxy Tests.]]></failure></testcase></testsuite></testsuites>')
     jsfailed.close()
     localAppData = os.environ.get('ProgramFiles')
-    uiPath = os.path.join(os.getcwd(), 'Public\Js\Zapp.Web.UI.Tests')
+    uiPath = os.path.join(os.getcwd(), 'Build\Include\Js\Tests')
     browser = os.path.join(localAppData, 'Safari\Safari.exe')
     testbasic = subprocess.Popen(['Build\Obj\Windows\TestDvTestBasic.exe', '-l', '-c', uiPath])
     devfinder = subprocess.Popen(['Build\Obj\Windows\TestDeviceFinder.exe', '-l', '-s', 'zapp.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)

@@ -89,21 +89,34 @@ private:
 class OhmHeaderAudio
 {
 public:
-    static const TUint kHeaderBytes = 46; // not including codec name
+    static const TUint kHeaderBytes = 50; // not including codec name
     static const TUint kReserved = 0;
     static const TUint kFlagHalt = 1;
     static const TUint kFlagLossless = 2;
-    static const TUint kFlagSync = 4;
+    static const TUint kFlagTimestamp = 4;
 
 public:
     OhmHeaderAudio();
     OhmHeaderAudio(TBool aHalt, 
                    TBool aLossless,
-                   TBool aSync,
                    TUint aSamples,
                    TUint aFrame,
-                   TUint aTxTimestampPrev,
-                   TUint aSyncTimestamp,
+                   TUint64 aSampleStart,
+                   TUint64 aSamplesTotal,
+                   TUint aSampleRate,
+                   TUint aBitRate,
+                   TUint aVolumeOffset,
+                   TUint aBitDepth,
+                   TUint aChannels,
+                   const Brx& aCodecName);
+    
+    OhmHeaderAudio(TBool aHalt, 
+                   TBool aLossless,
+                   TUint aSamples,
+                   TUint aFrame,
+                   TUint aNetworkTimestamp,
+                   TUint aMediaLatency,
+                   TUint aMediaTimestamp,
                    TUint64 aSampleStart,
                    TUint64 aSamplesTotal,
                    TUint aSampleRate,
@@ -118,10 +131,12 @@ public:
     
     TBool Halt() const {return (iHalt);}
     TBool Lossless() const {return (iLossless);}
-    TBool Sync() const {return (iSync);}
+    TBool Timestamped() const {return (iTimestamped);}
     TUint Samples() const {return (iSamples);}
     TUint Frame() const {return (iFrame);}
-    TUint TxTimestampPrev() const {return (iTxTimestampPrev);}
+    TUint NetworkTimestamp() const {return (iNetworkTimestamp);}
+    TUint MediaLatency() const {return (iMediaLatency);}
+    TUint MediaTimestamp() const {return (iMediaTimestamp);}
     TUint64 SampleStart() const {return (iSampleStart);}
     TUint64 SamplesTotal() const {return (iSamplesTotal);}
     TUint SampleRate() const {return (iSampleRate);}
@@ -137,30 +152,32 @@ public:
 private:
     //Offset    Bytes                   Desc
     //0         1                       Msg Header Bytes (without the codec name)
-    //1         1                       Flags (lsb first: halt flag, lossless flag, sync flag all other bits 0)
+    //1         1                       Flags (lsb first: halt flag, lossless flag, timestamped flag all other bits 0)
     //2         2                       Samples in this msg
     //4         4                       Frame
-    //8         4                       Sender timestamp of previous frame
-    //12        4                       Sync time of first sample in message
-    //16        8                       Sample Start (first sample's offset from the beginiing of this track)
-    //24        8                       Samples Total (total samples for this track)
-    //32        4                       Sample Rate
-    //36        4                       Bit Rate
-    //40		2						Volume Offset
-    //42        1                       Bit depth of audio (16, 24)
-    //43        1                       Channels
-    //44        1                       Reserved (must be zero)
-    //45        1                       Codec Name Bytes
-    //46        n                       Codec Name
-    //46 + n    Msg Total Bytes - Msg Header Bytes - Code Name Bytes (Sample data in big endian, channels interleaved, packed)
+    //8         4                       Network timestamp
+    //12        4                       Media Latency
+    //16        4                       Media Timestamp
+    //20        8                       Sample Start (first sample's offset from the beginiing of this track)
+    //28        8                       Samples Total (total samples for this track)
+    //36        4                       Sample Rate
+    //40        4                       Bit Rate
+    //44		2						Volume Offset
+    //46        1                       Bit depth of audio (16, 24)
+    //47        1                       Channels
+    //48        1                       Reserved (must be zero)
+    //49        1                       Codec Name Bytes
+    //50        n                       Codec Name
+    //50 + n    Msg Total Bytes - Msg Header Bytes - Code Name Bytes (Sample data in big endian, channels interleaved, packed)
 
     TBool iHalt;
     TBool iLossless;
-    TBool iSync;
+    TBool iTimestamped;
     TUint iSamples;
     TUint iFrame;
-    TUint iTxTimestampPrev;
-    TUint iSyncTimestamp;
+    TUint iNetworkTimestamp;
+    TUint iMediaLatency;
+    TUint iMediaTimestamp;
     TUint64 iSampleStart;
     TUint64 iSamplesTotal;
     TUint iSampleRate;
@@ -175,26 +192,29 @@ private:
 class OhmHeaderTrack
 {
 public:
-    static const TUint kHeaderBytes = 8;
+    static const TUint kHeaderBytes = 12;
 
 public:
     OhmHeaderTrack();
-    OhmHeaderTrack(const Brx& aUri, const Brx& aMetadata);
+    OhmHeaderTrack(TUint aSequence, const Brx& aUri, const Brx& aMetadata);
     
     void Internalise(IReader& aReader, const OhmHeader& aHeader);
     void Externalise(IWriter& aWriter) const;
     
+    TUint Sequence() const {return (iSequence);}
     TUint UriBytes() const {return (iUriBytes);}
     TUint MetadataBytes() const {return (iMetadataBytes);}
     TUint MsgBytes() const {return (kHeaderBytes + iUriBytes + iMetadataBytes);}
 
 private:
     //Offset    Bytes                   Desc
-    //0         4                       Uri Bytes (n)
-    //4         4                       Metadata Bytes (m)
-    //8         n                       n bytes of uri
-    //8 + n     m                       m bytes of didl lite metadata
+    //0         4                       Sequence
+    //4         4                       Uri Bytes (n)
+    //8         4                       Metadata Bytes (m)
+    //12        n                       n bytes of uri
+    //12 + n    m                       m bytes of didl lite metadata
 
+    TUint iSequence;
     TUint iUriBytes;
     TUint iMetadataBytes;
 };
@@ -202,23 +222,26 @@ private:
 class OhmHeaderMetatext
 {
 public:
-    static const TUint kHeaderBytes = 4;
+    static const TUint kHeaderBytes = 8;
 
 public:
     OhmHeaderMetatext();
-    OhmHeaderMetatext(const Brx& aMetatext);
+    OhmHeaderMetatext(TUint aSequence, const Brx& aMetatext);
     
     void Internalise(IReader& aReader, const OhmHeader& aHeader);
     void Externalise(IWriter& aWriter) const;
     
+    TUint Sequence() const {return (iSequence);}
     TUint MetatextBytes() const {return (iMetatextBytes);}
     TUint MsgBytes() const {return (kHeaderBytes + iMetatextBytes);}
 
 private:
     //Offset    Bytes                   Desc
-    //0         4                       Metatext Bytes (n)
-    //4         n                       n bytes of metatext
+    //0         4                       Sequence (n)
+    //4         4                       Metatext Bytes (n)
+    //8         n                       n bytes of metatext
 
+    TUint iSequence;
     TUint iMetatextBytes;
 };
 

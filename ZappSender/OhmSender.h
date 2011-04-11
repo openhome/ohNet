@@ -122,6 +122,8 @@ private:
     TBool iLossless;
     TUint64 iSampleStart;
     TUint64 iSamplesTotal;
+    TUint iSequenceTrack;
+    TUint iSequenceMetatext;
 };
 
 } // namespace Zapp

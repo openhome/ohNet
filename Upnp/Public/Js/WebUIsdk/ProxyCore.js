@@ -585,7 +585,7 @@ Zapp.ServiceProperty.prototype.setValue = function (value) {
                     this.value = Zapp.SoapRequest.readStringParameter(value);
                     break;
                 }
-            case "boolean":
+            case "bool":
                 {
                     this.value = Zapp.SoapRequest.readBoolParameter(value);
                     break;

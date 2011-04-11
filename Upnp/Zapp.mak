@@ -70,6 +70,12 @@ copy_build_includes:
 	if not exist $(inc_build)\Cpp mkdir $(inc_build)\Cpp
 	if not exist $(inc_build)\Cpp\Core mkdir $(inc_build)\Cpp\Core
 	if not exist $(inc_build)\Cpp\Std mkdir $(inc_build)\Cpp\Std
+    if not exist $(inc_build)\Js mkdir $(inc_build)\Js
+    if not exist $(inc_build)\Js\Tests mkdir $(inc_build)\Js\Tests
+    if not exist $(inc_build)\Js\Tests\css mkdir $(inc_build)\Js\Tests\css
+    if not exist $(inc_build)\Js\Tests\Scripts mkdir $(inc_build)\Js\Tests\Scripts
+    if not exist $(inc_build)\Js\Tests\extern mkdir $(inc_build)\Js\Tests\extern
+    if not exist $(inc_build)\Js\Tests\proxy mkdir $(inc_build)\Js\Tests\proxy
 	copy Api\*.h $(inc_build) > nul
 	copy Api\C\*.h $(inc_build)\C > nul
 	copy Api\Cpp\*.h $(inc_build)\Cpp > nul
@@ -100,7 +106,12 @@ copy_build_includes:
 	copy Thread\Thread.h $(inc_build) > nul
 	copy Utils\*.h $(inc_build) > nul
 	copy TestFramework\*.h $(inc_build) > nul
-
+    copy Public\Js\Zapp.Web.UI.Tests\*.html $(inc_build)\Js\Tests > nul
+    copy Public\Js\Zapp.Web.UI.Tests\css\*.css $(inc_build)\Js\Tests\css > nul
+    copy Public\Js\Zapp.Web.UI.Tests\Scripts\*.js $(inc_build)\Js\Tests\Scripts > nul
+    copy Public\Js\WebUIsdk\*.js $(inc_build)\Js\Tests\extern > nul
+    copy ControlPoint\Services\Js\CpZappOrgTestBasic1.js $(inc_build)\Js\Tests\proxy > nul
+    
 install :
 	if not exist "$(installdir)" mkdir "$(installdir)"
 	if not exist "$(installlibdir)" mkdir "$(installlibdir)"

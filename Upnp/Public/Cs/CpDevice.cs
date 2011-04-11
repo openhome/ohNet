@@ -99,6 +99,11 @@ namespace Zapp.ControlPoint
         }
     }
 
+    public interface ICpDeviceList : IDisposable
+    {
+        void Refresh();
+    }
+
     /// <summary>
     /// List of devices available on the current subnet
     /// </summary>
@@ -112,7 +117,7 @@ namespace Zapp.ControlPoint
     /// will define policy on how to detect devices etc.
     /// 
     /// Dispose() must be called before Core.Library.Close().</remarks>
-    public class CpDeviceList : IDisposable
+    public class CpDeviceList : ICpDeviceList, IDisposable
     {
         [DllImport ("ZappUpnp")]
         static extern void CpDeviceListDestroy(IntPtr aListHandle);
