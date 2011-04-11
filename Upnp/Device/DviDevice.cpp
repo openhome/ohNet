@@ -52,7 +52,7 @@ void DviDevice::AddProtocol(IDvProtocol* aProtocol)
 DviDevice::~DviDevice()
 {
     TUint i = 0;
-    for (; i<iProtocols.size(); i++) {
+    for (; i<(TUint)iProtocols.size(); i++) {
         delete iProtocols[i];
     }
     for (i=0; i<iServices.size(); i++) {
@@ -117,7 +117,7 @@ void DviDevice::SetEnabled()
     iConfigUpdated = false;
     iShutdownSem.Clear();
     iLock.Signal();
-    for (TUint i=0; i<iProtocols.size(); i++) {
+    for (TUint i=0; i<(TUint)iProtocols.size(); i++) {
         iProtocols[i]->Enable();
 		// queue updates for all service properties
 		// nothing may have changed but individual subscriptions will spot this and skip any update message
@@ -137,7 +137,7 @@ void DviDevice::GetAttribute(const TChar* aKey, const TChar** aValue) const
     Brn key(aKey);
     Parser parser(key);
     Brn name = parser.Next('.');
-    for (TUint i=0; i<iProtocols.size(); i++) {
+    for (TUint i=0; i<(TUint)iProtocols.size(); i++) {
         IDvProtocol* protocol = iProtocols[i];
         if (protocol->ProtocolName() == name) {
             aKey += name.Bytes() + 1;
@@ -158,7 +158,7 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
     if (strlen(aKey) <4 || strncmp(aKey, "Test", 4) != 0) {
         ASSERT(iEnabled == eDisabled);
     }
-    for (TUint i=0; i<iProtocols.size(); i++) {
+    for (TUint i=0; i<(TUint)iProtocols.size(); i++) {
         IDvProtocol* protocol = iProtocols[i];
         if (protocol->ProtocolName() == name) {
             protocol->SetAttribute(aKey, aValue);
@@ -232,7 +232,7 @@ void DviDevice::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResou
         }
     }
     else {
-        for (TUint i=0; i<iProtocols.size(); i++) {
+        for (TUint i=0; i<(TUint)iProtocols.size(); i++) {
             IDvProtocol* protocol = iProtocols[i];
             if (protocol->ProtocolName() == dir) {
                 protocol->WriteResource(parser.Remaining(), aInterface, aResourceWriter);
@@ -286,7 +286,7 @@ IResourceManager* DviDevice::ResourceManager()
 void DviDevice::SetCustomData(const TChar* aProtocol, const TChar* aTag, void* aData)
 {
     Brn protocolName(aProtocol);
-    for (TUint i=0; i<iProtocols.size(); i++) {
+    for (TUint i=0; i<(TUint)iProtocols.size(); i++) {
         IDvProtocol* protocol = iProtocols[i];
         if (protocol->ProtocolName() == protocolName) {
             protocol->SetCustomData(aTag, aData);
@@ -320,7 +320,7 @@ void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
     ASSERT(iEnabled == eEnabled);
     iEnabled = eDisabling;
     iDisableComplete = aCompleted;
-    iProtocolDisableCount = iProtocols.size();
+    iProtocolDisableCount = (TUint)iProtocols.size();
     if (!aLocked) {
         iLock.Signal();
     }
