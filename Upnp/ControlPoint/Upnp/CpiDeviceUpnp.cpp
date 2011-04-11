@@ -334,6 +334,7 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     TUint xmlWaitCount = 0;
     iLock.Wait();
     iActive = false;
+    iLock.Signal();
     Stack::NetworkInterfaceList().RemoveCurrentChangeListener(iInterfaceChangeListenerId);
     Stack::NetworkInterfaceList().RemoveSubnetChangeListener(iSubnetChangeListenerId);
     if (iMulticastListener != NULL) {
@@ -341,6 +342,7 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
         Stack::MulticastListenerRelease(iInterface);
     }
     delete iUnicastListener;
+    iLock.Wait();
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
         CpiDevice* device = reinterpret_cast<CpiDevice*>(it->second);

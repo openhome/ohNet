@@ -29,7 +29,7 @@ using namespace Zapp::TestFramework;
 class DeviceList
 {
 public:
-    DeviceList();
+    DeviceList(Semaphore& aAddedSem);
     ~DeviceList();
     void Stop();
     void TestActions();
@@ -39,6 +39,7 @@ public:
 private:
     Mutex iLock;
     std::vector<CpDeviceC> iList;
+    Semaphore& iAddedSem;
 };
 
 
@@ -53,8 +54,9 @@ static void removed(void* aPtr, CpDeviceC aDevice)
 }
 
 
-DeviceList::DeviceList()
+DeviceList::DeviceList(Semaphore& aAddedSem)
     : iLock("DLMX")
+    , iAddedSem(aAddedSem)
 {
 }
 
@@ -88,6 +90,7 @@ void DeviceList::Added(CpDeviceC aDevice)
     AutoMutex a(iLock);
     iList.push_back(aDevice);
     CpDeviceCAddRef(aDevice);
+    iAddedSem.Signal();
 }
 
 void DeviceList::Removed(CpDeviceC aDevice)
@@ -115,13 +118,13 @@ extern "C" void ZappTestRunner(ZappHandleInitParams aInitParams)
     ZappLibraryStartCombined();
 //    Debug::SetLevel(Debug::kService);
 
+    Semaphore* sem = new Semaphore("SEM1", 0);
     DeviceBasicC* device = new DeviceBasicC;
-    DeviceList* deviceList = new DeviceList;
+    DeviceList* deviceList = new DeviceList(*sem);;
     HandleCpDeviceList dlh = CpDeviceListCreateUpnpServiceType("zapp.org", "TestBasic", 1,
                                                                added, deviceList, removed, deviceList);
-    Blocker* blocker = new Blocker;
-    blocker->Wait(ZappInitParamsMsearchTimeSecs(aInitParams));
-    delete blocker;
+    sem->Wait(30*1000); // allow up to 30 seconds to fine our one device
+    delete sem;
 
     deviceList->TestActions();
     deviceList->TestSubscriptions();

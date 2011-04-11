@@ -173,6 +173,8 @@ OhmSender::OhmSender(DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAdd
     , iFrame(0)
     , iSampleStart(0)
     , iSamplesTotal(0)
+    , iSequenceTrack(0)
+    , iSequenceMetatext(0)
 {
     iProvider = new ProviderSender(iDevice);
     
@@ -376,11 +378,8 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
     
     OhmHeaderAudio headerAudio(false,  // halt
                                iLossless,
-                               false, // sync
                                samples,
                                iFrame,
-                               0, // timestamp
-                               0, // sync timestamp
                                iSampleStart,
                                iSamplesTotal,
                                iSampleRate,
@@ -822,7 +821,7 @@ void OhmSender::Send()
 
 void OhmSender::SendTrack()
 {
-    OhmHeaderTrack headerTrack(iTrackUri, iTrackMetadata);
+    OhmHeaderTrack headerTrack(iSequenceTrack, iTrackUri, iTrackMetadata);
     OhmHeader header(OhmHeader::kMsgTypeTrack, headerTrack.MsgBytes());
     
     WriterBuffer writer(iTxBuffer);
@@ -840,7 +839,7 @@ void OhmSender::SendTrack()
 
 void OhmSender::SendMetatext()
 {
-    OhmHeaderMetatext headerMetatext(iTrackMetatext);
+    OhmHeaderMetatext headerMetatext(iSequenceMetatext, iTrackMetatext);
     OhmHeader header(OhmHeader::kMsgTypeMetatext, headerMetatext.MsgBytes());
     
     WriterBuffer writer(iTxBuffer);

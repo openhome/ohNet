@@ -38,10 +38,15 @@ Zapp.SubscriptionManager = (function () {
     var subscriptionCounter = -1; // A unique identifier for each subscription (zero-based).
     var subscriptionTimeoutSec = -1; // The suggested timeout in seconds for each subscription.
 
+    var StartedFunction;
+    var Debug;
+    var SubscriptionTimeoutSeconds;
 
     // Public Variables
     var running = false; // A flag to state if the Subscription Manager is running
 
+    // Debug Variables
+    var connectionPreviouslyOpened = false;
 
     // Functions
 
@@ -83,7 +88,6 @@ Zapp.SubscriptionManager = (function () {
         if (DEBUG) {
             console.log("subscribeMessage/message: " + message);
         }
-
         return message;
     };
 
@@ -273,7 +277,7 @@ Zapp.SubscriptionManager = (function () {
 
         var properties = xmlDoc.getElementsByTagNameNS("*", "property"); // NON-IE
         if (properties) {
-            for (var i = properties.length - 1; i > -1; i--) {
+            for (var i = 0, count = properties.length; i < count; i++) {
                 var property = properties[i].childNodes[0];
                 if (property) {
                     setPropertyUpdate(subscriptionId, property.tagName, property.textContent);
@@ -343,9 +347,10 @@ Zapp.SubscriptionManager = (function () {
     * @method onSocketError
     */
     var onSocketError = function () {
-        if (DEBUG) {
-            console.log("onSocketError");
-        }
+        //   if (DEBUG) {
+        console.log("onSocketError");
+        alert("Socket Error");
+        //    }
     };
 
 
@@ -354,9 +359,27 @@ Zapp.SubscriptionManager = (function () {
     * @method onSocketClose
     */
     var onSocketClose = function () {
-        if (DEBUG) {
-            console.log("onSocketClose");
-        }
+        // if (DEBUG) {
+        console.log("onSocketClose");
+        stop();
+        if (connectionPreviouslyOpened)
+            alert("Lost Connection to Node: Connection had successully opened.  Reconnecting...");
+        else
+            alert("Lost Connection to Node: Connection has failed to open the websocket.  Reconnecting...");
+
+        connectionPreviouslyOpened = false;
+
+        setTimeout(function () { reconnect(); }, 1500);
+        //    }
+    };
+
+
+    /** 
+    * Reconnects to the Web Socket Server
+    * @method reconnect
+    */
+    var reconnect = function () {
+        start(StartedFunction, Debug, SubscriptionTimeoutSeconds);
     };
 
     /**
@@ -364,9 +387,13 @@ Zapp.SubscriptionManager = (function () {
     * @method onSocketOpen
     */
     var onSocketOpen = function () {
-        if (DEBUG) {
-            console.log("onSocketOpen");
-        }
+
+        //if (DEBUG) {
+        console.log("onSocketOpen");
+        // }
+        connectionPreviouslyOpened = true;
+
+        StartedFunction();
     };
 
     /**
@@ -391,6 +418,9 @@ Zapp.SubscriptionManager = (function () {
     * @param {Int} subscriptionTimeoutSeconds The suggested subscription timeout value.  Overrides the default.
     */
     var start = function (startedFunction, debugMode, subscriptionTimeoutSeconds) {
+        StartedFunction = startedFunction;
+        Debug = debugMode;
+        SubscriptionTimeoutSeconds = subscriptionTimeoutSeconds;
 
         if (debugMode) {
             DEBUG = debugMode;
@@ -401,16 +431,15 @@ Zapp.SubscriptionManager = (function () {
         var websocketSupported = ("WebSocket" in window);
         if (websocketSupported) { // NON-IE check if Websockets is supported
             var websocketServerLocation = "ws://" + window.location.hostname + ":54321/";
-            websocket = new WebSocket(websocketServerLocation, "upnp:event"); // TODO : Needs to acquire the port
-
             if (DEBUG) {
                 console.log("start/websocketServerLocation: " + websocketServerLocation);
             }
+            websocket = new WebSocket(websocketServerLocation, "upnp:event"); // TODO : Needs to acquire the port
 
             websocket.onmessage = onSocketMessage;
             websocket.onerror = onSocketError;
             websocket.onclose = onSocketClose;
-            websocket.onopen = startedFunction;
+            websocket.onopen = onSocketOpen;
         }
         else {
             if (DEBUG) {
@@ -437,7 +466,7 @@ Zapp.SubscriptionManager = (function () {
                     console.log("stop/service.subscriptionId: " + service.subscriptionId);
                 }
 
-                this.RemoveService(service.subscriptionId);
+                removeService(service.subscriptionId);
             }
             else {
                 if (DEBUG) {
@@ -528,8 +557,9 @@ Zapp.SubscriptionManager = (function () {
 * @namespace Zapp
 * @class ServiceProperty
 */
-Zapp.ServiceProperty = function (name) {
+Zapp.ServiceProperty = function (name, type) {
     this.name = name; // The name of the property
+    this.type = type;
     this.value = null; // The value of the property
     this.listeners = []; // A collection of listeners to notify of property value changes
 }
@@ -540,8 +570,37 @@ Zapp.ServiceProperty = function (name) {
 * @param {String | Int | Boolean} value The new value for the property
 */
 Zapp.ServiceProperty.prototype.setValue = function (value) {
+
     if (this.value != value) {
-        this.value = value;
+
+        switch (this.type) {
+
+            case "int":
+                {
+                    this.value = Zapp.SoapRequest.readIntParameter(value);
+                    break;
+                }
+            case "string":
+                {
+                    this.value = Zapp.SoapRequest.readStringParameter(value);
+                    break;
+                }
+            case "bool":
+                {
+                    this.value = Zapp.SoapRequest.readBoolParameter(value);
+                    break;
+                }
+            case "binary":
+                {
+                    this.value = Zapp.SoapRequest.readBinaryParameter(value);
+                    break;
+                }
+            default:
+                {
+                    throw "Invalid Property Type: '" + this.type + "'";
+                }
+        }
+
         for (var i = this.listeners.length - 1; i > -1; i--) {
             try {
                 this.listeners[i].call(this, value);
@@ -644,6 +703,7 @@ Zapp.SoapRequest.prototype.send = function (successFunction, errorFunction) {
 		    if (transport.responseXML.getElementsByTagName("faultcode").length > 0) {
 		        errorFunction(_this.getTransportErrorMessage(transport), transport);
 		    } else {
+
 		        var outParameters = transport.responseXML.getElementsByTagNameNS("*", _this.action + "Response")[0].childNodes;
 
 		        // Parse the output
@@ -658,6 +718,7 @@ Zapp.SoapRequest.prototype.send = function (successFunction, errorFunction) {
 		            result[outParameters[i].nodeName] = (nodeValue != "" ? nodeValue : null);
 		        }
 		        successFunction(result);
+
 		    }
 		},
 		function (transport) {
@@ -680,55 +741,43 @@ Zapp.SoapRequest.prototype.send = function (successFunction, errorFunction) {
 */
 Zapp.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorFunction) {
     var _this = this;
-    YUI().use("io-base", function (Y) {
-        var cfg = {
-            method: "POST",
-            data: _this.envelope,
-            headers: { 'SOAPAction': _this.getSoapAction() },
-            xdr: {
-                dataType: 'text/xml; charset=\"utf-8\"'
-            }
-        };
-
-        Y.io(_this.url, cfg);
-
-        Y.on('io:success', onSuccess, Y, true);
-        Y.on('io:failure', onFailure, Y, 'Transaction Failed');
-
-        function onSuccess(transactionid, response, arguments) {
-            // transactionid : The transaction's ID.
-            // response: The response object.
-            // arguments: Boolean value "true".
-            if (response.status) {
+    x$(document).xhr(_this.url,
+    {
+        async: true,
+        method: 'POST',
+        callback: function () {
+            if (this.status) {
                 if (successFunction) {
                     try {
-                        successFunction(response);
+                        successFunction(this);
                     } catch (e) {
-                        console.log("createAjaxRequest: " + e.message);
-                        if (errorFunction) { errorFunction(textStatus); };
+                        console.log("createAjaxRequest: " + e);
+                        if (errorFunction) { errorFunction(this); };
                     }
                 }
             } else {
-                console.log("createAjaxRequest: " + _this.url);
+                console.log("Invalid Status createAjaxRequest: " + _this.url);
                 if (errorFunction) { errorFunction(); };
             }
-        }
-
-        function onFailure(transactionid, response, arguments) {
-            // transactionid : The transaction's ID.
-            // response: The response object.  Only status and 
-            //           statusText are populated when the 
-            //           transaction is terminated due to abort 
-            //           or timeout.  The status will read
-            //           0, and statusText will return "timeout" 
-            //           or "abort" depending on the mode of 
-            //           termination.
-            // arguments: String "Transaction Failed".
+        },
+        headers:
+           [{ name: "SOAPAction", value: _this.getSoapAction() },
+            { name: "Content-Type", value: "application/x-www-form-urlencoded; charset=UTF-8"}]
+        ,
+        data: _this.envelope,
+        error: function () {
             if (errorFunction) {
-                errorFunction(response);
+                errorFunction(this);
+            }
+            else {
+                console.log('SOAP Message ERROR: ' + this.responseText);
             }
         }
     });
+
+
+
+
 
     //    var _this = this;
 
@@ -797,7 +846,7 @@ Zapp.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorF
     //        },
     //        contentType: "text/xml; charset=\"utf-8\""
     //    });
-};
+}
 
 
 /**
@@ -884,7 +933,7 @@ Zapp.SoapRequest.readStringParameter = function (value) {
 * @return {String} The binary value converted from base64
 */
 Zapp.SoapRequest.readBinaryParameter = function (value) {
-    return atob(value); // NON-IE
+    return atob(value);
 }
 
 /**
@@ -927,6 +976,7 @@ Zapp.SoapRequest.prototype.writeBinaryParameter = function (tagName, value) {
     this.writeParameter(tagName, (value ? btoa(value) : ""));
 }
 
+
 /**
 * Helper to format the tag and value into a xml tag and insert into the SOAP enveloper
 * @method writeParameter
@@ -936,3 +986,6 @@ Zapp.SoapRequest.prototype.writeBinaryParameter = function (tagName, value) {
 Zapp.SoapRequest.prototype.writeParameter = function (tagName, value) {
     this.envelope += "<" + tagName + ">" + value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</" + tagName + ">";
 }
+
+
+

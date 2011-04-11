@@ -2,9 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title></title>
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="-1">        
     <link href="css/test.css" rel="stylesheet" type="text/css" />
-    <script src="scripts/ohProxyCore.js" type="text/javascript"></script>
-    <script src="scripts/CpZappOrgTestBasic1.js" type="text/javascript"></script>
+    <script src="extern/xui-2.0.0.min.js" type="text/javascript"></script>
+    <script src="extern/ProxyCore.js" type="text/javascript"></script>
+    <script src="proxy/CpZappOrgTestBasic1.js" type="text/javascript"></script>
     <script src="scripts/yui-min.js" type="text/javascript"></script>
     <script src="scripts/io-base-min.js" type="text/javascript"></script>
     <script src="scripts/querystring-stringify-simple-min.js" type="text/javascript"></script>
@@ -22,7 +25,8 @@
     <script src="scripts/event-simulate-min.js" type="text/javascript"></script>
     <script src="scripts/test-min.js" type="text/javascript"></script>
     <script type="text/javascript">
-        var kAsyncTimeoutMS = 5000; //300;
+        var outputFile = true;
+        var kAsyncTimeoutMS = 15000; //300;
         var _Y;
          var proxy;
         function pageLoad() {
@@ -352,15 +356,22 @@
 
         function onComplete(results) {
             var resultsXML = this.getResults(_Y.Test.Format.JUnitXML);
-
-            proxy.WriteFile(resultsXML,"xout\\ProxyJsTest.xml",
-            function () {
+            if(outputFile)
+            {
+                proxy.WriteFile(resultsXML,"xout\\ProxyJsTest.xml",
+                function () {
                window.close();
-            },function() {
-               window.close();
-            });
+                },function() {
+                    window.close();
+                });
+                setTimeout(function() {   window.close();  },5000); // Close window after 5 seconds as a fall back
+            }
+            else
+            {
+                console.log(resultsXML);
+            }
             
-            setTimeout(function() {   window.close();  },5000); // Close window after 5 seconds as a fall back
+           
         } 
       
     </script>

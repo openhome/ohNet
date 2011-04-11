@@ -151,11 +151,8 @@ OhmHeaderAudio::OhmHeaderAudio()
 
 OhmHeaderAudio::OhmHeaderAudio(TBool aHalt, 
                                TBool aLossless,
-                               TBool aSync,
                                TUint aSamples,
                                TUint aFrame,
-                               TUint aTxTimestampPrev,
-                               TUint aSyncTimestamp,
                                TUint64 aSampleStart,
                                TUint64 aSamplesTotal,
                                TUint aSampleRate,
@@ -166,11 +163,47 @@ OhmHeaderAudio::OhmHeaderAudio(TBool aHalt,
                                const Brx& aCodecName)
     : iHalt(aHalt)
     , iLossless(aLossless)
-    , iSync(aSync)
+    , iTimestamped(false)
     , iSamples(aSamples)
     , iFrame(aFrame)
-    , iTxTimestampPrev(aTxTimestampPrev)
-    , iSyncTimestamp(aSyncTimestamp)
+    , iNetworkTimestamp(0)
+    , iMediaLatency(0)
+    , iMediaTimestamp(0)
+    , iSampleStart(aSampleStart)
+    , iSamplesTotal(aSamplesTotal)
+    , iSampleRate(aSampleRate)
+    , iBitRate(aBitRate)
+    , iVolumeOffset(aVolumeOffset)
+    , iBitDepth(aBitDepth)
+    , iChannels(aChannels)
+    , iCodecName(aCodecName)
+{
+    iAudioBytes = iSamples * iBitDepth * iChannels / 8;
+}
+    
+OhmHeaderAudio::OhmHeaderAudio(TBool aHalt, 
+                               TBool aLossless,
+                               TUint aSamples,
+                               TUint aFrame,
+                               TUint aNetworkTimestamp,
+                               TUint aMediaLatency,
+                               TUint aMediaTimestamp,
+                               TUint64 aSampleStart,
+                               TUint64 aSamplesTotal,
+                               TUint aSampleRate,
+                               TUint aBitRate,
+                               TUint aVolumeOffset,
+                               TUint aBitDepth,
+                               TUint aChannels,
+                               const Brx& aCodecName)
+    : iHalt(aHalt)
+    , iLossless(aLossless)
+    , iTimestamped(true)
+    , iSamples(aSamples)
+    , iFrame(aFrame)
+    , iNetworkTimestamp(aNetworkTimestamp)
+    , iMediaLatency(aMediaLatency)
+    , iMediaTimestamp(aMediaTimestamp)
     , iSampleStart(aSampleStart)
     , iSamplesTotal(aSamplesTotal)
     , iSampleRate(aSampleRate)
@@ -211,8 +244,9 @@ void OhmHeaderAudio::Internalise(IReader& aReader, const OhmHeader& aHeader)
 
     iSamples = readerBinary.ReadUintBe(2);
     iFrame = readerBinary.ReadUintBe(4);
-    iTxTimestampPrev = readerBinary.ReadUintBe(4);
-    iSyncTimestamp = readerBinary.ReadUintBe(4);
+    iNetworkTimestamp = readerBinary.ReadUintBe(4);
+    iMediaLatency = readerBinary.ReadUintBe(4);
+    iMediaTimestamp = readerBinary.ReadUintBe(4);
     iSampleStart = readerBinary.ReadUint64Be(8);
     iSamplesTotal = readerBinary.ReadUint64Be(8);
     iSampleRate = readerBinary.ReadUintBe(4);
@@ -257,8 +291,9 @@ void OhmHeaderAudio::Externalise(IWriter& aWriter) const
     writer.WriteUint8(flags);
     writer.WriteUint16Be(iSamples);
     writer.WriteUint32Be(iFrame);
-    writer.WriteUint32Be(iTxTimestampPrev);
-    writer.WriteUint32Be(iSyncTimestamp);
+    writer.WriteUint32Be(iNetworkTimestamp);
+    writer.WriteUint32Be(iMediaLatency);
+    writer.WriteUint32Be(iMediaTimestamp);
     writer.WriteUint64Be(iSampleStart);
     writer.WriteUint64Be(iSamplesTotal);
     writer.WriteUint32Be(iSampleRate);
@@ -280,10 +315,14 @@ void OhmHeaderAudio::Externalise(IWriter& aWriter) const
 // OhmHeaderTrack
 
 OhmHeaderTrack::OhmHeaderTrack()
+    : iSequence(0)
+    , iUriBytes(0)
+    , iMetadataBytes(0)
 {
 }
 
-OhmHeaderTrack::OhmHeaderTrack(const Brx& aUri, const Brx& aMetadata)
+OhmHeaderTrack::OhmHeaderTrack(TUint aSequence, const Brx& aUri, const Brx& aMetadata)
+    : iSequence(aSequence)
 {
     iUriBytes = aUri.Bytes();
     iMetadataBytes = aMetadata.Bytes();
@@ -295,6 +334,7 @@ void OhmHeaderTrack::Internalise(IReader& aReader, const OhmHeader& aHeader)
     
     ReaderBinary readerBinary(aReader);
 
+    iSequence = readerBinary.ReadUintBe(4);
     iUriBytes = readerBinary.ReadUintBe(4);
     iMetadataBytes = readerBinary.ReadUintBe(4);
 }
@@ -303,6 +343,7 @@ void OhmHeaderTrack::Externalise(IWriter& aWriter) const
 {
     WriterBinary writer(aWriter);
 
+    writer.WriteUint32Be(iSequence);
     writer.WriteUint32Be(iUriBytes);
     writer.WriteUint32Be(iMetadataBytes);
 }
@@ -310,10 +351,13 @@ void OhmHeaderTrack::Externalise(IWriter& aWriter) const
 // OhmHeaderMetatext
 
 OhmHeaderMetatext::OhmHeaderMetatext()
+    : iSequence(0)
+    , iMetatextBytes(0)
 {
 }
     
-OhmHeaderMetatext::OhmHeaderMetatext(const Brx& aMetatext)
+OhmHeaderMetatext::OhmHeaderMetatext(TUint aSequence, const Brx& aMetatext)
+    : iSequence(aSequence)
 {
     iMetatextBytes = aMetatext.Bytes();
 }
@@ -324,6 +368,7 @@ void OhmHeaderMetatext::Internalise(IReader& aReader, const OhmHeader& aHeader)
     
     ReaderBinary readerBinary(aReader);
 
+    iSequence = readerBinary.ReadUintBe(4);
     iMetatextBytes = readerBinary.ReadUintBe(4);
 }
 
@@ -331,6 +376,7 @@ void OhmHeaderMetatext::Externalise(IWriter& aWriter) const
 {
     WriterBinary writer(aWriter);
 
+    writer.WriteUint32Be(iSequence);
     writer.WriteUint32Be(iMetatextBytes);
 }
     
