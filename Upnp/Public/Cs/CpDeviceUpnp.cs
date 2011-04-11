@@ -4,24 +4,81 @@ using Zapp.Core;
 
 namespace Zapp.ControlPoint
 {
+    /// <summary>
+    /// Factory interface for creating any sort of Upnp device list.
+    /// </summary>
     public interface ICpUpnpDeviceListFactory
     {
+        /// <summary>
+        /// Create a device list that detects all UPnP devices.
+        /// </summary>
+        /// <param name="aAdded">Delegate which will be run when a new device is detected.
+        /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
+        /// This callback will never be run for a device that is already in the list.</param>
+        /// <param name="aRemoved">Delegatewhich will be run when a device is removed from the network.
+        /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
+        /// and remove the device from their local collection.
+        /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         ICpDeviceList CreateListAll(
             CpDeviceList.ChangeHandler aAdded,
             CpDeviceList.ChangeHandler aRemoved);
+
+        /// <summary>
+        /// Create a device list that detects all UPnP root devices.
+        /// </summary>
+        /// <param name="aAdded">Delegate which will be run when a new device is detected.
+        /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
+        /// This callback will never be run for a device that is already in the list.</param>
+        /// <param name="aRemoved">Delegatewhich will be run when a device is removed from the network.
+        /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
+        /// and remove the device from their local collection.
+        /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         ICpDeviceList CreateListRoot(
             CpDeviceList.ChangeHandler aAdded,
             CpDeviceList.ChangeHandler aRemoved);
+
+        /// <summary>
+        /// Create a device list that detects a UPnP devices with a specific Udn.
+        /// </summary>
+        /// <param name="aAdded">Delegate which will be run when a new device is detected.
+        /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
+        /// This callback will never be run for a device that is already in the list.</param>
+        /// <param name="aRemoved">Delegatewhich will be run when a device is removed from the network.
+        /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
+        /// and remove the device from their local collection.
+        /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         ICpDeviceList CreateListUuid(
             string aUuid,
             CpDeviceList.ChangeHandler aAdded,
             CpDeviceList.ChangeHandler aRemoved);
+
+        /// <summary>
+        /// Create a device list that detects UPnP devices of a specific type.
+        /// </summary>
+        /// <param name="aAdded">Delegate which will be run when a new device is detected.
+        /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
+        /// This callback will never be run for a device that is already in the list.</param>
+        /// <param name="aRemoved">Delegatewhich will be run when a device is removed from the network.
+        /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
+        /// and remove the device from their local collection.
+        /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         ICpDeviceList CreateListDeviceType(
             string aDomain,
             string aDeviceType,
             uint aVersion,
             CpDeviceList.ChangeHandler aAdded,
             CpDeviceList.ChangeHandler aRemoved);
+
+        /// <summary>
+        /// Create a device list that detects UPnP devices bearing a specific type of service.
+        /// </summary>
+        /// <param name="aAdded">Delegate which will be run when a new device is detected.
+        /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
+        /// This callback will never be run for a device that is already in the list.</param>
+        /// <param name="aRemoved">Delegatewhich will be run when a device is removed from the network.
+        /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
+        /// and remove the device from their local collection.
+        /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         ICpDeviceList CreateListServiceType(
             string aDomain,
             string aServiceType,
@@ -30,9 +87,13 @@ namespace Zapp.ControlPoint
             CpDeviceList.ChangeHandler aRemoved);
     }
 
+    /// <summary>
+    /// Default implementation of device list factory interface.
+    /// </summary>
     public class CpUpnpDeviceListFactory : ICpUpnpDeviceListFactory
     {
         private ControlPointStack iControlPointStack;
+
         public CpUpnpDeviceListFactory(
             ControlPointStack aControlPointStack)
         {
@@ -43,18 +104,50 @@ namespace Zapp.ControlPoint
             iControlPointStack = aControlPointStack;
         }
 
+        /// <summary>
+        /// Create a device list that detects all UPnP devices.
+        /// </summary>
+        /// <param name="aAdded">Delegate which will be run when a new device is detected.
+        /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
+        /// This callback will never be run for a device that is already in the list.</param>
+        /// <param name="aRemoved">Delegatewhich will be run when a device is removed from the network.
+        /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
+        /// and remove the device from their local collection.
+        /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         public ICpDeviceList CreateListAll(
             CpDeviceList.ChangeHandler aAdded,
             CpDeviceList.ChangeHandler aRemoved)
         {
             return new CpDeviceListUpnpAll(aAdded, aRemoved);
         }
+
+        /// <summary>
+        /// Create a device list that detects all UPnP root devices.
+        /// </summary>
+        /// <param name="aAdded">Delegate which will be run when a new device is detected.
+        /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
+        /// This callback will never be run for a device that is already in the list.</param>
+        /// <param name="aRemoved">Delegatewhich will be run when a device is removed from the network.
+        /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
+        /// and remove the device from their local collection.
+        /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         public ICpDeviceList CreateListRoot(
             CpDeviceList.ChangeHandler aAdded,
             CpDeviceList.ChangeHandler aRemoved)
         {
             return new CpDeviceListUpnpRoot(aAdded, aRemoved);
         }
+
+        /// <summary>
+        /// Create a device list that detects a UPnP devices with a specific Udn.
+        /// </summary>
+        /// <param name="aAdded">Delegate which will be run when a new device is detected.
+        /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
+        /// This callback will never be run for a device that is already in the list.</param>
+        /// <param name="aRemoved">Delegatewhich will be run when a device is removed from the network.
+        /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
+        /// and remove the device from their local collection.
+        /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         public ICpDeviceList CreateListUuid(
             string aUuid,
             CpDeviceList.ChangeHandler aAdded,
@@ -62,6 +155,17 @@ namespace Zapp.ControlPoint
         {
             return new CpDeviceListUpnpUuid(aUuid, aAdded, aRemoved);
         }
+
+        /// <summary>
+        /// Create a device list that detects UPnP devices of a specific type.
+        /// </summary>
+        /// <param name="aAdded">Delegate which will be run when a new device is detected.
+        /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
+        /// This callback will never be run for a device that is already in the list.</param>
+        /// <param name="aRemoved">Delegatewhich will be run when a device is removed from the network.
+        /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
+        /// and remove the device from their local collection.
+        /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         public ICpDeviceList CreateListDeviceType(
             string aDomain,
             string aDeviceType,
@@ -71,6 +175,17 @@ namespace Zapp.ControlPoint
         {
             return new CpDeviceListUpnpDeviceType(aDomain, aDeviceType, aVersion, aAdded, aRemoved);
         }
+
+        /// <summary>
+        /// Create a device list that detects UPnP devices bearing a specific type of service.
+        /// </summary>
+        /// <param name="aAdded">Delegate which will be run when a new device is detected.
+        /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
+        /// This callback will never be run for a device that is already in the list.</param>
+        /// <param name="aRemoved">Delegatewhich will be run when a device is removed from the network.
+        /// Clients who had previously stored a reference to the device in their aAdded callback should call RemoveRef()
+        /// and remove the device from their local collection.
+        /// Clients who had not previously claimed a reference to a device must not call ReleaseRef().</param>
         public ICpDeviceList CreateListServiceType(
             string aDomain,
             string aServiceType,

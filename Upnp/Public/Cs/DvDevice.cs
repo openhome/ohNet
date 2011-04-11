@@ -85,22 +85,62 @@ namespace Zapp.Device
             iWriteEnd(iWriterData);
         }
     }
-    
+
+    /// <summary>
+    /// A factory to create DvDevices.
+    /// </summary>
     public interface IDvDeviceFactory
     {
+        /// <summary>
+        /// Creates a device capable of operating on any of the protocols the device
+        /// stack supports but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.</param>
         Zapp.Device.DvDevice CreateDevice(string aUdn);
+
+        /// <summary>
+        /// Constructor.  Creates a device capable of operating on any of the protocols the device
+        /// stack supports but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.</param>
+        /// <param name="aResourceManager">Allows the owner of a device to serve UI files.</param>
+        Zapp.Device.DvDevice CreateDevice(string aUdn, IResourceManager aResourceManager);
     }
 
+    /// <summary>
+    /// The default factory for DvDevices. Creates devices normally.
+    /// </summary>
     public class DvDeviceFactory : IDvDeviceFactory
     {
         private Zapp.Core.DeviceStack iDeviceStack;
+
+        /// <summary>
+        /// Create a new device factory. Requires a running device stack.
+        /// </summary>
         public DvDeviceFactory(Zapp.Core.DeviceStack aDeviceStack)
         {
             iDeviceStack = aDeviceStack;
         }
+
+        /// <summary>
+        /// Creates a device capable of operating on any of the protocols the device
+        /// stack supports but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.</param>
         public Zapp.Device.DvDevice CreateDevice(string aUdn)
         {
             return new DvDevice(aUdn);
+        }
+
+        /// <summary>
+        /// Creates a device capable of operating on any of the protocols the device
+        /// stack supports but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.</param>
+        /// <param name="aResourceManager">Allows the owner of a device to serve UI files</param>
+        public Zapp.Device.DvDevice CreateDevice(string aUdn, IResourceManager aResourceManager)
+        {
+            return new DvDevice(aUdn, aResourceManager);
         }
     }
     

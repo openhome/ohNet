@@ -307,6 +307,10 @@ namespace Zapp.Core
 
 
 
+    /// <summary>
+    /// A control-point stack. Pre-requisite for creating a device-list
+    /// factory.
+    /// </summary>
     public class ControlPointStack
     {
         // Constructor is not public - obtain an instance from Library.
@@ -315,6 +319,9 @@ namespace Zapp.Core
         }
     }
 
+    /// <summary>
+    /// A device stack. Pre-requisite for creating a device factory.
+    /// </summary>
     public class DeviceStack
     {
         // Constructor is not public - obtain an instance from Library.
@@ -323,10 +330,22 @@ namespace Zapp.Core
         }
     }
 
+    /// <summary>
+    /// Combined control-point and device stacks.
+    /// </summary>
     public class CombinedStack
     {
+        /// <summary>
+        /// Provides access to the ControlPointStack to create a device-list
+        /// factory.
+        /// </summary>
         public ControlPointStack ControlPointStack { get; private set; }
+
+        /// <summary>
+        /// Provides access to the DeviceStack to create a device factory.
+        /// </summary>
         public DeviceStack DeviceStack { get; private set; }
+
         // Constructor is not public - obtain an instance from Library.
         internal CombinedStack()
         {
@@ -422,6 +441,9 @@ namespace Zapp.Core
         /// <summary>
         /// Start the library as a UPnP control point stack
         /// </summary>
+        /// <returns>
+        /// A control-point stack. Can be used to create device list factories.
+        /// </returns>
         public ControlPointStack StartCp()
         {
             ZappLibraryStartCp();
@@ -431,6 +453,9 @@ namespace Zapp.Core
         /// <summary>
         /// Start the library as a UPnP device stack
         /// </summary>
+        /// <returns>
+        /// A device stack. Can be used to create device factories.
+        /// </returns>
         public DeviceStack StartDv()
         {
             ZappLibraryStartDv();
