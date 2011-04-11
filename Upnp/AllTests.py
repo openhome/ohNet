@@ -29,11 +29,13 @@ def runBuilds():
     print '\nBuilds complete'
 
 def runTests():
-    testsToRun = [test for test in gAllTests if test.quick]
-    if gFullTests == 1:
-        testsToRun = [test for test in gAllTests]
-        if gNativeTestsOnly == 1:
-            testsToRun = [test for test in gAllTests if test.native]
+    testsToRun = list(gAllTests)
+    if gFullTests != 1:
+        # Suppress non-quick tests
+        testsToRun = [test for test in testsToRun if test.quick]
+    if gNativeTestsOnly == 1:
+        # Suppress non-native tests
+        testsToRun = [test for test in testsToRun if test.native]
     for test in testsToRun:
         print '\nTest: ' + test.name
         cmdLine = test.args
