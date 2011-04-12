@@ -40,7 +40,7 @@ public:
     DvDevices();
     ~DvDevices();
 private:
-    DviDevice* iDevices[2];
+    DviDeviceStandard* iDevices[2];
 };
 
 DvDevices::DvDevices()
@@ -50,7 +50,7 @@ DvDevices::DvDevices()
     RandomiseUdn(gNameDevice1_2);
     RandomiseUdn(gNameDevice2);
 
-    DviDevice* device = new DviDevice(Brn(gNameDevice1));
+    DviDeviceStandard* device = new DviDeviceStandard(Brn(gNameDevice1));
     iDevices[0] = device;
     device->SetAttribute("Upnp.Domain", "a.b.c");
     device->SetAttribute("Upnp.Type", "test1");
@@ -58,7 +58,7 @@ DvDevices::DvDevices()
     device->SetAttribute("Upnp.FriendlyName", (const TChar*)gNameDevice1.Ptr());
     device->AddService(new DviService("a.b.c", "service1", 1));
 
-    device = new DviDevice(Brn(gNameDevice1_1));
+    device = new DviDeviceStandard(Brn(gNameDevice1_1));
     iDevices[0]->AddDevice(device);
     device->SetAttribute("Upnp.Domain", "a.b.c");
     device->SetAttribute("Upnp.Type", "test3");
@@ -68,7 +68,7 @@ DvDevices::DvDevices()
     device->AddService(new DviService("a.b.c", "service3", 1));
     device->SetEnabled();
 
-    device = new DviDevice(Brn(gNameDevice1_2));
+    device = new DviDeviceStandard(Brn(gNameDevice1_2));
     iDevices[0]->AddDevice(device);
     device->SetAttribute("Upnp.Domain", "a.b.c");
     device->SetAttribute("Upnp.Type", "test4");
@@ -78,7 +78,7 @@ DvDevices::DvDevices()
     device->SetEnabled();
     iDevices[0]->SetEnabled();
 
-    device = new DviDevice(Brn(gNameDevice2));
+    device = new DviDeviceStandard(Brn(gNameDevice2));
     iDevices[1] = device;
     device->SetAttribute("Upnp.Domain", "a.b.c");
     device->SetAttribute("Upnp.Type", "test2");

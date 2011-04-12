@@ -23,7 +23,10 @@ class DviDevice;
 /**
  * Device
  *
- * Has a universally unique name and operates on 0..n protocols.
+ * Has a universally unique name.  Does not operate on any protocols itself but can be extended
+ * by sub-classes to add support for various protocols.
+ * Lack of protocol support makes this class unsuitable for most use cases but it may be useful for
+ * CpDeviceDv (where a control point device communicates directly with a DvDevice) and related classes.
  * Services are added by constructing DvProvider derived classes, passing a reference to a
  * DvDevice to their c'tor
  * @ingroup Device
@@ -32,22 +35,13 @@ class DllExportClass DvDevice
 {
 public:
     /**
-     * Constructor.  Creates a device capable of serving UI files and of operating on any of the
-     * protocols the device stack supports but with no services or attributes as yet
+     * Constructor.  Creates a device ready to have services or attributes added.
+     * Addition of any protocols to operate over is the responsibility of any sub-classes.
      *
      * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
      *                    calculating/assigning this
      */
     DvDevice(const Brx& aUdn);
-    /**
-     * Constructor.  Creates a device capable of operating on any of the protocols the device
-     * stack supports but with no services or attributes as yet
-     *
-     * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
-     *                    calculating/assigning this
-     * @param[in] aResourceManager  Allows the owner of a device to serve UI files
-     */
-    DvDevice(const Brx& aUdn, IResourceManager& aResourceManager);
     /**
      * Destructor.  Can be called regardless of whether the device is enabled or disabled.
      */
@@ -113,8 +107,40 @@ public:
      * @param[in] aXml  One or more tag+value blocks
      */
     void SetXmlExtension(const TChar* aXml);
-private:
+protected:
+    DvDevice();
+protected:
     DviDevice* iDevice;
+};
+
+/**
+ * Device
+ *
+ * Has a universally unique name and on all the protocols the device stack supports as standard.
+ * Services are added by constructing DvProvider derived classes, passing a reference to a
+ * DvDevice to their c'tor
+ * @ingroup Device
+ */
+class DvDeviceStandard : public DvDevice
+{
+public:
+    /**
+     * Constructor.  Creates a device capable of operating on any of the protocols the device
+     * stack supports as standard but with no services or attributes as yet
+     *
+     * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
+     *                    calculating/assigning this
+     */
+    DvDeviceStandard(const Brx& aUdn);
+    /**
+     * Constructor.  Creates a device capable of serving UI files and of operating on any of the
+     * protocols the device stack supports as standard but with no services or attributes as yet
+     *
+     * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
+     *                    calculating/assigning this
+     * @param[in] aResourceManager  Allows the owner of a device to serve UI files
+     */
+    DvDeviceStandard(const Brx& aUdn, IResourceManager& aResourceManager);
 };
 
 } // namespace Zapp

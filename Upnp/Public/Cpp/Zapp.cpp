@@ -381,7 +381,7 @@ void UpnpLibrary::Initialise(InitialisationParams* aInitParams)
 {
     UpnpLibrary::InitialiseMinimal(aInitParams);
     new Stack(aInitParams);
-    Debug::SetLevel(Debug::kDvInvocation);
+    //Debug::SetLevel(Debug::kError);
 }
 
 void UpnpLibrary::InitialiseMinimal(InitialisationParams* aInitParams)

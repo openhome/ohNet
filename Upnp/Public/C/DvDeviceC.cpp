@@ -4,6 +4,8 @@
 
 using namespace Zapp;
 
+// DviDeviceC
+
 DviDeviceC::DviDeviceC(const char* aUdn)
 {
 	Brn udn(aUdn);
@@ -13,12 +15,10 @@ DviDeviceC::DviDeviceC(const char* aUdn)
 	iResourceWriter = NULL;
 }
 
-DviDeviceC::DviDeviceC(const char* aUdn, ZappCallbackResourceManager aResourceManager, void* aPtr)
+DviDeviceC::DviDeviceC()
 {
-	Brn udn(aUdn);
-	iDevice = new DvDevice(udn, *this);
-	iResourceManager = aResourceManager;
-	iCallbackArg = aPtr;
+	iResourceManager = NULL;
+	iCallbackArg = NULL;
 	iResourceWriter = NULL;
 }
 
@@ -41,34 +41,47 @@ void DviDeviceC::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IReso
 }
 
 void DviDeviceC::WriteResourceBegin(void* aPtr, uint32_t aTotalBytes, const char* aMimeType)
-{
-	DviDeviceC* self = reinterpret_cast<DviDeviceC*>(aPtr);
+{ // static
+	DviDeviceStandardC* self = reinterpret_cast<DviDeviceStandardC*>(aPtr);
 	self->iResourceWriter->WriteResourceBegin(aTotalBytes, aMimeType);
 }
 
 void DviDeviceC::WriteResource(void* aPtr, const uint8_t* aData, uint32_t aBytes)
-{
-	DviDeviceC* self = reinterpret_cast<DviDeviceC*>(aPtr);
+{ // static
+	DviDeviceStandardC* self = reinterpret_cast<DviDeviceStandardC*>(aPtr);
 	self->iResourceWriter->WriteResource(aData, aBytes);
 }
 
 void DviDeviceC::WriteResourceEnd(void* aPtr)
-{
-	DviDeviceC* self = reinterpret_cast<DviDeviceC*>(aPtr);
+{ // static
+	DviDeviceStandardC* self = reinterpret_cast<DviDeviceStandardC*>(aPtr);
 	self->iResourceWriter->WriteResourceEnd();
 }
 
 
+// DviDeviceStandardC
 
-DvDeviceC DvDeviceCreateNoResources(const char* aUdn)
+DviDeviceStandardC::DviDeviceStandardC(const char* aUdn)
 {
-	DviDeviceC* wrapper = new DviDeviceC(aUdn);
-	return (DvDeviceC)wrapper;
+	Brn udn(aUdn);
+	iDevice = new DvDeviceStandard(udn);
 }
 
-DvDeviceC DvDeviceCreate(const char* aUdn, ZappCallbackResourceManager aResourceManager, void* aPtr)
+DviDeviceStandardC::DviDeviceStandardC(const char* aUdn, ZappCallbackResourceManager aResourceManager, void* aPtr)
 {
-	DviDeviceC* wrapper = new DviDeviceC(aUdn, aResourceManager, aPtr);
+	Brn udn(aUdn);
+	iDevice = new DvDeviceStandard(udn, *this);
+	iResourceManager = aResourceManager;
+	iCallbackArg = aPtr;
+	iResourceWriter = NULL;
+}
+
+
+// C APIs
+
+DvDeviceC DvDeviceCreate(const char* aUdn)
+{
+	DviDeviceC* wrapper = new DviDeviceC(aUdn);
 	return (DvDeviceC)wrapper;
 }
 
@@ -111,4 +124,16 @@ void DvDeviceSetAttribute(DvDeviceC aDevice, const char* aKey, const char* aValu
 void DvDeviceSetXmlExtension(DvDeviceC aDevice, const char* aXml)
 {
 	DviDeviceC::DeviceFromHandle(aDevice)->SetXmlExtension(aXml);
+}
+
+DvDeviceC DvDeviceStandardCreateNoResources(const char* aUdn)
+{
+	DviDeviceStandardC* wrapper = new DviDeviceStandardC(aUdn);
+	return (DvDeviceC)wrapper;
+}
+
+DvDeviceC DvDeviceStandardCreate(const char* aUdn, ZappCallbackResourceManager aResourceManager, void* aPtr)
+{
+	DviDeviceStandardC* wrapper = new DviDeviceStandardC(aUdn, aResourceManager, aPtr);
+	return (DvDeviceC)wrapper;
 }

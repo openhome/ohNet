@@ -141,7 +141,7 @@ DeviceBasicC::DeviceBasicC()
 {
     Bwh udn("device");
     RandomiseUdn(udn);
-    iDevice = DvDeviceCreate((const char*)udn.Ptr(), NULL, NULL);
+    iDevice = DvDeviceStandardCreateNoResources((const char*)udn.Ptr());
     DvDeviceSetAttribute(iDevice, "Upnp.Domain", "zapp.org");
     DvDeviceSetAttribute(iDevice, "Upnp.Type", "Test");
     DvDeviceSetAttribute(iDevice, "Upnp.Version", "1");

@@ -5,14 +5,16 @@
 
 using namespace Zapp;
 
+// DvDevice
+
 DvDevice::DvDevice(const Brx& aUdn)
 {
     iDevice = new DviDevice(aUdn);
 }
 
-DvDevice::DvDevice(const Brx& aUdn, IResourceManager& aResourceManager)
+DvDevice::DvDevice()
+    : iDevice(NULL)
 {
-    iDevice = new DviDevice(aUdn, aResourceManager);
 }
 
 DvDevice::~DvDevice()
@@ -60,4 +62,17 @@ void DvDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
 void DvDevice::SetXmlExtension(const TChar* aXml)
 {
     iDevice->SetXmlExtension(aXml);
+}
+
+
+// DvDeviceStandard
+
+DvDeviceStandard::DvDeviceStandard(const Brx& aUdn)
+{
+    iDevice = new DviDeviceStandard(aUdn);
+}
+
+DvDeviceStandard::DvDeviceStandard(const Brx& aUdn, IResourceManager& aResourceManager)
+{
+    iDevice = new DviDeviceStandard(aUdn, aResourceManager);
 }

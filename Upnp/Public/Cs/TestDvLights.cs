@@ -188,7 +188,7 @@ namespace Zapp
 
     class DeviceLights : Device.IResourceManager, IDisposable
     {
-        private Device.DvDevice iDevice;
+        private Device.DvDeviceStandard iDevice;
         private ProviderLights iLights;
         private string iConfigDir;
         public string iDeviceName;
@@ -197,7 +197,7 @@ namespace Zapp
         {
             iConfigDir = aConfigDir;
             RandomiseUdn(out iDeviceName);
-            iDevice = new Device.DvDevice(iDeviceName, this);
+            iDevice = new Device.DvDeviceStandard(iDeviceName, this);
             iDevice.SetAttribute("Upnp.Domain", "zapp.org");
             iDevice.SetAttribute("Upnp.Type", "TestLights");
             iDevice.SetAttribute("Upnp.Version", "1");
