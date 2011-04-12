@@ -27,12 +27,10 @@ public:
 class DviSubscription;
 class DviDevice : public IResourceManager
 {
-    static const TUint kNumProtocols = 1;
 public:
     static const Brn kResourceDir;
 public:
     DviDevice(const Brx& aUdn);
-    DviDevice(const Brx& aUdn, IResourceManager& aResourceManager);
     void Destroy();
     void AddWeakRef();
     void RemoveWeakRef();
@@ -58,8 +56,11 @@ public:
     void CreateSid(Brh& aSid);
     IResourceManager* ResourceManager();
     void SetCustomData(const TChar* aProtocol, const TChar* Tag, void* aData);
-private:
+protected:
+    DviDevice(const Brx& aUdn, IResourceManager& aResourceManager);
     ~DviDevice();
+    void AddProtocol(IDvProtocol* aProtocol);
+private:
     void Construct(const Brx& aUdn);
     void SetParent(DviDevice* aParent);
     void SetDisabled(Functor aCompleted, bool aLocked);
@@ -85,13 +86,22 @@ private:
     DviDevice* iParent;
     std::vector<DviService*> iServices;
     std::vector<DviDevice*> iDevices;
-    IDvProtocol* iProtocols[kNumProtocols];
+    std::vector<IDvProtocol*> iProtocols;
     IResourceManager* iResourceManager;
     TUint iProtocolDisableCount;
     Functor iDisableComplete;
     Semaphore iShutdownSem;
     TUint iSubscriptionId;
     Brh iXmlExtension;
+};
+
+class DviDeviceStandard : public DviDevice
+{
+public:
+    DviDeviceStandard(const Brx& aUdn);
+    DviDeviceStandard(const Brx& aUdn, IResourceManager& aResourceManager);
+private:
+    void Construct();
 };
 
 class AttributeMap

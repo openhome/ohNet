@@ -69,17 +69,17 @@ void DviSubscription::Start(DviService& aService)
 
 void DviSubscription::AddRef()
 {
-    iLock.Wait();
+    Stack::Mutex().Wait();
     iRefCount++;
-    iLock.Signal();
+    Stack::Mutex().Signal();
 }
 
 void DviSubscription::RemoveRef()
 {
-    iLock.Wait();
+    Stack::Mutex().Wait();
     iRefCount--;
     TBool dead = (iRefCount == 0);
-    iLock.Signal();
+    Stack::Mutex().Signal();
     if (dead) {
         delete this;
     }
@@ -193,9 +193,9 @@ DviSubscription::~DviSubscription()
 
 void DviSubscription::Expired()
 {
-    iLock.Wait();
+    Stack::Mutex().Wait();
     iExpired = true;
-    iLock.Signal();
+    Stack::Mutex().Signal();
     iService->RemoveSubscription(iSid);
 }
 

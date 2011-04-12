@@ -33,7 +33,7 @@ public:
 private:
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
 private:
-    DvDevice* iDevice;
+    DvDeviceStandard* iDevice;
     ProviderColorLight* iColorLight;
     Brh iConfigDir;
 };
@@ -88,7 +88,7 @@ void ProviderColorLight::GetMaxColors(IInvocationResponse& aResponse, TUint /*aV
 DeviceColorLight::DeviceColorLight(const Brx& aConfigDir)
     : iConfigDir(aConfigDir)
 {
-    iDevice = new DvDevice(Brn("device-OpenhomeColorLight"), *this);
+    iDevice = new DvDeviceStandard(Brn("device-OpenhomeColorLight"), *this);
     iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "TestColorLight");
     iDevice->SetAttribute("Upnp.Version", "1");

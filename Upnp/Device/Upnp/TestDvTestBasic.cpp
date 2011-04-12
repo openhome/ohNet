@@ -47,7 +47,7 @@ public:
 private:
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
 private:
-    DvDevice* iDevice;
+    DvDeviceStandard* iDevice;
     ProviderTestBasic* iTestBasic;
     Brh iConfigDir;
 };
@@ -238,7 +238,7 @@ void ProviderTestBasic::Shutdown(IInvocationResponse& aResponse, TUint /*aVersio
 DeviceBasic::DeviceBasic(const Brx& aConfigDir)
     : iConfigDir(aConfigDir)
 {
-    iDevice = new DvDevice(Brn("device-ZappTestBasic"), *this);
+    iDevice = new DvDeviceStandard(Brn("device-ZappTestBasic"), *this);
     iDevice->SetAttribute("Upnp.Domain", "zapp.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");

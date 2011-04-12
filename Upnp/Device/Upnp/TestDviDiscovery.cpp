@@ -248,7 +248,7 @@ void SuiteAlive::Test()
     TInt listenerId = listenerMulticast->AddNotifyHandler(listener);
     listenerMulticast->Start();
 
-    DviDevice* device = new DviDevice(gNameDevice1);
+    DviDevice* device = new DviDeviceStandard(gNameDevice1);
     device->SetAttribute("Upnp.Domain", "a.b.c");
     device->SetAttribute("Upnp.Type", "type1");
     device->SetAttribute("Upnp.Version", "1");
@@ -483,7 +483,7 @@ SuiteMsearch::~SuiteMsearch()
 
 void SuiteMsearch::Test()
 {
-    DviDevice* device = new DviDevice(gNameDevice1);
+    DviDevice* device = new DviDeviceStandard(gNameDevice1);
     iDevices[0] = device;
     device->SetAttribute("Upnp.Domain", "upnp.org");
     device->SetAttribute("Upnp.Type", "test1");
@@ -499,7 +499,7 @@ void SuiteMsearch::Test()
     TEST_THROWS(device->AddService(service), AssertionFailed);
     service->RemoveRef();
 
-    device = new DviDevice(gNameDevice2);
+    device = new DviDeviceStandard(gNameDevice2);
     iDevices[1] = device;
     device->SetAttribute("Upnp.Domain", "linn.co.uk");
     device->SetAttribute("Upnp.Type", "test2");
@@ -507,7 +507,7 @@ void SuiteMsearch::Test()
     device->AddService(new DviService("linn.co.uk", "service4", 2));
     device->AddService(new DviService("linn.co.uk", "service5", 1));
 
-    device = new DviDevice(gNameDevice2Embedded1);
+    device = new DviDeviceStandard(gNameDevice2Embedded1);
     iDevices[1]->AddDevice(device);
     device->SetAttribute("Upnp.Domain", "linn.co.uk");
     device->SetAttribute("Upnp.Type", "test3");
@@ -520,7 +520,7 @@ void SuiteMsearch::Test()
     service->RemoveRef();
     iDevices[1]->SetEnabled();
     device->SetEnabled();
-    device = new DviDevice(kNameDummy);
+    device = new DviDeviceStandard(kNameDummy);
     TEST_THROWS(iDevices[1]->AddDevice(device), AssertionFailed);
     device->Destroy();
 

@@ -8,21 +8,18 @@
 
 using namespace Zapp;
 
+// DvDeviceStd
 
 DvDeviceStd::DvDeviceStd(const std::string& aUdn)
 {
     Brn buf((const TByte*)aUdn.c_str(), (TUint)aUdn.length());
     iDevice = new DviDevice(buf);
-    iUdn.assign(aUdn);
-    iResourceManager = NULL;
+    SetUdn(aUdn);
 }
     
-DvDeviceStd::DvDeviceStd(const std::string& aUdn, IResourceManagerStd& aResourceManager)
+DvDeviceStd::DvDeviceStd()
+    : iDevice(NULL)
 {
-    Brn buf((const TByte*)aUdn.c_str(), (TUint)aUdn.length());
-    iDevice = new DviDevice(buf, *this);
-    iUdn.assign(aUdn);
-    iResourceManager = &aResourceManager;
 }
     
 DvDeviceStd::~DvDeviceStd()
@@ -30,6 +27,11 @@ DvDeviceStd::~DvDeviceStd()
     iDevice->Destroy();
 }
     
+void DvDeviceStd::SetUdn(const std::string& aUdn)
+{
+    iUdn.assign(aUdn);
+}
+
 DviDevice& DvDeviceStd::Device()
 {
     return *iDevice;
@@ -69,8 +71,27 @@ void DvDeviceStd::SetXmlExtension(const TChar* aXml)
 {
     iDevice->SetXmlExtension(aXml);
 }
+
+
+// DvDeviceStdStandard
+
+DvDeviceStdStandard::DvDeviceStdStandard(const std::string& aUdn)
+{
+    Brn buf((const TByte*)aUdn.c_str(), (TUint)aUdn.length());
+    iDevice = new DviDeviceStandard(buf);
+    SetUdn(aUdn);
+    iResourceManager = NULL;
+}
+
+DvDeviceStdStandard::DvDeviceStdStandard(const std::string& aUdn, IResourceManagerStd& aResourceManager)
+{
+    iResourceManager = &aResourceManager;
+    Brn buf((const TByte*)aUdn.c_str(), (TUint)aUdn.length());
+    iDevice = new DviDeviceStandard(buf, *this);
+    SetUdn(aUdn);
+}
     
-void DvDeviceStd::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter)
+void DvDeviceStdStandard::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter)
 {
     std::string uriTail((const char*)aUriTail.Ptr(), aUriTail.Bytes());
     ASSERT(iResourceManager != NULL);

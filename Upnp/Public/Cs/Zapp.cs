@@ -21,12 +21,12 @@ namespace Zapp.Core
         /// <remarks>Suggested action if this is called is to exit the process and restart the library and its owning application.
         /// 
         /// The string passed to the callback is an error message so would be useful to log.</remarks>
-        public ZappCallbackMsg FatalErrorHandler { get; set; }
-        public ZappCallbackAsync AsyncBeginHandler { get; set; }
-        public ZappCallbackAsync AsyncEndHandler { get; set; }
-        public ZappCallbackAsync AsyncErrorHandler { get; set; }
+        public ZappCallbackMsg FatalErrorHandler { private get; set; }
+        public ZappCallbackAsync AsyncBeginHandler { private get; set; }
+        public ZappCallbackAsync AsyncEndHandler { private get; set; }
+        public ZappCallbackAsync AsyncErrorHandler { private get; set; }
         public uint DefaultSubnet { get; set; }
-        public ZappCallback SubnetChangedListener { get; set; }
+        public ZappCallback SubnetChangedListener { private get; set; }
 
         /// <summary>
         /// A timeout for TCP connections in milliseconds. Must be >0
@@ -213,12 +213,26 @@ namespace Zapp.Core
         static extern uint ZappInitParamsDvNumWebSocketThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
         static extern uint ZappInitParamsDvIsBonjourEnabled(IntPtr aParams);
+        
+        private static void DefaultActionFunction()
+        {
+            throw new InvalidOperationException("This delegate is a sentinel value and shouldn't actually be invoked.");
+        }
+        private static readonly ZappCallback DefaultCallback = aPtr => DefaultActionFunction();
+        private static readonly ZappCallbackMsg DefaultCallbackMsg = (aPtr, aMsg) => DefaultActionFunction();
+        private static readonly ZappCallbackAsync DefaultCallbackAsync = (aPtr, aAsyncHandle) => DefaultActionFunction();
 
         public InitParams()
         {
             IntPtr defaultParams = ZappInitParamsCreate();
             
+            LogOutput = DefaultCallbackMsg;
+            FatalErrorHandler = DefaultCallbackMsg;
+            AsyncBeginHandler = DefaultCallbackAsync;
+            AsyncEndHandler = DefaultCallbackAsync;
+            AsyncErrorHandler = DefaultCallbackAsync;
             DefaultSubnet = 0; // FIXME: No getter?
+            SubnetChangedListener = DefaultCallback;
             TcpConnectTimeoutMs = ZappInitParamsTcpConnectTimeoutMs(defaultParams); 
             MsearchTimeSecs = ZappInitParamsMsearchTimeSecs(defaultParams); 
             MsearchTtl = ZappInitParamsMsearchTtl(defaultParams); 
@@ -241,25 +255,28 @@ namespace Zapp.Core
         {
             IntPtr nativeParams = ZappInitParamsCreate();
 
-            ZappInitParamsSetLogOutput(nativeParams, LogOutput, aCallbackPtr);
-            if (FatalErrorHandler != null)
+            if (LogOutput != DefaultCallbackMsg)
+            {
+                ZappInitParamsSetLogOutput(nativeParams, LogOutput, aCallbackPtr);
+            }
+            if (FatalErrorHandler != DefaultCallbackMsg)
             {
                 ZappInitParamsSetFatalErrorHandler(nativeParams, FatalErrorHandler, aCallbackPtr);
             }
-            if (AsyncBeginHandler != null)
+            if (AsyncBeginHandler != DefaultCallbackAsync)
             {
                 ZappInitParamsSetAsyncBeginHandler(nativeParams, AsyncBeginHandler, aCallbackPtr);
             }
-            if (AsyncEndHandler != null)
+            if (AsyncEndHandler != DefaultCallbackAsync)
             {
                 ZappInitParamsSetAsyncEndHandler(nativeParams, AsyncEndHandler, aCallbackPtr);
             }
-            if (AsyncErrorHandler != null)
+            if (AsyncErrorHandler != DefaultCallbackAsync)
             {
                 ZappInitParamsSetAsyncErrorHandler(nativeParams, AsyncErrorHandler, aCallbackPtr);
             }
             ZappInitParamsSetDefaultSubnet(nativeParams, DefaultSubnet);
-            if (SubnetChangedListener != null)
+            if (SubnetChangedListener != DefaultCallback)
             {
                 ZappInitParamsSetSubnetChangedListener(nativeParams, SubnetChangedListener, aCallbackPtr);
             }
@@ -284,7 +301,6 @@ namespace Zapp.Core
             {
                 ZappInitParamsSetUseLoopbackNetworkInterface(nativeParams);
             }
-            ZappInitParamsSetUseLoopbackNetworkInterface(nativeParams);
             return nativeParams;
         }
         internal static void FreeNativeInitParams(IntPtr aNativeInitParams)
@@ -307,6 +323,10 @@ namespace Zapp.Core
 
 
 
+    /// <summary>
+    /// A control-point stack. Pre-requisite for creating a device-list
+    /// factory.
+    /// </summary>
     public class ControlPointStack
     {
         // Constructor is not public - obtain an instance from Library.
@@ -315,6 +335,9 @@ namespace Zapp.Core
         }
     }
 
+    /// <summary>
+    /// A device stack. Pre-requisite for creating a device factory.
+    /// </summary>
     public class DeviceStack
     {
         // Constructor is not public - obtain an instance from Library.
@@ -323,10 +346,22 @@ namespace Zapp.Core
         }
     }
 
+    /// <summary>
+    /// Combined control-point and device stacks.
+    /// </summary>
     public class CombinedStack
     {
+        /// <summary>
+        /// Provides access to the ControlPointStack to create a device-list
+        /// factory.
+        /// </summary>
         public ControlPointStack ControlPointStack { get; private set; }
+
+        /// <summary>
+        /// Provides access to the DeviceStack to create a device factory.
+        /// </summary>
         public DeviceStack DeviceStack { get; private set; }
+
         // Constructor is not public - obtain an instance from Library.
         internal CombinedStack()
         {
@@ -422,6 +457,9 @@ namespace Zapp.Core
         /// <summary>
         /// Start the library as a UPnP control point stack
         /// </summary>
+        /// <returns>
+        /// A control-point stack. Can be used to create device list factories.
+        /// </returns>
         public ControlPointStack StartCp()
         {
             ZappLibraryStartCp();
@@ -431,6 +469,9 @@ namespace Zapp.Core
         /// <summary>
         /// Start the library as a UPnP device stack
         /// </summary>
+        /// <returns>
+        /// A device stack. Can be used to create device factories.
+        /// </returns>
         public DeviceStack StartDv()
         {
             ZappLibraryStartDv();

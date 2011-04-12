@@ -198,7 +198,6 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionSetColor;
         private Zapp.Core.Action iActionGetColor;
         private Zapp.Core.Action iActionGetColorComponents;
-        private Mutex iPropertyLock;
 
         /// <summary>
         /// Constructor
@@ -260,8 +259,6 @@ namespace Zapp.ControlPoint.Proxies
             iActionGetColorComponents.AddOutputParameter(param);
             param = new ParameterUint("Blue");
             iActionGetColorComponents.AddOutputParameter(param);
-            
-            iPropertyLock = new Mutex();
         }
 
         /// <summary>

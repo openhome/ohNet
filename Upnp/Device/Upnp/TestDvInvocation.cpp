@@ -34,7 +34,7 @@ public:
     DeviceBasic();
     ~DeviceBasic();
 private:
-    DvDevice* iDevice;
+    DvDeviceStandard* iDevice;
     ProviderTestBasic* iTestBasic;
 };
 
@@ -112,7 +112,7 @@ static void RandomiseUdn(Bwh& aUdn)
 DeviceBasic::DeviceBasic()
 {
     RandomiseUdn(gDeviceName);
-    iDevice = new DvDevice(gDeviceName);
+    iDevice = new DvDeviceStandard(gDeviceName);
     iDevice->SetAttribute("Upnp.Domain", "zapp.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
@@ -134,7 +134,7 @@ class CpDevices
 {
     static const TUint kTestIterations = 10;
 public:
-    CpDevices();
+    CpDevices(Semaphore& aAddedSem);
     ~CpDevices();
     void Test();
     void Added(CpDevice& aDevice);
@@ -142,10 +142,12 @@ public:
 private:
     Mutex iLock;
     std::vector<CpDevice*> iList;
+    Semaphore& iAddedSem;
 };
 
-CpDevices::CpDevices()
+CpDevices::CpDevices(Semaphore& aAddedSem)
     : iLock("DLMX")
+    , iAddedSem(aAddedSem)
 {
 }
 
@@ -224,6 +226,7 @@ void CpDevices::Added(CpDevice& aDevice)
     if (aDevice.Udn() == gDeviceName) {
         iList.push_back(&aDevice);
         aDevice.AddRef();
+        iAddedSem.Signal();
     }
     iLock.Signal();
 }
@@ -250,8 +253,9 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
 
     Print("TestDvInvocation - starting\n");
 
+    Semaphore* sem = new Semaphore("SEM1", 0);
     DeviceBasic* device = new DeviceBasic;
-    CpDevices* deviceList = new CpDevices;
+    CpDevices* deviceList = new CpDevices(*sem);;
     FunctorCpDevice added = MakeFunctorCpDevice(*deviceList, &CpDevices::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(*deviceList, &CpDevices::Removed);
     Brn domainName("zapp.org");
@@ -259,9 +263,8 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     TUint ver = 1;
     CpDeviceListUpnpServiceType* list =
                 new CpDeviceListUpnpServiceType(domainName, serviceType, ver, added, removed);
-    Blocker* blocker = new Blocker;
-    blocker->Wait(aInitParams->MsearchTimeSecs());
-    delete blocker;
+    sem->Wait(30*1000); // allow up to 30 seconds to find our one device
+    delete sem;
     deviceList->Test();
     delete list;
     delete deviceList;

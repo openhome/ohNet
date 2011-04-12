@@ -1,6 +1,9 @@
 *.pdb
 *~
 .*.swp
+*.ReSharper.user
+*.suo
+_ReSharper.*
 
 /Upnp/*.sbr
 /Upnp/Build/

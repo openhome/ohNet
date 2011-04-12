@@ -25,31 +25,25 @@ class DviDevice;
 /**
  * Device
  *
- * Has a universally unique name and operates on 0..n protocols.
+ * Has a universally unique name.  Does not operate on any protocols itself but can be extended
+ * by sub-classes to add support for various protocols.
+ * Lack of protocol support makes this class unsuitable for most use cases but it may be useful for
+ * CpDeviceDvStd (where a control point device communicates directly with a DvDevice) and related classes.
  * Services are added by constructing DvProvider derived classes, passing a reference to a
  * DvDevice to their c'tor
  * @ingroup Device
  */
-class DvDeviceStd : private IResourceManager
+class DvDeviceStd
 {
 public:
     /**
-     * Constructor.  Creates a device capable of operating on any of the protocols the device
-     * stack supports but with no services or attributes as yet
+     * Constructor.  Creates a device ready to have services or attributes added.
+     * Addition of any protocols to operate over is teh responsibility of any sub-classes.
      *
      * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
      *                    calculating/assigning this
      */
     DvDeviceStd(const std::string& aUdn);
-    /**
-     * Constructor.  Creates a device capable of operating on any of the protocols the device
-     * stack supports but with no services or attributes as yet
-     *
-     * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
-     *                    calculating/assigning this
-     * @param[in] aResourceManager  Allows the owner of a device to serve UI files
-     */
-    DvDeviceStd(const std::string& aUdn, IResourceManagerStd& aResourceManager);
     /**
      * Destructor.  Can be called regardless of whether the device is enabled or disabled.
      */
@@ -115,11 +109,46 @@ public:
      * @param[in] aXml  One or more tag+value blocks
      */
     void SetXmlExtension(const char* aXml);
+protected:
+    DvDeviceStd();
+    void SetUdn(const std::string& aUdn);
+protected:
+    DviDevice* iDevice;
+private:
+    std::string iUdn;
+};
+
+/**
+ * Device
+ *
+ * Has a universally unique name and on all the protocols the device stack supports as standard.
+ * Services are added by constructing DvProvider derived classes, passing a reference to a
+ * DvDevice to their c'tor
+ * @ingroup Device
+ */
+class DvDeviceStdStandard : public DvDeviceStd, private IResourceManager
+{
+public:
+    /**
+     * Constructor.  Creates a device capable of operating on any of the protocols the device
+     * stack supports as standard but with no services or attributes as yet
+     *
+     * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
+     *                    calculating/assigning this
+     */
+    DvDeviceStdStandard(const std::string& aUdn);
+    /**
+     * Constructor.  Creates a device capable of serving UI files and of operating on any of the
+     * protocols the device stack supports as standard but with no services or attributes as yet
+     *
+     * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
+     *                    calculating/assigning this
+     * @param[in] aResourceManager  Allows the owner of a device to serve UI files
+     */
+    DvDeviceStdStandard(const std::string& aUdn, IResourceManagerStd& aResourceManager);
 private:
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
 private:
-    DviDevice* iDevice;
-    std::string iUdn;
     IResourceManagerStd* iResourceManager;
 };
 

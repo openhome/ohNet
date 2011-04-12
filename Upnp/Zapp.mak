@@ -133,5 +133,5 @@ bundle: tt
 
 bundle-dev: tt
 	if not exist "$(bundle_build)" mkdir "$(bundle_build)"
-	if "$(targetplatform)"=="" echo "Usage: make bundle_dev targetplatform=Windows-x86" && exit /b 1
+	if "$(targetplatform)"=="" echo "Usage: make bundle-dev targetplatform=Windows-x86" && exit /b 1
 	python bundle_binaries.py --dev Windows $(targetplatform)

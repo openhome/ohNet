@@ -119,7 +119,10 @@ namespace Zapp.ControlPoint.Proxies
 <#  { #>
         private CallbackPropertyChanged i<#=s.name#>Changed;
 <#  } #>
+<#  if (u.evented.Count > 0) #>
+<#  { #>
         private Mutex iPropertyLock;
+<#  } #>
 
         /// <summary>
         /// Constructor
@@ -179,8 +182,11 @@ namespace Zapp.ControlPoint.Proxies
             AddProperty(i<#=s.name#>);
 <#      } #>
 <#  } #>
+<#  if (u.evented.Count > 0) #>
+<#  { #>
             
             iPropertyLock = new Mutex();
+<#  } #>
         }
 <#  foreach (Method a in u.methods) #>
 <#  { #>
