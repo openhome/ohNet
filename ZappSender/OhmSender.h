@@ -13,6 +13,49 @@ namespace Zapp {
 
 class ProviderSender;
 
+class IOhmSenderDriver
+{
+public:
+    virtual void SetTtl(TUint aValue) = 0;
+    virtual void SetTrackPosition(TUint64 aSampleStart, TUint64 aSamplesTotal) = 0;
+    virtual void Start(const Endpoint& aEndpoint) = 0;
+    virtual void Stop() = 0;
+    virtual ~IOhmSenderDriver() {}
+};
+
+class OhmSenderDriver : public IOhmSenderDriver
+{
+    static const TUint kMaxAudioFrameBytes = 16 * 1024;
+
+public:
+    OhmSenderDriver();
+    void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName);
+    void SendAudio(const TByte* aData, TUint aBytes);
+
+private:    
+    // IOhmSenderDriver
+    virtual void SetTtl(TUint aValue);
+    virtual void SetTrackPosition(TUint64 aSamplesTotal, TUint64 aSampleStart);
+    virtual void Start(const Endpoint& aEndpoint);
+    virtual void Stop();
+
+private:
+    Mutex iMutex;
+    TBool iActive;
+    Bws<kMaxAudioFrameBytes> iBuffer;
+    Endpoint iEndpoint;
+    TUint iFrame;
+    TUint iSampleRate;
+    TUint iBitRate;
+    TUint iChannels;
+    TUint iBitDepth;
+    TBool iLossless;
+    Bws<Ohm::kMaxCodecNameBytes> iCodecName;
+    TUint64 iSamplesTotal;
+    TUint64 iSampleStart;
+    SocketUdp iSocket;
+};
+
 class OhmSender
 {
     static const TUint kMaxMetadataBytes = 1000;
@@ -33,7 +76,7 @@ public:
 	static const TUint kMaxTrackMetatextBytes = Ohm::kMaxTrackMetatextBytes;
 
 public:
-    OhmSender(DvDevice& aDevice, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled);
+    OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled);
     ~OhmSender();
 
 	void SetName(const Brx& aValue);
@@ -42,15 +85,7 @@ public:
     void SetTtl(TUint aValue);
     void SetMulticast(TBool aValue);
 	void SetEnabled(TBool aValue);
-
-    void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName);
-    
-    void StartTrack(TUint64 aSampleStart);
-    void StartTrack(TUint64 aSampleStart, TUint64 aSamplesTotal);
-    void StartTrack(TUint64 aSampleStart, TUint64 aSamplesTotal, const Brx& aUri, const Brx& aMetadata);
-    
-	void SendAudio(const TByte* aData, TUint aBytes);
-
+    void SetTrack(const Brx& aUri, const Brx& aMetadata, TUint64 aSamplesTotal, TUint64 aSampleStart);
 	void SetMetatext(const Brx& aValue);
     
 private:
@@ -81,6 +116,7 @@ private:
     
 private:
     DvDevice& iDevice;
+    IOhmSenderDriver& iDriver;
     Bws<kMaxNameBytes> iName;
     TUint iChannel;
     TIpAddress iInterface;
@@ -99,13 +135,12 @@ private:
     ProviderSender* iProvider;
     TBool iStarted;
     TBool iActive;
-    Endpoint iMulticastEndpoint;
-    Endpoint iTargetEndpoint;
     TBool iAliveJoined;
     TBool iAliveBlocked;
+    Endpoint iMulticastEndpoint;
+    Endpoint iTargetEndpoint;
     ThreadFunctor* iThreadMulticast;
     ThreadFunctor* iThreadUnicast;
-    TUint iFrame;
     Bws<Ohm::kMaxUriBytes> iUri;
     Bws<kMaxMetadataBytes> iMetadata;
     TUint iSlaveCount;
@@ -114,14 +149,6 @@ private:
     Bws<Ohm::kMaxTrackUriBytes> iTrackUri;
     Bws<Ohm::kMaxTrackMetadataBytes> iTrackMetadata;
     Bws<Ohm::kMaxTrackMetatextBytes> iTrackMetatext;
-    Bws<Ohm::kMaxCodecNameBytes> iCodecName;
-    TUint iSampleRate;
-    TUint iBitRate;
-    TUint iChannels;
-    TUint iBitDepth;
-    TBool iLossless;
-    TUint64 iSampleStart;
-    TUint64 iSamplesTotal;
     TUint iSequenceTrack;
     TUint iSequenceMetatext;
 };

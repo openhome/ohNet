@@ -44,7 +44,7 @@ public:
 	static const TUint kMaxPacketBytes = 4096;
 	
 public:
-	WavSender(OhmSender* aSender, const Brx& aUri, const TByte* aData, TUint aSampleCount, TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth);
+	WavSender(OhmSender* aSender, OhmSenderDriver* aDriver, const Brx& aUri, const TByte* aData, TUint aSampleCount, TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth);
 	void Start();
 	void Pause();
 	void SetSpeed(TUint aValue);
@@ -56,7 +56,8 @@ private:
 	void TimerExpired();
 	
 private:
-	OhmSender* iSender;
+    OhmSender* iSender;
+    OhmSenderDriver* iDriver;
 	Bws<OhmSender::kMaxTrackUriBytes> iUri;
 	const TByte* iData;
 	TUint iSampleCount;
@@ -73,8 +74,9 @@ private:
 	TUint iPacketBytes;
 };
 
-WavSender::WavSender(OhmSender* aSender, const Brx& aUri, const TByte* aData, TUint aSampleCount, TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth)
+WavSender::WavSender(OhmSender* aSender, OhmSenderDriver* aDriver, const Brx& aUri, const TByte* aData, TUint aSampleCount, TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth)
 	: iSender(aSender)
+	, iDriver(aDriver)
 	, iUri(aUri)
 	, iData(aData)
 	, iSampleCount(aSampleCount)
@@ -94,7 +96,7 @@ WavSender::WavSender(OhmSender* aSender, const Brx& aUri, const TByte* aData, TU
 
 void WavSender::Start()
 {
-    iSender->SetAudioFormat(iSampleRate, iBitRate, iChannels, iBitDepth, true, Brn("WAV"));
+    iDriver->SetAudioFormat(iSampleRate, iBitRate, iChannels, iBitDepth, true, Brn("WAV"));
 	iSender->SetEnabled(true);
 	iTimer.FireIn(kPeriodMs);
 }
@@ -150,19 +152,19 @@ void WavSender::TimerExpired()
 	
 	if (!iPaused) {
 	    if (iIndex == 0) {
-            iSender->StartTrack(0, iSampleCount, iUri, Brx::Empty());
+            iSender->SetTrack(iUri, Brx::Empty(), iSampleCount, 0);
             iSender->SetMetatext(Brn("WavSender repeated play"));
 	    }
 	    
 		if (iIndex + iPacketBytes <= iTotalBytes) {
-			iSender->SendAudio(&iData[iIndex], iPacketBytes);
+			iDriver->SendAudio(&iData[iIndex], iPacketBytes);
             iIndex += iPacketBytes;
 		}
 		else {
-            iSender->SendAudio(&iData[iIndex], iTotalBytes - iIndex);
-            iSender->StartTrack(0, iSampleCount);
+            iDriver->SendAudio(&iData[iIndex], iTotalBytes - iIndex);
+            iSender->SetTrack(iUri, Brx::Empty(), iSampleCount, 0);
             TUint remaining = iPacketBytes + iIndex - iTotalBytes;
-            iSender->SendAudio(&iData[0], remaining);
+            iDriver->SendAudio(&iData[0], remaining);
             iIndex = remaining;
 		}
 	
@@ -176,6 +178,7 @@ WavSender::~WavSender()
 {
 	iTimer.Cancel();
 	delete (iSender);
+	delete (iDriver);
 }
 
 static void RandomiseUdn(Bwh& aUdn)
@@ -430,9 +433,11 @@ int main(int aArgc, char* aArgv[])
     device->SetAttribute("Upnp.SerialNumber", "Not Applicable");
     device->SetAttribute("Upnp.Upc", "Not Applicable");
 
-	OhmSender* sender = new OhmSender(*device, name, channel, interface, ttl, multicast, !disabled);
+    OhmSenderDriver* driver = new OhmSenderDriver();
+    
+	OhmSender* sender = new OhmSender(*device, *driver, name, channel, interface, ttl, multicast, !disabled);
 	
-    WavSender* wavsender = new WavSender(sender, file, data, sampleCount, sampleRate, byteRate * 8, numChannels, bitsPerSample);
+    WavSender* wavsender = new WavSender(sender, driver, file, data, sampleCount, sampleRate, byteRate * 8, numChannels, bitsPerSample);
     
     device->SetEnabled();
 
