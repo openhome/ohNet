@@ -21,12 +21,12 @@ namespace Zapp.Core
         /// <remarks>Suggested action if this is called is to exit the process and restart the library and its owning application.
         /// 
         /// The string passed to the callback is an error message so would be useful to log.</remarks>
-        public ZappCallbackMsg FatalErrorHandler { get; set; }
-        public ZappCallbackAsync AsyncBeginHandler { get; set; }
-        public ZappCallbackAsync AsyncEndHandler { get; set; }
-        public ZappCallbackAsync AsyncErrorHandler { get; set; }
+        public ZappCallbackMsg FatalErrorHandler { private get; set; }
+        public ZappCallbackAsync AsyncBeginHandler { private get; set; }
+        public ZappCallbackAsync AsyncEndHandler { private get; set; }
+        public ZappCallbackAsync AsyncErrorHandler { private get; set; }
         public uint DefaultSubnet { get; set; }
-        public ZappCallback SubnetChangedListener { get; set; }
+        public ZappCallback SubnetChangedListener { private get; set; }
 
         /// <summary>
         /// A timeout for TCP connections in milliseconds. Must be >0
@@ -213,12 +213,26 @@ namespace Zapp.Core
         static extern uint ZappInitParamsDvNumWebSocketThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
         static extern uint ZappInitParamsDvIsBonjourEnabled(IntPtr aParams);
+        
+        private static void DefaultActionFunction()
+        {
+            throw new InvalidOperationException("This delegate is a sentinel value and shouldn't actually be invoked.");
+        }
+        private static readonly ZappCallback DefaultCallback = aPtr => DefaultActionFunction();
+        private static readonly ZappCallbackMsg DefaultCallbackMsg = (aPtr, aMsg) => DefaultActionFunction();
+        private static readonly ZappCallbackAsync DefaultCallbackAsync = (aPtr, aAsyncHandle) => DefaultActionFunction();
 
         public InitParams()
         {
             IntPtr defaultParams = ZappInitParamsCreate();
             
+            LogOutput = DefaultCallbackMsg;
+            FatalErrorHandler = DefaultCallbackMsg;
+            AsyncBeginHandler = DefaultCallbackAsync;
+            AsyncEndHandler = DefaultCallbackAsync;
+            AsyncErrorHandler = DefaultCallbackAsync;
             DefaultSubnet = 0; // FIXME: No getter?
+            SubnetChangedListener = DefaultCallback;
             TcpConnectTimeoutMs = ZappInitParamsTcpConnectTimeoutMs(defaultParams); 
             MsearchTimeSecs = ZappInitParamsMsearchTimeSecs(defaultParams); 
             MsearchTtl = ZappInitParamsMsearchTtl(defaultParams); 
@@ -241,25 +255,28 @@ namespace Zapp.Core
         {
             IntPtr nativeParams = ZappInitParamsCreate();
 
-            ZappInitParamsSetLogOutput(nativeParams, LogOutput, aCallbackPtr);
-            if (FatalErrorHandler != null)
+            if (LogOutput != DefaultCallbackMsg)
+            {
+                ZappInitParamsSetLogOutput(nativeParams, LogOutput, aCallbackPtr);
+            }
+            if (FatalErrorHandler != DefaultCallbackMsg)
             {
                 ZappInitParamsSetFatalErrorHandler(nativeParams, FatalErrorHandler, aCallbackPtr);
             }
-            if (AsyncBeginHandler != null)
+            if (AsyncBeginHandler != DefaultCallbackAsync)
             {
                 ZappInitParamsSetAsyncBeginHandler(nativeParams, AsyncBeginHandler, aCallbackPtr);
             }
-            if (AsyncEndHandler != null)
+            if (AsyncEndHandler != DefaultCallbackAsync)
             {
                 ZappInitParamsSetAsyncEndHandler(nativeParams, AsyncEndHandler, aCallbackPtr);
             }
-            if (AsyncErrorHandler != null)
+            if (AsyncErrorHandler != DefaultCallbackAsync)
             {
                 ZappInitParamsSetAsyncErrorHandler(nativeParams, AsyncErrorHandler, aCallbackPtr);
             }
             ZappInitParamsSetDefaultSubnet(nativeParams, DefaultSubnet);
-            if (SubnetChangedListener != null)
+            if (SubnetChangedListener != DefaultCallback)
             {
                 ZappInitParamsSetSubnetChangedListener(nativeParams, SubnetChangedListener, aCallbackPtr);
             }
