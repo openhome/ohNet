@@ -989,7 +989,8 @@ IPropertyWriter* DviSessionUpnp::CreateWriter(const IDviSubscriptionUserData* aU
 
 // DviServerUpnp
 
-DviServerUpnp::DviServerUpnp()
+DviServerUpnp::DviServerUpnp(TUint aPort)
+    : iPort(aPort)
 {
     Initialise();
 }
@@ -1005,8 +1006,7 @@ void DviServerUpnp::Redirect(const Brx& aUriRequested, const Brx& aUriRedirected
 
 SocketTcpServer* DviServerUpnp::CreateServer(const NetworkInterface& aNif)
 {
-    TUint port = (Stack::InitParams().DvIsBonjourEnabled()? 80 : 0);
-    SocketTcpServer* server = new SocketTcpServer("DSVU", port, aNif.Address());
+    SocketTcpServer* server = new SocketTcpServer("DSVU", iPort, aNif.Address());
     TChar thName[5];
 	const TUint numWsThreads = Stack::InitParams().DvNumServerThreads();
     for (TUint i=0; i<numWsThreads; i++) {
