@@ -165,7 +165,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 <#=className#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){	
-	var request = new Zapp.SoapRequest("<#=a.name#>", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("<#=a.name#>", this.url, this.domain, this.type, this.version);		
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
     request.write<#=svtype[i.variable.type]#>Parameter("<#=i.name#>", <#=i.name#>);
