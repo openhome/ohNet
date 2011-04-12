@@ -7,6 +7,10 @@
 
 #include <stdio.h>
 
+#ifdef _WIN32
+# pragma warning(disable:4355) // use of 'this' in ctor lists safe in this case
+#endif
+
 namespace Zapp {
 
 	class ProviderSender : public DvProviderAvOpenhomeOrgSender1
@@ -66,7 +70,7 @@ ProviderSender::ProviderSender(DvDevice& aDevice)
     SetPropertyAttributes(Brx::Empty());
 }
 
-void ProviderSender::PresentationUrl(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
+void ProviderSender::PresentationUrl(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseString& aValue)
 {
 	Brhz value;
     GetPropertyPresentationUrl(value);
@@ -76,7 +80,7 @@ void ProviderSender::PresentationUrl(IInvocationResponse& aResponse, TUint aVers
     aResponse.End();
 }
 
-void ProviderSender::Metadata(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
+void ProviderSender::Metadata(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseString& aValue)
 {
 	Brhz value;
     GetPropertyMetadata(value);
@@ -86,7 +90,7 @@ void ProviderSender::Metadata(IInvocationResponse& aResponse, TUint aVersion, II
     aResponse.End();
 }
 
-void ProviderSender::Audio(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue)
+void ProviderSender::Audio(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseBool& aValue)
 {
     TBool value;
     GetPropertyAudio(value);
@@ -95,7 +99,7 @@ void ProviderSender::Audio(IInvocationResponse& aResponse, TUint aVersion, IInvo
     aResponse.End();
 }
 
-void ProviderSender::Status(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
+void ProviderSender::Status(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseString& aValue)
 {
     Brhz value;
     GetPropertyStatus(value);
@@ -105,7 +109,7 @@ void ProviderSender::Status(IInvocationResponse& aResponse, TUint aVersion, IInv
     aResponse.End();
 }
 
-void ProviderSender::Attributes(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
+void ProviderSender::Attributes(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseString& aValue)
 {
     Brhz value;
     GetPropertyAttributes(value);
@@ -489,7 +493,7 @@ void OhmSender::RunPipeline()
 
 void OhmSender::RunMulticast()
 {
-    while (true) {
+    for (;;) {
         LOG(kMedia, "OhmSender::RunMulticast wait\n");
         
         iThreadMulticast->Wait();
@@ -497,7 +501,7 @@ void OhmSender::RunMulticast()
         LOG(kMedia, "OhmSender::RunMulticast go\n");
         
         try {
-            while (true) {
+            for (;;) {
                 try {
                     OhmHeader header;
                     header.Internalise(iRxBuffer);
@@ -583,7 +587,7 @@ void OhmSender::RunMulticast()
 
 void OhmSender::RunUnicast()
 {
-    while (true) {
+    for (;;) {
         LOG(kMedia, "OhmSender::RunUnicast wait\n");
         
         iThreadUnicast->Wait();
@@ -591,12 +595,12 @@ void OhmSender::RunUnicast()
         LOG(kMedia, "OhmSender::RunUnicast go\n");
         
         try {
-            while (true) {
+            for (;;) {
                 // wait for first receiver to join
                 // if we receive a listen, it's probably from a temporarily physically disconnected receiver
                 // so accept them as well
                             
-                while (true) {
+                for (;;) {
                     try {
                         OhmHeader header;
                         header.Internalise(iRxBuffer);
@@ -633,7 +637,7 @@ void OhmSender::RunUnicast()
                 
                 iTimerExpiry.FireIn(kTimerExpiryTimeoutMs);
                 
-                while (true) {
+                for (;;) {
                     try {
                         OhmHeader header;
                         header.Internalise(iRxBuffer);
@@ -965,7 +969,12 @@ void OhmSender::SendListen(const Endpoint& aEndpoint)
     writer.Flush();
     header.Externalise(writer);
 
-    Send();    
+    try {
+        iSocket.Send(iTxBuffer, aEndpoint);
+    }
+    catch (NetworkError&) {
+        ASSERTS();
+    }
 }
 
 // Leave message is sent to acknowledge a Leave sent from a receiver or slave
@@ -979,7 +988,12 @@ void OhmSender::SendLeave(const Endpoint& aEndpoint)
     writer.Flush();
     header.Externalise(writer);
 
-    Send();    
+    try {
+        iSocket.Send(iTxBuffer, aEndpoint);
+    }
+    catch (NetworkError&) {
+        ASSERTS();
+    }
 }
 
 TBool OhmSender::CheckSlaveExpiry()

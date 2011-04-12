@@ -1,46 +1,47 @@
-objdir = Build/Obj/Posix
+objdir = Build/Obj/Windows
 incdir = Build/Include
-zappdir = ../Upnp/Build/Obj/Posix
-toolsDir = ../Upnp/Build/Posix/Tools
+zappdir = ../Upnp/Build/Obj/Windows
+toolsDir = ../Upnp/Build/Windows/Tools
 templatesDir = ../Upnp/T4/Templates
 
 
 
 # Macros used by Common.mak
 
-ar = ${CROSS_COMPILE}ar rc $(objdir)
-cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -g -O0 -Wno-psabi -fvisibility=hidden -DDllImport="__attribute__ ((visibility(\"default\")))" -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))"
-objdir = Build/Obj/Posix/
-inc_build = Build/Include
-includes = -I../Upnp/Build/Include/ -I../Upnp/Build/Include/Cpp/
-bundle_build = Build/Bundles
-osdir = Posix
-objext = o
-libprefix = lib
-libext = a
-exeext = elf
-compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
-link = ${CROSS_COMPILE}g++ -lpthread
-linkoutput = -o 
-dllprefix = lib
-dllext = so
-link_dll = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc
-link_dll_service = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc -lZappUpnp -L$(objdir)
-csharp = gmcs /nologo
-publiccsdir = Public/Cs/
-dirsep = /
-prefix = /usr/local
-installlibdir = $(prefix)/lib/zapp
-installincludedir = $(prefix)/include/zapp
-installpkgconfdir = $(prefix)/lib/pkgconfig
-mkdir = mkdir -p
-rmdir = rm -rf
+ar = lib /nologo /out:$(objdir)
+cflags = /MDd /W4 /WX /EHsc /RTC1 /Zi /FR$(objdir) /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS /Od -DDllImport=__declspec(dllimport) -DDllExport=__declspec(dllexport) -DDllExportClass=
+objdirbare = Build\Obj\Windows
+objdir = $(objdirbare)^\
+inc_build = Build\Include
+includes = -I..\Upnp\Build\Include -I..\Upnp\Build\Include\Cpp
+bundle_build = Build\Bundles
+osdir = Windows
+objext = obj
+libprefix = 
+libext = lib
+exeext = exe
+compiler = cl /nologo /Fo$(objdir)
+link = link /nologo /debug /SUBSYSTEM:CONSOLE /map Ws2_32.lib Iphlpapi.lib /incremental:no
+linkoutput = /out:
+dllprefix =
+dllext = dll
+link_dll = link /nologo /debug /map Ws2_32.lib Iphlpapi.lib /dll
+link_dll_service = link /nologo /debug  /map $(objdir)ZappUpnp.lib Ws2_32.lib Iphlpapi.lib /dll
+csharp = csc /nologo /platform:x86
+publiccsdir = Public\Cs^\
+dirsep = ^\
+installdir = $(PROGRAMFILES)\Zapp
+installlibdir = $(installdir)\lib
+installincludedir = $(installdir)\include
+mkdir = Scripts\mkdir.bat
+rmdir = Scripts\rmdir.bat
 uset4 = no
+
 
 all: $(objdir)/WavSender.exe 
 
 $(objdir)/WavSender.exe :
-	mkdir -p $(objdir)
+    if not exist $(objdirbare) mkdir $(objdirbare)
 	$(compiler)/DvAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) DvAvOpenhomeOrgSender1.cpp
 	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Ohm.cpp
 	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) OhmSender.cpp
@@ -48,7 +49,7 @@ $(objdir)/WavSender.exe :
 	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(zappdir)/$(libprefix)upnp_core.$(libext) $(zappdir)/TestFramework.$(libext)
 
 $(objdir)/Receiver.exe :
-	mkdir -p $(objdir)
+    if not exist $(objdirbare) mkdir $(objdirbare)
 	$(compiler)/DvAvOpenhomeOrgProduct1.$(objext) -c $(cflags) $(includes) DvAvOpenhomeOrgProduct1.cpp
 	$(compiler)/DvAvOpenhomeOrgReceiver1.$(objext) -c $(cflags) $(includes) DvAvOpenhomeOrgReceiver1.cpp
 	$(compiler)/Product.$(objext) -c $(cflags) $(includes) Product.cpp

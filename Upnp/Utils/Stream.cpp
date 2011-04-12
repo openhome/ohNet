@@ -508,80 +508,80 @@ void WriterBinary::Write(const Brx& aBuf)
     iWriter.Write(aBuf);
 }
 
-void WriterBinary::WriteUint8(TUint8 aValue)
+void WriterBinary::WriteUint8(TUint aValue)
 {
-    iWriter.Write(aValue);
+    iWriter.Write((TByte)(aValue));
 }
 
-void WriterBinary::WriteUint16Be(TUint16 aValue)
+void WriterBinary::WriteUint16Be(TUint aValue)
 {
-    iWriter.Write(aValue >> 8);
-    iWriter.Write((TByte)aValue);
+    iWriter.Write((TByte)(aValue >> 8));
+    iWriter.Write((TByte)(aValue));
 }
 
 void WriterBinary::WriteUint24Be(TUint aValue)
 {
     iWriter.Write((TByte)(aValue >> 16));
     iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)aValue);
+    iWriter.Write((TByte)(aValue));
 }
 
 void WriterBinary::WriteUint32Be(TUint aValue)
 {
-    iWriter.Write(aValue >> 24);
+    iWriter.Write((TByte)(aValue >> 24));
     iWriter.Write((TByte)(aValue >> 16));
     iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)aValue);
+    iWriter.Write((TByte)(aValue));
 }
 
 void WriterBinary::WriteUint64Be(TUint64 aValue)
 {
-    iWriter.Write(aValue >> 56);
+    iWriter.Write((TByte)(aValue >> 56));
     iWriter.Write((TByte)(aValue >> 48));
     iWriter.Write((TByte)(aValue >> 40));
     iWriter.Write((TByte)(aValue >> 32));
     iWriter.Write((TByte)(aValue >> 24));
     iWriter.Write((TByte)(aValue >> 16));
     iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)aValue);
+    iWriter.Write((TByte)(aValue));
 }
 
-void WriterBinary::WriteInt8(TInt8 aValue)
+void WriterBinary::WriteInt8(TInt aValue)
 {
-    iWriter.Write(aValue);
+    iWriter.Write((TByte)(aValue));
 }
 
-void WriterBinary::WriteInt16Be(TInt16 aValue)
+void WriterBinary::WriteInt16Be(TInt aValue)
 {
-    iWriter.Write(aValue >> 8);
-    iWriter.Write((TByte)aValue);
+    iWriter.Write((TByte)(aValue >> 8));
+    iWriter.Write((TByte)(aValue));
 }
 
 void WriterBinary::WriteInt24Be(TInt aValue)
 {
     iWriter.Write((TByte)(aValue >> 16));
     iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)aValue);
+    iWriter.Write((TByte)(aValue));
 }
 
 void WriterBinary::WriteInt32Be(TInt aValue)
 {
-    iWriter.Write(aValue >> 24);
+    iWriter.Write((TByte)(aValue >> 24));
     iWriter.Write((TByte)(aValue >> 16));
     iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)aValue);
+    iWriter.Write((TByte)(aValue));
 }
 
 void WriterBinary::WriteInt64Be(TInt64 aValue)
 {
-    iWriter.Write(aValue >> 56);
+    iWriter.Write((TByte)(aValue >> 56));
     iWriter.Write((TByte)(aValue >> 48));
     iWriter.Write((TByte)(aValue >> 40));
     iWriter.Write((TByte)(aValue >> 32));
     iWriter.Write((TByte)(aValue >> 24));
     iWriter.Write((TByte)(aValue >> 16));
     iWriter.Write((TByte)(aValue >> 8));
-    iWriter.Write((TByte)aValue);
+    iWriter.Write((TByte)(aValue));
 }
 
 
