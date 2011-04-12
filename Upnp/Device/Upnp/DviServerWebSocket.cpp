@@ -315,7 +315,6 @@ void DviSessionWebSocket::Run()
     else {
         while (!iExit) {
             try {
-                Interrupt(false);
                 WritePropertyUpdates();
                 LOG(kDvWebSocket, "WS: Wait for next request (or interrupt)\n");
                 Read();
@@ -551,6 +550,7 @@ void DviSessionWebSocket::Read()
         if (msg[0] != kMsgCloseEnd) {
             THROW(WebSocketError);
         }
+        LOG(kDvWebSocket, "WS: Received close cmd from browser\n");
         WriteConnectionClose();
         iExit = true;
         return;
@@ -747,6 +747,7 @@ void DviSessionWebSocket::WriteSubscriptionTimeout(const Brx& aSid, TUint aSecon
 void DviSessionWebSocket::WritePropertyUpdates()
 {
     AutoMutex a(iInterruptLock);
+    Interrupt(false);
     while (iPropertyUpdates.SlotsUsed() > 0) {
         LOG(kDvWebSocket, "WS: Write property update\n");
         Brh* msg = iPropertyUpdates.Read();
