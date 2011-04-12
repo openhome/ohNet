@@ -174,13 +174,14 @@ private:
 class DviServerUpnp : public DviServer, private IRedirector
 {
 public:
-    DviServerUpnp();
+    DviServerUpnp(TUint aPort = 0);
     void Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo);
 protected:
     virtual SocketTcpServer* CreateServer(const NetworkInterface& aNif);
 private:
     TBool RedirectUri(const Brx& aUri, Brn& aRedirectTo);
 private:
+    TUint iPort;
     Brh iRedirectUriRequested;
     Brh iRedirectUriRedirectedTo;
 };

@@ -18,7 +18,8 @@ DviStack::DviStack()
     , iMdns(NULL)
 {
     Stack::SetDviStack(this);
-    iDviServerUpnp = new DviServerUpnp;
+    TUint port = (Stack::InitParams().DvIsBonjourEnabled()? 80 : 0);
+    iDviServerUpnp = new DviServerUpnp(port);
     iDviDeviceMap = new DviDeviceMap;
     iSubscriptionManager = new DviSubscriptionManager;
     iDviServerWebSocket = new DviServerWebSocket;
