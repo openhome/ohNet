@@ -43,7 +43,6 @@
     fileName += type;
     fileName += version;
     string className = "CpProxy" + fileName;
-    string dllName = "Cp" + fileName;
 
     Initialise();
 

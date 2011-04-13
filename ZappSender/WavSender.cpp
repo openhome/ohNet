@@ -15,10 +15,27 @@
 
 #include "OhmSender.h"
 
+#ifdef _WIN32
+
+#pragma warning(disable:4355) // use of 'this' in ctor lists safe in this case
+
+#define CDECL __cdecl
+
+#include <conio.h>
+
+int mygetch()
+{
+    return (_getch());
+}
+
+#else
+
+#define CDECL
+
 #include <termios.h>
 #include <unistd.h>
 
-int mygetch(void)
+int mygetch()
 {
 	struct termios oldt, newt;
 	int ch;
@@ -31,10 +48,13 @@ int mygetch(void)
 	return ch;
 }
 
+#endif
+
+
 using namespace Zapp;
 using namespace Zapp::TestFramework;
 
-class WavSender
+class PcmSender
 {
 public:
 	static const TUint kPeriodMs = 5;
@@ -44,12 +64,12 @@ public:
 	static const TUint kMaxPacketBytes = 4096;
 	
 public:
-	WavSender(OhmSender* aSender, OhmSenderDriver* aDriver, const Brx& aUri, const TByte* aData, TUint aSampleCount, TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth);
+	PcmSender(OhmSender* aSender, OhmSenderDriver* aDriver, const Brx& aUri, const TByte* aData, TUint aSampleCount, TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth);
 	void Start();
 	void Pause();
 	void SetSpeed(TUint aValue);
 	void Restart();
-	~WavSender();
+	~PcmSender();
 	
 private:
 	void CalculatePacketBytes();
@@ -74,7 +94,7 @@ private:
 	TUint iPacketBytes;
 };
 
-WavSender::WavSender(OhmSender* aSender, OhmSenderDriver* aDriver, const Brx& aUri, const TByte* aData, TUint aSampleCount, TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth)
+PcmSender::PcmSender(OhmSender* aSender, OhmSenderDriver* aDriver, const Brx& aUri, const TByte* aData, TUint aSampleCount, TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth)
 	: iSender(aSender)
 	, iDriver(aDriver)
 	, iUri(aUri)
@@ -85,7 +105,7 @@ WavSender::WavSender(OhmSender* aSender, OhmSenderDriver* aDriver, const Brx& aU
 	, iChannels(aChannels)
 	, iBitDepth(aBitDepth)
 	, iTotalBytes(aSampleCount * aChannels * aBitDepth / 8)
-	, iTimer(MakeFunctor(*this, &WavSender::TimerExpired))
+	, iTimer(MakeFunctor(*this, &PcmSender::TimerExpired))
 	, iMutex("WAVP")
 	, iPaused(false)
 	, iSpeed(kSpeedNormal)
@@ -94,14 +114,14 @@ WavSender::WavSender(OhmSender* aSender, OhmSenderDriver* aDriver, const Brx& aU
 	CalculatePacketBytes();
 }
 
-void WavSender::Start()
+void PcmSender::Start()
 {
     iDriver->SetAudioFormat(iSampleRate, iBitRate, iChannels, iBitDepth, true, Brn("WAV"));
 	iSender->SetEnabled(true);
 	iTimer.FireIn(kPeriodMs);
 }
 
-void WavSender::Pause()
+void PcmSender::Pause()
 {
 	iMutex.Wait();
 
@@ -116,14 +136,14 @@ void WavSender::Pause()
 	iMutex.Signal();
 }
 
-void WavSender::Restart()
+void PcmSender::Restart()
 {
 	iMutex.Wait();
 	iIndex = 0;
 	iMutex.Signal();
 }
 
-void WavSender::SetSpeed(TUint aSpeed)
+void PcmSender::SetSpeed(TUint aSpeed)
 {
 	iMutex.Wait();
 	iSpeed = aSpeed;
@@ -131,7 +151,7 @@ void WavSender::SetSpeed(TUint aSpeed)
 	iMutex.Signal();
 }
 
-void WavSender::CalculatePacketBytes()
+void PcmSender::CalculatePacketBytes()
 {
     TUint bytespersample = iChannels * iBitDepth / 8;
     #
@@ -146,14 +166,14 @@ void WavSender::CalculatePacketBytes()
 	iPacketBytes = samples * bytespersample;
 }
 
-void WavSender::TimerExpired()
+void PcmSender::TimerExpired()
 {
 	iMutex.Wait();
 	
 	if (!iPaused) {
 	    if (iIndex == 0) {
             iSender->SetTrack(iUri, Brx::Empty(), iSampleCount, 0);
-            iSender->SetMetatext(Brn("WavSender repeated play"));
+            iSender->SetMetatext(Brn("PcmSender repeated play"));
 	    }
 	    
 		if (iIndex + iPacketBytes <= iTotalBytes) {
@@ -174,7 +194,7 @@ void WavSender::TimerExpired()
 	iMutex.Signal();
 }
 
-WavSender::~WavSender()
+PcmSender::~PcmSender()
 {
 	iTimer.Cancel();
 	delete (iSender);
@@ -194,9 +214,9 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.PtrZ();
 }
 
-int main(int aArgc, char* aArgv[])
+int CDECL main(int aArgc, char* aArgv[])
 {
-	Debug::SetLevel(Debug::kMedia);
+	//Debug::SetLevel(Debug::kMedia);
 	
     OptionParser parser;
     
@@ -250,7 +270,7 @@ int main(int aArgc, char* aArgv[])
 
     // Read WAV file
     
-    FILE* pFile = fopen(file.CString(), "r");
+    FILE* pFile = fopen(file.CString(), "rb");
     
     if (pFile == 0) {
     	printf("Unable to open specified wav file\n");
@@ -369,7 +389,7 @@ int main(int aArgc, char* aArgv[])
     
     if (count != subChunk2Size)
     {
-    	printf("Unable to read wav file\n");
+    	printf("Unable to read wav file %d, %d\n", count, subChunk2Size);
     	return (1);
     }
     
@@ -418,7 +438,7 @@ int main(int aArgc, char* aArgv[])
 	Bwh udn("device");
     RandomiseUdn(udn);
 
-    DvDevice* device = new DvDevice(udn);
+    DvDeviceStandard* device = new DvDeviceStandard(udn);
     
     device->SetAttribute("Upnp.Domain", "av.openhome.org");
     device->SetAttribute("Upnp.Type", "Sender");
@@ -437,17 +457,17 @@ int main(int aArgc, char* aArgv[])
     
 	OhmSender* sender = new OhmSender(*device, *driver, name, channel, interface, ttl, multicast, !disabled);
 	
-    WavSender* wavsender = new WavSender(sender, driver, file, data, sampleCount, sampleRate, byteRate * 8, numChannels, bitsPerSample);
+    PcmSender* pcmsender = new PcmSender(sender, driver, file, data, sampleCount, sampleRate, byteRate * 8, numChannels, bitsPerSample);
     
     device->SetEnabled();
 
-	wavsender->Start();
+	pcmsender->Start();
 	
-	TUint speed = WavSender::kSpeedNormal;
+	TUint speed = PcmSender::kSpeedNormal;
 	
 	printf("q = quit, f = faster, s = slower, n = normal, p = pause, r = restart, m = toggle multicast, e = toggle enabled\n");
 	
-    while (true) {
+    for (;;) {
     	int key = mygetch();
     	
     	if (key == 'q') {
@@ -455,34 +475,34 @@ int main(int aArgc, char* aArgv[])
     	}
 
     	if (key == 'f') {
-            if (speed < WavSender::kSpeedMax) {
+            if (speed < PcmSender::kSpeedMax) {
         		speed++;
-        		wavsender->SetSpeed(speed);
+        		pcmsender->SetSpeed(speed);
             }
     		printf("%d\n", speed);
     	}
 
       	if (key == 's') {
-      		if (speed > WavSender::kSpeedMin) {
+      		if (speed > PcmSender::kSpeedMin) {
     			speed--;
-	    		wavsender->SetSpeed(speed);
+	    		pcmsender->SetSpeed(speed);
     		}
     		printf("%d\n", speed);
     	}
 
         if (key == 'n') {
-            speed = WavSender::kSpeedNormal;
-            wavsender->SetSpeed(speed);
+            speed = PcmSender::kSpeedNormal;
+            pcmsender->SetSpeed(speed);
             printf("%d\n", speed);
         }
 
         if (key == 'p') {
-            wavsender->Pause();
+            pcmsender->Pause();
             printf("pause\n");
         }
 
         if (key == 'r') {
-            wavsender->Restart();
+            pcmsender->Restart();
             printf("restart\n");
         }
 
@@ -513,7 +533,7 @@ int main(int aArgc, char* aArgv[])
         }
     }
        
-    delete (wavsender);
+    delete (pcmsender);
 
     delete (device);
     
@@ -521,4 +541,3 @@ int main(int aArgc, char* aArgv[])
 	
     return (0);
 }
-

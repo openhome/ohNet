@@ -50,8 +50,8 @@ Endpoint OhmSocket::Sender() const
 void OhmSocket::Close()
 {
     ASSERT(iSocket);
-    delete (iReader);
     delete (iSocket);
+    delete (iReader);
     iReader = 0;
     iSocket = 0;
 }

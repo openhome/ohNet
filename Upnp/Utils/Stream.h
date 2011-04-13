@@ -202,15 +202,15 @@ class WriterBinary : private INonCopyable
 public:
     WriterBinary(IWriter& aWriter);
     void Write(const Brx& aBuffer);
-    void WriteUint8(TUint8 aValue);
-    void WriteUint16Be(TUint16 aValue);
-    void WriteUint24Be(TUint32 aValue);
-    void WriteUint32Be(TUint32 aValue);
+    void WriteUint8(TUint aValue);
+    void WriteUint16Be(TUint aValue);
+    void WriteUint24Be(TUint aValue);
+    void WriteUint32Be(TUint aValue);
     void WriteUint64Be(TUint64 aValue);
-    void WriteInt8(TInt8 aValue);
-    void WriteInt16Be(TInt16 aValue);
-    void WriteInt24Be(TInt32 aValue);
-    void WriteInt32Be(TInt32 aValue);
+    void WriteInt8(TInt aValue);
+    void WriteInt16Be(TInt aValue);
+    void WriteInt24Be(TInt aValue);
+    void WriteInt32Be(TInt aValue);
     void WriteInt64Be(TInt64 aValue);
 private:
     IWriter& iWriter;
