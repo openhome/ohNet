@@ -367,8 +367,9 @@ Zapp.SubscriptionManager = (function () {
         stop();
 
         if (websocketOnOpen && !websocketOnClose) {
-            alert("Lost Web Socket Connection to Node with the following debug information: \n\nWebSocket Open Called: " + websocketOpen + "\nWebSocket OnOpen Called: " + websocketOnOpen + "\nWebSocket OnClose Called: " + websocketOnClose+"\n\nRetrying once more...");
-   
+            alert("Lost Web Socket Connection to Node with the following debug information: \n\nWebSocket Open Called: " + websocketOpen + "\nWebSocket OnOpen Called: " + websocketOnOpen + "\nWebSocket OnClose Called: true\n\nRetrying once more...");
+            websocketOnOpen = false;
+            websocketOpen = false;
             setTimeout(function () { reconnect(); }, 1500);
         }
         else {
