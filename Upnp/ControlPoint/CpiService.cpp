@@ -131,7 +131,9 @@ ArgumentString::ArgumentString(const Zapp::Parameter& aParameter, const Brx& aVa
 {
     try {
         aParameter.ValidateString(aValue);
-        iValue.Set(aValue);
+        if (aValue.Bytes() > 0) {
+            iValue.Set(aValue);
+        }
     }
     catch (ParameterValidationError&) {
         ValidationFailed(aParameter);
@@ -299,7 +301,9 @@ ArgumentBinary::ArgumentBinary(const Zapp::Parameter& aParameter, const Brx& aVa
 {
     try {
         aParameter.ValidateBinary(aValue);
-        iValue.Set(aValue);
+        if (aValue.Bytes() > 0) {
+            iValue.Set(aValue);
+        }
     }
     catch (ParameterValidationError&) {
         ValidationFailed(aParameter);
