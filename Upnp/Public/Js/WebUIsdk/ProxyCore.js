@@ -46,7 +46,9 @@ Zapp.SubscriptionManager = (function () {
     var running = false; // A flag to state if the Subscription Manager is running
 
     // Debug Variables
-    var connectionPreviouslyOpened = false;
+    var websocketOpen = false;
+    var websocketOnOpen = false;
+    var websocketOnClose = false;
 
     // Functions
 
@@ -359,17 +361,21 @@ Zapp.SubscriptionManager = (function () {
     * @method onSocketClose
     */
     var onSocketClose = function () {
+
         // if (DEBUG) {
         console.log("onSocketClose");
         stop();
-        if (connectionPreviouslyOpened)
-            alert("Lost Connection to Node: Connection had successully opened.  Reconnecting...");
-        else
-            alert("Lost Connection to Node: Connection has failed to open the websocket.  Reconnecting...");
 
-        connectionPreviouslyOpened = false;
+        if (websocketOnOpen && !websocketOnClose) {
+            alert("Lost Web Socket Connection to Node with the following debug information: \n\nWebSocket Open Called: " + websocketOpen + "\nWebSocket OnOpen Called: " + websocketOnOpen + "\nWebSocket OnClose Called: " + websocketOnClose+"\n\nRetrying once more...");
+   
+            setTimeout(function () { reconnect(); }, 1500);
+        }
+        else {
+            alert("Lost Web Socket Connection to Node with the following debug information: \n\nWebSocket Open Called: " + websocketOpen + "\nWebSocket OnOpen Called: " + websocketOnOpen + "\nWebSocket OnClose Called: true");
+        }
+        websocketOnClose = true;
 
-        setTimeout(function () { reconnect(); }, 1500);
         //    }
     };
 
@@ -391,7 +397,7 @@ Zapp.SubscriptionManager = (function () {
         //if (DEBUG) {
         console.log("onSocketOpen");
         // }
-        connectionPreviouslyOpened = true;
+        websocketOnOpen = true;
 
         StartedFunction();
     };
@@ -435,6 +441,7 @@ Zapp.SubscriptionManager = (function () {
                 console.log("start/websocketServerLocation: " + websocketServerLocation);
             }
             websocket = new WebSocket(websocketServerLocation, "upnp:event"); // TODO : Needs to acquire the port
+            websocketOpen = true;
 
             websocket.onmessage = onSocketMessage;
             websocket.onerror = onSocketError;
@@ -774,78 +781,6 @@ Zapp.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorF
             }
         }
     });
-
-
-
-
-
-    //    var _this = this;
-
-    //    var parameters = this.envelope;
-    //    var headers =
-    //[
-    //{ name: "SOAPAction", value: _this.getSoapAction()
-    //}]
-    //    var xhr = new wink.XhrSOAP();
-
-    //    xhr.sendData(this.url, parameters, 'POST', { method: 'onsuccess' }, { method: 'onfailure' }, headers);
-
-    //    onsuccess = function (data, textStatus, XMLHttpRequest) {
-    //        if (XMLHttpRequest.status) {
-    //            if (successFunction) {
-    //                try {
-    //                    successFunction(XMLHttpRequest);
-    //                } catch (e) {
-    //                    console.log("createAjaxRequest: " + e.message);
-    //                    if (errorFunction) { errorFunction(textStatus); };
-    //                }
-    //            }
-    //        } else {
-    //            console.log("createAjaxRequest: " + _this.url);
-    //            if (errorFunction) { errorFunction(); };
-    //        }
-    //    }
-
-    //    onfailure = function (XMLHttpRequest, textStatus, errorThrown) {
-    //        if (errorFunction) {
-    //            errorFunction(XMLHttpRequest);
-    //        }
-    //    }
-    //    return xhr;
-
-    //    return new jQuery.ajax({
-    //        async: true,
-    //        url: this.url,
-    //        type: "POST",
-    //        dataType: "xml",
-    //        data: this.envelope,
-    //        success: function (data, textStatus, XMLHttpRequest) {
-    //            if (XMLHttpRequest.status) {
-    //                if (successFunction) {
-    //                    try {
-    //                        successFunction(XMLHttpRequest);
-    //                    } catch (e) {
-    //                        console.log("createAjaxRequest: " + e.message);
-    //                        if (errorFunction) { errorFunction(textStatus); };
-    //                    }
-    //                }
-    //            } else {
-    //                console.log("createAjaxRequest: " + _this.url);
-    //                if (errorFunction) { errorFunction(); };
-    //            }
-    //        },
-    //        processData: false,
-    //        error: function (XMLHttpRequest, textStatus, errorThrown) {
-    //            if (errorFunction) {
-    //                errorFunction(XMLHttpRequest);
-    //            }
-
-    //        },
-    //        beforeSend: function (req) {
-    //            req.setRequestHeader("SOAPAction", _this.getSoapAction());
-    //        },
-    //        contentType: "text/xml; charset=\"utf-8\""
-    //    });
 }
 
 
