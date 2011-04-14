@@ -134,6 +134,7 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
     iTimer = new Timer(MakeFunctor(*this, &CpiSubscription::Renew));
     iDevice.AddRef();
     Schedule(eSubscribe);
+    Stack::AddObject(this, "CpiSubscription");
 }
 
 CpiSubscription::~CpiSubscription()
@@ -146,6 +147,7 @@ CpiSubscription::~CpiSubscription()
     Stack::Mutex().Signal();
     iDevice.RemoveRef();
     delete iTimer;
+    Stack::RemoveObject(this, "CpiSubscription");
 }
 
 void CpiSubscription::Schedule(EOperation aOperation)
