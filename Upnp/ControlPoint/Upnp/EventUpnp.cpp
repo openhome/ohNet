@@ -98,6 +98,7 @@ void EventSessionUpnp::Run()
 
         if (!subscription->UpdateSequenceNumber(iHeaderSeq.Seq())) {
             subscription->SetNotificationError();
+            subscription->RemoveRef();
             subscription = NULL;
         }
     }
