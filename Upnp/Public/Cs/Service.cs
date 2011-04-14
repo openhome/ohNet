@@ -158,6 +158,9 @@ namespace Zapp.Core
     /// <remarks>One Property will be created per Property (state variable) for the Service</remarks>
     public class Property : IDisposable
     {
+        [DllImport("ZappUpnp")]
+        static extern unsafe IntPtr ServicePropertyDestroy(IntPtr aHandle);
+        
         public delegate void CallbackValueChanged();
         protected delegate void Callback(IntPtr aPtr);
 
@@ -165,11 +168,15 @@ namespace Zapp.Core
         protected GCHandle iGch;
         protected Callback iCallbackValueChanged;
         private CallbackValueChanged iValueChanged;
+        private bool iOwnsNativeProperty;
 
         public void Dispose()
         {
             iGch.Free();
-            // !!!! aren't we leaking the underlying property?
+            if (iOwnsNativeProperty)
+            {
+                ServicePropertyDestroy(iHandle);
+            }
         }
 
         internal IntPtr Handle()
@@ -177,9 +184,10 @@ namespace Zapp.Core
             return iHandle;
         }
         
-        protected Property()
+        protected Property(bool aOwnsNativeProperty)
         {
             iGch = GCHandle.Alloc(this);
+            iOwnsNativeProperty = aOwnsNativeProperty;
         }
 
         protected Property(CallbackValueChanged aValueChanged)
@@ -229,7 +237,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
         /// <param name="aParameter">Parameter defining the name and any value bounds for the property</param>
-        public PropertyInt(ParameterInt aParameter)
+        public PropertyInt(ParameterInt aParameter, bool aOwnsNativeProperty = false)
+            : base(aOwnsNativeProperty)
         {
             iHandle = ServicePropertyCreateIntDv(aParameter.Handle());
         }
@@ -287,7 +296,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
         /// <param name="aParameter">Parameter defining the name and any value bounds for the property</param>
-        public PropertyUint(ParameterUint aParameter)
+        public PropertyUint(ParameterUint aParameter, bool aOwnsNativeProperty = false)
+            : base(aOwnsNativeProperty)
         {
             iHandle = ServicePropertyCreateUintDv(aParameter.Handle());
         }
@@ -345,7 +355,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
         /// <param name="aParameter">Parameter defining the name for the property</param>
-        public PropertyBool(ParameterBool aParameter)
+        public PropertyBool(ParameterBool aParameter, bool aOwnsNativeProperty = false)
+            : base(aOwnsNativeProperty)
         {
             iHandle = ServicePropertyCreateBoolDv(aParameter.Handle());
         }
@@ -407,7 +418,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
         /// <param name="aParameter">Parameter defining the name and any set of allowed values for the property</param>
-        public PropertyString(ParameterString aParameter)
+        public PropertyString(ParameterString aParameter, bool aOwnsNativeProperty = false)
+            : base(aOwnsNativeProperty)
         {
             iHandle = ServicePropertyCreateStringDv(aParameter.Handle());
         }
@@ -472,7 +484,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
         /// <param name="aParameter">Parameter defining the name for the property</param>
-        public PropertyBinary(ParameterBinary aParameter)
+        public PropertyBinary(ParameterBinary aParameter, bool aOwnsNativeProperty = false)
+            : base(aOwnsNativeProperty)
         {
             iHandle = ServicePropertyCreateBinaryDv(aParameter.Handle());
         }
