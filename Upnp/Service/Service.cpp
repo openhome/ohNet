@@ -304,6 +304,7 @@ PropertyString::~PropertyString()
 const Brx& PropertyString::Value() const
 {
     AutoMutex a(Stack::Mutex());
+    ASSERT(iSequenceNumber > 0);
     return iValue;
 }
 
@@ -315,6 +316,7 @@ void PropertyString::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
     aProcessor.ProcessString(aBuffer, iValue);
 	if (iSequenceNumber == 0 || old != iValue) {
         iChanged = true;
+        iSequenceNumber++;
     }
 }
 
@@ -355,6 +357,7 @@ TInt PropertyInt::Value() const
 {
     TInt val;
     Stack::Mutex().Wait();
+    ASSERT(iSequenceNumber > 0);
     val = iValue;
     Stack::Mutex().Signal();
     return val;
@@ -367,6 +370,7 @@ void PropertyInt::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
     aProcessor.ProcessInt(aBuffer, iValue);
 	if (iSequenceNumber == 0 || old != iValue) {
         iChanged = true;
+        iSequenceNumber++;
     }
 }
 
@@ -407,6 +411,7 @@ TUint PropertyUint::Value() const
 {
     TInt val;
     Stack::Mutex().Wait();
+    ASSERT(iSequenceNumber > 0);
     val = iValue;
     Stack::Mutex().Signal();
     return val;
@@ -419,6 +424,7 @@ void PropertyUint::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 	aProcessor.ProcessUint(aBuffer, iValue);
 	if (iSequenceNumber == 0 || old != iValue) {
         iChanged = true;
+        iSequenceNumber++;
     }
 }
 
@@ -459,6 +465,7 @@ TBool PropertyBool::Value() const
 {
     TInt val;
     Stack::Mutex().Wait();
+    ASSERT(iSequenceNumber > 0);
     val = iValue;
     Stack::Mutex().Signal();
     return (val != 0);
@@ -471,6 +478,7 @@ void PropertyBool::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 	aProcessor.ProcessBool(aBuffer, iValue);
 	if (iSequenceNumber == 0 || old != iValue) {
         iChanged = true;
+        iSequenceNumber++;
     }
 }
 
@@ -510,6 +518,7 @@ PropertyBinary::~PropertyBinary()
 const Brx& PropertyBinary::Value() const
 {
     AutoMutex a(Stack::Mutex());
+    ASSERT(iSequenceNumber > 0);
     return iValue;
 }
 
@@ -520,6 +529,7 @@ void PropertyBinary::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
     aProcessor.ProcessBinary(aBuffer, iValue);
 	if (iSequenceNumber == 0 || old != iValue) {
         iChanged = true;
+        iSequenceNumber++;
     }
 }
 
