@@ -70,13 +70,13 @@ namespace Zapp.ControlPoint.Proxies
         void SyncGetFreeFormQueryCapabilities(out String aFFQCapabilities);
         void BeginGetFreeFormQueryCapabilities(CpProxy.CallbackAsyncComplete aCallback);
         void EndGetFreeFormQueryCapabilities(IntPtr aAsyncHandle, out String aFFQCapabilities);
-        void SetPropertySystemUpdateIDChanged(CpProxy.CallbackPropertyChanged aSystemUpdateIDChanged);
+        void SetPropertySystemUpdateIDChanged(System.Action aSystemUpdateIDChanged);
         uint PropertySystemUpdateID();
-        void SetPropertyContainerUpdateIDsChanged(CpProxy.CallbackPropertyChanged aContainerUpdateIDsChanged);
+        void SetPropertyContainerUpdateIDsChanged(System.Action aContainerUpdateIDsChanged);
         String PropertyContainerUpdateIDs();
-        void SetPropertyLastChangeChanged(CpProxy.CallbackPropertyChanged aLastChangeChanged);
+        void SetPropertyLastChangeChanged(System.Action aLastChangeChanged);
         String PropertyLastChange();
-        void SetPropertyTransferIDsChanged(CpProxy.CallbackPropertyChanged aTransferIDsChanged);
+        void SetPropertyTransferIDsChanged(System.Action aTransferIDsChanged);
         String PropertyTransferIDs();
     }
 
@@ -519,10 +519,10 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyString iContainerUpdateIDs;
         private PropertyString iLastChange;
         private PropertyString iTransferIDs;
-        private CallbackPropertyChanged iSystemUpdateIDChanged;
-        private CallbackPropertyChanged iContainerUpdateIDsChanged;
-        private CallbackPropertyChanged iLastChangeChanged;
-        private CallbackPropertyChanged iTransferIDsChanged;
+        private System.Action iSystemUpdateIDChanged;
+        private System.Action iContainerUpdateIDsChanged;
+        private System.Action iLastChangeChanged;
+        private System.Action iTransferIDsChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -1789,7 +1789,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgContentDirectory3 instance will not overlap.</remarks>
         /// <param name="aSystemUpdateIDChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertySystemUpdateIDChanged(CallbackPropertyChanged aSystemUpdateIDChanged)
+        public void SetPropertySystemUpdateIDChanged(System.Action aSystemUpdateIDChanged)
         {
             lock (iPropertyLock)
             {
@@ -1811,7 +1811,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgContentDirectory3 instance will not overlap.</remarks>
         /// <param name="aContainerUpdateIDsChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyContainerUpdateIDsChanged(CallbackPropertyChanged aContainerUpdateIDsChanged)
+        public void SetPropertyContainerUpdateIDsChanged(System.Action aContainerUpdateIDsChanged)
         {
             lock (iPropertyLock)
             {
@@ -1833,7 +1833,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgContentDirectory3 instance will not overlap.</remarks>
         /// <param name="aLastChangeChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyLastChangeChanged(CallbackPropertyChanged aLastChangeChanged)
+        public void SetPropertyLastChangeChanged(System.Action aLastChangeChanged)
         {
             lock (iPropertyLock)
             {
@@ -1855,7 +1855,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgContentDirectory3 instance will not overlap.</remarks>
         /// <param name="aTransferIDsChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTransferIDsChanged(CallbackPropertyChanged aTransferIDsChanged)
+        public void SetPropertyTransferIDsChanged(System.Action aTransferIDsChanged)
         {
             lock (iPropertyLock)
             {

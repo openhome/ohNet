@@ -121,7 +121,7 @@ namespace Zapp.ControlPoint.Proxies
         void SyncSetStateVariables(uint aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs, out String aStateVariableList);
         void BeginSetStateVariables(uint aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetStateVariables(IntPtr aAsyncHandle, out String aStateVariableList);
-        void SetPropertyLastChangeChanged(CpProxy.CallbackPropertyChanged aLastChangeChanged);
+        void SetPropertyLastChangeChanged(System.Action aLastChangeChanged);
         String PropertyLastChange();
     }
 
@@ -791,7 +791,7 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionGetStateVariables;
         private Zapp.Core.Action iActionSetStateVariables;
         private PropertyString iLastChange;
-        private CallbackPropertyChanged iLastChangeChanged;
+        private System.Action iLastChangeChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -2955,7 +2955,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgRenderingControl2 instance will not overlap.</remarks>
         /// <param name="aLastChangeChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyLastChangeChanged(CallbackPropertyChanged aLastChangeChanged)
+        public void SetPropertyLastChangeChanged(System.Action aLastChangeChanged)
         {
             lock (iPropertyLock)
             {

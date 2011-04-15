@@ -26,6 +26,7 @@ CpiService::CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion,
     , iSubscription(NULL)
 {
 	iDevice.AddRef();
+	Stack::AddObject(this, "CpiService");
 }
 
 CpiService::~CpiService()
@@ -45,6 +46,7 @@ CpiService::~CpiService()
         iShutdownSignal.Wait();
     }
 	iDevice.RemoveRef();
+	Stack::RemoveObject(this, "CpiService");
 }
 
 Invocation* CpiService::Invocation(const Action& aAction, FunctorAsync& aFunctor)

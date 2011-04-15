@@ -64,7 +64,7 @@ namespace Zapp.ControlPoint.Proxies
         void SyncGetRecordTaskConflicts(String aRecordTaskID, out String aRecordTaskConflictIDList, out uint aUpdateID);
         void BeginGetRecordTaskConflicts(String aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
         void EndGetRecordTaskConflicts(IntPtr aAsyncHandle, out String aRecordTaskConflictIDList, out uint aUpdateID);
-        void SetPropertyLastChangeChanged(CpProxy.CallbackPropertyChanged aLastChangeChanged);
+        void SetPropertyLastChangeChanged(System.Action aLastChangeChanged);
         String PropertyLastChange();
     }
 
@@ -464,7 +464,7 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionGetRecordScheduleConflicts;
         private Zapp.Core.Action iActionGetRecordTaskConflicts;
         private PropertyString iLastChange;
-        private CallbackPropertyChanged iLastChangeChanged;
+        private System.Action iLastChangeChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -1590,7 +1590,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgScheduledRecording2 instance will not overlap.</remarks>
         /// <param name="aLastChangeChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyLastChangeChanged(CallbackPropertyChanged aLastChangeChanged)
+        public void SetPropertyLastChangeChanged(System.Action aLastChangeChanged)
         {
             lock (iPropertyLock)
             {

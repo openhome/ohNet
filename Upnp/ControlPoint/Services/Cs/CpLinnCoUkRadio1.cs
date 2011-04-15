@@ -58,19 +58,19 @@ namespace Zapp.ControlPoint.Proxies
         void SyncIdsMax(out uint aIdsMax);
         void BeginIdsMax(CpProxy.CallbackAsyncComplete aCallback);
         void EndIdsMax(IntPtr aAsyncHandle, out uint aIdsMax);
-        void SetPropertyChannelUriChanged(CpProxy.CallbackPropertyChanged aChannelUriChanged);
+        void SetPropertyChannelUriChanged(System.Action aChannelUriChanged);
         String PropertyChannelUri();
-        void SetPropertyChannelMetadataChanged(CpProxy.CallbackPropertyChanged aChannelMetadataChanged);
+        void SetPropertyChannelMetadataChanged(System.Action aChannelMetadataChanged);
         String PropertyChannelMetadata();
-        void SetPropertyTransportStateChanged(CpProxy.CallbackPropertyChanged aTransportStateChanged);
+        void SetPropertyTransportStateChanged(System.Action aTransportStateChanged);
         String PropertyTransportState();
-        void SetPropertyProtocolInfoChanged(CpProxy.CallbackPropertyChanged aProtocolInfoChanged);
+        void SetPropertyProtocolInfoChanged(System.Action aProtocolInfoChanged);
         String PropertyProtocolInfo();
-        void SetPropertyIdChanged(CpProxy.CallbackPropertyChanged aIdChanged);
+        void SetPropertyIdChanged(System.Action aIdChanged);
         uint PropertyId();
-        void SetPropertyIdArrayChanged(CpProxy.CallbackPropertyChanged aIdArrayChanged);
+        void SetPropertyIdArrayChanged(System.Action aIdArrayChanged);
         byte[] PropertyIdArray();
-        void SetPropertyIdsMaxChanged(CpProxy.CallbackPropertyChanged aIdsMaxChanged);
+        void SetPropertyIdsMaxChanged(System.Action aIdsMaxChanged);
         uint PropertyIdsMax();
     }
 
@@ -381,13 +381,13 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyUint iId;
         private PropertyBinary iIdArray;
         private PropertyUint iIdsMax;
-        private CallbackPropertyChanged iChannelUriChanged;
-        private CallbackPropertyChanged iChannelMetadataChanged;
-        private CallbackPropertyChanged iTransportStateChanged;
-        private CallbackPropertyChanged iProtocolInfoChanged;
-        private CallbackPropertyChanged iIdChanged;
-        private CallbackPropertyChanged iIdArrayChanged;
-        private CallbackPropertyChanged iIdsMaxChanged;
+        private System.Action iChannelUriChanged;
+        private System.Action iChannelMetadataChanged;
+        private System.Action iTransportStateChanged;
+        private System.Action iProtocolInfoChanged;
+        private System.Action iIdChanged;
+        private System.Action iIdArrayChanged;
+        private System.Action iIdsMaxChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -1249,7 +1249,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkRadio1 instance will not overlap.</remarks>
         /// <param name="aChannelUriChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyChannelUriChanged(CallbackPropertyChanged aChannelUriChanged)
+        public void SetPropertyChannelUriChanged(System.Action aChannelUriChanged)
         {
             lock (iPropertyLock)
             {
@@ -1271,7 +1271,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkRadio1 instance will not overlap.</remarks>
         /// <param name="aChannelMetadataChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyChannelMetadataChanged(CallbackPropertyChanged aChannelMetadataChanged)
+        public void SetPropertyChannelMetadataChanged(System.Action aChannelMetadataChanged)
         {
             lock (iPropertyLock)
             {
@@ -1293,7 +1293,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkRadio1 instance will not overlap.</remarks>
         /// <param name="aTransportStateChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTransportStateChanged(CallbackPropertyChanged aTransportStateChanged)
+        public void SetPropertyTransportStateChanged(System.Action aTransportStateChanged)
         {
             lock (iPropertyLock)
             {
@@ -1315,7 +1315,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkRadio1 instance will not overlap.</remarks>
         /// <param name="aProtocolInfoChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyProtocolInfoChanged(CallbackPropertyChanged aProtocolInfoChanged)
+        public void SetPropertyProtocolInfoChanged(System.Action aProtocolInfoChanged)
         {
             lock (iPropertyLock)
             {
@@ -1337,7 +1337,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkRadio1 instance will not overlap.</remarks>
         /// <param name="aIdChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyIdChanged(CallbackPropertyChanged aIdChanged)
+        public void SetPropertyIdChanged(System.Action aIdChanged)
         {
             lock (iPropertyLock)
             {
@@ -1359,7 +1359,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkRadio1 instance will not overlap.</remarks>
         /// <param name="aIdArrayChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyIdArrayChanged(CallbackPropertyChanged aIdArrayChanged)
+        public void SetPropertyIdArrayChanged(System.Action aIdArrayChanged)
         {
             lock (iPropertyLock)
             {
@@ -1381,7 +1381,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkRadio1 instance will not overlap.</remarks>
         /// <param name="aIdsMaxChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyIdsMaxChanged(CallbackPropertyChanged aIdsMaxChanged)
+        public void SetPropertyIdsMaxChanged(System.Action aIdsMaxChanged)
         {
             lock (iPropertyLock)
             {

@@ -12,6 +12,7 @@
 #include <CpiService.h>
 #include <XmlFetcher.h>
 #include <CpiSubscription.h>
+#include <CpiDevice.h>
 
 #include <vector>
 
@@ -24,6 +25,7 @@ public:
     static Zapp::InvocationManager& InvocationManager();
     static Zapp::XmlFetchManager& XmlFetchManager();
     static CpiSubscriptionManager& SubscriptionManager();
+    static CpiDeviceListUpdater& DeviceListUpdater();
 private:
     ~CpiStack();
     static CpiStack* Self();
@@ -31,6 +33,7 @@ private:
     Zapp::InvocationManager* iInvocationManager;
     Zapp::XmlFetchManager* iXmlFetchManager;
     CpiSubscriptionManager* iSubscriptionManager;
+    CpiDeviceListUpdater* iDeviceListUpdater;
 };
 
 } // namespace Zapp

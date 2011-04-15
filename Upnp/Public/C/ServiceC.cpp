@@ -38,6 +38,11 @@ ServiceParameter ServiceParameterCreateRelated(const char* aName, ServicePropert
     return (ServiceParameter)new ParameterRelated(aName, *prop);
 }
 
+void ServicePropertyDestroy(ServiceProperty aProperty)
+{
+    delete reinterpret_cast<Zapp::Property*>(aProperty);
+}
+
 ServiceProperty ServicePropertyCreateIntCp(const char* aName, ZappCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);

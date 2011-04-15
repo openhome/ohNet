@@ -52,11 +52,11 @@ namespace Zapp.ControlPoint.Proxies
         void SyncCreateReference(String aContainerID, String aObjectID, out String aNewID);
         void BeginCreateReference(String aContainerID, String aObjectID, CpProxy.CallbackAsyncComplete aCallback);
         void EndCreateReference(IntPtr aAsyncHandle, out String aNewID);
-        void SetPropertyTransferIDsChanged(CpProxy.CallbackPropertyChanged aTransferIDsChanged);
+        void SetPropertyTransferIDsChanged(System.Action aTransferIDsChanged);
         String PropertyTransferIDs();
-        void SetPropertySystemUpdateIDChanged(CpProxy.CallbackPropertyChanged aSystemUpdateIDChanged);
+        void SetPropertySystemUpdateIDChanged(System.Action aSystemUpdateIDChanged);
         uint PropertySystemUpdateID();
-        void SetPropertyContainerUpdateIDsChanged(CpProxy.CallbackPropertyChanged aContainerUpdateIDsChanged);
+        void SetPropertyContainerUpdateIDsChanged(System.Action aContainerUpdateIDsChanged);
         String PropertyContainerUpdateIDs();
     }
 
@@ -373,9 +373,9 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyString iTransferIDs;
         private PropertyUint iSystemUpdateID;
         private PropertyString iContainerUpdateIDs;
-        private CallbackPropertyChanged iTransferIDsChanged;
-        private CallbackPropertyChanged iSystemUpdateIDChanged;
-        private CallbackPropertyChanged iContainerUpdateIDsChanged;
+        private System.Action iTransferIDsChanged;
+        private System.Action iSystemUpdateIDChanged;
+        private System.Action iContainerUpdateIDsChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -1300,7 +1300,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgContentDirectory1 instance will not overlap.</remarks>
         /// <param name="aTransferIDsChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTransferIDsChanged(CallbackPropertyChanged aTransferIDsChanged)
+        public void SetPropertyTransferIDsChanged(System.Action aTransferIDsChanged)
         {
             lock (iPropertyLock)
             {
@@ -1322,7 +1322,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgContentDirectory1 instance will not overlap.</remarks>
         /// <param name="aSystemUpdateIDChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertySystemUpdateIDChanged(CallbackPropertyChanged aSystemUpdateIDChanged)
+        public void SetPropertySystemUpdateIDChanged(System.Action aSystemUpdateIDChanged)
         {
             lock (iPropertyLock)
             {
@@ -1344,7 +1344,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgContentDirectory1 instance will not overlap.</remarks>
         /// <param name="aContainerUpdateIDsChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyContainerUpdateIDsChanged(CallbackPropertyChanged aContainerUpdateIDsChanged)
+        public void SetPropertyContainerUpdateIDsChanged(System.Action aContainerUpdateIDsChanged)
         {
             lock (iPropertyLock)
             {

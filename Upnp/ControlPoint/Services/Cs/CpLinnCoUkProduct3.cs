@@ -82,31 +82,31 @@ namespace Zapp.ControlPoint.Proxies
         void SyncSetSourceVisible(uint aSourceIndex, bool aSourceVisible);
         void BeginSetSourceVisible(uint aSourceIndex, bool aSourceVisible, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetSourceVisible(IntPtr aAsyncHandle);
-        void SetPropertyProductTypeChanged(CpProxy.CallbackPropertyChanged aProductTypeChanged);
+        void SetPropertyProductTypeChanged(System.Action aProductTypeChanged);
         String PropertyProductType();
-        void SetPropertyProductModelChanged(CpProxy.CallbackPropertyChanged aProductModelChanged);
+        void SetPropertyProductModelChanged(System.Action aProductModelChanged);
         String PropertyProductModel();
-        void SetPropertyProductNameChanged(CpProxy.CallbackPropertyChanged aProductNameChanged);
+        void SetPropertyProductNameChanged(System.Action aProductNameChanged);
         String PropertyProductName();
-        void SetPropertyProductRoomChanged(CpProxy.CallbackPropertyChanged aProductRoomChanged);
+        void SetPropertyProductRoomChanged(System.Action aProductRoomChanged);
         String PropertyProductRoom();
-        void SetPropertyProductStandbyChanged(CpProxy.CallbackPropertyChanged aProductStandbyChanged);
+        void SetPropertyProductStandbyChanged(System.Action aProductStandbyChanged);
         bool PropertyProductStandby();
-        void SetPropertyProductSourceIndexChanged(CpProxy.CallbackPropertyChanged aProductSourceIndexChanged);
+        void SetPropertyProductSourceIndexChanged(System.Action aProductSourceIndexChanged);
         uint PropertyProductSourceIndex();
-        void SetPropertyProductSourceCountChanged(CpProxy.CallbackPropertyChanged aProductSourceCountChanged);
+        void SetPropertyProductSourceCountChanged(System.Action aProductSourceCountChanged);
         uint PropertyProductSourceCount();
-        void SetPropertyProductSourceXmlChanged(CpProxy.CallbackPropertyChanged aProductSourceXmlChanged);
+        void SetPropertyProductSourceXmlChanged(System.Action aProductSourceXmlChanged);
         String PropertyProductSourceXml();
-        void SetPropertyStartupSourceIndexChanged(CpProxy.CallbackPropertyChanged aStartupSourceIndexChanged);
+        void SetPropertyStartupSourceIndexChanged(System.Action aStartupSourceIndexChanged);
         uint PropertyStartupSourceIndex();
-        void SetPropertyStartupSourceEnabledChanged(CpProxy.CallbackPropertyChanged aStartupSourceEnabledChanged);
+        void SetPropertyStartupSourceEnabledChanged(System.Action aStartupSourceEnabledChanged);
         bool PropertyStartupSourceEnabled();
-        void SetPropertyProductAnySourceNameChanged(CpProxy.CallbackPropertyChanged aProductAnySourceNameChanged);
+        void SetPropertyProductAnySourceNameChanged(System.Action aProductAnySourceNameChanged);
         uint PropertyProductAnySourceName();
-        void SetPropertyProductAnySourceVisibleChanged(CpProxy.CallbackPropertyChanged aProductAnySourceVisibleChanged);
+        void SetPropertyProductAnySourceVisibleChanged(System.Action aProductAnySourceVisibleChanged);
         uint PropertyProductAnySourceVisible();
-        void SetPropertyProductAnySourceTypeChanged(CpProxy.CallbackPropertyChanged aProductAnySourceTypeChanged);
+        void SetPropertyProductAnySourceTypeChanged(System.Action aProductAnySourceTypeChanged);
         uint PropertyProductAnySourceType();
     }
 
@@ -558,19 +558,19 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyUint iProductAnySourceName;
         private PropertyUint iProductAnySourceVisible;
         private PropertyUint iProductAnySourceType;
-        private CallbackPropertyChanged iProductTypeChanged;
-        private CallbackPropertyChanged iProductModelChanged;
-        private CallbackPropertyChanged iProductNameChanged;
-        private CallbackPropertyChanged iProductRoomChanged;
-        private CallbackPropertyChanged iProductStandbyChanged;
-        private CallbackPropertyChanged iProductSourceIndexChanged;
-        private CallbackPropertyChanged iProductSourceCountChanged;
-        private CallbackPropertyChanged iProductSourceXmlChanged;
-        private CallbackPropertyChanged iStartupSourceIndexChanged;
-        private CallbackPropertyChanged iStartupSourceEnabledChanged;
-        private CallbackPropertyChanged iProductAnySourceNameChanged;
-        private CallbackPropertyChanged iProductAnySourceVisibleChanged;
-        private CallbackPropertyChanged iProductAnySourceTypeChanged;
+        private System.Action iProductTypeChanged;
+        private System.Action iProductModelChanged;
+        private System.Action iProductNameChanged;
+        private System.Action iProductRoomChanged;
+        private System.Action iProductStandbyChanged;
+        private System.Action iProductSourceIndexChanged;
+        private System.Action iProductSourceCountChanged;
+        private System.Action iProductSourceXmlChanged;
+        private System.Action iStartupSourceIndexChanged;
+        private System.Action iStartupSourceEnabledChanged;
+        private System.Action iProductAnySourceNameChanged;
+        private System.Action iProductAnySourceVisibleChanged;
+        private System.Action iProductAnySourceTypeChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -1848,7 +1848,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
         /// <param name="aProductTypeChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyProductTypeChanged(CallbackPropertyChanged aProductTypeChanged)
+        public void SetPropertyProductTypeChanged(System.Action aProductTypeChanged)
         {
             lock (iPropertyLock)
             {
@@ -1870,7 +1870,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
         /// <param name="aProductModelChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyProductModelChanged(CallbackPropertyChanged aProductModelChanged)
+        public void SetPropertyProductModelChanged(System.Action aProductModelChanged)
         {
             lock (iPropertyLock)
             {
@@ -1892,7 +1892,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
         /// <param name="aProductNameChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyProductNameChanged(CallbackPropertyChanged aProductNameChanged)
+        public void SetPropertyProductNameChanged(System.Action aProductNameChanged)
         {
             lock (iPropertyLock)
             {
@@ -1914,7 +1914,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
         /// <param name="aProductRoomChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyProductRoomChanged(CallbackPropertyChanged aProductRoomChanged)
+        public void SetPropertyProductRoomChanged(System.Action aProductRoomChanged)
         {
             lock (iPropertyLock)
             {
@@ -1936,7 +1936,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
         /// <param name="aProductStandbyChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyProductStandbyChanged(CallbackPropertyChanged aProductStandbyChanged)
+        public void SetPropertyProductStandbyChanged(System.Action aProductStandbyChanged)
         {
             lock (iPropertyLock)
             {
@@ -1958,7 +1958,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
         /// <param name="aProductSourceIndexChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyProductSourceIndexChanged(CallbackPropertyChanged aProductSourceIndexChanged)
+        public void SetPropertyProductSourceIndexChanged(System.Action aProductSourceIndexChanged)
         {
             lock (iPropertyLock)
             {
@@ -1980,7 +1980,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
         /// <param name="aProductSourceCountChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyProductSourceCountChanged(CallbackPropertyChanged aProductSourceCountChanged)
+        public void SetPropertyProductSourceCountChanged(System.Action aProductSourceCountChanged)
         {
             lock (iPropertyLock)
             {
@@ -2002,7 +2002,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
         /// <param name="aProductSourceXmlChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyProductSourceXmlChanged(CallbackPropertyChanged aProductSourceXmlChanged)
+        public void SetPropertyProductSourceXmlChanged(System.Action aProductSourceXmlChanged)
         {
             lock (iPropertyLock)
             {
@@ -2024,7 +2024,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
         /// <param name="aStartupSourceIndexChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyStartupSourceIndexChanged(CallbackPropertyChanged aStartupSourceIndexChanged)
+        public void SetPropertyStartupSourceIndexChanged(System.Action aStartupSourceIndexChanged)
         {
             lock (iPropertyLock)
             {
@@ -2046,7 +2046,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
         /// <param name="aStartupSourceEnabledChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyStartupSourceEnabledChanged(CallbackPropertyChanged aStartupSourceEnabledChanged)
+        public void SetPropertyStartupSourceEnabledChanged(System.Action aStartupSourceEnabledChanged)
         {
             lock (iPropertyLock)
             {
@@ -2068,7 +2068,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
         /// <param name="aProductAnySourceNameChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyProductAnySourceNameChanged(CallbackPropertyChanged aProductAnySourceNameChanged)
+        public void SetPropertyProductAnySourceNameChanged(System.Action aProductAnySourceNameChanged)
         {
             lock (iPropertyLock)
             {
@@ -2090,7 +2090,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
         /// <param name="aProductAnySourceVisibleChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyProductAnySourceVisibleChanged(CallbackPropertyChanged aProductAnySourceVisibleChanged)
+        public void SetPropertyProductAnySourceVisibleChanged(System.Action aProductAnySourceVisibleChanged)
         {
             lock (iPropertyLock)
             {
@@ -2112,7 +2112,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
         /// <param name="aProductAnySourceTypeChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyProductAnySourceTypeChanged(CallbackPropertyChanged aProductAnySourceTypeChanged)
+        public void SetPropertyProductAnySourceTypeChanged(System.Action aProductAnySourceTypeChanged)
         {
             lock (iPropertyLock)
             {

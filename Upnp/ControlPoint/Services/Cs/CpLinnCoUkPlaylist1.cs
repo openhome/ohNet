@@ -46,13 +46,13 @@ namespace Zapp.ControlPoint.Proxies
         void SyncIdArrayChanged(uint aIdArrayToken, out bool aIdArrayChanged);
         void BeginIdArrayChanged(uint aIdArrayToken, CpProxy.CallbackAsyncComplete aCallback);
         void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aIdArrayChanged);
-        void SetPropertyIdArrayChanged(CpProxy.CallbackPropertyChanged aIdArrayChanged);
+        void SetPropertyIdArrayChanged(System.Action aIdArrayChanged);
         byte[] PropertyIdArray();
-        void SetPropertyRepeatChanged(CpProxy.CallbackPropertyChanged aRepeatChanged);
+        void SetPropertyRepeatChanged(System.Action aRepeatChanged);
         bool PropertyRepeat();
-        void SetPropertyShuffleChanged(CpProxy.CallbackPropertyChanged aShuffleChanged);
+        void SetPropertyShuffleChanged(System.Action aShuffleChanged);
         bool PropertyShuffle();
-        void SetPropertyTracksMaxChanged(CpProxy.CallbackPropertyChanged aTracksMaxChanged);
+        void SetPropertyTracksMaxChanged(System.Action aTracksMaxChanged);
         uint PropertyTracksMax();
     }
 
@@ -295,10 +295,10 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyBool iRepeat;
         private PropertyBool iShuffle;
         private PropertyUint iTracksMax;
-        private CallbackPropertyChanged iIdArrayChanged;
-        private CallbackPropertyChanged iRepeatChanged;
-        private CallbackPropertyChanged iShuffleChanged;
-        private CallbackPropertyChanged iTracksMaxChanged;
+        private System.Action iIdArrayChanged;
+        private System.Action iRepeatChanged;
+        private System.Action iShuffleChanged;
+        private System.Action iTracksMaxChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -972,7 +972,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkPlaylist1 instance will not overlap.</remarks>
         /// <param name="aIdArrayChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyIdArrayChanged(CallbackPropertyChanged aIdArrayChanged)
+        public void SetPropertyIdArrayChanged(System.Action aIdArrayChanged)
         {
             lock (iPropertyLock)
             {
@@ -994,7 +994,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkPlaylist1 instance will not overlap.</remarks>
         /// <param name="aRepeatChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyRepeatChanged(CallbackPropertyChanged aRepeatChanged)
+        public void SetPropertyRepeatChanged(System.Action aRepeatChanged)
         {
             lock (iPropertyLock)
             {
@@ -1016,7 +1016,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkPlaylist1 instance will not overlap.</remarks>
         /// <param name="aShuffleChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyShuffleChanged(CallbackPropertyChanged aShuffleChanged)
+        public void SetPropertyShuffleChanged(System.Action aShuffleChanged)
         {
             lock (iPropertyLock)
             {
@@ -1038,7 +1038,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkPlaylist1 instance will not overlap.</remarks>
         /// <param name="aTracksMaxChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTracksMaxChanged(CallbackPropertyChanged aTracksMaxChanged)
+        public void SetPropertyTracksMaxChanged(System.Action aTracksMaxChanged)
         {
             lock (iPropertyLock)
             {

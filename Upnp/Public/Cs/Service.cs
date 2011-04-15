@@ -158,18 +158,24 @@ namespace Zapp.Core
     /// <remarks>One Property will be created per Property (state variable) for the Service</remarks>
     public class Property : IDisposable
     {
-        public delegate void CallbackValueChanged();
+        [DllImport("ZappUpnp")]
+        static extern unsafe IntPtr ServicePropertyDestroy(IntPtr aHandle);
+        
         protected delegate void Callback(IntPtr aPtr);
 
         protected IntPtr iHandle;
         protected GCHandle iGch;
         protected Callback iCallbackValueChanged;
-        private CallbackValueChanged iValueChanged;
+        private System.Action iValueChanged;
+        private bool iOwnsNativeProperty;
 
         public void Dispose()
         {
             iGch.Free();
-            // !!!! aren't we leaking the underlying property?
+            if (iOwnsNativeProperty)
+            {
+                ServicePropertyDestroy(iHandle);
+            }
         }
 
         internal IntPtr Handle()
@@ -177,12 +183,13 @@ namespace Zapp.Core
             return iHandle;
         }
         
-        protected Property()
+        protected Property(bool aOwnsNativeProperty)
         {
             iGch = GCHandle.Alloc(this);
+            iOwnsNativeProperty = aOwnsNativeProperty;
         }
 
-        protected Property(CallbackValueChanged aValueChanged)
+        protected Property(System.Action aValueChanged)
         {
             iGch = GCHandle.Alloc(this);
             iValueChanged = aValueChanged;
@@ -215,8 +222,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the control point stack
         /// </summary>
         /// <param name="aName">Property name</param>
-        /// <param name="aValueChanged">Delegate to run when the property's value changes</param>
-        public unsafe PropertyInt(String aName, CallbackValueChanged aValueChanged)
+        /// <param name="aValueChanged">Action to run when the property's value changes</param>
+        public unsafe PropertyInt(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -229,7 +236,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
         /// <param name="aParameter">Parameter defining the name and any value bounds for the property</param>
-        public PropertyInt(ParameterInt aParameter)
+        public PropertyInt(ParameterInt aParameter, bool aOwnsNativeProperty = false)
+            : base(aOwnsNativeProperty)
         {
             iHandle = ServicePropertyCreateIntDv(aParameter.Handle());
         }
@@ -273,8 +281,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the control point stack
         /// </summary>
         /// <param name="aName">Property name</param>
-        /// <param name="aValueChanged">Delegate to run when the property's value changes</param>
-        public unsafe PropertyUint(String aName, CallbackValueChanged aValueChanged)
+        /// <param name="aValueChanged">Action to run when the property's value changes</param>
+        public unsafe PropertyUint(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -287,7 +295,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
         /// <param name="aParameter">Parameter defining the name and any value bounds for the property</param>
-        public PropertyUint(ParameterUint aParameter)
+        public PropertyUint(ParameterUint aParameter, bool aOwnsNativeProperty = false)
+            : base(aOwnsNativeProperty)
         {
             iHandle = ServicePropertyCreateUintDv(aParameter.Handle());
         }
@@ -331,8 +340,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the control point stack
         /// </summary>
         /// <param name="aName">Property name</param>
-        /// <param name="aValueChanged">Delegate to run when the property's value changes</param>
-        public unsafe PropertyBool(String aName, CallbackValueChanged aValueChanged)
+        /// <param name="aValueChanged">Action to run when the property's value changes</param>
+        public unsafe PropertyBool(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -345,7 +354,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
         /// <param name="aParameter">Parameter defining the name for the property</param>
-        public PropertyBool(ParameterBool aParameter)
+        public PropertyBool(ParameterBool aParameter, bool aOwnsNativeProperty = false)
+            : base(aOwnsNativeProperty)
         {
             iHandle = ServicePropertyCreateBoolDv(aParameter.Handle());
         }
@@ -393,8 +403,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the control point stack
         /// </summary>
         /// <param name="aName">Property name</param>
-        /// <param name="aValueChanged">Delegate to run when the property's value changes</param>
-        public unsafe PropertyString(String aName, CallbackValueChanged aValueChanged)
+        /// <param name="aValueChanged">Action to run when the property's value changes</param>
+        public unsafe PropertyString(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -407,7 +417,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
         /// <param name="aParameter">Parameter defining the name and any set of allowed values for the property</param>
-        public PropertyString(ParameterString aParameter)
+        public PropertyString(ParameterString aParameter, bool aOwnsNativeProperty = false)
+            : base(aOwnsNativeProperty)
         {
             iHandle = ServicePropertyCreateStringDv(aParameter.Handle());
         }
@@ -458,8 +469,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the control point stack
         /// </summary>
         /// <param name="aName">Property name</param>
-        /// <param name="aValueChanged">Delegate to run when the property's value changes</param>
-        public unsafe PropertyBinary(String aName, CallbackValueChanged aValueChanged)
+        /// <param name="aValueChanged">Action to run when the property's value changes</param>
+        public unsafe PropertyBinary(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -472,7 +483,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
         /// <param name="aParameter">Parameter defining the name for the property</param>
-        public PropertyBinary(ParameterBinary aParameter)
+        public PropertyBinary(ParameterBinary aParameter, bool aOwnsNativeProperty = false)
+            : base(aOwnsNativeProperty)
         {
             iHandle = ServicePropertyCreateBinaryDv(aParameter.Handle());
         }

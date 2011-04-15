@@ -52,17 +52,17 @@ namespace Zapp.ControlPoint.Proxies
         void SyncStartupVolumeEnabled(out bool aStartupVolumeEnabled);
         void BeginStartupVolumeEnabled(CpProxy.CallbackAsyncComplete aCallback);
         void EndStartupVolumeEnabled(IntPtr aAsyncHandle, out bool aStartupVolumeEnabled);
-        void SetPropertyVolumeChanged(CpProxy.CallbackPropertyChanged aVolumeChanged);
+        void SetPropertyVolumeChanged(System.Action aVolumeChanged);
         uint PropertyVolume();
-        void SetPropertyMuteChanged(CpProxy.CallbackPropertyChanged aMuteChanged);
+        void SetPropertyMuteChanged(System.Action aMuteChanged);
         bool PropertyMute();
-        void SetPropertyBalanceChanged(CpProxy.CallbackPropertyChanged aBalanceChanged);
+        void SetPropertyBalanceChanged(System.Action aBalanceChanged);
         int PropertyBalance();
-        void SetPropertyVolumeLimitChanged(CpProxy.CallbackPropertyChanged aVolumeLimitChanged);
+        void SetPropertyVolumeLimitChanged(System.Action aVolumeLimitChanged);
         uint PropertyVolumeLimit();
-        void SetPropertyStartupVolumeChanged(CpProxy.CallbackPropertyChanged aStartupVolumeChanged);
+        void SetPropertyStartupVolumeChanged(System.Action aStartupVolumeChanged);
         uint PropertyStartupVolume();
-        void SetPropertyStartupVolumeEnabledChanged(CpProxy.CallbackPropertyChanged aStartupVolumeEnabledChanged);
+        void SetPropertyStartupVolumeEnabledChanged(System.Action aStartupVolumeEnabledChanged);
         bool PropertyStartupVolumeEnabled();
     }
 
@@ -317,12 +317,12 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyUint iVolumeLimit;
         private PropertyUint iStartupVolume;
         private PropertyBool iStartupVolumeEnabled;
-        private CallbackPropertyChanged iVolumeChanged;
-        private CallbackPropertyChanged iMuteChanged;
-        private CallbackPropertyChanged iBalanceChanged;
-        private CallbackPropertyChanged iVolumeLimitChanged;
-        private CallbackPropertyChanged iStartupVolumeChanged;
-        private CallbackPropertyChanged iStartupVolumeEnabledChanged;
+        private System.Action iVolumeChanged;
+        private System.Action iMuteChanged;
+        private System.Action iBalanceChanged;
+        private System.Action iVolumeLimitChanged;
+        private System.Action iStartupVolumeChanged;
+        private System.Action iStartupVolumeEnabledChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -1035,7 +1035,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkPreamp4 instance will not overlap.</remarks>
         /// <param name="aVolumeChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyVolumeChanged(CallbackPropertyChanged aVolumeChanged)
+        public void SetPropertyVolumeChanged(System.Action aVolumeChanged)
         {
             lock (iPropertyLock)
             {
@@ -1057,7 +1057,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkPreamp4 instance will not overlap.</remarks>
         /// <param name="aMuteChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyMuteChanged(CallbackPropertyChanged aMuteChanged)
+        public void SetPropertyMuteChanged(System.Action aMuteChanged)
         {
             lock (iPropertyLock)
             {
@@ -1079,7 +1079,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkPreamp4 instance will not overlap.</remarks>
         /// <param name="aBalanceChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyBalanceChanged(CallbackPropertyChanged aBalanceChanged)
+        public void SetPropertyBalanceChanged(System.Action aBalanceChanged)
         {
             lock (iPropertyLock)
             {
@@ -1101,7 +1101,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkPreamp4 instance will not overlap.</remarks>
         /// <param name="aVolumeLimitChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyVolumeLimitChanged(CallbackPropertyChanged aVolumeLimitChanged)
+        public void SetPropertyVolumeLimitChanged(System.Action aVolumeLimitChanged)
         {
             lock (iPropertyLock)
             {
@@ -1123,7 +1123,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkPreamp4 instance will not overlap.</remarks>
         /// <param name="aStartupVolumeChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyStartupVolumeChanged(CallbackPropertyChanged aStartupVolumeChanged)
+        public void SetPropertyStartupVolumeChanged(System.Action aStartupVolumeChanged)
         {
             lock (iPropertyLock)
             {
@@ -1145,7 +1145,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkPreamp4 instance will not overlap.</remarks>
         /// <param name="aStartupVolumeEnabledChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyStartupVolumeEnabledChanged(CallbackPropertyChanged aStartupVolumeEnabledChanged)
+        public void SetPropertyStartupVolumeEnabledChanged(System.Action aStartupVolumeEnabledChanged)
         {
             lock (iPropertyLock)
             {

@@ -3,6 +3,7 @@
 #include <CpiService.h>
 #include <XmlFetcher.h>
 #include <CpiSubscription.h>
+#include <CpiDevice.h>
 #include <Printer.h>
 
 using namespace Zapp;
@@ -15,10 +16,12 @@ CpiStack::CpiStack()
     iInvocationManager = new Zapp::InvocationManager;
     iXmlFetchManager = new Zapp::XmlFetchManager;
     iSubscriptionManager = new CpiSubscriptionManager;
+    iDeviceListUpdater = new CpiDeviceListUpdater;
 }
 
 CpiStack::~CpiStack()
 {
+    delete iDeviceListUpdater;
     delete iSubscriptionManager;
     delete iXmlFetchManager;
     delete iInvocationManager;
@@ -40,6 +43,12 @@ CpiSubscriptionManager& CpiStack::SubscriptionManager()
 {
     CpiStack* self = CpiStack::Self();
     return *(self->iSubscriptionManager);
+}
+
+CpiDeviceListUpdater& CpiStack::DeviceListUpdater()
+{
+    CpiStack* self = CpiStack::Self();
+    return *(self->iDeviceListUpdater);
 }
 
 CpiStack* CpiStack::Self()

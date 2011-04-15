@@ -49,7 +49,7 @@ namespace Zapp.ControlPoint.Proxies
         void SyncReboot(uint aDelay);
         void BeginReboot(uint aDelay, CpProxy.CallbackAsyncComplete aCallback);
         void EndReboot(IntPtr aAsyncHandle);
-        void SetPropertyaStateVariableChanged(CpProxy.CallbackPropertyChanged aaStateVariableChanged);
+        void SetPropertyaStateVariableChanged(System.Action aaStateVariableChanged);
         uint PropertyaStateVariable();
     }
 
@@ -299,7 +299,7 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionSetStateVariablePeriod;
         private Zapp.Core.Action iActionReboot;
         private PropertyUint iaStateVariable;
-        private CallbackPropertyChanged iaStateVariableChanged;
+        private System.Action iaStateVariableChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -982,7 +982,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkDiagnostics1 instance will not overlap.</remarks>
         /// <param name="aaStateVariableChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyaStateVariableChanged(CallbackPropertyChanged aaStateVariableChanged)
+        public void SetPropertyaStateVariableChanged(System.Action aaStateVariableChanged)
         {
             lock (iPropertyLock)
             {

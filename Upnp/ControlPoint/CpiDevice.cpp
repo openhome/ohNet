@@ -3,6 +3,7 @@
 #include <Debug.h>
 #include <ZappTypes.h>
 #include <Stack.h>
+#include <CpiStack.h>
 
 using namespace Zapp;
 
@@ -150,6 +151,8 @@ CpiDeviceList::CpiDeviceList(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved)
     , iLock("CDLM")
     , iAdded(aAdded)
     , iRemoved(aRemoved)
+    , iRefCount(0)
+    , iShutdownSem("CDLS", 0)
 {
     ASSERT(iAdded);
     ASSERT(iRemoved);
@@ -158,6 +161,16 @@ CpiDeviceList::CpiDeviceList(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved)
 
 CpiDeviceList::~CpiDeviceList()
 {
+    TBool wait = false;
+    Stack::Mutex().Wait();
+    if (iRefCount > 0) {
+        wait = true;
+        iShutdownSem.Clear();
+    }
+    Stack::Mutex().Signal();
+    if (wait) {
+        iShutdownSem.Wait();
+    }
     ClearMap(iMap);
     ClearMap(iRefreshMap);
     Stack::RemoveObject(this, "CpiDeviceList");
@@ -204,34 +217,7 @@ void CpiDeviceList::Add(CpiDevice* aDevice)
 
 void CpiDeviceList::Remove(const Brx& aUdn)
 {
-    LOG(kDevice, "> CpiDeviceList::Remove for device ");
-    LOG(kDevice, aUdn);
-    LOG(kDevice, "\n");
-    iLock.Wait();
-    if (!iActive) {
-        LOG(kDevice, "< CpiDeviceList::Remove, list not active\n");
-        iLock.Signal();
-        return;
-    }
-    TBool callObserver;
-    Brn udn(aUdn);
-    Map::iterator it = iMap.find(udn);
-    if (it == iMap.end()) {
-        // device isn't in this list
-        LOG(kDevice, "< CpiDeviceList::Remove, device not in list\n");
-        iLock.Signal();
-        return;
-    }
-    CpiDevice* device = it->second;
-    // don't remove our ref to the device yet, re-use it for the observer
-    callObserver = device->IsReady();
-    it->second = NULL;
-    iMap.erase(it);
-    iLock.Signal();
-    if (callObserver) {
-        iRemoved(*device);
-    }
-    device->RemoveRef();
+    CpiDeviceListUpdater::QueueRemoved(*this, aUdn);
 }
 
 TBool CpiDeviceList::IsDeviceReady(CpiDevice& /*aDevice*/)
@@ -251,6 +237,95 @@ TBool CpiDeviceList::StartRefresh()
 
 void CpiDeviceList::RefreshComplete()
 {
+    CpiDeviceListUpdater::QueueRefreshed(*this);
+}
+
+void CpiDeviceList::SetDeviceReady(CpiDevice& aDevice)
+{
+    CpiDeviceListUpdater::QueueAdded(*this, aDevice);
+}
+
+void CpiDeviceList::ClearMap(Map& aMap)
+{
+    Map::iterator it = aMap.begin();
+    while (it != aMap.end()) {
+        it->second->RemoveRef();
+        it->second = NULL;
+        it++;
+    }
+    aMap.clear();
+}
+
+void CpiDeviceList::AddRef()
+{
+    Stack::Mutex().Wait();
+    ++iRefCount;
+    Stack::Mutex().Signal();
+}
+
+void CpiDeviceList::RemoveRef()
+{
+    Stack::Mutex().Wait();
+    if (--iRefCount == 0) {
+        iShutdownSem.Signal();
+    }
+    Stack::Mutex().Signal();
+}
+
+void CpiDeviceList::NotifyAdded(CpiDevice& aDevice)
+{
+    LOG(kDevice, "CpiDeviceList::NotifyAdded for device ");
+    LOG(kDevice, aDevice.Udn());
+    LOG(kDevice, "\n");
+    iLock.Wait();
+    if (!iActive) {
+        iLock.Signal();
+        return;
+    }
+    aDevice.SetReady();
+    iLock.Signal();
+    iAdded(aDevice);
+}
+
+void CpiDeviceList::NotifyRemoved(const Brx& aUdn)
+{
+    DoRemove(aUdn);
+}
+
+void CpiDeviceList::DoRemove(const Brx& aUdn)
+{
+    LOG(kDevice, "> CpiDeviceList::DoRemove for device ");
+    LOG(kDevice, aUdn);
+    LOG(kDevice, "\n");
+    iLock.Wait();
+    if (!iActive) {
+        LOG(kDevice, "< CpiDeviceList::DoRemove, list not active\n");
+        iLock.Signal();
+        return;
+    }
+    TBool callObserver;
+    Brn udn(aUdn);
+    Map::iterator it = iMap.find(udn);
+    if (it == iMap.end()) {
+        // device isn't in this list
+        LOG(kDevice, "< CpiDeviceList::DoRemove, device not in list\n");
+        iLock.Signal();
+        return;
+    }
+    CpiDevice* device = it->second;
+    // don't remove our ref to the device yet, re-use it for the observer
+    callObserver = device->IsReady();
+    it->second = NULL;
+    iMap.erase(it);
+    iLock.Signal();
+    if (callObserver) {
+        iRemoved(*device);
+    }
+    device->RemoveRef();
+}
+
+void CpiDeviceList::NotifyRefreshed()
+{
     iLock.Wait();
     iRefreshing = false;
     if (iActive) {
@@ -268,7 +343,7 @@ void CpiDeviceList::RefreshComplete()
                 CpiDevice* device = it->second;
                 device->AddRef();
                 iLock.Signal();
-                Remove(device->Udn());
+                DoRemove(device->Udn());
                 device->RemoveRef();
                 iLock.Wait();
                 it = iMap.begin();
@@ -279,28 +354,117 @@ void CpiDeviceList::RefreshComplete()
     iLock.Signal();
 }
 
-void CpiDeviceList::SetDeviceReady(CpiDevice& aDevice)
+
+// CpiDeviceListUpdater
+
+CpiDeviceListUpdater::CpiDeviceListUpdater()
+    : Thread("DLUP")
+    , iLock("DLUM")
 {
-    LOG(kDevice, "CpiDeviceList::SetDeviceReady for device ");
-    LOG(kDevice, aDevice.Udn());
-    LOG(kDevice, "\n");
-    iLock.Wait();
-    if (!iActive) {
-        iLock.Signal();
-        return;
-    }
-    aDevice.SetReady();
-    iLock.Signal();
-    iAdded(aDevice);
+    Start();
 }
 
-void CpiDeviceList::ClearMap(Map& aMap)
+CpiDeviceListUpdater::~CpiDeviceListUpdater()
 {
-    Map::iterator it = aMap.begin();
-    while (it != aMap.end()) {
-        it->second->RemoveRef();
-        it->second = NULL;
-        it++;
+    ASSERT(iList.size() == 0);
+    Kill();
+    Join();
+}
+
+void CpiDeviceListUpdater::QueueAdded(IDeviceListUpdater& aUpdater, CpiDevice& aDevice)
+{ // static
+    CpiDeviceListUpdater::Queue(new UpdateAdded(aUpdater, aDevice));
+}
+
+void CpiDeviceListUpdater::QueueRemoved(IDeviceListUpdater& aUpdater, const Brx& aUdn)
+{ // static
+    CpiDeviceListUpdater::Queue(new UpdateRemoved(aUpdater, aUdn));
+}
+
+void CpiDeviceListUpdater::QueueRefreshed(IDeviceListUpdater& aUpdater)
+{ // static
+    CpiDeviceListUpdater::Queue(new UpdateRefresh(aUpdater));
+}
+
+void CpiDeviceListUpdater::Queue(UpdateBase* aUpdate)
+{ // static
+    CpiDeviceListUpdater& self = CpiStack::DeviceListUpdater();
+    self.iLock.Wait();
+    self.iList.push_back(aUpdate);
+    self.iLock.Signal();
+    self.Signal();
+}
+
+void CpiDeviceListUpdater::Run()
+{
+    for (;;) {
+        Wait();
+        iLock.Wait();
+        UpdateBase* update = iList.front();
+        iList.pop_front();
+        iLock.Signal();
+        update->Update();
+        delete update;
     }
-    aMap.clear();
+}
+
+
+// CpiDeviceListUpdater::UpdateBase
+
+CpiDeviceListUpdater::UpdateBase::~UpdateBase()
+{
+    iUpdater.RemoveRef();
+}
+
+CpiDeviceListUpdater::UpdateBase::UpdateBase(IDeviceListUpdater& aUpdater)
+    : iUpdater(aUpdater)
+{
+    iUpdater.AddRef();
+}
+
+
+// CpiDeviceListUpdater::UpdateAdded
+
+CpiDeviceListUpdater::UpdateAdded::UpdateAdded(IDeviceListUpdater& aUpdater, CpiDevice& aDevice)
+    : CpiDeviceListUpdater::UpdateBase(aUpdater)
+    , iDevice(aDevice)
+{
+    iDevice.AddRef();
+}
+
+CpiDeviceListUpdater::UpdateAdded::~UpdateAdded()
+{
+    iDevice.RemoveRef();
+}
+
+void CpiDeviceListUpdater::UpdateAdded::Update()
+{
+    iUpdater.NotifyAdded(iDevice);
+}
+
+
+// CpiDeviceListUpdater::UpdateRemoved
+
+CpiDeviceListUpdater::UpdateRemoved::UpdateRemoved(IDeviceListUpdater& aUpdater, const Brx& aUdn)
+    : CpiDeviceListUpdater::UpdateBase(aUpdater)
+    , iUdn(aUdn)
+{
+}
+
+void CpiDeviceListUpdater::UpdateRemoved::Update()
+{
+    iUpdater.NotifyRemoved(iUdn);
+}
+
+
+// CpiDeviceListUpdater::UpdateRefresh
+
+CpiDeviceListUpdater::UpdateRefresh::UpdateRefresh(IDeviceListUpdater& aUpdater)
+    : CpiDeviceListUpdater::UpdateBase(aUpdater)
+{
+}
+
+void CpiDeviceListUpdater::UpdateRefresh::Update()
+{
+    iUpdater.NotifyRefreshed();
 }

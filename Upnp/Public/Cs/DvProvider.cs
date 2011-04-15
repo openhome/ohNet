@@ -104,6 +104,7 @@ namespace Zapp.Device
         /// <param name="aProperty">Property being added</param>
         protected void AddProperty(Zapp.Core.Property aProperty)
         {
+            iProperties.Add(aProperty);
             DvProviderAddProperty(iHandle, aProperty.Handle());
         }
         

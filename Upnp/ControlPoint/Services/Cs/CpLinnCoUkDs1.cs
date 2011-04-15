@@ -40,23 +40,23 @@ namespace Zapp.ControlPoint.Proxies
         void SyncProtocolInfo(out String aSupportedProtocols);
         void BeginProtocolInfo(CpProxy.CallbackAsyncComplete aCallback);
         void EndProtocolInfo(IntPtr aAsyncHandle, out String aSupportedProtocols);
-        void SetPropertySupportedProtocolsChanged(CpProxy.CallbackPropertyChanged aSupportedProtocolsChanged);
+        void SetPropertySupportedProtocolsChanged(System.Action aSupportedProtocolsChanged);
         String PropertySupportedProtocols();
-        void SetPropertyTrackDurationChanged(CpProxy.CallbackPropertyChanged aTrackDurationChanged);
+        void SetPropertyTrackDurationChanged(System.Action aTrackDurationChanged);
         uint PropertyTrackDuration();
-        void SetPropertyTrackBitRateChanged(CpProxy.CallbackPropertyChanged aTrackBitRateChanged);
+        void SetPropertyTrackBitRateChanged(System.Action aTrackBitRateChanged);
         uint PropertyTrackBitRate();
-        void SetPropertyTrackLosslessChanged(CpProxy.CallbackPropertyChanged aTrackLosslessChanged);
+        void SetPropertyTrackLosslessChanged(System.Action aTrackLosslessChanged);
         bool PropertyTrackLossless();
-        void SetPropertyTrackBitDepthChanged(CpProxy.CallbackPropertyChanged aTrackBitDepthChanged);
+        void SetPropertyTrackBitDepthChanged(System.Action aTrackBitDepthChanged);
         uint PropertyTrackBitDepth();
-        void SetPropertyTrackSampleRateChanged(CpProxy.CallbackPropertyChanged aTrackSampleRateChanged);
+        void SetPropertyTrackSampleRateChanged(System.Action aTrackSampleRateChanged);
         uint PropertyTrackSampleRate();
-        void SetPropertyTrackCodecNameChanged(CpProxy.CallbackPropertyChanged aTrackCodecNameChanged);
+        void SetPropertyTrackCodecNameChanged(System.Action aTrackCodecNameChanged);
         String PropertyTrackCodecName();
-        void SetPropertyTrackIdChanged(CpProxy.CallbackPropertyChanged aTrackIdChanged);
+        void SetPropertyTrackIdChanged(System.Action aTrackIdChanged);
         uint PropertyTrackId();
-        void SetPropertyTransportStateChanged(CpProxy.CallbackPropertyChanged aTransportStateChanged);
+        void SetPropertyTransportStateChanged(System.Action aTransportStateChanged);
         String PropertyTransportState();
     }
 
@@ -269,15 +269,15 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyString iTrackCodecName;
         private PropertyUint iTrackId;
         private PropertyString iTransportState;
-        private CallbackPropertyChanged iSupportedProtocolsChanged;
-        private CallbackPropertyChanged iTrackDurationChanged;
-        private CallbackPropertyChanged iTrackBitRateChanged;
-        private CallbackPropertyChanged iTrackLosslessChanged;
-        private CallbackPropertyChanged iTrackBitDepthChanged;
-        private CallbackPropertyChanged iTrackSampleRateChanged;
-        private CallbackPropertyChanged iTrackCodecNameChanged;
-        private CallbackPropertyChanged iTrackIdChanged;
-        private CallbackPropertyChanged iTransportStateChanged;
+        private System.Action iSupportedProtocolsChanged;
+        private System.Action iTrackDurationChanged;
+        private System.Action iTrackBitRateChanged;
+        private System.Action iTrackLosslessChanged;
+        private System.Action iTrackBitDepthChanged;
+        private System.Action iTrackSampleRateChanged;
+        private System.Action iTrackCodecNameChanged;
+        private System.Action iTrackIdChanged;
+        private System.Action iTransportStateChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -841,7 +841,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
         /// <param name="aSupportedProtocolsChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertySupportedProtocolsChanged(CallbackPropertyChanged aSupportedProtocolsChanged)
+        public void SetPropertySupportedProtocolsChanged(System.Action aSupportedProtocolsChanged)
         {
             lock (iPropertyLock)
             {
@@ -863,7 +863,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
         /// <param name="aTrackDurationChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTrackDurationChanged(CallbackPropertyChanged aTrackDurationChanged)
+        public void SetPropertyTrackDurationChanged(System.Action aTrackDurationChanged)
         {
             lock (iPropertyLock)
             {
@@ -885,7 +885,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
         /// <param name="aTrackBitRateChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTrackBitRateChanged(CallbackPropertyChanged aTrackBitRateChanged)
+        public void SetPropertyTrackBitRateChanged(System.Action aTrackBitRateChanged)
         {
             lock (iPropertyLock)
             {
@@ -907,7 +907,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
         /// <param name="aTrackLosslessChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTrackLosslessChanged(CallbackPropertyChanged aTrackLosslessChanged)
+        public void SetPropertyTrackLosslessChanged(System.Action aTrackLosslessChanged)
         {
             lock (iPropertyLock)
             {
@@ -929,7 +929,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
         /// <param name="aTrackBitDepthChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTrackBitDepthChanged(CallbackPropertyChanged aTrackBitDepthChanged)
+        public void SetPropertyTrackBitDepthChanged(System.Action aTrackBitDepthChanged)
         {
             lock (iPropertyLock)
             {
@@ -951,7 +951,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
         /// <param name="aTrackSampleRateChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTrackSampleRateChanged(CallbackPropertyChanged aTrackSampleRateChanged)
+        public void SetPropertyTrackSampleRateChanged(System.Action aTrackSampleRateChanged)
         {
             lock (iPropertyLock)
             {
@@ -973,7 +973,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
         /// <param name="aTrackCodecNameChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTrackCodecNameChanged(CallbackPropertyChanged aTrackCodecNameChanged)
+        public void SetPropertyTrackCodecNameChanged(System.Action aTrackCodecNameChanged)
         {
             lock (iPropertyLock)
             {
@@ -995,7 +995,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
         /// <param name="aTrackIdChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTrackIdChanged(CallbackPropertyChanged aTrackIdChanged)
+        public void SetPropertyTrackIdChanged(System.Action aTrackIdChanged)
         {
             lock (iPropertyLock)
             {
@@ -1017,7 +1017,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
         /// <param name="aTransportStateChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTransportStateChanged(CallbackPropertyChanged aTransportStateChanged)
+        public void SetPropertyTransportStateChanged(System.Action aTransportStateChanged)
         {
             lock (iPropertyLock)
             {

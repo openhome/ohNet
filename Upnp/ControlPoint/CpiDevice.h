@@ -18,6 +18,7 @@
 
 #include <vector>
 #include <map>
+#include <list>
 
 namespace Zapp {
 
@@ -151,12 +152,22 @@ public:
     virtual void Remove(const Brx& aUdn) = 0;
 };
 
+class IDeviceListUpdater
+{
+public:
+    virtual void AddRef() = 0;
+    virtual void RemoveRef() = 0;
+    virtual void NotifyAdded(CpiDevice& aDevice) = 0;
+    virtual void NotifyRemoved(const Brx& aUdn) = 0;
+    virtual void NotifyRefreshed() = 0;
+};
+
 /**
  * Protocol-independent list of devices
  *
  * This class is not intended for use outside this module.
  */
-class CpiDeviceList : public IDeviceRemover
+class CpiDeviceList : public IDeviceRemover, private IDeviceListUpdater
 {
 public:
     virtual ~CpiDeviceList();
@@ -223,6 +234,13 @@ protected:
 
     typedef std::map<Brn,CpiDevice*,BufferCmp> Map;
     static void ClearMap(Map& aMap);
+private:
+    void AddRef();
+    void RemoveRef();
+    void NotifyAdded(CpiDevice& aDevice);
+    void NotifyRemoved(const Brx& aUdn);
+    void DoRemove(const Brx& aUdn);
+    void NotifyRefreshed();
 protected:
     TBool iActive; // true if Start() has been called
     TBool iRefreshing;
@@ -232,6 +250,61 @@ protected:
 private:
     FunctorCpiDevice iAdded;
     FunctorCpiDevice iRemoved;
+    TUint iRefCount;
+    Semaphore iShutdownSem;
+};
+
+class CpiDeviceListUpdater : public Thread
+{
+public:
+    CpiDeviceListUpdater();
+    ~CpiDeviceListUpdater();
+    static void QueueAdded(IDeviceListUpdater& aUpdater, CpiDevice& aDevice);
+    static void QueueRemoved(IDeviceListUpdater& aUpdater, const Brx& aUdn);
+    static void QueueRefreshed(IDeviceListUpdater& aUpdater);
+private:
+    class UpdateBase : private INonCopyable
+    {
+    public:
+        virtual ~UpdateBase();
+        virtual void Update() = 0;
+    protected:
+        UpdateBase(IDeviceListUpdater& aUpdater);
+    protected:
+        IDeviceListUpdater& iUpdater;
+    };
+    class UpdateAdded : public UpdateBase
+    {
+    public:
+        UpdateAdded(IDeviceListUpdater& aUpdater, CpiDevice& aDevice);
+        ~UpdateAdded();
+    private:
+        void Update();
+    private:
+        CpiDevice& iDevice;
+    };
+    class UpdateRemoved : public UpdateBase
+    {
+    public:
+        UpdateRemoved(IDeviceListUpdater& aUpdater, const Brx& aUdn);
+    private:
+        void Update();
+    private:
+        Brh iUdn;
+    };
+    class UpdateRefresh : public UpdateBase
+    {
+    public:
+        UpdateRefresh(IDeviceListUpdater& aUpdater);
+    private:
+        void Update();
+    };
+private:
+    static void Queue(UpdateBase* aUpdate);
+    void Run();
+private:
+    Mutex iLock;
+    std::list<UpdateBase*> iList;
 };
 
 } // namespace Zapp

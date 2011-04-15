@@ -174,7 +174,7 @@ namespace Zapp.Device
         [DllImport("ZappUpnp")]
         static extern void DvDeviceSetEnabled(IntPtr aDevice);
         [DllImport("ZappUpnp")]
-        static extern unsafe void DvDeviceSetDisabled(IntPtr aDevice, DisableCompleted aCompleted, IntPtr aPtr);
+        static extern unsafe void DvDeviceSetDisabled(IntPtr aDevice, System.Action<IntPtr> aCompleted, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void DvDeviceGetAttribute(IntPtr aDevice, char* aKey, char** aValue);
         [DllImport("ZappUpnp")]
@@ -183,9 +183,6 @@ namespace Zapp.Device
         static extern unsafe void DvDeviceSetXmlExtension(IntPtr aDevice, char* aXml);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
-
-        public delegate void Callback();
-        private delegate void DisableCompleted(IntPtr aPtr);
 
         protected IntPtr iHandle;
         protected GCHandle iGch;
@@ -253,7 +250,7 @@ namespace Zapp.Device
         /// aCompleted callback before adding services or setting attributes.</remarks>
         /// <param name="aCompleted">Callback which runs when the device is fully disabled.
         /// Until this runs, the device should be considered to still be enabled.</param>
-        public void SetDisabled(Callback aCompleted)
+        public void SetDisabled(Action aCompleted)
         {
             GCHandle gch = GCHandle.Alloc(aCompleted);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
@@ -263,7 +260,7 @@ namespace Zapp.Device
         private static void Disabled(IntPtr aPtr)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            Callback cb = (Callback)gch.Target;
+            System.Action cb = (System.Action)gch.Target;
             gch.Free();
             cb();
         }

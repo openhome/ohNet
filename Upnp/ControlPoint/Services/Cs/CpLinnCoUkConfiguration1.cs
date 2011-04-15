@@ -19,9 +19,9 @@ namespace Zapp.ControlPoint.Proxies
         void SyncSetParameter(String aTarget, String aName, String aValue);
         void BeginSetParameter(String aTarget, String aName, String aValue, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetParameter(IntPtr aAsyncHandle);
-        void SetPropertyConfigurationXmlChanged(CpProxy.CallbackPropertyChanged aConfigurationXmlChanged);
+        void SetPropertyConfigurationXmlChanged(System.Action aConfigurationXmlChanged);
         String PropertyConfigurationXml();
-        void SetPropertyParameterXmlChanged(CpProxy.CallbackPropertyChanged aParameterXmlChanged);
+        void SetPropertyParameterXmlChanged(System.Action aParameterXmlChanged);
         String PropertyParameterXml();
     }
 
@@ -87,8 +87,8 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionSetParameter;
         private PropertyString iConfigurationXml;
         private PropertyString iParameterXml;
-        private CallbackPropertyChanged iConfigurationXmlChanged;
-        private CallbackPropertyChanged iParameterXmlChanged;
+        private System.Action iConfigurationXmlChanged;
+        private System.Action iParameterXmlChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -276,7 +276,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkConfiguration1 instance will not overlap.</remarks>
         /// <param name="aConfigurationXmlChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyConfigurationXmlChanged(CallbackPropertyChanged aConfigurationXmlChanged)
+        public void SetPropertyConfigurationXmlChanged(System.Action aConfigurationXmlChanged)
         {
             lock (iPropertyLock)
             {
@@ -298,7 +298,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkConfiguration1 instance will not overlap.</remarks>
         /// <param name="aParameterXmlChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyParameterXmlChanged(CallbackPropertyChanged aParameterXmlChanged)
+        public void SetPropertyParameterXmlChanged(System.Action aParameterXmlChanged)
         {
             lock (iPropertyLock)
             {

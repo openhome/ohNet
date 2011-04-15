@@ -19,7 +19,7 @@ namespace Zapp.ControlPoint.Proxies
         void SyncGetStatus(out bool aResultStatus);
         void BeginGetStatus(CpProxy.CallbackAsyncComplete aCallback);
         void EndGetStatus(IntPtr aAsyncHandle, out bool aResultStatus);
-        void SetPropertyStatusChanged(CpProxy.CallbackPropertyChanged aStatusChanged);
+        void SetPropertyStatusChanged(System.Action aStatusChanged);
         bool PropertyStatus();
     }
 
@@ -84,7 +84,7 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionGetTarget;
         private Zapp.Core.Action iActionGetStatus;
         private PropertyBool iStatus;
-        private CallbackPropertyChanged iStatusChanged;
+        private System.Action iStatusChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgSwitchPower1 instance will not overlap.</remarks>
         /// <param name="aStatusChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyStatusChanged(CallbackPropertyChanged aStatusChanged)
+        public void SetPropertyStatusChanged(System.Action aStatusChanged)
         {
             lock (iPropertyLock)
             {
