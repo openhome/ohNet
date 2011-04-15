@@ -213,11 +213,16 @@ namespace Zapp.Core
         static extern uint ZappInitParamsDvNumWebSocketThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
         static extern uint ZappInitParamsDvIsBonjourEnabled(IntPtr aParams);
-        
+
         private static void DefaultActionFunction()
         {
-            throw new InvalidOperationException("This delegate is a sentinel value and shouldn't actually be invoked.");
+            throw new InvalidOperationException("This is a sentinel value and shouldn't actually be invoked.");
         }
+        // These delegates are stored in the callback properties. If they are still there
+        // when we come to generate the native InitParams, we don't write anything into it
+        // and keep whatever value it has. Using this as a sentinel instead of null is
+        // useful because it allows the user to write null to the property and have it
+        // properly passed through to the library.
         private static readonly ZappCallback DefaultCallback = aPtr => DefaultActionFunction();
         private static readonly ZappCallbackMsg DefaultCallbackMsg = (aPtr, aMsg) => DefaultActionFunction();
         private static readonly ZappCallbackAsync DefaultCallbackAsync = (aPtr, aAsyncHandle) => DefaultActionFunction();
