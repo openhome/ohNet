@@ -68,7 +68,7 @@ namespace Zapp.ControlPoint.Proxies
 <#  } #>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
-        void SetProperty<#=s.name#>Changed(CpProxy.CallbackPropertyChanged a<#=s.name#>Changed);
+        void SetProperty<#=s.name#>Changed(System.Action a<#=s.name#>Changed);
         <#=argtype[s.type]#> Property<#=s.name#>();
 <#  } #>
     }
@@ -116,7 +116,7 @@ namespace Zapp.ControlPoint.Proxies
 <#  } #>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
-        private CallbackPropertyChanged i<#=s.name#>Changed;
+        private System.Action i<#=s.name#>Changed;
 <#  } #>
 <#  if (u.evented.Count > 0) #>
 <#  { #>
@@ -283,7 +283,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// <#=className#> instance will not overlap.</remarks>
         /// <param name="a<#=s.name#>Changed">The delegate to run when the state variable changes</param>
-        public void SetProperty<#=s.name#>Changed(CallbackPropertyChanged a<#=s.name#>Changed)
+        public void SetProperty<#=s.name#>Changed(System.Action a<#=s.name#>Changed)
         {
             lock (iPropertyLock)
             {

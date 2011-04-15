@@ -25,11 +25,11 @@ namespace Zapp.ControlPoint.Proxies
         void SyncGetCurrentConnectionInfo(int aConnectionID, out int aRcsID, out int aAVTransportID, out String aProtocolInfo, out String aPeerConnectionManager, out int aPeerConnectionID, out String aDirection, out String aStatus);
         void BeginGetCurrentConnectionInfo(int aConnectionID, CpProxy.CallbackAsyncComplete aCallback);
         void EndGetCurrentConnectionInfo(IntPtr aAsyncHandle, out int aRcsID, out int aAVTransportID, out String aProtocolInfo, out String aPeerConnectionManager, out int aPeerConnectionID, out String aDirection, out String aStatus);
-        void SetPropertySourceProtocolInfoChanged(CpProxy.CallbackPropertyChanged aSourceProtocolInfoChanged);
+        void SetPropertySourceProtocolInfoChanged(System.Action aSourceProtocolInfoChanged);
         String PropertySourceProtocolInfo();
-        void SetPropertySinkProtocolInfoChanged(CpProxy.CallbackPropertyChanged aSinkProtocolInfoChanged);
+        void SetPropertySinkProtocolInfoChanged(System.Action aSinkProtocolInfoChanged);
         String PropertySinkProtocolInfo();
-        void SetPropertyCurrentConnectionIDsChanged(CpProxy.CallbackPropertyChanged aCurrentConnectionIDsChanged);
+        void SetPropertyCurrentConnectionIDsChanged(System.Action aCurrentConnectionIDsChanged);
         String PropertyCurrentConnectionIDs();
     }
 
@@ -181,9 +181,9 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyString iSourceProtocolInfo;
         private PropertyString iSinkProtocolInfo;
         private PropertyString iCurrentConnectionIDs;
-        private CallbackPropertyChanged iSourceProtocolInfoChanged;
-        private CallbackPropertyChanged iSinkProtocolInfoChanged;
-        private CallbackPropertyChanged iCurrentConnectionIDsChanged;
+        private System.Action iSourceProtocolInfoChanged;
+        private System.Action iSinkProtocolInfoChanged;
+        private System.Action iCurrentConnectionIDsChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -567,7 +567,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgConnectionManager2 instance will not overlap.</remarks>
         /// <param name="aSourceProtocolInfoChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertySourceProtocolInfoChanged(CallbackPropertyChanged aSourceProtocolInfoChanged)
+        public void SetPropertySourceProtocolInfoChanged(System.Action aSourceProtocolInfoChanged)
         {
             lock (iPropertyLock)
             {
@@ -589,7 +589,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgConnectionManager2 instance will not overlap.</remarks>
         /// <param name="aSinkProtocolInfoChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertySinkProtocolInfoChanged(CallbackPropertyChanged aSinkProtocolInfoChanged)
+        public void SetPropertySinkProtocolInfoChanged(System.Action aSinkProtocolInfoChanged)
         {
             lock (iPropertyLock)
             {
@@ -611,7 +611,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgConnectionManager2 instance will not overlap.</remarks>
         /// <param name="aCurrentConnectionIDsChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyCurrentConnectionIDsChanged(CallbackPropertyChanged aCurrentConnectionIDsChanged)
+        public void SetPropertyCurrentConnectionIDsChanged(System.Action aCurrentConnectionIDsChanged)
         {
             lock (iPropertyLock)
             {

@@ -22,9 +22,9 @@ namespace Zapp.ControlPoint.Proxies
         void SyncSetStandby(bool aStandby);
         void BeginSetStandby(bool aStandby, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetStandby(IntPtr aAsyncHandle);
-        void SetPropertyRoomChanged(CpProxy.CallbackPropertyChanged aRoomChanged);
+        void SetPropertyRoomChanged(System.Action aRoomChanged);
         String PropertyRoom();
-        void SetPropertyStandbyChanged(CpProxy.CallbackPropertyChanged aStandbyChanged);
+        void SetPropertyStandbyChanged(System.Action aStandbyChanged);
         bool PropertyStandby();
     }
 
@@ -105,8 +105,8 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionSetStandby;
         private PropertyString iRoom;
         private PropertyBool iStandby;
-        private CallbackPropertyChanged iRoomChanged;
-        private CallbackPropertyChanged iStandbyChanged;
+        private System.Action iRoomChanged;
+        private System.Action iStandbyChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -332,7 +332,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct1 instance will not overlap.</remarks>
         /// <param name="aRoomChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyRoomChanged(CallbackPropertyChanged aRoomChanged)
+        public void SetPropertyRoomChanged(System.Action aRoomChanged)
         {
             lock (iPropertyLock)
             {
@@ -354,7 +354,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProduct1 instance will not overlap.</remarks>
         /// <param name="aStandbyChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyStandbyChanged(CallbackPropertyChanged aStandbyChanged)
+        public void SetPropertyStandbyChanged(System.Action aStandbyChanged)
         {
             lock (iPropertyLock)
             {

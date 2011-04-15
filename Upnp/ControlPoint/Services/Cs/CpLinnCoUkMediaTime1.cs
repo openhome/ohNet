@@ -13,7 +13,7 @@ namespace Zapp.ControlPoint.Proxies
         void SyncSeconds(out uint aSeconds);
         void BeginSeconds(CpProxy.CallbackAsyncComplete aCallback);
         void EndSeconds(IntPtr aAsyncHandle, out uint aSeconds);
-        void SetPropertySecondsChanged(CpProxy.CallbackPropertyChanged aSecondsChanged);
+        void SetPropertySecondsChanged(System.Action aSecondsChanged);
         uint PropertySeconds();
     }
 
@@ -43,7 +43,7 @@ namespace Zapp.ControlPoint.Proxies
     {
         private Zapp.Core.Action iActionSeconds;
         private PropertyUint iSeconds;
-        private CallbackPropertyChanged iSecondsChanged;
+        private System.Action iSecondsChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkMediaTime1 instance will not overlap.</remarks>
         /// <param name="aSecondsChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertySecondsChanged(CallbackPropertyChanged aSecondsChanged)
+        public void SetPropertySecondsChanged(System.Action aSecondsChanged)
         {
             lock (iPropertyLock)
             {

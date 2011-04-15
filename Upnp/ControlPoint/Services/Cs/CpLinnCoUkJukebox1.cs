@@ -34,11 +34,11 @@ namespace Zapp.ControlPoint.Proxies
         void SyncLoadManifest(out uint aTotalPresets);
         void BeginLoadManifest(CpProxy.CallbackAsyncComplete aCallback);
         void EndLoadManifest(IntPtr aAsyncHandle, out uint aTotalPresets);
-        void SetPropertyCurrentPresetChanged(CpProxy.CallbackPropertyChanged aCurrentPresetChanged);
+        void SetPropertyCurrentPresetChanged(System.Action aCurrentPresetChanged);
         uint PropertyCurrentPreset();
-        void SetPropertyPresetPrefixChanged(CpProxy.CallbackPropertyChanged aPresetPrefixChanged);
+        void SetPropertyPresetPrefixChanged(System.Action aPresetPrefixChanged);
         String PropertyPresetPrefix();
-        void SetPropertyAlbumArtFileNameChanged(CpProxy.CallbackPropertyChanged aAlbumArtFileNameChanged);
+        void SetPropertyAlbumArtFileNameChanged(System.Action aAlbumArtFileNameChanged);
         String PropertyAlbumArtFileName();
     }
 
@@ -195,9 +195,9 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyUint iCurrentPreset;
         private PropertyString iPresetPrefix;
         private PropertyString iAlbumArtFileName;
-        private CallbackPropertyChanged iCurrentPresetChanged;
-        private CallbackPropertyChanged iPresetPrefixChanged;
-        private CallbackPropertyChanged iAlbumArtFileNameChanged;
+        private System.Action iCurrentPresetChanged;
+        private System.Action iPresetPrefixChanged;
+        private System.Action iAlbumArtFileNameChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -632,7 +632,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkJukebox1 instance will not overlap.</remarks>
         /// <param name="aCurrentPresetChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyCurrentPresetChanged(CallbackPropertyChanged aCurrentPresetChanged)
+        public void SetPropertyCurrentPresetChanged(System.Action aCurrentPresetChanged)
         {
             lock (iPropertyLock)
             {
@@ -654,7 +654,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkJukebox1 instance will not overlap.</remarks>
         /// <param name="aPresetPrefixChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyPresetPrefixChanged(CallbackPropertyChanged aPresetPrefixChanged)
+        public void SetPropertyPresetPrefixChanged(System.Action aPresetPrefixChanged)
         {
             lock (iPropertyLock)
             {
@@ -676,7 +676,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkJukebox1 instance will not overlap.</remarks>
         /// <param name="aAlbumArtFileNameChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyAlbumArtFileNameChanged(CallbackPropertyChanged aAlbumArtFileNameChanged)
+        public void SetPropertyAlbumArtFileNameChanged(System.Action aAlbumArtFileNameChanged)
         {
             lock (iPropertyLock)
             {

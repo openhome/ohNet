@@ -37,9 +37,9 @@ namespace Zapp.ControlPoint.Proxies
         void SyncPresetCount(out uint aCount);
         void BeginPresetCount(CpProxy.CallbackAsyncComplete aCallback);
         void EndPresetCount(IntPtr aAsyncHandle, out uint aCount);
-        void SetPropertyPresetXmlChanged(CpProxy.CallbackPropertyChanged aPresetXmlChanged);
+        void SetPropertyPresetXmlChanged(System.Action aPresetXmlChanged);
         String PropertyPresetXml();
-        void SetPropertyPresetIndexChanged(CpProxy.CallbackPropertyChanged aPresetIndexChanged);
+        void SetPropertyPresetIndexChanged(System.Action aPresetIndexChanged);
         uint PropertyPresetIndex();
     }
 
@@ -210,8 +210,8 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionPresetCount;
         private PropertyString iPresetXml;
         private PropertyUint iPresetIndex;
-        private CallbackPropertyChanged iPresetXmlChanged;
-        private CallbackPropertyChanged iPresetIndexChanged;
+        private System.Action iPresetXmlChanged;
+        private System.Action iPresetIndexChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -701,7 +701,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkDelay1 instance will not overlap.</remarks>
         /// <param name="aPresetXmlChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyPresetXmlChanged(CallbackPropertyChanged aPresetXmlChanged)
+        public void SetPropertyPresetXmlChanged(System.Action aPresetXmlChanged)
         {
             lock (iPropertyLock)
             {
@@ -723,7 +723,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkDelay1 instance will not overlap.</remarks>
         /// <param name="aPresetIndexChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyPresetIndexChanged(CallbackPropertyChanged aPresetIndexChanged)
+        public void SetPropertyPresetIndexChanged(System.Action aPresetIndexChanged)
         {
             lock (iPropertyLock)
             {

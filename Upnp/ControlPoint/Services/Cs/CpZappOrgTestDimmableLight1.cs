@@ -16,7 +16,7 @@ namespace Zapp.ControlPoint.Proxies
         void SyncSetLevel(uint aLevel);
         void BeginSetLevel(uint aLevel, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetLevel(IntPtr aAsyncHandle);
-        void SetPropertyA_ARG_LevelChanged(CpProxy.CallbackPropertyChanged aA_ARG_LevelChanged);
+        void SetPropertyA_ARG_LevelChanged(System.Action aA_ARG_LevelChanged);
         uint PropertyA_ARG_Level();
     }
 
@@ -61,7 +61,7 @@ namespace Zapp.ControlPoint.Proxies
         private Zapp.Core.Action iActionGetLevel;
         private Zapp.Core.Action iActionSetLevel;
         private PropertyUint iA_ARG_Level;
-        private CallbackPropertyChanged iA_ARG_LevelChanged;
+        private System.Action iA_ARG_LevelChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyZappOrgTestDimmableLight1 instance will not overlap.</remarks>
         /// <param name="aA_ARG_LevelChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyA_ARG_LevelChanged(CallbackPropertyChanged aA_ARG_LevelChanged)
+        public void SetPropertyA_ARG_LevelChanged(System.Action aA_ARG_LevelChanged)
         {
             lock (iPropertyLock)
             {

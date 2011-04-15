@@ -73,15 +73,15 @@ namespace Zapp.ControlPoint.Proxies
         void SyncGetRampTime(out uint aRetRampTime);
         void BeginGetRampTime(CpProxy.CallbackAsyncComplete aCallback);
         void EndGetRampTime(IntPtr aAsyncHandle, out uint aRetRampTime);
-        void SetPropertyLoadLevelStatusChanged(CpProxy.CallbackPropertyChanged aLoadLevelStatusChanged);
+        void SetPropertyLoadLevelStatusChanged(System.Action aLoadLevelStatusChanged);
         uint PropertyLoadLevelStatus();
-        void SetPropertyStepDeltaChanged(CpProxy.CallbackPropertyChanged aStepDeltaChanged);
+        void SetPropertyStepDeltaChanged(System.Action aStepDeltaChanged);
         uint PropertyStepDelta();
-        void SetPropertyRampRateChanged(CpProxy.CallbackPropertyChanged aRampRateChanged);
+        void SetPropertyRampRateChanged(System.Action aRampRateChanged);
         uint PropertyRampRate();
-        void SetPropertyIsRampingChanged(CpProxy.CallbackPropertyChanged aIsRampingChanged);
+        void SetPropertyIsRampingChanged(System.Action aIsRampingChanged);
         bool PropertyIsRamping();
-        void SetPropertyRampPausedChanged(CpProxy.CallbackPropertyChanged aRampPausedChanged);
+        void SetPropertyRampPausedChanged(System.Action aRampPausedChanged);
         bool PropertyRampPaused();
     }
 
@@ -455,11 +455,11 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyUint iRampRate;
         private PropertyBool iIsRamping;
         private PropertyBool iRampPaused;
-        private CallbackPropertyChanged iLoadLevelStatusChanged;
-        private CallbackPropertyChanged iStepDeltaChanged;
-        private CallbackPropertyChanged iRampRateChanged;
-        private CallbackPropertyChanged iIsRampingChanged;
-        private CallbackPropertyChanged iRampPausedChanged;
+        private System.Action iLoadLevelStatusChanged;
+        private System.Action iStepDeltaChanged;
+        private System.Action iRampRateChanged;
+        private System.Action iIsRampingChanged;
+        private System.Action iRampPausedChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -1503,7 +1503,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgDimming1 instance will not overlap.</remarks>
         /// <param name="aLoadLevelStatusChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyLoadLevelStatusChanged(CallbackPropertyChanged aLoadLevelStatusChanged)
+        public void SetPropertyLoadLevelStatusChanged(System.Action aLoadLevelStatusChanged)
         {
             lock (iPropertyLock)
             {
@@ -1525,7 +1525,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgDimming1 instance will not overlap.</remarks>
         /// <param name="aStepDeltaChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyStepDeltaChanged(CallbackPropertyChanged aStepDeltaChanged)
+        public void SetPropertyStepDeltaChanged(System.Action aStepDeltaChanged)
         {
             lock (iPropertyLock)
             {
@@ -1547,7 +1547,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgDimming1 instance will not overlap.</remarks>
         /// <param name="aRampRateChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyRampRateChanged(CallbackPropertyChanged aRampRateChanged)
+        public void SetPropertyRampRateChanged(System.Action aRampRateChanged)
         {
             lock (iPropertyLock)
             {
@@ -1569,7 +1569,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgDimming1 instance will not overlap.</remarks>
         /// <param name="aIsRampingChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyIsRampingChanged(CallbackPropertyChanged aIsRampingChanged)
+        public void SetPropertyIsRampingChanged(System.Action aIsRampingChanged)
         {
             lock (iPropertyLock)
             {
@@ -1591,7 +1591,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyUpnpOrgDimming1 instance will not overlap.</remarks>
         /// <param name="aRampPausedChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyRampPausedChanged(CallbackPropertyChanged aRampPausedChanged)
+        public void SetPropertyRampPausedChanged(System.Action aRampPausedChanged)
         {
             lock (iPropertyLock)
             {

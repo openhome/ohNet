@@ -43,13 +43,13 @@ namespace Zapp.ControlPoint.Proxies
         void SyncLocate();
         void BeginLocate(CpProxy.CallbackAsyncComplete aCallback);
         void EndLocate(IntPtr aAsyncHandle);
-        void SetPropertyAmplifierEnabledChanged(CpProxy.CallbackPropertyChanged aAmplifierEnabledChanged);
+        void SetPropertyAmplifierEnabledChanged(System.Action aAmplifierEnabledChanged);
         bool PropertyAmplifierEnabled();
-        void SetPropertyAmplifierAttenuationChanged(CpProxy.CallbackPropertyChanged aAmplifierAttenuationChanged);
+        void SetPropertyAmplifierAttenuationChanged(System.Action aAmplifierAttenuationChanged);
         String PropertyAmplifierAttenuation();
-        void SetPropertyVolumeControlEnabledChanged(CpProxy.CallbackPropertyChanged aVolumeControlEnabledChanged);
+        void SetPropertyVolumeControlEnabledChanged(System.Action aVolumeControlEnabledChanged);
         bool PropertyVolumeControlEnabled();
-        void SetPropertyDigitalAudioOutputRawChanged(CpProxy.CallbackPropertyChanged aDigitalAudioOutputRawChanged);
+        void SetPropertyDigitalAudioOutputRawChanged(System.Action aDigitalAudioOutputRawChanged);
         bool PropertyDigitalAudioOutputRaw();
     }
 
@@ -257,10 +257,10 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyString iAmplifierAttenuation;
         private PropertyBool iVolumeControlEnabled;
         private PropertyBool iDigitalAudioOutputRaw;
-        private CallbackPropertyChanged iAmplifierEnabledChanged;
-        private CallbackPropertyChanged iAmplifierAttenuationChanged;
-        private CallbackPropertyChanged iVolumeControlEnabledChanged;
-        private CallbackPropertyChanged iDigitalAudioOutputRawChanged;
+        private System.Action iAmplifierEnabledChanged;
+        private System.Action iAmplifierAttenuationChanged;
+        private System.Action iVolumeControlEnabledChanged;
+        private System.Action iDigitalAudioOutputRawChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -842,7 +842,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkComponent1 instance will not overlap.</remarks>
         /// <param name="aAmplifierEnabledChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyAmplifierEnabledChanged(CallbackPropertyChanged aAmplifierEnabledChanged)
+        public void SetPropertyAmplifierEnabledChanged(System.Action aAmplifierEnabledChanged)
         {
             lock (iPropertyLock)
             {
@@ -864,7 +864,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkComponent1 instance will not overlap.</remarks>
         /// <param name="aAmplifierAttenuationChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyAmplifierAttenuationChanged(CallbackPropertyChanged aAmplifierAttenuationChanged)
+        public void SetPropertyAmplifierAttenuationChanged(System.Action aAmplifierAttenuationChanged)
         {
             lock (iPropertyLock)
             {
@@ -886,7 +886,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkComponent1 instance will not overlap.</remarks>
         /// <param name="aVolumeControlEnabledChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyVolumeControlEnabledChanged(CallbackPropertyChanged aVolumeControlEnabledChanged)
+        public void SetPropertyVolumeControlEnabledChanged(System.Action aVolumeControlEnabledChanged)
         {
             lock (iPropertyLock)
             {
@@ -908,7 +908,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkComponent1 instance will not overlap.</remarks>
         /// <param name="aDigitalAudioOutputRawChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyDigitalAudioOutputRawChanged(CallbackPropertyChanged aDigitalAudioOutputRawChanged)
+        public void SetPropertyDigitalAudioOutputRawChanged(System.Action aDigitalAudioOutputRawChanged)
         {
             lock (iPropertyLock)
             {

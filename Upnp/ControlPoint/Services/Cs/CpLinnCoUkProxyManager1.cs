@@ -40,13 +40,13 @@ namespace Zapp.ControlPoint.Proxies
         void SyncTestDiscPlayerConnection(out bool aResult);
         void BeginTestDiscPlayerConnection(CpProxy.CallbackAsyncComplete aCallback);
         void EndTestDiscPlayerConnection(IntPtr aAsyncHandle, out bool aResult);
-        void SetPropertyKontrolProductConnectedChanged(CpProxy.CallbackPropertyChanged aKontrolProductConnectedChanged);
+        void SetPropertyKontrolProductConnectedChanged(System.Action aKontrolProductConnectedChanged);
         String PropertyKontrolProductConnected();
-        void SetPropertyKontrolProductComPortChanged(CpProxy.CallbackPropertyChanged aKontrolProductComPortChanged);
+        void SetPropertyKontrolProductComPortChanged(System.Action aKontrolProductComPortChanged);
         uint PropertyKontrolProductComPort();
-        void SetPropertyDiscPlayerConnectedChanged(CpProxy.CallbackPropertyChanged aDiscPlayerConnectedChanged);
+        void SetPropertyDiscPlayerConnectedChanged(System.Action aDiscPlayerConnectedChanged);
         String PropertyDiscPlayerConnected();
-        void SetPropertyDiscPlayerComPortChanged(CpProxy.CallbackPropertyChanged aDiscPlayerComPortChanged);
+        void SetPropertyDiscPlayerComPortChanged(System.Action aDiscPlayerComPortChanged);
         uint PropertyDiscPlayerComPort();
     }
 
@@ -239,10 +239,10 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyUint iKontrolProductComPort;
         private PropertyString iDiscPlayerConnected;
         private PropertyUint iDiscPlayerComPort;
-        private CallbackPropertyChanged iKontrolProductConnectedChanged;
-        private CallbackPropertyChanged iKontrolProductComPortChanged;
-        private CallbackPropertyChanged iDiscPlayerConnectedChanged;
-        private CallbackPropertyChanged iDiscPlayerComPortChanged;
+        private System.Action iKontrolProductConnectedChanged;
+        private System.Action iKontrolProductComPortChanged;
+        private System.Action iDiscPlayerConnectedChanged;
+        private System.Action iDiscPlayerComPortChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -816,7 +816,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProxyManager1 instance will not overlap.</remarks>
         /// <param name="aKontrolProductConnectedChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyKontrolProductConnectedChanged(CallbackPropertyChanged aKontrolProductConnectedChanged)
+        public void SetPropertyKontrolProductConnectedChanged(System.Action aKontrolProductConnectedChanged)
         {
             lock (iPropertyLock)
             {
@@ -838,7 +838,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProxyManager1 instance will not overlap.</remarks>
         /// <param name="aKontrolProductComPortChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyKontrolProductComPortChanged(CallbackPropertyChanged aKontrolProductComPortChanged)
+        public void SetPropertyKontrolProductComPortChanged(System.Action aKontrolProductComPortChanged)
         {
             lock (iPropertyLock)
             {
@@ -860,7 +860,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProxyManager1 instance will not overlap.</remarks>
         /// <param name="aDiscPlayerConnectedChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyDiscPlayerConnectedChanged(CallbackPropertyChanged aDiscPlayerConnectedChanged)
+        public void SetPropertyDiscPlayerConnectedChanged(System.Action aDiscPlayerConnectedChanged)
         {
             lock (iPropertyLock)
             {
@@ -882,7 +882,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkProxyManager1 instance will not overlap.</remarks>
         /// <param name="aDiscPlayerComPortChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyDiscPlayerComPortChanged(CallbackPropertyChanged aDiscPlayerComPortChanged)
+        public void SetPropertyDiscPlayerComPortChanged(System.Action aDiscPlayerComPortChanged)
         {
             lock (iPropertyLock)
             {

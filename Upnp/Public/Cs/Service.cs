@@ -161,13 +161,12 @@ namespace Zapp.Core
         [DllImport("ZappUpnp")]
         static extern unsafe IntPtr ServicePropertyDestroy(IntPtr aHandle);
         
-        public delegate void CallbackValueChanged();
         protected delegate void Callback(IntPtr aPtr);
 
         protected IntPtr iHandle;
         protected GCHandle iGch;
         protected Callback iCallbackValueChanged;
-        private CallbackValueChanged iValueChanged;
+        private System.Action iValueChanged;
         private bool iOwnsNativeProperty;
 
         public void Dispose()
@@ -190,7 +189,7 @@ namespace Zapp.Core
             iOwnsNativeProperty = aOwnsNativeProperty;
         }
 
-        protected Property(CallbackValueChanged aValueChanged)
+        protected Property(System.Action aValueChanged)
         {
             iGch = GCHandle.Alloc(this);
             iValueChanged = aValueChanged;
@@ -223,8 +222,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the control point stack
         /// </summary>
         /// <param name="aName">Property name</param>
-        /// <param name="aValueChanged">Delegate to run when the property's value changes</param>
-        public unsafe PropertyInt(String aName, CallbackValueChanged aValueChanged)
+        /// <param name="aValueChanged">Action to run when the property's value changes</param>
+        public unsafe PropertyInt(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -282,8 +281,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the control point stack
         /// </summary>
         /// <param name="aName">Property name</param>
-        /// <param name="aValueChanged">Delegate to run when the property's value changes</param>
-        public unsafe PropertyUint(String aName, CallbackValueChanged aValueChanged)
+        /// <param name="aValueChanged">Action to run when the property's value changes</param>
+        public unsafe PropertyUint(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -341,8 +340,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the control point stack
         /// </summary>
         /// <param name="aName">Property name</param>
-        /// <param name="aValueChanged">Delegate to run when the property's value changes</param>
-        public unsafe PropertyBool(String aName, CallbackValueChanged aValueChanged)
+        /// <param name="aValueChanged">Action to run when the property's value changes</param>
+        public unsafe PropertyBool(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -404,8 +403,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the control point stack
         /// </summary>
         /// <param name="aName">Property name</param>
-        /// <param name="aValueChanged">Delegate to run when the property's value changes</param>
-        public unsafe PropertyString(String aName, CallbackValueChanged aValueChanged)
+        /// <param name="aValueChanged">Action to run when the property's value changes</param>
+        public unsafe PropertyString(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
@@ -470,8 +469,8 @@ namespace Zapp.Core
         /// Constructor suitable for use by clients of the control point stack
         /// </summary>
         /// <param name="aName">Property name</param>
-        /// <param name="aValueChanged">Delegate to run when the property's value changes</param>
-        public unsafe PropertyBinary(String aName, CallbackValueChanged aValueChanged)
+        /// <param name="aValueChanged">Action to run when the property's value changes</param>
+        public unsafe PropertyBinary(String aName, System.Action aValueChanged)
             : base(aValueChanged)
         {
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
