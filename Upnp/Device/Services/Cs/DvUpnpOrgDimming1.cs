@@ -808,14 +808,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -826,6 +827,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -847,14 +854,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -866,6 +874,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -887,14 +901,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -906,6 +921,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -928,14 +949,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -946,6 +968,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -968,14 +996,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -986,6 +1015,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1008,14 +1043,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1028,6 +1064,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1048,14 +1090,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1066,6 +1109,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1086,14 +1135,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1104,6 +1154,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1124,14 +1180,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1142,6 +1199,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1162,14 +1225,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1180,6 +1244,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1200,14 +1270,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1218,6 +1289,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1242,14 +1319,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1260,6 +1338,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1282,14 +1366,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1300,6 +1385,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1321,14 +1412,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1340,6 +1432,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1362,14 +1460,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1380,6 +1479,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1401,14 +1506,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1420,6 +1526,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1440,14 +1552,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1458,6 +1571,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1478,14 +1597,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1496,6 +1616,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1517,14 +1643,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1536,6 +1663,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1557,14 +1690,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1576,6 +1710,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }
@@ -1597,14 +1737,15 @@ namespace Zapp.Device.Providers
                 invocation.ReportError(501, "Invalid XML");
                 return -1;
             }
-            catch (ActionDisabledError)
-            {
-                invocation.ReportError(501, "Action not implemented");
-                return -1;
-            }
             catch (PropertyUpdateError)
             {
                 invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
                 return -1;
             }
             try
@@ -1616,6 +1757,12 @@ namespace Zapp.Device.Providers
             catch (ActionError)
             {
                 return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             return 0;
         }

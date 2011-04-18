@@ -173,7 +173,7 @@ namespace Zapp.ControlPoint
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             CpDeviceList list = (CpDeviceList)gch.Target;
             if (list.iAdded != null) {
-                list.iAdded(list, device);
+                CallListChangedDelegate(list.iAdded, list, device);
             }
         }
 
@@ -183,7 +183,20 @@ namespace Zapp.ControlPoint
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             CpDeviceList list = (CpDeviceList)gch.Target;
             if (list.iRemoved != null) {
-                list.iRemoved(list, device);
+                CallListChangedDelegate(list.iRemoved, list, device);
+            }
+        }
+
+        private static void CallListChangedDelegate(ChangeHandler aDelegate, CpDeviceList aList, CpDevice aDevice)
+        {
+            try
+            {
+                aDelegate(aList, aDevice);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         No exceptions should be thrown by device list change delegates");
             }
         }
 
