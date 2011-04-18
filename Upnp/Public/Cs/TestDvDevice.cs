@@ -55,7 +55,7 @@ namespace Zapp.Device
             }
             device.Dispose();
 
-            Console.Write("TestDvDeviceCpp - completed\n");
+            Console.Write("TestDvDeviceCs - completed\n");
         }
 
         private void DeviceAdded(CpDeviceList aList, CpDevice aDevice)
