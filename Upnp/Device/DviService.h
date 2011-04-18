@@ -88,6 +88,7 @@ private:
     ~DviService();
 private:
     Mutex iLock;
+    Mutex iActionLock;
     TUint iRefCount;
     Mutex iPropertiesLock;
     VectorActions iDvActions;
