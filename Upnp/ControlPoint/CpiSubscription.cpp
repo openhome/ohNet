@@ -99,6 +99,7 @@ void CpiSubscription::RunInSubscriber()
 {
     Stack::Mutex().Wait();
     EOperation op = iPendingOperation;
+    iPendingOperation = eNone;
     Stack::Mutex().Signal();
 
     switch (op)
