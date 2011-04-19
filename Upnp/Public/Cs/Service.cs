@@ -178,6 +178,19 @@ namespace Zapp.Core
             }
         }
 
+        public static void CallPropertyChangedDelegate(System.Action aDelegate)
+        {
+            try
+            {
+                aDelegate();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         No exceptions should be thrown by property change delegates");
+            }
+        }
+
         internal IntPtr Handle()
         {
             return iHandle;
@@ -200,7 +213,7 @@ namespace Zapp.Core
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             Property self = (Property)gch.Target;
-            self.iValueChanged();
+            CallPropertyChangedDelegate(self.iValueChanged);
         }
     }
 

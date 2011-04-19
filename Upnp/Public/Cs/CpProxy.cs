@@ -168,14 +168,14 @@ namespace Zapp.ControlPoint
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             CpProxy self = (CpProxy)gch.Target;
-            self.iPropertyChanged();
+            Property.CallPropertyChangedDelegate(self.iPropertyChanged);
         }
 
         private void InitialEvent(IntPtr aPtr)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             CpProxy self = (CpProxy)gch.Target;
-            self.iInitialEvent();
+            Property.CallPropertyChangedDelegate(self.iInitialEvent);
         }
 
         protected void DisposeProxy()
@@ -227,6 +227,12 @@ namespace Zapp.ControlPoint
             catch (ProxyError)
             {
                 iError = true;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ProxyError can be thrown by action complete delegates");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             iSem.Release();
         }

@@ -101,6 +101,8 @@ protected:
      * @return  true if the property's value has changed (aValue was different to the previous value)
      */
     DllExport bool SetPropertyBinary(PropertyBinary& aProperty, const Brx& aValue);
+private:
+    void TryPublishUpdate();
 protected:
     DviService* iService;
 private:
