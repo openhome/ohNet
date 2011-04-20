@@ -123,6 +123,7 @@ def getModule():
     if Module == 'upnp':
         module = 'upnp'
         cmd = 'cd Upnp && python AllTests.py'
+	
     
     if Module == 'zappSpyGUI':
         module = 'zappSpyGUI'
@@ -163,11 +164,8 @@ def getArguments(module,nightly,arch,valgrind,os):
             
 
 def Build(tool, cmd, args):
-
-    buildCmd = []
-    buildCmd.append(tool + ' && ' + cmd + args)
-    print buildCmd
-    ret = subprocess.call(buildCmd, shell=True)
+	
+    ret = subprocess.check_call(tool + '&&' + cmd + args, shell=True)
     if ret != 0:
         print ret        
         sys.exit(10)
