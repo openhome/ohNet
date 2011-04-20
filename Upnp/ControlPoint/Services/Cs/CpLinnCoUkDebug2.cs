@@ -86,6 +86,7 @@ namespace Zapp.ControlPoint.Proxies
             : base("linn-co-uk", "Debug", 2, aDevice)
         {
             Zapp.Core.Parameter param;
+            
 
             iActionSetDebugLevel = new Zapp.Core.Action("SetDebugLevel");
             param = new ParameterUint("aDebugLevel");

@@ -55,6 +55,7 @@ namespace Zapp.ControlPoint.Proxies
             : base("linn-co-uk", "MediaTime", 1, aDevice)
         {
             Zapp.Core.Parameter param;
+            
 
             iActionSeconds = new Zapp.Core.Action("Seconds");
             param = new ParameterUint("aSeconds");

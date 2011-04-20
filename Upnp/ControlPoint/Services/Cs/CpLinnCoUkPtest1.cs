@@ -86,6 +86,7 @@ namespace Zapp.ControlPoint.Proxies
             : base("linn-co-uk", "Ptest", 1, aDevice)
         {
             Zapp.Core.Parameter param;
+            
 
             iActionTestComPort = new Zapp.Core.Action("TestComPort");
             param = new ParameterUint("aPort");

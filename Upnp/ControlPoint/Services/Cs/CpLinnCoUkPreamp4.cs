@@ -334,6 +334,7 @@ namespace Zapp.ControlPoint.Proxies
             : base("linn-co-uk", "Preamp", 4, aDevice)
         {
             Zapp.Core.Parameter param;
+            
 
             iActionVolumeInc = new Zapp.Core.Action("VolumeInc");
 

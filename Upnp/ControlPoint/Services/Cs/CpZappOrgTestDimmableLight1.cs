@@ -73,6 +73,7 @@ namespace Zapp.ControlPoint.Proxies
             : base("zapp-org", "TestDimmableLight", 1, aDevice)
         {
             Zapp.Core.Parameter param;
+            
 
             iActionGetLevel = new Zapp.Core.Action("GetLevel");
             param = new ParameterUint("Level");

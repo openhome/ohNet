@@ -96,6 +96,7 @@ namespace Zapp.ControlPoint.Proxies
             : base("schemas-upnp-org", "SwitchPower", 1, aDevice)
         {
             Zapp.Core.Parameter param;
+            
 
             iActionSetTarget = new Zapp.Core.Action("SetTarget");
             param = new ParameterBool("newTargetValue");
