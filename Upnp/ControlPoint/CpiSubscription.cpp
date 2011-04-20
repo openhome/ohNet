@@ -99,6 +99,7 @@ void CpiSubscription::RunInSubscriber()
 {
     Stack::Mutex().Wait();
     EOperation op = iPendingOperation;
+    iPendingOperation = eNone;
     Stack::Mutex().Signal();
 
     switch (op)
@@ -257,11 +258,16 @@ void CpiSubscription::DoUnsubscribe()
     Stack::Mutex().Wait();
     iSid.TransferTo(sid);
     Stack::Mutex().Signal();
-    iDevice.Unsubscribe(*this, sid);
-
-    LOG(kEvent, "Unsubscribed sid ");
-    LOG(kEvent, sid);
-    LOG(kEvent, "\n");
+    if (sid.Bytes() == 0) {
+        LOG(kEvent, "Skipped unsubscribing since sid is empty (we're not subscribed)\n");
+    }
+    else
+    {
+        iDevice.Unsubscribe(*this, sid);
+        LOG(kEvent, "Unsubscribed sid ");
+        LOG(kEvent, sid);
+        LOG(kEvent, "\n");
+    }
 }
 
 void CpiSubscription::EventUpdateStart()

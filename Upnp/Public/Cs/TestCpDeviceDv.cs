@@ -22,7 +22,7 @@ namespace Zapp
             lib.Initialise(initParams);
             lib.StartCombined();
 
-            Console.Write("TestDvDeviceCs - starting\n");
+            Console.Write("TestCpDeviceDvCs - starting\n");
             DeviceBasic device = new DeviceBasic();
             CpDeviceDv cpDevice = new CpDeviceDv(device.Device());
             TestBasicCp cp = new TestBasicCp(cpDevice);
@@ -30,7 +30,7 @@ namespace Zapp
             cp.TestSubscriptions();
             cpDevice.RemoveRef();
             device.Dispose();
-            Console.Write("TestDvDeviceCpp - completed\n");
+            Console.Write("TestCpDeviceDvCs - completed\n");
             
             lib.Close();
         }
