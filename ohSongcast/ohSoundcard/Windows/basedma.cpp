@@ -18,10 +18,10 @@ Abstract:
 #include "common.h"
 #include "basewave.h"
 
-extern void MpusStop();
+#pragma code_seg("PAGE")
+
 extern void MpusSend(UCHAR* aBuffer, UINT aBytes);
 
-#pragma code_seg("PAGE")
 //=============================================================================
 STDMETHODIMP_(NTSTATUS)
 CMiniportWaveCyclicStreamMSVAD::AllocateBuffer
@@ -57,7 +57,7 @@ Return Value:
 {
     UNREFERENCED_PARAMETER(PhysicalAddressConstraint);
 
-    PAGED_CODE();
+	PAGED_CODE();
 
     DPF_ENTER(("[CMiniportWaveCyclicStreamMSVAD::AllocateBuffer]"));
 
@@ -85,6 +85,7 @@ Return Value:
 
     return ntStatus;
 } // AllocateBuffer
+
 #pragma code_seg()
 
 //=============================================================================
@@ -208,12 +209,11 @@ Return Value:
     UNREFERENCED_PARAMETER(Destination);
 
 	MpusSend((UCHAR*)Source, ByteCount);
-
-//  m_SaveData.WriteData((PBYTE) Source, ByteCount);
 } // CopyTo
 
-//=============================================================================
 #pragma code_seg("PAGE")
+
+//=============================================================================
 STDMETHODIMP_(void)
 CMiniportWaveCyclicStreamMSVAD::FreeBuffer
 (
@@ -236,7 +236,7 @@ Return Value:
 
 --*/
 {
-    PAGED_CODE();
+	PAGED_CODE();
 
 	DPF_ENTER(("[CMiniportWaveCyclicStreamMSVAD::FreeBuffer]"));
 
@@ -244,9 +244,9 @@ Return Value:
     {
         ExFreePoolWithTag( m_pvDmaBuffer, SNEAKY_POOLTAG );
         m_ulDmaBufferSize = 0;
-		MpusStop();
     }
 } // FreeBuffer
+
 #pragma code_seg()
 
 //=============================================================================
@@ -423,3 +423,4 @@ Return Value:
 
     return m_ulDmaBufferSize;
 }
+

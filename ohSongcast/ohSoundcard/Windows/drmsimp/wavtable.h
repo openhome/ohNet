@@ -148,13 +148,19 @@ PCPROPERTY_ITEM FilterProperties[] =
     },
     {
         &KSPROPSETID_Private,
-        KSPROPERTY_SNEAKY_MULTIPUS_GROUP,
+        KSPROPERTY_SNEAKY_ENDPOINT,
         KSPROPERTY_TYPE_SET,
         PropertyHandler_Wave
     },
     {
         &KSPROPSETID_Private,
-        KSPROPERTY_SNEAKY_MULTIPUS_CHANNEL,
+        KSPROPERTY_SNEAKY_ACTIVE,
+        KSPROPERTY_TYPE_SET,
+        PropertyHandler_Wave
+    },
+    {
+        &KSPROPSETID_Private,
+        KSPROPERTY_SNEAKY_TTL,
         KSPROPERTY_TYPE_SET,
         PropertyHandler_Wave
     }

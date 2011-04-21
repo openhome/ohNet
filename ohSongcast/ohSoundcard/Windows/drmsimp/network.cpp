@@ -15,16 +15,16 @@ static char STR_MODULENAME[] = "Sneaky Soundcard Network: ";
 
 // CWinsock
 
-void CWinsock::Initialise(PSOCKADDR aSocket, UCHAR aAddr1, UCHAR aAddr2, UCHAR aAddr3, UCHAR aAddr4, USHORT aPort)
+void CWinsock::Initialise(PSOCKADDR aSocket, ULONG aAddress, ULONG aPort)
 {
 	SOCKADDR_IN* addr = (SOCKADDR_IN*) aSocket;
 
 	addr->sin_family = AF_INET;
 	addr->sin_port = ((aPort >> 8) & 0x00ff) + ((aPort << 8) & 0xff00);
-	addr->sin_addr.S_un.S_un_b.s_b1 = aAddr1;
-	addr->sin_addr.S_un.S_un_b.s_b2 = aAddr2;
-	addr->sin_addr.S_un.S_un_b.s_b3 = aAddr3;
-	addr->sin_addr.S_un.S_un_b.s_b4 = aAddr4;
+	addr->sin_addr.S_un.S_un_b.s_b1 = (aAddress >> 24) & 0xff;
+	addr->sin_addr.S_un.S_un_b.s_b2 = (aAddress >> 16) & 0xff;
+	addr->sin_addr.S_un.S_un_b.s_b3 = (aAddress >> 8) & 0xff;
+	addr->sin_addr.S_un.S_un_b.s_b4 = (aAddress & 0xff);
 	addr->sin_zero[0] = 0;
 	addr->sin_zero[1] = 0;
 	addr->sin_zero[2] = 0;
@@ -37,7 +37,7 @@ void CWinsock::Initialise(PSOCKADDR aSocket, UCHAR aAddr1, UCHAR aAddr2, UCHAR a
 
 void CWinsock::Initialise(PSOCKADDR aSocket)
 {
-	Initialise(aSocket, 0, 0, 0, 0, 0);
+	Initialise(aSocket, 0, 0);
 }
 
 CWinsock* CWinsock::Create(NETWORK_CALLBACK aCallback, void* aContext)
@@ -90,6 +90,7 @@ CWinsock* CWinsock::Create(NETWORK_CALLBACK aCallback, void* aContext)
 void CWinsock::Close()
 {
 	WskDeregister(&iRegistration);
+
 	ExFreePool(this);
 }
 
@@ -103,7 +104,7 @@ void CWinsock::Init(void* aContext)
 
 	status = WskCaptureProviderNPI(&(winsock->iRegistration), WSK_INFINITE_WAIT, &(winsock->iProviderNpi));
 
-	if(status != STATUS_SUCCESS)
+	if (status != STATUS_SUCCESS)
 	{
 		return;
 	}
@@ -134,43 +135,45 @@ bool CWinsock::Initialised()
 	return initialised;
 }
 
-// CSocketMultipus
+// CSocketOhm
 
-CSocketMultipus::CSocketMultipus()
+CSocketOhm::CSocketOhm()
 {
 	iInitialised = false;
 
 	KeInitializeSpinLock(&iSpinLock);
 
-	iHeader.iMpus[0] = 'M';
-	iHeader.iMpus[1] = 'p';
-	iHeader.iMpus[2] = 'u';
-	iHeader.iMpus[3] = 's';
+	iHeader.iMagic[0] = 'O';
+	iHeader.iMagic[1] = 'h';
+	iHeader.iMagic[2] = 'm';
+	iHeader.iMagic[3] = ' ';
 
 	iHeader.iMajorVersion = 1;
-
-	iHeader.iUid[0] = 0;
-	iHeader.iUid[1] = 0;
-	iHeader.iUid[2] = 0;
-
-	iHeader.iFrameNo = 0;
-	iHeader.iTimestamp = 0;
-	iHeader.iSubMsgType = 1;
-	iHeader.iSubMsgHeaderBytes = 12;
-
-	iHeader.iTotalBytes = 0;
-	
-	iHeader.iSampleStartOffset = 0;
-	iHeader.iSampleRate = 0;
-	iHeader.iBitDepth = 0;
-	iHeader.iChannels = 0;
-	iHeader.iFlags = 0;
+	iHeader.iMsgType = 3;
+	iHeader.iAudioHeaderBytes = 50;
+	iHeader.iAudioNetworkTimestamp = 0;
+	iHeader.iAudioMediaLatency = 0;
+	iHeader.iAudioMediaTimestamp = 0;
+	iHeader.iAudioSampleStartHi = 0;
+	iHeader.iAudioSampleStartLo = 0;
+	iHeader.iAudioSamplesTotalHi = 0;
+	iHeader.iAudioSamplesTotalLo = 0;
+	iHeader.iAudioVolumeOffset = 0;
 	iHeader.iReserved = 0;
+	iHeader.iCodecNameBytes = 6;  // 3
+	iHeader.iCodecName[0] = 'P';
+	iHeader.iCodecName[1] = 'C';
+	iHeader.iCodecName[2] = 'M';
+	iHeader.iCodecName[3] = '/';
+	iHeader.iCodecName[4] = 'S';
+	iHeader.iCodecName[5] = 'C';
 
-	iFrameNo = 0;
+	iFrame = 0;
+	iSampleStart = 0;
+	iSamplesTotal = 0;
 }
 
-NTSTATUS CSocketMultipus::Initialise(CWinsock& aWsk, NETWORK_CALLBACK aCallback, void* aContext)
+NTSTATUS CSocketOhm::Initialise(CWinsock& aWsk, NETWORK_CALLBACK aCallback, void* aContext)
 {
 	iWsk = &aWsk;
 	iCallback = aCallback;
@@ -214,13 +217,13 @@ NTSTATUS CSocketMultipus::Initialise(CWinsock& aWsk, NETWORK_CALLBACK aCallback,
 	return (status);
 }
 
-NTSTATUS CSocketMultipus::CreateComplete(PDEVICE_OBJECT aDeviceObject, PIRP aIrp, PVOID aContext)
+NTSTATUS CSocketOhm::CreateComplete(PDEVICE_OBJECT aDeviceObject, PIRP aIrp, PVOID aContext)
 {
-    UNREFERENCED_PARAMETER(aDeviceObject);
+	UNREFERENCED_PARAMETER(aDeviceObject);
 
 	if (aIrp->IoStatus.Status == STATUS_SUCCESS)
 	{
-		CSocketMultipus* socket = (CSocketMultipus*)aContext;
+		CSocketOhm* socket = (CSocketOhm*)aContext;
 
 		// Save the socket object for the new socket
 		socket->iSocket = (PWSK_SOCKET)(aIrp->IoStatus.Information);
@@ -250,13 +253,13 @@ NTSTATUS CSocketMultipus::CreateComplete(PDEVICE_OBJECT aDeviceObject, PIRP aIrp
 }
 
 
-NTSTATUS CSocketMultipus::BindComplete(PDEVICE_OBJECT aDeviceObject, PIRP aIrp, PVOID aContext)
+NTSTATUS CSocketOhm::BindComplete(PDEVICE_OBJECT aDeviceObject, PIRP aIrp, PVOID aContext)
 {
-    UNREFERENCED_PARAMETER(aDeviceObject);
+	UNREFERENCED_PARAMETER(aDeviceObject);
 
 	if (aIrp->IoStatus.Status == STATUS_SUCCESS)
 	{
-		CSocketMultipus* socket = (CSocketMultipus*)aContext;
+		CSocketOhm* socket = (CSocketOhm*)aContext;
 
 		// Reuse the Irp
 		IoReuseIrp(aIrp, STATUS_SUCCESS);
@@ -280,11 +283,11 @@ NTSTATUS CSocketMultipus::BindComplete(PDEVICE_OBJECT aDeviceObject, PIRP aIrp, 
 	return STATUS_MORE_PROCESSING_REQUIRED;
 }
 
-NTSTATUS CSocketMultipus::InitialiseComplete(PDEVICE_OBJECT aDeviceObject, PIRP aIrp, PVOID aContext)
+NTSTATUS CSocketOhm::InitialiseComplete(PDEVICE_OBJECT aDeviceObject, PIRP aIrp, PVOID aContext)
 {
-    UNREFERENCED_PARAMETER(aDeviceObject);
+	UNREFERENCED_PARAMETER(aDeviceObject);
 
-	CSocketMultipus* socket = (CSocketMultipus*)aContext;
+	CSocketOhm* socket = (CSocketOhm*)aContext;
 
 	if (aIrp->IoStatus.Status == STATUS_SUCCESS)
 	{
@@ -314,16 +317,27 @@ typedef struct
 	SOCKADDR iAddr;
 } UDPSEND, *PUDPSEND;
 
-void CSocketMultipus::Stop(PSOCKADDR aAddress, ULONG aSampleRate, ULONG aBitDepth, ULONG aChannels)
+void CSocketOhm::SetTtl(ULONG aValue)
 {
-    UNREFERENCED_PARAMETER(aAddress);
-    UNREFERENCED_PARAMETER(aSampleRate);
-    UNREFERENCED_PARAMETER(aBitDepth);
-    UNREFERENCED_PARAMETER(aChannels);
+    UNREFERENCED_PARAMETER(aValue);
 }
 
 /*
-void CSocketMultipus::Stop(PSOCKADDR aAddress, ULONG aSampleRate, ULONG aBitDepth, ULONG aChannels)
+void CSocketOhm::Send(PSOCKADDR aAddress, UCHAR* aBuffer, ULONG aBytes, UCHAR aHalt, ULONG aSampleRate, ULONG aBitRate, ULONG aBitDepth, ULONG aChannels)
+{
+	UNREFERENCED_PARAMETER(aAddress);
+	UNREFERENCED_PARAMETER(aBuffer);
+	UNREFERENCED_PARAMETER(aBytes);
+	UNREFERENCED_PARAMETER(aHalt);
+	UNREFERENCED_PARAMETER(aSampleRate);
+	UNREFERENCED_PARAMETER(aBitRate);
+	UNREFERENCED_PARAMETER(aBitDepth);
+	UNREFERENCED_PARAMETER(aChannels);
+}
+*/
+
+
+void CSocketOhm::Send(PSOCKADDR aAddress, UCHAR* aBuffer, ULONG aBytes, UCHAR aHalt, ULONG aSampleRate, ULONG aBitRate, ULONG aBitDepth, ULONG aChannels)
 {
 	PIRP irp;
 
@@ -338,7 +352,7 @@ void CSocketMultipus::Stop(PSOCKADDR aAddress, ULONG aSampleRate, ULONG aBitDept
         return;
     }
 
-	void* alloc = ExAllocatePoolWithTag(NonPagedPool, sizeof(UDPSEND) + sizeof(MPUSHEADER), 0);
+	void* alloc = ExAllocatePoolWithTag(NonPagedPool, sizeof(UDPSEND) + sizeof(OHMHEADER) + aBytes, 0);
 
 	if (alloc == NULL)
 	{
@@ -346,102 +360,12 @@ void CSocketMultipus::Stop(PSOCKADDR aAddress, ULONG aSampleRate, ULONG aBitDept
 	}
 
 	PUDPSEND udp = (PUDPSEND) alloc;
-	PMPUSHEADER header = (PMPUSHEADER) (udp + 1);
-
-	udp->iBuf.Offset = 0;
-	udp->iBuf.Length = sizeof(MPUSHEADER);
-	udp->iBuf.Mdl = IoAllocateMdl(header, sizeof(MPUSHEADER), FALSE, FALSE, NULL);
-
-	if (udp->iBuf.Mdl == NULL)
-	{
-		ExFreePool(alloc);
-        return;
-	}
-
-	MmBuildMdlForNonPagedPool(udp->iBuf.Mdl);
-
-	RtlCopyMemory(&udp->iAddr, aAddress, sizeof(SOCKADDR));
-
-	KIRQL oldIrql;
-
-	KeAcquireSpinLock (&iSpinLock, &oldIrql);
-
-	ULONG frame = ++iFrameNo;
-
-	RtlCopyMemory(header, &iHeader, sizeof(MPUSHEADER));
-
-	KeReleaseSpinLock (&iSpinLock, oldIrql);
-
-	// Fill in multipus header
-
-	header->iFrameNo = frame >> 24 & 0x000000ff;
-	header->iFrameNo += frame >> 8 & 0x0000ff00;
-	header->iFrameNo += frame << 8 & 0x00ff0000;
-	header->iFrameNo += frame << 24 & 0xff000000;
-
-	header->iSampleRate = aSampleRate >> 24 & 0x000000ff;
-	header->iSampleRate += aSampleRate >> 8 & 0x0000ff00;
-	header->iSampleRate += aSampleRate << 8 & 0x00ff0000;
-	header->iSampleRate += aSampleRate << 24 & 0xff000000;
-
-	header->iBitDepth = (UCHAR) aBitDepth;
-	header->iChannels = (UCHAR) aChannels;
-
-	header->iFlags = 1;
-
-	USHORT bytes = (USHORT)(sizeof(MPUSHEADER));
-
-	header->iTotalBytes = bytes >> 8 & 0x00ff;
-	header->iTotalBytes += bytes << 8 & 0xff00;
-
-	// Set the completion routine for the IRP
-
-	IoSetCompletionRoutine(irp,	SendComplete, alloc, TRUE, TRUE, TRUE);
-
-	((PWSK_PROVIDER_DATAGRAM_DISPATCH)(iSocket->Dispatch))->WskSendTo(iSocket, &udp->iBuf, 0, &udp->iAddr, 0, NULL, irp);
-}
-*/
-/*
-void CSocketMultipus::Send(PSOCKADDR aAddress, UCHAR* aBuffer, ULONG aBytes, ULONG aSampleRate, ULONG aBitDepth, ULONG aChannels)
-{
-    UNREFERENCED_PARAMETER(aAddress);
-    UNREFERENCED_PARAMETER(aBuffer);
-    UNREFERENCED_PARAMETER(aBytes);
-    UNREFERENCED_PARAMETER(aSampleRate);
-    UNREFERENCED_PARAMETER(aBitDepth);
-    UNREFERENCED_PARAMETER(aChannels);
-}
-*/
-
-void CSocketMultipus::Send(PSOCKADDR aAddress, UCHAR* aBuffer, ULONG aBytes, ULONG aSampleRate, ULONG aBitDepth, ULONG aChannels)
-{
-	PIRP irp;
-
-	// Allocate an IRP
-
-	irp = IoAllocateIrp(1, FALSE);
-
-	// Check result
-
-	if (irp == NULL)
-	{
-        return;
-    }
-
-	void* alloc = ExAllocatePoolWithTag(NonPagedPool, sizeof(UDPSEND) + sizeof(MPUSHEADER) + aBytes, 0);
-
-	if (alloc == NULL)
-	{
-        return;
-	}
-
-	PUDPSEND udp = (PUDPSEND) alloc;
-	PMPUSHEADER header = (PMPUSHEADER) (udp + 1);
+	POHMHEADER header = (POHMHEADER) (udp + 1);
 	UCHAR* audio = (UCHAR*) (header + 1);
 
 	udp->iBuf.Offset = 0;
-	udp->iBuf.Length = aBytes + sizeof(MPUSHEADER);
-	udp->iBuf.Mdl = IoAllocateMdl(header, sizeof(MPUSHEADER) + aBytes, FALSE, FALSE, NULL);
+	udp->iBuf.Length = aBytes + sizeof(OHMHEADER);
+	udp->iBuf.Mdl = IoAllocateMdl(header, sizeof(OHMHEADER) + aBytes, FALSE, FALSE, NULL);
 
 	if (udp->iBuf.Mdl == NULL)
 	{
@@ -457,28 +381,47 @@ void CSocketMultipus::Send(PSOCKADDR aAddress, UCHAR* aBuffer, ULONG aBytes, ULO
 
 	KeAcquireSpinLock (&iSpinLock, &oldIrql);
 
-	ULONG frame = ++iFrameNo;
+	ULONG frame = ++iFrame;
 
-	RtlCopyMemory(header, &iHeader, sizeof(MPUSHEADER));
+	RtlCopyMemory(header, &iHeader, sizeof(OHMHEADER));
 
 	KeReleaseSpinLock (&iSpinLock, oldIrql);
 
 	// Fill in multipus header
 
-	header->iFrameNo = frame >> 24 & 0x000000ff;
-	header->iFrameNo += frame >> 8 & 0x0000ff00;
-	header->iFrameNo += frame << 8 & 0x00ff0000;
-	header->iFrameNo += frame << 24 & 0xff000000;
+	UCHAR flags = 2; // lossless flag
 
-	header->iSampleRate = aSampleRate >> 24 & 0x000000ff;
-	header->iSampleRate += aSampleRate >> 8 & 0x0000ff00;
-	header->iSampleRate += aSampleRate << 8 & 0x00ff0000;
-	header->iSampleRate += aSampleRate << 24 & 0xff000000;
+	if (aHalt != 0)
+	{
+		flags |= 1; // halt flag
+	}
 
-	header->iBitDepth = (UCHAR) aBitDepth;
-	header->iChannels = (UCHAR) aChannels;
+	header->iAudioFlags = flags;
 
-	USHORT bytes = (USHORT)(sizeof(MPUSHEADER) + aBytes);
+	USHORT samples = (USHORT)(aBytes / ((ULONG)aChannels * (ULONG)aBitDepth / 8));
+
+	header->iAudioSamples = samples >> 8 & 0x00ff;
+	header->iAudioSamples += samples << 8 & 0xff00;
+
+	header->iAudioFrame = frame >> 24 & 0x000000ff;
+	header->iAudioFrame += frame >> 8 & 0x0000ff00;
+	header->iAudioFrame += frame << 8 & 0x00ff0000;
+	header->iAudioFrame += frame << 24 & 0xff000000;
+
+	header->iAudioSampleRate = aSampleRate >> 24 & 0x000000ff;
+	header->iAudioSampleRate += aSampleRate >> 8 & 0x0000ff00;
+	header->iAudioSampleRate += aSampleRate << 8 & 0x00ff0000;
+	header->iAudioSampleRate += aSampleRate << 24 & 0xff000000;
+
+	header->iAudioBitRate = aBitRate >> 24 & 0x000000ff;
+	header->iAudioBitRate += aBitRate >> 8 & 0x0000ff00;
+	header->iAudioBitRate += aBitRate << 8 & 0x00ff0000;
+	header->iAudioBitRate += aBitRate << 24 & 0xff000000;
+
+	header->iAudioBitDepth = (UCHAR) aBitDepth;
+	header->iAudioChannels = (UCHAR) aChannels;
+
+	USHORT bytes = (USHORT)(sizeof(OHMHEADER) + aBytes);
 
 	header->iTotalBytes = bytes >> 8 & 0x00ff;
 	header->iTotalBytes += bytes << 8 & 0xff00;
@@ -494,8 +437,7 @@ void CSocketMultipus::Send(PSOCKADDR aAddress, UCHAR* aBuffer, ULONG aBytes, ULO
 	((PWSK_PROVIDER_DATAGRAM_DISPATCH)(iSocket->Dispatch))->WskSendTo(iSocket, &udp->iBuf, 0, &udp->iAddr, 0, NULL, irp);
 }
 
-
-void CSocketMultipus::CopyAudio(UCHAR* aDestination, UCHAR* aSource, ULONG aBytes, ULONG aBitDepth)
+void CSocketOhm::CopyAudio(UCHAR* aDestination, UCHAR* aSource, ULONG aBytes, ULONG aBitDepth)
 {
 	UCHAR* dst = aDestination;
 	UCHAR* src = aSource;
@@ -517,7 +459,7 @@ void CSocketMultipus::CopyAudio(UCHAR* aDestination, UCHAR* aSource, ULONG aByte
 	}
 }
 
-NTSTATUS CSocketMultipus::SendComplete(PDEVICE_OBJECT aDeviceObject, PIRP aIrp, PVOID aContext)
+NTSTATUS CSocketOhm::SendComplete(PDEVICE_OBJECT aDeviceObject, PIRP aIrp, PVOID aContext)
 {
     UNREFERENCED_PARAMETER(aDeviceObject);
 
@@ -533,7 +475,7 @@ NTSTATUS CSocketMultipus::SendComplete(PDEVICE_OBJECT aDeviceObject, PIRP aIrp, 
 	return STATUS_MORE_PROCESSING_REQUIRED;
 }
 
-bool CSocketMultipus::Initialised()
+bool CSocketOhm::Initialised()
 {
 	KIRQL oldIrql;
 
@@ -545,8 +487,6 @@ bool CSocketMultipus::Initialised()
 
 	return initialised;
 }
-
-
 
 #endif
 

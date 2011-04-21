@@ -23,26 +23,28 @@ Abstract:
 
 FAST_MUTEX MpusFastMutex;
 
-UINT MpusGroup;
-UINT MpusChannel;
-UINT MpusEnabled;
 SOCKADDR MpusAddress;
 
+ULONG MpusActive;
+ULONG MpusTtl;
+ULONG MpusAddr;
+ULONG MpusPort;
 ULONG MpusAudioSampleRate;
+ULONG MpusAudioBitRate;
 ULONG MpusAudioBitDepth;
 ULONG MpusAudioChannels;
+ULONG MpusSendFormat;
 
 KEVENT WskInitialisedEvent;
 
 CWinsock* Wsk;
-CSocketMultipus* SocketTx;
+CSocketOhm* Socket;
 
-void SetMpusAddress();
-void SocketTxInitialised(void* aContext);
+void SocketInitialised(void* aContext);
 void WskInitialised(void* aContext);
 void MpusStop();
 void MpusSend(UCHAR* aBuffer, UINT aBytes);
-void MpusSetFormat(ULONG aSampleRate, ULONG aBitDepth, ULONG aChannels);
+void MpusSetFormat(ULONG aSampleRate, ULONG aBitRate, ULONG aBitDepth, ULONG aChannels);
 
 #pragma code_seg("PAGE")
 
@@ -81,7 +83,7 @@ Return Value:
 
 --*/
 {
-    PAGED_CODE();
+	PAGED_CODE();
 
     ASSERT(Unknown);
 
@@ -92,6 +94,7 @@ Return Value:
 CMiniportWaveCyclic::~CMiniportWaveCyclic
 ( 
     void 
+
 )
 /*++
 
@@ -107,7 +110,7 @@ Return Value:
 
 --*/
 {
-    PAGED_CODE();
+	PAGED_CODE();
 
     DPF_ENTER(("[CMiniportWaveCyclic::~CMiniportWaveCyclic]"));
 } // ~CMiniportWaveCyclic
@@ -166,7 +169,7 @@ Arguments:
     UNREFERENCED_PARAMETER(ResultantFormat);
     UNREFERENCED_PARAMETER(ResultantFormatLength);
 
-    PAGED_CODE();
+	PAGED_CODE();
 
     // This driver only supports PCM formats.
     // Portcls will handle the request for us.
@@ -200,7 +203,7 @@ Return Value:
 
 --*/
 {
-    PAGED_CODE();
+	PAGED_CODE();
 
     ASSERT(OutFilterDescriptor);
 
@@ -240,7 +243,7 @@ Return Value:
 
 --*/
 {
-    PAGED_CODE();
+	PAGED_CODE();
 
     ASSERT(UnknownAdapter_);
     ASSERT(Port_);
@@ -279,14 +282,26 @@ Return Value:
 
 	ExInitializeFastMutex(&MpusFastMutex);
 
-	MpusSetFormat(44100, 16, 2);
-
 	ExAcquireFastMutex(&MpusFastMutex);
 
-	MpusGroup = 0;
-	MpusChannel = 1;
+	MpusActive = 0;
+	MpusTtl = 0;
+	MpusAddr = 0;
+	MpusPort = 0;
+	MpusAudioSampleRate = 0;
+	MpusAudioBitRate = 0;
+	MpusAudioBitDepth = 0;
+	MpusAudioChannels = 0;
+	MpusSendFormat = 0;
 
-	SetMpusAddress();
+	MpusActive = 1;
+	MpusTtl = 4;
+	MpusAddr = 0xeffd0001;
+	MpusPort = 51972;
+
+	CWinsock::Initialise(&MpusAddress, MpusAddr, MpusPort);
+
+	CWinsock::Initialise(&MpusAddress, MpusAddr, MpusPort);
 
 	ExReleaseFastMutex(&MpusFastMutex);
 
@@ -360,7 +375,7 @@ Return Value:
 {
     UNREFERENCED_PARAMETER(PoolType);
 
-    PAGED_CODE();
+	PAGED_CODE();
 
     ASSERT(OutStream);
     ASSERT(DataFormat);
@@ -485,7 +500,7 @@ Return Value:
 
 --*/
 {
-    PAGED_CODE();
+	PAGED_CODE();
 
     ASSERT(Object);
 
@@ -523,7 +538,7 @@ NTSTATUS PropertyHandler_Wave
     IN PPCPROPERTY_REQUEST PropertyRequest
 )
 {
-    PAGED_CODE ();
+	PAGED_CODE();
 
     ASSERT (PropertyRequest);
 
@@ -554,8 +569,6 @@ NTSTATUS PropertyHandler_Wave
 		ExAcquireFastMutex(&MpusFastMutex);
 
         pSneakyFeatures->iVersion = 1;
-        pSneakyFeatures->iMpusGroup = MpusGroup;
-        pSneakyFeatures->iMpusChannel = MpusChannel;
 
 		ExReleaseFastMutex(&MpusFastMutex);
 
@@ -563,28 +576,63 @@ NTSTATUS PropertyHandler_Wave
     }
     else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
     {
-        if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_MULTIPUS_GROUP)
+        if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_ENDPOINT)
 		{
-			if (PropertyRequest->ValueSize < sizeof (UINT))
+			if (PropertyRequest->ValueSize != (sizeof (UINT) * 2))
 			{
 				return STATUS_INVALID_PARAMETER;
 			}
 
             UINT* pValue = (UINT *)PropertyRequest->Value;
 
+			ULONG addr = *pValue++;
+			ULONG port = *pValue;
+
 			ExAcquireFastMutex(&MpusFastMutex);
 
-			MpusGroup = *pValue;
+			if (MpusAddr != addr || MpusPort != port)
+			{
+				MpusAddr = addr;
+				MpusPort = port;
 
-			SetMpusAddress();
+				CWinsock::Initialise(&MpusAddress, MpusAddr, MpusPort);
+			}
 
 			ExReleaseFastMutex(&MpusFastMutex);
 
 			return STATUS_SUCCESS;
 		}
-        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_MULTIPUS_CHANNEL)
+        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_ACTIVE)
 		{
-			if (PropertyRequest->ValueSize < sizeof (UINT))
+			if (PropertyRequest->ValueSize != sizeof (UINT))
+			{
+				return STATUS_INVALID_PARAMETER;
+			}
+
+            UINT* pValue = (UINT *)PropertyRequest->Value;
+
+			ULONG active = *pValue;
+
+			ExAcquireFastMutex(&MpusFastMutex);
+
+			if (!active) {
+				if (MpusActive) { // turning off
+					Socket->Send(&MpusAddress, (UCHAR*)0, 0, 1, MpusAudioSampleRate, MpusAudioBitRate, MpusAudioBitDepth,  MpusAudioChannels);
+					MpusActive = 0;
+					MpusSendFormat = 1;
+				}
+			}
+			else {
+				MpusActive = 1;
+			}
+
+			ExReleaseFastMutex(&MpusFastMutex);
+
+			return STATUS_SUCCESS;
+		}
+        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_TTL)
+		{
+			if (PropertyRequest->ValueSize != sizeof (UINT))
 			{
 				return STATUS_INVALID_PARAMETER;
 			}
@@ -593,9 +641,9 @@ NTSTATUS PropertyHandler_Wave
 
 			ExAcquireFastMutex(&MpusFastMutex);
 
-			MpusChannel = *pValue;
+			MpusTtl = *pValue;
 
-			SetMpusAddress();
+			Socket->SetTtl(MpusTtl);
 
 			ExReleaseFastMutex(&MpusFastMutex);
 
@@ -629,7 +677,7 @@ Return Value:
 
 --*/
 {
-    PAGED_CODE();
+	PAGED_CODE();
 
     DPF_ENTER(("[CMiniportWaveCyclicStream::~CMiniportWaveCyclicStream]"));
 
@@ -679,7 +727,7 @@ Return Value:
 
 --*/
 {
-    PAGED_CODE();
+	PAGED_CODE();
 
     m_pMiniportLocal = Miniport_;
 
@@ -718,7 +766,7 @@ Return Value:
 
 --*/
 {
-    PAGED_CODE();
+	PAGED_CODE();
 
     ASSERT(Object);
 
@@ -780,7 +828,7 @@ Return Value:
     UNREFERENCED_PARAMETER(contentId);
     UNREFERENCED_PARAMETER(drmRights);
 
-    PAGED_CODE();
+	PAGED_CODE();
 
     DPF_ENTER(("[CMiniportWaveCyclicStream::SetContentId]"));
 
@@ -799,32 +847,13 @@ Return Value:
     return STATUS_SUCCESS;
 } // SetContentId
 
-//=============================================================================
-// SetMpusAddress
-//=============================================================================
-
-void SetMpusAddress()
-{
-    PAGED_CODE ();
-
-	if (MpusChannel != 0)
-	{
-		MpusEnabled = true;
-		CWinsock::Initialise(&MpusAddress, 239, 255, 19, 72, 51972);
-	}
-	else
-	{
-		MpusEnabled = false;
-	}
-}
-
 #pragma code_seg()
 
 //=============================================================================
-// SocketTxInitialised
+// SocketInitialised
 //=============================================================================
 
-void SocketTxInitialised(void* aContext)
+void SocketInitialised(void* aContext)
 {
     UNREFERENCED_PARAMETER(aContext);
 
@@ -837,8 +866,8 @@ void SocketTxInitialised(void* aContext)
 
 void WskInitialised(void* aContext)
 {
-	SocketTx = new (NonPagedPool, SNEAKY_POOLTAG) CSocketMultipus();
-	SocketTx->Initialise(*Wsk, SocketTxInitialised, aContext);
+	Socket = new (NonPagedPool, SNEAKY_POOLTAG) CSocketOhm();
+	Socket->Initialise(*Wsk, SocketInitialised, aContext);
 }
 
 //=============================================================================
@@ -849,9 +878,9 @@ void MpusStop()
 {
 	ExAcquireFastMutex(&MpusFastMutex);
 
-	if (MpusEnabled)
+	if (MpusActive)
 	{
-		SocketTx->Stop(&MpusAddress, MpusAudioSampleRate, MpusAudioBitDepth, MpusAudioChannels);
+		Socket->Send(&MpusAddress, (UCHAR*) 0, 0, 1, MpusAudioSampleRate, MpusAudioBitRate, MpusAudioBitDepth,  MpusAudioChannels);
 	}
 
 	ExReleaseFastMutex(&MpusFastMutex);
@@ -865,9 +894,15 @@ void MpusSend(UCHAR* aBuffer, UINT aBytes)
 {
 	ExAcquireFastMutex(&MpusFastMutex);
 
-	if (MpusEnabled)
+	if (MpusActive)
 	{
-		SocketTx->Send(&MpusAddress, aBuffer, aBytes, MpusAudioSampleRate, MpusAudioBitDepth, MpusAudioChannels);
+		if (MpusSendFormat)
+		{
+			MpusSendFormat = 0;
+			Socket->Send(&MpusAddress, (UCHAR*)0, 0, 0, MpusAudioSampleRate, MpusAudioBitRate, MpusAudioBitDepth,  MpusAudioChannels);
+		}
+
+		Socket->Send(&MpusAddress, aBuffer, aBytes, 0, MpusAudioSampleRate, MpusAudioBitRate, MpusAudioBitDepth,  MpusAudioChannels);
 	}
 
 	ExReleaseFastMutex(&MpusFastMutex);
@@ -877,13 +912,15 @@ void MpusSend(UCHAR* aBuffer, UINT aBytes)
 // MpusSetFormat
 //=============================================================================
 
-void MpusSetFormat(ULONG aSampleRate, ULONG aBitDepth, ULONG aChannels)
+void MpusSetFormat(ULONG aSampleRate, ULONG aBitRate, ULONG aBitDepth, ULONG aChannels)
 {
 	ExAcquireFastMutex(&MpusFastMutex);
 
 	MpusAudioSampleRate = aSampleRate;
+	MpusAudioBitRate = aBitRate;
 	MpusAudioBitDepth = aBitDepth;
 	MpusAudioChannels = aChannels;
+	MpusSendFormat = 1;
 
 	ExReleaseFastMutex(&MpusFastMutex);
 }

@@ -31,18 +31,15 @@
 
 typedef void NETWORK_CALLBACK(void* aContect);
 
-class CSocketUdpClient;
-class CSocketUdpClientMulticast;
-class CSocketUdpListenerMulticast;
+class CSocketOhm;
 
 class CWinsock
 {
-	friend class CSocketUdpClient;
-	friend class CSocketMultipus;
-	friend class CSocketUdpListenerMulticast;
+	friend class CSocketOhm;
+
 public:
 	static void Initialise(PSOCKADDR aSocket);
-	static void Initialise(PSOCKADDR aSocket, UCHAR aAddr1, UCHAR aAddr2, UCHAR aAddr3, UCHAR aAddr4, USHORT aPort);
+	static void Initialise(PSOCKADDR aSocket, ULONG aAddress, ULONG aPort);
 	static CWinsock* Create(NETWORK_CALLBACK* aCallback, void*  aContext);
 	bool Initialised();
 	void Close();
@@ -61,65 +58,71 @@ private:
 	void* iContext;
 };
 
-class CSocketUdpClient
-{
-private:
-    KSPIN_LOCK iSpinLock;
-	bool iInitialised;
-};
 
+// Ohm Header
 
-// Multipus Header
-// 
-// ByteStart Bytes                   Desc
-// 0         4                       Ascii representation of "Mpus"
-// 4         1                       MultipusHeader Major Version
-// 5         3                       Uid
-// 8         4                       Frame #
-// 12        4                       Timestamp
-// 16        1                       Sub Msg Type (0 = MultipusMsgAudio)
-// 17        1                       Sub Msg Header Bytes (doubles as Minor Version for Sub Msg)
-// 18        2                       Total Bytes (including all header bytes)
+//Offset    Bytes                   Desc
+//0         4                       Ascii representation of "Ohm "
+//4         1                       Major Version
+//5         1                       Msg Type
+//6         2                       Total Bytes (Absolutely all bytes in the entire frame)
 
-// 
 // Audio Header
-// 
-// ByteStart Bytes                   Desc
-// 0         4                       Sample Start Offset
-// 4         4                       Sample Rate
-// 8         1                       Bit depth of audio (16, 24)
-// 9         1                       Channels
-// 10        1                       Flags (lsb is halt flag)
-// 11        1                       Reserved
-// 12        TotalBytes - 16 - 12    Sample data in big endian, channels interleaved, packed
+
+//Offset    Bytes                   Desc
+//0         1                       Msg Header Bytes (without the codec name)
+//1         1                       Flags (lsb first: halt flag, lossless flag, sync flag all other bits 0)
+//2         2                       Samples in this msg
+//4         4                       Frame
+//8         4                       Network Timestamp
+//12        4                       Media Latency (delay through audio buffers)
+//16        4                       Media Timestamp
+//20        8                       Sample Start (first sample's offset from the beginiing of this track)
+//28        8                       Samples Total (total samples for this track)
+//36        4                       Sample Rate
+//40        4                       Bit Rate
+//44        2                       Volume Offset
+//46        1                       Bit depth of audio (16, 24)
+//47        1                       Channels
+//48        1                       Reserved (must be zero)
+//49        1                       Codec Name Bytes
+//50        n                       Codec Name
+//50 + n    Msg Total Bytes - Msg Header Bytes - Code Name Bytes (Sample data in big endian, channels interleaved, packed)
 
 typedef struct
 {
-	UCHAR iMpus[4];
-	UCHAR iMajorVersion;
-	UCHAR iUid[3];
-	ULONG iFrameNo;
-	ULONG iTimestamp;
-	UCHAR iSubMsgType;
-	UCHAR iSubMsgHeaderBytes;
+	UCHAR iMagic[4]; // "Ohm "
+	UCHAR iMajorVersion; // 1
+	UCHAR iMsgType; // 3 - Audio
 	USHORT iTotalBytes;
-	ULONG iSampleStartOffset;
-	ULONG iSampleRate;
-	UCHAR iBitDepth;
-	UCHAR iChannels;
-	UCHAR iFlags;
+	UCHAR iAudioHeaderBytes;
+	UCHAR iAudioFlags;
+	USHORT iAudioSamples;
+	ULONG iAudioFrame;
+	ULONG iAudioNetworkTimestamp;
+	ULONG iAudioMediaLatency;
+	ULONG iAudioMediaTimestamp;
+	ULONG iAudioSampleStartHi;
+	ULONG iAudioSampleStartLo;
+	ULONG iAudioSamplesTotalHi;
+	ULONG iAudioSamplesTotalLo;
+	ULONG iAudioSampleRate;
+	ULONG iAudioBitRate;
+	USHORT iAudioVolumeOffset;
+	UCHAR iAudioBitDepth;
+	UCHAR iAudioChannels;
 	UCHAR iReserved;
-} MPUSHEADER, *PMPUSHEADER;
+	UCHAR iCodecNameBytes;  // 6
+	UCHAR iCodecName[6]; // "PCM   "
+} OHMHEADER, *POHMHEADER;
 
-class CSocketMultipus
+class CSocketOhm
 {
 public:
-	CSocketMultipus();
+	CSocketOhm();
 	NTSTATUS Initialise(CWinsock& aWsk, NETWORK_CALLBACK* aCallback, void*  aContext);
-	//NTSTATUS Send(PSOCKADDR aAddress, PVOID aBuffer, ULONG aBytes);
-	//NTSTATUS Send(PSOCKADDR aAddress, PVOID aBuffer, ULONG aBytes);
-	void Stop(PSOCKADDR aAddress, ULONG aSampleRate, ULONG aBitDepth, ULONG aChannels);
-	void Send(PSOCKADDR aAddress, UCHAR* aBuffer, ULONG aBytes, ULONG aSampleRate, ULONG aBitDepth, ULONG aChannels);
+	void SetTtl(ULONG aValue);
+	void Send(PSOCKADDR aAddress, UCHAR* aBuffer, ULONG aBytes, UCHAR aHalt, ULONG aSampleRate, ULONG aBitRate, ULONG aBitDepth, ULONG aChannels);
 
 	bool Initialised();
 
@@ -140,17 +143,11 @@ private:
 	NETWORK_CALLBACK* iCallback;
 	void* iContext;
 	PWSK_SOCKET iSocket;
-	MPUSHEADER iHeader;
-	ULONG iFrameNo;
+	OHMHEADER iHeader;
+	ULONG iFrame;
+	ULONGLONG iSampleStart;
+	ULONGLONG iSamplesTotal;
 };
-	
-class CSocketUdpListenerMulticast
-{
-private:
-    KSPIN_LOCK iSpinLock;
-	bool iInitialised;
-};
-
 
 #endif          // (NTDDI_VERSION >= NTDDI_VISTA)
 

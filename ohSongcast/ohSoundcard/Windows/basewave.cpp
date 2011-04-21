@@ -18,7 +18,8 @@ Abstract:
 #include "common.h"
 #include "basewave.h"
 
-extern void MpusSetFormat(ULONG aSampleRate, ULONG aBitDepth, ULONG aChannels);
+extern void MpusStop();
+extern void MpusSetFormat(ULONG aSampleRate, ULONG aBitRate, ULONG aBitDepth, ULONG aChannels);
 
 //=============================================================================
 // CMiniportWaveCyclicMSVAD
@@ -818,20 +819,13 @@ Return Value:
 
         if (pWfx)
         {
-            ntStatus =
-                KeWaitForSingleObject
-                (
-                    &m_pMiniport->m_SampleRateSync,
-                    Executive,
-                    KernelMode,
-                    FALSE,
-                    NULL
-                );
+            ntStatus =  KeWaitForSingleObject(&m_pMiniport->m_SampleRateSync, Executive, KernelMode, FALSE, NULL);
+
             if (STATUS_SUCCESS == ntStatus)
             {
                 if (!m_fCapture)
                 {
-					MpusSetFormat(pWfx->nSamplesPerSec, pWfx->wBitsPerSample, pWfx->nChannels);
+					MpusSetFormat(pWfx->nSamplesPerSec, pWfx->nAvgBytesPerSec * 8, pWfx->wBitsPerSample, pWfx->nChannels);
                 }
 
                 m_usBlockAlign = pWfx->nBlockAlign;
@@ -843,13 +837,12 @@ Return Value:
             }
 
             KeReleaseMutex(&m_pMiniport->m_SampleRateSync, FALSE);
-
-			//MpusSetFormat(m_pMiniport->m_SamplingFrequency, 
 		}
     }
 
     return ntStatus;
 } // SetFormat
+
 
 //=============================================================================
 STDMETHODIMP_(ULONG)
@@ -886,6 +879,18 @@ Return Value:
 
     DPF_ENTER(("[CMiniportWaveCyclicStreamMSVAD::SetNotificationFreq]"));
 
+	/*
+
+	the normal request is for 10mS
+
+	UNREFERENCED_PARAMETER(Interval);
+
+	m_pMiniport->m_NotificationInterval = 5;
+
+    *FramingSize = m_usBlockAlign * m_pMiniport->m_SamplingFrequency * 5 / 1000;
+
+	*/
+
     m_pMiniport->m_NotificationInterval = Interval;
 
     *FramingSize =
@@ -893,7 +898,7 @@ Return Value:
         m_pMiniport->m_SamplingFrequency *
         Interval / 1000;
 
-    return m_pMiniport->m_NotificationInterval;
+	return m_pMiniport->m_NotificationInterval;
 } // SetNotificationFreq
 
 //=============================================================================
@@ -949,7 +954,7 @@ Return Value:
             {
                 DPF(D_TERSE, ("KSSTATE_RUN"));
 
-                 LARGE_INTEGER   delay;
+                LARGE_INTEGER   delay;
 
                 // Set the timer for DPC.
                 //
@@ -979,6 +984,8 @@ Return Value:
             m_ulByteDisplacementCarryForward  = 0;
 
             KeCancelTimer( m_pTimer );
+
+			MpusStop();
 
             break;
         }
