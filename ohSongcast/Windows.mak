@@ -35,10 +35,16 @@ mkdir = Scripts\mkdir.bat
 rmdir = Scripts\rmdir.bat
 uset4 = no
 
+all: $(objdir)/$(dllprefix)OhmSender.$(dllext) $(objdir)/WavSender.$(exeext)
 
-all: $(objdir)/WavSender.exe 
+$(objdir)/$(dllprefix)OhmSender.$(dllext) :
+    if not exist $(objdirbare) mkdir $(objdirbare)
+	$(compiler)/DvAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgSender1.cpp
+	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Library/Ohm.cpp
+	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) Library/OhmSender.cpp
+	$(link_dll) $(linkoutput)$(objdir)/$(dllprefix)OhmSender.$(dllext) $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext)
 
-$(objdir)/WavSender.exe :
+$(objdir)/WavSender.$(exeext) :
     if not exist $(objdirbare) mkdir $(objdirbare)
 	$(compiler)/DvAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgSender1.cpp
 	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Library/Ohm.cpp
@@ -46,7 +52,7 @@ $(objdir)/WavSender.exe :
 	$(compiler)/WavSender.$(objext) -c $(cflags) $(includes) WavSender/WavSender.cpp
 	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext) $(ohnetdir)/TestFramework.$(libext)
 
-$(objdir)/WavReceiver.exe :
+$(objdir)/WavReceiver.$(exeext) :
     if not exist $(objdirbare) mkdir $(objdirbare)
 	$(compiler)/DvAvOpenhomeOrgProduct1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgProduct1.cpp
 	$(compiler)/DvAvOpenhomeOrgReceiver1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgReceiver1.cpp
