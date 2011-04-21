@@ -26,6 +26,7 @@ CpiService::CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion,
     , iSubscription(NULL)
 {
 	iDevice.AddRef();
+	Stack::AddObject(this, "CpiService");
 }
 
 CpiService::~CpiService()
@@ -45,6 +46,7 @@ CpiService::~CpiService()
         iShutdownSignal.Wait();
     }
 	iDevice.RemoveRef();
+	Stack::RemoveObject(this, "CpiService");
 }
 
 Invocation* CpiService::Invocation(const Action& aAction, FunctorAsync& aFunctor)
@@ -131,7 +133,9 @@ ArgumentString::ArgumentString(const Zapp::Parameter& aParameter, const Brx& aVa
 {
     try {
         aParameter.ValidateString(aValue);
-        iValue.Set(aValue);
+        if (aValue.Bytes() > 0) {
+            iValue.Set(aValue);
+        }
     }
     catch (ParameterValidationError&) {
         ValidationFailed(aParameter);
@@ -299,7 +303,9 @@ ArgumentBinary::ArgumentBinary(const Zapp::Parameter& aParameter, const Brx& aVa
 {
     try {
         aParameter.ValidateBinary(aValue);
-        iValue.Set(aValue);
+        if (aValue.Bytes() > 0) {
+            iValue.Set(aValue);
+        }
     }
     catch (ParameterValidationError&) {
         ValidationFailed(aParameter);

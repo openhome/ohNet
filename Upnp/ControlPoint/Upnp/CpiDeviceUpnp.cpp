@@ -77,6 +77,7 @@ void CpiDeviceUpnp::FetchXml(CpiDeviceListUpnp& aList)
 
 void CpiDeviceUpnp::InterruptXmlFetch()
 {
+    AutoMutex a(iLock);
     if (iXmlFetch != NULL) {
         iXmlFetch->Interrupt();
     }
@@ -250,6 +251,9 @@ TBool CpiDeviceUpnp::UdnMatches(const Brx& aFound, const Brx& aTarget)
 
 void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
 {
+    iLock.Wait();
+    iXmlFetch = NULL;
+    iLock.Signal();
     TBool err = false;
     try {
         XmlFetch::Xml(aAsync).TransferTo(iXml);

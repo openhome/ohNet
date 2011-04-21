@@ -67,15 +67,15 @@ namespace Zapp.ControlPoint.Proxies
         void SyncShutdown();
         void BeginShutdown(CpProxy.CallbackAsyncComplete aCallback);
         void EndShutdown(IntPtr aAsyncHandle);
-        void SetPropertyVarUintChanged(CpProxy.CallbackPropertyChanged aVarUintChanged);
+        void SetPropertyVarUintChanged(System.Action aVarUintChanged);
         uint PropertyVarUint();
-        void SetPropertyVarIntChanged(CpProxy.CallbackPropertyChanged aVarIntChanged);
+        void SetPropertyVarIntChanged(System.Action aVarIntChanged);
         int PropertyVarInt();
-        void SetPropertyVarBoolChanged(CpProxy.CallbackPropertyChanged aVarBoolChanged);
+        void SetPropertyVarBoolChanged(System.Action aVarBoolChanged);
         bool PropertyVarBool();
-        void SetPropertyVarStrChanged(CpProxy.CallbackPropertyChanged aVarStrChanged);
+        void SetPropertyVarStrChanged(System.Action aVarStrChanged);
         String PropertyVarStr();
-        void SetPropertyVarBinChanged(CpProxy.CallbackPropertyChanged aVarBinChanged);
+        void SetPropertyVarBinChanged(System.Action aVarBinChanged);
         byte[] PropertyVarBin();
     }
 
@@ -424,11 +424,11 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyBool iVarBool;
         private PropertyString iVarStr;
         private PropertyBinary iVarBin;
-        private CallbackPropertyChanged iVarUintChanged;
-        private CallbackPropertyChanged iVarIntChanged;
-        private CallbackPropertyChanged iVarBoolChanged;
-        private CallbackPropertyChanged iVarStrChanged;
-        private CallbackPropertyChanged iVarBinChanged;
+        private System.Action iVarUintChanged;
+        private System.Action iVarIntChanged;
+        private System.Action iVarBoolChanged;
+        private System.Action iVarStrChanged;
+        private System.Action iVarBinChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -1437,7 +1437,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyZappOrgTestBasic1 instance will not overlap.</remarks>
         /// <param name="aVarUintChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyVarUintChanged(CallbackPropertyChanged aVarUintChanged)
+        public void SetPropertyVarUintChanged(System.Action aVarUintChanged)
         {
             lock (iPropertyLock)
             {
@@ -1459,7 +1459,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyZappOrgTestBasic1 instance will not overlap.</remarks>
         /// <param name="aVarIntChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyVarIntChanged(CallbackPropertyChanged aVarIntChanged)
+        public void SetPropertyVarIntChanged(System.Action aVarIntChanged)
         {
             lock (iPropertyLock)
             {
@@ -1481,7 +1481,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyZappOrgTestBasic1 instance will not overlap.</remarks>
         /// <param name="aVarBoolChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyVarBoolChanged(CallbackPropertyChanged aVarBoolChanged)
+        public void SetPropertyVarBoolChanged(System.Action aVarBoolChanged)
         {
             lock (iPropertyLock)
             {
@@ -1503,7 +1503,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyZappOrgTestBasic1 instance will not overlap.</remarks>
         /// <param name="aVarStrChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyVarStrChanged(CallbackPropertyChanged aVarStrChanged)
+        public void SetPropertyVarStrChanged(System.Action aVarStrChanged)
         {
             lock (iPropertyLock)
             {
@@ -1525,7 +1525,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyZappOrgTestBasic1 instance will not overlap.</remarks>
         /// <param name="aVarBinChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyVarBinChanged(CallbackPropertyChanged aVarBinChanged)
+        public void SetPropertyVarBinChanged(System.Action aVarBinChanged)
         {
             lock (iPropertyLock)
             {

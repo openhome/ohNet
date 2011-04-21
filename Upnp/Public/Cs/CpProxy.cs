@@ -28,16 +28,16 @@ namespace Zapp.ControlPoint
         /// <remarks>No further notifications will be published until Subscribe() is called again.</remarks>
         void Unsubscribe();
         /// <summary>
-        /// Register a delegate which will run after each group of 1..n changes to state variable is processed.
+        /// Register an action which will run after each group of 1..n changes to state variable is processed.
         /// </summary>
-        /// <param name="aPropertyChanged">The delegate to be run</param>
-        void SetPropertyChanged(CpProxy.CallbackPropertyChanged aPropertyChanged);
+        /// <param name="aPropertyChanged">The action to be run</param>
+        void SetPropertyChanged(System.Action aPropertyChanged);
         /// <summary>
-        /// Register a delegate which will run when the state of all properties becomes available.
+        /// Register a action which will run when the state of all properties becomes available.
         /// </summary>
         /// <remarks>This is often the first point at which UI elements can be fully initialised.</remarks>
-        /// <param name="aInitialEvent">The delegate to be run</param>
-        void SetPropertyInitialEvent(CpProxy.CallbackPropertyChanged aInitialEvent);
+        /// <param name="aInitialEvent">The action to be run</param>
+        void SetPropertyInitialEvent(System.Action aInitialEvent);
     }
 
     /// <summary>
@@ -66,7 +66,6 @@ namespace Zapp.ControlPoint
         [DllImport("ZappUpnp")]
         static extern void CpProxyAddProperty(IntPtr aHandle, IntPtr aProperty);
 
-        public delegate void CallbackPropertyChanged();
         public delegate void CallbackAsyncComplete(IntPtr aAsyncHandle);
         public delegate void CallbackActionComplete(IntPtr aPtr, IntPtr aAsyncHandle);
         public delegate void Callback(IntPtr aPtr);
@@ -81,9 +80,9 @@ namespace Zapp.ControlPoint
         protected IntPtr iHandle;
         protected CpService iService;
         private GCHandle iGchProxy;
-        private CallbackPropertyChanged iPropertyChanged;
+        private System.Action iPropertyChanged;
         private Callback iCallbackPropertyChanged;
-        private CallbackPropertyChanged iInitialEvent;
+        private System.Action iInitialEvent;
         private Callback iCallbackInitialEvent;
         private SubscriptionStatus iSubscriptionStatus = SubscriptionStatus.eNotSubscribed;
         private Mutex iSubscriptionStatusLock;
@@ -106,7 +105,7 @@ namespace Zapp.ControlPoint
             CpProxyUnsubscribe(iHandle);
         }
 
-        public void SetPropertyChanged(CallbackPropertyChanged aPropertyChanged)
+        public void SetPropertyChanged(System.Action aPropertyChanged)
         {
             iPropertyChanged = aPropertyChanged;
             iCallbackPropertyChanged = new Callback(PropertyChanged);
@@ -114,7 +113,7 @@ namespace Zapp.ControlPoint
             CpProxySetPropertyChanged(iHandle, iCallbackPropertyChanged, ptr);
         }
 
-        public void SetPropertyInitialEvent(CallbackPropertyChanged aInitialEvent)
+        public void SetPropertyInitialEvent(System.Action aInitialEvent)
         {
             iInitialEvent = aInitialEvent;
             iCallbackInitialEvent = new Callback(InitialEvent);
@@ -144,8 +143,8 @@ namespace Zapp.ControlPoint
         {
             CpProxyPropertyReadUnlock(iHandle);
         }
-        
-        protected void ReportEvent(CallbackPropertyChanged aCallback)
+
+        protected void ReportEvent(System.Action aCallback)
         {
             lock (iSubscriptionStatusLock)
             {
@@ -169,14 +168,14 @@ namespace Zapp.ControlPoint
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             CpProxy self = (CpProxy)gch.Target;
-            self.iPropertyChanged();
+            Property.CallPropertyChangedDelegate(self.iPropertyChanged);
         }
 
         private void InitialEvent(IntPtr aPtr)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             CpProxy self = (CpProxy)gch.Target;
-            self.iInitialEvent();
+            Property.CallPropertyChangedDelegate(self.iInitialEvent);
         }
 
         protected void DisposeProxy()
@@ -228,6 +227,12 @@ namespace Zapp.ControlPoint
             catch (ProxyError)
             {
                 iError = true;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ProxyError can be thrown by action complete delegates");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             iSem.Release();
         }

@@ -466,6 +466,11 @@ namespace Zapp.ControlPoint
             catch (ProxyError)
             {
             }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ProxyError can be thrown by action complete delegates");
+            }
             gch.Free();
             self.iService.InvocationComplete(this);
         }

@@ -82,27 +82,27 @@ namespace Zapp.ControlPoint.Proxies
         void SyncDisplayLedOff(out bool aOff);
         void BeginDisplayLedOff(CpProxy.CallbackAsyncComplete aCallback);
         void EndDisplayLedOff(IntPtr aAsyncHandle, out bool aOff);
-        void SetPropertyDisplayBrightnessChanged(CpProxy.CallbackPropertyChanged aDisplayBrightnessChanged);
+        void SetPropertyDisplayBrightnessChanged(System.Action aDisplayBrightnessChanged);
         uint PropertyDisplayBrightness();
-        void SetPropertyDisplayBrightnessAutoChanged(CpProxy.CallbackPropertyChanged aDisplayBrightnessAutoChanged);
+        void SetPropertyDisplayBrightnessAutoChanged(System.Action aDisplayBrightnessAutoChanged);
         bool PropertyDisplayBrightnessAuto();
-        void SetPropertyInfraredCommandsChanged(CpProxy.CallbackPropertyChanged aInfraredCommandsChanged);
+        void SetPropertyInfraredCommandsChanged(System.Action aInfraredCommandsChanged);
         String PropertyInfraredCommands();
-        void SetPropertyInfraredTerminalCommandsChanged(CpProxy.CallbackPropertyChanged aInfraredTerminalCommandsChanged);
+        void SetPropertyInfraredTerminalCommandsChanged(System.Action aInfraredTerminalCommandsChanged);
         String PropertyInfraredTerminalCommands();
-        void SetPropertyDisplayUpsideDownChanged(CpProxy.CallbackPropertyChanged aDisplayUpsideDownChanged);
+        void SetPropertyDisplayUpsideDownChanged(System.Action aDisplayUpsideDownChanged);
         bool PropertyDisplayUpsideDown();
-        void SetPropertyDisplayScrollTextChanged(CpProxy.CallbackPropertyChanged aDisplayScrollTextChanged);
+        void SetPropertyDisplayScrollTextChanged(System.Action aDisplayScrollTextChanged);
         bool PropertyDisplayScrollText();
-        void SetPropertyDisplaySleepChanged(CpProxy.CallbackPropertyChanged aDisplaySleepChanged);
+        void SetPropertyDisplaySleepChanged(System.Action aDisplaySleepChanged);
         bool PropertyDisplaySleep();
-        void SetPropertyDisplayLedOffChanged(CpProxy.CallbackPropertyChanged aDisplayLedOffChanged);
+        void SetPropertyDisplayLedOffChanged(System.Action aDisplayLedOffChanged);
         bool PropertyDisplayLedOff();
-        void SetPropertyTerminalInputCodeChanged(CpProxy.CallbackPropertyChanged aTerminalInputCodeChanged);
+        void SetPropertyTerminalInputCodeChanged(System.Action aTerminalInputCodeChanged);
         uint PropertyTerminalInputCode();
-        void SetPropertyTerminalInputNameChanged(CpProxy.CallbackPropertyChanged aTerminalInputNameChanged);
+        void SetPropertyTerminalInputNameChanged(System.Action aTerminalInputNameChanged);
         String PropertyTerminalInputName();
-        void SetPropertyDisplayPixelsChanged(CpProxy.CallbackPropertyChanged aDisplayPixelsChanged);
+        void SetPropertyDisplayPixelsChanged(System.Action aDisplayPixelsChanged);
         byte[] PropertyDisplayPixels();
     }
 
@@ -527,17 +527,17 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyUint iTerminalInputCode;
         private PropertyString iTerminalInputName;
         private PropertyBinary iDisplayPixels;
-        private CallbackPropertyChanged iDisplayBrightnessChanged;
-        private CallbackPropertyChanged iDisplayBrightnessAutoChanged;
-        private CallbackPropertyChanged iInfraredCommandsChanged;
-        private CallbackPropertyChanged iInfraredTerminalCommandsChanged;
-        private CallbackPropertyChanged iDisplayUpsideDownChanged;
-        private CallbackPropertyChanged iDisplayScrollTextChanged;
-        private CallbackPropertyChanged iDisplaySleepChanged;
-        private CallbackPropertyChanged iDisplayLedOffChanged;
-        private CallbackPropertyChanged iTerminalInputCodeChanged;
-        private CallbackPropertyChanged iTerminalInputNameChanged;
-        private CallbackPropertyChanged iDisplayPixelsChanged;
+        private System.Action iDisplayBrightnessChanged;
+        private System.Action iDisplayBrightnessAutoChanged;
+        private System.Action iInfraredCommandsChanged;
+        private System.Action iInfraredTerminalCommandsChanged;
+        private System.Action iDisplayUpsideDownChanged;
+        private System.Action iDisplayScrollTextChanged;
+        private System.Action iDisplaySleepChanged;
+        private System.Action iDisplayLedOffChanged;
+        private System.Action iTerminalInputCodeChanged;
+        private System.Action iTerminalInputNameChanged;
+        private System.Action iDisplayPixelsChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -1770,7 +1770,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
         /// <param name="aDisplayBrightnessChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyDisplayBrightnessChanged(CallbackPropertyChanged aDisplayBrightnessChanged)
+        public void SetPropertyDisplayBrightnessChanged(System.Action aDisplayBrightnessChanged)
         {
             lock (iPropertyLock)
             {
@@ -1792,7 +1792,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
         /// <param name="aDisplayBrightnessAutoChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyDisplayBrightnessAutoChanged(CallbackPropertyChanged aDisplayBrightnessAutoChanged)
+        public void SetPropertyDisplayBrightnessAutoChanged(System.Action aDisplayBrightnessAutoChanged)
         {
             lock (iPropertyLock)
             {
@@ -1814,7 +1814,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
         /// <param name="aInfraredCommandsChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyInfraredCommandsChanged(CallbackPropertyChanged aInfraredCommandsChanged)
+        public void SetPropertyInfraredCommandsChanged(System.Action aInfraredCommandsChanged)
         {
             lock (iPropertyLock)
             {
@@ -1836,7 +1836,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
         /// <param name="aInfraredTerminalCommandsChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyInfraredTerminalCommandsChanged(CallbackPropertyChanged aInfraredTerminalCommandsChanged)
+        public void SetPropertyInfraredTerminalCommandsChanged(System.Action aInfraredTerminalCommandsChanged)
         {
             lock (iPropertyLock)
             {
@@ -1858,7 +1858,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
         /// <param name="aDisplayUpsideDownChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyDisplayUpsideDownChanged(CallbackPropertyChanged aDisplayUpsideDownChanged)
+        public void SetPropertyDisplayUpsideDownChanged(System.Action aDisplayUpsideDownChanged)
         {
             lock (iPropertyLock)
             {
@@ -1880,7 +1880,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
         /// <param name="aDisplayScrollTextChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyDisplayScrollTextChanged(CallbackPropertyChanged aDisplayScrollTextChanged)
+        public void SetPropertyDisplayScrollTextChanged(System.Action aDisplayScrollTextChanged)
         {
             lock (iPropertyLock)
             {
@@ -1902,7 +1902,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
         /// <param name="aDisplaySleepChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyDisplaySleepChanged(CallbackPropertyChanged aDisplaySleepChanged)
+        public void SetPropertyDisplaySleepChanged(System.Action aDisplaySleepChanged)
         {
             lock (iPropertyLock)
             {
@@ -1924,7 +1924,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
         /// <param name="aDisplayLedOffChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyDisplayLedOffChanged(CallbackPropertyChanged aDisplayLedOffChanged)
+        public void SetPropertyDisplayLedOffChanged(System.Action aDisplayLedOffChanged)
         {
             lock (iPropertyLock)
             {
@@ -1946,7 +1946,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
         /// <param name="aTerminalInputCodeChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTerminalInputCodeChanged(CallbackPropertyChanged aTerminalInputCodeChanged)
+        public void SetPropertyTerminalInputCodeChanged(System.Action aTerminalInputCodeChanged)
         {
             lock (iPropertyLock)
             {
@@ -1968,7 +1968,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
         /// <param name="aTerminalInputNameChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTerminalInputNameChanged(CallbackPropertyChanged aTerminalInputNameChanged)
+        public void SetPropertyTerminalInputNameChanged(System.Action aTerminalInputNameChanged)
         {
             lock (iPropertyLock)
             {
@@ -1990,7 +1990,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
         /// <param name="aDisplayPixelsChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyDisplayPixelsChanged(CallbackPropertyChanged aDisplayPixelsChanged)
+        public void SetPropertyDisplayPixelsChanged(System.Action aDisplayPixelsChanged)
         {
             lock (iPropertyLock)
             {

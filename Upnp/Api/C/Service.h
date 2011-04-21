@@ -141,6 +141,13 @@ DllExport ServiceParameter ServiceParameterCreateRelated(const char* aName, Serv
 typedef THandle ServiceProperty;
 
 /**
+ * Destroy a property instance, freeing all memory associated with it.
+ *
+ * @param[in] aProperty  Property handle returned from ServicePropertyCreate[Type][Cp|Dv]
+ */
+DllExport void ServicePropertyDestroy(ServiceProperty aProperty);
+
+/**
  * Create an integer property suitable for use by a client of the control point stack
  *
  * Note that no destructor exists.  Properties must be added to proxies or providers, which take ownership of them

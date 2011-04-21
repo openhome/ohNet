@@ -13,11 +13,11 @@ namespace Zapp.ControlPoint.Proxies
         void SyncTime(out uint aTrackCount, out uint aDuration, out uint aSeconds);
         void BeginTime(CpProxy.CallbackAsyncComplete aCallback);
         void EndTime(IntPtr aAsyncHandle, out uint aTrackCount, out uint aDuration, out uint aSeconds);
-        void SetPropertyTrackCountChanged(CpProxy.CallbackPropertyChanged aTrackCountChanged);
+        void SetPropertyTrackCountChanged(System.Action aTrackCountChanged);
         uint PropertyTrackCount();
-        void SetPropertyDurationChanged(CpProxy.CallbackPropertyChanged aDurationChanged);
+        void SetPropertyDurationChanged(System.Action aDurationChanged);
         uint PropertyDuration();
-        void SetPropertySecondsChanged(CpProxy.CallbackPropertyChanged aSecondsChanged);
+        void SetPropertySecondsChanged(System.Action aSecondsChanged);
         uint PropertySeconds();
     }
 
@@ -59,9 +59,9 @@ namespace Zapp.ControlPoint.Proxies
         private PropertyUint iTrackCount;
         private PropertyUint iDuration;
         private PropertyUint iSeconds;
-        private CallbackPropertyChanged iTrackCountChanged;
-        private CallbackPropertyChanged iDurationChanged;
-        private CallbackPropertyChanged iSecondsChanged;
+        private System.Action iTrackCountChanged;
+        private System.Action iDurationChanged;
+        private System.Action iSecondsChanged;
         private Mutex iPropertyLock;
 
         /// <summary>
@@ -73,6 +73,7 @@ namespace Zapp.ControlPoint.Proxies
             : base("linn-co-uk", "Time", 1, aDevice)
         {
             Zapp.Core.Parameter param;
+            
 
             iActionTime = new Zapp.Core.Action("Time");
             param = new ParameterUint("aTrackCount");
@@ -155,7 +156,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkTime1 instance will not overlap.</remarks>
         /// <param name="aTrackCountChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyTrackCountChanged(CallbackPropertyChanged aTrackCountChanged)
+        public void SetPropertyTrackCountChanged(System.Action aTrackCountChanged)
         {
             lock (iPropertyLock)
             {
@@ -177,7 +178,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkTime1 instance will not overlap.</remarks>
         /// <param name="aDurationChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertyDurationChanged(CallbackPropertyChanged aDurationChanged)
+        public void SetPropertyDurationChanged(System.Action aDurationChanged)
         {
             lock (iPropertyLock)
             {
@@ -199,7 +200,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Callbacks may be run in different threads but callbacks for a
         /// CpProxyLinnCoUkTime1 instance will not overlap.</remarks>
         /// <param name="aSecondsChanged">The delegate to run when the state variable changes</param>
-        public void SetPropertySecondsChanged(CallbackPropertyChanged aSecondsChanged)
+        public void SetPropertySecondsChanged(System.Action aSecondsChanged)
         {
             lock (iPropertyLock)
             {
