@@ -39,6 +39,7 @@ Zapp.SubscriptionManager = (function () {
     var subscriptionTimeoutSec = -1; // The suggested timeout in seconds for each subscription.
 
     var StartedFunction;
+    var ErrorFunction;
     var Debug;
     var SubscriptionTimeoutSeconds;
 
@@ -367,14 +368,21 @@ Zapp.SubscriptionManager = (function () {
         stop();
 
         if (websocketOnOpen && !websocketOnClose) {
-            alert("Lost Web Socket Connection to Node with the following debug information: \n\nWebSocket Open Called: " + websocketOpen + "\nWebSocket OnOpen Called: " + websocketOnOpen + "\nWebSocket OnClose Called: true\n\nRetrying once more...");
-            websocketOnOpen = false;
-            websocketOpen = false;
-            setTimeout(function () { reconnect(); }, 1500);
+            if(ErrorFunction)
+            {
+                ErrorFunction("Lost Web Socket Connection to Node with the following debug information: \n\nWebSocket Open Called: " + websocketOpen + "\nWebSocket OnOpen Called: " + websocketOnOpen + "\nWebSocket OnClose Called: true\n\nRetrying once more...");
+                websocketOnOpen = false;
+                websocketOpen = false;
+                setTimeout(function () { reconnect(); }, 1500);
+            }
         }
         else {
-            alert("Lost Web Socket Connection to Node with the following debug information: \n\nWebSocket Open Called: " + websocketOpen + "\nWebSocket OnOpen Called: " + websocketOnOpen + "\nWebSocket OnClose Called: true");
+            if(ErrorFunction)
+            {
+                ErrorFunction("Lost Web Socket Connection to Node with the following debug information: \n\nWebSocket Open Called: " + websocketOpen + "\nWebSocket OnOpen Called: " + websocketOnOpen + "\nWebSocket OnClose Called: true");
+            }
         }
+        
         websocketOnClose = true;
 
         //    }
@@ -424,8 +432,9 @@ Zapp.SubscriptionManager = (function () {
     * @param {Boolean} debugMode A switch to turn debugging on to log debugging messages to console.
     * @param {Int} subscriptionTimeoutSeconds The suggested subscription timeout value.  Overrides the default.
     */
-    var start = function (startedFunction, debugMode, subscriptionTimeoutSeconds) {
+    var start = function (startedFunction, debugMode, subscriptionTimeoutSeconds, errorFunction) {
         StartedFunction = startedFunction;
+        ErrorFunction = errorFunction;
         Debug = debugMode;
         SubscriptionTimeoutSeconds = subscriptionTimeoutSeconds;
 
