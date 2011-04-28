@@ -45,8 +45,8 @@ public:
     TBool Equals(const Endpoint& aEndpoint) const;       // test if this endpoint is equal to the specified endpoint
     TIpAddress Address() const;
     TUint16 Port() const;                                // return port as a network order uint16
-    void GetAddress(Bwx& aAddress) const;
-    void GetEndpoint(Bwx& aEndpoint) const;
+    void AppendAddress(Bwx& aAddress) const;
+    void AppendEndpoint(Bwx& aEndpoint) const;
     void GetAddressOctets(TByte (&aOctets)[4]) const;
 private:
     TIpAddress iAddress;

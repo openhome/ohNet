@@ -158,11 +158,70 @@ void ProviderSender::TimerAudioPresentExpired()
 
 OhmSenderDriver::OhmSenderDriver()
     : iMutex("OHMD")
+	, iEnabled(false)
     , iActive(false)
+	, iSend(false)
     , iFrame(0)
     , iSamplesTotal(0)
     , iSampleStart(0)
 {
+}
+
+void OhmSenderDriver::SetEnabled(TBool aValue)
+{
+    iMutex.Wait();
+
+	iEnabled = aValue;
+
+	if (iSend) {
+		if (!aValue) { // turning off
+			iSend = false;
+			iFrame = 0;
+		}
+	}
+	else {
+		if (aValue && iActive) { // turning on
+			iSend = true;
+		}
+	}
+
+	iMutex.Signal();
+}
+
+void OhmSenderDriver::SetActive(TBool aValue)
+{
+    iMutex.Wait();
+	
+	iActive = aValue;
+
+	if (iSend) {
+		if (!aValue) { // turning off
+			iSend = false;
+			iFrame = 0;
+		}
+	}
+	else {
+		if (aValue && iEnabled) { // turning on
+			iSend = true;
+		}
+	}
+
+	iMutex.Signal();
+}
+
+void OhmSenderDriver::SetEndpoint(const Endpoint& aEndpoint)
+{
+    iMutex.Wait();
+    iEndpoint.Replace(aEndpoint);
+    iMutex.Signal();
+}
+
+
+void OhmSenderDriver::SetTtl(TUint aValue)
+{
+    iMutex.Wait();
+    iSocket.SetTtl(aValue);
+    iMutex.Signal();
 }
 
 void OhmSenderDriver::SetTrackPosition(TUint64 aSamplesTotal, TUint64 aSampleStart)
@@ -191,7 +250,7 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes)
     
     TUint samples = aBytes * 8 / iChannels / iBitDepth;
 
-    if (!iActive) {
+    if (!iSend) {
         iSampleStart += samples;
         iMutex.Signal();
         return;
@@ -231,29 +290,6 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes)
 
     iFrame++;
     
-    iMutex.Signal();
-}
-
-void OhmSenderDriver::SetTtl(TUint aValue)
-{
-    iMutex.Wait();
-    iSocket.SetTtl(aValue);
-    iMutex.Signal();
-}
-
-void OhmSenderDriver::Start(const Endpoint& aEndpoint)
-{
-    iMutex.Wait();
-    iActive = true;
-    iEndpoint.Replace(aEndpoint);
-    iMutex.Signal();
-}
-
-void OhmSenderDriver::Stop()
-{
-    iMutex.Wait();
-    iActive = false;
-    iFrame = 0;
     iMutex.Signal();
 }
 
@@ -382,6 +418,8 @@ void OhmSender::SetEnabled(TBool aValue)
     iMutexStartStop.Wait();
     
     iEnabled = aValue;
+
+	iDriver.SetEnabled(aValue);
     
     if (iEnabled) {
         iProvider->SetStatusEnabled();
@@ -500,6 +538,8 @@ void OhmSender::RunMulticast()
 
         LOG(kMedia, "OhmSender::RunMulticast go\n");
         
+		iDriver.SetEndpoint(iTargetEndpoint);
+
         try {
             for (;;) {
                 try {
@@ -521,7 +561,7 @@ void OhmSender::RunMulticast()
                         
                         iTimerAliveJoin.FireIn(kTimerAliveJoinTimeoutMs);
 
-                        iDriver.Start(iTargetEndpoint);
+                        iDriver.SetActive(true);
 
                         iMutexActive.Signal();
                     }
@@ -539,7 +579,7 @@ void OhmSender::RunMulticast()
                         
                         if (iActive) {
                             iActive = false;
-                            iDriver.Stop();
+                            iDriver.SetActive(false);
                         } 
 
                         iAliveBlocked = true;
@@ -571,7 +611,7 @@ void OhmSender::RunMulticast()
 
         if (iActive) {
             iActive = false;
-            iDriver.Stop();
+            iDriver.SetActive(false);
         } 
 
         iAliveJoined = false;
@@ -621,7 +661,9 @@ void OhmSender::RunUnicast()
 
                 iTargetEndpoint.Replace(iSocket.Sender());
 
-                SendTrack();
+				iDriver.SetEndpoint(iTargetEndpoint);
+        
+				SendTrack();
                 SendMetatext();
             
                 iSlaveCount = 0;
@@ -631,7 +673,7 @@ void OhmSender::RunUnicast()
                 iActive = true;
                 iAliveJoined = true;
 
-                iDriver.Start(iTargetEndpoint);
+                iDriver.SetActive(true);
 
                 iMutexActive.Signal();
                 
@@ -728,7 +770,7 @@ void OhmSender::RunUnicast()
                                     if (iSlaveCount > 0) {
                                         SendSlaveList();
                                     }
-                                    iDriver.Start(iTargetEndpoint);
+                                    iDriver.SetEndpoint(iTargetEndpoint);
                                     iMutexActive.Signal();
                                 }
                             }
@@ -756,7 +798,7 @@ void OhmSender::RunUnicast()
                 iMutexActive.Wait();
                 iActive = false;
                 iAliveJoined = false;               
-                iDriver.Stop();
+                iDriver.SetActive(false);
                 iMutexActive.Signal();
             }
         }
@@ -772,7 +814,7 @@ void OhmSender::RunUnicast()
 
         if (iActive) {
             iActive = false;
-            iDriver.Stop();
+            iDriver.SetActive(false);
         } 
 
         iAliveJoined = false;
@@ -849,32 +891,14 @@ void OhmSender::UpdateMetadata()
         iMetadata.Append(iName);
         iMetadata.Append("</dc:title>");
         if (iMulticast) {
-            TUint address = Arch::BigEndian4(iMulticastEndpoint.Address());
             iMetadata.Append("<res protocolInfo=\"ohm:*:*:*\">");
             iUri.Replace("ohm://");
-            Ascii::AppendDec(iUri, (address >> 24 & 0xff));
-            iUri.Append('.');
-            Ascii::AppendDec(iUri, (address >> 16 & 0xff));
-            iUri.Append('.');
-            Ascii::AppendDec(iUri, (address >> 8 & 0xff));
-            iUri.Append('.');
-            Ascii::AppendDec(iUri, (address & 0xff));
-            iUri.Append(':');
-            Ascii::AppendDec(iUri, Ohm::kPort);
+			iMulticastEndpoint.AppendEndpoint(iUri);
         }
         else {
-            TUint address = Arch::BigEndian4(iSocket.This().Address());
             iMetadata.Append("<res protocolInfo=\"ohu:*:*:*\">");
             iUri.Replace("ohu://");
-            Ascii::AppendDec(iUri, (address >> 24 & 0xff));
-            iUri.Append('.');
-            Ascii::AppendDec(iUri, (address >> 16 & 0xff));
-            iUri.Append('.');
-            Ascii::AppendDec(iUri, (address >> 8 & 0xff));
-            iUri.Append('.');
-            Ascii::AppendDec(iUri, (address & 0xff));
-            iUri.Append(':');
-            Ascii::AppendDec(iUri, iSocket.This().Port());
+            iSocket.This().AppendEndpoint(iUri);
         }
         iMetadata.Append(iUri);
         iMetadata.Append("</res>");

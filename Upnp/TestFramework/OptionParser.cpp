@@ -70,6 +70,11 @@ const Brx& OptionString::Value() const
     return iValue;
 }
 
+const TChar* OptionString::CString() const
+{
+    return iValue.CString();
+}
+
 
 // OptionInt
 

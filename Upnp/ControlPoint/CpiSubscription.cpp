@@ -171,7 +171,7 @@ void CpiSubscription::DoSubscribe()
     Endpoint endpt(CpiSubscriptionManager::EventServer()->Port(), nif->Address());
     delete nif;
     Endpoint::EndpointBuf buf;
-    endpt.GetEndpoint(buf);
+    endpt.AppendEndpoint(buf);
     uri.Append(buf);
     uri.Append('/');
     Uri subscriber(uri);

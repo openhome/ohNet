@@ -24,7 +24,7 @@ linkoutput = /out:
 dllprefix =
 dllext = dll
 link_dll = link /nologo /debug /map Ws2_32.lib Iphlpapi.lib /dll
-link_dll_service = link /nologo /debug  /map $(objdir)ZappUpnp.lib Ws2_32.lib Iphlpapi.lib /dll
+link_dll_service = link /nologo /debug  /map $(ohnetdir)/ZappUpnp.lib Ws2_32.lib Iphlpapi.lib /dll
 csharp = csc /nologo /platform:x86
 publiccsdir = Public\Cs^\
 dirsep = ^\
@@ -35,16 +35,21 @@ mkdir = Scripts\mkdir.bat
 rmdir = Scripts\rmdir.bat
 uset4 = no
 
-all: $(objdir)/$(dllprefix)OhmSender.$(dllext) $(objdir)/WavSender.$(exeext)
+all: $(objdir)/$(dllprefix)OhSoundcard.$(dllext) $(objdir)/TestSoundcard.$(exeext) $(objdir)/WavSender.$(exeext)
 
-$(objdir)/$(dllprefix)OhmSender.$(dllext) :
+$(objdir)/$(dllprefix)ohSoundcard.$(dllext) : Services/DvAvOpenhomeOrgSender1.cpp Library/Ohm.cpp Library/OhmSender.cpp ohSoundcard/Windows/Soundcard.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
 	$(compiler)/DvAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgSender1.cpp
 	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Library/Ohm.cpp
 	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) Library/OhmSender.cpp
-	$(link_dll) $(linkoutput)$(objdir)/$(dllprefix)OhmSender.$(dllext) $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext)
+	$(compiler)/Soundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/Soundcard.cpp
+	$(link_dll) $(linkoutput)$(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(ohnetdir)/upnp_core.lib $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib
 
-$(objdir)/WavSender.$(exeext) :
+$(objdir)/TestSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) ohSoundcard/Windows/TestSoundcard.cpp
+	$(compiler)/TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/TestSoundcard.cpp
+	$(link) $(linkoutput)$(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcard.$(objext) $(ohnetdir)/upnp_core.lib $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib $(ohnetdir)/TestFramework.$(libext) 
+
+$(objdir)/WavSender.$(exeext) : Services/DvAvOpenhomeOrgSender1.cpp Library/Ohm.cpp Library/OhmSender.cpp WavSender/WavSender.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
 	$(compiler)/DvAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgSender1.cpp
 	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Library/Ohm.cpp
@@ -52,7 +57,7 @@ $(objdir)/WavSender.$(exeext) :
 	$(compiler)/WavSender.$(objext) -c $(cflags) $(includes) WavSender/WavSender.cpp
 	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext) $(ohnetdir)/TestFramework.$(libext)
 
-$(objdir)/WavReceiver.$(exeext) :
+$(objdir)/WavReceiver.$(exeext) : Services/DvAvOpenhomeOrgProduct1.cpp Services/DvAvOpenhomeOrgReceiver1.cpp Library/Product.cpp WavReceiver/WavReceiver.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
 	$(compiler)/DvAvOpenhomeOrgProduct1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgProduct1.cpp
 	$(compiler)/DvAvOpenhomeOrgReceiver1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgReceiver1.cpp

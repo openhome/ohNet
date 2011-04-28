@@ -25,6 +25,7 @@ FAST_MUTEX MpusFastMutex;
 
 SOCKADDR MpusAddress;
 
+ULONG MpusEnabled;
 ULONG MpusActive;
 ULONG MpusTtl;
 ULONG MpusAddr;
@@ -284,6 +285,7 @@ Return Value:
 
 	ExAcquireFastMutex(&MpusFastMutex);
 
+	MpusEnabled = 0;
 	MpusActive = 0;
 	MpusTtl = 0;
 	MpusAddr = 0;
@@ -542,60 +544,57 @@ NTSTATUS PropertyHandler_Wave
 
     ASSERT (PropertyRequest);
 
-    // We only have a get defined.
+    // We only have a get defined for KSPROPERTY_SNEAKY_VERSION
+
     if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
     {
         // Check the ID ("function" in "group").
-        if (PropertyRequest->PropertyItem->Id != KSPROPERTY_SNEAKY_FEATURES)
+        if (PropertyRequest->PropertyItem->Id != KSPROPERTY_SNEAKY_VERSION)
 		{
             return STATUS_INVALID_PARAMETER;
 		}
 
         // validate buffer size.
-        if (PropertyRequest->ValueSize < sizeof (SneakyFeatures))
+        if (PropertyRequest->ValueSize < sizeof (ULONG))
 		{
             return STATUS_INVALID_PARAMETER;
 		}
 
         // The "Value" is the out buffer that you pass in DeviceIoControl call.
-        SneakyFeatures *pSneakyFeatures = (SneakyFeatures *) PropertyRequest->Value;
+
+        UINT* pValue = (UINT *)PropertyRequest->Value;
         
         // Check the buffer.
-        if (!pSneakyFeatures)
+
+        if (!pValue)
 		{
             return STATUS_INVALID_PARAMETER;
 		}
 
-		ExAcquireFastMutex(&MpusFastMutex);
-
-        pSneakyFeatures->iVersion = 1;
-
-		ExReleaseFastMutex(&MpusFastMutex);
+		*pValue = 1;
 
 		return STATUS_SUCCESS ;
     }
     else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
     {
-        if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_ENDPOINT)
+        if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_ENABLED)
 		{
-			if (PropertyRequest->ValueSize != (sizeof (UINT) * 2))
+			if (PropertyRequest->ValueSize != sizeof (UINT))
 			{
 				return STATUS_INVALID_PARAMETER;
 			}
 
             UINT* pValue = (UINT *)PropertyRequest->Value;
 
-			ULONG addr = *pValue++;
-			ULONG port = *pValue;
+			ULONG enabled = *pValue;
 
 			ExAcquireFastMutex(&MpusFastMutex);
 
-			if (MpusAddr != addr || MpusPort != port)
-			{
-				MpusAddr = addr;
-				MpusPort = port;
-
-				CWinsock::Initialise(&MpusAddress, MpusAddr, MpusPort);
+			if (!enabled) {
+				MpusEnabled = 0;
+			}
+			else {
+				MpusEnabled = 1;
 			}
 
 			ExReleaseFastMutex(&MpusFastMutex);
@@ -624,6 +623,32 @@ NTSTATUS PropertyHandler_Wave
 			}
 			else {
 				MpusActive = 1;
+			}
+
+			ExReleaseFastMutex(&MpusFastMutex);
+
+			return STATUS_SUCCESS;
+		}
+        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_ENDPOINT)
+		{
+			if (PropertyRequest->ValueSize != (sizeof (UINT) * 2))
+			{
+				return STATUS_INVALID_PARAMETER;
+			}
+
+            UINT* pValue = (UINT *)PropertyRequest->Value;
+
+			ULONG addr = *pValue++;
+			ULONG port = *pValue;
+
+			ExAcquireFastMutex(&MpusFastMutex);
+
+			if (MpusAddr != addr || MpusPort != port)
+			{
+				MpusAddr = addr;
+				MpusPort = port;
+
+				CWinsock::Initialise(&MpusAddress, MpusAddr, MpusPort);
 			}
 
 			ExReleaseFastMutex(&MpusFastMutex);

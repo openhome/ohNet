@@ -27,17 +27,8 @@ DEFINE_GUID(KSPROPSETID_Private, 0xff89e492, 0x5c4a, 0x4b2c, 0x87, 0x9a, 0x6a, 0
 // Define the method in the property. You can have multiple methods defined
 // for one private property ...
 
-const int KSPROPERTY_SNEAKY_FEATURES = 0;
-const int KSPROPERTY_SNEAKY_VERSION = 1;
-const int KSPROPERTY_SNEAKY_ENDPOINT = 2;
-const int KSPROPERTY_SNEAKY_ACTIVE = 3;
+const int KSPROPERTY_SNEAKY_VERSION = 0;
+const int KSPROPERTY_SNEAKY_ENABLED = 1;
+const int KSPROPERTY_SNEAKY_ACTIVE = 2;
+const int KSPROPERTY_SNEAKY_ENDPOINT = 3;
 const int KSPROPERTY_SNEAKY_TTL = 4;
-
-// Structure passed in the private property request with method
-// KSPROPERTY_SNEAKY_FEATURES.
-
-typedef struct
-{
-	UINT iVersion;
-} SneakyFeatures;
-

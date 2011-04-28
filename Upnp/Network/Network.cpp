@@ -87,7 +87,7 @@ TUint16 Endpoint::Port() const
     return iPort;
 }
 
-void Endpoint::GetAddress(Bwx& aAddress) const
+void Endpoint::AppendAddress(Bwx& aAddress) const
 {
     ASSERT(aAddress.MaxBytes() - aAddress.Bytes() >= kMaxAddressBytes);
 #ifdef DEFINE_LITTLE_ENDIAN
@@ -112,10 +112,10 @@ void Endpoint::GetAddress(Bwx& aAddress) const
     aAddress.PtrZ();
 }
 
-void Endpoint::GetEndpoint(Bwx& aEndpoint) const
+void Endpoint::AppendEndpoint(Bwx& aEndpoint) const
 {
     ASSERT(aEndpoint.MaxBytes() - aEndpoint.Bytes() >= kMaxEndpointBytes);
-    GetAddress(aEndpoint);
+    AppendAddress(aEndpoint);
     aEndpoint.Append(':');
     (void)Ascii::AppendDec(aEndpoint, iPort);
     aEndpoint.PtrZ();

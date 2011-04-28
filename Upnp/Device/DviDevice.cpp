@@ -250,7 +250,7 @@ void DviDevice::GetUriBase(Bwh& aUriBase, TIpAddress aInterface, TUint aPort, ID
     aUriBase.Append(Http::kUriPrefix);
     Endpoint endpt(aPort, aInterface);
     Endpoint::EndpointBuf buf;
-    endpt.GetEndpoint(buf);
+    endpt.AppendEndpoint(buf);
     aUriBase.Append(buf);
     aUriBase.Append('/');
     aUriBase.Append(iUdn);

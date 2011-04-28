@@ -16,10 +16,11 @@ class ProviderSender;
 class IOhmSenderDriver
 {
 public:
+    virtual void SetEnabled(TBool aValue) = 0;
+    virtual void SetEndpoint(const Endpoint& aEndpoint) = 0;
+    virtual void SetActive(TBool aValue) = 0;
     virtual void SetTtl(TUint aValue) = 0;
     virtual void SetTrackPosition(TUint64 aSampleStart, TUint64 aSamplesTotal) = 0;
-    virtual void Start(const Endpoint& aEndpoint) = 0;
-    virtual void Stop() = 0;
     virtual ~IOhmSenderDriver() {}
 };
 
@@ -34,16 +35,19 @@ public:
 
 private:    
     // IOhmSenderDriver
+    virtual void SetEnabled(TBool aValue);
+    virtual void SetActive(TBool aValue);
+    virtual void SetEndpoint(const Endpoint& aEndpoint);
     virtual void SetTtl(TUint aValue);
-    virtual void SetTrackPosition(TUint64 aSamplesTotal, TUint64 aSampleStart);
-    virtual void Start(const Endpoint& aEndpoint);
-    virtual void Stop();
+    virtual void SetTrackPosition(TUint64 aSampleStart, TUint64 aSamplesTotal);
 
 private:
     Mutex iMutex;
+	TBool iEnabled;
     TBool iActive;
-    Bws<kMaxAudioFrameBytes> iBuffer;
+	TBool iSend;
     Endpoint iEndpoint;
+    Bws<kMaxAudioFrameBytes> iBuffer;
     TUint iFrame;
     TUint iSampleRate;
     TUint iBitRate;

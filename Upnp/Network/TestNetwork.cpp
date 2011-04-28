@@ -723,7 +723,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     delete ifs;
     Endpoint endpt(0, addr);
     Endpoint::AddressBuf buf;
-    endpt.GetAddress(buf);
+    endpt.AppendAddress(buf);
     Print("Using network interface %s\n\n", buf.Ptr());
     MainTestThread th(addr);
     th.Start();

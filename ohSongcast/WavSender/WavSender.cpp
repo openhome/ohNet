@@ -450,8 +450,8 @@ int CDECL main(int aArgc, char* aArgv[])
     device->SetAttribute("Upnp.ModelName", "Openhome WavSender");
     device->SetAttribute("Upnp.ModelNumber", "1");
     device->SetAttribute("Upnp.ModelUrl", "http://www.openhome.org");
-    device->SetAttribute("Upnp.SerialNumber", "Not Applicable");
-    device->SetAttribute("Upnp.Upc", "Not Applicable");
+    device->SetAttribute("Upnp.SerialNumber", "");
+    device->SetAttribute("Upnp.Upc", "");
 
     OhmSenderDriver* driver = new OhmSenderDriver();
     

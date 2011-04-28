@@ -139,7 +139,7 @@ const Brx& HeaderCallback::Uri() const
 void HeaderCallback::Log()
 {
     Endpoint::EndpointBuf buf;
-    iEndpoint.GetEndpoint(buf);
+    iEndpoint.AppendEndpoint(buf);
     LOG(kDvEvent, buf);
     LOG(kDvEvent, iUri);
 }
@@ -224,7 +224,7 @@ PropertyWriterUpnp::PropertyWriterUpnp(const Endpoint& aPublisher, const Endpoin
 
     IWriterAscii& writer = iWriterEvent->WriteHeaderField(Http::kHeaderHost);
     Endpoint::EndpointBuf buf;
-    aPublisher.GetEndpoint(buf);
+    aPublisher.AppendEndpoint(buf);
     writer.Write(buf);
     writer.WriteFlush();
 
@@ -414,7 +414,7 @@ void DviSessionUpnp::Get()
         writerLocation.Write(Brn("http://"));
         Endpoint endpt(iPort, iInterface);
         Bws<Endpoint::kMaxEndpointBytes> endptBuf;
-        endpt.GetEndpoint(endptBuf);
+        endpt.AppendEndpoint(endptBuf);
         writerLocation.Write(endptBuf);
         writerLocation.Write(redirectTo);
         writerLocation.WriteFlush();

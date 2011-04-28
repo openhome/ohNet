@@ -40,9 +40,10 @@ public:
     void Reset();
     TInt ExpectedArgCount() const;
     const Brx& Value() const;
+    const TChar* CString() const;
 private:
-    Brh iValue;
-    Brh iDefault;
+    Brhz iValue;
+    Brhz iDefault;
 };
 
 class OptionInt : public Option

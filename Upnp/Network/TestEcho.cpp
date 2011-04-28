@@ -59,7 +59,7 @@ void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Initi
     TIpAddress addr = (*ifs)[0]->Address();
     Endpoint endpt(0, addr);
     Endpoint::AddressBuf buf;
-    endpt.GetAddress(buf);
+    endpt.AppendAddress(buf);
     Print("Using network interface %s\n\n", buf.Ptr());
     Semaphore sem("", 0);
     SocketTcpServer* server = new SocketTcpServer("ECHO", 1025, addr);

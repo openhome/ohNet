@@ -114,7 +114,7 @@ static TIpAddress NetworkIf(TUint aIndex)
     TIpAddress addr = ifs[aIndex]->Address();
     Endpoint endpt(0, addr);
     Endpoint::AddressBuf buf;
-    endpt.GetAddress(buf);
+    endpt.AppendAddress(buf);
     Print("Using network interface %s\n\n", buf.Ptr());
     return ifs[aIndex]->Address();
 }
