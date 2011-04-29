@@ -41,7 +41,6 @@ FunctorDviInvocation DvAction::Functor() const
 DviService::DviService(const TChar* aDomain, const TChar* aName, TUint aVersion)
     : Service(aDomain, aName, aVersion)
     , iLock("DVSM")
-    , iActionLock("DVSA")
     , iRefCount(1)
     , iPropertiesLock("SPRM")
 {
@@ -98,7 +97,6 @@ const DviService::VectorActions& DviService::DvActions() const
 
 void DviService::Invoke(IDviInvocation& aInvocation, TUint aVersion, const Brx& aActionName)
 {
-    AutoMutex a(iActionLock);
     for (TUint i=0; i<iDvActions.size(); i++) {
         if (iDvActions[i].Action()->Name() == aActionName) {
             iDvActions[i].Functor()(aInvocation, aVersion);
