@@ -1,7 +1,6 @@
 objdir = Build/Obj/Windows
 incdir = Build/Include
 ohnetdir = ../Upnp/Build/Obj/Windows
-toolsDir = ../Upnp/Build/Windows/Tools
 templatesDir = ../Upnp/T4/Templates
 
 # Macros used by Common.mak
@@ -35,7 +34,7 @@ mkdir = Scripts\mkdir.bat
 rmdir = Scripts\rmdir.bat
 uset4 = no
 
-all: $(objdir)/$(dllprefix)OhSoundcard.$(dllext) $(objdir)/TestSoundcard.$(exeext) $(objdir)/WavSender.$(exeext)
+all: $(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(objdir)/TestSoundcard.$(exeext) $(objdir)/WavSender.$(exeext)
 
 $(objdir)/$(dllprefix)ohSoundcard.$(dllext) : Services/DvAvOpenhomeOrgSender1.cpp Library/Ohm.cpp Library/OhmSender.cpp ohSoundcard/Windows/Soundcard.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
@@ -45,9 +44,22 @@ $(objdir)/$(dllprefix)ohSoundcard.$(dllext) : Services/DvAvOpenhomeOrgSender1.cp
 	$(compiler)/Soundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/Soundcard.cpp
 	$(link_dll) $(linkoutput)$(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(ohnetdir)/upnp_core.lib $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib
 
-$(objdir)/TestSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) ohSoundcard/Windows/TestSoundcard.cpp
-	$(compiler)/TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/TestSoundcard.cpp
-	$(link) $(linkoutput)$(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcard.$(objext) $(ohnetdir)/upnp_core.lib $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib $(ohnetdir)/TestFramework.$(libext) 
+$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) 
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) \
+		ohSoundcard\Windows\Soundcard.cs
+
+$(objdir)/TestSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) ohSoundcard/Windows/TestSoundcard.cs
+	$(csharp) /unsafe /t:exe /debug+ \
+		/out:$(objdir)TestSoundcard.exe \
+		/reference:System.dll \
+		/reference:System.Net.dll \
+		/reference:$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext)  \
+		ohSoundcard\Windows\TestSoundcard.cs
+
+#$(objdir)/TestSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) ohSoundcard/Windows/TestSoundcard.cpp
+#	$(compiler)/TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/TestSoundcard.cpp
+#	$(link) $(linkoutput)$(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcard.$(objext) $(ohnetdir)/upnp_core.lib $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib $(ohnetdir)/TestFramework.$(libext) 
 
 $(objdir)/WavSender.$(exeext) : Services/DvAvOpenhomeOrgSender1.cpp Library/Ohm.cpp Library/OhmSender.cpp WavSender/WavSender.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
@@ -65,21 +77,21 @@ $(objdir)/WavReceiver.$(exeext) : Services/DvAvOpenhomeOrgProduct1.cpp Services/
 	$(compiler)/Receiver.$(objext) -c $(cflags) $(includes) WavReceiver/WavReceiver.cpp
 	$(link) $(linkoutput)$(objdir)/WavReceiver.$(exeext) $(objdir)/WavReceiver.$(objext) $(objdir)/Product.$(objext) $(objdir)/DvAvOpenhomeOrgProduct1.$(objext) $(objdir)/DvAvOpenhomeOrgReceiver1.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext) $(ohnetdir)/TestFramework.$(libext)
 
-t4 = $(toolsDir)/TextTransform.exe
+t4 = ..\Upnp\Build\Windows\Tools\TextTransform.exe
 
 gen: DvAvOpenhomeOrgSender1.h DvAvOpenhomeOrgSender1.cpp DvAvOpenhomeOrgProduct1.h DvAvOpenhomeOrgProduct1.cpp DvAvOpenhomeOrgReceiver1.h DvAvOpenhomeOrgReceiver1.cpp
 
 DvAvOpenhomeOrgSender1.h : $(templatesDir)/DvUpnpCppCoreHeader.tt Services/Sender1.xml
-	$(t4) -o Services/DvAvOpenhomeOrgSender1.h $(templatesDir)/DvUpnpCppCoreHeader.tt -a "xml:Sender1.xml" -a domain:av.openhome.org -a type:Sender -a version:1
+	$(t4) -o Services/DvAvOpenhomeOrgSender1.h $(templatesDir)/DvUpnpCppCoreHeader.tt -a "xml:Services/Sender1.xml" -a domain:av.openhome.org -a type:Sender -a version:1
 DvAvOpenhomeOrgSender1.cpp : ../Upnp/T4/Templates/DvUpnpCppCoreSource.tt Services/Sender1.xml
-	$(t4) -o Services/DvAvOpenhomeOrgSender1.cpp $(templatesDir)/DvUpnpCppCoreSource.tt -a "xml:Sender1.xml" -a domain:av.openhome.org -a type:Sender -a version:1
+	$(t4) -o Services/DvAvOpenhomeOrgSender1.cpp $(templatesDir)/DvUpnpCppCoreSource.tt -a "xml:Services/Sender1.xml" -a domain:av.openhome.org -a type:Sender -a version:1
 
 DvAvOpenhomeOrgProduct1.h : $(templatesDir)/DvUpnpCppCoreHeader.tt Services/Product1.xml
-	$(t4) -o Services/DvAvOpenhomeOrgProduct1.h $(templatesDir)/DvUpnpCppCoreHeader.tt -a "xml:Product1.xml" -a domain:av.openhome.org -a type:Product -a version:1
+	$(t4) -o Services/DvAvOpenhomeOrgProduct1.h $(templatesDir)/DvUpnpCppCoreHeader.tt -a "xml:Services/Product1.xml" -a domain:av.openhome.org -a type:Product -a version:1
 DvAvOpenhomeOrgProduct1.cpp : ../Upnp/T4/Templates/DvUpnpCppCoreSource.tt Services/Product1.xml
-	$(t4) -o Services/DvAvOpenhomeOrgProduct1.cpp $(templatesDir)/DvUpnpCppCoreSource.tt -a "xml:Product1.xml" -a domain:av.openhome.org -a type:Product -a version:1
+	$(t4) -o Services/DvAvOpenhomeOrgProduct1.cpp $(templatesDir)/DvUpnpCppCoreSource.tt -a "xml:Services/Product1.xml" -a domain:av.openhome.org -a type:Product -a version:1
 
 DvAvOpenhomeOrgReceiver1.h : $(templatesDir)/DvUpnpCppCoreHeader.tt Services/Receiver1.xml
-	$(t4) -o Services/DvAvOpenhomeOrgReceiver1.h $(templatesDir)/DvUpnpCppCoreHeader.tt -a "xml:Receiver1.xml" -a domain:av.openhome.org -a type:Receiver -a version:1
+	$(t4) -o Services/DvAvOpenhomeOrgReceiver1.h $(templatesDir)/DvUpnpCppCoreHeader.tt -a "xml:Services/Receiver1.xml" -a domain:av.openhome.org -a type:Receiver -a version:1
 DvAvOpenhomeOrgReceiver1.cpp : ../Upnp/T4/Templates/DvUpnpCppCoreSource.tt Services/Receiver1.xml
-	$(t4) -o Services/DvAvOpenhomeOrgReceiver1.cpp $(templatesDir)/DvUpnpCppCoreSource.tt -a "xml:Receiver1.xml" -a domain:av.openhome.org -a type:Receiver -a version:1
+	$(t4) -o Services/DvAvOpenhomeOrgReceiver1.cpp $(templatesDir)/DvUpnpCppCoreSource.tt -a "xml:Services/Receiver1.xml" -a domain:av.openhome.org -a type:Receiver -a version:1

@@ -69,13 +69,11 @@ DvProviderAvOpenhomeOrgSender1::DvProviderAvOpenhomeOrgSender1(DvDevice& aDevice
     iPropertyAudio = new PropertyBool(new ParameterBool("Audio"));
     iService->AddProperty(iPropertyAudio); // passes ownership
     index = 0;
-    allowedValues = new TChar*[5];
-    allowedValues[index++] = (TChar*)"Sending";
-    allowedValues[index++] = (TChar*)"Ready";
-    allowedValues[index++] = (TChar*)"Blocked";
-    allowedValues[index++] = (TChar*)"Inactive";
+    allowedValues = new TChar*[3];
+    allowedValues[index++] = (TChar*)"Enabled";
     allowedValues[index++] = (TChar*)"Disabled";
-    iPropertyStatus = new PropertyString(new ParameterString("Status", allowedValues, 5));
+    allowedValues[index++] = (TChar*)"Blocked";
+    iPropertyStatus = new PropertyString(new ParameterString("Status", allowedValues, 3));
     delete[] allowedValues;
     iService->AddProperty(iPropertyStatus); // passes ownership
     iPropertyAttributes = new PropertyString(new ParameterString("Attributes"));

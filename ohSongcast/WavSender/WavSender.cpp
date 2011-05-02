@@ -455,7 +455,7 @@ int CDECL main(int aArgc, char* aArgv[])
 
     OhmSenderDriver* driver = new OhmSenderDriver();
     
-	OhmSender* sender = new OhmSender(*device, *driver, name, channel, interface, ttl, multicast, !disabled);
+	OhmSender* sender = new OhmSender(*device, *driver, name, channel, interface, ttl, multicast, !disabled, Brx::Empty(), Brx::Empty());
 	
     PcmSender* pcmsender = new PcmSender(sender, driver, file, data, sampleCount, sampleRate, byteRate * 8, numChannels, bitsPerSample);
     

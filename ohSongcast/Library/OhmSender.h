@@ -6,6 +6,7 @@
 #include <Core/DvDevice.h>
 #include <Thread.h>
 #include <Timer.h>
+#include <Http.h>
 
 #include "Ohm.h"
 
@@ -72,6 +73,8 @@ class OhmSender
     static const TUint kTimerAliveAudioTimeoutMs = 3000;
     static const TUint kTimerExpiryTimeoutMs = 3100;
     static const TUint kMaxSlaveCount = 4;
+	static const TUint kMaxImageBytes = 30*1024;
+	static const TUint kMaxMimeTypeBytes = 100;
 
 public:
 	static const TUint kMaxNameBytes = 32;
@@ -80,8 +83,11 @@ public:
 	static const TUint kMaxTrackMetatextBytes = Ohm::kMaxTrackMetatextBytes;
 
 public:
-    OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled);
+    OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled, const Brx& aImage, const Brx& aMimeType);
     ~OhmSender();
+
+	const Brx& Image() const;
+	const Brx& MimeType() const;
 
 	void SetName(const Brx& aValue);
 	void SetChannel(TUint aValue);
@@ -93,7 +99,7 @@ public:
 	void SetMetatext(const Brx& aValue);
     
 private:
-    void RunPipeline();
+	void RunPipeline();
     void RunMulticast();
     void RunUnicast();
 
@@ -127,6 +133,8 @@ private:
     TUint iTtl;
     TBool iMulticast;
     TBool iEnabled;
+	Bws<kMaxImageBytes> iImage;
+	Bws<kMaxMimeTypeBytes> iMimeType;
     OhmSocket iSocket;
     Srs<kMaxAudioFrameBytes> iRxBuffer;
     Bws<kMaxAudioFrameBytes> iTxBuffer;
@@ -155,7 +163,35 @@ private:
     Bws<Ohm::kMaxTrackMetatextBytes> iTrackMetatext;
     TUint iSequenceTrack;
     TUint iSequenceMetatext;
+    SocketTcpServer* iServer;
+	TBool iClientControllingTrackMetadata;
 };
+
+class OhmSenderSession : public SocketTcpSession
+{
+    static const TUint kMaxRequestBytes = 4*1024;
+    static const TUint kMaxResponseBytes = 4*1024;
+public:
+    OhmSenderSession(const OhmSender& aSender);
+    ~OhmSenderSession();
+private:
+    void Run();
+    void Error(const HttpStatus& aStatus);
+    void Get(TBool aWriteEntity);
+private:
+	const OhmSender& iSender;
+    Srs<kMaxRequestBytes>* iReadBuffer;
+    ReaderHttpRequest* iReaderRequest;
+    Sws<kMaxResponseBytes>* iWriterBuffer;
+    WriterHttpResponse* iWriterResponse;
+    HttpHeaderHost iHeaderHost;
+    HttpHeaderExpect iHeaderExpect;
+	const HttpStatus* iErrorStatus;
+    TBool iResponseStarted;
+    TBool iResponseEnded;
+    Semaphore iShutdownSem;
+};
+
 
 } // namespace Zapp
 

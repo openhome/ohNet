@@ -75,11 +75,9 @@
             <name>Status</name>
             <dataType>string</dataType>
             <allowedValueList>
-                <allowedValue>Sending</allowedValue>
-                <allowedValue>Ready</allowedValue>
-                <allowedValue>Blocked</allowedValue>
-                <allowedValue>Inactive</allowedValue>
+                <allowedValue>Enabled</allowedValue>
                 <allowedValue>Disabled</allowedValue>
+                <allowedValue>Blocked</allowedValue>
             </allowedValueList>
         </stateVariable>
         <stateVariable sendEvents="yes">

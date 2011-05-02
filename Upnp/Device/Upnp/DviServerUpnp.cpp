@@ -32,25 +32,6 @@ static const Brn kUpnpMethodUnsubscribe("UNSUBSCRIBE");
 static const Brn kUpnpMethodNotify("NOTIFY");
 
 
-// HeaderExpect
-
-TBool HeaderExpect::Continue() const
-{
-    return (Received()? iContinue : false);
-}
-
-TBool HeaderExpect::Recognise(const Brx& aHeader)
-{
-    return (Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderExpect));
-}
-
-void HeaderExpect::Process(const Brx& aValue)
-{
-    SetReceived();
-    iContinue = (aValue == Http::kExpect100Continue);
-}
-
-
 // HeaderSoapAction
 
 const Brx& HeaderSoapAction::Domain() const

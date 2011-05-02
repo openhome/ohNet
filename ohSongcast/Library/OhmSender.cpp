@@ -295,7 +295,7 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes)
 
 // OhmSender
 
-OhmSender::OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled)
+OhmSender::OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled, const Brx& aImage, const Brx& aMimeType)
     : iDevice(aDevice)
     , iDriver(aDriver)
     , iName(aName)
@@ -303,6 +303,8 @@ OhmSender::OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aN
     , iInterface(aInterface)
     , iTtl(aTtl)
     , iMulticast(aMulticast)
+	, iImage(aImage)
+	, iMimeType(aMimeType)
     , iRxBuffer(iSocket)
     , iMutexStartStop("OHMS")
     , iMutexActive("OHMA")
@@ -316,6 +318,8 @@ OhmSender::OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aN
     , iAliveBlocked(false)
     , iSequenceTrack(0)
     , iSequenceMetatext(0)
+	, iClientControllingTrackMetadata(false)
+
 {
     iProvider = new ProviderSender(iDevice);
  
@@ -329,8 +333,23 @@ OhmSender::OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aN
     iThreadUnicast = new ThreadFunctor("MTXU", MakeFunctor(*this, &OhmSender::RunUnicast), kThreadPriorityNetwork, kThreadStackBytesNetwork);
     iThreadUnicast->Start();
     
+	iServer = new SocketTcpServer("OHMS", 0, iInterface);
+
+	iServer->Add("OHMS", new OhmSenderSession(*this));
+
     SetEnabled(aEnabled);
 }
+
+const Brx& OhmSender::Image() const
+{
+	return (iImage);
+}
+
+const Brx& OhmSender::MimeType() const
+{
+	return (iMimeType);
+}
+
 
 void OhmSender::SetName(const Brx& aValue)
 {
@@ -370,6 +389,9 @@ void OhmSender::SetInterface(TIpAddress aValue)
     if (iStarted) {
         Stop();
         iInterface = aValue;
+		delete (iServer);
+		iServer = new SocketTcpServer("OHMS", 0, iInterface);
+		iServer->Add("OHMS", new OhmSenderSession(*this));
         Start();
     }
     else {
@@ -466,9 +488,10 @@ void OhmSender::Stop()
     }
 }
 
-void OhmSender::SetTrack(const Brx& aUri, const Brx& aMetadata, TUint64 aSamplesTotal,TUint64 aSampleStart)
+void OhmSender::SetTrack(const Brx& aUri, const Brx& aMetadata, TUint64 aSamplesTotal, TUint64 aSampleStart)
 {
     iMutexActive.Wait();
+	iClientControllingTrackMetadata = true;
     iDriver.SetTrackPosition(aSamplesTotal, aSampleStart);
     iSequenceTrack++;
     iSequenceMetatext = 0;
@@ -902,10 +925,34 @@ void OhmSender::UpdateMetadata()
         }
         iMetadata.Append(iUri);
         iMetadata.Append("</res>");
-        iMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");
+
+		iMetadata.Append("<upnp:albumArtURI>");
+		iMetadata.Append("http://");
+
+		Endpoint(iServer->Port(), iInterface).AppendEndpoint(iMetadata);
+
+		iMetadata.Append("/icon");
+		iMetadata.Append("</upnp:albumArtURI>");
+		
+		iMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");
         iMetadata.Append("</item>");
         iMetadata.Append("</DIDL-Lite>");
     }
+
+	if (!iClientControllingTrackMetadata) {
+		iMutexActive.Wait();
+	
+		iTrackMetadata.Replace(iMetadata);
+		
+		iSequenceTrack++;
+		iSequenceMetatext = 0;
+    
+		if (iActive) {
+			SendTrack();
+		}
+    
+		iMutexActive.Signal();
+	}
 
 	iProvider->SetMetadata(iMetadata);
 }
@@ -1057,5 +1104,130 @@ TUint OhmSender::FindSlave(const Endpoint& aEndpoint)
     }
     
     return (iSlaveCount);
+}
+
+//
+
+
+// OhmSenderSession
+
+OhmSenderSession::OhmSenderSession(const OhmSender& aSender)
+	: iSender(aSender)
+    , iShutdownSem("OHMS", 1)
+{
+    iReadBuffer = new Srs<kMaxRequestBytes>(*this);
+    iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
+    iWriterBuffer = new Sws<kMaxResponseBytes>(*this);
+    iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
+    iReaderRequest->AddMethod(Http::kMethodGet);
+    iReaderRequest->AddMethod(Http::kMethodHead);
+    iReaderRequest->AddHeader(iHeaderHost);
+}
+
+OhmSenderSession::~OhmSenderSession()
+{
+    Interrupt(true);
+    iShutdownSem.Wait();
+    delete iWriterResponse;
+    delete iWriterBuffer;
+    delete iReaderRequest;
+    delete iReadBuffer;
+}
+
+void OhmSenderSession::Run()
+{
+    iShutdownSem.Wait();
+    iErrorStatus = &HttpStatus::kOk;
+    iReaderRequest->Flush();
+    
+	try {
+        try {
+            iReaderRequest->Read();
+        }
+        catch (HttpError&) {
+            Error(HttpStatus::kBadRequest);
+        }
+        if (iReaderRequest->MethodNotAllowed()) {
+            Error(HttpStatus::kMethodNotAllowed);
+        }
+        const Brx& method = iReaderRequest->Method();
+        iResponseStarted = false;
+        iResponseEnded = false;
+        if (method == Http::kMethodGet) {
+            Get(true);
+        }
+		else {
+			Get(false);
+		}
+    }
+    catch (HttpError&) {
+        iErrorStatus = &HttpStatus::kMethodNotAllowed;
+    }
+    catch (ReaderError&) {
+        iErrorStatus = &HttpStatus::kBadRequest;
+    }
+    catch (WriterError&) {
+    }
+    
+	try {
+        if (!iResponseStarted) {
+            if (iErrorStatus == &HttpStatus::kOk) {
+                iErrorStatus = &HttpStatus::kNotFound;
+            }
+            iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
+            Http::WriteHeaderConnectionClose(*iWriterResponse);
+            iWriterResponse->WriteFlush();
+        }
+        else if (!iResponseEnded) {
+            iWriterResponse->WriteFlush();
+        }
+    }
+    catch (WriterError&) {
+	}
+
+    iShutdownSem.Signal();
+}
+
+void OhmSenderSession::Error(const HttpStatus& aStatus)
+{
+    iErrorStatus = &aStatus;
+    THROW(HttpError);
+}
+
+void OhmSenderSession::Get(TBool aWriteEntity)
+{
+    if (iReaderRequest->Version() == Http::eHttp11) {
+        if (!iHeaderHost.Received()) {
+            Error(HttpStatus::kBadRequest);
+        }
+    }
+
+    // DviStack::DeviceMap().WriteResource(iReaderRequest->Uri(), iInterface, *this);
+
+	if (iHeaderExpect.Continue()) {
+        iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);
+        iWriterResponse->WriteFlush();
+    }
+
+    iWriterResponse->WriteStatus(HttpStatus::kOk, Http::eHttp11);
+
+    Http::WriteHeaderContentLength(*iWriterResponse, iSender.Image().Bytes());
+
+	IWriterAscii& writer = iWriterResponse->WriteHeaderField(Http::kHeaderContentType);
+	writer.Write(iSender.MimeType());
+	writer.Write(Brn("; charset=\"utf-8\""));
+	writer.WriteFlush();
+
+	Http::WriteHeaderConnectionClose(*iWriterResponse);
+
+    iWriterResponse->WriteFlush();
+
+    iResponseStarted = true;
+
+	if (aWriteEntity) {
+		iWriterBuffer->Write(iSender.Image());
+	}
+
+    iWriterBuffer->WriteFlush();
 }
 

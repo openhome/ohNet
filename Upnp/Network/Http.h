@@ -409,6 +409,17 @@ protected:
     Bws<kMaxTypeBytes> iType;
 };
 
+class HttpHeaderExpect : public HttpHeader
+{
+public:
+    TBool Continue() const;
+private:
+    TBool Recognise(const Brx& aHeader);
+    void Process(const Brx& aValue);
+private:
+    TBool iContinue;
+};
+
 class EndpointHttp : public Endpoint
 {
 public:

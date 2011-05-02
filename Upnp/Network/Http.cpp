@@ -831,6 +831,25 @@ void HttpHeaderConnection::Process(const Brx& aValue)
     }
 }
 
+// HttpHeaderExpect
+
+TBool HttpHeaderExpect::Continue() const
+{
+    return (Received()? iContinue : false);
+}
+
+TBool HttpHeaderExpect::Recognise(const Brx& aHeader)
+{
+    return (Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderExpect));
+}
+
+void HttpHeaderExpect::Process(const Brx& aValue)
+{
+    SetReceived();
+    iContinue = (aValue == Http::kExpect100Continue);
+}
+
+
 // EndpointHttp
 
 EndpointHttp::EndpointHttp(const Uri& aUri)

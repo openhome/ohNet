@@ -1,4 +1,5 @@
 #include "Soundcard.h"
+#include "Icon.h"
 
 #include <Ascii.h>
 #include <Maths.h>
@@ -164,6 +165,57 @@ void OhmSenderDriverWindows::SetTrackPosition(TUint64 /*aSamplesTotal*/, TUint64
 {
 }
 
+// C interface
+
+THandle SoundcardCreate(const char* aName, uint32_t aChannel, uint32_t aInterface, uint32_t aTtl, uint32_t aMulticast, uint32_t aEnabled)
+{
+	return (Soundcard::Create(aName, aChannel, aInterface, aTtl, (aMulticast == 0) ? false : true, (aEnabled == 0) ? false : true));
+}
+
+void SoundcardSetName(THandle aSoundcard, const char* aValue)
+{
+	((Soundcard*)aSoundcard)->SetName(aValue);
+}
+
+void SoundcardSetChannel(THandle aSoundcard, uint32_t aValue)
+{
+	((Soundcard*)aSoundcard)->SetChannel(aValue);
+}
+
+void SoundcardSetInterface(THandle aSoundcard, uint32_t aValue)
+{
+	((Soundcard*)aSoundcard)->SetInterface(aValue);
+}
+
+void SoundcardSetTtl(THandle aSoundcard, uint32_t aValue)
+{
+	((Soundcard*)aSoundcard)->SetTtl(aValue);
+}
+
+void SoundcardSetMulticast(THandle aSoundcard, uint32_t aValue)
+{
+	((Soundcard*)aSoundcard)->SetMulticast((aValue == 0) ? false : true);
+}
+
+void SoundcardSetEnabled(THandle aSoundcard, uint32_t aValue)
+{
+	((Soundcard*)aSoundcard)->SetEnabled((aValue == 0) ? false : true);
+}
+
+void SoundcardSetTrack(THandle aSoundcard, const char* aUri, const char* aMetadata, uint64_t aSamplesTotal, uint64_t aSampleStart)
+{
+	((Soundcard*)aSoundcard)->SetTrack(aUri, aMetadata, aSamplesTotal, aSampleStart);
+}
+
+void SoundcardSetMetatext(THandle aSoundcard, const char* aValue)
+{
+	((Soundcard*)aSoundcard)->SetMetatext(aValue);
+}
+
+void SoundcardDestroy(THandle aSoundcard)
+{
+	delete ((Soundcard*)aSoundcard);
+}
 
 
 // Soundcard
@@ -171,7 +223,8 @@ void OhmSenderDriverWindows::SetTrackPosition(TUint64 /*aSamplesTotal*/, TUint64
 Soundcard* Soundcard::Create(const TChar* aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled)
 {
 	try {
-		return (new Soundcard(aName, aChannel, aInterface, aTtl, aMulticast, aEnabled));
+		Soundcard* soundcard = new Soundcard(aName, aChannel, aInterface, aTtl, aMulticast, aEnabled);
+		return (soundcard);
 	}
 	catch (SoundcardError) {
 	}
@@ -214,7 +267,9 @@ Soundcard::Soundcard(const TChar* aName, TUint aChannel, TIpAddress aInterface, 
 
     iDriver = new OhmSenderDriverWindows();
     
-	iSender = new OhmSender(*iDevice, *iDriver, Brn(aName), aChannel, aInterface, aTtl, aMulticast, aEnabled);
+	Brn icon(icon_png, icon_png_len);
+
+	iSender = new OhmSender(*iDevice, *iDriver, Brn(aName), aChannel, aInterface, aTtl, aMulticast, aEnabled, icon, Brn("image/png"));
 	
     iDevice->SetEnabled();
 }

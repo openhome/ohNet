@@ -23,17 +23,6 @@ public:
     virtual TBool RedirectUri(const Brx& aUri, Brn& aRedirectTo) = 0;
 };
     
-class HeaderExpect : public HttpHeader
-{
-public:
-    TBool Continue() const;
-private:
-    TBool Recognise(const Brx& aHeader);
-    void Process(const Brx& aValue);
-private:
-    TBool iContinue;
-};
-
 class HeaderSoapAction : public HttpHeader
 {
 public:
@@ -156,7 +145,7 @@ private:
     HttpHeaderHost iHeaderHost;
     HttpHeaderContentLength iHeaderContentLength;
     HttpHeaderConnection iHeaderConnection;
-    HeaderExpect iHeaderExpect;
+    HttpHeaderExpect iHeaderExpect;
     HeaderSoapAction iHeaderSoapAction;
     HeaderSid iHeaderSid;
     HeaderTimeout iHeaderTimeout;

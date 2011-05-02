@@ -10,6 +10,25 @@
 #include "../../Library/Ohm.h"
 #include "../../Library/OhmSender.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+DllExport THandle SoundcardCreate(const char* aName, uint32_t aChannel, uint32_t aInterface, uint32_t aTtl, uint32_t aMulticast, uint32_t aEnabled);
+DllExport void SoundcardSetName(THandle aSoundcard, const char* aValue);
+DllExport void SoundcardSetChannel(THandle aSoundcard, uint32_t aValue);
+DllExport void SoundcardSetInterface(THandle aSoundcard, uint32_t aValue);
+DllExport void SoundcardSetTtl(THandle aSoundcard, uint32_t aValue);
+DllExport void SoundcardSetMulticast(THandle aSoundcard, uint32_t aValue);
+DllExport void SoundcardSetEnabled(THandle aSoundcard, uint32_t aValue);
+DllExport void SoundcardSetTrack(THandle aSoundcard, const char* aUri, const char* aMetadata, uint64_t aSamplesTotal, uint64_t aSampleStart);
+DllExport void SoundcardSetMetatext(THandle aSoundcard, const char* aValue);
+DllExport void SoundcardDestroy(THandle aSoundcard);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 namespace Zapp {
 
 class OhmSenderDriverWindows : public IOhmSenderDriver
