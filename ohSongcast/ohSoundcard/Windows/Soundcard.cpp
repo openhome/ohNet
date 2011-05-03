@@ -231,7 +231,7 @@ Soundcard* Soundcard::Create(const TChar* aName, TUint aChannel, TIpAddress aInt
 	return (0);
 }
 
-Soundcard::Soundcard(const TChar* aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled)
+Soundcard::Soundcard(const TChar* /*aName*/, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled)
 {
 	InitialisationParams* initParams = InitialisationParams::Create();
 
@@ -241,21 +241,26 @@ Soundcard::Soundcard(const TChar* aName, TUint aChannel, TIpAddress aInterface, 
 
 	Bws<kMaxUdnBytes> computer;
 	Bws<kMaxUdnBytes> udn;
+	Bws<kMaxUdnBytes + 1> friendly;
 
 	TUint bytes = computer.MaxBytes();
 
-	if (GetComputerName((LPSTR)computer.Ptr(), (LPDWORD)&bytes)) {
-		computer.SetBytes(bytes);
-		udn.Replace("ohSoundcard-");
-		udn.Append(computer);
+	if (!GetComputerName((LPSTR)computer.Ptr(), (LPDWORD)&bytes)) {
+		THROW(SoundcardError);
 	}
+
+	computer.SetBytes(bytes);
+	udn.Replace("ohSoundcard-");
+	udn.Append(computer);
+	friendly.Replace(udn);
+	friendly.Append('\0');
 
 	iDevice = new DvDeviceStandard(udn);
     
 	iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Soundcard");
     iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", aName);
+    iDevice->SetAttribute("Upnp.FriendlyName", (TChar*)friendly.Ptr());
     iDevice->SetAttribute("Upnp.Manufacturer", "Openhome");
     iDevice->SetAttribute("Upnp.ManufacturerUrl", "http://www.openhome.org");
     iDevice->SetAttribute("Upnp.ModelDescription", "OpenHome Soundcard");
@@ -269,7 +274,7 @@ Soundcard::Soundcard(const TChar* aName, TUint aChannel, TIpAddress aInterface, 
     
 	Brn icon(icon_png, icon_png_len);
 
-	iSender = new OhmSender(*iDevice, *iDriver, Brn(aName), aChannel, aInterface, aTtl, aMulticast, aEnabled, icon, Brn("image/png"));
+	iSender = new OhmSender(*iDevice, *iDriver, computer, aChannel, aInterface, aTtl, aMulticast, aEnabled, icon, Brn("image/png"));
 	
     iDevice->SetEnabled();
 }

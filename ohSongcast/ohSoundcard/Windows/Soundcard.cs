@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Net;
 
-namespace Zapp
+namespace ohSoundcard
 {
     public class Soundcard : IDisposable
     {
@@ -85,5 +85,4 @@ namespace Zapp
 
         protected IntPtr iHandle;
     }
-
-}
+} // namespace ohSoundcard
