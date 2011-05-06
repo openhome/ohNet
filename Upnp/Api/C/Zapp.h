@@ -338,6 +338,16 @@ DllExport void ZappInitParamsSetDvNumPublisherThreads(ZappHandleInitParams aPara
 DllExport void ZappInitParamsSetDvNumWebSocketThreads(ZappHandleInitParams aParams, uint32_t aNumThreads);
 
 /**
+ * Set the tcp port number web socket servers will run on.
+ *
+ * You should question your design if you need to use this.
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aPort            Port number.  0 (the default value) implies an OS-assigned port.
+ */
+DllExport void ZappInitParamsSetDvWebSocketPort(ZappHandleInitParams aParams, uint32_t aPort);
+
+/**
  * Enable use of Bonjour.
  * All DvDevice instances with a resource manager will be published using Bonjour.
  * If a device sets the "Upnp.MdnsHostName" attribute, its presentation will be available via http://[hostname].local.
@@ -465,6 +475,15 @@ DllExport uint32_t ZappInitParamsDvNumPublisherThreads(ZappHandleInitParams aPar
  * @return  number of threads
  */
 DllExport uint32_t ZappInitParamsDvNumWebSocketThreads(ZappHandleInitParams aParams);
+
+/**
+ * Query the port the WebSocket server will run on.
+ *
+ * @param[in] aParams          Initialisation params
+ *
+ * @return  port number
+ */
+DllExport uint32_t ZappInitParamsDvWebSocketPort(ZappHandleInitParams aParams);
 
 /**
  * Query whether Bonjour is enabled

@@ -221,6 +221,11 @@ void InitialisationParams::SetDvNumWebSocketThreads(uint32_t aNumThreads)
     iDvNumWebSocketThreads = aNumThreads;
 }
 
+void InitialisationParams::SetDvWebSocketPort(TUint aPort)
+{
+    iDvWebSocketPort = aPort;
+}
+
 void InitialisationParams::SetDvEnableBonjour()
 {
     iEnableBonjour = true;
@@ -336,6 +341,11 @@ uint32_t InitialisationParams::DvNumWebSocketThreads() const
 	return iDvNumWebSocketThreads;
 }
 
+uint32_t InitialisationParams::DvWebSocketPort() const
+{
+    return iDvWebSocketPort;
+}
+
 bool InitialisationParams::DvIsBonjourEnabled() const
 {
     return iEnableBonjour;
@@ -358,6 +368,7 @@ InitialisationParams::InitialisationParams()
     , iDvNumServerThreads(4)
 	, iDvNumPublisherThreads(4)
     , iDvNumWebSocketThreads(0)
+    , iDvWebSocketPort(0)
     , iEnableBonjour(false)
 {
     iDefaultLogger = new DefaultLogger;

@@ -225,7 +225,7 @@ PropertyWriterWs::~PropertyWriterWs()
 
 void PropertyWriterWs::PropertyWriteEnd()
 {
-    iWriter.Write(Brn("</root>"));
+    iWriter.Write(Brn("</e:propertyset></root>"));
     Brh* buf = new Brh;
     iWriter.TransferTo(*buf);
     iSession.QueuePropertyUpdate(buf);
@@ -793,7 +793,7 @@ DviServerWebSocket::DviServerWebSocket()
 
 SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkInterface& aNif)
 {
-    SocketTcpServer* server = new SocketTcpServer("WSSV", 54321, aNif.Address());
+    SocketTcpServer* server = new SocketTcpServer("WSSV", Stack::InitParams().DvWebSocketPort(), aNif.Address());
     TChar thName[5];
 	const TUint numWsThreads = Stack::InitParams().DvNumWebSocketThreads();
     for (TUint i=0; i<numWsThreads; i++) {

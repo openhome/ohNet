@@ -1,0 +1,21 @@
+<scpd>
+    <serviceStateTable>
+        <stateVariable>
+            <name>A_ARG_TYPE_WebSocketPort</name>
+            <sendEventsAttribute>no</sendEventsAttribute>
+            <dataType>ui4</dataType>
+        </stateVariable>
+    </serviceStateTable>
+    <actionList>
+        <action>
+            <name>GetWebSocketPort</name>
+            <argumentList>
+                <argument>
+                    <name>Port</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_WebSocketPort</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+    </actionList>
+</scpd>
