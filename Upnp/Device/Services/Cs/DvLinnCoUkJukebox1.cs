@@ -741,7 +741,7 @@ namespace Zapp.Device.Providers
         /// <summary>
         /// Must be called for each class instance.  Must be called before Core.Library.Close().
         /// </summary>
-        public void Dispose()
+        public virtual void Dispose()
         {
             DoDispose();
             GC.SuppressFinalize(this);

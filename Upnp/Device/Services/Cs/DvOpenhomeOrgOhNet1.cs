@@ -6,101 +6,66 @@ using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
-    public interface IDvProviderLinnCoUkMediaTime1 : IDisposable
+    public interface IDvProviderOpenhomeOrgOhNet1 : IDisposable
     {
-
-        /// <summary>
-        /// Set the value of the Seconds property
-        /// </summary>
-        /// <param name="aValue">New value for the property</param>
-        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        bool SetPropertySeconds(uint aValue);
-
-        /// <summary>
-        /// Get a copy of the value of the Seconds property
-        /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        uint PropertySeconds();
         
     }
     /// <summary>
-    /// Provider for the linn.co.uk:MediaTime:1 UPnP service
+    /// Provider for the openhome.org:OhNet:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkMediaTime1 : DvProvider, IDisposable, IDvProviderLinnCoUkMediaTime1
+    public class DvProviderOpenhomeOrgOhNet1 : DvProvider, IDisposable, IDvProviderOpenhomeOrgOhNet1
     {
         private GCHandle iGch;
-        private ActionDelegate iDelegateSeconds;
-        private PropertyUint iPropertySeconds;
+        private ActionDelegate iDelegateGetWebSocketPort;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
-        protected DvProviderLinnCoUkMediaTime1(DvDevice aDevice)
-            : base(aDevice, "linn.co.uk", "MediaTime", 1)
+        protected DvProviderOpenhomeOrgOhNet1(DvDevice aDevice)
+            : base(aDevice, "openhome.org", "OhNet", 1)
         {
             iGch = GCHandle.Alloc(this);
-            iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"));
-            AddProperty(iPropertySeconds);
         }
 
         /// <summary>
-        /// Set the value of the Seconds property
-        /// </summary>
-        /// <param name="aValue">New value for the property</param>
-        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public bool SetPropertySeconds(uint aValue)
-        {
-            return SetPropertyUint(iPropertySeconds, aValue);
-        }
-
-        /// <summary>
-        /// Get a copy of the value of the Seconds property
-        /// </summary>
-        /// <returns>The value of the property</returns>
-        public uint PropertySeconds()
-        {
-            return iPropertySeconds.Value();
-        }
-
-        /// <summary>
-        /// Signal that the action Seconds is supported.
+        /// Signal that the action GetWebSocketPort is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// Seconds must be overridden if this is called.</remarks>
-        protected void EnableActionSeconds()
+        /// GetWebSocketPort must be overridden if this is called.</remarks>
+        protected void EnableActionGetWebSocketPort()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Seconds");
-            action.AddOutputParameter(new ParameterRelated("aSeconds", iPropertySeconds));
-            iDelegateSeconds = new ActionDelegate(DoSeconds);
-            EnableAction(action, iDelegateSeconds, GCHandle.ToIntPtr(iGch));
+            Zapp.Core.Action action = new Zapp.Core.Action("GetWebSocketPort");
+            action.AddOutputParameter(new ParameterUint("Port"));
+            iDelegateGetWebSocketPort = new ActionDelegate(DoGetWebSocketPort);
+            EnableAction(action, iDelegateGetWebSocketPort, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
-        /// Seconds action.
+        /// GetWebSocketPort action.
         /// </summary>
         /// <remarks>Will be called when the device stack receives an invocation of the
-        /// Seconds action for the owning device.
+        /// GetWebSocketPort action for the owning device.
         ///
-        /// Must be implemented iff EnableActionSeconds was called.</remarks>
+        /// Must be implemented iff EnableActionGetWebSocketPort was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        /// <param name="aaSeconds"></param>
-        protected virtual void Seconds(uint aVersion, out uint aaSeconds)
+        /// <param name="aPort"></param>
+        protected virtual void GetWebSocketPort(uint aVersion, out uint aPort)
         {
             throw (new ActionDisabledError());
         }
 
-        private static int DoSeconds(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoGetWebSocketPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvProviderLinnCoUkMediaTime1 self = (DvProviderLinnCoUkMediaTime1)gch.Target;
+            DvProviderOpenhomeOrgOhNet1 self = (DvProviderOpenhomeOrgOhNet1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            uint aSeconds;
+            uint port;
             try
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Seconds(aVersion, out aSeconds);
+                self.GetWebSocketPort(aVersion, out port);
             }
             catch (ActionError)
             {
@@ -121,7 +86,7 @@ namespace Zapp.Device.Providers
             try
             {
                 invocation.WriteStart();
-                invocation.WriteUint("aSeconds", aSeconds);
+                invocation.WriteUint("Port", port);
                 invocation.WriteEnd();
             }
             catch (ActionError)
@@ -146,7 +111,7 @@ namespace Zapp.Device.Providers
             GC.SuppressFinalize(this);
         }
 
-        ~DvProviderLinnCoUkMediaTime1()
+        ~DvProviderOpenhomeOrgOhNet1()
         {
             DoDispose();
         }
