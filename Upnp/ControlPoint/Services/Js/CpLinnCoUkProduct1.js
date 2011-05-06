@@ -78,7 +78,7 @@ CpProxyLinnCoUkProduct1.prototype.Standby_Changed = function (stateChangedFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct1.prototype.Room = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Room", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Room", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aRoom"] = Zapp.SoapRequest.readStringParameter(result["aRoom"]);	
 	
@@ -99,7 +99,7 @@ CpProxyLinnCoUkProduct1.prototype.Room = function(successFunction, errorFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct1.prototype.SetRoom = function(aRoom, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetRoom", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetRoom", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("aRoom", aRoom);
     request.send(function(result){
 	
@@ -119,7 +119,7 @@ CpProxyLinnCoUkProduct1.prototype.SetRoom = function(aRoom, successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct1.prototype.Standby = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Standby", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Standby", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aStandby"] = Zapp.SoapRequest.readBoolParameter(result["aStandby"]);	
 	
@@ -140,7 +140,7 @@ CpProxyLinnCoUkProduct1.prototype.Standby = function(successFunction, errorFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkProduct1.prototype.SetStandby = function(aStandby, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetStandby", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetStandby", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("aStandby", aStandby);
     request.send(function(result){
 	

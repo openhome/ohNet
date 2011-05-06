@@ -92,7 +92,7 @@ CpProxyLinnCoUkTime1.prototype.Seconds_Changed = function (stateChangedFunction)
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkTime1.prototype.Time = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Time", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Time", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aTrackCount"] = Zapp.SoapRequest.readIntParameter(result["aTrackCount"]);	
 		result["aDuration"] = Zapp.SoapRequest.readIntParameter(result["aDuration"]);	

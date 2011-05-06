@@ -78,7 +78,7 @@ CpProxyLinnCoUkConfiguration1.prototype.ParameterXml_Changed = function (stateCh
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkConfiguration1.prototype.ConfigurationXml = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ConfigurationXml", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ConfigurationXml", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aConfigurationXml"] = Zapp.SoapRequest.readStringParameter(result["aConfigurationXml"]);	
 	
@@ -98,7 +98,7 @@ CpProxyLinnCoUkConfiguration1.prototype.ConfigurationXml = function(successFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkConfiguration1.prototype.ParameterXml = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ParameterXml", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("ParameterXml", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aParameterXml"] = Zapp.SoapRequest.readStringParameter(result["aParameterXml"]);	
 	
@@ -121,7 +121,7 @@ CpProxyLinnCoUkConfiguration1.prototype.ParameterXml = function(successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkConfiguration1.prototype.SetParameter = function(aTarget, aName, aValue, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetParameter", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetParameter", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("aTarget", aTarget);
     request.writeStringParameter("aName", aName);
     request.writeStringParameter("aValue", aValue);

@@ -93,7 +93,7 @@ CpProxyLinnCoUkJukebox1.prototype.AlbumArtFileName_Changed = function (stateChan
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkJukebox1.prototype.SetPresetPrefix = function(aUri, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetPresetPrefix", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetPresetPrefix", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("aUri", aUri);
     request.send(function(result){
 	
@@ -113,7 +113,7 @@ CpProxyLinnCoUkJukebox1.prototype.SetPresetPrefix = function(aUri, successFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkJukebox1.prototype.PresetPrefix = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("PresetPrefix", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("PresetPrefix", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aUri"] = Zapp.SoapRequest.readStringParameter(result["aUri"]);	
 	
@@ -134,7 +134,7 @@ CpProxyLinnCoUkJukebox1.prototype.PresetPrefix = function(successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkJukebox1.prototype.SetAlbumArtFileName = function(aName, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetAlbumArtFileName", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetAlbumArtFileName", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("aName", aName);
     request.send(function(result){
 	
@@ -154,7 +154,7 @@ CpProxyLinnCoUkJukebox1.prototype.SetAlbumArtFileName = function(aName, successF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkJukebox1.prototype.AlbumArtFileName = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("AlbumArtFileName", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("AlbumArtFileName", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aName"] = Zapp.SoapRequest.readStringParameter(result["aName"]);	
 	
@@ -175,7 +175,7 @@ CpProxyLinnCoUkJukebox1.prototype.AlbumArtFileName = function(successFunction, e
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkJukebox1.prototype.SetCurrentPreset = function(aPreset, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetCurrentPreset", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetCurrentPreset", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aPreset", aPreset);
     request.send(function(result){
 	
@@ -195,7 +195,7 @@ CpProxyLinnCoUkJukebox1.prototype.SetCurrentPreset = function(aPreset, successFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkJukebox1.prototype.CurrentPreset = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("CurrentPreset", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("CurrentPreset", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aPreset"] = Zapp.SoapRequest.readIntParameter(result["aPreset"]);	
 	
@@ -216,7 +216,7 @@ CpProxyLinnCoUkJukebox1.prototype.CurrentPreset = function(successFunction, erro
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkJukebox1.prototype.PresetMetaData = function(aPreset, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("PresetMetaData", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("PresetMetaData", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aPreset", aPreset);
     request.send(function(result){
 		result["aMetaData"] = Zapp.SoapRequest.readStringParameter(result["aMetaData"]);	
@@ -237,7 +237,7 @@ CpProxyLinnCoUkJukebox1.prototype.PresetMetaData = function(aPreset, successFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkJukebox1.prototype.LoadManifest = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("LoadManifest", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("LoadManifest", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aTotalPresets"] = Zapp.SoapRequest.readIntParameter(result["aTotalPresets"]);	
 	

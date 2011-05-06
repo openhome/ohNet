@@ -51,7 +51,7 @@ CpProxyLinnCoUkPtest1.prototype.unsubscribe = function () {
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPtest1.prototype.TestComPort = function(aPort, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("TestComPort", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("TestComPort", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aPort", aPort);
     request.send(function(result){
 		result["aResult"] = Zapp.SoapRequest.readBoolParameter(result["aResult"]);	
@@ -72,7 +72,7 @@ CpProxyLinnCoUkPtest1.prototype.TestComPort = function(aPort, successFunction, e
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPtest1.prototype.LedsOn = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("LedsOn", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("LedsOn", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -91,7 +91,7 @@ CpProxyLinnCoUkPtest1.prototype.LedsOn = function(successFunction, errorFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkPtest1.prototype.LedsOff = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("LedsOff", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("LedsOff", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){

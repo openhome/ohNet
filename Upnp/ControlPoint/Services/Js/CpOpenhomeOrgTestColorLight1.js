@@ -50,7 +50,7 @@ CpProxyOpenhomeOrgTestColorLight1.prototype.unsubscribe = function () {
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestColorLight1.prototype.GetName = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetName", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetName", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["FriendlyName"] = Zapp.SoapRequest.readStringParameter(result["FriendlyName"]);	
 	
@@ -73,7 +73,7 @@ CpProxyOpenhomeOrgTestColorLight1.prototype.GetName = function(successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestColorLight1.prototype.SetColor = function(Red, Green, Blue, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetColor", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetColor", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Red", Red);
     request.writeIntParameter("Green", Green);
     request.writeIntParameter("Blue", Blue);
@@ -95,7 +95,7 @@ CpProxyOpenhomeOrgTestColorLight1.prototype.SetColor = function(Red, Green, Blue
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestColorLight1.prototype.GetColor = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetColor", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetColor", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["Red"] = Zapp.SoapRequest.readIntParameter(result["Red"]);	
 		result["Green"] = Zapp.SoapRequest.readIntParameter(result["Green"]);	
@@ -117,7 +117,7 @@ CpProxyOpenhomeOrgTestColorLight1.prototype.GetColor = function(successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestColorLight1.prototype.GetMaxColors = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetMaxColors", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetMaxColors", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["Red"] = Zapp.SoapRequest.readIntParameter(result["Red"]);	
 		result["Green"] = Zapp.SoapRequest.readIntParameter(result["Green"]);	
