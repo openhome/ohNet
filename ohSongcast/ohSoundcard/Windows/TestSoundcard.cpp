@@ -26,14 +26,14 @@ using namespace Zapp::TestFramework;
 
 int __cdecl main(int aArgc, char* aArgv[])
 {
-	//Debug::SetLevel(Debug::kMedia);
+	Debug::SetLevel(Debug::kMedia);
 	
     OptionParser parser;
     
     OptionString optionName("-n", "--name", Brn("TestSoundcard"), "[name] name of the soundcard");
     parser.AddOption(&optionName);
     
-    OptionUint optionChannel("-c", "--channel", 0, "[0..65535] moulticast channel");
+    OptionUint optionChannel("-c", "--channel", 0, "[0..65535] multicast channel");
     parser.AddOption(&optionChannel);
 
     OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
@@ -47,6 +47,9 @@ int __cdecl main(int aArgc, char* aArgv[])
 
     OptionBool optionDisabled("-d", "--disabled", "[disabled] start up disabled");
     parser.AddOption(&optionDisabled);
+
+    OptionUint optionPreset("-p", "--preset", 0, "[0..99] preset number");
+    parser.AddOption(&optionPreset);
 
     if (!parser.Parse(aArgc, aArgv)) {
         return (1);
@@ -71,8 +74,9 @@ int __cdecl main(int aArgc, char* aArgv[])
     TUint ttl = optionTtl.Value();
     TBool multicast = optionMulticast.Value();
     TBool disabled = optionDisabled.Value();
+    TUint preset = optionPreset.Value();
 
-    Soundcard* soundcard = Soundcard::Create(name, channel, iface, ttl, multicast, !disabled);
+    Soundcard* soundcard = Soundcard::Create(name, channel, iface, ttl, multicast, !disabled, preset);
 
 	if (soundcard == 0) {
 		printf("Soundcard error\n");
@@ -80,6 +84,7 @@ int __cdecl main(int aArgc, char* aArgv[])
 	}
 
 	printf("name = %s\n", name);
+	printf("preset = %d\n", preset);
 
     if (multicast) {
         printf("multicast\n");

@@ -73,8 +73,11 @@ class OhmSender
     static const TUint kTimerAliveAudioTimeoutMs = 3000;
     static const TUint kTimerExpiryTimeoutMs = 3100;
     static const TUint kMaxSlaveCount = 4;
-	static const TUint kMaxImageBytes = 30*1024;
+	static const TUint kMaxImageBytes = 30 * 1024;
 	static const TUint kMaxMimeTypeBytes = 100;
+    static const TUint kMaxZoneFrameBytes = 1 * 1024;
+    static const TUint kTimerZoneUriDelayMs = 100;
+    static const TUint kTimerPresetInfoDelayMs = 100;
 
 public:
 	static const TUint kMaxNameBytes = 32;
@@ -83,7 +86,7 @@ public:
 	static const TUint kMaxTrackMetatextBytes = Ohm::kMaxTrackMetatextBytes;
 
 public:
-    OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled, const Brx& aImage, const Brx& aMimeType);
+    OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled, const Brx& aImage, const Brx& aMimeType, TUint aPreset);
     ~OhmSender();
 
 	const Brx& Image() const;
@@ -97,22 +100,28 @@ public:
 	void SetEnabled(TBool aValue);
     void SetTrack(const Brx& aUri, const Brx& aMetadata, TUint64 aSamplesTotal, TUint64 aSampleStart);
 	void SetMetatext(const Brx& aValue);
+	void SetPreset(TUint aValue);
     
 private:
-	void RunPipeline();
     void RunMulticast();
     void RunUnicast();
+	void RunZone();
 
     void UpdateChannel();
     void UpdateMetadata();
+    void UpdateUri();
 
     void Start();
     void Stop();
+    void StartZone();
+    void StopZone();
     void EnabledChanged();
     void ChannelChanged();
     void TimerAliveJoinExpired();
     void TimerAliveAudioExpired();
     void TimerExpiryExpired();
+    void TimerZoneUriExpired();
+    void TimerPresetInfoExpired();
     void Send();
     void SendTrackInfo();
     void SendTrack();
@@ -120,6 +129,10 @@ private:
     void SendSlaveList();
     void SendListen(const Endpoint& aEndpoint);
     void SendLeave(const Endpoint& aEndpoint);
+	void SendZoneUri(TUint aCount);
+	void SendZoneUri();
+	void SendPresetInfo(TUint aCount);
+	void SendPresetInfo();
     TUint FindSlave(const Endpoint& aEndpoint);
     void RemoveSlave(TUint aIndex);
     TBool CheckSlaveExpiry();
@@ -135,15 +148,22 @@ private:
     TBool iEnabled;
 	Bws<kMaxImageBytes> iImage;
 	Bws<kMaxMimeTypeBytes> iMimeType;
-    OhmSocket iSocket;
+    OhmSocket iSocketOhm;
+    OhzSocket iSocketOhz;
     Srs<kMaxAudioFrameBytes> iRxBuffer;
     Bws<kMaxAudioFrameBytes> iTxBuffer;
+    Srs<kMaxZoneFrameBytes> iRxZone;
+    Bws<kMaxZoneFrameBytes> iTxZone;
     Mutex iMutexStartStop;
     Mutex iMutexActive;
-    Semaphore iNetworkAudioDeactivated;
+    Mutex iMutexZone;
+    Semaphore iNetworkDeactivated;
+    Semaphore iZoneDeactivated;
     Timer iTimerAliveJoin;
     Timer iTimerAliveAudio;
     Timer iTimerExpiry;
+    Timer iTimerZoneUri;
+    Timer iTimerPresetInfo;
     ProviderSender* iProvider;
     TBool iStarted;
     TBool iActive;
@@ -153,6 +173,7 @@ private:
     Endpoint iTargetEndpoint;
     ThreadFunctor* iThreadMulticast;
     ThreadFunctor* iThreadUnicast;
+    ThreadFunctor* iThreadZone;
     Bws<Ohm::kMaxUriBytes> iUri;
     Bws<kMaxMetadataBytes> iMetadata;
     TUint iSlaveCount;
@@ -165,6 +186,9 @@ private:
     TUint iSequenceMetatext;
     SocketTcpServer* iServer;
 	TBool iClientControllingTrackMetadata;
+	TUint iSendZoneUriCount;
+	TUint iSendPresetInfoCount;
+	TUint iPreset;
 };
 
 class OhmSenderSession : public SocketTcpSession
@@ -189,7 +213,7 @@ private:
 	const HttpStatus* iErrorStatus;
     TBool iResponseStarted;
     TBool iResponseEnded;
-    Semaphore iShutdownSem;
+    Semaphore iSemaphore;
 };
 
 

@@ -82,10 +82,66 @@ OhmSocket::~OhmSocket()
 }
 
 
+// OhzSocket
+
+OhzSocket::OhzSocket()
+	: iSocket(0)
+	, iEndpoint(51972, Brn("239.255.255.250"))
+{
+}
+
+void OhzSocket::Open(TIpAddress aInterface, TUint aTtl)
+{
+    ASSERT(!iSocket);
+    iSocket = new SocketUdpMulticast(aInterface, iEndpoint);
+    iSocket->SetTtl(aTtl);
+    iReader = new UdpReader(*iSocket);
+}
+
+void OhzSocket::Send(const Brx& aBuffer)
+{
+    ASSERT(iSocket);
+    iSocket->Send(aBuffer, iEndpoint);
+}
+
+void OhzSocket::Close()
+{
+    ASSERT(iSocket);
+    delete (iSocket);
+    delete (iReader);
+    iReader = 0;
+    iSocket = 0;
+}
+    
+void OhzSocket::Read(Bwx& aBuffer)
+{
+    ASSERT(iSocket);
+    iReader->Read(aBuffer);
+}
+
+void OhzSocket::ReadFlush()
+{
+    ASSERT(iSocket != 0);
+    iReader->ReadFlush();
+}
+
+void OhzSocket::ReadInterrupt()
+{
+    ASSERT(iSocket != 0);
+    iReader->ReadInterrupt();
+}
+
+OhzSocket::~OhzSocket()
+{
+    if (iSocket != 0) {
+        Close();
+    }
+}
+
+
+
 ////////////////////////////////////////////////////////
 // OHM Protocol                        
-    
-
 
 // OhmHeader
 
@@ -418,7 +474,7 @@ void OhmHeaderSlave::Externalise(IWriter& aWriter) const
 const Brn OhzHeader::kOhz("Ohz ");
 
 OhzHeader::OhzHeader()
-    : iMsgType(kMsgTypeQuery)
+    : iMsgType(0)
     , iBytes(kHeaderBytes)
 {
 }
@@ -447,7 +503,7 @@ void OhzHeader::Internalise(IReader& aReader)
 
     iMsgType  = reader.ReadUintBe(1);
 
-    if(iMsgType > kMsgTypeUri) {
+    if(iMsgType > kMsgTypePresetInfo) {
         THROW(OhzError);
     }
 
@@ -468,21 +524,21 @@ void OhzHeader::Externalise(IWriter& aWriter) const
     writer.WriteUint16Be(iBytes);
 }
 
-// OhzHeaderUri
+// OhzHeaderZoneUri
 
-OhzHeaderUri::OhzHeaderUri()
+OhzHeaderZoneUri::OhzHeaderZoneUri()
 {
 }
 
-OhzHeaderUri::OhzHeaderUri(const Brx& aZone, const Brx& aUri)
+OhzHeaderZoneUri::OhzHeaderZoneUri(const Brx& aZone, const Brx& aUri)
 {
     iZoneBytes = aZone.Bytes();
     iUriBytes = aUri.Bytes();
 }
 
-void OhzHeaderUri::Internalise(IReader& aReader, const OhzHeader& aHeader)
+void OhzHeaderZoneUri::Internalise(IReader& aReader, const OhzHeader& aHeader)
 {
-    ASSERT (aHeader.MsgType() == OhzHeader::kMsgTypeUri);
+    ASSERT (aHeader.MsgType() == OhzHeader::kMsgTypeZoneUri);
     
     ReaderBinary readerBinary(aReader);
 
@@ -490,7 +546,7 @@ void OhzHeaderUri::Internalise(IReader& aReader, const OhzHeader& aHeader)
     iUriBytes = readerBinary.ReadUintBe(4);
 }
 
-void OhzHeaderUri::Externalise(IWriter& aWriter) const
+void OhzHeaderZoneUri::Externalise(IWriter& aWriter) const
 {
     WriterBinary writer(aWriter);
 
@@ -498,32 +554,87 @@ void OhzHeaderUri::Externalise(IWriter& aWriter) const
     writer.WriteUint32Be(iUriBytes);
 }
 
-// OhzHeaderQuery
+// OhzHeaderZoneQuery
 
-OhzHeaderQuery::OhzHeaderQuery()
+OhzHeaderZoneQuery::OhzHeaderZoneQuery()
 {
 }
     
-OhzHeaderQuery::OhzHeaderQuery(const Brx& aQuery)
+OhzHeaderZoneQuery::OhzHeaderZoneQuery(const Brx& aQuery)
 {
     iZoneBytes = aQuery.Bytes();
 }
 
-void OhzHeaderQuery::Internalise(IReader& aReader, const OhzHeader& aHeader)
+void OhzHeaderZoneQuery::Internalise(IReader& aReader, const OhzHeader& aHeader)
 {
-    ASSERT (aHeader.MsgType() == OhzHeader::kMsgTypeQuery);
+    ASSERT (aHeader.MsgType() == OhzHeader::kMsgTypeZoneQuery);
     
     ReaderBinary readerBinary(aReader);
 
     iZoneBytes = readerBinary.ReadUintBe(4);
 }
 
-void OhzHeaderQuery::Externalise(IWriter& aWriter) const
+void OhzHeaderZoneQuery::Externalise(IWriter& aWriter) const
 {
     WriterBinary writer(aWriter);
 
     writer.WriteUint32Be(iZoneBytes);
 }
     
-    
-    
+// OhzHeaderPresetQuery
+
+OhzHeaderPresetQuery::OhzHeaderPresetQuery()
+{
+}
+
+OhzHeaderPresetQuery::OhzHeaderPresetQuery(TUint aPreset)
+{
+	iPreset = aPreset;
+}
+
+void OhzHeaderPresetQuery::Internalise(IReader& aReader, const OhzHeader& aHeader)
+{
+    ASSERT (aHeader.MsgType() == OhzHeader::kMsgTypePresetQuery);
+
+    ReaderBinary readerBinary(aReader);
+
+	iPreset = readerBinary.ReadUintBe(4);
+}
+
+void OhzHeaderPresetQuery::Externalise(IWriter& aWriter) const
+{
+	WriterBinary writer(aWriter);
+
+	writer.WriteUint32Be(iPreset);
+}
+
+// ZonepusHeaderUri
+
+OhzHeaderPresetInfo::OhzHeaderPresetInfo()
+{
+}
+
+OhzHeaderPresetInfo::OhzHeaderPresetInfo(TUint aPreset, const Brx& aMetadata)
+{
+	iPreset = aPreset;
+    iMetadataBytes = aMetadata.Bytes();
+}
+
+void OhzHeaderPresetInfo::Internalise(IReader& aReader, const OhzHeader& aHeader)
+{
+    ASSERT (aHeader.MsgType() == OhzHeader::kMsgTypePresetInfo);
+
+    ReaderBinary readerBinary(aReader);
+
+    iPreset = readerBinary.ReadUintBe(4);
+    iMetadataBytes = readerBinary.ReadUintBe(4);
+}
+
+void OhzHeaderPresetInfo::Externalise(IWriter& aWriter) const
+{
+    WriterBinary writer(aWriter);
+
+    writer.WriteUint32Be(iPreset);
+    writer.WriteUint32Be(iMetadataBytes);
+}
+

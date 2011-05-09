@@ -684,6 +684,7 @@ int32_t OsNetworkSocketSetMulticastTtl(THandle aHandle, uint8_t aTtl)
 int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress)
 {
     int32_t err;
+    char loop;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
 
     struct ip_mreq mreq;
@@ -694,6 +695,9 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
     if (err != 0) {
         return err;
     }
+    
+    loop = 1;
+    err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
     
     return err;
 }
