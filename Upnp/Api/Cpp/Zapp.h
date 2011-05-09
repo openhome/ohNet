@@ -205,6 +205,12 @@ public:
      */
     void SetDvNumWebSocketThreads(uint32_t aNumThreads);
     /**
+     * Set the tcp port number web socket servers will run on.
+     * The default value is 0 (meaning that the OS will assign a port).
+     * You should question your design if you need to use this.
+     */
+    void SetDvWebSocketPort(TUint aPort);
+    /**
      * Enable use of Bonjour.
      * All DvDevice instances with an IResourceManager will be published using Bonjour.
      * If a device sets the "Upnp.MdnsHostName" attribute, its presentation will be available via http://[hostname].local.
@@ -235,6 +241,7 @@ public:
     uint32_t DvNumServerThreads() const;
     uint32_t DvNumPublisherThreads() const;
     uint32_t DvNumWebSocketThreads() const;
+    uint32_t DvWebSocketPort() const;
     bool DvIsBonjourEnabled() const;
 private:
     InitialisationParams();
@@ -264,6 +271,7 @@ private:
     uint32_t iDvNumServerThreads;
 	uint32_t iDvNumPublisherThreads;
     uint32_t iDvNumWebSocketThreads;
+    uint32_t iDvWebSocketPort;
     bool iEnableBonjour;
 };
 

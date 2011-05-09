@@ -258,4 +258,11 @@
     <type>TestColorLight</type>
     <version>1</version>
   </service>
+  <service>
+    <publisher>Openhome</publisher>
+    <dcpdir></dcpdir>
+    <domain>openhome.org</domain>
+    <type>OhNet</type>
+    <version>1</version>
+  </service>
 </servicelist>

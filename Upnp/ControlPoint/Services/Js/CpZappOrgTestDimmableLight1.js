@@ -64,7 +64,7 @@ CpProxyZappOrgTestDimmableLight1.prototype.A_ARG_Level_Changed = function (state
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestDimmableLight1.prototype.GetLevel = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetLevel", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetLevel", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["Level"] = Zapp.SoapRequest.readIntParameter(result["Level"]);	
 	
@@ -85,7 +85,7 @@ CpProxyZappOrgTestDimmableLight1.prototype.GetLevel = function(successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyZappOrgTestDimmableLight1.prototype.SetLevel = function(Level, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetLevel", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetLevel", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Level", Level);
     request.send(function(result){
 	

@@ -115,6 +115,9 @@ objects_devices = \
                   $(objdir)DvOpenhomeOrgTestColorLight1.$(objext) \
                   $(objdir)DvOpenhomeOrgTestColorLight1Std.$(objext) \
                   $(objdir)DvOpenhomeOrgTestColorLight1C.$(objext) \
+                  $(objdir)DvOpenhomeOrgOhNet1.$(objext) \
+                  $(objdir)DvOpenhomeOrgOhNet1Std.$(objext) \
+                  $(objdir)DvOpenhomeOrgOhNet1C.$(objext) \
 
 # Devices have well controlled dependencies so we can document a more limited set of headers
 headers_device = $(inc_build)/Cpp/ZappTypes.h \
@@ -161,6 +164,7 @@ device_dotnet_assemblies = \
         DvZappOrgTestLights1.net.dll \
         DvZappOrgTestDimmableLight1.net.dll \
         DvOpenhomeOrgTestColorLight1.net.dll \
+        DvOpenhomeOrgOhNet1.net.dll \
 
 device_dotnet_assemblies_with_path = \
         $(objdir)DvUpnpOrgAVTransport1.net.dll \
@@ -200,6 +204,7 @@ device_dotnet_assemblies_with_path = \
         $(objdir)DvZappOrgTestLights1.net.dll \
         $(objdir)DvZappOrgTestDimmableLight1.net.dll \
         $(objdir)DvOpenhomeOrgTestColorLight1.net.dll \
+        $(objdir)DvOpenhomeOrgOhNet1.net.dll \
 
 devices : upnp_core $(objects_devices)
 	$(ar)ZappDevices.$(libext) $(objects_devices)
@@ -425,6 +430,12 @@ $(objdir)DvOpenhomeOrgTestColorLight1Std.$(objext) : $(deviceCppStd)DvOpenhomeOr
 	$(compiler)DvOpenhomeOrgTestColorLight1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvOpenhomeOrgTestColorLight1Std.cpp
 $(objdir)DvOpenhomeOrgTestColorLight1C.$(objext) : $(deviceC)DvOpenhomeOrgTestColorLight1C.cpp $(headers_device) $(inc_build)/C/DvOpenhomeOrgTestColorLight1.h
 	$(compiler)DvOpenhomeOrgTestColorLight1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvOpenhomeOrgTestColorLight1C.cpp
+$(objdir)DvOpenhomeOrgOhNet1.$(objext) : $(deviceCppCore)DvOpenhomeOrgOhNet1.cpp $(headers_device)
+	$(compiler)DvOpenhomeOrgOhNet1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvOpenhomeOrgOhNet1.cpp
+$(objdir)DvOpenhomeOrgOhNet1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgOhNet1Std.cpp $(headers_device)
+	$(compiler)DvOpenhomeOrgOhNet1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvOpenhomeOrgOhNet1Std.cpp
+$(objdir)DvOpenhomeOrgOhNet1C.$(objext) : $(deviceC)DvOpenhomeOrgOhNet1C.cpp $(headers_device) $(inc_build)/C/DvOpenhomeOrgOhNet1.h
+	$(compiler)DvOpenhomeOrgOhNet1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvOpenhomeOrgOhNet1C.cpp
 
 device_dlls = \
              DvUpnpOrgAVTransport1Dll \
@@ -464,6 +475,7 @@ device_dlls = \
              DvZappOrgTestLights1Dll \
              DvZappOrgTestDimmableLight1Dll \
              DvOpenhomeOrgTestColorLight1Dll \
+             DvOpenhomeOrgOhNet1Dll \
 
 DvDeviceDlls: $(device_dlls)
 DvUpnpOrgAVTransport1Dll: $(objdir)$(dllprefix)DvUpnpOrgAVTransport1.$(dllext) 
@@ -577,6 +589,9 @@ $(objdir)$(dllprefix)DvZappOrgTestDimmableLight1.$(dllext) : ZappUpnpDll $(objdi
 DvOpenhomeOrgTestColorLight1Dll: $(objdir)$(dllprefix)DvOpenhomeOrgTestColorLight1.$(dllext) 
 $(objdir)$(dllprefix)DvOpenhomeOrgTestColorLight1.$(dllext) : ZappUpnpDll $(objdir)DvOpenhomeOrgTestColorLight1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvOpenhomeOrgTestColorLight1.$(dllext) $(objdir)DvOpenhomeOrgTestColorLight1.$(objext)
+DvOpenhomeOrgOhNet1Dll: $(objdir)$(dllprefix)DvOpenhomeOrgOhNet1.$(dllext) 
+$(objdir)$(dllprefix)DvOpenhomeOrgOhNet1.$(dllext) : ZappUpnpDll $(objdir)DvOpenhomeOrgOhNet1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvOpenhomeOrgOhNet1.$(dllext) $(objdir)DvOpenhomeOrgOhNet1.$(objext)
 
 
 # Device assemblies for .NET:
@@ -768,5 +783,10 @@ $(objdir)DvOpenhomeOrgTestColorLight1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)
 		/out:$(objdir)DvOpenhomeOrgTestColorLight1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
 		$(deviceCs)DvOpenhomeOrgTestColorLight1.cs
+$(objdir)DvOpenhomeOrgOhNet1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvOpenhomeOrgOhNet1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvOpenhomeOrgOhNet1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvOpenhomeOrgOhNet1.cs
 
 

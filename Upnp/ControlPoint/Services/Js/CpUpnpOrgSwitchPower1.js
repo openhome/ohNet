@@ -65,7 +65,7 @@ CpProxySchemasUpnpOrgSwitchPower1.prototype.Status_Changed = function (stateChan
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgSwitchPower1.prototype.SetTarget = function(newTargetValue, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetTarget", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetTarget", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("newTargetValue", newTargetValue);
     request.send(function(result){
 	
@@ -85,7 +85,7 @@ CpProxySchemasUpnpOrgSwitchPower1.prototype.SetTarget = function(newTargetValue,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgSwitchPower1.prototype.GetTarget = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetTarget", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetTarget", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["RetTargetValue"] = Zapp.SoapRequest.readBoolParameter(result["RetTargetValue"]);	
 	
@@ -105,7 +105,7 @@ CpProxySchemasUpnpOrgSwitchPower1.prototype.GetTarget = function(successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgSwitchPower1.prototype.GetStatus = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetStatus", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("GetStatus", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["ResultStatus"] = Zapp.SoapRequest.readBoolParameter(result["ResultStatus"]);	
 	

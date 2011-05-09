@@ -64,7 +64,7 @@ CpProxyLinnCoUkMediaTime1.prototype.Seconds_Changed = function (stateChangedFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkMediaTime1.prototype.Seconds = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Seconds", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("Seconds", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aSeconds"] = Zapp.SoapRequest.readIntParameter(result["aSeconds"]);	
 	

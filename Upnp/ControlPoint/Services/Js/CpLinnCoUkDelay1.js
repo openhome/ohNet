@@ -78,7 +78,7 @@ CpProxyLinnCoUkDelay1.prototype.PresetIndex_Changed = function (stateChangedFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDelay1.prototype.PresetXml = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("PresetXml", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("PresetXml", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aPresetXml"] = Zapp.SoapRequest.readStringParameter(result["aPresetXml"]);	
 	
@@ -98,7 +98,7 @@ CpProxyLinnCoUkDelay1.prototype.PresetXml = function(successFunction, errorFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDelay1.prototype.PresetIndex = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("PresetIndex", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("PresetIndex", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aIndex"] = Zapp.SoapRequest.readIntParameter(result["aIndex"]);	
 	
@@ -119,7 +119,7 @@ CpProxyLinnCoUkDelay1.prototype.PresetIndex = function(successFunction, errorFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDelay1.prototype.SetPresetIndex = function(aIndex, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetPresetIndex", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetPresetIndex", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aIndex", aIndex);
     request.send(function(result){
 	
@@ -141,7 +141,7 @@ CpProxyLinnCoUkDelay1.prototype.SetPresetIndex = function(aIndex, successFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDelay1.prototype.SetPresetDelay = function(aIndex, aDelay, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetPresetDelay", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetPresetDelay", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aIndex", aIndex);
     request.writeIntParameter("aDelay", aDelay);
     request.send(function(result){
@@ -164,7 +164,7 @@ CpProxyLinnCoUkDelay1.prototype.SetPresetDelay = function(aIndex, aDelay, succes
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDelay1.prototype.SetPresetVisible = function(aIndex, aVisible, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetPresetVisible", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetPresetVisible", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aIndex", aIndex);
     request.writeBoolParameter("aVisible", aVisible);
     request.send(function(result){
@@ -187,7 +187,7 @@ CpProxyLinnCoUkDelay1.prototype.SetPresetVisible = function(aIndex, aVisible, su
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDelay1.prototype.SetPresetName = function(aIndex, aName, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetPresetName", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("SetPresetName", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("aIndex", aIndex);
     request.writeStringParameter("aName", aName);
     request.send(function(result){
@@ -208,7 +208,7 @@ CpProxyLinnCoUkDelay1.prototype.SetPresetName = function(aIndex, aName, successF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDelay1.prototype.DelayMinimum = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DelayMinimum", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DelayMinimum", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aDelay"] = Zapp.SoapRequest.readIntParameter(result["aDelay"]);	
 	
@@ -228,7 +228,7 @@ CpProxyLinnCoUkDelay1.prototype.DelayMinimum = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDelay1.prototype.DelayMaximum = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DelayMaximum", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("DelayMaximum", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aDelay"] = Zapp.SoapRequest.readIntParameter(result["aDelay"]);	
 	
@@ -248,7 +248,7 @@ CpProxyLinnCoUkDelay1.prototype.DelayMaximum = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyLinnCoUkDelay1.prototype.PresetCount = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("PresetCount", this.url, this.formattedDomain, this.type, this.version);		
+	var request = new Zapp.SoapRequest("PresetCount", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 		result["aCount"] = Zapp.SoapRequest.readIntParameter(result["aCount"]);	
 	

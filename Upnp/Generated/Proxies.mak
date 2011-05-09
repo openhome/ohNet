@@ -115,6 +115,9 @@ objects_proxies = \
                   $(objdir)CpOpenhomeOrgTestColorLight1.$(objext) \
                   $(objdir)CpOpenhomeOrgTestColorLight1C.$(objext) \
                   $(objdir)CpOpenhomeOrgTestColorLight1Std.$(objext) \
+                  $(objdir)CpOpenhomeOrgOhNet1.$(objext) \
+                  $(objdir)CpOpenhomeOrgOhNet1C.$(objext) \
+                  $(objdir)CpOpenhomeOrgOhNet1Std.$(objext) \
 
 # Service proxies have well controlled dependencies so we can document a more limited set of headers
 headers_proxy = $(inc_build)/Cpp/Buffer.h \
@@ -167,6 +170,7 @@ proxy_dotnet_assemblies = \
         CpZappOrgTestLights1.net.dll \
         CpZappOrgTestDimmableLight1.net.dll \
         CpOpenhomeOrgTestColorLight1.net.dll \
+        CpOpenhomeOrgOhNet1.net.dll \
 
 proxy_dotnet_assemblies_with_path = \
         $(objdir)CpUpnpOrgAVTransport1.net.dll \
@@ -206,6 +210,7 @@ proxy_dotnet_assemblies_with_path = \
         $(objdir)CpZappOrgTestLights1.net.dll \
         $(objdir)CpZappOrgTestDimmableLight1.net.dll \
         $(objdir)CpOpenhomeOrgTestColorLight1.net.dll \
+        $(objdir)CpOpenhomeOrgOhNet1.net.dll \
 
 
 proxies : upnp_core $(objects_proxies)
@@ -432,6 +437,12 @@ $(objdir)CpOpenhomeOrgTestColorLight1C.$(objext) : $(proxyC)CpOpenhomeOrgTestCol
 	$(compiler)CpOpenhomeOrgTestColorLight1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpOpenhomeOrgTestColorLight1C.cpp
 $(objdir)CpOpenhomeOrgTestColorLight1Std.$(objext) : $(proxyCppStd)CpOpenhomeOrgTestColorLight1Std.cpp $(headers_proxy) $(inc_build)/Cpp/Std/CpOpenhomeOrgTestColorLight1.h
 	$(compiler)CpOpenhomeOrgTestColorLight1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpOpenhomeOrgTestColorLight1Std.cpp
+$(objdir)CpOpenhomeOrgOhNet1.$(objext) : $(proxyCppCore)CpOpenhomeOrgOhNet1.cpp $(headers_proxy) $(inc_build)/Cpp/Core/CpOpenhomeOrgOhNet1.h
+	$(compiler)CpOpenhomeOrgOhNet1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpOpenhomeOrgOhNet1.cpp
+$(objdir)CpOpenhomeOrgOhNet1C.$(objext) : $(proxyC)CpOpenhomeOrgOhNet1C.cpp $(headers_proxy) $(inc_build)/C/CpOpenhomeOrgOhNet1.h
+	$(compiler)CpOpenhomeOrgOhNet1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpOpenhomeOrgOhNet1C.cpp
+$(objdir)CpOpenhomeOrgOhNet1Std.$(objext) : $(proxyCppStd)CpOpenhomeOrgOhNet1Std.cpp $(headers_proxy) $(inc_build)/Cpp/Std/CpOpenhomeOrgOhNet1.h
+	$(compiler)CpOpenhomeOrgOhNet1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpOpenhomeOrgOhNet1Std.cpp
 
 proxy_dlls = \
              CpUpnpOrgAVTransport1Dll \
@@ -471,6 +482,7 @@ proxy_dlls = \
              CpZappOrgTestLights1Dll \
              CpZappOrgTestDimmableLight1Dll \
              CpOpenhomeOrgTestColorLight1Dll \
+             CpOpenhomeOrgOhNet1Dll \
 
 CpProxyDlls: $(proxy_dlls)
 
@@ -585,6 +597,9 @@ $(objdir)$(dllprefix)CpZappOrgTestDimmableLight1.$(dllext) : ZappUpnpDll $(objdi
 CpOpenhomeOrgTestColorLight1Dll: $(objdir)$(dllprefix)CpOpenhomeOrgTestColorLight1.$(dllext)
 $(objdir)$(dllprefix)CpOpenhomeOrgTestColorLight1.$(dllext) : ZappUpnpDll $(objdir)CpOpenhomeOrgTestColorLight1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpOpenhomeOrgTestColorLight1.$(dllext) $(objdir)CpOpenhomeOrgTestColorLight1.$(objext)
+CpOpenhomeOrgOhNet1Dll: $(objdir)$(dllprefix)CpOpenhomeOrgOhNet1.$(dllext)
+$(objdir)$(dllprefix)CpOpenhomeOrgOhNet1.$(dllext) : ZappUpnpDll $(objdir)CpOpenhomeOrgOhNet1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpOpenhomeOrgOhNet1.$(dllext) $(objdir)CpOpenhomeOrgOhNet1.$(objext)
 
 # Proxy assemblies for .NET:
 
@@ -775,4 +790,9 @@ $(objdir)CpOpenhomeOrgTestColorLight1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)C
 		/out:$(objdir)CpOpenhomeOrgTestColorLight1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
 		$(proxyCs)CpOpenhomeOrgTestColorLight1.cs
+$(objdir)CpOpenhomeOrgOhNet1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpOpenhomeOrgOhNet1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpOpenhomeOrgOhNet1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(proxyCs)CpOpenhomeOrgOhNet1.cs
 

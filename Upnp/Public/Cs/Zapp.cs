@@ -122,6 +122,11 @@ namespace Zapp.Core
         /// support</remarks>
         public uint DvNumWebSocketThreads { get; set; }
 
+        /// <summary>Get/set the tcp port number the WebSocket server will run on.</summary>
+        /// <remarks>The default value is 0 (meaning that the OS will assign a port).
+        ///  You should question your design if you need to use this.</remarks>
+        public uint DvWebSocketPort { get; set; }
+
         /// <summary>
         /// Limit the library to using only the loopback network interface
         /// </summary>
@@ -182,6 +187,8 @@ namespace Zapp.Core
         [DllImport("ZappUpnp")]
         static extern void ZappInitParamsSetDvNumWebSocketThreads(IntPtr aParams, uint aNumThreads);
         [DllImport("ZappUpnp")]
+        static extern void ZappInitParamsSetDvWebSocketPort(IntPtr aParams, uint aPort);
+        [DllImport("ZappUpnp")]
         static extern void ZappInitParamsSetDvEnableBonjour(IntPtr aParams);
         [DllImport("ZappUpnp")]
         static extern void ZappInitParamsSetUseLoopbackNetworkInterface(IntPtr aParams);
@@ -211,6 +218,8 @@ namespace Zapp.Core
         static extern uint ZappInitParamsDvNumPublisherThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
         static extern uint ZappInitParamsDvNumWebSocketThreads(IntPtr aParams);
+        [DllImport("ZappUpnp")]
+        static extern uint ZappInitParamsDvWebSocketPort(IntPtr aParams);
         [DllImport("ZappUpnp")]
         static extern uint ZappInitParamsDvIsBonjourEnabled(IntPtr aParams);
 
@@ -249,8 +258,9 @@ namespace Zapp.Core
             PendingSubscriptionTimeoutMs = ZappInitParamsPendingSubscriptionTimeoutMs(defaultParams); 
             DvMaxUpdateTimeSecs = ZappInitParamsDvMaxUpdateTimeSecs(defaultParams); 
             DvNumServerThreads = ZappInitParamsDvNumServerThreads(defaultParams); 
-            DvNumPublisherThreads = ZappInitParamsDvNumPublisherThreads(defaultParams); 
-            DvNumWebSocketThreads = ZappInitParamsDvNumWebSocketThreads(defaultParams); 
+            DvNumPublisherThreads = ZappInitParamsDvNumPublisherThreads(defaultParams);
+            DvNumWebSocketThreads = ZappInitParamsDvNumWebSocketThreads(defaultParams);
+            DvWebSocketPort = ZappInitParamsDvWebSocketPort(defaultParams); 
             UseLoopbackNetworkInterface = false; // FIXME: No getter?
             DvEnableBonjour = ZappInitParamsDvIsBonjourEnabled(defaultParams) != 0; 
 
@@ -298,6 +308,7 @@ namespace Zapp.Core
             ZappInitParamsSetDvNumServerThreads(nativeParams, DvNumServerThreads);
             ZappInitParamsSetDvNumPublisherThreads(nativeParams, DvNumPublisherThreads);
             ZappInitParamsSetDvNumWebSocketThreads(nativeParams, DvNumWebSocketThreads);
+            ZappInitParamsSetDvWebSocketPort(nativeParams, DvWebSocketPort);
             if (DvEnableBonjour)
             {
                 ZappInitParamsSetDvEnableBonjour(nativeParams);

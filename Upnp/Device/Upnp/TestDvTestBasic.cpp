@@ -332,6 +332,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         aInitParams->SetUseLoopbackNetworkInterface();
     }
     aInitParams->SetDvNumWebSocketThreads(5);
+    aInitParams->SetDvWebSocketPort(54321);
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartDv();
 
