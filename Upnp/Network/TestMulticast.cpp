@@ -59,7 +59,8 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         Bws<10000> message;
         Endpoint sender = socket.Receive(message);
         Bws<100> buf3;
-        sender.AppendEndpoint(buf2);
+        sender.AppendEndpoint(buf3);
+        
         if (message == Brn("Test message")) {
             Print("Received test messsge from %s\n", buf3.Ptr());
         }
