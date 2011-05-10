@@ -366,9 +366,13 @@ CpiDeviceListUpdater::CpiDeviceListUpdater()
 
 CpiDeviceListUpdater::~CpiDeviceListUpdater()
 {
-    ASSERT(iList.size() == 0);
     Kill();
     Join();
+    for (size_t i=0; i<iList.size(); i++) {
+        UpdateBase* update = iList.front();
+        delete update;
+        iList.pop_front();
+    }
 }
 
 void CpiDeviceListUpdater::QueueAdded(IDeviceListUpdater& aUpdater, CpiDevice& aDevice)
