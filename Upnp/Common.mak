@@ -399,6 +399,12 @@ $(objdir)TestEcho.$(exeext) :  upnp_core $(objdir)TestEcho.$(objext) TestFramewo
 $(objdir)TestEcho.$(objext) : Network/TestEcho.cpp $(headers)
 	$(compiler)TestEcho.$(objext) -c $(cflags) $(includes) Network/TestEcho.cpp
 
+TestMulticast: $(objdir)TestMulticast.$(exeext) 
+$(objdir)TestMulticast.$(exeext) :  upnp_core $(objdir)TestMulticast.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestMulticast.$(exeext) $(objdir)TestMulticast.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestMulticast.$(objext) : Network/TestMulticast.cpp $(headers)
+	$(compiler)TestMulticast.$(objext) -c $(cflags) $(includes) Network/TestMulticast.cpp
+
 TestNetwork: $(objdir)TestNetwork.$(exeext) 
 $(objdir)TestNetwork.$(exeext) :  upnp_core $(objdir)TestNetwork.$(objext) TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestNetwork.$(exeext) $(objdir)TestNetwork.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
@@ -589,7 +595,7 @@ $(objdir)TestDvColorLight.$(exeext) :  upnp_core $(objdir)TestDvColorLight.$(obj
 $(objdir)TestDvColorLight.$(objext) : Public/Cpp/Core/TestDvColorLight.cpp $(headers)
 	$(compiler)TestDvColorLight.$(objext) -c $(cflags) $(includes) Public/Cpp/Core/TestDvColorLight.cpp
 
-Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvColorLight TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs
+Tests: TestBuffer TestThread TestFifo TestQueue TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvColorLight TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs
 
 Zapp.net.dll : $(objdir)Zapp.net.dll ZappUpnpDll
 
