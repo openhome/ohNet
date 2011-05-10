@@ -605,7 +605,7 @@ $(objdir)Zapp.net.dll: \
 	$(publiccsdir)DvServerUpnp.cs \
 	$(publiccsdir)Zapp.cs \
 	$(publiccsdir)CpDeviceDv.cs
-	$(csharp) /unsafe /t:library /debug+\
+	$(csharp) /unsafe /t:library /debug+ /warnaserror+\
 		/out:$(objdir)Zapp.net.dll \
 		$(publiccsdir)CpDevice.cs \
 		$(publiccsdir)CpDeviceUpnp.cs \
@@ -627,7 +627,7 @@ $(objdir)TestProxyCs.exe: \
 	$(publiccsdir)TestProxy.cs \
 	$(objdir)CpUpnpOrgConnectionManager1.net.dll \
 	
-	$(csharp) /unsafe /t:exe /debug+\
+	$(csharp) /unsafe /t:exe /debug+ /warnaserror+\
 		/out:$(objdir)TestProxyCs.exe \
 		/reference:$(objdir)Zapp.net.dll \
 		/reference:$(objdir)CpUpnpOrgConnectionManager1.net.dll \
@@ -644,7 +644,7 @@ $(objdir)TestDvDeviceCs.exe: \
 	$(publiccsdir)TestBasicCp.cs \
 	$(publiccsdir)TestDvDevice.cs
 	$(csharp) \
-		/d:DEBUG /debug /unsafe /platform:x86 /t:exe \
+		/d:DEBUG /debug /unsafe /warnaserror+ /platform:x86 /t:exe \
 		/out:$(objdir)TestDvDeviceCs.exe \
 		/reference:$(objdir)Zapp.net.dll \
 		/reference:$(objdir)DvZappOrgTestBasic1.net.dll \
@@ -662,7 +662,7 @@ $(objdir)TestDvLightsCs.exe: \
 	$(objdir)CpZappOrgTestLights1.net.dll \
 	$(publiccsdir)TestDvLights.cs
 	$(csharp) \
-		/d:DEBUG /debug /unsafe /platform:x86 /t:exe \
+		/d:DEBUG /debug /unsafe /warnaserror+ /platform:x86 /t:exe \
 		/out:$(objdir)TestDvLightsCs.exe \
 		/reference:$(objdir)Zapp.net.dll \
 		/reference:$(objdir)DvZappOrgTestLights1.net.dll \
@@ -680,7 +680,7 @@ $(objdir)TestCpDeviceDvCs.exe: \
 	$(publiccsdir)TestBasicCp.cs \
 	$(publiccsdir)TestDvDevice.cs
 	$(csharp) \
-		/d:DEBUG /debug /unsafe /platform:x86 /t:exe \
+		/d:DEBUG /debug /unsafe /warnaserror+ /platform:x86 /t:exe \
 		/out:$(objdir)TestCpDeviceDvCs.exe \
 		/reference:$(objdir)Zapp.net.dll \
 		/reference:$(objdir)DvZappOrgTestBasic1.net.dll \
