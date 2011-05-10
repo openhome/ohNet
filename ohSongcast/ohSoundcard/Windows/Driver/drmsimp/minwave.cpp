@@ -296,11 +296,6 @@ Return Value:
 	MpusAudioChannels = 0;
 	MpusSendFormat = 0;
 
-	MpusActive = 1;
-	MpusTtl = 4;
-	MpusAddr = 0xeffd0001;
-	MpusPort = 51972;
-
 	CWinsock::Initialise(&MpusAddress, MpusAddr, MpusPort);
 
 	CWinsock::Initialise(&MpusAddress, MpusAddr, MpusPort);
@@ -555,14 +550,14 @@ NTSTATUS PropertyHandler_Wave
 		}
 
         // validate buffer size.
-        if (PropertyRequest->ValueSize < sizeof (ULONG))
+        if (PropertyRequest->ValueSize != sizeof (ULONG))
 		{
             return STATUS_INVALID_PARAMETER;
 		}
 
         // The "Value" is the out buffer that you pass in DeviceIoControl call.
 
-        UINT* pValue = (UINT *)PropertyRequest->Value;
+        ULONG* pValue = (ULONG*)PropertyRequest->Value;
         
         // Check the buffer.
 
@@ -571,27 +566,33 @@ NTSTATUS PropertyHandler_Wave
             return STATUS_INVALID_PARAMETER;
 		}
 
-		*pValue = 1;
+		*pValue = 1; // Version 1
 
-		return STATUS_SUCCESS ;
+		return STATUS_SUCCESS;
     }
     else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
     {
         if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_ENABLED)
 		{
-			if (PropertyRequest->ValueSize != sizeof (UINT))
+			if (PropertyRequest->ValueSize != sizeof (ULONG))
 			{
 				return STATUS_INVALID_PARAMETER;
 			}
 
-            UINT* pValue = (UINT *)PropertyRequest->Value;
+            ULONG* pValue = (ULONG*)PropertyRequest->Value;
 
 			ULONG enabled = *pValue;
 
 			ExAcquireFastMutex(&MpusFastMutex);
 
 			if (!enabled) {
-				MpusEnabled = 0;
+				if (MpusEnabled) {
+					if (MpusActive) {
+						Socket->Send(&MpusAddress, (UCHAR*)0, 0, 1, MpusAudioSampleRate, MpusAudioBitRate, MpusAudioBitDepth,  MpusAudioChannels);
+					}
+					MpusEnabled = 0;
+					MpusSendFormat = 1;
+				}
 			}
 			else {
 				MpusEnabled = 1;
@@ -603,20 +604,22 @@ NTSTATUS PropertyHandler_Wave
 		}
         else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_ACTIVE)
 		{
-			if (PropertyRequest->ValueSize != sizeof (UINT))
+			if (PropertyRequest->ValueSize != sizeof (ULONG))
 			{
 				return STATUS_INVALID_PARAMETER;
 			}
 
-            UINT* pValue = (UINT *)PropertyRequest->Value;
+            ULONG* pValue = (ULONG*)PropertyRequest->Value;
 
 			ULONG active = *pValue;
 
 			ExAcquireFastMutex(&MpusFastMutex);
 
 			if (!active) {
-				if (MpusActive) { // turning off
-					Socket->Send(&MpusAddress, (UCHAR*)0, 0, 1, MpusAudioSampleRate, MpusAudioBitRate, MpusAudioBitDepth,  MpusAudioChannels);
+				if (MpusActive) {
+					if (MpusEnabled) {
+						Socket->Send(&MpusAddress, (UCHAR*)0, 0, 1, MpusAudioSampleRate, MpusAudioBitRate, MpusAudioBitDepth,  MpusAudioChannels);
+					}
 					MpusActive = 0;
 					MpusSendFormat = 1;
 				}
@@ -631,12 +634,12 @@ NTSTATUS PropertyHandler_Wave
 		}
         else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_ENDPOINT)
 		{
-			if (PropertyRequest->ValueSize != (sizeof (UINT) * 2))
+			if (PropertyRequest->ValueSize != (sizeof (ULONG) * 2))
 			{
 				return STATUS_INVALID_PARAMETER;
 			}
 
-            UINT* pValue = (UINT *)PropertyRequest->Value;
+            ULONG* pValue = (ULONG*)PropertyRequest->Value;
 
 			ULONG addr = *pValue++;
 			ULONG port = *pValue;
@@ -657,12 +660,12 @@ NTSTATUS PropertyHandler_Wave
 		}
         else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_TTL)
 		{
-			if (PropertyRequest->ValueSize != sizeof (UINT))
+			if (PropertyRequest->ValueSize != sizeof (ULONG))
 			{
 				return STATUS_INVALID_PARAMETER;
 			}
 
-            UINT* pValue = (UINT *)PropertyRequest->Value;
+            ULONG* pValue = (ULONG*)PropertyRequest->Value;
 
 			ExAcquireFastMutex(&MpusFastMutex);
 
@@ -903,7 +906,7 @@ void MpusStop()
 {
 	ExAcquireFastMutex(&MpusFastMutex);
 
-	if (MpusActive)
+	if (MpusActive && MpusEnabled)
 	{
 		Socket->Send(&MpusAddress, (UCHAR*) 0, 0, 1, MpusAudioSampleRate, MpusAudioBitRate, MpusAudioBitDepth,  MpusAudioChannels);
 	}
@@ -919,7 +922,7 @@ void MpusSend(UCHAR* aBuffer, UINT aBytes)
 {
 	ExAcquireFastMutex(&MpusFastMutex);
 
-	if (MpusActive)
+	if (MpusActive && MpusEnabled)
 	{
 		if (MpusSendFormat)
 		{

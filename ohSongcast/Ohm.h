@@ -14,7 +14,7 @@ namespace Zapp {
 class Ohm
 {
 public:
-    static const TUint kPort = 51972;
+    static const TUint kPort = 51970;
     static const TUint kMaxUriBytes = 30;
     static const TUint kMaxTrackUriBytes = 1000;
     static const TUint kMaxTrackMetadataBytes = 5000;
@@ -46,6 +46,30 @@ private:
     SocketUdp* iSocket;
     UdpReader* iReader;
     Endpoint iThis;
+};
+
+class OhzSocket : public IReaderSource, public INonCopyable
+{
+    static const TUint kSendBufBytes = 1024;
+
+public:
+    OhzSocket();
+
+	void Open(TIpAddress aInterface, TUint aTtl);
+    void Send(const Brx& aBuffer);
+    void Close();
+
+    // IReaderSource
+    virtual void Read(Bwx& aBuffer);
+    virtual void ReadFlush();
+    virtual void ReadInterrupt();
+    
+    ~OhzSocket();
+
+private:
+    SocketUdpMulticast* iSocket;
+    Endpoint iEndpoint;
+    UdpReader* iReader;
 };
 
 class OhmHeader
@@ -276,8 +300,10 @@ public:
     static const TUint kHeaderBytes = 8;
     
 public:
-    static const TUint8 kMsgTypeQuery = 0;
-    static const TUint8 kMsgTypeUri = 1;
+    static const TUint8 kMsgTypeZoneQuery = 0;
+    static const TUint8 kMsgTypeZoneUri = 1;
+    static const TUint8 kMsgTypePresetQuery = 2;
+    static const TUint8 kMsgTypePresetInfo = 3;
 
 public:
     OhzHeader();
@@ -301,14 +327,14 @@ private:
     //6         2                       Total Bytes (Absolutely all bytes in the entire frame)
 };
 
-class OhzHeaderQuery
+class OhzHeaderZoneQuery
 {
 public:
     static const TUint kHeaderBytes = 4;
 
 public:
-    OhzHeaderQuery();
-    OhzHeaderQuery(const Brx& aZone);
+    OhzHeaderZoneQuery();
+    OhzHeaderZoneQuery(const Brx& aZone);
     
     void Internalise(IReader& aReader, const OhzHeader& aHeader);
     void Externalise(IWriter& aWriter) const;
@@ -324,14 +350,14 @@ private:
     TUint iZoneBytes;
 };
 
-class OhzHeaderUri
+class OhzHeaderZoneUri
 {
 public:
     static const TUint kHeaderBytes = 8;
 
 public:
-    OhzHeaderUri();
-    OhzHeaderUri(const Brx& aZone, const Brx& aUri);
+    OhzHeaderZoneUri();
+    OhzHeaderZoneUri(const Brx& aZone, const Brx& aUri);
     
     void Internalise(IReader& aReader, const OhzHeader& aHeader);
     void Externalise(IWriter& aWriter) const;
@@ -350,6 +376,58 @@ private:
     TUint iZoneBytes;
     TUint iUriBytes;
 };
+
+class OhzHeaderPresetQuery
+{
+public:
+    static const TUint kHeaderBytes = 4;
+
+public:
+    OhzHeaderPresetQuery();
+    OhzHeaderPresetQuery(TUint aPreset);
+
+    void Internalise(IReader& aReader, const OhzHeader& aHeader);
+    void Externalise(IWriter& aWriter) const;
+
+    TUint MsgBytes() const {return (kHeaderBytes);}
+
+    TUint Preset() const {return (iPreset);}
+
+private:
+    //Offset    Bytes                   Desc
+	//0         4                       Preset Number (query)
+
+	TUint iPreset;
+};
+
+class OhzHeaderPresetInfo
+{
+public:
+    static const TUint kHeaderBytes = 8;
+
+public:
+    OhzHeaderPresetInfo();
+    OhzHeaderPresetInfo(TUint aPreset, const Brx& aMetadata);
+
+    void Internalise(IReader& aReader, const OhzHeader& aHeader);
+    void Externalise(IWriter& aWriter) const;
+
+    TUint MsgBytes() const {return (kHeaderBytes + iMetadataBytes);}
+
+    TUint Preset() const {return (iPreset);}
+    TUint MetadataBytes() const {return (iMetadataBytes);}
+
+private:
+    //ZonepusHeaderPresetResponse
+    //ByteStart Bytes                   Desc
+    //0         4                       Preset Number (response)
+    //4         4						Metadata Bytes (n)
+    //8         n                       n bytes of metadata
+
+    TUint iPreset;
+    TUint iMetadataBytes;
+};
+
 
 } // namespace Zapp
 
