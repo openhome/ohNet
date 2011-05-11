@@ -97,11 +97,11 @@ namespace Zapp.ControlPoint
         public CpUpnpDeviceListFactory(
             ControlPointStack aControlPointStack)
         {
-            if (aControlPointStack == null)
+            iControlPointStack = aControlPointStack;
+            if (iControlPointStack == null)
             {
                 throw new ArgumentNullException("aControlPointStack");
             }
-            iControlPointStack = aControlPointStack;
         }
 
         /// <summary>
