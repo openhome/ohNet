@@ -169,7 +169,7 @@ OhmSenderDriver::OhmSenderDriver()
 
 void OhmSenderDriver::SetEnabled(TBool aValue)
 {
-    iMutex.Wait();
+	iMutex.Wait();
 
 	iEnabled = aValue;
 
@@ -190,7 +190,7 @@ void OhmSenderDriver::SetEnabled(TBool aValue)
 
 void OhmSenderDriver::SetActive(TBool aValue)
 {
-    iMutex.Wait();
+	iMutex.Wait();
 	
 	iActive = aValue;
 
@@ -295,7 +295,7 @@ void OhmSenderDriver::SendAudio(const TByte* aData, TUint aBytes)
 
 // OhmSender
 
-OhmSender::OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled, const Brx& aImage, const Brx& aMimeType)
+OhmSender::OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled, const Brx& aImage, const Brx& aMimeType, TUint aPreset)
     : iDevice(aDevice)
     , iDriver(aDriver)
     , iName(aName)
@@ -305,13 +305,19 @@ OhmSender::OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aN
     , iMulticast(aMulticast)
 	, iImage(aImage)
 	, iMimeType(aMimeType)
-    , iRxBuffer(iSocket)
+	, iPreset(aPreset)
+    , iRxBuffer(iSocketOhm)
+	, iRxZone(iSocketOhz)
     , iMutexStartStop("OHMS")
     , iMutexActive("OHMA")
-    , iNetworkAudioDeactivated("OHMD", 0)
+    , iMutexZone("OHMZ")
+    , iNetworkDeactivated("OHDN", 0)
+    , iZoneDeactivated("OHDZ", 0)
     , iTimerAliveJoin(MakeFunctor(*this, &OhmSender::TimerAliveJoinExpired))
     , iTimerAliveAudio(MakeFunctor(*this, &OhmSender::TimerAliveAudioExpired))
     , iTimerExpiry(MakeFunctor(*this, &OhmSender::TimerExpiryExpired))
+    , iTimerZoneUri(MakeFunctor(*this, &OhmSender::TimerZoneUriExpired))
+    , iTimerPresetInfo(MakeFunctor(*this, &OhmSender::TimerPresetInfoExpired))
     , iStarted(false)
     , iActive(false)
     , iAliveJoined(false)
@@ -319,12 +325,9 @@ OhmSender::OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aN
     , iSequenceTrack(0)
     , iSequenceMetatext(0)
 	, iClientControllingTrackMetadata(false)
-
 {
     iProvider = new ProviderSender(iDevice);
  
-    UpdateChannel();
-
     iDriver.SetTtl(iTtl);
        
     iThreadMulticast = new ThreadFunctor("MTXM", MakeFunctor(*this, &OhmSender::RunMulticast), kThreadPriorityNetwork, kThreadStackBytesNetwork);
@@ -333,11 +336,24 @@ OhmSender::OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aN
     iThreadUnicast = new ThreadFunctor("MTXU", MakeFunctor(*this, &OhmSender::RunUnicast), kThreadPriorityNetwork, kThreadStackBytesNetwork);
     iThreadUnicast->Start();
     
+    iThreadZone = new ThreadFunctor("MTXZ", MakeFunctor(*this, &OhmSender::RunZone), kThreadPriorityNetwork, kThreadStackBytesNetwork);
+    iThreadZone->Start();    
+
 	iServer = new SocketTcpServer("OHMS", 0, iInterface);
 
 	iServer->Add("OHMS", new OhmSenderSession(*this));
 
-    SetEnabled(aEnabled);
+	iMutexStartStop.Wait();
+
+	StartZone();
+    
+	iMutexStartStop.Signal();
+
+    UpdateChannel();
+
+	SetEnabled(aEnabled);
+	
+	UpdateMetadata();
 }
 
 const Brx& OhmSender::Image() const
@@ -355,9 +371,10 @@ void OhmSender::SetName(const Brx& aValue)
 {
     iMutexStartStop.Wait();
     
-	iName.Replace(aValue);
-	
-	UpdateMetadata();
+	if (iName != aValue) {
+		iName.Replace(aValue);
+		UpdateMetadata();
+	}
 
     iMutexStartStop.Signal();
 }
@@ -365,19 +382,26 @@ void OhmSender::SetName(const Brx& aValue)
 void OhmSender::SetChannel(TUint aValue)
 {
     iMutexStartStop.Wait();
-    
-    if (iMulticast) {
-        if (iStarted) {
-            Stop();
-            iChannel = aValue;
-            UpdateChannel();
-            Start();
-        }
-        else {
-            iChannel = aValue;
-            UpdateChannel();
-        }
-    }
+
+	if (iChannel != aValue) {
+		if (iMulticast) {
+			if (iStarted) {
+				Stop();
+				iChannel = aValue;
+				UpdateChannel();
+				Start();
+			}
+			else {
+				iChannel = aValue;
+				UpdateChannel();
+				UpdateUri();
+			}
+		}
+		else {
+			iChannel = aValue;
+			UpdateChannel();
+		}
+	}
     
     iMutexStartStop.Signal();
 }
@@ -386,17 +410,23 @@ void OhmSender::SetInterface(TIpAddress aValue)
 {
     iMutexStartStop.Wait();
     
-    if (iStarted) {
-        Stop();
-        iInterface = aValue;
-		delete (iServer);
-		iServer = new SocketTcpServer("OHMS", 0, iInterface);
-		iServer->Add("OHMS", new OhmSenderSession(*this));
-        Start();
-    }
-    else {
-        iInterface = aValue;
-    }
+	if (iInterface != aValue) {
+		if (iStarted) {
+			StopZone();
+			Stop();
+			iInterface = aValue;
+			delete (iServer);
+			iServer = new SocketTcpServer("OHMS", 0, iInterface);
+			iServer->Add("OHMS", new OhmSenderSession(*this));
+			Start();
+			StartZone();
+		}
+		else {
+			StopZone();
+			iInterface = aValue;
+			StartZone();
+		}
+	}
     
     iMutexStartStop.Signal();
 }
@@ -405,16 +435,18 @@ void OhmSender::SetTtl(TUint aValue)
 {
     iMutexStartStop.Wait();
     
-    if (iStarted) {
-        Stop();
-        iTtl = aValue;
-        iDriver.SetTtl(iTtl);
-        Start();
-    }
-    else {
-        iTtl = aValue;
-        iDriver.SetTtl(iTtl);
-    }
+	if (iTtl != aValue) {
+		if (iStarted) {
+			Stop();
+			iTtl = aValue;
+			iDriver.SetTtl(iTtl);
+			Start();
+		}
+		else {
+			iTtl = aValue;
+			iDriver.SetTtl(iTtl);
+		}
+	}
     
     iMutexStartStop.Signal();
 }
@@ -422,15 +454,19 @@ void OhmSender::SetTtl(TUint aValue)
 void OhmSender::SetMulticast(TBool aValue)
 {
     iMutexStartStop.Wait();
-    
-    if (iStarted) {
-        Stop();
-        iMulticast = aValue;
-        Start();
-    }
-    else {
-        iMulticast = aValue;
-    }
+
+	if (iMulticast != aValue) {
+		if (iStarted) {
+			Stop();
+			iMulticast = aValue;
+			UpdateMetadata();
+			Start();
+		}
+		else {
+			iMulticast = aValue;
+			UpdateMetadata();
+		}
+	}
     
     iMutexStartStop.Signal();
 }
@@ -438,19 +474,21 @@ void OhmSender::SetMulticast(TBool aValue)
 void OhmSender::SetEnabled(TBool aValue)
 {
     iMutexStartStop.Wait();
-    
-    iEnabled = aValue;
 
-	iDriver.SetEnabled(aValue);
+	if (iEnabled != aValue) {
+		iEnabled = aValue;
+
+		iDriver.SetEnabled(aValue);
     
-    if (iEnabled) {
-        iProvider->SetStatusEnabled();
-        Start();
-    }
-    else {
-        Stop();
-        iProvider->SetStatusDisabled();
-    }
+		if (iEnabled) {
+			iProvider->SetStatusEnabled();
+			Start();
+		}
+		else {
+			Stop();
+			iProvider->SetStatusDisabled();
+		}
+	}
 
     iMutexStartStop.Signal();
 }
@@ -461,16 +499,16 @@ void OhmSender::Start()
 {
     if (!iStarted) {
         if (iMulticast) {
-            iSocket.OpenMulticast(iInterface, iTtl, iMulticastEndpoint);
+            iSocketOhm.OpenMulticast(iInterface, iTtl, iMulticastEndpoint);
             iTargetEndpoint.Replace(iMulticastEndpoint);
             iThreadMulticast->Signal();
         }
         else {
-            iSocket.OpenUnicast(iInterface, iTtl);
+            iSocketOhm.OpenUnicast(iInterface, iTtl);
             iThreadUnicast->Signal();
         }
         iStarted = true;
-        UpdateMetadata();
+        UpdateUri();
     }
 }
 
@@ -480,12 +518,25 @@ void OhmSender::Start()
 void OhmSender::Stop()
 {
     if (iStarted) {
-        iSocket.ReadInterrupt();
-        iNetworkAudioDeactivated.Wait();
-        iSocket.Close();
+        iSocketOhm.ReadInterrupt();
+        iNetworkDeactivated.Wait();
+        iSocketOhm.Close();
         iStarted = false;
-        UpdateMetadata();
+        UpdateUri();
     }
+}
+
+void OhmSender::StopZone()
+{
+    iSocketOhz.ReadInterrupt();
+    iZoneDeactivated.Wait();
+    iSocketOhz.Close();
+}
+
+void OhmSender::StartZone()
+{
+    iSocketOhz.Open(iInterface, iTtl);
+	iThreadZone->Signal();
 }
 
 void OhmSender::SetTrack(const Brx& aUri, const Brx& aMetadata, TUint64 aSamplesTotal, TUint64 aSampleStart)
@@ -518,29 +569,23 @@ void OhmSender::SetMetatext(const Brx& aValue)
     
     iMutexActive.Signal();
 }
+
+void OhmSender::SetPreset(TUint aValue)
+{
+	iMutexZone.Wait();
+	iPreset = aValue;
+	iMutexZone.Signal();
+}
     
 OhmSender::~OhmSender()
 {
     iMutexStartStop.Wait();
     Stop();
+	StopZone();
     iMutexStartStop.Signal();
 
     delete iThreadMulticast;
 }
-
-/*
-void OhmSender::Play(const Brx& aAudioBuffer)
-{
-    iFifoAudio.Write(aMsg);
-}
-
-void OhmSender::RunPipeline()
-{
-    while (true) {
-        //MsgIb* msg = iFifo.Read();
-    }
-}
-*/
 
 //  This runs a little state machine where the current state is reflected by:
 //
@@ -611,7 +656,9 @@ void OhmSender::RunMulticast()
 
                         iMutexActive.Signal();
 
-                        iProvider->SetStatusBlocked();
+                        LOG(kMedia, "OhmSender::RunMulticast blocked\n");
+
+						iProvider->SetStatusBlocked();
                     }
                 }
                 catch (OhmError&)
@@ -642,7 +689,7 @@ void OhmSender::RunMulticast()
 
         iMutexActive.Signal();
         
-        iNetworkAudioDeactivated.Signal();
+        iNetworkDeactivated.Signal();
 
         LOG(kMedia, "OhmSender::RunMulticast stop\n");
     }
@@ -682,7 +729,7 @@ void OhmSender::RunUnicast()
     
                 iRxBuffer.ReadFlush();
 
-                iTargetEndpoint.Replace(iSocket.Sender());
+                iTargetEndpoint.Replace(iSocketOhm.Sender());
 
 				iDriver.SetEndpoint(iTargetEndpoint);
         
@@ -710,7 +757,7 @@ void OhmSender::RunUnicast()
                         if (header.MsgType() == OhmHeader::kMsgTypeJoin) {
                             LOG(kMedia, "OhmSender::RunUnicast sending/join\n");
                             
-                            Endpoint sender(iSocket.Sender());
+                            Endpoint sender(iSocketOhm.Sender());
 
                             if (sender.Equals(iTargetEndpoint)) {
                                 iTimerExpiry.FireIn(kTimerExpiryTimeoutMs);
@@ -740,7 +787,7 @@ void OhmSender::RunUnicast()
                         else if (header.MsgType() == OhmHeader::kMsgTypeListen) {
                             LOG(kMedia, "OhmSender::RunUnicast sending/listen\n");
                             
-                            Endpoint sender(iSocket.Sender());
+                            Endpoint sender(iSocketOhm.Sender());
 
                             if (sender.Equals(iTargetEndpoint)) {
                                 iTimerExpiry.FireIn(kTimerExpiryTimeoutMs);
@@ -774,9 +821,9 @@ void OhmSender::RunUnicast()
                         else if (header.MsgType() == OhmHeader::kMsgTypeLeave) {
                             LOG(kMedia, "OhmSender::RunUnicast sending/leave\n");
                             
-                            Endpoint sender(iSocket.Sender());
+                            Endpoint sender(iSocketOhm.Sender());
 
-                            if (sender.Equals(iTargetEndpoint) || sender.Equals(iSocket.This())) {
+                            if (sender.Equals(iTargetEndpoint) || sender.Equals(iSocketOhm.This())) {
                                 if (iSlaveCount == 0) {
                                     if (sender.Equals(iTargetEndpoint)) {
                                         iMutexActive.Wait();
@@ -845,7 +892,7 @@ void OhmSender::RunUnicast()
 
         iMutexActive.Signal();
         
-        iNetworkAudioDeactivated.Signal();
+        iNetworkDeactivated.Signal();
         
         LOG(kMedia, "OhmSender::RunUnicast stop\n");
     }
@@ -885,7 +932,7 @@ void OhmSender::TimerExpiryExpired()
     iMutexActive.Wait();
 
     try {
-        iSocket.Send(buffer, iSocket.This());
+        iSocketOhm.Send(buffer, iSocketOhm.This());
     }
     catch (NetworkError&) {
         ASSERTS();
@@ -902,42 +949,59 @@ void OhmSender::UpdateChannel()
     iMulticastEndpoint.SetPort(Ohm::kPort);
 }
 
+void OhmSender::UpdateUri()
+{
+	iMutexZone.Wait();
+
+	if (iStarted) {
+		if (iMulticast) {
+			iUri.Replace("ohm://");
+			iMulticastEndpoint.AppendEndpoint(iUri);
+		}
+		else {
+			iUri.Replace("ohu://");
+			iSocketOhm.This().AppendEndpoint(iUri);
+		}
+	}
+	else {
+			iUri.Replace("ohu://0.0.0.0:0");
+	}
+
+	SendZoneUri(3);
+
+	iMutexZone.Signal();
+}
+
 void OhmSender::UpdateMetadata()
 {
-    if (!iStarted) {
-        iMetadata.Replace(Brx::Empty());
-    }
-    else {
-        iMetadata.Replace("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
-        iMetadata.Append("<item id=\"0\" restricted=\"True\">");
-        iMetadata.Append("<dc:title>");
-        iMetadata.Append(iName);
-        iMetadata.Append("</dc:title>");
-        if (iMulticast) {
-            iMetadata.Append("<res protocolInfo=\"ohm:*:*:*\">");
-            iUri.Replace("ohm://");
-			iMulticastEndpoint.AppendEndpoint(iUri);
-        }
-        else {
-            iMetadata.Append("<res protocolInfo=\"ohu:*:*:*\">");
-            iUri.Replace("ohu://");
-            iSocket.This().AppendEndpoint(iUri);
-        }
-        iMetadata.Append(iUri);
-        iMetadata.Append("</res>");
+    iMetadata.Replace("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
+    iMetadata.Append("<item id=\"0\" restricted=\"True\">");
+    iMetadata.Append("<dc:title>");
+    iMetadata.Append(iName);
+    iMetadata.Append("</dc:title>");
+    
+    if (iMulticast) {
+	    iMetadata.Append("<res protocolInfo=\"ohz:*:*:m\">");
+	}
+	else {
+	    iMetadata.Append("<res protocolInfo=\"ohz:*:*:u\">");
+	}
 
-		iMetadata.Append("<upnp:albumArtURI>");
-		iMetadata.Append("http://");
+    iMetadata.Append("ohz://239.255.255.250:51972/");
+    iMetadata.Append(iDevice.Udn());
+    iMetadata.Append("</res>");
+    
+	iMetadata.Append("<upnp:albumArtURI>");
+	iMetadata.Append("http://");
 
-		Endpoint(iServer->Port(), iInterface).AppendEndpoint(iMetadata);
+	Endpoint(iServer->Port(), iInterface).AppendEndpoint(iMetadata);
 
-		iMetadata.Append("/icon");
-		iMetadata.Append("</upnp:albumArtURI>");
+	iMetadata.Append("/icon");
+	iMetadata.Append("</upnp:albumArtURI>");
 		
-		iMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");
-        iMetadata.Append("</item>");
-        iMetadata.Append("</DIDL-Lite>");
-    }
+	iMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");
+    iMetadata.Append("</item>");
+    iMetadata.Append("</DIDL-Lite>");
 
 	if (!iClientControllingTrackMetadata) {
 		iMutexActive.Wait();
@@ -960,7 +1024,7 @@ void OhmSender::UpdateMetadata()
 void OhmSender::Send()
 {
     try {
-        iSocket.Send(iTxBuffer, iTargetEndpoint);
+        iSocketOhm.Send(iTxBuffer, iTargetEndpoint);
     }
     catch (NetworkError&) {
         ASSERTS();
@@ -1041,7 +1105,7 @@ void OhmSender::SendListen(const Endpoint& aEndpoint)
     header.Externalise(writer);
 
     try {
-        iSocket.Send(iTxBuffer, aEndpoint);
+        iSocketOhm.Send(iTxBuffer, aEndpoint);
     }
     catch (NetworkError&) {
         ASSERTS();
@@ -1060,7 +1124,7 @@ void OhmSender::SendLeave(const Endpoint& aEndpoint)
     header.Externalise(writer);
 
     try {
-        iSocket.Send(iTxBuffer, aEndpoint);
+        iSocketOhm.Send(iTxBuffer, aEndpoint);
     }
     catch (NetworkError&) {
         ASSERTS();
@@ -1106,14 +1170,169 @@ TUint OhmSender::FindSlave(const Endpoint& aEndpoint)
     return (iSlaveCount);
 }
 
-//
+// Zone handling
 
+void OhmSender::RunZone()
+{
+    for (;;) {
+        LOG(kMedia, "OhmSender::RunZone wait\n");
+        
+        iThreadZone->Wait();
+
+        LOG(kMedia, "OhmSender::RunZone go\n");
+        
+		try {
+			for (;;) {
+				OhzHeader header;
+	        
+        		try {
+					header.Internalise(iRxZone);
+				}
+				catch (OhzError&) {
+			        LOG(kMedia, "OhmSender::RunZone received error\n");
+					iRxZone.ReadFlush();
+	           		continue;
+				}
+
+		        LOG(kMedia, "OhmSender::RunZone received message\n");
+
+				if (header.MsgType() == OhzHeader::kMsgTypeZoneQuery) {
+			        LOG(kMedia, "OhmSender::RunZone received zone query\n");
+					OhzHeaderZoneQuery headerZoneQuery;
+					headerZoneQuery.Internalise(iRxZone, header);
+					Brn zone = iRxZone.Read(headerZoneQuery.ZoneBytes());
+                
+					if (zone == iDevice.Udn())
+					{
+						iMutexZone.Wait();
+						SendZoneUri(1);
+						iMutexZone.Signal();
+					}
+				}
+				else if (header.MsgType() == OhzHeader::kMsgTypePresetQuery) {
+			        LOG(kMedia, "OhmSender::RunZone received preset query\n");
+					OhzHeaderPresetQuery headerPresetQuery;
+					headerPresetQuery.Internalise(iRxZone, header);
+					TUint preset = headerPresetQuery.Preset();
+
+					if (preset > 0) {
+						iMutexZone.Wait();
+						if (preset == iPreset) {
+							SendPresetInfo(1);
+						}
+						iMutexZone.Signal();
+					}
+				}
+
+				iRxZone.ReadFlush();
+			}
+		}
+		catch (ReaderError&) { // ReaderError is thrown when shutdown is called to close the thread
+		}
+
+        iZoneDeactivated.Signal();
+        
+        LOG(kMedia, "OhmSender::RunZone stop\n");
+	}
+}
+
+// called with zone mutex locked
+
+void OhmSender::SendZoneUri(TUint aCount)
+{
+    iSendZoneUriCount = aCount;
+
+    SendZoneUri();
+}
+
+void OhmSender::SendZoneUri()
+{
+    try
+    {
+        OhzHeaderZoneUri headerZoneUri(iDevice.Udn(), iUri);
+        OhzHeader header(OhzHeader::kMsgTypeZoneUri, headerZoneUri.MsgBytes());
+        
+        WriterBuffer writer(iTxZone);
+        
+        writer.Flush();
+        header.Externalise(writer);
+        headerZoneUri.Externalise(writer);
+        writer.Write(iDevice.Udn());
+        writer.Write(iUri);
+        
+        iSocketOhz.Send(iTxZone);
+        
+        iSendZoneUriCount--;
+    }
+    catch (OhzError&)
+    {
+    }
+    catch (WriterError&)
+    {
+    }
+
+    if (iSendZoneUriCount > 0) {
+        iTimerZoneUri.FireIn(kTimerZoneUriDelayMs);
+    }
+}
+
+void OhmSender::SendPresetInfo(TUint aCount)
+{
+	iSendPresetInfoCount = aCount;
+
+    SendPresetInfo();
+}
+
+void OhmSender::SendPresetInfo()
+{
+    try
+    {
+    	OhzHeaderPresetInfo headerPresetInfo(iPreset, iMetadata);
+        OhzHeader header(OhzHeader::kMsgTypePresetInfo, headerPresetInfo.MsgBytes());
+
+        WriterBuffer writer(iTxZone);
+
+        writer.Flush();
+        header.Externalise(writer);
+        headerPresetInfo.Externalise(writer);
+        writer.Write(iMetadata);
+
+        iSocketOhz.Send(iTxZone);
+
+        iSendPresetInfoCount--;
+    }
+    catch (OhzError&)
+    {
+    }
+    catch (WriterError&)
+    {
+    }
+
+    if (iSendPresetInfoCount > 0) {
+        iTimerPresetInfo.FireIn(kTimerPresetInfoDelayMs);
+    }
+}
+
+void OhmSender::TimerZoneUriExpired()
+{
+    iMutexZone.Wait();
+    SendZoneUri();
+    iMutexZone.Signal();
+}
+
+void OhmSender::TimerPresetInfoExpired()
+{
+    iMutexZone.Wait();
+    SendPresetInfo();
+    iMutexZone.Signal();
+}
+    
 
 // OhmSenderSession
 
 OhmSenderSession::OhmSenderSession(const OhmSender& aSender)
 	: iSender(aSender)
-    , iShutdownSem("OHMS", 1)
+    , iSemaphore("OHMS", 1)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
@@ -1127,7 +1346,7 @@ OhmSenderSession::OhmSenderSession(const OhmSender& aSender)
 OhmSenderSession::~OhmSenderSession()
 {
     Interrupt(true);
-    iShutdownSem.Wait();
+    iSemaphore.Wait();
     delete iWriterResponse;
     delete iWriterBuffer;
     delete iReaderRequest;
@@ -1136,7 +1355,7 @@ OhmSenderSession::~OhmSenderSession()
 
 void OhmSenderSession::Run()
 {
-    iShutdownSem.Wait();
+    iSemaphore.Wait();
     iErrorStatus = &HttpStatus::kOk;
     iReaderRequest->Flush();
     
@@ -1185,7 +1404,7 @@ void OhmSenderSession::Run()
     catch (WriterError&) {
 	}
 
-    iShutdownSem.Signal();
+    iSemaphore.Signal();
 }
 
 void OhmSenderSession::Error(const HttpStatus& aStatus)
@@ -1201,8 +1420,6 @@ void OhmSenderSession::Get(TBool aWriteEntity)
             Error(HttpStatus::kBadRequest);
         }
     }
-
-    // DviStack::DeviceMap().WriteResource(iReaderRequest->Uri(), iInterface, *this);
 
 	if (iHeaderExpect.Continue()) {
         iWriterResponse->WriteStatus(HttpStatus::kContinue, Http::eHttp11);

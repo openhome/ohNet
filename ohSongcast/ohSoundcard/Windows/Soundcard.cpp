@@ -59,7 +59,7 @@ OhmSenderDriverWindows::OhmSenderDriverWindows()
 		{
 			try
 			{
-				iHandle = CreateFile(deviceInterfaceDetailData->DevicePath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
+				iHandle = CreateFile(deviceInterfaceDetailData->DevicePath, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
 
                 KSPROPERTY prop;
 				
@@ -105,7 +105,12 @@ void OhmSenderDriverWindows::SetEnabled(TBool aValue)
 
     DWORD bytes;
 
-    DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &aValue, sizeof(aValue), &bytes, 0);
+	DWORD value = aValue ? 1 : 0;
+
+    if (!DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &value, sizeof(value), &bytes, 0)) {
+		TUint error = GetLastError();
+		printf("FAILURE %d\n", error);
+	}
 }
 
 void OhmSenderDriverWindows::SetActive(TBool  aValue)
@@ -120,7 +125,12 @@ void OhmSenderDriverWindows::SetActive(TBool  aValue)
 
     DWORD bytes;
 
-    DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &aValue, sizeof(aValue), &bytes, 0);
+	DWORD value = aValue ? 1 : 0;
+
+    if (!DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &value, sizeof(value), &bytes, 0)) {
+		TUint error = GetLastError();
+		printf("FAILURE %d\n", error);
+	}
 }
 
 void OhmSenderDriverWindows::SetEndpoint(const Endpoint& aEndpoint)
@@ -142,7 +152,10 @@ void OhmSenderDriverWindows::SetEndpoint(const Endpoint& aEndpoint)
 
     DWORD bytes;
 
-    DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &buffer, sizeof(buffer), &bytes, 0);
+    if (!DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &buffer, sizeof(buffer), &bytes, 0)) {
+		TUint error = GetLastError();
+		printf("FAILURE %d\n", error);
+	}
 }
 
 
@@ -158,7 +171,10 @@ void OhmSenderDriverWindows::SetTtl(TUint aValue)
 
     DWORD bytes;
 
-    DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &aValue, sizeof(aValue), &bytes, 0);
+    if (!DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &aValue, sizeof(aValue), &bytes, 0)) {
+		TUint error = GetLastError();
+		printf("FAILURE %d\n", error);
+	}
 }
 
 void OhmSenderDriverWindows::SetTrackPosition(TUint64 /*aSamplesTotal*/, TUint64 /*aSampleStart*/)
@@ -167,9 +183,9 @@ void OhmSenderDriverWindows::SetTrackPosition(TUint64 /*aSamplesTotal*/, TUint64
 
 // C interface
 
-THandle SoundcardCreate(const char* aName, uint32_t aChannel, uint32_t aInterface, uint32_t aTtl, uint32_t aMulticast, uint32_t aEnabled)
+THandle SoundcardCreate(const char* aName, uint32_t aChannel, uint32_t aInterface, uint32_t aTtl, uint32_t aMulticast, uint32_t aEnabled, uint32_t aPreset)
 {
-	return (Soundcard::Create(aName, aChannel, aInterface, aTtl, (aMulticast == 0) ? false : true, (aEnabled == 0) ? false : true));
+	return (Soundcard::Create(aName, aChannel, aInterface, aTtl, (aMulticast == 0) ? false : true, (aEnabled == 0) ? false : true, aPreset));
 }
 
 void SoundcardSetName(THandle aSoundcard, const char* aValue)
@@ -220,10 +236,10 @@ void SoundcardDestroy(THandle aSoundcard)
 
 // Soundcard
 
-Soundcard* Soundcard::Create(const TChar* aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled)
+Soundcard* Soundcard::Create(const TChar* aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset)
 {
 	try {
-		Soundcard* soundcard = new Soundcard(aName, aChannel, aInterface, aTtl, aMulticast, aEnabled);
+		Soundcard* soundcard = new Soundcard(aName, aChannel, aInterface, aTtl, aMulticast, aEnabled, aPreset);
 		return (soundcard);
 	}
 	catch (SoundcardError) {
@@ -231,7 +247,7 @@ Soundcard* Soundcard::Create(const TChar* aName, TUint aChannel, TIpAddress aInt
 	return (0);
 }
 
-Soundcard::Soundcard(const TChar* /*aName*/, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled)
+Soundcard::Soundcard(const TChar* /*aName*/, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset)
 {
 	InitialisationParams* initParams = InitialisationParams::Create();
 
@@ -274,7 +290,7 @@ Soundcard::Soundcard(const TChar* /*aName*/, TUint aChannel, TIpAddress aInterfa
     
 	Brn icon(icon_png, icon_png_len);
 
-	iSender = new OhmSender(*iDevice, *iDriver, computer, aChannel, aInterface, aTtl, aMulticast, aEnabled, icon, Brn("image/png"));
+	iSender = new OhmSender(*iDevice, *iDriver, computer, aChannel, aInterface, aTtl, aMulticast, aEnabled, icon, Brn("image/png"), aPreset);
 	
     iDevice->SetEnabled();
 }

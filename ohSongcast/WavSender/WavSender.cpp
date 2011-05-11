@@ -13,7 +13,7 @@
 #include <vector>
 #include <stdio.h>
 
-#include "../Library/OhmSender.h"
+#include "../OhmSender.h"
 
 #ifdef _WIN32
 
@@ -455,7 +455,7 @@ int CDECL main(int aArgc, char* aArgv[])
 
     OhmSenderDriver* driver = new OhmSenderDriver();
     
-	OhmSender* sender = new OhmSender(*device, *driver, name, channel, interface, ttl, multicast, !disabled, Brx::Empty(), Brx::Empty());
+	OhmSender* sender = new OhmSender(*device, *driver, name, channel, interface, ttl, multicast, !disabled, Brx::Empty(), Brx::Empty(), 0);
 	
     PcmSender* pcmsender = new PcmSender(sender, driver, file, data, sampleCount, sampleRate, byteRate * 8, numChannels, bitsPerSample);
     
