@@ -43,66 +43,24 @@ objects_devices = \
                   $(objdir)DvUpnpOrgDimming1.$(objext) \
                   $(objdir)DvUpnpOrgDimming1Std.$(objext) \
                   $(objdir)DvUpnpOrgDimming1C.$(objext) \
-                  $(objdir)DvLinnCoUkComponent1.$(objext) \
-                  $(objdir)DvLinnCoUkComponent1Std.$(objext) \
-                  $(objdir)DvLinnCoUkComponent1C.$(objext) \
-                  $(objdir)DvLinnCoUkConfiguration1.$(objext) \
-                  $(objdir)DvLinnCoUkConfiguration1Std.$(objext) \
-                  $(objdir)DvLinnCoUkConfiguration1C.$(objext) \
-                  $(objdir)DvLinnCoUkDebug2.$(objext) \
-                  $(objdir)DvLinnCoUkDebug2Std.$(objext) \
-                  $(objdir)DvLinnCoUkDebug2C.$(objext) \
-                  $(objdir)DvLinnCoUkDelay1.$(objext) \
-                  $(objdir)DvLinnCoUkDelay1Std.$(objext) \
-                  $(objdir)DvLinnCoUkDelay1C.$(objext) \
-                  $(objdir)DvLinnCoUkDiagnostics1.$(objext) \
-                  $(objdir)DvLinnCoUkDiagnostics1Std.$(objext) \
-                  $(objdir)DvLinnCoUkDiagnostics1C.$(objext) \
-                  $(objdir)DvLinnCoUkDs1.$(objext) \
-                  $(objdir)DvLinnCoUkDs1Std.$(objext) \
-                  $(objdir)DvLinnCoUkDs1C.$(objext) \
-                  $(objdir)DvLinnCoUkInfo1.$(objext) \
-                  $(objdir)DvLinnCoUkInfo1Std.$(objext) \
-                  $(objdir)DvLinnCoUkInfo1C.$(objext) \
-                  $(objdir)DvLinnCoUkJukebox1.$(objext) \
-                  $(objdir)DvLinnCoUkJukebox1Std.$(objext) \
-                  $(objdir)DvLinnCoUkJukebox1C.$(objext) \
-                  $(objdir)DvLinnCoUkMediaTime1.$(objext) \
-                  $(objdir)DvLinnCoUkMediaTime1Std.$(objext) \
-                  $(objdir)DvLinnCoUkMediaTime1C.$(objext) \
-                  $(objdir)DvLinnCoUkPlaylist1.$(objext) \
-                  $(objdir)DvLinnCoUkPlaylist1Std.$(objext) \
-                  $(objdir)DvLinnCoUkPlaylist1C.$(objext) \
-                  $(objdir)DvLinnCoUkPreamp4.$(objext) \
-                  $(objdir)DvLinnCoUkPreamp4Std.$(objext) \
-                  $(objdir)DvLinnCoUkPreamp4C.$(objext) \
-                  $(objdir)DvLinnCoUkProduct1.$(objext) \
-                  $(objdir)DvLinnCoUkProduct1Std.$(objext) \
-                  $(objdir)DvLinnCoUkProduct1C.$(objext) \
-                  $(objdir)DvLinnCoUkProduct2.$(objext) \
-                  $(objdir)DvLinnCoUkProduct2Std.$(objext) \
-                  $(objdir)DvLinnCoUkProduct2C.$(objext) \
-                  $(objdir)DvLinnCoUkProduct3.$(objext) \
-                  $(objdir)DvLinnCoUkProduct3Std.$(objext) \
-                  $(objdir)DvLinnCoUkProduct3C.$(objext) \
-                  $(objdir)DvLinnCoUkProxyManager1.$(objext) \
-                  $(objdir)DvLinnCoUkProxyManager1Std.$(objext) \
-                  $(objdir)DvLinnCoUkProxyManager1C.$(objext) \
-                  $(objdir)DvLinnCoUkPtest1.$(objext) \
-                  $(objdir)DvLinnCoUkPtest1Std.$(objext) \
-                  $(objdir)DvLinnCoUkPtest1C.$(objext) \
-                  $(objdir)DvLinnCoUkRadio1.$(objext) \
-                  $(objdir)DvLinnCoUkRadio1Std.$(objext) \
-                  $(objdir)DvLinnCoUkRadio1C.$(objext) \
-                  $(objdir)DvLinnCoUkTime1.$(objext) \
-                  $(objdir)DvLinnCoUkTime1Std.$(objext) \
-                  $(objdir)DvLinnCoUkTime1C.$(objext) \
-                  $(objdir)DvLinnCoUkUi2.$(objext) \
-                  $(objdir)DvLinnCoUkUi2Std.$(objext) \
-                  $(objdir)DvLinnCoUkUi2C.$(objext) \
-                  $(objdir)DvLinnCoUkVolkano1.$(objext) \
-                  $(objdir)DvLinnCoUkVolkano1Std.$(objext) \
-                  $(objdir)DvLinnCoUkVolkano1C.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgInfo1.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgInfo1Std.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgInfo1C.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgTime1.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgTime1Std.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgTime1C.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgPlaylist1.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgPlaylist1Std.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgPlaylist1C.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgVolume1.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgVolume1Std.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgVolume1C.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgProduct1.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgProduct1Std.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgProduct1C.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgRadio1.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgRadio1Std.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgRadio1C.$(objext) \
                   $(objdir)DvZappOrgTestBasic1.$(objext) \
                   $(objdir)DvZappOrgTestBasic1Std.$(objext) \
                   $(objdir)DvZappOrgTestBasic1C.$(objext) \
@@ -140,26 +98,12 @@ device_dotnet_assemblies = \
         DvUpnpOrgScheduledRecording2.net.dll \
         DvUpnpOrgSwitchPower1.net.dll \
         DvUpnpOrgDimming1.net.dll \
-        DvLinnCoUkComponent1.net.dll \
-        DvLinnCoUkConfiguration1.net.dll \
-        DvLinnCoUkDebug2.net.dll \
-        DvLinnCoUkDelay1.net.dll \
-        DvLinnCoUkDiagnostics1.net.dll \
-        DvLinnCoUkDs1.net.dll \
-        DvLinnCoUkInfo1.net.dll \
-        DvLinnCoUkJukebox1.net.dll \
-        DvLinnCoUkMediaTime1.net.dll \
-        DvLinnCoUkPlaylist1.net.dll \
-        DvLinnCoUkPreamp4.net.dll \
-        DvLinnCoUkProduct1.net.dll \
-        DvLinnCoUkProduct2.net.dll \
-        DvLinnCoUkProduct3.net.dll \
-        DvLinnCoUkProxyManager1.net.dll \
-        DvLinnCoUkPtest1.net.dll \
-        DvLinnCoUkRadio1.net.dll \
-        DvLinnCoUkTime1.net.dll \
-        DvLinnCoUkUi2.net.dll \
-        DvLinnCoUkVolkano1.net.dll \
+        DvAvOpenhomeOrgInfo1.net.dll \
+        DvAvOpenhomeOrgTime1.net.dll \
+        DvAvOpenhomeOrgPlaylist1.net.dll \
+        DvAvOpenhomeOrgVolume1.net.dll \
+        DvAvOpenhomeOrgProduct1.net.dll \
+        DvAvOpenhomeOrgRadio1.net.dll \
         DvZappOrgTestBasic1.net.dll \
         DvZappOrgTestLights1.net.dll \
         DvZappOrgTestDimmableLight1.net.dll \
@@ -180,26 +124,12 @@ device_dotnet_assemblies_with_path = \
         $(objdir)DvUpnpOrgScheduledRecording2.net.dll \
         $(objdir)DvUpnpOrgSwitchPower1.net.dll \
         $(objdir)DvUpnpOrgDimming1.net.dll \
-        $(objdir)DvLinnCoUkComponent1.net.dll \
-        $(objdir)DvLinnCoUkConfiguration1.net.dll \
-        $(objdir)DvLinnCoUkDebug2.net.dll \
-        $(objdir)DvLinnCoUkDelay1.net.dll \
-        $(objdir)DvLinnCoUkDiagnostics1.net.dll \
-        $(objdir)DvLinnCoUkDs1.net.dll \
-        $(objdir)DvLinnCoUkInfo1.net.dll \
-        $(objdir)DvLinnCoUkJukebox1.net.dll \
-        $(objdir)DvLinnCoUkMediaTime1.net.dll \
-        $(objdir)DvLinnCoUkPlaylist1.net.dll \
-        $(objdir)DvLinnCoUkPreamp4.net.dll \
-        $(objdir)DvLinnCoUkProduct1.net.dll \
-        $(objdir)DvLinnCoUkProduct2.net.dll \
-        $(objdir)DvLinnCoUkProduct3.net.dll \
-        $(objdir)DvLinnCoUkProxyManager1.net.dll \
-        $(objdir)DvLinnCoUkPtest1.net.dll \
-        $(objdir)DvLinnCoUkRadio1.net.dll \
-        $(objdir)DvLinnCoUkTime1.net.dll \
-        $(objdir)DvLinnCoUkUi2.net.dll \
-        $(objdir)DvLinnCoUkVolkano1.net.dll \
+        $(objdir)DvAvOpenhomeOrgInfo1.net.dll \
+        $(objdir)DvAvOpenhomeOrgTime1.net.dll \
+        $(objdir)DvAvOpenhomeOrgPlaylist1.net.dll \
+        $(objdir)DvAvOpenhomeOrgVolume1.net.dll \
+        $(objdir)DvAvOpenhomeOrgProduct1.net.dll \
+        $(objdir)DvAvOpenhomeOrgRadio1.net.dll \
         $(objdir)DvZappOrgTestBasic1.net.dll \
         $(objdir)DvZappOrgTestLights1.net.dll \
         $(objdir)DvZappOrgTestDimmableLight1.net.dll \
@@ -208,233 +138,149 @@ device_dotnet_assemblies_with_path = \
 
 devices : upnp_core $(objects_devices)
 	$(ar)ZappDevices.$(libext) $(objects_devices)
-$(objdir)DvUpnpOrgAVTransport1.$(objext) : $(deviceCppCore)DvUpnpOrgAVTransport1.cpp $(headers_device)
+$(objdir)DvUpnpOrgAVTransport1.$(objext) : $(deviceCppCore)DvUpnpOrgAVTransport1.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgAVTransport1.h
 	$(compiler)DvUpnpOrgAVTransport1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgAVTransport1.cpp
-$(objdir)DvUpnpOrgAVTransport1Std.$(objext) : $(deviceCppStd)DvUpnpOrgAVTransport1Std.cpp $(headers_device)
+$(objdir)DvUpnpOrgAVTransport1Std.$(objext) : $(deviceCppStd)DvUpnpOrgAVTransport1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgAVTransport1.h
 	$(compiler)DvUpnpOrgAVTransport1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgAVTransport1Std.cpp
-$(objdir)DvUpnpOrgAVTransport1C.$(objext) : $(deviceC)DvUpnpOrgAVTransport1C.cpp $(headers_device) $(inc_build)/C/DvUpnpOrgAVTransport1.h
+$(objdir)DvUpnpOrgAVTransport1C.$(objext) : $(deviceC)DvUpnpOrgAVTransport1C.cpp $(headers_device) Device/Services/C/DvUpnpOrgAVTransport1.h
 	$(compiler)DvUpnpOrgAVTransport1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgAVTransport1C.cpp
-$(objdir)DvUpnpOrgAVTransport2.$(objext) : $(deviceCppCore)DvUpnpOrgAVTransport2.cpp $(headers_device)
+$(objdir)DvUpnpOrgAVTransport2.$(objext) : $(deviceCppCore)DvUpnpOrgAVTransport2.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgAVTransport2.h
 	$(compiler)DvUpnpOrgAVTransport2.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgAVTransport2.cpp
-$(objdir)DvUpnpOrgAVTransport2Std.$(objext) : $(deviceCppStd)DvUpnpOrgAVTransport2Std.cpp $(headers_device)
+$(objdir)DvUpnpOrgAVTransport2Std.$(objext) : $(deviceCppStd)DvUpnpOrgAVTransport2Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgAVTransport2.h
 	$(compiler)DvUpnpOrgAVTransport2Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgAVTransport2Std.cpp
-$(objdir)DvUpnpOrgAVTransport2C.$(objext) : $(deviceC)DvUpnpOrgAVTransport2C.cpp $(headers_device) $(inc_build)/C/DvUpnpOrgAVTransport2.h
+$(objdir)DvUpnpOrgAVTransport2C.$(objext) : $(deviceC)DvUpnpOrgAVTransport2C.cpp $(headers_device) Device/Services/C/DvUpnpOrgAVTransport2.h
 	$(compiler)DvUpnpOrgAVTransport2C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgAVTransport2C.cpp
-$(objdir)DvUpnpOrgConnectionManager1.$(objext) : $(deviceCppCore)DvUpnpOrgConnectionManager1.cpp $(headers_device)
+$(objdir)DvUpnpOrgConnectionManager1.$(objext) : $(deviceCppCore)DvUpnpOrgConnectionManager1.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgConnectionManager1.h
 	$(compiler)DvUpnpOrgConnectionManager1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgConnectionManager1.cpp
-$(objdir)DvUpnpOrgConnectionManager1Std.$(objext) : $(deviceCppStd)DvUpnpOrgConnectionManager1Std.cpp $(headers_device)
+$(objdir)DvUpnpOrgConnectionManager1Std.$(objext) : $(deviceCppStd)DvUpnpOrgConnectionManager1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgConnectionManager1.h
 	$(compiler)DvUpnpOrgConnectionManager1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgConnectionManager1Std.cpp
-$(objdir)DvUpnpOrgConnectionManager1C.$(objext) : $(deviceC)DvUpnpOrgConnectionManager1C.cpp $(headers_device) $(inc_build)/C/DvUpnpOrgConnectionManager1.h
+$(objdir)DvUpnpOrgConnectionManager1C.$(objext) : $(deviceC)DvUpnpOrgConnectionManager1C.cpp $(headers_device) Device/Services/C/DvUpnpOrgConnectionManager1.h
 	$(compiler)DvUpnpOrgConnectionManager1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgConnectionManager1C.cpp
-$(objdir)DvUpnpOrgConnectionManager2.$(objext) : $(deviceCppCore)DvUpnpOrgConnectionManager2.cpp $(headers_device)
+$(objdir)DvUpnpOrgConnectionManager2.$(objext) : $(deviceCppCore)DvUpnpOrgConnectionManager2.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgConnectionManager2.h
 	$(compiler)DvUpnpOrgConnectionManager2.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgConnectionManager2.cpp
-$(objdir)DvUpnpOrgConnectionManager2Std.$(objext) : $(deviceCppStd)DvUpnpOrgConnectionManager2Std.cpp $(headers_device)
+$(objdir)DvUpnpOrgConnectionManager2Std.$(objext) : $(deviceCppStd)DvUpnpOrgConnectionManager2Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgConnectionManager2.h
 	$(compiler)DvUpnpOrgConnectionManager2Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgConnectionManager2Std.cpp
-$(objdir)DvUpnpOrgConnectionManager2C.$(objext) : $(deviceC)DvUpnpOrgConnectionManager2C.cpp $(headers_device) $(inc_build)/C/DvUpnpOrgConnectionManager2.h
+$(objdir)DvUpnpOrgConnectionManager2C.$(objext) : $(deviceC)DvUpnpOrgConnectionManager2C.cpp $(headers_device) Device/Services/C/DvUpnpOrgConnectionManager2.h
 	$(compiler)DvUpnpOrgConnectionManager2C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgConnectionManager2C.cpp
-$(objdir)DvUpnpOrgContentDirectory1.$(objext) : $(deviceCppCore)DvUpnpOrgContentDirectory1.cpp $(headers_device)
+$(objdir)DvUpnpOrgContentDirectory1.$(objext) : $(deviceCppCore)DvUpnpOrgContentDirectory1.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgContentDirectory1.h
 	$(compiler)DvUpnpOrgContentDirectory1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgContentDirectory1.cpp
-$(objdir)DvUpnpOrgContentDirectory1Std.$(objext) : $(deviceCppStd)DvUpnpOrgContentDirectory1Std.cpp $(headers_device)
+$(objdir)DvUpnpOrgContentDirectory1Std.$(objext) : $(deviceCppStd)DvUpnpOrgContentDirectory1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgContentDirectory1.h
 	$(compiler)DvUpnpOrgContentDirectory1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgContentDirectory1Std.cpp
-$(objdir)DvUpnpOrgContentDirectory1C.$(objext) : $(deviceC)DvUpnpOrgContentDirectory1C.cpp $(headers_device) $(inc_build)/C/DvUpnpOrgContentDirectory1.h
+$(objdir)DvUpnpOrgContentDirectory1C.$(objext) : $(deviceC)DvUpnpOrgContentDirectory1C.cpp $(headers_device) Device/Services/C/DvUpnpOrgContentDirectory1.h
 	$(compiler)DvUpnpOrgContentDirectory1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgContentDirectory1C.cpp
-$(objdir)DvUpnpOrgContentDirectory2.$(objext) : $(deviceCppCore)DvUpnpOrgContentDirectory2.cpp $(headers_device)
+$(objdir)DvUpnpOrgContentDirectory2.$(objext) : $(deviceCppCore)DvUpnpOrgContentDirectory2.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgContentDirectory2.h
 	$(compiler)DvUpnpOrgContentDirectory2.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgContentDirectory2.cpp
-$(objdir)DvUpnpOrgContentDirectory2Std.$(objext) : $(deviceCppStd)DvUpnpOrgContentDirectory2Std.cpp $(headers_device)
+$(objdir)DvUpnpOrgContentDirectory2Std.$(objext) : $(deviceCppStd)DvUpnpOrgContentDirectory2Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgContentDirectory2.h
 	$(compiler)DvUpnpOrgContentDirectory2Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgContentDirectory2Std.cpp
-$(objdir)DvUpnpOrgContentDirectory2C.$(objext) : $(deviceC)DvUpnpOrgContentDirectory2C.cpp $(headers_device) $(inc_build)/C/DvUpnpOrgContentDirectory2.h
+$(objdir)DvUpnpOrgContentDirectory2C.$(objext) : $(deviceC)DvUpnpOrgContentDirectory2C.cpp $(headers_device) Device/Services/C/DvUpnpOrgContentDirectory2.h
 	$(compiler)DvUpnpOrgContentDirectory2C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgContentDirectory2C.cpp
-$(objdir)DvUpnpOrgContentDirectory3.$(objext) : $(deviceCppCore)DvUpnpOrgContentDirectory3.cpp $(headers_device)
+$(objdir)DvUpnpOrgContentDirectory3.$(objext) : $(deviceCppCore)DvUpnpOrgContentDirectory3.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgContentDirectory3.h
 	$(compiler)DvUpnpOrgContentDirectory3.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgContentDirectory3.cpp
-$(objdir)DvUpnpOrgContentDirectory3Std.$(objext) : $(deviceCppStd)DvUpnpOrgContentDirectory3Std.cpp $(headers_device)
+$(objdir)DvUpnpOrgContentDirectory3Std.$(objext) : $(deviceCppStd)DvUpnpOrgContentDirectory3Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgContentDirectory3.h
 	$(compiler)DvUpnpOrgContentDirectory3Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgContentDirectory3Std.cpp
-$(objdir)DvUpnpOrgContentDirectory3C.$(objext) : $(deviceC)DvUpnpOrgContentDirectory3C.cpp $(headers_device) $(inc_build)/C/DvUpnpOrgContentDirectory3.h
+$(objdir)DvUpnpOrgContentDirectory3C.$(objext) : $(deviceC)DvUpnpOrgContentDirectory3C.cpp $(headers_device) Device/Services/C/DvUpnpOrgContentDirectory3.h
 	$(compiler)DvUpnpOrgContentDirectory3C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgContentDirectory3C.cpp
-$(objdir)DvUpnpOrgRenderingControl1.$(objext) : $(deviceCppCore)DvUpnpOrgRenderingControl1.cpp $(headers_device)
+$(objdir)DvUpnpOrgRenderingControl1.$(objext) : $(deviceCppCore)DvUpnpOrgRenderingControl1.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgRenderingControl1.h
 	$(compiler)DvUpnpOrgRenderingControl1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgRenderingControl1.cpp
-$(objdir)DvUpnpOrgRenderingControl1Std.$(objext) : $(deviceCppStd)DvUpnpOrgRenderingControl1Std.cpp $(headers_device)
+$(objdir)DvUpnpOrgRenderingControl1Std.$(objext) : $(deviceCppStd)DvUpnpOrgRenderingControl1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgRenderingControl1.h
 	$(compiler)DvUpnpOrgRenderingControl1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgRenderingControl1Std.cpp
-$(objdir)DvUpnpOrgRenderingControl1C.$(objext) : $(deviceC)DvUpnpOrgRenderingControl1C.cpp $(headers_device) $(inc_build)/C/DvUpnpOrgRenderingControl1.h
+$(objdir)DvUpnpOrgRenderingControl1C.$(objext) : $(deviceC)DvUpnpOrgRenderingControl1C.cpp $(headers_device) Device/Services/C/DvUpnpOrgRenderingControl1.h
 	$(compiler)DvUpnpOrgRenderingControl1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgRenderingControl1C.cpp
-$(objdir)DvUpnpOrgRenderingControl2.$(objext) : $(deviceCppCore)DvUpnpOrgRenderingControl2.cpp $(headers_device)
+$(objdir)DvUpnpOrgRenderingControl2.$(objext) : $(deviceCppCore)DvUpnpOrgRenderingControl2.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgRenderingControl2.h
 	$(compiler)DvUpnpOrgRenderingControl2.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgRenderingControl2.cpp
-$(objdir)DvUpnpOrgRenderingControl2Std.$(objext) : $(deviceCppStd)DvUpnpOrgRenderingControl2Std.cpp $(headers_device)
+$(objdir)DvUpnpOrgRenderingControl2Std.$(objext) : $(deviceCppStd)DvUpnpOrgRenderingControl2Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgRenderingControl2.h
 	$(compiler)DvUpnpOrgRenderingControl2Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgRenderingControl2Std.cpp
-$(objdir)DvUpnpOrgRenderingControl2C.$(objext) : $(deviceC)DvUpnpOrgRenderingControl2C.cpp $(headers_device) $(inc_build)/C/DvUpnpOrgRenderingControl2.h
+$(objdir)DvUpnpOrgRenderingControl2C.$(objext) : $(deviceC)DvUpnpOrgRenderingControl2C.cpp $(headers_device) Device/Services/C/DvUpnpOrgRenderingControl2.h
 	$(compiler)DvUpnpOrgRenderingControl2C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgRenderingControl2C.cpp
-$(objdir)DvUpnpOrgScheduledRecording1.$(objext) : $(deviceCppCore)DvUpnpOrgScheduledRecording1.cpp $(headers_device)
+$(objdir)DvUpnpOrgScheduledRecording1.$(objext) : $(deviceCppCore)DvUpnpOrgScheduledRecording1.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgScheduledRecording1.h
 	$(compiler)DvUpnpOrgScheduledRecording1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgScheduledRecording1.cpp
-$(objdir)DvUpnpOrgScheduledRecording1Std.$(objext) : $(deviceCppStd)DvUpnpOrgScheduledRecording1Std.cpp $(headers_device)
+$(objdir)DvUpnpOrgScheduledRecording1Std.$(objext) : $(deviceCppStd)DvUpnpOrgScheduledRecording1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgScheduledRecording1.h
 	$(compiler)DvUpnpOrgScheduledRecording1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgScheduledRecording1Std.cpp
-$(objdir)DvUpnpOrgScheduledRecording1C.$(objext) : $(deviceC)DvUpnpOrgScheduledRecording1C.cpp $(headers_device) $(inc_build)/C/DvUpnpOrgScheduledRecording1.h
+$(objdir)DvUpnpOrgScheduledRecording1C.$(objext) : $(deviceC)DvUpnpOrgScheduledRecording1C.cpp $(headers_device) Device/Services/C/DvUpnpOrgScheduledRecording1.h
 	$(compiler)DvUpnpOrgScheduledRecording1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgScheduledRecording1C.cpp
-$(objdir)DvUpnpOrgScheduledRecording2.$(objext) : $(deviceCppCore)DvUpnpOrgScheduledRecording2.cpp $(headers_device)
+$(objdir)DvUpnpOrgScheduledRecording2.$(objext) : $(deviceCppCore)DvUpnpOrgScheduledRecording2.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgScheduledRecording2.h
 	$(compiler)DvUpnpOrgScheduledRecording2.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgScheduledRecording2.cpp
-$(objdir)DvUpnpOrgScheduledRecording2Std.$(objext) : $(deviceCppStd)DvUpnpOrgScheduledRecording2Std.cpp $(headers_device)
+$(objdir)DvUpnpOrgScheduledRecording2Std.$(objext) : $(deviceCppStd)DvUpnpOrgScheduledRecording2Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgScheduledRecording2.h
 	$(compiler)DvUpnpOrgScheduledRecording2Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgScheduledRecording2Std.cpp
-$(objdir)DvUpnpOrgScheduledRecording2C.$(objext) : $(deviceC)DvUpnpOrgScheduledRecording2C.cpp $(headers_device) $(inc_build)/C/DvUpnpOrgScheduledRecording2.h
+$(objdir)DvUpnpOrgScheduledRecording2C.$(objext) : $(deviceC)DvUpnpOrgScheduledRecording2C.cpp $(headers_device) Device/Services/C/DvUpnpOrgScheduledRecording2.h
 	$(compiler)DvUpnpOrgScheduledRecording2C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgScheduledRecording2C.cpp
-$(objdir)DvUpnpOrgSwitchPower1.$(objext) : $(deviceCppCore)DvUpnpOrgSwitchPower1.cpp $(headers_device)
+$(objdir)DvUpnpOrgSwitchPower1.$(objext) : $(deviceCppCore)DvUpnpOrgSwitchPower1.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgSwitchPower1.h
 	$(compiler)DvUpnpOrgSwitchPower1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgSwitchPower1.cpp
-$(objdir)DvUpnpOrgSwitchPower1Std.$(objext) : $(deviceCppStd)DvUpnpOrgSwitchPower1Std.cpp $(headers_device)
+$(objdir)DvUpnpOrgSwitchPower1Std.$(objext) : $(deviceCppStd)DvUpnpOrgSwitchPower1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgSwitchPower1.h
 	$(compiler)DvUpnpOrgSwitchPower1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgSwitchPower1Std.cpp
-$(objdir)DvUpnpOrgSwitchPower1C.$(objext) : $(deviceC)DvUpnpOrgSwitchPower1C.cpp $(headers_device) $(inc_build)/C/DvUpnpOrgSwitchPower1.h
+$(objdir)DvUpnpOrgSwitchPower1C.$(objext) : $(deviceC)DvUpnpOrgSwitchPower1C.cpp $(headers_device) Device/Services/C/DvUpnpOrgSwitchPower1.h
 	$(compiler)DvUpnpOrgSwitchPower1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgSwitchPower1C.cpp
-$(objdir)DvUpnpOrgDimming1.$(objext) : $(deviceCppCore)DvUpnpOrgDimming1.cpp $(headers_device)
+$(objdir)DvUpnpOrgDimming1.$(objext) : $(deviceCppCore)DvUpnpOrgDimming1.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgDimming1.h
 	$(compiler)DvUpnpOrgDimming1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgDimming1.cpp
-$(objdir)DvUpnpOrgDimming1Std.$(objext) : $(deviceCppStd)DvUpnpOrgDimming1Std.cpp $(headers_device)
+$(objdir)DvUpnpOrgDimming1Std.$(objext) : $(deviceCppStd)DvUpnpOrgDimming1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgDimming1.h
 	$(compiler)DvUpnpOrgDimming1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvUpnpOrgDimming1Std.cpp
-$(objdir)DvUpnpOrgDimming1C.$(objext) : $(deviceC)DvUpnpOrgDimming1C.cpp $(headers_device) $(inc_build)/C/DvUpnpOrgDimming1.h
+$(objdir)DvUpnpOrgDimming1C.$(objext) : $(deviceC)DvUpnpOrgDimming1C.cpp $(headers_device) Device/Services/C/DvUpnpOrgDimming1.h
 	$(compiler)DvUpnpOrgDimming1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvUpnpOrgDimming1C.cpp
-$(objdir)DvLinnCoUkComponent1.$(objext) : $(deviceCppCore)DvLinnCoUkComponent1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkComponent1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkComponent1.cpp
-$(objdir)DvLinnCoUkComponent1Std.$(objext) : $(deviceCppStd)DvLinnCoUkComponent1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkComponent1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkComponent1Std.cpp
-$(objdir)DvLinnCoUkComponent1C.$(objext) : $(deviceC)DvLinnCoUkComponent1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkComponent1.h
-	$(compiler)DvLinnCoUkComponent1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkComponent1C.cpp
-$(objdir)DvLinnCoUkConfiguration1.$(objext) : $(deviceCppCore)DvLinnCoUkConfiguration1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkConfiguration1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkConfiguration1.cpp
-$(objdir)DvLinnCoUkConfiguration1Std.$(objext) : $(deviceCppStd)DvLinnCoUkConfiguration1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkConfiguration1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkConfiguration1Std.cpp
-$(objdir)DvLinnCoUkConfiguration1C.$(objext) : $(deviceC)DvLinnCoUkConfiguration1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkConfiguration1.h
-	$(compiler)DvLinnCoUkConfiguration1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkConfiguration1C.cpp
-$(objdir)DvLinnCoUkDebug2.$(objext) : $(deviceCppCore)DvLinnCoUkDebug2.cpp $(headers_device)
-	$(compiler)DvLinnCoUkDebug2.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkDebug2.cpp
-$(objdir)DvLinnCoUkDebug2Std.$(objext) : $(deviceCppStd)DvLinnCoUkDebug2Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkDebug2Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkDebug2Std.cpp
-$(objdir)DvLinnCoUkDebug2C.$(objext) : $(deviceC)DvLinnCoUkDebug2C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkDebug2.h
-	$(compiler)DvLinnCoUkDebug2C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkDebug2C.cpp
-$(objdir)DvLinnCoUkDelay1.$(objext) : $(deviceCppCore)DvLinnCoUkDelay1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkDelay1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkDelay1.cpp
-$(objdir)DvLinnCoUkDelay1Std.$(objext) : $(deviceCppStd)DvLinnCoUkDelay1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkDelay1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkDelay1Std.cpp
-$(objdir)DvLinnCoUkDelay1C.$(objext) : $(deviceC)DvLinnCoUkDelay1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkDelay1.h
-	$(compiler)DvLinnCoUkDelay1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkDelay1C.cpp
-$(objdir)DvLinnCoUkDiagnostics1.$(objext) : $(deviceCppCore)DvLinnCoUkDiagnostics1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkDiagnostics1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkDiagnostics1.cpp
-$(objdir)DvLinnCoUkDiagnostics1Std.$(objext) : $(deviceCppStd)DvLinnCoUkDiagnostics1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkDiagnostics1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkDiagnostics1Std.cpp
-$(objdir)DvLinnCoUkDiagnostics1C.$(objext) : $(deviceC)DvLinnCoUkDiagnostics1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkDiagnostics1.h
-	$(compiler)DvLinnCoUkDiagnostics1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkDiagnostics1C.cpp
-$(objdir)DvLinnCoUkDs1.$(objext) : $(deviceCppCore)DvLinnCoUkDs1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkDs1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkDs1.cpp
-$(objdir)DvLinnCoUkDs1Std.$(objext) : $(deviceCppStd)DvLinnCoUkDs1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkDs1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkDs1Std.cpp
-$(objdir)DvLinnCoUkDs1C.$(objext) : $(deviceC)DvLinnCoUkDs1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkDs1.h
-	$(compiler)DvLinnCoUkDs1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkDs1C.cpp
-$(objdir)DvLinnCoUkInfo1.$(objext) : $(deviceCppCore)DvLinnCoUkInfo1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkInfo1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkInfo1.cpp
-$(objdir)DvLinnCoUkInfo1Std.$(objext) : $(deviceCppStd)DvLinnCoUkInfo1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkInfo1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkInfo1Std.cpp
-$(objdir)DvLinnCoUkInfo1C.$(objext) : $(deviceC)DvLinnCoUkInfo1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkInfo1.h
-	$(compiler)DvLinnCoUkInfo1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkInfo1C.cpp
-$(objdir)DvLinnCoUkJukebox1.$(objext) : $(deviceCppCore)DvLinnCoUkJukebox1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkJukebox1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkJukebox1.cpp
-$(objdir)DvLinnCoUkJukebox1Std.$(objext) : $(deviceCppStd)DvLinnCoUkJukebox1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkJukebox1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkJukebox1Std.cpp
-$(objdir)DvLinnCoUkJukebox1C.$(objext) : $(deviceC)DvLinnCoUkJukebox1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkJukebox1.h
-	$(compiler)DvLinnCoUkJukebox1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkJukebox1C.cpp
-$(objdir)DvLinnCoUkMediaTime1.$(objext) : $(deviceCppCore)DvLinnCoUkMediaTime1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkMediaTime1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkMediaTime1.cpp
-$(objdir)DvLinnCoUkMediaTime1Std.$(objext) : $(deviceCppStd)DvLinnCoUkMediaTime1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkMediaTime1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkMediaTime1Std.cpp
-$(objdir)DvLinnCoUkMediaTime1C.$(objext) : $(deviceC)DvLinnCoUkMediaTime1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkMediaTime1.h
-	$(compiler)DvLinnCoUkMediaTime1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkMediaTime1C.cpp
-$(objdir)DvLinnCoUkPlaylist1.$(objext) : $(deviceCppCore)DvLinnCoUkPlaylist1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkPlaylist1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkPlaylist1.cpp
-$(objdir)DvLinnCoUkPlaylist1Std.$(objext) : $(deviceCppStd)DvLinnCoUkPlaylist1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkPlaylist1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkPlaylist1Std.cpp
-$(objdir)DvLinnCoUkPlaylist1C.$(objext) : $(deviceC)DvLinnCoUkPlaylist1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkPlaylist1.h
-	$(compiler)DvLinnCoUkPlaylist1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkPlaylist1C.cpp
-$(objdir)DvLinnCoUkPreamp4.$(objext) : $(deviceCppCore)DvLinnCoUkPreamp4.cpp $(headers_device)
-	$(compiler)DvLinnCoUkPreamp4.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkPreamp4.cpp
-$(objdir)DvLinnCoUkPreamp4Std.$(objext) : $(deviceCppStd)DvLinnCoUkPreamp4Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkPreamp4Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkPreamp4Std.cpp
-$(objdir)DvLinnCoUkPreamp4C.$(objext) : $(deviceC)DvLinnCoUkPreamp4C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkPreamp4.h
-	$(compiler)DvLinnCoUkPreamp4C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkPreamp4C.cpp
-$(objdir)DvLinnCoUkProduct1.$(objext) : $(deviceCppCore)DvLinnCoUkProduct1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkProduct1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkProduct1.cpp
-$(objdir)DvLinnCoUkProduct1Std.$(objext) : $(deviceCppStd)DvLinnCoUkProduct1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkProduct1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkProduct1Std.cpp
-$(objdir)DvLinnCoUkProduct1C.$(objext) : $(deviceC)DvLinnCoUkProduct1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkProduct1.h
-	$(compiler)DvLinnCoUkProduct1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkProduct1C.cpp
-$(objdir)DvLinnCoUkProduct2.$(objext) : $(deviceCppCore)DvLinnCoUkProduct2.cpp $(headers_device)
-	$(compiler)DvLinnCoUkProduct2.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkProduct2.cpp
-$(objdir)DvLinnCoUkProduct2Std.$(objext) : $(deviceCppStd)DvLinnCoUkProduct2Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkProduct2Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkProduct2Std.cpp
-$(objdir)DvLinnCoUkProduct2C.$(objext) : $(deviceC)DvLinnCoUkProduct2C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkProduct2.h
-	$(compiler)DvLinnCoUkProduct2C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkProduct2C.cpp
-$(objdir)DvLinnCoUkProduct3.$(objext) : $(deviceCppCore)DvLinnCoUkProduct3.cpp $(headers_device)
-	$(compiler)DvLinnCoUkProduct3.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkProduct3.cpp
-$(objdir)DvLinnCoUkProduct3Std.$(objext) : $(deviceCppStd)DvLinnCoUkProduct3Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkProduct3Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkProduct3Std.cpp
-$(objdir)DvLinnCoUkProduct3C.$(objext) : $(deviceC)DvLinnCoUkProduct3C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkProduct3.h
-	$(compiler)DvLinnCoUkProduct3C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkProduct3C.cpp
-$(objdir)DvLinnCoUkProxyManager1.$(objext) : $(deviceCppCore)DvLinnCoUkProxyManager1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkProxyManager1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkProxyManager1.cpp
-$(objdir)DvLinnCoUkProxyManager1Std.$(objext) : $(deviceCppStd)DvLinnCoUkProxyManager1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkProxyManager1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkProxyManager1Std.cpp
-$(objdir)DvLinnCoUkProxyManager1C.$(objext) : $(deviceC)DvLinnCoUkProxyManager1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkProxyManager1.h
-	$(compiler)DvLinnCoUkProxyManager1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkProxyManager1C.cpp
-$(objdir)DvLinnCoUkPtest1.$(objext) : $(deviceCppCore)DvLinnCoUkPtest1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkPtest1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkPtest1.cpp
-$(objdir)DvLinnCoUkPtest1Std.$(objext) : $(deviceCppStd)DvLinnCoUkPtest1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkPtest1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkPtest1Std.cpp
-$(objdir)DvLinnCoUkPtest1C.$(objext) : $(deviceC)DvLinnCoUkPtest1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkPtest1.h
-	$(compiler)DvLinnCoUkPtest1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkPtest1C.cpp
-$(objdir)DvLinnCoUkRadio1.$(objext) : $(deviceCppCore)DvLinnCoUkRadio1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkRadio1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkRadio1.cpp
-$(objdir)DvLinnCoUkRadio1Std.$(objext) : $(deviceCppStd)DvLinnCoUkRadio1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkRadio1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkRadio1Std.cpp
-$(objdir)DvLinnCoUkRadio1C.$(objext) : $(deviceC)DvLinnCoUkRadio1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkRadio1.h
-	$(compiler)DvLinnCoUkRadio1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkRadio1C.cpp
-$(objdir)DvLinnCoUkTime1.$(objext) : $(deviceCppCore)DvLinnCoUkTime1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkTime1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkTime1.cpp
-$(objdir)DvLinnCoUkTime1Std.$(objext) : $(deviceCppStd)DvLinnCoUkTime1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkTime1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkTime1Std.cpp
-$(objdir)DvLinnCoUkTime1C.$(objext) : $(deviceC)DvLinnCoUkTime1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkTime1.h
-	$(compiler)DvLinnCoUkTime1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkTime1C.cpp
-$(objdir)DvLinnCoUkUi2.$(objext) : $(deviceCppCore)DvLinnCoUkUi2.cpp $(headers_device)
-	$(compiler)DvLinnCoUkUi2.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkUi2.cpp
-$(objdir)DvLinnCoUkUi2Std.$(objext) : $(deviceCppStd)DvLinnCoUkUi2Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkUi2Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkUi2Std.cpp
-$(objdir)DvLinnCoUkUi2C.$(objext) : $(deviceC)DvLinnCoUkUi2C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkUi2.h
-	$(compiler)DvLinnCoUkUi2C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkUi2C.cpp
-$(objdir)DvLinnCoUkVolkano1.$(objext) : $(deviceCppCore)DvLinnCoUkVolkano1.cpp $(headers_device)
-	$(compiler)DvLinnCoUkVolkano1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvLinnCoUkVolkano1.cpp
-$(objdir)DvLinnCoUkVolkano1Std.$(objext) : $(deviceCppStd)DvLinnCoUkVolkano1Std.cpp $(headers_device)
-	$(compiler)DvLinnCoUkVolkano1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvLinnCoUkVolkano1Std.cpp
-$(objdir)DvLinnCoUkVolkano1C.$(objext) : $(deviceC)DvLinnCoUkVolkano1C.cpp $(headers_device) $(inc_build)/C/DvLinnCoUkVolkano1.h
-	$(compiler)DvLinnCoUkVolkano1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvLinnCoUkVolkano1C.cpp
-$(objdir)DvZappOrgTestBasic1.$(objext) : $(deviceCppCore)DvZappOrgTestBasic1.cpp $(headers_device)
+$(objdir)DvAvOpenhomeOrgInfo1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgInfo1.cpp $(headers_device) Device/Services/Cpp/Core/DvAvOpenhomeOrgInfo1.h
+	$(compiler)DvAvOpenhomeOrgInfo1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgInfo1.cpp
+$(objdir)DvAvOpenhomeOrgInfo1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgInfo1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvAvOpenhomeOrgInfo1.h
+	$(compiler)DvAvOpenhomeOrgInfo1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgInfo1Std.cpp
+$(objdir)DvAvOpenhomeOrgInfo1C.$(objext) : $(deviceC)DvAvOpenhomeOrgInfo1C.cpp $(headers_device) Device/Services/C/DvAvOpenhomeOrgInfo1.h
+	$(compiler)DvAvOpenhomeOrgInfo1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgInfo1C.cpp
+$(objdir)DvAvOpenhomeOrgTime1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgTime1.cpp $(headers_device) Device/Services/Cpp/Core/DvAvOpenhomeOrgTime1.h
+	$(compiler)DvAvOpenhomeOrgTime1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgTime1.cpp
+$(objdir)DvAvOpenhomeOrgTime1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgTime1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvAvOpenhomeOrgTime1.h
+	$(compiler)DvAvOpenhomeOrgTime1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgTime1Std.cpp
+$(objdir)DvAvOpenhomeOrgTime1C.$(objext) : $(deviceC)DvAvOpenhomeOrgTime1C.cpp $(headers_device) Device/Services/C/DvAvOpenhomeOrgTime1.h
+	$(compiler)DvAvOpenhomeOrgTime1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgTime1C.cpp
+$(objdir)DvAvOpenhomeOrgPlaylist1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgPlaylist1.cpp $(headers_device) Device/Services/Cpp/Core/DvAvOpenhomeOrgPlaylist1.h
+	$(compiler)DvAvOpenhomeOrgPlaylist1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgPlaylist1.cpp
+$(objdir)DvAvOpenhomeOrgPlaylist1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgPlaylist1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvAvOpenhomeOrgPlaylist1.h
+	$(compiler)DvAvOpenhomeOrgPlaylist1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgPlaylist1Std.cpp
+$(objdir)DvAvOpenhomeOrgPlaylist1C.$(objext) : $(deviceC)DvAvOpenhomeOrgPlaylist1C.cpp $(headers_device) Device/Services/C/DvAvOpenhomeOrgPlaylist1.h
+	$(compiler)DvAvOpenhomeOrgPlaylist1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgPlaylist1C.cpp
+$(objdir)DvAvOpenhomeOrgVolume1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgVolume1.cpp $(headers_device) Device/Services/Cpp/Core/DvAvOpenhomeOrgVolume1.h
+	$(compiler)DvAvOpenhomeOrgVolume1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgVolume1.cpp
+$(objdir)DvAvOpenhomeOrgVolume1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgVolume1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvAvOpenhomeOrgVolume1.h
+	$(compiler)DvAvOpenhomeOrgVolume1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgVolume1Std.cpp
+$(objdir)DvAvOpenhomeOrgVolume1C.$(objext) : $(deviceC)DvAvOpenhomeOrgVolume1C.cpp $(headers_device) Device/Services/C/DvAvOpenhomeOrgVolume1.h
+	$(compiler)DvAvOpenhomeOrgVolume1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgVolume1C.cpp
+$(objdir)DvAvOpenhomeOrgProduct1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgProduct1.cpp $(headers_device) Device/Services/Cpp/Core/DvAvOpenhomeOrgProduct1.h
+	$(compiler)DvAvOpenhomeOrgProduct1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgProduct1.cpp
+$(objdir)DvAvOpenhomeOrgProduct1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgProduct1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvAvOpenhomeOrgProduct1.h
+	$(compiler)DvAvOpenhomeOrgProduct1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgProduct1Std.cpp
+$(objdir)DvAvOpenhomeOrgProduct1C.$(objext) : $(deviceC)DvAvOpenhomeOrgProduct1C.cpp $(headers_device) Device/Services/C/DvAvOpenhomeOrgProduct1.h
+	$(compiler)DvAvOpenhomeOrgProduct1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgProduct1C.cpp
+$(objdir)DvAvOpenhomeOrgRadio1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgRadio1.cpp $(headers_device) Device/Services/Cpp/Core/DvAvOpenhomeOrgRadio1.h
+	$(compiler)DvAvOpenhomeOrgRadio1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgRadio1.cpp
+$(objdir)DvAvOpenhomeOrgRadio1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgRadio1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvAvOpenhomeOrgRadio1.h
+	$(compiler)DvAvOpenhomeOrgRadio1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgRadio1Std.cpp
+$(objdir)DvAvOpenhomeOrgRadio1C.$(objext) : $(deviceC)DvAvOpenhomeOrgRadio1C.cpp $(headers_device) Device/Services/C/DvAvOpenhomeOrgRadio1.h
+	$(compiler)DvAvOpenhomeOrgRadio1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgRadio1C.cpp
+$(objdir)DvZappOrgTestBasic1.$(objext) : $(deviceCppCore)DvZappOrgTestBasic1.cpp $(headers_device) Device/Services/Cpp/Core/DvZappOrgTestBasic1.h
 	$(compiler)DvZappOrgTestBasic1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvZappOrgTestBasic1.cpp
-$(objdir)DvZappOrgTestBasic1Std.$(objext) : $(deviceCppStd)DvZappOrgTestBasic1Std.cpp $(headers_device)
+$(objdir)DvZappOrgTestBasic1Std.$(objext) : $(deviceCppStd)DvZappOrgTestBasic1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvZappOrgTestBasic1.h
 	$(compiler)DvZappOrgTestBasic1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvZappOrgTestBasic1Std.cpp
-$(objdir)DvZappOrgTestBasic1C.$(objext) : $(deviceC)DvZappOrgTestBasic1C.cpp $(headers_device) $(inc_build)/C/DvZappOrgTestBasic1.h
+$(objdir)DvZappOrgTestBasic1C.$(objext) : $(deviceC)DvZappOrgTestBasic1C.cpp $(headers_device) Device/Services/C/DvZappOrgTestBasic1.h
 	$(compiler)DvZappOrgTestBasic1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvZappOrgTestBasic1C.cpp
-$(objdir)DvZappOrgTestLights1.$(objext) : $(deviceCppCore)DvZappOrgTestLights1.cpp $(headers_device)
+$(objdir)DvZappOrgTestLights1.$(objext) : $(deviceCppCore)DvZappOrgTestLights1.cpp $(headers_device) Device/Services/Cpp/Core/DvZappOrgTestLights1.h
 	$(compiler)DvZappOrgTestLights1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvZappOrgTestLights1.cpp
-$(objdir)DvZappOrgTestLights1Std.$(objext) : $(deviceCppStd)DvZappOrgTestLights1Std.cpp $(headers_device)
+$(objdir)DvZappOrgTestLights1Std.$(objext) : $(deviceCppStd)DvZappOrgTestLights1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvZappOrgTestLights1.h
 	$(compiler)DvZappOrgTestLights1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvZappOrgTestLights1Std.cpp
-$(objdir)DvZappOrgTestLights1C.$(objext) : $(deviceC)DvZappOrgTestLights1C.cpp $(headers_device) $(inc_build)/C/DvZappOrgTestLights1.h
+$(objdir)DvZappOrgTestLights1C.$(objext) : $(deviceC)DvZappOrgTestLights1C.cpp $(headers_device) Device/Services/C/DvZappOrgTestLights1.h
 	$(compiler)DvZappOrgTestLights1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvZappOrgTestLights1C.cpp
-$(objdir)DvZappOrgTestDimmableLight1.$(objext) : $(deviceCppCore)DvZappOrgTestDimmableLight1.cpp $(headers_device)
+$(objdir)DvZappOrgTestDimmableLight1.$(objext) : $(deviceCppCore)DvZappOrgTestDimmableLight1.cpp $(headers_device) Device/Services/Cpp/Core/DvZappOrgTestDimmableLight1.h
 	$(compiler)DvZappOrgTestDimmableLight1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvZappOrgTestDimmableLight1.cpp
-$(objdir)DvZappOrgTestDimmableLight1Std.$(objext) : $(deviceCppStd)DvZappOrgTestDimmableLight1Std.cpp $(headers_device)
+$(objdir)DvZappOrgTestDimmableLight1Std.$(objext) : $(deviceCppStd)DvZappOrgTestDimmableLight1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvZappOrgTestDimmableLight1.h
 	$(compiler)DvZappOrgTestDimmableLight1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvZappOrgTestDimmableLight1Std.cpp
-$(objdir)DvZappOrgTestDimmableLight1C.$(objext) : $(deviceC)DvZappOrgTestDimmableLight1C.cpp $(headers_device) $(inc_build)/C/DvZappOrgTestDimmableLight1.h
+$(objdir)DvZappOrgTestDimmableLight1C.$(objext) : $(deviceC)DvZappOrgTestDimmableLight1C.cpp $(headers_device) Device/Services/C/DvZappOrgTestDimmableLight1.h
 	$(compiler)DvZappOrgTestDimmableLight1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvZappOrgTestDimmableLight1C.cpp
-$(objdir)DvOpenhomeOrgTestColorLight1.$(objext) : $(deviceCppCore)DvOpenhomeOrgTestColorLight1.cpp $(headers_device)
+$(objdir)DvOpenhomeOrgTestColorLight1.$(objext) : $(deviceCppCore)DvOpenhomeOrgTestColorLight1.cpp $(headers_device) Device/Services/Cpp/Core/DvOpenhomeOrgTestColorLight1.h
 	$(compiler)DvOpenhomeOrgTestColorLight1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvOpenhomeOrgTestColorLight1.cpp
-$(objdir)DvOpenhomeOrgTestColorLight1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgTestColorLight1Std.cpp $(headers_device)
+$(objdir)DvOpenhomeOrgTestColorLight1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgTestColorLight1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvOpenhomeOrgTestColorLight1.h
 	$(compiler)DvOpenhomeOrgTestColorLight1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvOpenhomeOrgTestColorLight1Std.cpp
-$(objdir)DvOpenhomeOrgTestColorLight1C.$(objext) : $(deviceC)DvOpenhomeOrgTestColorLight1C.cpp $(headers_device) $(inc_build)/C/DvOpenhomeOrgTestColorLight1.h
+$(objdir)DvOpenhomeOrgTestColorLight1C.$(objext) : $(deviceC)DvOpenhomeOrgTestColorLight1C.cpp $(headers_device) Device/Services/C/DvOpenhomeOrgTestColorLight1.h
 	$(compiler)DvOpenhomeOrgTestColorLight1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvOpenhomeOrgTestColorLight1C.cpp
-$(objdir)DvOpenhomeOrgOhNet1.$(objext) : $(deviceCppCore)DvOpenhomeOrgOhNet1.cpp $(headers_device)
+$(objdir)DvOpenhomeOrgOhNet1.$(objext) : $(deviceCppCore)DvOpenhomeOrgOhNet1.cpp $(headers_device) Device/Services/Cpp/Core/DvOpenhomeOrgOhNet1.h
 	$(compiler)DvOpenhomeOrgOhNet1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvOpenhomeOrgOhNet1.cpp
-$(objdir)DvOpenhomeOrgOhNet1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgOhNet1Std.cpp $(headers_device)
+$(objdir)DvOpenhomeOrgOhNet1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgOhNet1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvOpenhomeOrgOhNet1.h
 	$(compiler)DvOpenhomeOrgOhNet1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvOpenhomeOrgOhNet1Std.cpp
-$(objdir)DvOpenhomeOrgOhNet1C.$(objext) : $(deviceC)DvOpenhomeOrgOhNet1C.cpp $(headers_device) $(inc_build)/C/DvOpenhomeOrgOhNet1.h
+$(objdir)DvOpenhomeOrgOhNet1C.$(objext) : $(deviceC)DvOpenhomeOrgOhNet1C.cpp $(headers_device) Device/Services/C/DvOpenhomeOrgOhNet1.h
 	$(compiler)DvOpenhomeOrgOhNet1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvOpenhomeOrgOhNet1C.cpp
 
 device_dlls = \
@@ -451,26 +297,12 @@ device_dlls = \
              DvUpnpOrgScheduledRecording2Dll \
              DvUpnpOrgSwitchPower1Dll \
              DvUpnpOrgDimming1Dll \
-             DvLinnCoUkComponent1Dll \
-             DvLinnCoUkConfiguration1Dll \
-             DvLinnCoUkDebug2Dll \
-             DvLinnCoUkDelay1Dll \
-             DvLinnCoUkDiagnostics1Dll \
-             DvLinnCoUkDs1Dll \
-             DvLinnCoUkInfo1Dll \
-             DvLinnCoUkJukebox1Dll \
-             DvLinnCoUkMediaTime1Dll \
-             DvLinnCoUkPlaylist1Dll \
-             DvLinnCoUkPreamp4Dll \
-             DvLinnCoUkProduct1Dll \
-             DvLinnCoUkProduct2Dll \
-             DvLinnCoUkProduct3Dll \
-             DvLinnCoUkProxyManager1Dll \
-             DvLinnCoUkPtest1Dll \
-             DvLinnCoUkRadio1Dll \
-             DvLinnCoUkTime1Dll \
-             DvLinnCoUkUi2Dll \
-             DvLinnCoUkVolkano1Dll \
+             DvAvOpenhomeOrgInfo1Dll \
+             DvAvOpenhomeOrgTime1Dll \
+             DvAvOpenhomeOrgPlaylist1Dll \
+             DvAvOpenhomeOrgVolume1Dll \
+             DvAvOpenhomeOrgProduct1Dll \
+             DvAvOpenhomeOrgRadio1Dll \
              DvZappOrgTestBasic1Dll \
              DvZappOrgTestLights1Dll \
              DvZappOrgTestDimmableLight1Dll \
@@ -517,66 +349,24 @@ $(objdir)$(dllprefix)DvUpnpOrgSwitchPower1.$(dllext) : ZappUpnpDll $(objdir)DvUp
 DvUpnpOrgDimming1Dll: $(objdir)$(dllprefix)DvUpnpOrgDimming1.$(dllext) 
 $(objdir)$(dllprefix)DvUpnpOrgDimming1.$(dllext) : ZappUpnpDll $(objdir)DvUpnpOrgDimming1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvUpnpOrgDimming1.$(dllext) $(objdir)DvUpnpOrgDimming1.$(objext)
-DvLinnCoUkComponent1Dll: $(objdir)$(dllprefix)DvLinnCoUkComponent1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkComponent1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkComponent1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkComponent1.$(dllext) $(objdir)DvLinnCoUkComponent1.$(objext)
-DvLinnCoUkConfiguration1Dll: $(objdir)$(dllprefix)DvLinnCoUkConfiguration1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkConfiguration1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkConfiguration1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkConfiguration1.$(dllext) $(objdir)DvLinnCoUkConfiguration1.$(objext)
-DvLinnCoUkDebug2Dll: $(objdir)$(dllprefix)DvLinnCoUkDebug2.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkDebug2.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkDebug2.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkDebug2.$(dllext) $(objdir)DvLinnCoUkDebug2.$(objext)
-DvLinnCoUkDelay1Dll: $(objdir)$(dllprefix)DvLinnCoUkDelay1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkDelay1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkDelay1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkDelay1.$(dllext) $(objdir)DvLinnCoUkDelay1.$(objext)
-DvLinnCoUkDiagnostics1Dll: $(objdir)$(dllprefix)DvLinnCoUkDiagnostics1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkDiagnostics1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkDiagnostics1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkDiagnostics1.$(dllext) $(objdir)DvLinnCoUkDiagnostics1.$(objext)
-DvLinnCoUkDs1Dll: $(objdir)$(dllprefix)DvLinnCoUkDs1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkDs1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkDs1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkDs1.$(dllext) $(objdir)DvLinnCoUkDs1.$(objext)
-DvLinnCoUkInfo1Dll: $(objdir)$(dllprefix)DvLinnCoUkInfo1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkInfo1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkInfo1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkInfo1.$(dllext) $(objdir)DvLinnCoUkInfo1.$(objext)
-DvLinnCoUkJukebox1Dll: $(objdir)$(dllprefix)DvLinnCoUkJukebox1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkJukebox1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkJukebox1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkJukebox1.$(dllext) $(objdir)DvLinnCoUkJukebox1.$(objext)
-DvLinnCoUkMediaTime1Dll: $(objdir)$(dllprefix)DvLinnCoUkMediaTime1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkMediaTime1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkMediaTime1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkMediaTime1.$(dllext) $(objdir)DvLinnCoUkMediaTime1.$(objext)
-DvLinnCoUkPlaylist1Dll: $(objdir)$(dllprefix)DvLinnCoUkPlaylist1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkPlaylist1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkPlaylist1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkPlaylist1.$(dllext) $(objdir)DvLinnCoUkPlaylist1.$(objext)
-DvLinnCoUkPreamp4Dll: $(objdir)$(dllprefix)DvLinnCoUkPreamp4.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkPreamp4.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkPreamp4.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkPreamp4.$(dllext) $(objdir)DvLinnCoUkPreamp4.$(objext)
-DvLinnCoUkProduct1Dll: $(objdir)$(dllprefix)DvLinnCoUkProduct1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkProduct1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkProduct1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkProduct1.$(dllext) $(objdir)DvLinnCoUkProduct1.$(objext)
-DvLinnCoUkProduct2Dll: $(objdir)$(dllprefix)DvLinnCoUkProduct2.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkProduct2.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkProduct2.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkProduct2.$(dllext) $(objdir)DvLinnCoUkProduct2.$(objext)
-DvLinnCoUkProduct3Dll: $(objdir)$(dllprefix)DvLinnCoUkProduct3.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkProduct3.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkProduct3.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkProduct3.$(dllext) $(objdir)DvLinnCoUkProduct3.$(objext)
-DvLinnCoUkProxyManager1Dll: $(objdir)$(dllprefix)DvLinnCoUkProxyManager1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkProxyManager1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkProxyManager1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkProxyManager1.$(dllext) $(objdir)DvLinnCoUkProxyManager1.$(objext)
-DvLinnCoUkPtest1Dll: $(objdir)$(dllprefix)DvLinnCoUkPtest1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkPtest1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkPtest1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkPtest1.$(dllext) $(objdir)DvLinnCoUkPtest1.$(objext)
-DvLinnCoUkRadio1Dll: $(objdir)$(dllprefix)DvLinnCoUkRadio1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkRadio1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkRadio1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkRadio1.$(dllext) $(objdir)DvLinnCoUkRadio1.$(objext)
-DvLinnCoUkTime1Dll: $(objdir)$(dllprefix)DvLinnCoUkTime1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkTime1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkTime1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkTime1.$(dllext) $(objdir)DvLinnCoUkTime1.$(objext)
-DvLinnCoUkUi2Dll: $(objdir)$(dllprefix)DvLinnCoUkUi2.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkUi2.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkUi2.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkUi2.$(dllext) $(objdir)DvLinnCoUkUi2.$(objext)
-DvLinnCoUkVolkano1Dll: $(objdir)$(dllprefix)DvLinnCoUkVolkano1.$(dllext) 
-$(objdir)$(dllprefix)DvLinnCoUkVolkano1.$(dllext) : ZappUpnpDll $(objdir)DvLinnCoUkVolkano1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvLinnCoUkVolkano1.$(dllext) $(objdir)DvLinnCoUkVolkano1.$(objext)
+DvAvOpenhomeOrgInfo1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgInfo1.$(dllext) 
+$(objdir)$(dllprefix)DvAvOpenhomeOrgInfo1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgInfo1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgInfo1.$(dllext) $(objdir)DvAvOpenhomeOrgInfo1.$(objext)
+DvAvOpenhomeOrgTime1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgTime1.$(dllext) 
+$(objdir)$(dllprefix)DvAvOpenhomeOrgTime1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgTime1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgTime1.$(dllext) $(objdir)DvAvOpenhomeOrgTime1.$(objext)
+DvAvOpenhomeOrgPlaylist1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgPlaylist1.$(dllext) 
+$(objdir)$(dllprefix)DvAvOpenhomeOrgPlaylist1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgPlaylist1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgPlaylist1.$(dllext) $(objdir)DvAvOpenhomeOrgPlaylist1.$(objext)
+DvAvOpenhomeOrgVolume1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgVolume1.$(dllext) 
+$(objdir)$(dllprefix)DvAvOpenhomeOrgVolume1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgVolume1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgVolume1.$(dllext) $(objdir)DvAvOpenhomeOrgVolume1.$(objext)
+DvAvOpenhomeOrgProduct1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgProduct1.$(dllext) 
+$(objdir)$(dllprefix)DvAvOpenhomeOrgProduct1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgProduct1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgProduct1.$(dllext) $(objdir)DvAvOpenhomeOrgProduct1.$(objext)
+DvAvOpenhomeOrgRadio1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgRadio1.$(dllext) 
+$(objdir)$(dllprefix)DvAvOpenhomeOrgRadio1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgRadio1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgRadio1.$(dllext) $(objdir)DvAvOpenhomeOrgRadio1.$(objext)
 DvZappOrgTestBasic1Dll: $(objdir)$(dllprefix)DvZappOrgTestBasic1.$(dllext) 
 $(objdir)$(dllprefix)DvZappOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)DvZappOrgTestBasic1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvZappOrgTestBasic1.$(dllext) $(objdir)DvZappOrgTestBasic1.$(objext)
@@ -663,106 +453,36 @@ $(objdir)DvUpnpOrgDimming1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgDi
 		/out:$(objdir)DvUpnpOrgDimming1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
 		$(deviceCs)DvUpnpOrgDimming1.cs
-$(objdir)DvLinnCoUkComponent1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkComponent1.cs
+$(objdir)DvAvOpenhomeOrgInfo1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvAvOpenhomeOrgInfo1.cs
 	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkComponent1.net.dll \
+		/out:$(objdir)DvAvOpenhomeOrgInfo1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkComponent1.cs
-$(objdir)DvLinnCoUkConfiguration1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkConfiguration1.cs
+		$(deviceCs)DvAvOpenhomeOrgInfo1.cs
+$(objdir)DvAvOpenhomeOrgTime1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvAvOpenhomeOrgTime1.cs
 	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkConfiguration1.net.dll \
+		/out:$(objdir)DvAvOpenhomeOrgTime1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkConfiguration1.cs
-$(objdir)DvLinnCoUkDebug2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkDebug2.cs
+		$(deviceCs)DvAvOpenhomeOrgTime1.cs
+$(objdir)DvAvOpenhomeOrgPlaylist1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvAvOpenhomeOrgPlaylist1.cs
 	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkDebug2.net.dll \
+		/out:$(objdir)DvAvOpenhomeOrgPlaylist1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkDebug2.cs
-$(objdir)DvLinnCoUkDelay1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkDelay1.cs
+		$(deviceCs)DvAvOpenhomeOrgPlaylist1.cs
+$(objdir)DvAvOpenhomeOrgVolume1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvAvOpenhomeOrgVolume1.cs
 	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkDelay1.net.dll \
+		/out:$(objdir)DvAvOpenhomeOrgVolume1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkDelay1.cs
-$(objdir)DvLinnCoUkDiagnostics1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkDiagnostics1.cs
+		$(deviceCs)DvAvOpenhomeOrgVolume1.cs
+$(objdir)DvAvOpenhomeOrgProduct1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvAvOpenhomeOrgProduct1.cs
 	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkDiagnostics1.net.dll \
+		/out:$(objdir)DvAvOpenhomeOrgProduct1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkDiagnostics1.cs
-$(objdir)DvLinnCoUkDs1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkDs1.cs
+		$(deviceCs)DvAvOpenhomeOrgProduct1.cs
+$(objdir)DvAvOpenhomeOrgRadio1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvAvOpenhomeOrgRadio1.cs
 	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkDs1.net.dll \
+		/out:$(objdir)DvAvOpenhomeOrgRadio1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkDs1.cs
-$(objdir)DvLinnCoUkInfo1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkInfo1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkInfo1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkInfo1.cs
-$(objdir)DvLinnCoUkJukebox1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkJukebox1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkJukebox1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkJukebox1.cs
-$(objdir)DvLinnCoUkMediaTime1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkMediaTime1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkMediaTime1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkMediaTime1.cs
-$(objdir)DvLinnCoUkPlaylist1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkPlaylist1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkPlaylist1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkPlaylist1.cs
-$(objdir)DvLinnCoUkPreamp4.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkPreamp4.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkPreamp4.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkPreamp4.cs
-$(objdir)DvLinnCoUkProduct1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkProduct1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkProduct1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkProduct1.cs
-$(objdir)DvLinnCoUkProduct2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkProduct2.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkProduct2.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkProduct2.cs
-$(objdir)DvLinnCoUkProduct3.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkProduct3.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkProduct3.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkProduct3.cs
-$(objdir)DvLinnCoUkProxyManager1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkProxyManager1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkProxyManager1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkProxyManager1.cs
-$(objdir)DvLinnCoUkPtest1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkPtest1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkPtest1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkPtest1.cs
-$(objdir)DvLinnCoUkRadio1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkRadio1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkRadio1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkRadio1.cs
-$(objdir)DvLinnCoUkTime1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkTime1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkTime1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkTime1.cs
-$(objdir)DvLinnCoUkUi2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkUi2.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkUi2.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkUi2.cs
-$(objdir)DvLinnCoUkVolkano1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkVolkano1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvLinnCoUkVolkano1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvLinnCoUkVolkano1.cs
+		$(deviceCs)DvAvOpenhomeOrgRadio1.cs
 $(objdir)DvZappOrgTestBasic1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvZappOrgTestBasic1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvZappOrgTestBasic1.net.dll \

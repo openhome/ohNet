@@ -46,7 +46,7 @@ CpTopology1::CpTopology1(ICpTopology1Handler& aHandler)
     FunctorCpDevice upnpAdded = MakeFunctorCpDevice(*this, &CpTopology1::UpnpAdded);
     FunctorCpDevice upnpRemoved = MakeFunctorCpDevice(*this, &CpTopology1::UpnpRemoved);
     
-    iDeviceListProduct = new CpDeviceListUpnpServiceType(Brn("linn.co.uk"), Brn("Product"), 3, productAdded, productRemoved);
+    iDeviceListProduct = new CpDeviceListUpnpServiceType(Brn("av.openhome.org"), Brn("Product"), 1, productAdded, productRemoved);
     iDeviceListUpnp = new CpDeviceListUpnpDeviceType(Brn("upnp.org"), Brn("MediaRenderer"), 1, upnpAdded, upnpRemoved);
 
 	iThread = new ThreadFunctor("TOP1", MakeFunctor(*this, &CpTopology1::Run));

@@ -42,11 +42,11 @@ devices : upnp_core $(objects_devices)
 	$(ar)ZappDevices.$(libext) $(objects_devices)
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_device)
+$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_device) Device/Services/Cpp/Core/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
 	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cflags) $(includes) $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
-$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp $(headers_device)
+$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp $(headers_device) Device/Services/Cpp/Std/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
 	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
-$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) : $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp $(headers_device) $(inc_build)/C/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
+$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) : $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp $(headers_device) Device/Services/C/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
 	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cflags) $(includes) $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
 <#  } #>
 

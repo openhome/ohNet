@@ -230,23 +230,28 @@ CpTopology2Product::CpTopology2Product(CpDevice& aDevice, ICpTopology2Handler& a
     : CpTopology2Device(aDevice)
     , iHandler(aHandler)
     , iServiceProduct(0)
-    , iServicePreamp(0)
+    , iServiceVolume(0)
     , iGroup(0)
 {
+    printf("product construct\n");
+
     iFunctorSetSourceIndex = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetSourceIndex);
     iFunctorSetStandby = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetStandby);
     iFunctorSetVolume = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetVolume);
     iFunctorSetMute = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetMute);
-	iServiceProduct = new CpProxyLinnCoUkProduct3(iDevice);
-	Functor initial = MakeFunctor(*this, &CpTopology2Product::EventProductPropertyChanged);
-	iServiceProduct->SetPropertyChanged(initial);	
+	iServiceProduct = new CpProxyAvOpenhomeOrgProduct1(iDevice);
+
+	Functor functorInitial = MakeFunctor(*this, &CpTopology2Product::EventProductInitialEvent);
+
+    iServiceProduct->SetPropertyInitialEvent(functorInitial);
+
 	iServiceProduct->Subscribe();
 }
 
 CpTopology2Product::~CpTopology2Product()
 {
 	delete (iServiceProduct);
-	delete (iServicePreamp);
+	delete (iServiceVolume);
 	
 	if (iGroup != 0) {
 		iHandler.GroupRemoved(*iGroup);
@@ -254,27 +259,42 @@ CpTopology2Product::~CpTopology2Product()
 	}
 }
 
-void CpTopology2Product::EventIgnorePropertyChanged()
+void CpTopology2Product::EventProductInitialEvent()
 {
-}
+    Functor functorRoom = MakeFunctor(*this, &CpTopology2Product::EventProductRoomChanged);
+    Functor functorName = MakeFunctor(*this, &CpTopology2Product::EventProductNameChanged);
+    Functor functorStandby = MakeFunctor(*this, &CpTopology2Product::EventProductStandbyChanged);
+    Functor functorSourceIndex = MakeFunctor(*this, &CpTopology2Product::EventProductSourceIndexChanged);
+    Functor functorSourceXml = MakeFunctor(*this, &CpTopology2Product::EventProductSourceXmlChanged);
 
-void CpTopology2Product::EventProductPropertyChanged()
-{
-	Functor ignore = MakeFunctor(*this, &CpTopology2Product::EventIgnorePropertyChanged);
-	iServiceProduct->SetPropertyChanged(ignore);	
+    iServiceProduct->SetPropertyProductRoomChanged(functorRoom);    
+    iServiceProduct->SetPropertyProductNameChanged(functorName);    
+    iServiceProduct->SetPropertyStandbyChanged(functorStandby); 
+    iServiceProduct->SetPropertySourceIndexChanged(functorSourceIndex); 
+    iServiceProduct->SetPropertySourceXmlChanged(functorSourceXml);
+      
+	Brhz attributes;
 
-	Brhz type;
+	iServiceProduct->PropertyAttributes(attributes);
 
-	iServiceProduct->PropertyProductType(type);
-
-	if (type == Brn("Preamp")) {
-		iServicePreamp = new CpProxyLinnCoUkPreamp4(iDevice);
-		Functor initial = MakeFunctor(*this, &CpTopology2Product::EventPreampPropertyChanged);
-		iServicePreamp->SetPropertyChanged(initial);	
-		iServicePreamp->Subscribe();
-		return;
-	}
-	
+    Parser parser(attributes);
+    
+    for (;;) {
+        Brn attribute = parser.Next();
+        
+        if (attribute.Bytes() == 0) {
+            break;
+        }
+        
+        if (attribute == Brn("Volume")) {
+            iServiceVolume = new CpProxyAvOpenhomeOrgVolume1(iDevice);
+            Functor functorInitial = MakeFunctor(*this, &CpTopology2Product::EventPreampInitialEvent);
+            iServiceVolume->SetPropertyInitialEvent(functorInitial);    
+            iServiceVolume->Subscribe();
+            return;
+        }
+    }
+    
 	Brhz room;
 	Brhz name;
 	TUint sourceIndex;
@@ -283,33 +303,23 @@ void CpTopology2Product::EventProductPropertyChanged()
 	
 	iServiceProduct->PropertyProductRoom(room);
 	iServiceProduct->PropertyProductName(name);
-	iServiceProduct->PropertyProductSourceIndex(sourceIndex);
-	iServiceProduct->PropertyProductStandby(standby);
-	iServiceProduct->PropertyProductSourceXml(xml);
+	iServiceProduct->PropertySourceIndex(sourceIndex);
+	iServiceProduct->PropertyStandby(standby);
+	iServiceProduct->PropertySourceXml(xml);
 	
 	iGroup = new CpTopology2Group(*this, iDevice, standby, room, name, sourceIndex, false, 0, false);
 	
 	ProcessSourceXml(xml, true);
 	
 	iHandler.GroupAdded(*iGroup);
-	
-	Functor functorRoom = MakeFunctor(*this, &CpTopology2Product::EventProductRoomChanged);
-	Functor functorName = MakeFunctor(*this, &CpTopology2Product::EventProductNameChanged);
-	Functor functorStandby = MakeFunctor(*this, &CpTopology2Product::EventProductStandbyChanged);
-	Functor functorSourceIndex = MakeFunctor(*this, &CpTopology2Product::EventProductSourceIndexChanged);
-	Functor functorSourceXml = MakeFunctor(*this, &CpTopology2Product::EventProductSourceXmlChanged);
-
-	iServiceProduct->SetPropertyProductRoomChanged(functorRoom);	
-	iServiceProduct->SetPropertyProductNameChanged(functorName);	
-	iServiceProduct->SetPropertyProductStandbyChanged(functorStandby);	
-	iServiceProduct->SetPropertyProductSourceIndexChanged(functorSourceIndex);	
-	iServiceProduct->SetPropertyProductSourceXmlChanged(functorSourceXml);
 }
 
-void CpTopology2Product::EventPreampPropertyChanged()
+void CpTopology2Product::EventPreampInitialEvent()
 {
-	Functor ignore = MakeFunctor(*this, &CpTopology2Product::EventIgnorePropertyChanged);
-	iServicePreamp->SetPropertyChanged(ignore);	
+    Functor functorVolume = MakeFunctor(*this, &CpTopology2Product::EventVolumeChanged);
+    Functor functorMute = MakeFunctor(*this, &CpTopology2Product::EventMuteChanged);
+    iServiceVolume->SetPropertyVolumeChanged(functorVolume);    
+    iServiceVolume->SetPropertyMuteChanged(functorMute);    
 
 	Brhz room;
 	Brhz name;
@@ -319,39 +329,21 @@ void CpTopology2Product::EventPreampPropertyChanged()
 	
 	iServiceProduct->PropertyProductRoom(room);
 	iServiceProduct->PropertyProductName(name);
-	iServiceProduct->PropertyProductSourceIndex(sourceIndex);
-	iServiceProduct->PropertyProductStandby(standby);
-	iServiceProduct->PropertyProductSourceXml(xml);
+	iServiceProduct->PropertySourceIndex(sourceIndex);
+	iServiceProduct->PropertyStandby(standby);
+	iServiceProduct->PropertySourceXml(xml);
 	
 	TUint volume;
 	TBool mute;
 	
-	iServicePreamp->PropertyVolume(volume);
-	iServicePreamp->PropertyMute(mute);
+	iServiceVolume->PropertyVolume(volume);
+	iServiceVolume->PropertyMute(mute);
 
 	iGroup = new CpTopology2Group(*this, iDevice, standby, room, name, sourceIndex, true, volume, mute);
 	
 	ProcessSourceXml(xml, true);
-	
-	iHandler.GroupAdded(*iGroup);
-	
-	Functor functorRoom = MakeFunctor(*this, &CpTopology2Product::EventProductRoomChanged);
-	Functor functorName = MakeFunctor(*this, &CpTopology2Product::EventProductNameChanged);
-	Functor functorStandby = MakeFunctor(*this, &CpTopology2Product::EventProductStandbyChanged);
-	Functor functorSourceIndex = MakeFunctor(*this, &CpTopology2Product::EventProductSourceIndexChanged);
-	Functor functorSourceXml = MakeFunctor(*this, &CpTopology2Product::EventProductSourceXmlChanged);
 
-	iServiceProduct->SetPropertyProductRoomChanged(functorRoom);	
-	iServiceProduct->SetPropertyProductNameChanged(functorName);	
-	iServiceProduct->SetPropertyProductStandbyChanged(functorStandby);	
-	iServiceProduct->SetPropertyProductSourceIndexChanged(functorSourceIndex);	
-	iServiceProduct->SetPropertyProductSourceXmlChanged(functorSourceXml);
-	
-	Functor functorVolume = MakeFunctor(*this, &CpTopology2Product::EventVolumeChanged);
-	Functor functorMute = MakeFunctor(*this, &CpTopology2Product::EventMuteChanged);
-	
-	iServicePreamp->SetPropertyVolumeChanged(functorVolume);	
-	iServicePreamp->SetPropertyMuteChanged(functorMute);	
+    iHandler.GroupAdded(*iGroup);
 }
 
 /*  Example source xml
@@ -361,13 +353,11 @@ void CpTopology2Product::EventPreampPropertyChanged()
 			<Name>Playlist</Name>
 			<Type>Playlist</Type>
 			<Visible>1</Visible>
-			<Attributes>Mpus</Attributes>
 		</Source>
 		<Source>
 			<Name>Radio</Name>
 			<Type>Radio</Type>
 			<Visible>1</Visible>
-			<Attributes>Mpus</Attributes>
 		</Source>
 	</SourceList>
 */
@@ -389,7 +379,7 @@ void CpTopology2Product::ProcessSourceXml(const Brx& aXml, TBool aInitial)
 			
 			TBool vis = false;
 			
-			if (visible == Brn("1")) {
+			if (visible == Brn("true")) {
 				vis = true;
 			}
 			
@@ -453,7 +443,7 @@ void CpTopology2Product::EventProductStandbyChanged()
     LOG(kTopology, "\n");
 
 	TBool standby;
-	iServiceProduct->PropertyProductStandby(standby);
+	iServiceProduct->PropertyStandby(standby);
 	
 	iGroup->UpdateStandby(standby);
 	iHandler.GroupStandbyChanged(*iGroup);
@@ -468,7 +458,7 @@ void CpTopology2Product::EventProductSourceIndexChanged()
     LOG(kTopology, "\n");
 
 	TUint sourceIndex;
-	iServiceProduct->PropertyProductSourceIndex(sourceIndex);
+	iServiceProduct->PropertySourceIndex(sourceIndex);
 	
 	iGroup->UpdateSourceIndex(sourceIndex);
 	iHandler.GroupSourceIndexChanged(*iGroup);
@@ -483,7 +473,7 @@ void CpTopology2Product::EventProductSourceXmlChanged()
     LOG(kTopology, "\n");
 
 	Brhz xml;
-	iServiceProduct->PropertyProductSourceXml(xml);
+	iServiceProduct->PropertySourceXml(xml);
 
 	ProcessSourceXml(xml, false);	
 }	
@@ -497,7 +487,7 @@ void CpTopology2Product::EventVolumeChanged()
     LOG(kTopology, "\n");
 
 	TUint volume;
-	iServicePreamp->PropertyVolume(volume);
+	iServiceVolume->PropertyVolume(volume);
 
 	iGroup->UpdateVolume(volume);
 	iHandler.GroupVolumeChanged(*iGroup);
@@ -512,7 +502,7 @@ void CpTopology2Product::EventMuteChanged()
     LOG(kTopology, "\n");
 
 	TBool mute;
-	iServicePreamp->PropertyMute(mute);
+	iServiceVolume->PropertyMute(mute);
 
 	iGroup->UpdateMute(mute);
 	iHandler.GroupMuteChanged(*iGroup);
@@ -540,22 +530,22 @@ void CpTopology2Product::CallbackSetStandby(IAsync& aAsync)
 
 void CpTopology2Product::SetVolume(TUint aValue)
 {
-	iServicePreamp->BeginSetVolume(aValue, iFunctorSetVolume);
+	iServiceVolume->BeginSetVolume(aValue, iFunctorSetVolume);
 }
 
 void CpTopology2Product::CallbackSetVolume(IAsync& aAsync)
 {
-	iServicePreamp->EndSetVolume(aAsync);
+	iServiceVolume->EndSetVolume(aAsync);
 }		
 
 void CpTopology2Product::SetMute(TBool aValue)
 {
-	iServicePreamp->BeginSetMute(aValue, iFunctorSetVolume);
+	iServiceVolume->BeginSetMute(aValue, iFunctorSetVolume);
 }
 
 void CpTopology2Product::CallbackSetMute(IAsync& aAsync)
 {
-	iServicePreamp->EndSetMute(aAsync);
+	iServiceVolume->EndSetMute(aAsync);
 }		
 
 // CpTopology2MediaRenderer
