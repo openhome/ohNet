@@ -114,19 +114,16 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         block = false;
     }
 
+    Blocker* blocker = new Blocker;
     if (deviceList != kHandleNull) {
-        Blocker* blocker = new Blocker;
         blocker->Wait(aInitParams->MsearchTimeSecs());
-        delete blocker;
     }
     if (refresh.Value()) {
-        Blocker* blocker = new Blocker;
-        blocker->Wait(mx.Value());
         Print("\nRefreshing...\n\n");
         CpDeviceListRefresh(deviceList);
-        blocker->Wait(mx.Value());
-        delete blocker;
+        blocker->Wait(aInitParams->MsearchTimeSecs());
     }
+    delete blocker;
     CpDeviceListDestroy(deviceList);
     delete mutex;
 

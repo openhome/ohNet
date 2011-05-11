@@ -87,7 +87,7 @@ gNativeTestsOnly = 0
 gSilent = 0
 gTestsOnly = 0
 gValgrind = 0
-gJsOnly = 0
+gJsTests = 0
 for arg in sys.argv[1:]:
     if arg == '-b' or arg == '--buildonly':
         gBuildOnly = 1
@@ -99,8 +99,8 @@ for arg in sys.argv[1:]:
         gNativeTestsOnly = 1
     elif arg == '-s' or arg == '--silent':
         gSilent = 1
-    elif arg == '-j' or arg == '--jsonly':
-        gJsOnly = 1
+    elif arg == '-j' or arg == '--js':
+        gJsTests = 1
     elif arg == '-t' or arg == '--testsonly':
         gTestsOnly = 1
     elif arg == '-vg' or arg == '--valgrind':
@@ -111,10 +111,9 @@ for arg in sys.argv[1:]:
     else:
         print 'Unrecognised argument - ' + arg
         sys.exit(1)
-if gSilent == 0:
     os.environ["ABORT_ON_FAILURE"] = "1"
-else:
-    os.environ["NO_ERROR_DIALOGS"] = "1"
+    if gSilent != 0:
+        os.environ["NO_ERROR_DIALOGS"] = "1"
 
 class TestCase(object):
     def __init__(self, name, args, quick=False, native=True):
@@ -167,7 +166,7 @@ gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestCpDeviceDvCs', [], True, False)
             ]
 
-def JsOnly():
+def JsTests():
     print "running javascript tests"
     if not os.path.exists("xout"):
         os.mkdir("xout")
@@ -191,8 +190,8 @@ if gBuildOnly == 0:
         runTestsValgrind()
     else:
         runTests()
-    if gJsOnly == 1:
-        JsOnly()
+    if gJsTests == 1:
+        JsTests()
     print '\nFinished.  All tests passed'
 print 'Start time: ' + gStartTime
 print 'Builds complete: ' + gBuildsCompleteTime

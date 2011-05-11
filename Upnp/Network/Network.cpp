@@ -697,7 +697,7 @@ Endpoint SocketUdp::Receive(Bwx& aBuffer)
 // SocketUdpMulticast
 
 SocketUdpMulticast::SocketUdpMulticast(TIpAddress aInterface, const Endpoint& aEndpoint)
-    : SocketUdp(aEndpoint.Port(), aInterface)
+    : SocketUdp(aEndpoint.Port())
     , iInterface(aInterface)
     , iAddress(aEndpoint.Address())
 {
