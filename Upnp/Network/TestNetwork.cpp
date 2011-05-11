@@ -552,7 +552,7 @@ void SuiteMulticast::Test()
 
         if (iSender.Clear()) {
             TEST(1 == 0);
-            Log::Print("SuiteMulticast - sent one message, received mnore than once\n");
+            Log::Print("SuiteMulticast - sent one message, received more than once\n");
         }
     }
 
