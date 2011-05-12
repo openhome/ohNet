@@ -714,7 +714,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
 
     UpnpLibrary::InitialiseMinimal(aInitParams);
 
-    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
+    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(true);
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress addr = (*ifs)[adapter.Value()]->Address();
     for (TUint i=0; i<ifs->size(); i++) {
