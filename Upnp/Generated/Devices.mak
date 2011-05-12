@@ -61,6 +61,9 @@ objects_devices = \
                   $(objdir)DvAvOpenhomeOrgRadio1.$(objext) \
                   $(objdir)DvAvOpenhomeOrgRadio1Std.$(objext) \
                   $(objdir)DvAvOpenhomeOrgRadio1C.$(objext) \
+                  $(objdir)DvOpenhomeOrgOhNet1.$(objext) \
+                  $(objdir)DvOpenhomeOrgOhNet1Std.$(objext) \
+                  $(objdir)DvOpenhomeOrgOhNet1C.$(objext) \
                   $(objdir)DvZappOrgTestBasic1.$(objext) \
                   $(objdir)DvZappOrgTestBasic1Std.$(objext) \
                   $(objdir)DvZappOrgTestBasic1C.$(objext) \
@@ -70,12 +73,6 @@ objects_devices = \
                   $(objdir)DvZappOrgTestDimmableLight1.$(objext) \
                   $(objdir)DvZappOrgTestDimmableLight1Std.$(objext) \
                   $(objdir)DvZappOrgTestDimmableLight1C.$(objext) \
-                  $(objdir)DvOpenhomeOrgTestColorLight1.$(objext) \
-                  $(objdir)DvOpenhomeOrgTestColorLight1Std.$(objext) \
-                  $(objdir)DvOpenhomeOrgTestColorLight1C.$(objext) \
-                  $(objdir)DvOpenhomeOrgOhNet1.$(objext) \
-                  $(objdir)DvOpenhomeOrgOhNet1Std.$(objext) \
-                  $(objdir)DvOpenhomeOrgOhNet1C.$(objext) \
 
 # Devices have well controlled dependencies so we can document a more limited set of headers
 headers_device = $(inc_build)/Cpp/ZappTypes.h \
@@ -104,11 +101,10 @@ device_dotnet_assemblies = \
         DvAvOpenhomeOrgVolume1.net.dll \
         DvAvOpenhomeOrgProduct1.net.dll \
         DvAvOpenhomeOrgRadio1.net.dll \
+        DvOpenhomeOrgOhNet1.net.dll \
         DvZappOrgTestBasic1.net.dll \
         DvZappOrgTestLights1.net.dll \
         DvZappOrgTestDimmableLight1.net.dll \
-        DvOpenhomeOrgTestColorLight1.net.dll \
-        DvOpenhomeOrgOhNet1.net.dll \
 
 device_dotnet_assemblies_with_path = \
         $(objdir)DvUpnpOrgAVTransport1.net.dll \
@@ -130,11 +126,10 @@ device_dotnet_assemblies_with_path = \
         $(objdir)DvAvOpenhomeOrgVolume1.net.dll \
         $(objdir)DvAvOpenhomeOrgProduct1.net.dll \
         $(objdir)DvAvOpenhomeOrgRadio1.net.dll \
+        $(objdir)DvOpenhomeOrgOhNet1.net.dll \
         $(objdir)DvZappOrgTestBasic1.net.dll \
         $(objdir)DvZappOrgTestLights1.net.dll \
         $(objdir)DvZappOrgTestDimmableLight1.net.dll \
-        $(objdir)DvOpenhomeOrgTestColorLight1.net.dll \
-        $(objdir)DvOpenhomeOrgOhNet1.net.dll \
 
 devices : upnp_core $(objects_devices)
 	$(ar)ZappDevices.$(libext) $(objects_devices)
@@ -252,6 +247,12 @@ $(objdir)DvAvOpenhomeOrgRadio1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgRadi
 	$(compiler)DvAvOpenhomeOrgRadio1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgRadio1Std.cpp
 $(objdir)DvAvOpenhomeOrgRadio1C.$(objext) : $(deviceC)DvAvOpenhomeOrgRadio1C.cpp $(headers_device) Device/Services/C/DvAvOpenhomeOrgRadio1.h
 	$(compiler)DvAvOpenhomeOrgRadio1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgRadio1C.cpp
+$(objdir)DvOpenhomeOrgOhNet1.$(objext) : $(deviceCppCore)DvOpenhomeOrgOhNet1.cpp $(headers_device) Device/Services/Cpp/Core/DvOpenhomeOrgOhNet1.h
+	$(compiler)DvOpenhomeOrgOhNet1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvOpenhomeOrgOhNet1.cpp
+$(objdir)DvOpenhomeOrgOhNet1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgOhNet1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvOpenhomeOrgOhNet1.h
+	$(compiler)DvOpenhomeOrgOhNet1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvOpenhomeOrgOhNet1Std.cpp
+$(objdir)DvOpenhomeOrgOhNet1C.$(objext) : $(deviceC)DvOpenhomeOrgOhNet1C.cpp $(headers_device) Device/Services/C/DvOpenhomeOrgOhNet1.h
+	$(compiler)DvOpenhomeOrgOhNet1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvOpenhomeOrgOhNet1C.cpp
 $(objdir)DvZappOrgTestBasic1.$(objext) : $(deviceCppCore)DvZappOrgTestBasic1.cpp $(headers_device) Device/Services/Cpp/Core/DvZappOrgTestBasic1.h
 	$(compiler)DvZappOrgTestBasic1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvZappOrgTestBasic1.cpp
 $(objdir)DvZappOrgTestBasic1Std.$(objext) : $(deviceCppStd)DvZappOrgTestBasic1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvZappOrgTestBasic1.h
@@ -270,18 +271,6 @@ $(objdir)DvZappOrgTestDimmableLight1Std.$(objext) : $(deviceCppStd)DvZappOrgTest
 	$(compiler)DvZappOrgTestDimmableLight1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvZappOrgTestDimmableLight1Std.cpp
 $(objdir)DvZappOrgTestDimmableLight1C.$(objext) : $(deviceC)DvZappOrgTestDimmableLight1C.cpp $(headers_device) Device/Services/C/DvZappOrgTestDimmableLight1.h
 	$(compiler)DvZappOrgTestDimmableLight1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvZappOrgTestDimmableLight1C.cpp
-$(objdir)DvOpenhomeOrgTestColorLight1.$(objext) : $(deviceCppCore)DvOpenhomeOrgTestColorLight1.cpp $(headers_device) Device/Services/Cpp/Core/DvOpenhomeOrgTestColorLight1.h
-	$(compiler)DvOpenhomeOrgTestColorLight1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvOpenhomeOrgTestColorLight1.cpp
-$(objdir)DvOpenhomeOrgTestColorLight1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgTestColorLight1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvOpenhomeOrgTestColorLight1.h
-	$(compiler)DvOpenhomeOrgTestColorLight1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvOpenhomeOrgTestColorLight1Std.cpp
-$(objdir)DvOpenhomeOrgTestColorLight1C.$(objext) : $(deviceC)DvOpenhomeOrgTestColorLight1C.cpp $(headers_device) Device/Services/C/DvOpenhomeOrgTestColorLight1.h
-	$(compiler)DvOpenhomeOrgTestColorLight1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvOpenhomeOrgTestColorLight1C.cpp
-$(objdir)DvOpenhomeOrgOhNet1.$(objext) : $(deviceCppCore)DvOpenhomeOrgOhNet1.cpp $(headers_device) Device/Services/Cpp/Core/DvOpenhomeOrgOhNet1.h
-	$(compiler)DvOpenhomeOrgOhNet1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvOpenhomeOrgOhNet1.cpp
-$(objdir)DvOpenhomeOrgOhNet1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgOhNet1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvOpenhomeOrgOhNet1.h
-	$(compiler)DvOpenhomeOrgOhNet1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvOpenhomeOrgOhNet1Std.cpp
-$(objdir)DvOpenhomeOrgOhNet1C.$(objext) : $(deviceC)DvOpenhomeOrgOhNet1C.cpp $(headers_device) Device/Services/C/DvOpenhomeOrgOhNet1.h
-	$(compiler)DvOpenhomeOrgOhNet1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvOpenhomeOrgOhNet1C.cpp
 
 device_dlls = \
              DvUpnpOrgAVTransport1Dll \
@@ -303,11 +292,10 @@ device_dlls = \
              DvAvOpenhomeOrgVolume1Dll \
              DvAvOpenhomeOrgProduct1Dll \
              DvAvOpenhomeOrgRadio1Dll \
+             DvOpenhomeOrgOhNet1Dll \
              DvZappOrgTestBasic1Dll \
              DvZappOrgTestLights1Dll \
              DvZappOrgTestDimmableLight1Dll \
-             DvOpenhomeOrgTestColorLight1Dll \
-             DvOpenhomeOrgOhNet1Dll \
 
 DvDeviceDlls: $(device_dlls)
 DvUpnpOrgAVTransport1Dll: $(objdir)$(dllprefix)DvUpnpOrgAVTransport1.$(dllext) 
@@ -367,6 +355,9 @@ $(objdir)$(dllprefix)DvAvOpenhomeOrgProduct1.$(dllext) : ZappUpnpDll $(objdir)Dv
 DvAvOpenhomeOrgRadio1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgRadio1.$(dllext) 
 $(objdir)$(dllprefix)DvAvOpenhomeOrgRadio1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgRadio1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgRadio1.$(dllext) $(objdir)DvAvOpenhomeOrgRadio1.$(objext)
+DvOpenhomeOrgOhNet1Dll: $(objdir)$(dllprefix)DvOpenhomeOrgOhNet1.$(dllext) 
+$(objdir)$(dllprefix)DvOpenhomeOrgOhNet1.$(dllext) : ZappUpnpDll $(objdir)DvOpenhomeOrgOhNet1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvOpenhomeOrgOhNet1.$(dllext) $(objdir)DvOpenhomeOrgOhNet1.$(objext)
 DvZappOrgTestBasic1Dll: $(objdir)$(dllprefix)DvZappOrgTestBasic1.$(dllext) 
 $(objdir)$(dllprefix)DvZappOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)DvZappOrgTestBasic1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvZappOrgTestBasic1.$(dllext) $(objdir)DvZappOrgTestBasic1.$(objext)
@@ -376,12 +367,6 @@ $(objdir)$(dllprefix)DvZappOrgTestLights1.$(dllext) : ZappUpnpDll $(objdir)DvZap
 DvZappOrgTestDimmableLight1Dll: $(objdir)$(dllprefix)DvZappOrgTestDimmableLight1.$(dllext) 
 $(objdir)$(dllprefix)DvZappOrgTestDimmableLight1.$(dllext) : ZappUpnpDll $(objdir)DvZappOrgTestDimmableLight1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvZappOrgTestDimmableLight1.$(dllext) $(objdir)DvZappOrgTestDimmableLight1.$(objext)
-DvOpenhomeOrgTestColorLight1Dll: $(objdir)$(dllprefix)DvOpenhomeOrgTestColorLight1.$(dllext) 
-$(objdir)$(dllprefix)DvOpenhomeOrgTestColorLight1.$(dllext) : ZappUpnpDll $(objdir)DvOpenhomeOrgTestColorLight1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvOpenhomeOrgTestColorLight1.$(dllext) $(objdir)DvOpenhomeOrgTestColorLight1.$(objext)
-DvOpenhomeOrgOhNet1Dll: $(objdir)$(dllprefix)DvOpenhomeOrgOhNet1.$(dllext) 
-$(objdir)$(dllprefix)DvOpenhomeOrgOhNet1.$(dllext) : ZappUpnpDll $(objdir)DvOpenhomeOrgOhNet1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvOpenhomeOrgOhNet1.$(dllext) $(objdir)DvOpenhomeOrgOhNet1.$(objext)
 
 
 # Device assemblies for .NET:
@@ -483,6 +468,11 @@ $(objdir)DvAvOpenhomeOrgRadio1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvAvOpe
 		/out:$(objdir)DvAvOpenhomeOrgRadio1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
 		$(deviceCs)DvAvOpenhomeOrgRadio1.cs
+$(objdir)DvOpenhomeOrgOhNet1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvOpenhomeOrgOhNet1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvOpenhomeOrgOhNet1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvOpenhomeOrgOhNet1.cs
 $(objdir)DvZappOrgTestBasic1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvZappOrgTestBasic1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvZappOrgTestBasic1.net.dll \
@@ -498,15 +488,5 @@ $(objdir)DvZappOrgTestDimmableLight1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)D
 		/out:$(objdir)DvZappOrgTestDimmableLight1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
 		$(deviceCs)DvZappOrgTestDimmableLight1.cs
-$(objdir)DvOpenhomeOrgTestColorLight1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvOpenhomeOrgTestColorLight1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvOpenhomeOrgTestColorLight1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvOpenhomeOrgTestColorLight1.cs
-$(objdir)DvOpenhomeOrgOhNet1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvOpenhomeOrgOhNet1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvOpenhomeOrgOhNet1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
-		$(deviceCs)DvOpenhomeOrgOhNet1.cs
 
 
