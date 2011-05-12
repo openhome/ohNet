@@ -45,7 +45,6 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)DviServerWebSocket.$(objext) \
     		   $(objdir)DviService.$(objext) \
     		   $(objdir)DviStack.$(objext) \
-               $(objdir)DvOpenhomeOrgOhNet1.$(objext) \
     		   $(objdir)DviSubscription.$(objext) \
     		   $(objdir)DvProvider.$(objext) \
     		   $(objdir)DvProviderC.$(objext) \

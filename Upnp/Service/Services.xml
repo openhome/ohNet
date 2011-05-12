@@ -133,13 +133,6 @@
     <version>1</version>
   </service>
   <service>
-    <publisher>OpenHome</publisher>
-    <dcpdir></dcpdir>
-    <domain>openhome.org</domain>
-    <type>OhNet</type>
-    <version>1</version>
-  </service>
-  <service>
     <publisher>Zapp</publisher>
     <dcpdir>Test</dcpdir>
     <domain>zapp.org</domain>
