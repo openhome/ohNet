@@ -98,7 +98,7 @@
     <version>1</version>
   </service>
   <service>
-    <publisher>Linn</publisher>
+    <publisher>OpenHome</publisher>
     <dcpdir></dcpdir>
     <domain>av.openhome.org</domain>
     <type>Time</type>
@@ -161,7 +161,7 @@
     <version>1</version>
   </service>
   <service>
-    <publisher>Openhome</publisher>
+    <publisher>OpenHome</publisher>
     <dcpdir></dcpdir>
     <domain>openhome.org</domain>
     <type>OhNet</type>
