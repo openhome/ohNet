@@ -111,10 +111,9 @@ for arg in sys.argv[1:]:
     else:
         print 'Unrecognised argument - ' + arg
         sys.exit(1)
-if gSilent == 0:
     os.environ["ABORT_ON_FAILURE"] = "1"
-else:
-    os.environ["NO_ERROR_DIALOGS"] = "1"
+    if gSilent != 0:
+        os.environ["NO_ERROR_DIALOGS"] = "1"
 
 class TestCase(object):
     def __init__(self, name, args, quick=False, native=True):

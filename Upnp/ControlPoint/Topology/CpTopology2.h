@@ -4,8 +4,8 @@
 #include <ZappTypes.h>
 #include <Fifo.h>
 #include <Thread.h>
-#include <Core/CpLinnCoUkProduct3.h>
-#include <Core/CpLinnCoUkPreamp4.h>
+#include <Core/CpAvOpenhomeOrgProduct1.h>
+#include <Core/CpAvOpenhomeOrgVolume1.h>
 #include <Core/CpUpnpOrgRenderingControl1.h>
 
 #include <vector>
@@ -146,6 +146,8 @@ private:
 	// ICpTopology2GroupHandler
     virtual void SetSourceIndex(TUint aIndex) = 0;
     virtual void SetStandby(TBool aValue) = 0;
+    virtual void SetVolume(TUint aValue) = 0;
+    virtual void SetMute(TBool aValue) = 0;
 
 protected:
 	CpDevice& iDevice;
@@ -170,21 +172,20 @@ private:
 	void CallbackSetMute(IAsync& aAsync);		
 
 	void ProcessSourceXml(const Brx& aXml, TBool aInitial);
-	void EventIgnorePropertyChanged();
-	void EventProductPropertyChanged();
+	void EventProductInitialEvent();
 	void EventProductRoomChanged();	
 	void EventProductNameChanged();	
 	void EventProductStandbyChanged();	
 	void EventProductSourceIndexChanged();	
 	void EventProductSourceXmlChanged();	
-	void EventPreampPropertyChanged();
+	void EventPreampInitialEvent();
 	void EventVolumeChanged();	
 	void EventMuteChanged();	
 
 private:
 	ICpTopology2Handler& iHandler;
-	CpProxyLinnCoUkProduct3* iServiceProduct;
-	CpProxyLinnCoUkPreamp4* iServicePreamp;
+	CpProxyAvOpenhomeOrgProduct1* iServiceProduct;
+	CpProxyAvOpenhomeOrgVolume1* iServiceVolume;
 	CpTopology2Group* iGroup;
 	FunctorAsync iFunctorSetSourceIndex;
 	FunctorAsync iFunctorSetStandby;

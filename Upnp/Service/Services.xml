@@ -91,143 +91,45 @@
     <version>1</version>
   </service>
   <service>
-    <publisher>Linn</publisher>
+    <publisher>OpenHome</publisher>
     <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Component</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Configuration</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Debug</type>
-    <version>2</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Delay</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Diagnostics</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Ds</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
+    <domain>av.openhome.org</domain>
     <type>Info</type>
     <version>1</version>
   </service>
   <service>
     <publisher>Linn</publisher>
     <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Jukebox</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>MediaTime</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Playlist</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Preamp</type>
-    <version>4</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Product</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Product</type>
-    <version>2</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Product</type>
-    <version>3</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>ProxyManager</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Ptest</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Radio</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Linn</publisher>
-    <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
+    <domain>av.openhome.org</domain>
     <type>Time</type>
     <version>1</version>
   </service>
   <service>
-    <publisher>Linn</publisher>
+    <publisher>OpenHome</publisher>
     <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Ui</type>
-    <version>2</version>
+    <domain>av.openhome.org</domain>
+    <type>Playlist</type>
+    <version>1</version>
   </service>
   <service>
-    <publisher>Linn</publisher>
+    <publisher>OpenHome</publisher>
     <dcpdir></dcpdir>
-    <domain>linn.co.uk</domain>
-    <type>Volkano</type>
+    <domain>av.openhome.org</domain>
+    <type>Volume</type>
+    <version>1</version>
+  </service>
+  <service>
+    <publisher>OpenHome</publisher>
+    <dcpdir></dcpdir>
+    <domain>av.openhome.org</domain>
+    <type>Product</type>
+    <version>1</version>
+  </service>
+  <service>
+    <publisher>OpenHome</publisher>
+    <dcpdir></dcpdir>
+    <domain>av.openhome.org</domain>
+    <type>Radio</type>
     <version>1</version>
   </service>
   <service>

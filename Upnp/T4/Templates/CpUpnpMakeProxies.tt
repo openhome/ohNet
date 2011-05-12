@@ -49,11 +49,11 @@ proxies : upnp_core $(objects_proxies)
 	$(ar)ZappProxies.$(libext) $(objects_proxies)
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-$(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_proxy) $(inc_build)/Cpp/Core/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
+$(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
 	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cflags) $(includes) $(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
-$(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) : $(proxyC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp $(headers_proxy) $(inc_build)/C/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
+$(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) : $(proxyC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp $(headers_proxy) ControlPoint/Services/C/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
 	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cflags) $(includes) $(proxyC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
-$(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(proxyCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp $(headers_proxy) $(inc_build)/Cpp/Std/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
+$(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(proxyCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp $(headers_proxy) ControlPoint/Services/Cpp/Std/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
 	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
 <#  } #>
 
