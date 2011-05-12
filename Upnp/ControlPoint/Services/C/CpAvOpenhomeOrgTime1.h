@@ -46,11 +46,11 @@ DllExport void CpProxyAvOpenhomeOrgTime1Destroy(THandle aHandle);
  * on the device and sets any output arguments.
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgTime1Create
- * @param[out] aaTrackCount
- * @param[out] aaDuration
- * @param[out] aaSeconds
+ * @param[out] aTrackCount
+ * @param[out] aDuration
+ * @param[out] aSeconds
  */
-DllExport void CpProxyAvOpenhomeOrgTime1SyncTime(THandle aHandle, uint32_t* aaTrackCount, uint32_t* aaDuration, uint32_t* aaSeconds);
+DllExport void CpProxyAvOpenhomeOrgTime1SyncTime(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -69,14 +69,14 @@ DllExport void CpProxyAvOpenhomeOrgTime1BeginTime(THandle aHandle, ZappCallbackA
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgTime1Create
  * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
- * @param[out] aaTrackCount
- * @param[out] aaDuration
- * @param[out] aaSeconds
+ * @param[out] aTrackCount
+ * @param[out] aDuration
+ * @param[out] aSeconds
  *
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgTime1EndTime(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaTrackCount, uint32_t* aaDuration, uint32_t* aaSeconds);
+DllExport int32_t CpProxyAvOpenhomeOrgTime1EndTime(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds);
 /**
  * Set a callback to be run when the TrackCount state variable changes.
  *

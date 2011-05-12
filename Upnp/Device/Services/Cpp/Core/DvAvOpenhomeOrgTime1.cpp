@@ -51,9 +51,9 @@ DvProviderAvOpenhomeOrgTime1::DvProviderAvOpenhomeOrgTime1(DvDevice& aDevice)
 void DvProviderAvOpenhomeOrgTime1::EnableActionTime()
 {
     Zapp::Action* action = new Zapp::Action("Time");
-    action->AddOutputParameter(new ParameterRelated("aTrackCount", *iPropertyTrackCount));
-    action->AddOutputParameter(new ParameterRelated("aDuration", *iPropertyDuration));
-    action->AddOutputParameter(new ParameterRelated("aSeconds", *iPropertySeconds));
+    action->AddOutputParameter(new ParameterRelated("TrackCount", *iPropertyTrackCount));
+    action->AddOutputParameter(new ParameterRelated("Duration", *iPropertyDuration));
+    action->AddOutputParameter(new ParameterRelated("Seconds", *iPropertySeconds));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgTime1::DoTime);
     iService->AddAction(action, functor);
 }
@@ -63,13 +63,13 @@ void DvProviderAvOpenhomeOrgTime1::DoTime(IDviInvocation& aInvocation, TUint aVe
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     InvocationResponse resp(aInvocation);
-    InvocationResponseUint respaTrackCount(aInvocation, "aTrackCount");
-    InvocationResponseUint respaDuration(aInvocation, "aDuration");
-    InvocationResponseUint respaSeconds(aInvocation, "aSeconds");
-    Time(resp, aVersion, respaTrackCount, respaDuration, respaSeconds);
+    InvocationResponseUint respTrackCount(aInvocation, "TrackCount");
+    InvocationResponseUint respDuration(aInvocation, "Duration");
+    InvocationResponseUint respSeconds(aInvocation, "Seconds");
+    Time(resp, aVersion, respTrackCount, respDuration, respSeconds);
 }
 
-void DvProviderAvOpenhomeOrgTime1::Time(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aaTrackCount*/, IInvocationResponseUint& /*aaDuration*/, IInvocationResponseUint& /*aaSeconds*/)
+void DvProviderAvOpenhomeOrgTime1::Time(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aTrackCount*/, IInvocationResponseUint& /*aDuration*/, IInvocationResponseUint& /*aSeconds*/)
 {
     ASSERTS();
 }

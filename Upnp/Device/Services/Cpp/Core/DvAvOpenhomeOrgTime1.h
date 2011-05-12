@@ -74,7 +74,7 @@ private:
      * Time action for the owning device.
      * Must be implemented iff EnableActionTime was called.
      */
-    virtual void Time(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaTrackCount, IInvocationResponseUint& aaDuration, IInvocationResponseUint& aaSeconds);
+    virtual void Time(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aTrackCount, IInvocationResponseUint& aDuration, IInvocationResponseUint& aSeconds);
 private:
     DvProviderAvOpenhomeOrgTime1();
     void DoTime(IDviInvocation& aInvocation, TUint aVersion);

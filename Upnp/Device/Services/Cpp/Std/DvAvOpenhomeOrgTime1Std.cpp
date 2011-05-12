@@ -51,9 +51,9 @@ DvProviderAvOpenhomeOrgTime1Cpp::DvProviderAvOpenhomeOrgTime1Cpp(DvDeviceStd& aD
 void DvProviderAvOpenhomeOrgTime1Cpp::EnableActionTime()
 {
     Zapp::Action* action = new Zapp::Action("Time");
-    action->AddOutputParameter(new ParameterRelated("aTrackCount", *iPropertyTrackCount));
-    action->AddOutputParameter(new ParameterRelated("aDuration", *iPropertyDuration));
-    action->AddOutputParameter(new ParameterRelated("aSeconds", *iPropertySeconds));
+    action->AddOutputParameter(new ParameterRelated("TrackCount", *iPropertyTrackCount));
+    action->AddOutputParameter(new ParameterRelated("Duration", *iPropertyDuration));
+    action->AddOutputParameter(new ParameterRelated("Seconds", *iPropertySeconds));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgTime1Cpp::DoTime);
     iService->AddAction(action, functor);
 }
@@ -62,21 +62,21 @@ void DvProviderAvOpenhomeOrgTime1Cpp::DoTime(IDviInvocation& aInvocation, TUint 
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    uint32_t respaTrackCount;
-    uint32_t respaDuration;
-    uint32_t respaSeconds;
-    Time(aVersion, respaTrackCount, respaDuration, respaSeconds);
+    uint32_t respTrackCount;
+    uint32_t respDuration;
+    uint32_t respSeconds;
+    Time(aVersion, respTrackCount, respDuration, respSeconds);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriteraTrackCount(aInvocation, "aTrackCount");
-    respWriteraTrackCount.Write(respaTrackCount);
-    InvocationResponseUint respWriteraDuration(aInvocation, "aDuration");
-    respWriteraDuration.Write(respaDuration);
-    InvocationResponseUint respWriteraSeconds(aInvocation, "aSeconds");
-    respWriteraSeconds.Write(respaSeconds);
+    InvocationResponseUint respWriterTrackCount(aInvocation, "TrackCount");
+    respWriterTrackCount.Write(respTrackCount);
+    InvocationResponseUint respWriterDuration(aInvocation, "Duration");
+    respWriterDuration.Write(respDuration);
+    InvocationResponseUint respWriterSeconds(aInvocation, "Seconds");
+    respWriterSeconds.Write(respSeconds);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgTime1Cpp::Time(uint32_t /*aVersion*/, uint32_t& /*aaTrackCount*/, uint32_t& /*aaDuration*/, uint32_t& /*aaSeconds*/)
+void DvProviderAvOpenhomeOrgTime1Cpp::Time(uint32_t /*aVersion*/, uint32_t& /*aTrackCount*/, uint32_t& /*aDuration*/, uint32_t& /*aSeconds*/)
 {
     ASSERTS();
 }

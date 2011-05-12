@@ -141,9 +141,9 @@ namespace Zapp.Device.Providers
         protected void EnableActionTime()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Time");
-            action.AddOutputParameter(new ParameterRelated("aTrackCount", iPropertyTrackCount));
-            action.AddOutputParameter(new ParameterRelated("aDuration", iPropertyDuration));
-            action.AddOutputParameter(new ParameterRelated("aSeconds", iPropertySeconds));
+            action.AddOutputParameter(new ParameterRelated("TrackCount", iPropertyTrackCount));
+            action.AddOutputParameter(new ParameterRelated("Duration", iPropertyDuration));
+            action.AddOutputParameter(new ParameterRelated("Seconds", iPropertySeconds));
             iDelegateTime = new ActionDelegate(DoTime);
             EnableAction(action, iDelegateTime, GCHandle.ToIntPtr(iGch));
         }
@@ -156,10 +156,10 @@ namespace Zapp.Device.Providers
         ///
         /// Must be implemented iff EnableActionTime was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        /// <param name="aaTrackCount"></param>
-        /// <param name="aaDuration"></param>
-        /// <param name="aaSeconds"></param>
-        protected virtual void Time(uint aVersion, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
+        /// <param name="aTrackCount"></param>
+        /// <param name="aDuration"></param>
+        /// <param name="aSeconds"></param>
+        protected virtual void Time(uint aVersion, out uint aTrackCount, out uint aDuration, out uint aSeconds)
         {
             throw (new ActionDisabledError());
         }
@@ -169,14 +169,14 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgTime1 self = (DvProviderAvOpenhomeOrgTime1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            uint aTrackCount;
-            uint aDuration;
-            uint aSeconds;
+            uint trackCount;
+            uint duration;
+            uint seconds;
             try
             {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                self.Time(aVersion, out aTrackCount, out aDuration, out aSeconds);
+                self.Time(aVersion, out trackCount, out duration, out seconds);
             }
             catch (ActionError)
             {
@@ -197,9 +197,9 @@ namespace Zapp.Device.Providers
             try
             {
                 invocation.WriteStart();
-                invocation.WriteUint("aTrackCount", aTrackCount);
-                invocation.WriteUint("aDuration", aDuration);
-                invocation.WriteUint("aSeconds", aSeconds);
+                invocation.WriteUint("TrackCount", trackCount);
+                invocation.WriteUint("Duration", duration);
+                invocation.WriteUint("Seconds", seconds);
                 invocation.WriteEnd();
             }
             catch (ActionError)

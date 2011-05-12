@@ -47,11 +47,11 @@ public:
      * Invoke the action synchronously.  Blocks until the action has been processed
      * on the device and sets any output arguments.
      *
-     * @param[out] aaTrackCount
-     * @param[out] aaDuration
-     * @param[out] aaSeconds
+     * @param[out] aTrackCount
+     * @param[out] aDuration
+     * @param[out] aSeconds
      */
-    void SyncTime(TUint& aaTrackCount, TUint& aaDuration, TUint& aaSeconds);
+    void SyncTime(TUint& aTrackCount, TUint& aDuration, TUint& aSeconds);
     /**
      * Invoke the action asynchronously.
      * Returns immediately and will run the client-specified callback when the action
@@ -67,11 +67,11 @@ public:
      * This may only be called from the callback set in the above Begin function.
      *
      * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
-     * @param[out] aaTrackCount
-     * @param[out] aaDuration
-     * @param[out] aaSeconds
+     * @param[out] aTrackCount
+     * @param[out] aDuration
+     * @param[out] aSeconds
      */
-    void EndTime(IAsync& aAsync, TUint& aaTrackCount, TUint& aaDuration, TUint& aaSeconds);
+    void EndTime(IAsync& aAsync, TUint& aTrackCount, TUint& aDuration, TUint& aSeconds);
 
     /**
      * Set a callback to be run when the TrackCount state variable changes.

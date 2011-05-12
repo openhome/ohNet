@@ -79,9 +79,9 @@ void DvProviderAvOpenhomeOrgTime1C::EnableActionTime(CallbackTime1Time aCallback
     iCallbackTime = aCallback;
     iPtrTime = aPtr;
     Zapp::Action* action = new Zapp::Action("Time");
-    action->AddOutputParameter(new ParameterRelated("aTrackCount", *iPropertyTrackCount));
-    action->AddOutputParameter(new ParameterRelated("aDuration", *iPropertyDuration));
-    action->AddOutputParameter(new ParameterRelated("aSeconds", *iPropertySeconds));
+    action->AddOutputParameter(new ParameterRelated("TrackCount", *iPropertyTrackCount));
+    action->AddOutputParameter(new ParameterRelated("Duration", *iPropertyDuration));
+    action->AddOutputParameter(new ParameterRelated("Seconds", *iPropertySeconds));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgTime1C::DoTime);
     iService->AddAction(action, functor);
 }
@@ -91,21 +91,21 @@ void DvProviderAvOpenhomeOrgTime1C::DoTime(IDviInvocation& aInvocation, TUint aV
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     InvocationResponse resp(aInvocation);
-    uint32_t aTrackCount;
-    uint32_t aDuration;
-    uint32_t aSeconds;
+    uint32_t TrackCount;
+    uint32_t Duration;
+    uint32_t Seconds;
     ASSERT(iCallbackTime != NULL);
-    if (0 != iCallbackTime(iPtrTime, aVersion, &aTrackCount, &aDuration, &aSeconds)) {
+    if (0 != iCallbackTime(iPtrTime, aVersion, &TrackCount, &Duration, &Seconds)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respaTrackCount(aInvocation, "aTrackCount");
-    InvocationResponseUint respaDuration(aInvocation, "aDuration");
-    InvocationResponseUint respaSeconds(aInvocation, "aSeconds");
+    InvocationResponseUint respTrackCount(aInvocation, "TrackCount");
+    InvocationResponseUint respDuration(aInvocation, "Duration");
+    InvocationResponseUint respSeconds(aInvocation, "Seconds");
     resp.Start();
-    respaTrackCount.Write(aTrackCount);
-    respaDuration.Write(aDuration);
-    respaSeconds.Write(aSeconds);
+    respTrackCount.Write(TrackCount);
+    respDuration.Write(Duration);
+    respSeconds.Write(Seconds);
     resp.End();
 }
 

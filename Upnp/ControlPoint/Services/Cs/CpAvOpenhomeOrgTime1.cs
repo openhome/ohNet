@@ -76,11 +76,11 @@ namespace Zapp.ControlPoint.Proxies
             
 
             iActionTime = new Zapp.Core.Action("Time");
-            param = new ParameterUint("aTrackCount");
+            param = new ParameterUint("TrackCount");
             iActionTime.AddOutputParameter(param);
-            param = new ParameterUint("aDuration");
+            param = new ParameterUint("Duration");
             iActionTime.AddOutputParameter(param);
-            param = new ParameterUint("aSeconds");
+            param = new ParameterUint("Seconds");
             iActionTime.AddOutputParameter(param);
 
             iTrackCount = new PropertyUint("TrackCount", TrackCountPropertyChanged);
@@ -98,9 +98,9 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="aaTrackCount"></param>
-        /// <param name="aaDuration"></param>
-        /// <param name="aaSeconds"></param>
+        /// <param name="aTrackCount"></param>
+        /// <param name="aDuration"></param>
+        /// <param name="aSeconds"></param>
         public void SyncTime(out uint aTrackCount, out uint aDuration, out uint aSeconds)
         {
             SyncTimeAvOpenhomeOrgTime1 sync = new SyncTimeAvOpenhomeOrgTime1(this);
@@ -135,9 +135,9 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        /// <param name="aaTrackCount"></param>
-        /// <param name="aaDuration"></param>
-        /// <param name="aaSeconds"></param>
+        /// <param name="aTrackCount"></param>
+        /// <param name="aDuration"></param>
+        /// <param name="aSeconds"></param>
         public void EndTime(IntPtr aAsyncHandle, out uint aTrackCount, out uint aDuration, out uint aSeconds)
         {
             if (Invocation.Error(aAsyncHandle))

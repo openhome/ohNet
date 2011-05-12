@@ -22,13 +22,13 @@ extern "C" {
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgTime1EnableActionTime
  * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
- * @param[out] aaTrackCount
- * @param[out] aaDuration
- * @param[out] aaSeconds
+ * @param[out] aTrackCount
+ * @param[out] aDuration
+ * @param[out] aSeconds
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTime1Time)(void* aPtr, uint32_t aVersion, uint32_t* aaTrackCount, uint32_t* aaDuration, uint32_t* aaSeconds);
+typedef int32_t (*CallbackTime1Time)(void* aPtr, uint32_t aVersion, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds);
 
 /**
  * Provider constructor

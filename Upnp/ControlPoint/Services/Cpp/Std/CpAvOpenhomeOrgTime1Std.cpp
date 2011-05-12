@@ -14,26 +14,26 @@ using namespace Zapp;
 class SyncTimeAvOpenhomeOrgTime1Cpp : public SyncProxyAction
 {
 public:
-    SyncTimeAvOpenhomeOrgTime1Cpp(CpProxyAvOpenhomeOrgTime1Cpp& aProxy, uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds);
+    SyncTimeAvOpenhomeOrgTime1Cpp(CpProxyAvOpenhomeOrgTime1Cpp& aProxy, uint32_t& aTrackCount, uint32_t& aDuration, uint32_t& aSeconds);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyAvOpenhomeOrgTime1Cpp& iService;
-    uint32_t& iaTrackCount;
-    uint32_t& iaDuration;
-    uint32_t& iaSeconds;
+    uint32_t& iTrackCount;
+    uint32_t& iDuration;
+    uint32_t& iSeconds;
 };
 
-SyncTimeAvOpenhomeOrgTime1Cpp::SyncTimeAvOpenhomeOrgTime1Cpp(CpProxyAvOpenhomeOrgTime1Cpp& aProxy, uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds)
+SyncTimeAvOpenhomeOrgTime1Cpp::SyncTimeAvOpenhomeOrgTime1Cpp(CpProxyAvOpenhomeOrgTime1Cpp& aProxy, uint32_t& aTrackCount, uint32_t& aDuration, uint32_t& aSeconds)
     : iService(aProxy)
-    , iaTrackCount(aaTrackCount)
-    , iaDuration(aaDuration)
-    , iaSeconds(aaSeconds)
+    , iTrackCount(aTrackCount)
+    , iDuration(aDuration)
+    , iSeconds(aSeconds)
 {
 }
 
 void SyncTimeAvOpenhomeOrgTime1Cpp::CompleteRequest(IAsync& aAsync)
 {
-    iService.EndTime(aAsync, iaTrackCount, iaDuration, iaSeconds);
+    iService.EndTime(aAsync, iTrackCount, iDuration, iSeconds);
 }
 
 
@@ -43,11 +43,11 @@ CpProxyAvOpenhomeOrgTime1Cpp::CpProxyAvOpenhomeOrgTime1Cpp(CpDeviceCpp& aDevice)
     Zapp::Parameter* param;
 
     iActionTime = new Action("Time");
-    param = new Zapp::ParameterUint("aTrackCount");
+    param = new Zapp::ParameterUint("TrackCount");
     iActionTime->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("aDuration");
+    param = new Zapp::ParameterUint("Duration");
     iActionTime->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("aSeconds");
+    param = new Zapp::ParameterUint("Seconds");
     iActionTime->AddOutputParameter(param);
 
     Functor functor;
@@ -68,9 +68,9 @@ CpProxyAvOpenhomeOrgTime1Cpp::~CpProxyAvOpenhomeOrgTime1Cpp()
     delete iActionTime;
 }
 
-void CpProxyAvOpenhomeOrgTime1Cpp::SyncTime(uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds)
+void CpProxyAvOpenhomeOrgTime1Cpp::SyncTime(uint32_t& aTrackCount, uint32_t& aDuration, uint32_t& aSeconds)
 {
-    SyncTimeAvOpenhomeOrgTime1Cpp sync(*this, aaTrackCount, aaDuration, aaSeconds);
+    SyncTimeAvOpenhomeOrgTime1Cpp sync(*this, aTrackCount, aDuration, aSeconds);
     BeginTime(sync.Functor());
     sync.Wait();
 }
@@ -86,7 +86,7 @@ void CpProxyAvOpenhomeOrgTime1Cpp::BeginTime(FunctorAsync& aFunctor)
     iInvocable.InvokeAction(*invocation);
 }
 
-void CpProxyAvOpenhomeOrgTime1Cpp::EndTime(IAsync& aAsync, uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds)
+void CpProxyAvOpenhomeOrgTime1Cpp::EndTime(IAsync& aAsync, uint32_t& aTrackCount, uint32_t& aDuration, uint32_t& aSeconds)
 {
     ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
     Invocation& invocation = (Invocation&)aAsync;
@@ -96,9 +96,9 @@ void CpProxyAvOpenhomeOrgTime1Cpp::EndTime(IAsync& aAsync, uint32_t& aaTrackCoun
         THROW(ProxyError);
     }
     TUint index = 0;
-    aaTrackCount = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
-    aaDuration = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
-    aaSeconds = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
+    aTrackCount = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
+    aDuration = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
+    aSeconds = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
 }
 
 void CpProxyAvOpenhomeOrgTime1Cpp::SetPropertyTrackCountChanged(Functor& aFunctor)
