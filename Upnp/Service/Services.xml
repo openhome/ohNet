@@ -133,6 +133,13 @@
     <version>1</version>
   </service>
   <service>
+    <publisher>OpenHome</publisher>
+    <dcpdir></dcpdir>
+    <domain>openhome.org</domain>
+    <type>OhNet</type>
+    <version>1</version>
+  </service>
+  <service>
     <publisher>Zapp</publisher>
     <dcpdir>Test</dcpdir>
     <domain>zapp.org</domain>
@@ -151,20 +158,6 @@
     <dcpdir>Test</dcpdir>
     <domain>zapp.org</domain>
     <type>TestDimmableLight</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>Openhome</publisher>
-    <dcpdir>Test</dcpdir>
-    <domain>openhome.org</domain>
-    <type>TestColorLight</type>
-    <version>1</version>
-  </service>
-  <service>
-    <publisher>OpenHome</publisher>
-    <dcpdir></dcpdir>
-    <domain>openhome.org</domain>
-    <type>OhNet</type>
     <version>1</version>
   </service>
 </servicelist>
