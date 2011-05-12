@@ -213,6 +213,7 @@ void* CpTopology2Group::UserData() const
 CpTopology2Device::CpTopology2Device(CpDevice& aDevice)
     : iDevice(aDevice)
 {
+    //iDevice.AddRef();
 }
 	
 TBool CpTopology2Device::IsAttachedTo(CpDevice& aDevice)
@@ -222,6 +223,7 @@ TBool CpTopology2Device::IsAttachedTo(CpDevice& aDevice)
 
 CpTopology2Device::~CpTopology2Device()
 {
+    //iDevice.RemoveRef();
 }
 	
 // CpTopology2Product
@@ -233,8 +235,6 @@ CpTopology2Product::CpTopology2Product(CpDevice& aDevice, ICpTopology2Handler& a
     , iServiceVolume(0)
     , iGroup(0)
 {
-    printf("product construct\n");
-
     iFunctorSetSourceIndex = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetSourceIndex);
     iFunctorSetStandby = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetStandby);
     iFunctorSetVolume = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetVolume);
@@ -473,6 +473,7 @@ void CpTopology2Product::EventProductSourceXmlChanged()
     LOG(kTopology, "\n");
 
 	Brhz xml;
+	
 	iServiceProduct->PropertySourceXml(xml);
 
 	ProcessSourceXml(xml, false);	
@@ -814,14 +815,15 @@ CpTopology2::CpTopology2(ICpTopology2Handler& aHandler)
 
 CpTopology2::~CpTopology2()
 {
-	delete (iTopology1);
-	
-    TUint count = (TUint)iDeviceList.size();
+    delete (iTopology1);
     
-    for (TUint i = 0; i < count; i++) {
-    	delete (iDeviceList[i]);
-    }
-	
+    std::vector<CpTopology2Device*>::iterator it = iDeviceList.begin();
+
+    while (it != iDeviceList.end()) {
+        delete (*it);
+        it++;
+    }   
+
 	iReady.Write(iFree.Read());
 
 	delete (iThread);
@@ -852,7 +854,9 @@ void CpTopology2::ProductRemoved(CpDevice& aDevice)
 
 void CpTopology2::UpnpAdded(CpDevice& aDevice)
 {
-   	iDeviceList.push_back(new CpTopology2MediaRenderer(aDevice, *this));
+    if (aDevice.Udn() == Brn("4c494e4e-0026-0f21-8335-420000040171")) {
+        iDeviceList.push_back(new CpTopology2MediaRenderer(aDevice, *this));
+    }
 }
 
 void CpTopology2::UpnpRemoved(CpDevice& aDevice)
@@ -862,17 +866,17 @@ void CpTopology2::UpnpRemoved(CpDevice& aDevice)
 
 void CpTopology2::DeviceRemoved(CpDevice& aDevice)
 {
-    TUint count = (TUint)iDeviceList.size();
-    
-    for (TUint i = 0; i < count; i++) {
-    	CpTopology2Device* device = iDeviceList[i];
-    	if (device->IsAttachedTo(aDevice)) {
-		    LOG(kTopology, "CpTopology2::ProductRemoved found\n");
-    		iDeviceList.erase(iDeviceList.begin() + i);
-    		delete (device);
-    		break;
-    	}
-    }
+    std::vector<CpTopology2Device*>::iterator it = iDeviceList.begin();
+
+    while (it != iDeviceList.end()) {
+        if ((*it)->IsAttachedTo(aDevice)) {
+            LOG(kTopology, "CpTopology2::ProductRemoved found\n");
+            delete (*it);
+            iDeviceList.erase(it);
+            break;
+        }
+        it++;
+    }   
 }
 
 // ICpTopology1Handler

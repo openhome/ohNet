@@ -113,10 +113,10 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     OptionParser parser;
 
     OptionUint duration("-d", "--duration", 30, "Number of seconds to run the test");
-    OptionUint network("-n", "--network", 0, "Index of the network to use");
+    OptionUint adapter("-i", "--interface", 0, "index of network adapter to use");
 
     parser.AddOption(&duration);
-    parser.AddOption(&network);
+    parser.AddOption(&adapter);
 
     if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
         return;
@@ -124,18 +124,19 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
 
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartCp();
-    
-    static std::vector<NetworkInterface*>* subnetList = UpnpLibrary::SubnetList();
-    
-    if (network.Value() >= subnetList->size()) {
-        Print("Invalid network specified. Available networks ...\n");
-	    for (TUint i = 0; i < subnetList->size(); i++) {
-	    	Print("%u. %s\n", i, subnetList->at(i)->Name());
-	    }
-        return;
+
+    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
+    ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
+    UpnpLibrary::SetCurrentSubnet(*(*ifs)[adapter.Value()]);
+    TIpAddress addr = (*ifs)[adapter.Value()]->Address();
+    for (TUint i=0; i<ifs->size(); i++) {
+        delete (*ifs)[i];
     }
-    
-    UpnpLibrary::SetCurrentSubnet(*subnetList->at(network.Value()));
+    delete ifs;
+    Endpoint endpt(0, addr);
+    Endpoint::AddressBuf buf;
+    endpt.AppendAddress(buf);
+    Print("Using network interface %s\n\n", buf.Ptr());
 
     Debug::SetLevel(Debug::kTopology);
     // Debug::SetLevel(Debug::kAll);

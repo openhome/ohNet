@@ -1,0 +1,31 @@
+<ohs>
+	<domain>av</domain>
+	<version>1</version>
+	<group name="Manufacturer" count="1">
+		<property name="Name" type="String" access="ROC" />
+		<property name="Info" type="String" access="ROC" />
+		<property name="Url" type="Uri" access="ROC" />
+		<property name="ImageUri" type="Uri" access="ROC" />
+	</group>
+	<group name="Model" count="1">
+		<property name="Name" type="String" access="ROC" />
+		<property name="Info" type="String" access="ROC" />
+		<property name="Url" type="Uri" access="ROC" />
+		<property name="ImageUri" type="Uri" access="ROC" />
+	</group>
+	<group name="Product" count="1">
+		<property name="Room" type="String" access="ROC" />
+		<property name="Name" type="String" access="ROC" />
+		<property name="Info" type="String" access="ROC" />
+		<property name="Url" type="Uri" access="ROC" />
+		<property name="ImageUri" type="Uri" access="ROC" />
+	</group>
+	<group name="Source" count="C">
+		<property name="Name" type="String" access="RW" />
+		<property name="Type" type="String" access="ROC" />
+		<property name="Visible" type="Boolean" access="RW" />
+	</group>
+	<property name="Attributes" type="String" access="ROC" />
+	<property name="Standby" type="Boolean" access="RW" />
+	<property name="SourceIndex" type="Unsigned" access="RW" />
+<ohs>
