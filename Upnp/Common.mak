@@ -494,7 +494,7 @@ $(objdir)TestTopology1.$(objext) : ControlPoint/Topology/TestTopology1.cpp $(hea
 
 TestTopology2: $(objdir)TestTopology2.$(exeext) 
 $(objdir)TestTopology2.$(exeext) :  upnp_core $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)TestTopology2.$(objext) $(objdir)CpAvOpenhomeOrgProduct1.$(objext) $(objdir)CpAvOpenhomeOrgVolume1.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestTopology2.$(exeext) $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)TestTopology2.$(objext) $(objdir)CpAvOpenhomeOrgProduct1.$(objext) $(objdir)CpAvOpenhomeOrgVolume1.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTopology2.$(exeext) $(objdir)CpAvOpenhomeOrgProduct1.$(objext) $(objdir)CpAvOpenhomeOrgVolume1.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)TestTopology2.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)CpTopology2.$(objext) : ControlPoint/Topology/CpTopology2.cpp $(headers)
 	$(compiler)CpTopology2.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/CpTopology2.cpp 
 $(objdir)TestTopology2.$(objext) : ControlPoint/Topology/TestTopology2.cpp $(headers)
@@ -507,6 +507,12 @@ $(objdir)CpTopology3.$(objext) : ControlPoint/Topology/CpTopology3.cpp $(headers
 	$(compiler)CpTopology3.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/CpTopology3.cpp 
 $(objdir)TestTopology3.$(objext) : ControlPoint/Topology/TestTopology3.cpp $(headers)
 	$(compiler)TestTopology3.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/TestTopology3.cpp
+
+TestTopology: $(objdir)TestTopology.$(exeext) 
+$(objdir)TestTopology.$(exeext) :  upnp_core $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)CpTopology3.$(objext) $(objdir)TestTopology.$(objext) $(objdir)CpAvOpenhomeOrgProduct1.$(objext) $(objdir)CpAvOpenhomeOrgVolume1.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTopology.$(exeext) $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)CpTopology3.$(objext) $(objdir)TestTopology.$(objext) $(objdir)CpAvOpenhomeOrgProduct1.$(objext) $(objdir)CpAvOpenhomeOrgVolume1.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestTopology.$(objext) : ControlPoint/Topology/TestTopology.cpp $(headers)
+	$(compiler)TestTopology.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/TestTopology.cpp
 
 TestDviDiscovery: $(objdir)TestDviDiscovery.$(exeext) 
 $(objdir)TestDviDiscovery.$(exeext) :  upnp_core $(objdir)TestDviDiscovery.$(objext) TestFramework.$(libext)
@@ -588,7 +594,7 @@ $(objdir)TestCpDeviceDvC.$(exeext) :  upnp_core $(objdir)TestCpDeviceDvC.$(objex
 $(objdir)TestCpDeviceDvC.$(objext) : Public/C/TestCpDeviceDvC.cpp $(headers)
 	$(compiler)TestCpDeviceDvC.$(objext) -c $(cflags) $(includes) Public/C/TestCpDeviceDvC.cpp
 
-Tests: TestBuffer TestThread TestFifo TestQueue TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs
+Tests: TestBuffer TestThread TestFifo TestQueue TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestTopology TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs
 
 Zapp.net.dll : $(objdir)Zapp.net.dll ZappUpnpDll
 

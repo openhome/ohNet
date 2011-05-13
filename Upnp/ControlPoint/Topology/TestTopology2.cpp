@@ -1,5 +1,4 @@
-// Simple test for Control Point side device list
-// Looks suspiciously similar to TestSsdpUListen for now...
+// Manual test program for exercising Topology Layer 2
 //
 
 #include <TestFramework.h>
