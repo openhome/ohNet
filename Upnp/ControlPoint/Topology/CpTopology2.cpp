@@ -852,12 +852,12 @@ void CpTopology2::ProductRemoved(CpDevice& aDevice)
     DeviceRemoved(aDevice);
 }
 
-void CpTopology2::UpnpAdded(CpDevice& aDevice)
+void CpTopology2::UpnpAdded(CpDevice& /*aDevice*/)
 {
 //  iDeviceList.push_back(new CpTopology2MediaRenderer(aDevice, *this));
 }
 
-void CpTopology2::UpnpRemoved(CpDevice& aDevice)
+void CpTopology2::UpnpRemoved(CpDevice& /*aDevice*/)
 {
 //  DeviceRemoved(aDevice);
 }

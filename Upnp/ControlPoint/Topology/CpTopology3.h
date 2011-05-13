@@ -68,7 +68,7 @@ private:
     TUint iSourceCount;
 };
 
-class CpTopology3Source
+class CpTopology3Source : private INonCopyable
 {
 	friend class CpTopology3Group;
 
