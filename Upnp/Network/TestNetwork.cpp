@@ -698,7 +698,9 @@ void MainTestThread::Run()
     runner.Add(new SuiteTcpServerShutdown(iInterface));
     runner.Add(new SuiteEndpoint());
     //runner.Add(new SuiteUnicast(iInterface));
-    runner.Add(new SuiteMulticast());
+    // SuiteMulticast disabled because Linn network setup means that each multicast message is duplicated when
+    // running on a core server (used for automated post-commit tests)
+    //runner.Add(new SuiteMulticast());
     runner.Run();
     Signal();
 }
