@@ -15,13 +15,10 @@
 #include <DviServerWebSocket.h>
 #include <DviService.h>
 #include <Bonjour.h>
-#include <Core/DvDevice.h>
 
 #include <vector>
 
 namespace Zapp {
-
-class DvProviderOhNet;
 
 class DviStack : private IStack
 {
@@ -45,8 +42,6 @@ private:
     DviSubscriptionManager* iSubscriptionManager;
     DviServerWebSocket* iDviServerWebSocket;
     IMdnsProvider* iMdns;
-    DvDevice* iOhNetDevice;
-    DvProviderOhNet* iOhNetProvider;
 };
 
 } // namespace Zapp
