@@ -460,8 +460,8 @@ void SuiteEndpoint::Test()
 {
     // Test bad DNS look ups
     Endpoint ep;
-    TEST_THROWS(ep.SetAddress(Brn("baddomainname")), NetworkError);
-    TEST_THROWS(Endpoint ep2(1234, Brn("baddomainname")); (void)ep2, NetworkError);
+    TEST_THROWS(ep.SetAddress(Brn("baddomainname.linn.co.uk")), NetworkError);
+    TEST_THROWS(Endpoint ep2(1234, Brn("baddomainname.linn.co.uk")); (void)ep2, NetworkError);
 }
 
 const TUint kMulticastPort = 2000;
