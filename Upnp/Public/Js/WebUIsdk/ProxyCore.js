@@ -42,6 +42,7 @@ Zapp.SubscriptionManager = (function () {
     var ErrorFunction;
     var Debug;
     var SubscriptionTimeoutSeconds;
+    var webSocketPort;
 
     // Public Variables
     var running = false; // A flag to state if the Subscription Manager is running
@@ -394,7 +395,7 @@ Zapp.SubscriptionManager = (function () {
     * @method reconnect
     */
     var reconnect = function () {
-        start(StartedFunction, Debug, SubscriptionTimeoutSeconds);
+        start(StartedFunction, webSocketPort, Debug, SubscriptionTimeoutSeconds);
     };
 
     /**
@@ -432,12 +433,12 @@ Zapp.SubscriptionManager = (function () {
     * @param {Boolean} debugMode A switch to turn debugging on to log debugging messages to console.
     * @param {Int} subscriptionTimeoutSeconds The suggested subscription timeout value.  Overrides the default.
     */
-    var start = function (startedFunction, debugMode, subscriptionTimeoutSeconds, errorFunction) {
+    var start = function (startedFunction, port, debugMode, subscriptionTimeoutSeconds, errorFunction) {
         StartedFunction = startedFunction;
         ErrorFunction = errorFunction;
         Debug = debugMode;
         SubscriptionTimeoutSeconds = subscriptionTimeoutSeconds;
-
+        webSocketPort = port;
         if (debugMode) {
             DEBUG = debugMode;
             console.log("*** Zapp.SubscriptionManager v" + VERSION + " ***");
@@ -446,17 +447,28 @@ Zapp.SubscriptionManager = (function () {
         subscriptionTimeoutSec = subscriptionTimeoutSeconds ? subscriptionTimeoutSeconds : DEFAULT_SUBSCRIPTION_TIMEOUT_SEC;
         var websocketSupported = ("WebSocket" in window);
         if (websocketSupported) { // NON-IE check if Websockets is supported
-            var websocketServerLocation = "ws://" + window.location.hostname + ":54321/";
-            if (DEBUG) {
-                console.log("start/websocketServerLocation: " + websocketServerLocation);
-            }
-            websocket = new WebSocket(websocketServerLocation, "upnp:event"); // TODO : Needs to acquire the port
-            websocketOpen = true;
+            if(port && port!="")
+            {
+                var websocketServerLocation = "ws://" + window.location.hostname + ":"+port+"/";
+                if (DEBUG) {
+                    console.log("start/websocketServerLocation: " + websocketServerLocation);
+                }
+                websocket = new WebSocket(websocketServerLocation, "upnp:event"); // TODO : Needs to acquire the port
+                websocketOpen = true;
 
-            websocket.onmessage = onSocketMessage;
-            websocket.onerror = onSocketError;
-            websocket.onclose = onSocketClose;
-            websocket.onopen = onSocketOpen;
+                websocket.onmessage = onSocketMessage;
+                websocket.onerror = onSocketError;
+                websocket.onclose = onSocketClose;
+                websocket.onopen = onSocketOpen;
+            }
+            else
+            {
+                if (DEBUG) {
+                    console.log("start/websocketSupported: NULL");
+                }
+                alert("Zapp.SubscriptionManager: No websocket port defined.");
+                running = false;
+            }
         }
         else {
             if (DEBUG) {
