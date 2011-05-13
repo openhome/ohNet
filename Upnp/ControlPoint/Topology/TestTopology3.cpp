@@ -1,5 +1,4 @@
-// Simple test for Control Point side device list
-// Looks suspiciously similar to TestSsdpUListen for now...
+// Manual test program for exercising Topology Layer 3
 //
 
 #include <TestFramework.h>
@@ -103,7 +102,7 @@ void TopologyLogger::PrintSourceInfo(const CpTopology3Room& aRoom)
 void TopologyLogger::PrintRoomInfo(const char* aPrologue, const CpTopology3Room& aRoom)
 {
     Print("%s ", aPrologue);
-    Print(aRoom.Room());
+    Print(aRoom.Name());
     Print(" ");
 }
 
@@ -138,7 +137,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     endpt.AppendAddress(buf);
     Print("Using network interface %s\n\n", buf.Ptr());
 
-    Debug::SetLevel(Debug::kTopology);
+    // Debug::SetLevel(Debug::kTopology);
     // Debug::SetLevel(Debug::kAll);
 
     TopologyLogger logger;

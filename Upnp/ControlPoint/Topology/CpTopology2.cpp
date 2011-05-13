@@ -842,7 +842,7 @@ void CpTopology2::Refresh()
     
 void CpTopology2::ProductAdded(CpDevice& aDevice)
 {
-    if (aDevice.Udn() == Brn("4c494e4e-0026-0f21-8335-42000004013f")) {
+    if (aDevice.Udn() == Brn("4c494e4e-0026-0f21-8335-42000004013f") || aDevice.Udn() == Brn("4c494e4e-0026-0f21-833c-90000004013f")) {
     	iDeviceList.push_back(new CpTopology2Product(aDevice, *this));
    	}
 }
@@ -854,14 +854,12 @@ void CpTopology2::ProductRemoved(CpDevice& aDevice)
 
 void CpTopology2::UpnpAdded(CpDevice& aDevice)
 {
-    if (aDevice.Udn() == Brn("4c494e4e-0026-0f21-8335-420000040171")) {
-        iDeviceList.push_back(new CpTopology2MediaRenderer(aDevice, *this));
-    }
+//  iDeviceList.push_back(new CpTopology2MediaRenderer(aDevice, *this));
 }
 
 void CpTopology2::UpnpRemoved(CpDevice& aDevice)
 {
-    DeviceRemoved(aDevice);
+//  DeviceRemoved(aDevice);
 }
 
 void CpTopology2::DeviceRemoved(CpDevice& aDevice)
