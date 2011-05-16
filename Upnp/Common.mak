@@ -594,7 +594,19 @@ $(objdir)TestCpDeviceDvC.$(exeext) :  upnp_core $(objdir)TestCpDeviceDvC.$(objex
 $(objdir)TestCpDeviceDvC.$(objext) : Public/C/TestCpDeviceDvC.cpp $(headers)
 	$(compiler)TestCpDeviceDvC.$(objext) -c $(cflags) $(includes) Public/C/TestCpDeviceDvC.cpp
 
-Tests: TestBuffer TestThread TestFifo TestQueue TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestTopology TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs
+TestPerformanceDv: $(objdir)TestPerformanceDv.$(exeext) 
+$(objdir)TestPerformanceDv.$(exeext) :  upnp_core $(objdir)TestPerformanceDv.$(objext) $(objdir)TestBasicDvStd.$(objext) $(objdir)DvZappOrgTestBasic1Std.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestPerformanceDv.$(exeext) $(objdir)TestPerformanceDv.$(objext) $(objdir)TestBasicDvStd.$(objext) $(objdir)DvZappOrgTestBasic1Std.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestPerformanceDv.$(objext) : Public/Cpp/Std/TestPerformanceDv.cpp $(headers)
+	$(compiler)TestPerformanceDv.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestPerformanceDv.cpp
+
+TestPerformanceCp: $(objdir)TestPerformanceCp.$(exeext) 
+$(objdir)TestPerformanceCp.$(exeext) :  upnp_core $(objdir)TestPerformanceCp.$(objext) $(objdir)CpZappOrgTestBasic1Std.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestPerformanceCp.$(exeext) $(objdir)TestPerformanceCp.$(objext) $(objdir)CpZappOrgTestBasic1Std.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestPerformanceCp.$(objext) : Public/Cpp/Std/TestPerformanceCp.cpp $(headers)
+	$(compiler)TestPerformanceCp.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestPerformanceCp.cpp
+
+Tests: TestBuffer TestThread TestFifo TestQueue TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestTopology TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 
 Zapp.net.dll : $(objdir)Zapp.net.dll ZappUpnpDll
 
@@ -693,6 +705,36 @@ $(objdir)TestCpDeviceDvCs.exe: \
 		$(publiccsdir)TestBasicDv.cs \
 		$(publiccsdir)TestBasicCp.cs \
 		$(publiccsdir)TestCpDeviceDv.cs
+
+TestPerformanceDvCs: $(objdir)TestPerformanceDvCs.exe
+
+$(objdir)TestPerformanceDvCs.exe: \
+	ZappUpnpDll \
+	$(objdir)Zapp.net.dll \
+	$(objdir)DvZappOrgTestBasic1.net.dll \
+	$(publiccsdir)TestBasicDv.cs \
+	$(publiccsdir)TestPerformanceDv.cs
+	$(csharp) \
+		/unsafe /warnaserror+ /platform:x86 /t:exe \
+		/out:$(objdir)TestPerformanceDvCs.exe \
+		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)DvZappOrgTestBasic1.net.dll \
+		$(publiccsdir)TestBasicDv.cs \
+		$(publiccsdir)TestPerformanceDv.cs
+
+TestPerformanceCpCs: $(objdir)TestPerformanceCpCs.exe
+
+$(objdir)TestPerformanceCpCs.exe: \
+	ZappUpnpDll \
+	$(objdir)Zapp.net.dll \
+	$(objdir)CpZappOrgTestBasic1.net.dll \
+	$(publiccsdir)TestPerformanceCp.cs
+	$(csharp) \
+		/unsafe /warnaserror+ /platform:x86 /t:exe \
+		/out:$(objdir)TestPerformanceCpCs.exe \
+		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)CpZappOrgTestBasic1.net.dll \
+		$(publiccsdir)TestPerformanceCp.cs
 
 
 Generated$(dirsep)GenerateSourceFiles.mak : $(tt) Service$(dirsep)Services.xml T4/Templates/UpnpMakeT4.tt

@@ -336,7 +336,7 @@ void TestTopology3Handler::RoomRemoved(CpTopology3Room& aRoom)
     Add(Brn("Removed"), aRoom.Name(), Brx::Empty());
 }
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* /*aInitParams*/)
 {
     UpnpLibrary::Initialise(aInitParams);
 
