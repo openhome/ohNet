@@ -606,7 +606,7 @@ $(objdir)TestPerformanceCp.$(exeext) :  upnp_core $(objdir)TestPerformanceCp.$(o
 $(objdir)TestPerformanceCp.$(objext) : Public/Cpp/Std/TestPerformanceCp.cpp $(headers)
 	$(compiler)TestPerformanceCp.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestPerformanceCp.cpp
 
-Tests: TestBuffer TestThread TestFifo TestQueue TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestTopology TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp
+Tests: TestBuffer TestThread TestFifo TestQueue TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestTopology TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 
 Zapp.net.dll : $(objdir)Zapp.net.dll ZappUpnpDll
 
@@ -705,6 +705,36 @@ $(objdir)TestCpDeviceDvCs.exe: \
 		$(publiccsdir)TestBasicDv.cs \
 		$(publiccsdir)TestBasicCp.cs \
 		$(publiccsdir)TestCpDeviceDv.cs
+
+TestPerformanceDvCs: $(objdir)TestPerformanceDvCs.exe
+
+$(objdir)TestPerformanceDvCs.exe: \
+	ZappUpnpDll \
+	$(objdir)Zapp.net.dll \
+	$(objdir)DvZappOrgTestBasic1.net.dll \
+	$(publiccsdir)TestBasicDv.cs \
+	$(publiccsdir)TestPerformanceDv.cs
+	$(csharp) \
+		/unsafe /warnaserror+ /platform:x86 /t:exe \
+		/out:$(objdir)TestPerformanceDvCs.exe \
+		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)DvZappOrgTestBasic1.net.dll \
+		$(publiccsdir)TestBasicDv.cs \
+		$(publiccsdir)TestPerformanceDv.cs
+
+TestPerformanceCpCs: $(objdir)TestPerformanceCpCs.exe
+
+$(objdir)TestPerformanceCpCs.exe: \
+	ZappUpnpDll \
+	$(objdir)Zapp.net.dll \
+	$(objdir)CpZappOrgTestBasic1.net.dll \
+	$(publiccsdir)TestPerformanceCp.cs
+	$(csharp) \
+		/unsafe /warnaserror+ /platform:x86 /t:exe \
+		/out:$(objdir)TestPerformanceCpCs.exe \
+		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)CpZappOrgTestBasic1.net.dll \
+		$(publiccsdir)TestPerformanceCp.cs
 
 
 Generated$(dirsep)GenerateSourceFiles.mak : $(tt) Service$(dirsep)Services.xml T4/Templates/UpnpMakeT4.tt
