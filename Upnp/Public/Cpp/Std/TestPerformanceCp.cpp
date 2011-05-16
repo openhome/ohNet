@@ -49,8 +49,8 @@ PerformanceTests::PerformanceTests(uint32_t aTimeoutSecs)
     : iLock("PFTM")
     , iSem("PFTS", 0)
     , iTimeoutSecs(aTimeoutSecs)
-    , iDevice(NULL)
     , iDeviceList(NULL)
+    , iDevice(NULL)
 {
     iTimer = new Timer(MakeFunctor(*this, &PerformanceTests::TimerExpired));
 }
