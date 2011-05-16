@@ -12,6 +12,70 @@
 using namespace Zapp;
 using namespace Zapp::TestFramework;
 
+class TestDevice : public ICpTopology2GroupHandler
+{
+public:
+    virtual void SetSourceIndex(TUint aIndex);
+    virtual void SetStandby(TBool aValue);
+    virtual void SetVolume(TUint aValue);
+    virtual void VolumeInc();
+    virtual void VolumeDec();
+    virtual void SetBalance(TInt aValue);
+    virtual void BalanceInc();
+    virtual void BalanceDec();
+    virtual void SetFade(TInt aValue);
+    virtual void FadeInc();
+    virtual void FadeDec();
+    virtual void SetMute(TBool aValue);
+};
+
+void TestDevice::SetSourceIndex(TUint /* aIndex */)
+{
+}
+
+void TestDevice::SetStandby(TBool /* aValue */)
+{
+}
+
+void TestDevice::SetVolume(TUint /* aValue */)
+{
+}
+
+void TestDevice::VolumeInc()
+{
+}
+
+void TestDevice::VolumeDec()
+{
+}
+
+void TestDevice::SetBalance(TInt /* aValue */)
+{
+}
+
+void TestDevice::BalanceInc()
+{
+}
+
+void TestDevice::BalanceDec()
+{
+}
+
+void TestDevice::SetFade(TInt /* aValue */)
+{
+}
+
+void TestDevice::FadeInc()
+{
+}
+
+void TestDevice::FadeDec()
+{
+}
+
+void TestDevice::SetMute(TBool /* aValue */)
+{
+}
 
 class TestEntry
 {
@@ -46,6 +110,8 @@ TBool TestEntry::Check(const Brx& aType, const Brx& aValue, const Brx& aInfo)
     
     expected.Print("E");
     
+    ASSERTS();
+    
     return (false);
 }
 
@@ -65,7 +131,7 @@ class TestRoom
 {
 public:
     TestRoom(const Brx& aName);
-    void Add(const Brx& aName, const Brx& aType);
+    void AddSource(const Brx& aName, const Brx& aType, TBool aDiscard);
     const Brx& Name() const;
     TUint SourceCount() const;
     const Brx& SourceName(TUint aIndex) const;
@@ -83,10 +149,12 @@ TestRoom::TestRoom(const Brx& aName)
 {
 }
 
-void TestRoom::Add(const Brx& aName, const Brx& aType)
+void TestRoom::AddSource(const Brx& aName, const Brx& aType, TBool aVisible)
 {
-    iNames[iCount].Replace(aName);
-    iTypes[iCount++].Replace(aType);
+    if (aVisible) {
+        iNames[iCount].Replace(aName);
+        iTypes[iCount++].Replace(aType);
+    }
 }
 
 const Brx& TestRoom::Name() const
@@ -116,18 +184,18 @@ class TestTopology3Handler : public ICpTopology3Handler
 public:
     TestTopology3Handler();
     TBool CheckRoomAdded(const TestRoom& aRoom);
-    TBool CheckRoomSourceListChanged(const TestRoom& aRoom);
+    TBool CheckRoomChanged(const TestRoom& aRoom);
     TBool CheckRoomRemoved(const TestRoom& aRoom);
     TBool CheckComplete();
     
 private:
 	virtual void RoomAdded(CpTopology3Room& aRoom);
+    virtual void RoomChanged(CpTopology3Room& aRoom);
+    virtual void RoomRemoved(CpTopology3Room& aRoom);
 	virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
 	virtual void RoomSourceIndexChanged(CpTopology3Room& aRoom);
-	virtual void RoomSourceListChanged(CpTopology3Room& aRoom);
 	virtual void RoomVolumeChanged(CpTopology3Room& aRoom);
 	virtual void RoomMuteChanged(CpTopology3Room& aRoom);
-	virtual void RoomRemoved(CpTopology3Room& aRoom);
 	
     void Add(const Brx& aType, const Brx& aValue, const Brx& aInfo);
     TBool Check(const Brx& aType, const Brx& aValue, const Brx& aInfo);
@@ -160,7 +228,7 @@ TBool TestTopology3Handler::CheckRoomAdded(const TestRoom& aRoom)
     return (true);
 }
 
-TBool TestTopology3Handler::CheckRoomSourceListChanged(const TestRoom& aRoom)
+TBool TestTopology3Handler::CheckRoomChanged(const TestRoom& aRoom)
 {
     Bws<10> count;
     
@@ -203,6 +271,7 @@ void TestTopology3Handler::Add(const Brx& aType, const Brx& aValue, const Brx& a
 TBool TestTopology3Handler::Check(const Brx& aType, const Brx& aValue, const Brx& aInfo)
 {
     TestEntry* entry = iFifo.Read();
+    entry->Print("O");
     TBool result = entry->Check(aType, aValue, aInfo);
     delete (entry);
     return (result);
@@ -235,7 +304,7 @@ void TestTopology3Handler::RoomSourceIndexChanged(CpTopology3Room& aRoom)
     Add(Brn("Index"), aRoom.Name(), index);
 }
 
-void TestTopology3Handler::RoomSourceListChanged(CpTopology3Room& aRoom)
+void TestTopology3Handler::RoomChanged(CpTopology3Room& aRoom)
 {
     Bws<10> count;
     
@@ -269,14 +338,172 @@ void TestTopology3Handler::RoomRemoved(CpTopology3Room& aRoom)
 
 void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
+    UpnpLibrary::Initialise(aInitParams);
+
     // Debug::SetLevel(Debug::kTopology);
     // Debug::SetLevel(Debug::kAll);
 
+    TestDevice device;
+    
     TestTopology3Handler handler3;
 
     ICpTopology2Handler* handler2;
     
-    CpTopology3* topology = new CpTopology3(handler3, &handler2);
+    CpTopology3* topology3 = new CpTopology3(handler3, &handler2);
 
-    delete topology;
+    Print("Test 1\n");
+    Print("Add and remove 1\n");
+    
+    CpTopology2Group* group1 = new CpTopology2Group(device, false, Brn("Kitchen"), Brn("Majik DS-I"), 0);
+    
+    group1->AddSource(Brn("Playlist"), Brn("Playlist"), true);
+    group1->AddSource(Brn("Radio"), Brn("Radio"), true);
+    group1->AddSource(Brn("Songcast"), Brn("Receiver"), true);
+    group1->AddSource(Brn("UpnpAv"), Brn("UpnpAv"), false);
+    group1->AddSource(Brn("Analog1"), Brn("Analog"), true);
+    group1->AddSource(Brn("Analog2"), Brn("Analog"), true);
+    group1->AddSource(Brn("Analog3"), Brn("Analog"), true);
+    group1->AddSource(Brn("Phono"), Brn("Analog"), true);
+    group1->AddSource(Brn("Front Aux"), Brn("Analog"), true);
+    group1->AddSource(Brn("Spdif1"), Brn("Digital"), true);
+    group1->AddSource(Brn("Spdif2"), Brn("Digital"), true);
+    group1->AddSource(Brn("Spdif3"), Brn("Digital"), true);
+    group1->AddSource(Brn("Toslink1"), Brn("Digital"), true);
+    group1->AddSource(Brn("Toslink2"), Brn("Digital"), true);
+    group1->AddSource(Brn("Toslink3"), Brn("Digital"), true);
+    
+    TestRoom* room1 = new TestRoom(Brn("Kitchen"));
+    room1->AddSource(Brn("Playlist"), Brn("Playlist"), true);
+    room1->AddSource(Brn("Radio"), Brn("Radio"), true);
+    room1->AddSource(Brn("Songcast"), Brn("Receiver"), true);
+    room1->AddSource(Brn("UpnpAv"), Brn("UpnpAv"), false);
+    room1->AddSource(Brn("Analog1"), Brn("Analog"), true);
+    room1->AddSource(Brn("Analog2"), Brn("Analog"), true);
+    room1->AddSource(Brn("Analog3"), Brn("Analog"), true);
+    room1->AddSource(Brn("Phono"), Brn("Analog"), true);
+    room1->AddSource(Brn("Front Aux"), Brn("Analog"), true);
+    room1->AddSource(Brn("Spdif1"), Brn("Digital"), true);
+    room1->AddSource(Brn("Spdif2"), Brn("Digital"), true);
+    room1->AddSource(Brn("Spdif3"), Brn("Digital"), true);
+    room1->AddSource(Brn("Toslink1"), Brn("Digital"), true);
+    room1->AddSource(Brn("Toslink2"), Brn("Digital"), true);
+    room1->AddSource(Brn("Toslink3"), Brn("Digital"), true);
+
+    handler2->GroupAdded(*group1);
+    handler3.CheckRoomAdded(*room1);
+    
+    handler2->GroupRemoved(*group1);
+    handler3.CheckRoomRemoved(*room1);
+
+    Print("Test 2\n");
+    Print("Add 1, add 2\n");
+
+    CpTopology2Group* group2 = new CpTopology2Group(device, false, Brn("Kitchen"), Brn("Phono"), 0);
+    
+    group2->AddSource(Brn("Playlist"), Brn("Playlist"), true);
+    group2->AddSource(Brn("Radio"), Brn("Radio"), true);
+    group2->AddSource(Brn("Songcast"), Brn("Receiver"), true);
+    group2->AddSource(Brn("UpnpAv"), Brn("UpnpAv"), false);
+    group2->AddSource(Brn("Analog1"), Brn("Analog"), true);
+    group2->AddSource(Brn("Analog2"), Brn("Analog"), true);
+    group2->AddSource(Brn("Analog3"), Brn("Analog"), true);
+    group2->AddSource(Brn("Phono"), Brn("Analog"), true);
+    group2->AddSource(Brn("Front Aux"), Brn("Analog"), true);
+    group2->AddSource(Brn("Spdif1"), Brn("Digital"), true);
+    group2->AddSource(Brn("Spdif2"), Brn("Digital"), true);
+    group2->AddSource(Brn("Spdif3"), Brn("Digital"), true);
+    group2->AddSource(Brn("Toslink1"), Brn("Digital"), true);
+    group2->AddSource(Brn("Toslink2"), Brn("Digital"), true);
+    group2->AddSource(Brn("Toslink3"), Brn("Digital"), true);
+    
+    TestRoom* room2 = new TestRoom(Brn("Kitchen"));
+    room2->AddSource(Brn("Playlist"), Brn("Playlist"), true);
+    room2->AddSource(Brn("Radio"), Brn("Radio"), true);
+    room2->AddSource(Brn("Songcast"), Brn("Receiver"), true);
+    room2->AddSource(Brn("UpnpAv"), Brn("UpnpAv"), false);
+    room2->AddSource(Brn("Analog1"), Brn("Analog"), true);
+    room2->AddSource(Brn("Analog2"), Brn("Analog"), true);
+    room2->AddSource(Brn("Analog3"), Brn("Analog"), true);
+    room2->AddSource(Brn("Phono"), Brn("Analog"), true);
+    room2->AddSource(Brn("Front Aux"), Brn("Analog"), true);
+    room2->AddSource(Brn("Spdif1"), Brn("Digital"), true);
+    room2->AddSource(Brn("Spdif2"), Brn("Digital"), true);
+    room2->AddSource(Brn("Spdif3"), Brn("Digital"), true);
+    room2->AddSource(Brn("Toslink1"), Brn("Digital"), true);
+    room2->AddSource(Brn("Toslink2"), Brn("Digital"), true);
+    room2->AddSource(Brn("Toslink3"), Brn("Digital"), true);
+
+    TestRoom* room1and2 = new TestRoom(Brn("Kitchen"));
+    room1and2->AddSource(Brn("Playlist"), Brn("Playlist"), true);
+    room1and2->AddSource(Brn("Radio"), Brn("Radio"), true);
+    room1and2->AddSource(Brn("Songcast"), Brn("Receiver"), true);
+    room1and2->AddSource(Brn("UpnpAv"), Brn("UpnpAv"), false);
+    room1and2->AddSource(Brn("Analog1"), Brn("Analog"), true);
+    room1and2->AddSource(Brn("Analog2"), Brn("Analog"), true);
+    room1and2->AddSource(Brn("Analog3"), Brn("Analog"), true);
+    // START room1and2->AddSource(Brn("Phono"), Brn("Analog"), true);
+    room1and2->AddSource(Brn("Playlist"), Brn("Playlist"), true);
+    room1and2->AddSource(Brn("Radio"), Brn("Radio"), true);
+    room1and2->AddSource(Brn("Songcast"), Brn("Receiver"), true);
+    room1and2->AddSource(Brn("UpnpAv"), Brn("UpnpAv"), false);
+    room1and2->AddSource(Brn("Analog1"), Brn("Analog"), true);
+    room1and2->AddSource(Brn("Analog2"), Brn("Analog"), true);
+    room1and2->AddSource(Brn("Analog3"), Brn("Analog"), true);
+    room1and2->AddSource(Brn("Phono"), Brn("Analog"), true);
+    room1and2->AddSource(Brn("Front Aux"), Brn("Analog"), true);
+    room1and2->AddSource(Brn("Spdif1"), Brn("Digital"), true);
+    room1and2->AddSource(Brn("Spdif2"), Brn("Digital"), true);
+    room1and2->AddSource(Brn("Spdif3"), Brn("Digital"), true);
+    room1and2->AddSource(Brn("Toslink1"), Brn("Digital"), true);
+    room1and2->AddSource(Brn("Toslink2"), Brn("Digital"), true);
+    room1and2->AddSource(Brn("Toslink3"), Brn("Digital"), true);
+    // END
+    room1and2->AddSource(Brn("Front Aux"), Brn("Analog"), true);
+    room1and2->AddSource(Brn("Spdif1"), Brn("Digital"), true);
+    room1and2->AddSource(Brn("Spdif2"), Brn("Digital"), true);
+    room1and2->AddSource(Brn("Spdif3"), Brn("Digital"), true);
+    room1and2->AddSource(Brn("Toslink1"), Brn("Digital"), true);
+    room1and2->AddSource(Brn("Toslink2"), Brn("Digital"), true);
+    room1and2->AddSource(Brn("Toslink3"), Brn("Digital"), true);
+
+    handler2->GroupAdded(*group1);
+    handler2->GroupAdded(*group2);
+    handler3.CheckRoomAdded(*room1);
+    handler3.CheckRoomChanged(*room1and2);
+
+    Print("Test 3\n");
+    Print("Remove 2\n");
+
+    handler2->GroupRemoved(*group2);
+    handler3.CheckRoomChanged(*room1);
+
+    Print("Test 4\n");
+    Print("Add 2\n");
+
+    handler2->GroupAdded(*group2);
+    handler3.CheckRoomChanged(*room1and2);
+
+    Print("Test 5\n");
+    Print("Remove 1\n");
+
+    handler2->GroupRemoved(*group1);
+    handler3.CheckRoomChanged(*room2);
+
+    Print("Test 6\n");
+    Print("Add 1\n");
+
+    handler2->GroupAdded(*group1);
+    handler3.CheckRoomChanged(*room1and2);
+
+    Print("Test 7\n");
+    Print("Remove 1 and 2\n");
+
+    handler2->GroupRemoved(*group1);
+    handler2->GroupRemoved(*group2);
+    handler3.CheckRoomChanged(*room2);
+    handler3.CheckRoomRemoved(*room1);
+
+    delete topology3;
+
+    UpnpLibrary::Close();
 }

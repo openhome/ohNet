@@ -17,13 +17,18 @@ class TopologyLogger : public ICpTopology2Handler
 {
 public:
     TopologyLogger();
-	virtual void GroupAdded(CpTopology2Group& aGroup);
-	virtual void GroupStandbyChanged(CpTopology2Group& aGroup);
-	virtual void GroupSourceIndexChanged(CpTopology2Group& aGroup);
-	virtual void GroupSourceListChanged(CpTopology2Group& aGroup);
-	virtual void GroupVolumeChanged(CpTopology2Group& aGroup);
-	virtual void GroupMuteChanged(CpTopology2Group& aGroup);
-	virtual void GroupRemoved(CpTopology2Group& aGroup);
+
+    virtual void GroupAdded(CpTopology2Group& aGroup);
+    virtual void GroupStandbyChanged(CpTopology2Group& aGroup);
+    virtual void GroupSourceIndexChanged(CpTopology2Group& aGroup);
+    virtual void GroupSourceListChanged(CpTopology2Group& aGroup);
+    virtual void GroupVolumeLimitChanged(CpTopology2Group& aGroup);
+    virtual void GroupVolumeChanged(CpTopology2Group& aGroup);
+    virtual void GroupBalanceChanged(CpTopology2Group& aGroup);
+    virtual void GroupFadeChanged(CpTopology2Group& aGroup);
+    virtual void GroupMuteChanged(CpTopology2Group& aGroup);
+    virtual void GroupRemoved(CpTopology2Group& aDevice);
+
 private:
     void PrintGroupInfo(const char* aPrologue, const CpTopology2Group& aGroup);
     void PrintSourceInfo(const CpTopology2Group& aGroup);
@@ -62,10 +67,28 @@ void TopologyLogger::GroupSourceListChanged(CpTopology2Group& aGroup)
     PrintSourceInfo(aGroup);
 }
 
+void TopologyLogger::GroupVolumeLimitChanged(CpTopology2Group& aGroup)
+{
+    PrintGroupInfo("Vol Limit Changed   ", aGroup);
+    Print("%u\n", aGroup.VolumeLimit());
+}
+
 void TopologyLogger::GroupVolumeChanged(CpTopology2Group& aGroup)
 {
     PrintGroupInfo("Volume Changed      ", aGroup);
     Print("%u\n", aGroup.Volume());
+}
+
+void TopologyLogger::GroupBalanceChanged(CpTopology2Group& aGroup)
+{
+    PrintGroupInfo("Balance Changed     ", aGroup);
+    Print("%d\n", aGroup.Balance());
+}
+
+void TopologyLogger::GroupFadeChanged(CpTopology2Group& aGroup)
+{
+    PrintGroupInfo("Fade Changed        ", aGroup);
+    Print("%d\n", aGroup.Fade());
 }
 
 void TopologyLogger::GroupMuteChanged(CpTopology2Group& aGroup)

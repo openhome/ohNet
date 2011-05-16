@@ -18,12 +18,12 @@ class TopologyLogger : public ICpTopology3Handler
 public:
     TopologyLogger();
 	virtual void RoomAdded(CpTopology3Room& aRoom);
+    virtual void RoomChanged(CpTopology3Room& aRoom);
+    virtual void RoomRemoved(CpTopology3Room& aRoom);
 	virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
 	virtual void RoomSourceIndexChanged(CpTopology3Room& aRoom);
-	virtual void RoomSourceListChanged(CpTopology3Room& aRoom);
 	virtual void RoomVolumeChanged(CpTopology3Room& aRoom);
 	virtual void RoomMuteChanged(CpTopology3Room& aRoom);
-	virtual void RoomRemoved(CpTopology3Room& aRoom);
 private:
     void PrintRoomInfo(const char* aPrologue, const CpTopology3Room& aRoom);
     void PrintSourceInfo(const CpTopology3Room& aRoom);
@@ -41,6 +41,20 @@ void TopologyLogger::RoomAdded(CpTopology3Room& aRoom)
     PrintSourceInfo(aRoom);
 }
 
+void TopologyLogger::RoomChanged(CpTopology3Room& aRoom)
+{
+    Print("\n");
+    PrintRoomInfo("Source List Changed ", aRoom);
+    Print("\n");
+    PrintSourceInfo(aRoom);
+}
+
+void TopologyLogger::RoomRemoved(CpTopology3Room& aRoom)
+{
+    PrintRoomInfo("Room Removed       ", aRoom);
+    Print("\n");
+}
+
 void TopologyLogger::RoomStandbyChanged(CpTopology3Room& aRoom)
 {
     PrintRoomInfo("Standby Changed     ", aRoom);
@@ -54,14 +68,6 @@ void TopologyLogger::RoomSourceIndexChanged(CpTopology3Room& aRoom)
     Print("%u\n", aRoom.SourceIndex());
 }
 
-void TopologyLogger::RoomSourceListChanged(CpTopology3Room& aRoom)
-{
-    Print("\n");
-    PrintRoomInfo("Source List Changed ", aRoom);
-    Print("\n");
-    PrintSourceInfo(aRoom);
-}
-
 void TopologyLogger::RoomVolumeChanged(CpTopology3Room& aRoom)
 {
     PrintRoomInfo("Volume Changed      ", aRoom);
@@ -72,12 +78,6 @@ void TopologyLogger::RoomMuteChanged(CpTopology3Room& aRoom)
 {
     PrintRoomInfo("Mute Changed        ", aRoom);
     Print(aRoom.Mute() ? "true" : "false");
-    Print("\n");
-}
-
-void TopologyLogger::RoomRemoved(CpTopology3Room& aRoom)
-{
-    PrintRoomInfo("Room Removed       ", aRoom);
     Print("\n");
 }
 

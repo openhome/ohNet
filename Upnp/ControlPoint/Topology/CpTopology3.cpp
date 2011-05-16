@@ -48,19 +48,23 @@ void CpTopology3Source::RemoveChild(CpTopology3Group& aGroup)
 
 void CpTopology3Source::ClearChildren()
 {
-	std::vector<CpTopology3Group*>::iterator it = iChildList.begin();
-	
-	while (it != iChildList.end()) {
-		(*it)->ClearParent();
-		it++;
-	}
+    // the reason we don't just iterate normally over the child list is because
+    // the ClearParent function does itself change the child list, which
+    // messes with our iterator
+    
+    while (iChildList.size() != 0) {
+    	std::vector<CpTopology3Group*>::iterator it = iChildList.begin();
+   		(*it)->ClearParent();
+   	}
 }
 
-TUint CpTopology3Source::EvaluateSourceCount()
+TUint CpTopology3Source::Evaluate()
 {
     iSourceCount = 0;
     
-    if (iChildList.size() == 0) {
+    TUint children = iChildList.size();
+    
+    if (children == 0) {
         if (iGroup.SourceVisible(iIndex)) {
             iSourceCount = 1;
         }
@@ -69,7 +73,7 @@ TUint CpTopology3Source::EvaluateSourceCount()
         std::vector<CpTopology3Group*>::iterator it = iChildList.begin();
         
         while (it != iChildList.end()) {
-            iSourceCount += (*it)->EvaluateSourceCount();
+            iSourceCount += (*it)->Evaluate();
             it++;
         }
     }
@@ -162,7 +166,7 @@ CpTopology3Group::~CpTopology3Group()
 	iGroup.RemoveRef();
 }
 
-const CpTopology2Group& CpTopology3Group::Group() const
+CpTopology2Group& CpTopology3Group::Group() const
 {
 	return (iGroup);
 }
@@ -198,14 +202,14 @@ void CpTopology3Group::SetRoot(TBool aValue)
 	iRoot = aValue;
 }
 
-TUint CpTopology3Group::EvaluateSourceCount()
+TUint CpTopology3Group::Evaluate()
 {
     iSourceCount = 0;
 
     std::vector<CpTopology3Source*>::iterator it = iSourceList.begin();
     
     while (it != iSourceList.end()) {
-        iSourceCount += (*it)->EvaluateSourceCount();
+        iSourceCount += (*it)->Evaluate();
         it++;
     }
 
@@ -261,8 +265,8 @@ void CpTopology3Group::ClearChildren()
 	std::vector<CpTopology3Source*>::iterator it = iSourceList.begin();
 	
 	while (it != iSourceList.end()) {
-		(*it)->ClearChildren();
-		it++;
+        (*it)->ClearChildren();
+        it++;
 	}
 }
 
@@ -275,10 +279,7 @@ void CpTopology3Group::ClearParent()
 
 void CpTopology3Group::SetParent(CpTopology3Group& aGroup, TUint aSourceIndex)
 {
-	if (iParent) {
-		iParent->RemoveChild(*this, iParentSourceIndex);
-	}
-
+    ASSERT(iParent == NULL);
 	iParent = &aGroup;
 	iParentSourceIndex = aSourceIndex;
 }
@@ -344,8 +345,6 @@ void CpTopology3Room::ReportGroups()
 	    LOG(kTopology, (*it)->Group().Room());
 	    LOG(kTopology, ":");
 	    LOG(kTopology, (*it)->Group().Name());
-	    LOG(kTopology, ":");
-	    LOG(kTopology, (*it)->Group().Device().Udn());
 	    LOG(kTopology, "\n");
 		it++;
 	}
@@ -358,8 +357,6 @@ void CpTopology3Room::ReportGroups()
 	    LOG(kTopology, (*it)->Group().Room());
 	    LOG(kTopology, ":");
 	    LOG(kTopology, (*it)->Group().Name());
-	    LOG(kTopology, ":");
-	    LOG(kTopology, (*it)->Group().Device().Udn());
 	    LOG(kTopology, "\n");
 		it++;
 	}
@@ -375,8 +372,6 @@ void CpTopology3Room::GroupAdded(CpTopology2Group& aGroup)
     LOG(kTopology, aGroup.Room());
     LOG(kTopology, ":");
     LOG(kTopology, aGroup.Name());
-    LOG(kTopology, ":");
-    LOG(kTopology, aGroup.Device().Udn());
     LOG(kTopology, ") in ");
     LOG(kTopology, iName);
     LOG(kTopology, "\n");
@@ -390,7 +385,7 @@ void CpTopology3Room::GroupAdded(CpTopology2Group& aGroup)
 	while (it != iGroupList.end()) {
 		if ((*it)->AddIfIsChild(*group)) {
 			iGroupList.push_back(group);
-			EvaluateSourceCount();
+			Evaluate();
 			return;
 		}
 		it++;
@@ -414,7 +409,7 @@ void CpTopology3Room::GroupAdded(CpTopology2Group& aGroup)
 	group->SetRoot(true);
 	iGroupList.push_back(group);
 	iRootList.push_back(group);
-	EvaluateSourceCount();
+	Evaluate();
 }
 
 void CpTopology3Room::GroupRemoved(CpTopology2Group& aGroup)
@@ -423,85 +418,70 @@ void CpTopology3Room::GroupRemoved(CpTopology2Group& aGroup)
     LOG(kTopology, aGroup.Room());
     LOG(kTopology, ":");
     LOG(kTopology, aGroup.Name());
-    LOG(kTopology, ":");
-    LOG(kTopology, aGroup.Device().Udn());
     LOG(kTopology, ") in ");
     LOG(kTopology, iName);
     LOG(kTopology, "\n");
 
 	std::vector<CpTopology3Group*>::iterator it = iGroupList.begin();
 	
+    CpTopology3Group* group = 0;
+    
 	while (it != iGroupList.end()) {
 		if ((*it)->IsAttachedTo(aGroup)) {
-			CpTopology3Group* group = (*it);
-
+			group = (*it);
 			iGroupList.erase(it);
-
-			if (group->Root()) {
-				it = iRootList.begin();
-
-				TBool found = false;
-				
-				while (it != iRootList.end()) {
-					if ((*it)->IsAttachedTo(aGroup)) {
-						found = true;
-						iRootList.erase(it);
-						break;
-					}
-					it++;
-				}
-				
-				ASSERT(found);
-			}
-			else {
-				group->ClearParent();
-			}
-			
-			group->ClearChildren();
-			
-			delete (group);
-			
-			// check for last group in this room
-			
-			if (iGroupList.size() == 0) {
-				RemoveRef();
-				return;
-			}
-			 
-			// now check orphaned groups
-			// remap them or change them to root groups
-			
-			it = iGroupList.begin();
-			
-			while (it != iGroupList.end()) {
-				if (!(*it)->Root() && !(*it)->HasParent()) { // indicates this group has been orphaned
-
-					TBool added = false;
-										
-					std::vector<CpTopology3Group*>::iterator it2 = iGroupList.begin();
-					
-					while (it2 != iGroupList.end()) {
-						if ((*it2)->AddIfIsChild(*(*it))) {
-							added = true;
-							break;		
-						}
-						it2++;
-					}
-					
-					if (!added) {
-						(*it)->SetRoot(true);
-						iRootList.push_back(*it);
-					}
-				}
-				it++;
-			}
-
-			EvaluateSourceCount();
-			return;
+			break;
 		}
 		it++;
 	}
-	ASSERTS();
+	
+	ASSERT(group != 0);
+
+	if (group->Root()) {
+        TBool found = false;
+        
+		it = iRootList.begin();
+
+		while (it != iRootList.end()) {
+			if ((*it)->IsAttachedTo(aGroup)) {
+				found = true;
+				iRootList.erase(it);
+				break;
+			}
+			it++;
+		}
+		
+		ASSERT(found);
+	}
+	else {
+		group->ClearParent();
+	}
+			
+	group->ClearChildren();
+	
+	delete (group);
+			
+	// check for last group in this room
+	
+	if (iGroupList.size() == 0) {
+		RemoveRef();
+		return;
+	}
+			 
+	// now check orphaned groups
+	// remap them or change them to root groups
+	
+	it = iGroupList.begin();
+	
+	while (it != iGroupList.end()) {
+		if (!(*it)->Root() && !(*it)->HasParent()) { // indicates this group has been orphaned
+            (*it)->SetRoot(true);
+            iRootList.push_back(*it);
+		}
+		it++;
+	}
+
+	Evaluate();
 }
 
 
@@ -515,10 +495,22 @@ void CpTopology3Room::GroupSourceIndexChanged(CpTopology2Group& /*aGroup*/)
 
 void CpTopology3Room::GroupSourceListChanged(CpTopology2Group& /*aGroup*/)
 {
-	EvaluateSourceCount();
+	Evaluate();
+}
+
+void CpTopology3Room::GroupVolumeLimitChanged(CpTopology2Group& /*aGroup*/)
+{
 }
 
 void CpTopology3Room::GroupVolumeChanged(CpTopology2Group& /*aGroup*/)
+{
+}
+
+void CpTopology3Room::GroupBalanceChanged(CpTopology2Group& /*aGroup*/)
+{
+}
+
+void CpTopology3Room::GroupFadeChanged(CpTopology2Group& /*aGroup*/)
 {
 }
 
@@ -566,21 +558,25 @@ const Brx& CpTopology3Room::Name() const
 	return (iName);
 }
 
-void CpTopology3Room::EvaluateSourceCount()
+void CpTopology3Room::Evaluate()
 {
+    ASSERT(iRootList.size() > 0);
+    
     TUint count = 0;
     
     std::vector<CpTopology3Group*>::const_iterator it = iRootList.begin();
     
+    iRoot = (*it);
+    
     while (it != iRootList.end()) {
-        count += (*it)->EvaluateSourceCount();
+        count += (*it)->Evaluate();
         it++;
     }
     
     iSourceCount = count;
     
     if (iActive) {
-        iHandler.RoomSourceListChanged(*this);
+        iHandler.RoomChanged(*this);
     }
 }
 
@@ -600,6 +596,7 @@ const Brx& CpTopology3Room::SourceName(TUint aIndex) const
     }
     
 	ASSERTS();
+
     return (Brx::Empty());
 }
 
@@ -622,34 +619,29 @@ const Brx& CpTopology3Room::SourceType(TUint aIndex) const
     return (Brx::Empty());
 }
 
-/*
-CpDevice& CpTopology3Room::SourceDevice(TUint aIndex) const
-{
-	return (CpDevice());
-}
-*/
-
 TBool CpTopology3Room::HasVolumeControl() const
 {
-	return (false);
+    return (iRoot->Group().HasVolumeControl());
 }
 
 TUint CpTopology3Room::Volume() const
 {
-	return (0);
+    return (iRoot->Group().Volume());
 }
 
-void CpTopology3Room::SetVolume(TUint /*aValue*/) const
+void CpTopology3Room::SetVolume(TUint aValue) const
 {
+    iRoot->Group().SetVolume(aValue);
 }
 
 TBool CpTopology3Room::Mute() const
 {
-	return (false);
+    return (iRoot->Group().Mute());
 }
 
-void CpTopology3Room::SetMute(TBool /*aValue*/)
+void CpTopology3Room::SetMute(TBool aValue)
 {
+    iRoot->Group().SetMute(aValue);
 }
 
 // CpTopology3
@@ -714,9 +706,24 @@ void CpTopology3::GroupSourceListChanged(CpTopology2Group& aGroup)
 	((CpTopology3Room*)aGroup.UserData())->GroupSourceListChanged(aGroup);
 }
 
+void CpTopology3::GroupVolumeLimitChanged(CpTopology2Group& aGroup)
+{
+    ((CpTopology3Room*)aGroup.UserData())->GroupVolumeLimitChanged(aGroup);
+}
+
 void CpTopology3::GroupVolumeChanged(CpTopology2Group& aGroup)
 {
 	((CpTopology3Room*)aGroup.UserData())->GroupVolumeChanged(aGroup);
+}
+
+void CpTopology3::GroupBalanceChanged(CpTopology2Group& aGroup)
+{
+    ((CpTopology3Room*)aGroup.UserData())->GroupBalanceChanged(aGroup);
+}
+
+void CpTopology3::GroupFadeChanged(CpTopology2Group& aGroup)
+{
+    ((CpTopology3Room*)aGroup.UserData())->GroupFadeChanged(aGroup);
 }
 
 void CpTopology3::GroupMuteChanged(CpTopology2Group& aGroup)
@@ -742,6 +749,35 @@ void CpTopology3::RoomAdded(CpTopology3Room& aRoom)
 	iHandler.RoomAdded(aRoom);
 }
 
+void CpTopology3::RoomChanged(CpTopology3Room& aRoom)
+{
+    LOG(kTopology, "CpTopology3::RoomSourceListChanged ");
+    LOG(kTopology, aRoom.Name());
+    LOG(kTopology, "\n");
+
+    iHandler.RoomChanged(aRoom);
+}
+
+void CpTopology3::RoomRemoved(CpTopology3Room& aRoom)
+{
+    LOG(kTopology, "CpTopology3::RoomRemoved ");
+    LOG(kTopology, aRoom.Name());
+    LOG(kTopology, "\n");
+
+    std::list<CpTopology3Room*>::iterator it = iRoomList.begin();
+    
+    while (it != iRoomList.end()) {
+        if (*it == &aRoom) {
+            iRoomList.erase(it);
+            iHandler.RoomRemoved(aRoom);
+            return;
+        }
+        it++;
+    }
+    
+    ASSERTS();
+}
+
 void CpTopology3::RoomStandbyChanged(CpTopology3Room& aRoom)
 {
     LOG(kTopology, "CpTopology3::RoomStandbyChanged ");
@@ -758,15 +794,6 @@ void CpTopology3::RoomSourceIndexChanged(CpTopology3Room& aRoom)
     LOG(kTopology, "\n");
 
 	iHandler.RoomSourceIndexChanged(aRoom);
-}
-
-void CpTopology3::RoomSourceListChanged(CpTopology3Room& aRoom)
-{
-    LOG(kTopology, "CpTopology3::RoomSourceListChanged ");
-    LOG(kTopology, aRoom.Name());
-    LOG(kTopology, "\n");
-
-	iHandler.RoomSourceListChanged(aRoom);
 }
 
 void CpTopology3::RoomVolumeChanged(CpTopology3Room& aRoom)
@@ -787,23 +814,4 @@ void CpTopology3::RoomMuteChanged(CpTopology3Room& aRoom)
 	iHandler.RoomMuteChanged(aRoom);
 }
 
-void CpTopology3::RoomRemoved(CpTopology3Room& aRoom)
-{
-    LOG(kTopology, "CpTopology3::RoomRemoved ");
-    LOG(kTopology, aRoom.Name());
-    LOG(kTopology, "\n");
-
-	std::list<CpTopology3Room*>::iterator it = iRoomList.begin();
-	
-	while (it != iRoomList.end()) {
-		if (*it == &aRoom) {
-			iRoomList.erase(it);
-			iHandler.RoomRemoved(aRoom);
-			return;
-		}
-		it++;
-	}
-	
-	ASSERTS();
-}
 
