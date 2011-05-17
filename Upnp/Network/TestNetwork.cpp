@@ -460,8 +460,8 @@ void SuiteEndpoint::Test()
 {
     // Test bad DNS look ups
     Endpoint ep;
-    TEST_THROWS(ep.SetAddress(Brn("baddomainname")), NetworkError);
-    TEST_THROWS(Endpoint ep2(1234, Brn("baddomainname")); (void)ep2, NetworkError);
+    TEST_THROWS(ep.SetAddress(Brn("baddomainname.linn.co.uk")), NetworkError);
+    TEST_THROWS(Endpoint ep2(1234, Brn("baddomainname.linn.co.uk")); (void)ep2, NetworkError);
 }
 
 const TUint kMulticastPort = 2000;
@@ -552,7 +552,7 @@ void SuiteMulticast::Test()
 
         if (iSender.Clear()) {
             TEST(1 == 0);
-            Log::Print("SuiteMulticast - sent one message, received mnore than once\n");
+            Log::Print("SuiteMulticast - sent one message, received more than once\n");
         }
     }
 
@@ -698,7 +698,9 @@ void MainTestThread::Run()
     runner.Add(new SuiteTcpServerShutdown(iInterface));
     runner.Add(new SuiteEndpoint());
     //runner.Add(new SuiteUnicast(iInterface));
-    runner.Add(new SuiteMulticast());
+    // SuiteMulticast disabled because Linn network setup means that each multicast message is duplicated when
+    // running on a core server (used for automated post-commit tests)
+    //runner.Add(new SuiteMulticast());
     runner.Run();
     Signal();
 }
@@ -714,7 +716,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
 
     UpnpLibrary::InitialiseMinimal(aInitParams);
 
-    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
+    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(true);
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress addr = (*ifs)[adapter.Value()]->Address();
     for (TUint i=0; i<ifs->size(); i++) {

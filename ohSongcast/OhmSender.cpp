@@ -619,46 +619,54 @@ void OhmSender::RunMulticast()
                         
                         iMutexActive.Wait();
                         
-                        iActive = true;
-                        iAliveJoined = true;
-                        
                         if (header.MsgType() == OhmHeader::kMsgTypeJoin) {
                             SendTrack();
                             SendMetatext();
                         }
                         
-                        iTimerAliveJoin.FireIn(kTimerAliveJoinTimeoutMs);
+						if (!iActive) {
+							iActive = true;
+	                        iDriver.SetActive(true);
+						}
+                        
+						iAliveJoined = true;
 
-                        iDriver.SetActive(true);
+                        iTimerAliveJoin.FireIn(kTimerAliveJoinTimeoutMs);
 
                         iMutexActive.Signal();
                     }
                     else {
-                        LOG(kMedia, "OhmSender::RunMulticast audio received\n");
+						// Check sender not us
 
-                        // The following randomisation prevents two senders from both sending,
-                        // both seeing each other's audio, both backing off for the same amount of time,
-                        // then both sending again, then both seeing each other's audio again,
-                        // then both backing off for the same amount of time ...
+						Endpoint sender = iSocketOhm.Sender();
+
+						if (sender.Address() != iInterface) {
+	                        LOG(kMedia, "OhmSender::RunMulticast audio received\n");
+
+							// The following randomisation prevents two senders from both sending,
+							// both seeing each other's audio, both backing off for the same amount of time,
+							// then both sending again, then both seeing each other's audio again,
+							// then both backing off for the same amount of time ...
                         
-                        TUint delay = Random(kTimerAliveAudioTimeoutMs, kTimerAliveAudioTimeoutMs >> 1);
+							TUint delay = Random(kTimerAliveAudioTimeoutMs, kTimerAliveAudioTimeoutMs >> 1);
 
-                        iMutexActive.Wait();
+							iMutexActive.Wait();
                         
-                        if (iActive) {
-                            iActive = false;
-                            iDriver.SetActive(false);
-                        } 
+							if (iActive) {
+								iActive = false;
+								iDriver.SetActive(false);
+							} 
 
-                        iAliveBlocked = true;
+							iAliveBlocked = true;
 
-                        iTimerAliveAudio.FireIn(delay);
+							iTimerAliveAudio.FireIn(delay);
 
-                        iMutexActive.Signal();
+							iMutexActive.Signal();
 
-                        LOG(kMedia, "OhmSender::RunMulticast blocked\n");
+							LOG(kMedia, "OhmSender::RunMulticast blocked\n");
 
-						iProvider->SetStatusBlocked();
+							iProvider->SetStatusBlocked();
+						}
                     }
                 }
                 catch (OhmError&)

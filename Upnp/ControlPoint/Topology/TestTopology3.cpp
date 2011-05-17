@@ -1,5 +1,4 @@
-// Simple test for Control Point side device list
-// Looks suspiciously similar to TestSsdpUListen for now...
+// Manual test program for exercising Topology Layer 3
 //
 
 #include <TestFramework.h>
@@ -19,12 +18,15 @@ class TopologyLogger : public ICpTopology3Handler
 public:
     TopologyLogger();
 	virtual void RoomAdded(CpTopology3Room& aRoom);
+    virtual void RoomChanged(CpTopology3Room& aRoom);
+    virtual void RoomRemoved(CpTopology3Room& aRoom);
 	virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
 	virtual void RoomSourceIndexChanged(CpTopology3Room& aRoom);
-	virtual void RoomSourceListChanged(CpTopology3Room& aRoom);
+    virtual void RoomVolumeLimitChanged(CpTopology3Room& aRoom);
 	virtual void RoomVolumeChanged(CpTopology3Room& aRoom);
+    virtual void RoomBalanceChanged(CpTopology3Room& aRoom);
+    virtual void RoomFadeChanged(CpTopology3Room& aRoom);
 	virtual void RoomMuteChanged(CpTopology3Room& aRoom);
-	virtual void RoomRemoved(CpTopology3Room& aRoom);
 private:
     void PrintRoomInfo(const char* aPrologue, const CpTopology3Room& aRoom);
     void PrintSourceInfo(const CpTopology3Room& aRoom);
@@ -42,6 +44,20 @@ void TopologyLogger::RoomAdded(CpTopology3Room& aRoom)
     PrintSourceInfo(aRoom);
 }
 
+void TopologyLogger::RoomChanged(CpTopology3Room& aRoom)
+{
+    Print("\n");
+    PrintRoomInfo("Source List Changed ", aRoom);
+    Print("\n");
+    PrintSourceInfo(aRoom);
+}
+
+void TopologyLogger::RoomRemoved(CpTopology3Room& aRoom)
+{
+    PrintRoomInfo("Room Removed       ", aRoom);
+    Print("\n");
+}
+
 void TopologyLogger::RoomStandbyChanged(CpTopology3Room& aRoom)
 {
     PrintRoomInfo("Standby Changed     ", aRoom);
@@ -55,12 +71,10 @@ void TopologyLogger::RoomSourceIndexChanged(CpTopology3Room& aRoom)
     Print("%u\n", aRoom.SourceIndex());
 }
 
-void TopologyLogger::RoomSourceListChanged(CpTopology3Room& aRoom)
+void TopologyLogger::RoomVolumeLimitChanged(CpTopology3Room& aRoom)
 {
-    Print("\n");
-    PrintRoomInfo("Source List Changed ", aRoom);
-    Print("\n");
-    PrintSourceInfo(aRoom);
+    PrintRoomInfo("Vol Limit Changed   ", aRoom);
+    Print("%u\n", aRoom.VolumeLimit());
 }
 
 void TopologyLogger::RoomVolumeChanged(CpTopology3Room& aRoom)
@@ -69,16 +83,22 @@ void TopologyLogger::RoomVolumeChanged(CpTopology3Room& aRoom)
     Print("%u\n", aRoom.Volume());
 }
 
+void TopologyLogger::RoomBalanceChanged(CpTopology3Room& aRoom)
+{
+    PrintRoomInfo("Balance Changed     ", aRoom);
+    Print("%u\n", aRoom.Balance());
+}
+
+void TopologyLogger::RoomFadeChanged(CpTopology3Room& aRoom)
+{
+    PrintRoomInfo("Fade Changed        ", aRoom);
+    Print("%u\n", aRoom.Fade());
+}
+
 void TopologyLogger::RoomMuteChanged(CpTopology3Room& aRoom)
 {
     PrintRoomInfo("Mute Changed        ", aRoom);
     Print(aRoom.Mute() ? "true" : "false");
-    Print("\n");
-}
-
-void TopologyLogger::RoomRemoved(CpTopology3Room& aRoom)
-{
-    PrintRoomInfo("Room Removed       ", aRoom);
     Print("\n");
 }
 
@@ -103,7 +123,7 @@ void TopologyLogger::PrintSourceInfo(const CpTopology3Room& aRoom)
 void TopologyLogger::PrintRoomInfo(const char* aPrologue, const CpTopology3Room& aRoom)
 {
     Print("%s ", aPrologue);
-    Print(aRoom.Room());
+    Print(aRoom.Name());
     Print(" ");
 }
 
@@ -113,10 +133,10 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     OptionParser parser;
 
     OptionUint duration("-d", "--duration", 30, "Number of seconds to run the test");
-    OptionUint network("-n", "--network", 0, "Index of the network to use");
+    OptionUint adapter("-i", "--interface", 0, "index of network adapter to use");
 
     parser.AddOption(&duration);
-    parser.AddOption(&network);
+    parser.AddOption(&adapter);
 
     if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
         return;
@@ -124,20 +144,21 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
 
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartCp();
-    
-    static std::vector<NetworkInterface*>* subnetList = UpnpLibrary::SubnetList();
-    
-    if (network.Value() >= subnetList->size()) {
-        Print("Invalid network specified. Available networks ...\n");
-	    for (TUint i = 0; i < subnetList->size(); i++) {
-	    	Print("%u. %s\n", i, subnetList->at(i)->Name());
-	    }
-        return;
-    }
-    
-    UpnpLibrary::SetCurrentSubnet(*subnetList->at(network.Value()));
 
-    Debug::SetLevel(Debug::kTopology);
+    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
+    ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
+    UpnpLibrary::SetCurrentSubnet(*(*ifs)[adapter.Value()]);
+    TIpAddress addr = (*ifs)[adapter.Value()]->Address();
+    for (TUint i=0; i<ifs->size(); i++) {
+        delete (*ifs)[i];
+    }
+    delete ifs;
+    Endpoint endpt(0, addr);
+    Endpoint::AddressBuf buf;
+    endpt.AppendAddress(buf);
+    Print("Using network interface %s\n\n", buf.Ptr());
+
+    // Debug::SetLevel(Debug::kTopology);
     // Debug::SetLevel(Debug::kAll);
 
     TopologyLogger logger;

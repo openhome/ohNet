@@ -40,25 +40,56 @@ void CpTopology2Source::Update(const Brx& aName, const Brx& aType, TBool aVisibl
 
 // CpTopology2Group
 
-CpTopology2Group::CpTopology2Group(ICpTopology2GroupHandler& aHandler, CpDevice& aDevice, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex, TBool aHasVolumeControl, TUint aVolume, TBool aMute)
-	: iHandler(aHandler)
-	, iDevice(aDevice)
+CpTopology2Group::CpTopology2Group(CpDevice& aDevice, ICpTopology2GroupHandler& aHandler, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex, TUint aVolumeMax, TUint aVolumeUnity, TUint aVolumeSteps, TUint aVolumeMilliDbPerStep, TUint aBalanceMax, TUint aFadeMax, TUint aVolumeLimit, TUint aVolume, TInt aBalance, TUint aFade, TBool aMute)
+	: iDevice(aDevice)
+	, iHandler(aHandler)
 	, iStandby(aStandby)
 	, iRoom(aRoom)
 	, iName(aName)
 	, iSourceIndex(aSourceIndex)
-	, iHasVolumeControl(aHasVolumeControl)
+	, iHasVolumeControl(true)
+	, iVolumeMax(aVolumeMax)
+	, iVolumeUnity(aVolumeUnity)
+	, iVolumeSteps(aVolumeSteps)
+	, iVolumeMilliDbPerStep(aVolumeMilliDbPerStep)
+	, iBalanceMax(aBalanceMax)
+	, iFadeMax(aFadeMax)
+	, iVolumeLimit(aVolumeLimit)
 	, iVolume(aVolume)
+	, iBalance(aBalance)
+	, iFade(aFade)
 	, iMute(aMute)
 	, iUserData(0)
 	, iRefCount(1)
 {
-	iDevice.AddRef();
+}
+
+CpTopology2Group::CpTopology2Group(CpDevice& aDevice, ICpTopology2GroupHandler& aHandler, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex)
+    : iDevice(aDevice)
+    , iHandler(aHandler)
+    , iStandby(aStandby)
+    , iRoom(aRoom)
+    , iName(aName)
+    , iSourceIndex(aSourceIndex)
+    , iHasVolumeControl(false)
+    , iVolumeMax(0)
+    , iVolumeUnity(0)
+    , iVolumeSteps(0)
+    , iVolumeMilliDbPerStep(0)
+    , iBalanceMax(0)
+    , iFadeMax(0)
+    , iVolumeLimit(0)
+    , iVolume(0)
+    , iBalance(0)
+    , iFade(0)
+    , iMute(0)
+    , iUserData(0)
+    , iRefCount(1)
+{
 }
 
 CpTopology2Group::~CpTopology2Group()
 {
-	iDevice.RemoveRef();
 }
 
 void CpTopology2Group::AddSource(const Brx& aName, const Brx& aType, TBool aVisible)
@@ -66,19 +97,19 @@ void CpTopology2Group::AddSource(const Brx& aName, const Brx& aType, TBool aVisi
 	iSourceList.push_back(new CpTopology2Source(aName, aType, aVisible));
 }
 
-void CpTopology2Group::UpdateRoom(const Brx& aRoom)
+void CpTopology2Group::UpdateRoom(const Brx& aValue)
 {
-	iRoom.Replace(aRoom);
+	iRoom.Replace(aValue);
 }
 
-void CpTopology2Group::UpdateName(const Brx& aName)
+void CpTopology2Group::UpdateName(const Brx& aValue)
 {
-	iName.Replace(aName);
+	iName.Replace(aValue);
 }
 
-void CpTopology2Group::UpdateSourceIndex(TUint aIndex)
+void CpTopology2Group::UpdateSourceIndex(TUint aValue)
 {
-	iSourceIndex = aIndex;
+	iSourceIndex = aValue;
 }
 
 void CpTopology2Group::UpdateStandby(TBool aValue)
@@ -86,9 +117,24 @@ void CpTopology2Group::UpdateStandby(TBool aValue)
 	iStandby = aValue;
 }
 
+void CpTopology2Group::UpdateVolumeLimit(TUint aValue)
+{
+    iVolumeLimit = aValue;
+}
+
 void CpTopology2Group::UpdateVolume(TUint aValue)
 {
 	iVolume = aValue;
+}
+
+void CpTopology2Group::UpdateBalance(TInt aValue)
+{
+    iBalance = aValue;
+}
+
+void CpTopology2Group::UpdateFade(TInt aValue)
+{
+    iFade = aValue;
 }
 
 void CpTopology2Group::UpdateMute(TBool aValue)
@@ -113,9 +159,14 @@ void CpTopology2Group::RemoveRef()
     }
 }
 
+CpDevice& CpTopology2Group::Device() const
+{
+    return (iDevice);
+}
+
 TUint CpTopology2Group::SourceCount() const
 {
-	return (TUint)iSourceList.size();
+	return ((TUint)iSourceList.size());
 }
 
 TUint CpTopology2Group::SourceIndex() const
@@ -164,43 +215,139 @@ TBool CpTopology2Group::SourceVisible(TUint aIndex) const
 	return (iSourceList[aIndex]->Visible());
 }
 
-CpDevice& CpTopology2Group::Device() const
-{
-	return (iDevice);
-}
-
 TBool CpTopology2Group::HasVolumeControl() const
 {
 	return (iHasVolumeControl);
 }
 
-TUint CpTopology2Group::Volume() const
+TUint CpTopology2Group::VolumeMax() const
 {
-	ASSERT(iHasVolumeControl);
-	return (iVolume);
+    ASSERT(iHasVolumeControl);
+    return (iVolumeMax);
 }
 
-void CpTopology2Group::SetVolume(TUint aValue) const
+TUint CpTopology2Group::VolumeUnity() const
 {
-	ASSERT(iHasVolumeControl);
-	iHandler.SetVolume(aValue);
+    ASSERT(iHasVolumeControl);
+    return (iVolumeUnity);
+}
+
+TUint CpTopology2Group::VolumeSteps() const
+{
+    ASSERT(iHasVolumeControl);
+    return (iVolumeSteps);
+}
+
+TUint CpTopology2Group::VolumeMilliDbPerStep() const
+{
+    ASSERT(iHasVolumeControl);
+    return (iVolumeMilliDbPerStep);
+}
+
+TUint CpTopology2Group::BalanceMax() const
+{
+    ASSERT(iHasVolumeControl);
+    return (iBalanceMax);
+}
+
+TUint CpTopology2Group::FadeMax() const
+{
+    ASSERT(iHasVolumeControl);
+    return (iFadeMax);
+}
+
+TUint CpTopology2Group::VolumeLimit() const
+{
+    ASSERT(iHasVolumeControl);
+    return (iVolumeLimit);
+}
+
+TUint CpTopology2Group::Volume() const
+{
+    ASSERT(iHasVolumeControl);
+    return (iVolume);
+}
+
+void CpTopology2Group::SetVolume(TUint aValue)
+{
+    ASSERT(iHasVolumeControl);
+    iHandler.SetVolume(aValue);
+}
+
+void CpTopology2Group::VolumeInc()
+{
+    ASSERT(iHasVolumeControl);
+    iHandler.VolumeInc();
+}
+
+void CpTopology2Group::VolumeDec()
+{
+    ASSERT(iHasVolumeControl);
+    iHandler.VolumeDec();
+}
+
+TInt CpTopology2Group::Balance() const
+{
+    return (iBalance);
+}
+
+void CpTopology2Group::SetBalance(TInt aValue)
+{
+    ASSERT(iHasVolumeControl);
+    iHandler.SetBalance(aValue);
+}
+
+void CpTopology2Group::BalanceInc()
+{
+    ASSERT(iHasVolumeControl);
+    iHandler.BalanceInc();
+}
+
+void CpTopology2Group::BalanceDec()
+{
+    ASSERT(iHasVolumeControl);
+    iHandler.BalanceDec();
+}
+
+TInt CpTopology2Group::Fade() const
+{
+    ASSERT(iHasVolumeControl);
+    return (iFade);
+}
+
+void CpTopology2Group::SetFade(TInt aValue)
+{
+    ASSERT(iHasVolumeControl);
+    iHandler.SetFade(aValue);
+}
+
+void CpTopology2Group::FadeInc()
+{
+    ASSERT(iHasVolumeControl);
+    iHandler.FadeInc();
+}
+
+void CpTopology2Group::FadeDec()
+{
+    ASSERT(iHasVolumeControl);
+    iHandler.FadeDec();
 }
 
 TBool CpTopology2Group::Mute() const
 {
-	ASSERT(iHasVolumeControl);
-	return (iMute);
+    ASSERT(iHasVolumeControl);
+    return (iMute);
 }
 
 void CpTopology2Group::SetMute(TBool aValue)
 {
-	ASSERT(iHasVolumeControl);
-	iHandler.SetMute(aValue);
+    ASSERT(iHasVolumeControl);
+    iHandler.SetMute(aValue);
 }
 
-void CpTopology2Group::SetUserData(void* aPtr)
+void CpTopology2Group::SetUserData(void* aValue)
 {
-	iUserData = aPtr;
+	iUserData = aValue;
 }
 
 void* CpTopology2Group::UserData() const
@@ -213,6 +360,7 @@ void* CpTopology2Group::UserData() const
 CpTopology2Device::CpTopology2Device(CpDevice& aDevice)
     : iDevice(aDevice)
 {
+    //iDevice.AddRef();
 }
 	
 TBool CpTopology2Device::IsAttachedTo(CpDevice& aDevice)
@@ -222,6 +370,7 @@ TBool CpTopology2Device::IsAttachedTo(CpDevice& aDevice)
 
 CpTopology2Device::~CpTopology2Device()
 {
+    //iDevice.RemoveRef();
 }
 	
 // CpTopology2Product
@@ -230,23 +379,40 @@ CpTopology2Product::CpTopology2Product(CpDevice& aDevice, ICpTopology2Handler& a
     : CpTopology2Device(aDevice)
     , iHandler(aHandler)
     , iServiceProduct(0)
-    , iServicePreamp(0)
+    , iServiceVolume(0)
     , iGroup(0)
 {
     iFunctorSetSourceIndex = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetSourceIndex);
+
     iFunctorSetStandby = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetStandby);
+
     iFunctorSetVolume = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetVolume);
+    iFunctorVolumeInc = MakeFunctorAsync(*this, &CpTopology2Product::CallbackVolumeInc);
+    iFunctorVolumeDec = MakeFunctorAsync(*this, &CpTopology2Product::CallbackVolumeDec);
+
+    iFunctorSetBalance = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetBalance);
+    iFunctorBalanceInc = MakeFunctorAsync(*this, &CpTopology2Product::CallbackBalanceInc);
+    iFunctorBalanceDec = MakeFunctorAsync(*this, &CpTopology2Product::CallbackBalanceDec);
+
+    iFunctorSetFade = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetFade);
+    iFunctorFadeInc = MakeFunctorAsync(*this, &CpTopology2Product::CallbackFadeInc);
+    iFunctorFadeDec = MakeFunctorAsync(*this, &CpTopology2Product::CallbackFadeDec);
+
     iFunctorSetMute = MakeFunctorAsync(*this, &CpTopology2Product::CallbackSetMute);
-	iServiceProduct = new CpProxyLinnCoUkProduct3(iDevice);
-	Functor initial = MakeFunctor(*this, &CpTopology2Product::EventProductPropertyChanged);
-	iServiceProduct->SetPropertyChanged(initial);	
+
+	iServiceProduct = new CpProxyAvOpenhomeOrgProduct1(iDevice);
+
+	Functor functorInitial = MakeFunctor(*this, &CpTopology2Product::EventProductInitialEvent);
+
+    iServiceProduct->SetPropertyInitialEvent(functorInitial);
+
 	iServiceProduct->Subscribe();
 }
 
 CpTopology2Product::~CpTopology2Product()
 {
 	delete (iServiceProduct);
-	delete (iServicePreamp);
+	delete (iServiceVolume);
 	
 	if (iGroup != 0) {
 		iHandler.GroupRemoved(*iGroup);
@@ -254,27 +420,42 @@ CpTopology2Product::~CpTopology2Product()
 	}
 }
 
-void CpTopology2Product::EventIgnorePropertyChanged()
+void CpTopology2Product::EventProductInitialEvent()
 {
-}
+    Functor functorRoom = MakeFunctor(*this, &CpTopology2Product::EventProductRoomChanged);
+    Functor functorName = MakeFunctor(*this, &CpTopology2Product::EventProductNameChanged);
+    Functor functorStandby = MakeFunctor(*this, &CpTopology2Product::EventProductStandbyChanged);
+    Functor functorSourceIndex = MakeFunctor(*this, &CpTopology2Product::EventProductSourceIndexChanged);
+    Functor functorSourceXml = MakeFunctor(*this, &CpTopology2Product::EventProductSourceXmlChanged);
 
-void CpTopology2Product::EventProductPropertyChanged()
-{
-	Functor ignore = MakeFunctor(*this, &CpTopology2Product::EventIgnorePropertyChanged);
-	iServiceProduct->SetPropertyChanged(ignore);	
+    iServiceProduct->SetPropertyProductRoomChanged(functorRoom);    
+    iServiceProduct->SetPropertyProductNameChanged(functorName);    
+    iServiceProduct->SetPropertyStandbyChanged(functorStandby); 
+    iServiceProduct->SetPropertySourceIndexChanged(functorSourceIndex); 
+    iServiceProduct->SetPropertySourceXmlChanged(functorSourceXml);
+      
+	Brhz attributes;
 
-	Brhz type;
+	iServiceProduct->PropertyAttributes(attributes);
 
-	iServiceProduct->PropertyProductType(type);
-
-	if (type == Brn("Preamp")) {
-		iServicePreamp = new CpProxyLinnCoUkPreamp4(iDevice);
-		Functor initial = MakeFunctor(*this, &CpTopology2Product::EventPreampPropertyChanged);
-		iServicePreamp->SetPropertyChanged(initial);	
-		iServicePreamp->Subscribe();
-		return;
-	}
-	
+    Parser parser(attributes);
+    
+    for (;;) {
+        Brn attribute = parser.Next();
+        
+        if (attribute.Bytes() == 0) {
+            break;
+        }
+        
+        if (attribute == Brn("Volume")) {
+            iServiceVolume = new CpProxyAvOpenhomeOrgVolume1(iDevice);
+            Functor functorInitial = MakeFunctor(*this, &CpTopology2Product::EventPreampInitialEvent);
+            iServiceVolume->SetPropertyInitialEvent(functorInitial);    
+            iServiceVolume->Subscribe();
+            return;
+        }
+    }
+    
 	Brhz room;
 	Brhz name;
 	TUint sourceIndex;
@@ -283,33 +464,26 @@ void CpTopology2Product::EventProductPropertyChanged()
 	
 	iServiceProduct->PropertyProductRoom(room);
 	iServiceProduct->PropertyProductName(name);
-	iServiceProduct->PropertyProductSourceIndex(sourceIndex);
-	iServiceProduct->PropertyProductStandby(standby);
-	iServiceProduct->PropertyProductSourceXml(xml);
+	iServiceProduct->PropertySourceIndex(sourceIndex);
+	iServiceProduct->PropertyStandby(standby);
+	iServiceProduct->PropertySourceXml(xml);
 	
-	iGroup = new CpTopology2Group(*this, iDevice, standby, room, name, sourceIndex, false, 0, false);
+	iGroup = new CpTopology2Group(iDevice, *this, standby, room, name, sourceIndex);
 	
 	ProcessSourceXml(xml, true);
 	
 	iHandler.GroupAdded(*iGroup);
-	
-	Functor functorRoom = MakeFunctor(*this, &CpTopology2Product::EventProductRoomChanged);
-	Functor functorName = MakeFunctor(*this, &CpTopology2Product::EventProductNameChanged);
-	Functor functorStandby = MakeFunctor(*this, &CpTopology2Product::EventProductStandbyChanged);
-	Functor functorSourceIndex = MakeFunctor(*this, &CpTopology2Product::EventProductSourceIndexChanged);
-	Functor functorSourceXml = MakeFunctor(*this, &CpTopology2Product::EventProductSourceXmlChanged);
-
-	iServiceProduct->SetPropertyProductRoomChanged(functorRoom);	
-	iServiceProduct->SetPropertyProductNameChanged(functorName);	
-	iServiceProduct->SetPropertyProductStandbyChanged(functorStandby);	
-	iServiceProduct->SetPropertyProductSourceIndexChanged(functorSourceIndex);	
-	iServiceProduct->SetPropertyProductSourceXmlChanged(functorSourceXml);
 }
 
-void CpTopology2Product::EventPreampPropertyChanged()
+void CpTopology2Product::EventPreampInitialEvent()
 {
-	Functor ignore = MakeFunctor(*this, &CpTopology2Product::EventIgnorePropertyChanged);
-	iServicePreamp->SetPropertyChanged(ignore);	
+    Functor functorVolumeLimit = MakeFunctor(*this, &CpTopology2Product::EventPreampVolumeLimitChanged);
+    Functor functorVolume = MakeFunctor(*this, &CpTopology2Product::EventPreampVolumeChanged);
+    Functor functorBalance = MakeFunctor(*this, &CpTopology2Product::EventPreampBalanceChanged);
+    Functor functorFade = MakeFunctor(*this, &CpTopology2Product::EventPreampFadeChanged);
+    Functor functorMute = MakeFunctor(*this, &CpTopology2Product::EventPreampMuteChanged);
+    iServiceVolume->SetPropertyVolumeChanged(functorVolume);    
+    iServiceVolume->SetPropertyMuteChanged(functorMute);    
 
 	Brhz room;
 	Brhz name;
@@ -319,39 +493,39 @@ void CpTopology2Product::EventPreampPropertyChanged()
 	
 	iServiceProduct->PropertyProductRoom(room);
 	iServiceProduct->PropertyProductName(name);
-	iServiceProduct->PropertyProductSourceIndex(sourceIndex);
-	iServiceProduct->PropertyProductStandby(standby);
-	iServiceProduct->PropertyProductSourceXml(xml);
+	iServiceProduct->PropertySourceIndex(sourceIndex);
+	iServiceProduct->PropertyStandby(standby);
+	iServiceProduct->PropertySourceXml(xml);
 	
-	TUint volume;
-	TBool mute;
-	
-	iServicePreamp->PropertyVolume(volume);
-	iServicePreamp->PropertyMute(mute);
+    TUint volumeMax;
+    TUint volumeUnity;
+    TUint volumeSteps;
+    TUint volumeMilliDbPerStep;
+    TUint balanceMax;
+    TUint fadeMax;
+    TUint volumeLimit; 
+    TUint volume;
+    TInt balance;
+    TInt fade;
+    TBool mute;
+    
+    iServiceVolume->PropertyVolumeMax(volumeMax);
+    iServiceVolume->PropertyVolumeUnity(volumeUnity);
+    iServiceVolume->PropertyVolumeSteps(volumeSteps);
+    iServiceVolume->PropertyVolumeMilliDbPerStep(volumeMilliDbPerStep);
+    iServiceVolume->PropertyBalanceMax(balanceMax);
+    iServiceVolume->PropertyFadeMax(fadeMax);
+    iServiceVolume->PropertyVolumeLimit(volumeLimit);
+	iServiceVolume->PropertyVolume(volume);
+    iServiceVolume->PropertyBalance(balance);
+    iServiceVolume->PropertyFade(fade);
+	iServiceVolume->PropertyMute(mute);
 
-	iGroup = new CpTopology2Group(*this, iDevice, standby, room, name, sourceIndex, true, volume, mute);
+	iGroup = new CpTopology2Group(iDevice, *this, standby, room, name, sourceIndex, volumeMax, volumeUnity, volumeSteps, volumeMilliDbPerStep, balanceMax, fadeMax, volumeLimit, volume, balance, fade, mute);
 	
 	ProcessSourceXml(xml, true);
-	
-	iHandler.GroupAdded(*iGroup);
-	
-	Functor functorRoom = MakeFunctor(*this, &CpTopology2Product::EventProductRoomChanged);
-	Functor functorName = MakeFunctor(*this, &CpTopology2Product::EventProductNameChanged);
-	Functor functorStandby = MakeFunctor(*this, &CpTopology2Product::EventProductStandbyChanged);
-	Functor functorSourceIndex = MakeFunctor(*this, &CpTopology2Product::EventProductSourceIndexChanged);
-	Functor functorSourceXml = MakeFunctor(*this, &CpTopology2Product::EventProductSourceXmlChanged);
 
-	iServiceProduct->SetPropertyProductRoomChanged(functorRoom);	
-	iServiceProduct->SetPropertyProductNameChanged(functorName);	
-	iServiceProduct->SetPropertyProductStandbyChanged(functorStandby);	
-	iServiceProduct->SetPropertyProductSourceIndexChanged(functorSourceIndex);	
-	iServiceProduct->SetPropertyProductSourceXmlChanged(functorSourceXml);
-	
-	Functor functorVolume = MakeFunctor(*this, &CpTopology2Product::EventVolumeChanged);
-	Functor functorMute = MakeFunctor(*this, &CpTopology2Product::EventMuteChanged);
-	
-	iServicePreamp->SetPropertyVolumeChanged(functorVolume);	
-	iServicePreamp->SetPropertyMuteChanged(functorMute);	
+    iHandler.GroupAdded(*iGroup);
 }
 
 /*  Example source xml
@@ -361,13 +535,11 @@ void CpTopology2Product::EventPreampPropertyChanged()
 			<Name>Playlist</Name>
 			<Type>Playlist</Type>
 			<Visible>1</Visible>
-			<Attributes>Mpus</Attributes>
 		</Source>
 		<Source>
 			<Name>Radio</Name>
 			<Type>Radio</Type>
 			<Visible>1</Visible>
-			<Attributes>Mpus</Attributes>
 		</Source>
 	</SourceList>
 */
@@ -389,7 +561,7 @@ void CpTopology2Product::ProcessSourceXml(const Brx& aXml, TBool aInitial)
 			
 			TBool vis = false;
 			
-			if (visible == Brn("1")) {
+			if (visible == Brn("true")) {
 				vis = true;
 			}
 			
@@ -453,7 +625,7 @@ void CpTopology2Product::EventProductStandbyChanged()
     LOG(kTopology, "\n");
 
 	TBool standby;
-	iServiceProduct->PropertyProductStandby(standby);
+	iServiceProduct->PropertyStandby(standby);
 	
 	iGroup->UpdateStandby(standby);
 	iHandler.GroupStandbyChanged(*iGroup);
@@ -468,7 +640,7 @@ void CpTopology2Product::EventProductSourceIndexChanged()
     LOG(kTopology, "\n");
 
 	TUint sourceIndex;
-	iServiceProduct->PropertyProductSourceIndex(sourceIndex);
+	iServiceProduct->PropertySourceIndex(sourceIndex);
 	
 	iGroup->UpdateSourceIndex(sourceIndex);
 	iHandler.GroupSourceIndexChanged(*iGroup);
@@ -483,12 +655,28 @@ void CpTopology2Product::EventProductSourceXmlChanged()
     LOG(kTopology, "\n");
 
 	Brhz xml;
-	iServiceProduct->PropertyProductSourceXml(xml);
+	
+	iServiceProduct->PropertySourceXml(xml);
 
 	ProcessSourceXml(xml, false);	
 }	
 
-void CpTopology2Product::EventVolumeChanged()
+void CpTopology2Product::EventPreampVolumeLimitChanged()
+{
+    LOG(kTopology, "CpTopology2::EventVolumeLimitChanged ");
+    LOG(kTopology, iGroup->Room());
+    LOG(kTopology, ":");
+    LOG(kTopology, iGroup->Name());
+    LOG(kTopology, "\n");
+
+    TUint volumeLimit;
+    iServiceVolume->PropertyVolume(volumeLimit);
+
+    iGroup->UpdateVolumeLimit(volumeLimit);
+    iHandler.GroupVolumeLimitChanged(*iGroup);
+}   
+
+void CpTopology2Product::EventPreampVolumeChanged()
 {
     LOG(kTopology, "CpTopology2::EventVolumeChanged ");
     LOG(kTopology, iGroup->Room());
@@ -497,13 +685,43 @@ void CpTopology2Product::EventVolumeChanged()
     LOG(kTopology, "\n");
 
 	TUint volume;
-	iServicePreamp->PropertyVolume(volume);
+	iServiceVolume->PropertyVolume(volume);
 
 	iGroup->UpdateVolume(volume);
 	iHandler.GroupVolumeChanged(*iGroup);
 }	
 
-void CpTopology2Product::EventMuteChanged()
+void CpTopology2Product::EventPreampBalanceChanged()
+{
+    LOG(kTopology, "CpTopology2::EventBalanceChanged ");
+    LOG(kTopology, iGroup->Room());
+    LOG(kTopology, ":");
+    LOG(kTopology, iGroup->Name());
+    LOG(kTopology, "\n");
+
+    TInt balance;
+    iServiceVolume->PropertyBalance(balance);
+
+    iGroup->UpdateBalance(balance);
+    iHandler.GroupBalanceChanged(*iGroup);
+}   
+
+void CpTopology2Product::EventPreampFadeChanged()
+{
+    LOG(kTopology, "CpTopology2::EventFadeChanged ");
+    LOG(kTopology, iGroup->Room());
+    LOG(kTopology, ":");
+    LOG(kTopology, iGroup->Name());
+    LOG(kTopology, "\n");
+
+    TInt fade;
+    iServiceVolume->PropertyFade(fade);
+
+    iGroup->UpdateFade(fade);
+    iHandler.GroupFadeChanged(*iGroup);
+}   
+
+void CpTopology2Product::EventPreampMuteChanged()
 {
     LOG(kTopology, "CpTopology2::EventMuteChanged ");
     LOG(kTopology, iGroup->Room());
@@ -512,7 +730,7 @@ void CpTopology2Product::EventMuteChanged()
     LOG(kTopology, "\n");
 
 	TBool mute;
-	iServicePreamp->PropertyMute(mute);
+	iServiceVolume->PropertyMute(mute);
 
 	iGroup->UpdateMute(mute);
 	iHandler.GroupMuteChanged(*iGroup);
@@ -540,245 +758,104 @@ void CpTopology2Product::CallbackSetStandby(IAsync& aAsync)
 
 void CpTopology2Product::SetVolume(TUint aValue)
 {
-	iServicePreamp->BeginSetVolume(aValue, iFunctorSetVolume);
+	iServiceVolume->BeginSetVolume(aValue, iFunctorSetVolume);
 }
 
 void CpTopology2Product::CallbackSetVolume(IAsync& aAsync)
 {
-	iServicePreamp->EndSetVolume(aAsync);
+	iServiceVolume->EndSetVolume(aAsync);
 }		
+
+void CpTopology2Product::VolumeInc()
+{
+    iServiceVolume->BeginVolumeInc(iFunctorVolumeInc);
+}
+
+void CpTopology2Product::CallbackVolumeInc(IAsync& aAsync)
+{
+    iServiceVolume->EndVolumeInc(aAsync);
+}       
+
+void CpTopology2Product::VolumeDec()
+{
+    iServiceVolume->BeginVolumeDec(iFunctorVolumeDec);
+}
+
+void CpTopology2Product::CallbackVolumeDec(IAsync& aAsync)
+{
+    iServiceVolume->EndVolumeDec(aAsync);
+}       
+
+void CpTopology2Product::SetBalance(TInt aValue)
+{
+    iServiceVolume->BeginSetBalance(aValue, iFunctorSetBalance);
+}
+
+void CpTopology2Product::CallbackSetBalance(IAsync& aAsync)
+{
+    iServiceVolume->EndSetBalance(aAsync);
+}       
+
+void CpTopology2Product::BalanceInc()
+{
+    iServiceVolume->BeginVolumeInc(iFunctorBalanceInc);
+}
+
+void CpTopology2Product::CallbackBalanceInc(IAsync& aAsync)
+{
+    iServiceVolume->EndBalanceInc(aAsync);
+}       
+
+void CpTopology2Product::BalanceDec()
+{
+    iServiceVolume->BeginBalanceInc(iFunctorBalanceDec);
+}
+
+void CpTopology2Product::CallbackBalanceDec(IAsync& aAsync)
+{
+    iServiceVolume->EndBalanceDec(aAsync);
+}       
+
+void CpTopology2Product::SetFade(TInt aValue)
+{
+    iServiceVolume->BeginSetFade(aValue, iFunctorSetFade);
+}
+
+void CpTopology2Product::CallbackSetFade(IAsync& aAsync)
+{
+    iServiceVolume->EndSetFade(aAsync);
+}       
+
+void CpTopology2Product::FadeInc()
+{
+    iServiceVolume->BeginFadeInc(iFunctorFadeInc);
+}
+
+void CpTopology2Product::CallbackFadeInc(IAsync& aAsync)
+{
+    iServiceVolume->EndFadeInc(aAsync);
+}       
+
+void CpTopology2Product::FadeDec()
+{
+    iServiceVolume->BeginFadeInc(iFunctorFadeDec);
+}
+
+void CpTopology2Product::CallbackFadeDec(IAsync& aAsync)
+{
+    iServiceVolume->EndFadeDec(aAsync);
+}       
 
 void CpTopology2Product::SetMute(TBool aValue)
 {
-	iServicePreamp->BeginSetMute(aValue, iFunctorSetVolume);
+	iServiceVolume->BeginSetMute(aValue, iFunctorSetVolume);
 }
 
 void CpTopology2Product::CallbackSetMute(IAsync& aAsync)
 {
-	iServicePreamp->EndSetMute(aAsync);
+	iServiceVolume->EndSetMute(aAsync);
 }		
 
-// CpTopology2MediaRenderer
-
-CpTopology2MediaRenderer::CpTopology2MediaRenderer(CpDevice& aDevice, ICpTopology2Handler& aHandler)
-	: CpTopology2Device(aDevice)
-	, iHandler(aHandler)
-    , iServiceRenderingControl(0)
-    , iGroup(0)
-    , iVolume(0)
-    , iMute(false)
-{
-    iFunctorSetVolume = MakeFunctorAsync(*this, &CpTopology2MediaRenderer::CallbackSetVolume);
-    iFunctorSetMute = MakeFunctorAsync(*this, &CpTopology2MediaRenderer::CallbackSetMute);
-
-	Brh version;
-
-	iHasVolume = aDevice.GetAttribute("Upnp.Service.upnp.org.RenderingControl", version);
-	iHasTransport = aDevice.GetAttribute("Upnp.Service.upnp.org.AVTransport", version);
-
-	if (iHasVolume || iHasTransport) {
-	
-		if (iHasVolume) {
-			iServiceRenderingControl = new CpProxyUpnpOrgRenderingControl1(iDevice);
-			Functor initial = MakeFunctor(*this, &CpTopology2MediaRenderer::EventRenderingControlPropertyChanged);
-			iServiceRenderingControl->SetPropertyChanged(initial);	
-			iServiceRenderingControl->Subscribe();
-			return;
-		}
-
-		Brh friendly;
-		
-		iDevice.GetAttribute("Upnp.FriendlyName", friendly);
-	
-		Brn room;
-		Brn name;
-		
-		ParseFriendlyName(friendly, room, name);
-		iGroup = new CpTopology2Group(*this, iDevice, false, room, name, 0, false, 0, false);
-		iGroup->AddSource(Brn("MediaRenderer"), Brn("UpnpAv"), true);
-		iHandler.GroupAdded(*iGroup);
-	}
-}
-
-CpTopology2MediaRenderer::~CpTopology2MediaRenderer()
-{
-	delete (iServiceRenderingControl);
-	
-	if (iGroup != 0) {
-		iHandler.GroupRemoved(*iGroup);
-		iGroup->RemoveRef();
-	}
-}
-
-/* Example LastChange property
-
-<Event xmlns="urn:schemas-upnp-org:metadata-1-0/RCS/">
-    <InstanceID val="0">
-        <PresetNameList val="FactoryDefaults"/>
-        <Mute channel= "Master" val="0"/>
-        <Volume channel= "Master" val="50"/>
-        <VolumeDB val="-7680"/>
-    </InstanceID>
-</Event>
-
-*/
-
-void CpTopology2MediaRenderer::ProcessLastChange()
-{
-	try {
-		Brhz lastChange;
-		
-		iServiceRenderingControl->PropertyLastChange(lastChange);
-		
-	    Brn event = XmlParserBasic::Find("Event", lastChange);
-		Brn instance = XmlParserBasic::Find("InstanceID", event);
-		
-		try {
-			iVolume = Ascii::Uint(XmlParserBasic::FindAttribute("Volume", "val", instance));
-		}
-		catch (XmlError) {
-		}
-		catch (AsciiError) {
-		}
-		
-		try {
-			Brn mute = XmlParserBasic::FindAttribute("Mute", "val", instance);
-			iMute = (mute != Brn("0"));
-		}
-		catch (XmlError) {
-		}
-	}
-	catch (XmlError)
-	{
-	}
-}
-
-void CpTopology2MediaRenderer::EventRenderingControlPropertyChanged()
-{
-	ProcessLastChange();
-	
-	if (iGroup == 0) {
-		Brh friendly;
-		
-		iDevice.GetAttribute("Upnp.FriendlyName", friendly);
-	
-		Brn room;
-		Brn name;
-		
-		ParseFriendlyName(friendly, room, name);
-		iGroup = new CpTopology2Group(*this, iDevice, false, room, name, 0, true, iVolume, iMute);
-		
-		if (iHasTransport) {
-			iGroup->AddSource(Brn("MediaRenderer"), Brn("UpnpAv"), true);
-		}
-		
-		iHandler.GroupAdded(*iGroup);
-	}
-	else {
-		if (iVolume != iGroup->Volume()) {
-			iGroup->UpdateVolume(iVolume);
-			iHandler.GroupVolumeChanged(*iGroup);
-		}
-		
-		if (iMute != iGroup->Mute()) {
-			iGroup->UpdateMute(iMute);
-			iHandler.GroupMuteChanged(*iGroup);
-		}
-	}
-}
-
-TBool CpTopology2MediaRenderer::ParseFriendlyNameBracketed(const Brx& aFriendlyName, Brn& aRoom, Brn& aName, TChar aOpen, TChar aClose)
-{
-	Parser parser(aFriendlyName);
-	
-	Brn room = parser.Next(aOpen);
-	Brn name = parser.Next(aClose);
-	
-	if (room.Bytes() > 0 && name.Bytes() > 0) {
-		if (room.Bytes() > CpTopology2Group::kMaxRoomBytes || name.Bytes() > CpTopology2Group::kMaxNameBytes) {
-			return (false);
-		}
-		
-		aRoom.Set(room);
-		aName.Set(name);
-		
-		return (true);
-	}
-	
-	return (false);
-}
-
-void CpTopology2MediaRenderer::ParseFriendlyName(const Brx& aFriendlyName, Brn& aRoom, Brn& aName)
-{
-    if (ParseFriendlyNameBracketed(aFriendlyName, aRoom, aName, '(', ')'))
-    {
-        return;
-    }
-
-    if (ParseFriendlyNameBracketed(aFriendlyName, aRoom, aName, '[', ']'))
-    {
-        return;
-    }
-
-    if (ParseFriendlyNameBracketed(aFriendlyName, aRoom, aName, '<', '>'))
-    {
-        return;
-    }
-
-    if (ParseFriendlyNameBracketed(aFriendlyName, aRoom, aName, ':', ':'))
-    {
-        return;
-    }
-
-    if (ParseFriendlyNameBracketed(aFriendlyName, aRoom, aName, '.', '.'))
-    {
-        return;
-    }
-
-	if (aFriendlyName.Bytes() > CpTopology2Group::kMaxRoomBytes) {
-		aRoom.Set(aFriendlyName.Split(0, CpTopology2Group::kMaxRoomBytes));
-	}
-	else {
-		aRoom.Set(aFriendlyName);
-	}
-	
-	if (aFriendlyName.Bytes() > CpTopology2Group::kMaxNameBytes) {
-		aName.Set(aFriendlyName.Split(0, CpTopology2Group::kMaxNameBytes));
-	}
-	else {
-		aName.Set(aFriendlyName);
-	}
-}
-	
-void CpTopology2MediaRenderer::SetSourceIndex(TUint aIndex)
-{
-	ASSERT(aIndex == 0);
-}
-
-void CpTopology2MediaRenderer::SetStandby(TBool aValue)
-{
-	iGroup->UpdateStandby(aValue); 
-	iHandler.GroupStandbyChanged(*iGroup);
-}
-
-void CpTopology2MediaRenderer::SetVolume(TUint aValue)
-{
-	iServiceRenderingControl->BeginSetVolume(0, Brn("Master"), aValue, iFunctorSetVolume);
-}
-
-void CpTopology2MediaRenderer::CallbackSetVolume(IAsync& /*aAsync*/)
-{
-}
-
-void CpTopology2MediaRenderer::SetMute(TBool aValue)
-{
-	iServiceRenderingControl->BeginSetMute(0, Brn("Master"), aValue, iFunctorSetMute);
-}
-
-void CpTopology2MediaRenderer::CallbackSetMute(IAsync& /*aAsync*/)
-{
-}
-		
 // CpTopology2Job
 
 CpTopology2Job::CpTopology2Job(ICpTopology2Handler& aHandler)
@@ -824,14 +901,15 @@ CpTopology2::CpTopology2(ICpTopology2Handler& aHandler)
 
 CpTopology2::~CpTopology2()
 {
-	delete (iTopology1);
-	
-    TUint count = (TUint)iDeviceList.size();
+    delete (iTopology1);
     
-    for (TUint i = 0; i < count; i++) {
-    	delete (iDeviceList[i]);
-    }
-	
+    std::vector<CpTopology2Device*>::iterator it = iDeviceList.begin();
+
+    while (it != iDeviceList.end()) {
+        delete (*it);
+        it++;
+    }   
+
 	iReady.Write(iFree.Read());
 
 	delete (iThread);
@@ -850,9 +928,7 @@ void CpTopology2::Refresh()
     
 void CpTopology2::ProductAdded(CpDevice& aDevice)
 {
-    if (aDevice.Udn() == Brn("4c494e4e-0026-0f21-8335-42000004013f")) {
-    	iDeviceList.push_back(new CpTopology2Product(aDevice, *this));
-   	}
+    iDeviceList.push_back(new CpTopology2Product(aDevice, *this));
 }
 
 void CpTopology2::ProductRemoved(CpDevice& aDevice)
@@ -860,29 +936,19 @@ void CpTopology2::ProductRemoved(CpDevice& aDevice)
     DeviceRemoved(aDevice);
 }
 
-void CpTopology2::UpnpAdded(CpDevice& aDevice)
-{
-   	iDeviceList.push_back(new CpTopology2MediaRenderer(aDevice, *this));
-}
-
-void CpTopology2::UpnpRemoved(CpDevice& aDevice)
-{
-    DeviceRemoved(aDevice);
-}
-
 void CpTopology2::DeviceRemoved(CpDevice& aDevice)
 {
-    TUint count = (TUint)iDeviceList.size();
-    
-    for (TUint i = 0; i < count; i++) {
-    	CpTopology2Device* device = iDeviceList[i];
-    	if (device->IsAttachedTo(aDevice)) {
-		    LOG(kTopology, "CpTopology2::ProductRemoved found\n");
-    		iDeviceList.erase(iDeviceList.begin() + i);
-    		delete (device);
-    		break;
-    	}
-    }
+    std::vector<CpTopology2Device*>::iterator it = iDeviceList.begin();
+
+    while (it != iDeviceList.end()) {
+        if ((*it)->IsAttachedTo(aDevice)) {
+            LOG(kTopology, "CpTopology2::ProductRemoved found\n");
+            delete (*it);
+            iDeviceList.erase(it);
+            break;
+        }
+        it++;
+    }   
 }
 
 // ICpTopology1Handler
@@ -939,6 +1005,19 @@ void CpTopology2::GroupSourceListChanged(CpTopology2Group& aGroup)
 	iReady.Write(job);
 }
 
+void CpTopology2::GroupVolumeLimitChanged(CpTopology2Group& aGroup)
+{
+    LOG(kTopology, "CpTopology2::GroupVolumeLimitChanged ");
+    LOG(kTopology, aGroup.Room());
+    LOG(kTopology, ":");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+    CpTopology2Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology2Handler::GroupVolumeLimitChanged);
+    iReady.Write(job);
+}
+
 void CpTopology2::GroupVolumeChanged(CpTopology2Group& aGroup)
 {
     LOG(kTopology, "CpTopology2::GroupVolumeChanged ");
@@ -950,6 +1029,32 @@ void CpTopology2::GroupVolumeChanged(CpTopology2Group& aGroup)
 	CpTopology2Job* job = iFree.Read();
 	job->Set(aGroup, &ICpTopology2Handler::GroupVolumeChanged);
 	iReady.Write(job);
+}
+
+void CpTopology2::GroupBalanceChanged(CpTopology2Group& aGroup)
+{
+    LOG(kTopology, "CpTopology2::GroupBalanceChanged ");
+    LOG(kTopology, aGroup.Room());
+    LOG(kTopology, ":");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+    CpTopology2Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology2Handler::GroupBalanceChanged);
+    iReady.Write(job);
+}
+
+void CpTopology2::GroupFadeChanged(CpTopology2Group& aGroup)
+{
+    LOG(kTopology, "CpTopology2::GroupFadeChanged ");
+    LOG(kTopology, aGroup.Room());
+    LOG(kTopology, ":");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+    CpTopology2Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology2Handler::GroupFadeChanged);
+    iReady.Write(job);
 }
 
 void CpTopology2::GroupMuteChanged(CpTopology2Group& aGroup)

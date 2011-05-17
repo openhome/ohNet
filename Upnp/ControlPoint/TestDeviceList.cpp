@@ -123,19 +123,16 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         block = false;
     }
 
+    Blocker* blocker = new Blocker;
     if (deviceList != NULL) {
-        Blocker* blocker = new Blocker;
         blocker->Wait(aInitParams->MsearchTimeSecs());
-        delete blocker;
     }
     if (refresh.Value()) {
-        Blocker* blocker = new Blocker;
-        blocker->Wait(mx.Value());
         Print("\nRefreshing...\n\n");
         deviceList->Refresh();
-        blocker->Wait(mx.Value());
-        delete blocker;
+        blocker->Wait(aInitParams->MsearchTimeSecs());
     }
+    delete blocker;
     delete deviceList;
 
     UpnpLibrary::Close();

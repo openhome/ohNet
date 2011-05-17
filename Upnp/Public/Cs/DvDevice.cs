@@ -127,6 +127,10 @@ namespace Zapp.Device
         public DvDeviceFactory(Zapp.Core.DeviceStack aDeviceStack)
         {
             iDeviceStack = aDeviceStack;
+            if (iDeviceStack == null)
+            {
+                throw new ArgumentNullException("aDeviceStack");
+            }
         }
 
         /// <summary>

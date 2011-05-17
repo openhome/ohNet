@@ -14,8 +14,6 @@ class ICpTopology1Handler
 public:
 	virtual void ProductAdded(CpDevice& aDevice) = 0;
 	virtual void ProductRemoved(CpDevice& aDevice) = 0;
-	virtual void UpnpAdded(CpDevice& aDevice) = 0;
-	virtual void UpnpRemoved(CpDevice& aDevice) = 0;
 	~ICpTopology1Handler() {}
 };
 
@@ -47,14 +45,11 @@ public:
 private:
 	void ProductAdded(CpDevice& aDevice);
 	void ProductRemoved(CpDevice& aDevice);
-	void UpnpAdded(CpDevice& aDevice);
-	void UpnpRemoved(CpDevice& aDevice);
 
 	void Run();
 	
 private:
 	CpDeviceListUpnpServiceType* iDeviceListProduct;
-	CpDeviceListUpnpDeviceType* iDeviceListUpnp;
 	Fifo<CpTopology1Job*> iFree;
 	Fifo<CpTopology1Job*> iReady;
 	ThreadFunctor* iThread;

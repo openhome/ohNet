@@ -1,5 +1,4 @@
-// Simple test for Control Point side device list
-// Looks suspiciously similar to TestSsdpUListen for now...
+// Manual test program for exercising Topology Layer 2
 //
 
 #include <TestFramework.h>
@@ -18,13 +17,18 @@ class TopologyLogger : public ICpTopology2Handler
 {
 public:
     TopologyLogger();
-	virtual void GroupAdded(CpTopology2Group& aGroup);
-	virtual void GroupStandbyChanged(CpTopology2Group& aGroup);
-	virtual void GroupSourceIndexChanged(CpTopology2Group& aGroup);
-	virtual void GroupSourceListChanged(CpTopology2Group& aGroup);
-	virtual void GroupVolumeChanged(CpTopology2Group& aGroup);
-	virtual void GroupMuteChanged(CpTopology2Group& aGroup);
-	virtual void GroupRemoved(CpTopology2Group& aGroup);
+
+    virtual void GroupAdded(CpTopology2Group& aGroup);
+    virtual void GroupStandbyChanged(CpTopology2Group& aGroup);
+    virtual void GroupSourceIndexChanged(CpTopology2Group& aGroup);
+    virtual void GroupSourceListChanged(CpTopology2Group& aGroup);
+    virtual void GroupVolumeLimitChanged(CpTopology2Group& aGroup);
+    virtual void GroupVolumeChanged(CpTopology2Group& aGroup);
+    virtual void GroupBalanceChanged(CpTopology2Group& aGroup);
+    virtual void GroupFadeChanged(CpTopology2Group& aGroup);
+    virtual void GroupMuteChanged(CpTopology2Group& aGroup);
+    virtual void GroupRemoved(CpTopology2Group& aDevice);
+
 private:
     void PrintGroupInfo(const char* aPrologue, const CpTopology2Group& aGroup);
     void PrintSourceInfo(const CpTopology2Group& aGroup);
@@ -63,10 +67,28 @@ void TopologyLogger::GroupSourceListChanged(CpTopology2Group& aGroup)
     PrintSourceInfo(aGroup);
 }
 
+void TopologyLogger::GroupVolumeLimitChanged(CpTopology2Group& aGroup)
+{
+    PrintGroupInfo("Vol Limit Changed   ", aGroup);
+    Print("%u\n", aGroup.VolumeLimit());
+}
+
 void TopologyLogger::GroupVolumeChanged(CpTopology2Group& aGroup)
 {
     PrintGroupInfo("Volume Changed      ", aGroup);
     Print("%u\n", aGroup.Volume());
+}
+
+void TopologyLogger::GroupBalanceChanged(CpTopology2Group& aGroup)
+{
+    PrintGroupInfo("Balance Changed     ", aGroup);
+    Print("%d\n", aGroup.Balance());
+}
+
+void TopologyLogger::GroupFadeChanged(CpTopology2Group& aGroup)
+{
+    PrintGroupInfo("Fade Changed        ", aGroup);
+    Print("%d\n", aGroup.Fade());
 }
 
 void TopologyLogger::GroupMuteChanged(CpTopology2Group& aGroup)
@@ -117,10 +139,10 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     OptionParser parser;
 
     OptionUint duration("-d", "--duration", 30, "Number of seconds to run the test");
-    OptionUint network("-n", "--network", 0, "Index of the network to use");
+    OptionUint adapter("-i", "--interface", 0, "index of network adapter to use");
 
     parser.AddOption(&duration);
-    parser.AddOption(&network);
+    parser.AddOption(&adapter);
 
     if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
         return;
@@ -129,17 +151,18 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartCp();
     
-    static std::vector<NetworkInterface*>* subnetList = UpnpLibrary::SubnetList();
-
-    if (network.Value() >= subnetList->size()) {
-        Print("Invalid network specified. Available networks ...\n");
-	    for (TUint i = 0; i < subnetList->size(); i++) {
-	    	Print("%u. %s\n", i, subnetList->at(i)->Name());
-	    }
-        return;
+    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
+    ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
+    UpnpLibrary::SetCurrentSubnet(*(*ifs)[adapter.Value()]);
+    TIpAddress addr = (*ifs)[adapter.Value()]->Address();
+    for (TUint i=0; i<ifs->size(); i++) {
+        delete (*ifs)[i];
     }
-
-    UpnpLibrary::SetCurrentSubnet(*subnetList->at(network.Value()));
+    delete ifs;
+    Endpoint endpt(0, addr);
+    Endpoint::AddressBuf buf;
+    endpt.AppendAddress(buf);
+    Print("Using network interface %s\n\n", buf.Ptr());
 
     // Debug::SetLevel(Debug::kTopology);
     // Debug::SetLevel(Debug::kAll);
