@@ -42,9 +42,9 @@ include Common.mak
 # Include the generated makefiles. Because nmake on Windows requires contortions to
 # include such files and handle their non-existance, these includes have to be at
 # the platform-specific level.
-#ifeq ($(uset4),yes)
+ifeq ($(uset4),yes)
 include Generated/GenerateSourceFiles.mak
-#endif
+endif
 
 include Generated/Proxies.mak
 include Generated/Devices.mak
