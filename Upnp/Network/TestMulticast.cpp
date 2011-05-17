@@ -77,8 +77,10 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
             multicast.AppendEndpoint(buf2);
             Print("Sending test message to %s\n", buf2.Ptr());
         
-            SocketUdp socket(0, addr);
-            socket.Send(Brn("Test message"), multicast);
+	        SocketUdpMulticast socket(addr, multicast);
+            //SocketUdp socket(0, addr);
+            
+			socket.Send(Brn("Test message"), multicast);
         }
     } 
 
