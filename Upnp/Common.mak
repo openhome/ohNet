@@ -608,7 +608,7 @@ $(objdir)TestPerformanceCp.$(objext) : Public/Cpp/Std/TestPerformanceCp.cpp $(he
 
 Tests: TestBuffer TestThread TestFifo TestQueue TestMulticast TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestTopology TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs TestPerformanceDv TestPerformanceCp TestPerformanceDvCs TestPerformanceCpCs
 
-Zapp.net.dll : $(objdir)Zapp.net.dll ZappUpnpDll
+Zapp.net.dll : ZappUpnpDll $(objdir)Zapp.net.dll
 
 $(objdir)Zapp.net.dll: \
 	$(publiccsdir)CpDevice.cs \
