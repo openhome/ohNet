@@ -62,7 +62,7 @@ TUint CpTopology3Source::Evaluate()
 {
     iSourceCount = 0;
     
-    TUint children = iChildList.size();
+    TUint children = (TUint)iChildList.size();
     
     if (children == 0) {
         if (iGroup.SourceVisible(iIndex)) {
