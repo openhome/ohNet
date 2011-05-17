@@ -1,6 +1,12 @@
 # Makefile for Windows
 #
 
+!if "$(csplatform)"=="x64"
+csplatform = x64
+!else
+csplatform = x86
+!endif
+
 # Macros used by Common.mak
 ar = lib /nologo /out:$(objdir)
 cflags = /MDd /W4 /WX /EHsc /RTC1 /Zi /FR$(objdir) /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS /Od -DDllImport=__declspec(dllimport) -DDllExport=__declspec(dllexport) -DDllExportClass=
@@ -21,7 +27,7 @@ dllprefix =
 dllext = dll
 link_dll = link /nologo /debug /map Ws2_32.lib Iphlpapi.lib /dll
 link_dll_service = link /nologo /debug  /map $(objdir)ZappUpnp.lib Ws2_32.lib Iphlpapi.lib /dll
-csharp = csc /nologo /platform:x86
+csharp = csc /nologo /platform:$(csplatform)
 publiccsdir = Public\Cs^\
 dirsep = ^\
 installdir = $(PROGRAMFILES)\Zapp
