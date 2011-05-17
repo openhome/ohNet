@@ -264,7 +264,7 @@ class CpTopology : public IHouse, ICpTopology3Handler
 {
 public:
     CpTopology(IHouseHandler& aHandler);
-
+    ~CpTopology();
 private:
     // IHouse
     virtual void Refresh();
@@ -283,7 +283,7 @@ private:
 
 private:
     IHouseHandler& iHandler;
-    CpTopology3 iTopology;
+    CpTopology3* iTopology;
 };
 
 #ifdef _WIN32
@@ -294,14 +294,18 @@ private:
 
 CpTopology::CpTopology(IHouseHandler& aHandler)
     : iHandler(aHandler)
-    , iTopology(*this)
 {
+    iTopology = new CpTopology3(*this);
 }
 
+CpTopology::~CpTopology()
+{
+    delete iTopology;
+}
 
 void CpTopology::Refresh()
 {
-    iTopology.Refresh();
+    iTopology->Refresh();
 }
     
 void CpTopology::RoomAdded(CpTopology3Room& aRoom)
