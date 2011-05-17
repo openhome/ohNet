@@ -87,6 +87,7 @@ def getEnvironment():
         tool = 'call vcvarsall.bat amd64 && set'
         ostype = 'Windows'
         arch = 'x64'
+        os.environ['CS_PLATFORM'] = 'x64'
 
     # Check whether we can run valgrind
 
