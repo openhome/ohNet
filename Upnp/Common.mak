@@ -661,7 +661,7 @@ $(objdir)TestDvDeviceCs.exe: \
 	$(publiccsdir)TestBasicCp.cs \
 	$(publiccsdir)TestDvDevice.cs
 	$(csharp) \
-		/d:DEBUG /debug /unsafe /warnaserror+ /platform:x86 /t:exe \
+		/d:DEBUG /debug /unsafe /warnaserror+ /t:exe \
 		/out:$(objdir)TestDvDeviceCs.exe \
 		/reference:$(objdir)Zapp.net.dll \
 		/reference:$(objdir)DvZappOrgTestBasic1.net.dll \
@@ -679,7 +679,7 @@ $(objdir)TestDvLightsCs.exe: \
 	$(objdir)CpZappOrgTestLights1.net.dll \
 	$(publiccsdir)TestDvLights.cs
 	$(csharp) \
-		/d:DEBUG /debug /unsafe /warnaserror+ /platform:x86 /t:exe \
+		/d:DEBUG /debug /unsafe /warnaserror+ /t:exe \
 		/out:$(objdir)TestDvLightsCs.exe \
 		/reference:$(objdir)Zapp.net.dll \
 		/reference:$(objdir)DvZappOrgTestLights1.net.dll \
@@ -697,7 +697,7 @@ $(objdir)TestCpDeviceDvCs.exe: \
 	$(publiccsdir)TestBasicCp.cs \
 	$(publiccsdir)TestDvDevice.cs
 	$(csharp) \
-		/d:DEBUG /debug /unsafe /warnaserror+ /platform:x86 /t:exe \
+		/d:DEBUG /debug /unsafe /warnaserror+ /t:exe \
 		/out:$(objdir)TestCpDeviceDvCs.exe \
 		/reference:$(objdir)Zapp.net.dll \
 		/reference:$(objdir)DvZappOrgTestBasic1.net.dll \
@@ -715,7 +715,7 @@ $(objdir)TestPerformanceDvCs.exe: \
 	$(publiccsdir)TestBasicDv.cs \
 	$(publiccsdir)TestPerformanceDv.cs
 	$(csharp) \
-		/unsafe /warnaserror+ /platform:x86 /t:exe \
+		/unsafe /warnaserror+ /t:exe \
 		/out:$(objdir)TestPerformanceDvCs.exe \
 		/reference:$(objdir)Zapp.net.dll \
 		/reference:$(objdir)DvZappOrgTestBasic1.net.dll \
@@ -730,7 +730,7 @@ $(objdir)TestPerformanceCpCs.exe: \
 	$(objdir)CpZappOrgTestBasic1.net.dll \
 	$(publiccsdir)TestPerformanceCp.cs
 	$(csharp) \
-		/unsafe /warnaserror+ /platform:x86 /t:exe \
+		/unsafe /warnaserror+ /t:exe \
 		/out:$(objdir)TestPerformanceCpCs.exe \
 		/reference:$(objdir)Zapp.net.dll \
 		/reference:$(objdir)CpZappOrgTestBasic1.net.dll \
