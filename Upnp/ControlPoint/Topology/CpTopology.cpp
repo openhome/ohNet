@@ -286,6 +286,10 @@ private:
     CpTopology3 iTopology;
 };
 
+#ifdef _WIN32
+# pragma warning(disable:4355) // use of 'this' in ctor lists safe in this case
+#endif
+
 // CpTopology
 
 CpTopology::CpTopology(IHouseHandler& aHandler)

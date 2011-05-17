@@ -377,7 +377,7 @@ void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Initi
     
     TestTopology3Handler handler3;
 
-    ICpTopology2Handler* handler2;
+    ICpTopology2Handler* handler2 = 0;
     
     CpTopology3* topology3 = new CpTopology3(handler3, &handler2);
 
