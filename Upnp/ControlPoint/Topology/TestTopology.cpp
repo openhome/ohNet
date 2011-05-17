@@ -374,11 +374,8 @@ void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Initi
     // Debug::SetLevel(Debug::kAll);
 
     TestDevice device;
-    
     TestTopology3Handler handler3;
-
-    ICpTopology2Handler* handler2;
-    
+    ICpTopology2Handler* handler2 = NULL;
     CpTopology3* topology3 = new CpTopology3(handler3, &handler2);
 
     Print("Test 1\n");
