@@ -305,7 +305,6 @@ OhmSender::OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aN
     , iMulticast(aMulticast)
 	, iImage(aImage)
 	, iMimeType(aMimeType)
-	, iPreset(aPreset)
     , iRxBuffer(iSocketOhm)
 	, iRxZone(iSocketOhz)
     , iMutexStartStop("OHMS")
@@ -325,6 +324,7 @@ OhmSender::OhmSender(DvDevice& aDevice, IOhmSenderDriver& aDriver, const Brx& aN
     , iSequenceTrack(0)
     , iSequenceMetatext(0)
 	, iClientControllingTrackMetadata(false)
+    , iPreset(aPreset)
 {
     iProvider = new ProviderSender(iDevice);
  
