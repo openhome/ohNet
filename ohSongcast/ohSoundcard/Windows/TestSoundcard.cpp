@@ -26,7 +26,7 @@ using namespace Zapp::TestFramework;
 
 int __cdecl main(int aArgc, char* aArgv[])
 {
-	Debug::SetLevel(Debug::kMedia);
+	//Debug::SetLevel(Debug::kMedia);
 	
     OptionParser parser;
     

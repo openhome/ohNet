@@ -49,17 +49,17 @@ $(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) : $(objdir)/$(dllprefix)ohSoundc
 		/out:$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) \
 		ohSoundcard\Windows\Soundcard.cs
 
-#$(objdir)/TestSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) ohSoundcard/Windows/TestSoundcard.cs
-#	$(csharp) /unsafe /t:exe /debug+ \
-#		/out:$(objdir)TestSoundcard.exe \
-#		/reference:System.dll \
-#		/reference:System.Net.dll \
-#		/reference:$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext)  \
-#		ohSoundcard\Windows\TestSoundcard.cs
+$(objdir)/TestSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) ohSoundcard/Windows/TestSoundcard.cs
+	$(csharp) /unsafe /t:exe /debug+ \
+		/out:$(objdir)TestSoundcard.exe \
+		/reference:System.dll \
+		/reference:System.Net.dll \
+		/reference:$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext)  \
+		ohSoundcard\Windows\TestSoundcard.cs
 
-$(objdir)/TestSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) ohSoundcard/Windows/TestSoundcard.cpp
-	$(compiler)/TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/TestSoundcard.cpp
-	$(link) $(linkoutput)$(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcard.$(objext) $(ohnetdir)/upnp_core.lib $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib $(ohnetdir)/TestFramework.$(libext) 
+#$(objdir)/TestSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) ohSoundcard/Windows/TestSoundcard.cpp
+#	$(compiler)/TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/TestSoundcard.cpp
+#	$(link) $(linkoutput)$(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcard.$(objext) $(ohnetdir)/upnp_core.lib $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib $(ohnetdir)/TestFramework.$(libext) 
 
 $(objdir)/ZoneWatcher.$(exeext) : ZoneWatcher/ZoneWatcher.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
