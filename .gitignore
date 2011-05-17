@@ -12,4 +12,5 @@ _ReSharper.*
 /build/
 /install/
 /ZappSender/Build/
+obj/
 
