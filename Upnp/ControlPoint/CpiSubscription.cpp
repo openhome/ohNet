@@ -234,7 +234,18 @@ void CpiSubscription::DoRenew()
     LOG(kEvent, iSid);
     LOG(kEvent, "\n");
 
-    TUint renewSecs = iDevice.Renew(*this);
+    TUint renewSecs = 0;
+    try {
+        renewSecs = iDevice.Renew(*this);
+    }
+    catch (HttpError&) {
+        Schedule(eResubscribe);
+        THROW(HttpError);
+    }
+    catch (WriterError&) {
+        Schedule(eResubscribe);
+        THROW(WriterError);
+    }
 
     LOG(kEvent, "Renewed ");
     LOG(kEvent, iSid);
