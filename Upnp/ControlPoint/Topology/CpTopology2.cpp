@@ -40,8 +40,9 @@ void CpTopology2Source::Update(const Brx& aName, const Brx& aType, TBool aVisibl
 
 // CpTopology2Group
 
-CpTopology2Group::CpTopology2Group(ICpTopology2GroupHandler& aHandler, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex, TUint aVolumeMax, TUint aVolumeUnity, TUint aVolumeSteps, TUint aVolumeMilliDbPerStep, TUint aBalanceMax, TUint aFadeMax, TUint aVolumeLimit, TUint aVolume, TInt aBalance, TUint aFade, TBool aMute)
-	: iHandler(aHandler)
+CpTopology2Group::CpTopology2Group(CpDevice& aDevice, ICpTopology2GroupHandler& aHandler, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex, TUint aVolumeMax, TUint aVolumeUnity, TUint aVolumeSteps, TUint aVolumeMilliDbPerStep, TUint aBalanceMax, TUint aFadeMax, TUint aVolumeLimit, TUint aVolume, TInt aBalance, TUint aFade, TBool aMute)
+	: iDevice(aDevice)
+	, iHandler(aHandler)
 	, iStandby(aStandby)
 	, iRoom(aRoom)
 	, iName(aName)
@@ -63,8 +64,9 @@ CpTopology2Group::CpTopology2Group(ICpTopology2GroupHandler& aHandler, TBool aSt
 {
 }
 
-CpTopology2Group::CpTopology2Group(ICpTopology2GroupHandler& aHandler, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex)
-    : iHandler(aHandler)
+CpTopology2Group::CpTopology2Group(CpDevice& aDevice, ICpTopology2GroupHandler& aHandler, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex)
+    : iDevice(aDevice)
+    , iHandler(aHandler)
     , iStandby(aStandby)
     , iRoom(aRoom)
     , iName(aName)
@@ -155,6 +157,11 @@ void CpTopology2Group::RemoveRef()
     if (--iRefCount == 0) {
         delete this;
     }
+}
+
+CpDevice& CpTopology2Group::Device() const
+{
+    return (iDevice);
 }
 
 TUint CpTopology2Group::SourceCount() const
@@ -338,9 +345,9 @@ void CpTopology2Group::SetMute(TBool aValue)
     iHandler.SetMute(aValue);
 }
 
-void CpTopology2Group::SetUserData(void* aPtr)
+void CpTopology2Group::SetUserData(void* aValue)
 {
-	iUserData = aPtr;
+	iUserData = aValue;
 }
 
 void* CpTopology2Group::UserData() const
@@ -461,7 +468,7 @@ void CpTopology2Product::EventProductInitialEvent()
 	iServiceProduct->PropertyStandby(standby);
 	iServiceProduct->PropertySourceXml(xml);
 	
-	iGroup = new CpTopology2Group(*this, standby, room, name, sourceIndex);
+	iGroup = new CpTopology2Group(iDevice, *this, standby, room, name, sourceIndex);
 	
 	ProcessSourceXml(xml, true);
 	
@@ -514,7 +521,7 @@ void CpTopology2Product::EventPreampInitialEvent()
     iServiceVolume->PropertyFade(fade);
 	iServiceVolume->PropertyMute(mute);
 
-	iGroup = new CpTopology2Group(*this, standby, room, name, sourceIndex, volumeMax, volumeUnity, volumeSteps, volumeMilliDbPerStep, balanceMax, fadeMax, volumeLimit, volume, balance, fade, mute);
+	iGroup = new CpTopology2Group(iDevice, *this, standby, room, name, sourceIndex, volumeMax, volumeUnity, volumeSteps, volumeMilliDbPerStep, balanceMax, fadeMax, volumeLimit, volume, balance, fade, mute);
 	
 	ProcessSourceXml(xml, true);
 
@@ -849,217 +856,6 @@ void CpTopology2Product::CallbackSetMute(IAsync& aAsync)
 	iServiceVolume->EndSetMute(aAsync);
 }		
 
-/*
-// CpTopology2MediaRenderer
-
-CpTopology2MediaRenderer::CpTopology2MediaRenderer(CpDevice& aDevice, ICpTopology2Handler& aHandler)
-	: CpTopology2Device(aDevice)
-	, iHandler(aHandler)
-    , iServiceRenderingControl(0)
-    , iGroup(0)
-    , iVolume(0)
-    , iMute(false)
-{
-    iFunctorSetVolume = MakeFunctorAsync(*this, &CpTopology2MediaRenderer::CallbackSetVolume);
-    iFunctorSetMute = MakeFunctorAsync(*this, &CpTopology2MediaRenderer::CallbackSetMute);
-
-	Brh version;
-
-	iHasVolume = aDevice.GetAttribute("Upnp.Service.upnp.org.RenderingControl", version);
-	iHasTransport = aDevice.GetAttribute("Upnp.Service.upnp.org.AVTransport", version);
-
-	if (iHasVolume || iHasTransport) {
-	
-		if (iHasVolume) {
-			iServiceRenderingControl = new CpProxyUpnpOrgRenderingControl1(iDevice);
-			Functor initial = MakeFunctor(*this, &CpTopology2MediaRenderer::EventRenderingControlPropertyChanged);
-			iServiceRenderingControl->SetPropertyChanged(initial);	
-			iServiceRenderingControl->Subscribe();
-			return;
-		}
-
-		Brh friendly;
-		
-		iDevice.GetAttribute("Upnp.FriendlyName", friendly);
-	
-		Brn room;
-		Brn name;
-		
-		ParseFriendlyName(friendly, room, name);
-		iGroup = new CpTopology2Group(*this, false, room, name, 0, false, 0, false);
-		iGroup->AddSource(Brn("MediaRenderer"), Brn("UpnpAv"), true);
-		iHandler.GroupAdded(*iGroup);
-	}
-}
-
-CpTopology2MediaRenderer::~CpTopology2MediaRenderer()
-{
-	delete (iServiceRenderingControl);
-	
-	if (iGroup != 0) {
-		iHandler.GroupRemoved(*iGroup);
-		iGroup->RemoveRef();
-	}
-}
-
-void CpTopology2MediaRenderer::ProcessLastChange()
-{
-	try {
-		Brhz lastChange;
-		
-		iServiceRenderingControl->PropertyLastChange(lastChange);
-		
-	    Brn event = XmlParserBasic::Find("Event", lastChange);
-		Brn instance = XmlParserBasic::Find("InstanceID", event);
-		
-		try {
-			iVolume = Ascii::Uint(XmlParserBasic::FindAttribute("Volume", "val", instance));
-		}
-		catch (XmlError) {
-		}
-		catch (AsciiError) {
-		}
-		
-		try {
-			Brn mute = XmlParserBasic::FindAttribute("Mute", "val", instance);
-			iMute = (mute != Brn("0"));
-		}
-		catch (XmlError) {
-		}
-	}
-	catch (XmlError)
-	{
-	}
-}
-
-void CpTopology2MediaRenderer::EventRenderingControlPropertyChanged()
-{
-	ProcessLastChange();
-	
-	if (iGroup == 0) {
-		Brh friendly;
-		
-		iDevice.GetAttribute("Upnp.FriendlyName", friendly);
-	
-		Brn room;
-		Brn name;
-		
-		ParseFriendlyName(friendly, room, name);
-		iGroup = new CpTopology2Group(*this, false, room, name, 0, true, iVolume, iMute);
-		
-		if (iHasTransport) {
-			iGroup->AddSource(Brn("MediaRenderer"), Brn("UpnpAv"), true);
-		}
-		
-		iHandler.GroupAdded(*iGroup);
-	}
-	else {
-		if (iVolume != iGroup->Volume()) {
-			iGroup->UpdateVolume(iVolume);
-			iHandler.GroupVolumeChanged(*iGroup);
-		}
-		
-		if (iMute != iGroup->Mute()) {
-			iGroup->UpdateMute(iMute);
-			iHandler.GroupMuteChanged(*iGroup);
-		}
-	}
-}
-
-TBool CpTopology2MediaRenderer::ParseFriendlyNameBracketed(const Brx& aFriendlyName, Brn& aRoom, Brn& aName, TChar aOpen, TChar aClose)
-{
-	Parser parser(aFriendlyName);
-	
-	Brn room = parser.Next(aOpen);
-	Brn name = parser.Next(aClose);
-	
-	if (room.Bytes() > 0 && name.Bytes() > 0) {
-		if (room.Bytes() > CpTopology2Group::kMaxRoomBytes || name.Bytes() > CpTopology2Group::kMaxNameBytes) {
-			return (false);
-		}
-		
-		aRoom.Set(room);
-		aName.Set(name);
-		
-		return (true);
-	}
-	
-	return (false);
-}
-
-void CpTopology2MediaRenderer::ParseFriendlyName(const Brx& aFriendlyName, Brn& aRoom, Brn& aName)
-{
-    if (ParseFriendlyNameBracketed(aFriendlyName, aRoom, aName, '(', ')'))
-    {
-        return;
-    }
-
-    if (ParseFriendlyNameBracketed(aFriendlyName, aRoom, aName, '[', ']'))
-    {
-        return;
-    }
-
-    if (ParseFriendlyNameBracketed(aFriendlyName, aRoom, aName, '<', '>'))
-    {
-        return;
-    }
-
-    if (ParseFriendlyNameBracketed(aFriendlyName, aRoom, aName, ':', ':'))
-    {
-        return;
-    }
-
-    if (ParseFriendlyNameBracketed(aFriendlyName, aRoom, aName, '.', '.'))
-    {
-        return;
-    }
-
-	if (aFriendlyName.Bytes() > CpTopology2Group::kMaxRoomBytes) {
-		aRoom.Set(aFriendlyName.Split(0, CpTopology2Group::kMaxRoomBytes));
-	}
-	else {
-		aRoom.Set(aFriendlyName);
-	}
-	
-	if (aFriendlyName.Bytes() > CpTopology2Group::kMaxNameBytes) {
-		aName.Set(aFriendlyName.Split(0, CpTopology2Group::kMaxNameBytes));
-	}
-	else {
-		aName.Set(aFriendlyName);
-	}
-}
-	
-void CpTopology2MediaRenderer::SetSourceIndex(TUint aIndex)
-{
-	ASSERT(aIndex == 0);
-}
-
-void CpTopology2MediaRenderer::SetStandby(TBool aValue)
-{
-	iGroup->UpdateStandby(aValue); 
-	iHandler.GroupStandbyChanged(*iGroup);
-}
-
-void CpTopology2MediaRenderer::SetVolume(TUint aValue)
-{
-	iServiceRenderingControl->BeginSetVolume(0, Brn("Master"), aValue, iFunctorSetVolume);
-}
-
-void CpTopology2MediaRenderer::CallbackSetVolume(IAsync& aAsync)
-{
-}
-
-void CpTopology2MediaRenderer::SetMute(TBool aValue)
-{
-	iServiceRenderingControl->BeginSetMute(0, Brn("Master"), aValue, iFunctorSetMute);
-}
-
-void CpTopology2MediaRenderer::CallbackSetMute(IAsync& aAsync)
-{
-}
-
-*/
-	
 // CpTopology2Job
 
 CpTopology2Job::CpTopology2Job(ICpTopology2Handler& aHandler)
@@ -1132,24 +928,12 @@ void CpTopology2::Refresh()
     
 void CpTopology2::ProductAdded(CpDevice& aDevice)
 {
-    if (aDevice.Udn() == Brn("4c494e4e-0026-0f21-8335-42000004013f") || aDevice.Udn() == Brn("4c494e4e-0026-0f21-833c-90000004013f")) {
-    	iDeviceList.push_back(new CpTopology2Product(aDevice, *this));
-   	}
+    iDeviceList.push_back(new CpTopology2Product(aDevice, *this));
 }
 
 void CpTopology2::ProductRemoved(CpDevice& aDevice)
 {
     DeviceRemoved(aDevice);
-}
-
-void CpTopology2::UpnpAdded(CpDevice& /*aDevice*/)
-{
-//  iDeviceList.push_back(new CpTopology2MediaRenderer(aDevice, *this));
-}
-
-void CpTopology2::UpnpRemoved(CpDevice& /*aDevice*/)
-{
-//  DeviceRemoved(aDevice);
 }
 
 void CpTopology2::DeviceRemoved(CpDevice& aDevice)
@@ -1221,6 +1005,19 @@ void CpTopology2::GroupSourceListChanged(CpTopology2Group& aGroup)
 	iReady.Write(job);
 }
 
+void CpTopology2::GroupVolumeLimitChanged(CpTopology2Group& aGroup)
+{
+    LOG(kTopology, "CpTopology2::GroupVolumeLimitChanged ");
+    LOG(kTopology, aGroup.Room());
+    LOG(kTopology, ":");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+    CpTopology2Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology2Handler::GroupVolumeLimitChanged);
+    iReady.Write(job);
+}
+
 void CpTopology2::GroupVolumeChanged(CpTopology2Group& aGroup)
 {
     LOG(kTopology, "CpTopology2::GroupVolumeChanged ");
@@ -1232,6 +1029,32 @@ void CpTopology2::GroupVolumeChanged(CpTopology2Group& aGroup)
 	CpTopology2Job* job = iFree.Read();
 	job->Set(aGroup, &ICpTopology2Handler::GroupVolumeChanged);
 	iReady.Write(job);
+}
+
+void CpTopology2::GroupBalanceChanged(CpTopology2Group& aGroup)
+{
+    LOG(kTopology, "CpTopology2::GroupBalanceChanged ");
+    LOG(kTopology, aGroup.Room());
+    LOG(kTopology, ":");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+    CpTopology2Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology2Handler::GroupBalanceChanged);
+    iReady.Write(job);
+}
+
+void CpTopology2::GroupFadeChanged(CpTopology2Group& aGroup)
+{
+    LOG(kTopology, "CpTopology2::GroupFadeChanged ");
+    LOG(kTopology, aGroup.Room());
+    LOG(kTopology, ":");
+    LOG(kTopology, aGroup.Name());
+    LOG(kTopology, "\n");
+
+    CpTopology2Job* job = iFree.Read();
+    job->Set(aGroup, &ICpTopology2Handler::GroupFadeChanged);
+    iReady.Write(job);
 }
 
 void CpTopology2::GroupMuteChanged(CpTopology2Group& aGroup)

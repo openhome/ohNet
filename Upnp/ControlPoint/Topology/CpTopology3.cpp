@@ -134,6 +134,31 @@ const Brx& CpTopology3Source::SourceType(TUint aIndex) const
     return (Brx::Empty());
 }
 
+CpDevice& CpTopology3Source::SourceDevice(TUint aIndex) const
+{
+    TUint index = aIndex;
+    
+    if (iChildList.size() == 0) {
+        return (iGroup.Device());
+    }
+    else {
+        std::vector<CpTopology3Group*>::const_iterator it = iChildList.begin();
+        
+        while (it != iChildList.end()) {
+            TUint count = (*it)->SourceCount();
+            if (count > index) {
+                return ((*it)->SourceDevice(index));
+            }
+            index -= count;
+            it++;
+        }
+    }
+    
+    ASSERTS();
+
+    return (*(CpDevice*)0);
+}
+
 CpTopology3Source::~CpTopology3Source()
 {
 	ASSERT(iChildList.size() == 0);
@@ -256,9 +281,29 @@ const Brx& CpTopology3Group::SourceType(TUint aIndex) const
     }
     
     ASSERTS();
+
     return (Brx::Empty());
 }
 
+CpDevice& CpTopology3Group::SourceDevice(TUint aIndex) const
+{
+    TUint index = aIndex;
+    
+    std::vector<CpTopology3Source*>::const_iterator it = iSourceList.begin();
+    
+    while (it != iSourceList.end()) {
+        TUint count = (*it)->SourceCount();
+        if (count > index) {
+            return ((*it)->SourceDevice(index));
+        }
+        index -= count;
+        it++;
+    }
+    
+    ASSERTS();
+
+    return (*(CpDevice*)0);
+}
 
 void CpTopology3Group::ClearChildren()
 {
@@ -321,6 +366,7 @@ CpTopology3Room::CpTopology3Room(ICpTopology3Handler& aHandler, CpTopology2Group
 	, iActive(false)
 	, iSourceCount(0)
 	, iRefCount(1)
+	, iUserData(0)
 {
 	GroupAdded(aGroup);
 	iHandler.RoomAdded(*this);
@@ -331,6 +377,16 @@ CpTopology3Room::~CpTopology3Room()
 {
 	ASSERT(iGroupList.size() == 0);
 	iHandler.RoomRemoved(*this);
+}
+
+void CpTopology3Room::SetUserData(void* aValue)
+{
+    iUserData = aValue;
+}
+
+void* CpTopology3Room::UserData() const
+{
+    return (iUserData);
 }
 
 void CpTopology3Room::ReportGroups()
@@ -619,9 +675,64 @@ const Brx& CpTopology3Room::SourceType(TUint aIndex) const
     return (Brx::Empty());
 }
 
+CpDevice& CpTopology3Room::SourceDevice(TUint aIndex) const
+{
+    TUint index = aIndex;
+    
+    std::vector<CpTopology3Group*>::const_iterator it = iRootList.begin();
+    
+    while (it != iRootList.end()) {
+        TUint count = (*it)->SourceCount();
+        if (count > index) {
+            return ((*it)->SourceDevice(index));
+        }
+        index -= count;
+        it++;
+    }
+    
+    ASSERTS();
+    
+    return (*(CpDevice*)0);
+}
+
 TBool CpTopology3Room::HasVolumeControl() const
 {
     return (iRoot->Group().HasVolumeControl());
+}
+
+TUint CpTopology3Room::VolumeMax() const
+{
+    return (iRoot->Group().VolumeMax());
+}
+
+TUint CpTopology3Room::VolumeUnity() const
+{
+    return (iRoot->Group().VolumeUnity());
+}
+
+TUint CpTopology3Room::VolumeSteps() const
+{
+    return (iRoot->Group().VolumeSteps());
+}
+
+TUint CpTopology3Room::VolumeMilliDbPerStep() const
+{
+    return (iRoot->Group().VolumeMilliDbPerStep());
+}
+
+TUint CpTopology3Room::FadeMax() const
+{
+    return (iRoot->Group().FadeMax());
+}
+
+TUint CpTopology3Room::BalanceMax() const
+{
+    return (iRoot->Group().BalanceMax());
+}
+
+TUint CpTopology3Room::VolumeLimit() const
+{
+    return (iRoot->Group().VolumeLimit());
 }
 
 TUint CpTopology3Room::Volume() const
@@ -629,9 +740,59 @@ TUint CpTopology3Room::Volume() const
     return (iRoot->Group().Volume());
 }
 
-void CpTopology3Room::SetVolume(TUint aValue) const
+void CpTopology3Room::SetVolume(TUint aValue)
 {
     iRoot->Group().SetVolume(aValue);
+}
+
+void CpTopology3Room::VolumeInc()
+{
+    iRoot->Group().VolumeInc();
+}
+
+void CpTopology3Room::VolumeDec()
+{
+    iRoot->Group().VolumeDec();
+}
+
+TInt CpTopology3Room::Balance() const
+{
+    return (iRoot->Group().Balance());
+}
+
+void CpTopology3Room::SetBalance(TInt aValue)
+{
+    iRoot->Group().SetBalance(aValue);
+}
+
+void CpTopology3Room::BalanceInc()
+{
+    iRoot->Group().BalanceInc();
+}
+
+void CpTopology3Room::BalanceDec()
+{
+    iRoot->Group().BalanceDec();
+}
+
+TInt CpTopology3Room::Fade() const
+{
+    return (iRoot->Group().Fade());
+}
+
+void CpTopology3Room::SetFade(TInt aValue)
+{
+    iRoot->Group().SetFade(aValue);
+}
+
+void CpTopology3Room::FadeInc()
+{
+    iRoot->Group().FadeInc();
+}
+
+void CpTopology3Room::FadeDec()
+{
+    iRoot->Group().FadeDec();
 }
 
 TBool CpTopology3Room::Mute() const
@@ -796,6 +957,15 @@ void CpTopology3::RoomSourceIndexChanged(CpTopology3Room& aRoom)
 	iHandler.RoomSourceIndexChanged(aRoom);
 }
 
+void CpTopology3::RoomVolumeLimitChanged(CpTopology3Room& aRoom)
+{
+    LOG(kTopology, "CpTopology3::RoomVolumeLimitChanged ");
+    LOG(kTopology, aRoom.Name());
+    LOG(kTopology, "\n");
+
+    iHandler.RoomVolumeLimitChanged(aRoom);
+}
+
 void CpTopology3::RoomVolumeChanged(CpTopology3Room& aRoom)
 {
     LOG(kTopology, "CpTopology3::RoomVolumeChanged ");
@@ -803,6 +973,24 @@ void CpTopology3::RoomVolumeChanged(CpTopology3Room& aRoom)
     LOG(kTopology, "\n");
 
 	iHandler.RoomVolumeChanged(aRoom);
+}
+
+void CpTopology3::RoomBalanceChanged(CpTopology3Room& aRoom)
+{
+    LOG(kTopology, "CpTopology3::RoomBalanceChanged ");
+    LOG(kTopology, aRoom.Name());
+    LOG(kTopology, "\n");
+
+    iHandler.RoomBalanceChanged(aRoom);
+}
+
+void CpTopology3::RoomFadeChanged(CpTopology3Room& aRoom)
+{
+    LOG(kTopology, "CpTopology3::RoomFadeChanged ");
+    LOG(kTopology, aRoom.Name());
+    LOG(kTopology, "\n");
+
+    iHandler.RoomFadeChanged(aRoom);
 }
 
 void CpTopology3::RoomMuteChanged(CpTopology3Room& aRoom)

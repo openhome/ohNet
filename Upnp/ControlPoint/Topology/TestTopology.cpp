@@ -194,7 +194,10 @@ private:
     virtual void RoomRemoved(CpTopology3Room& aRoom);
 	virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
 	virtual void RoomSourceIndexChanged(CpTopology3Room& aRoom);
+    virtual void RoomVolumeLimitChanged(CpTopology3Room& aRoom);
 	virtual void RoomVolumeChanged(CpTopology3Room& aRoom);
+    virtual void RoomBalanceChanged(CpTopology3Room& aRoom);
+    virtual void RoomFadeChanged(CpTopology3Room& aRoom);
 	virtual void RoomMuteChanged(CpTopology3Room& aRoom);
 	
     void Add(const Brx& aType, const Brx& aValue, const Brx& aInfo);
@@ -317,6 +320,15 @@ void TestTopology3Handler::RoomChanged(CpTopology3Room& aRoom)
     }
 }
 
+void TestTopology3Handler::RoomVolumeLimitChanged(CpTopology3Room& aRoom)
+{
+    Bws<10> limit;
+    
+    Ascii::AppendDec(limit, aRoom.VolumeLimit());
+    
+    Add(Brn("VolumeLimit"), aRoom.Name(), limit);
+}
+
 void TestTopology3Handler::RoomVolumeChanged(CpTopology3Room& aRoom)
 {
     Bws<10> volume;
@@ -324,6 +336,24 @@ void TestTopology3Handler::RoomVolumeChanged(CpTopology3Room& aRoom)
     Ascii::AppendDec(volume, aRoom.Volume());
     
     Add(Brn("Volume"), aRoom.Name(), volume);
+}
+
+void TestTopology3Handler::RoomBalanceChanged(CpTopology3Room& aRoom)
+{
+    Bws<10> balance;
+    
+    Ascii::AppendDec(balance, aRoom.Balance());
+    
+    Add(Brn("Balance"), aRoom.Name(), balance);
+}
+
+void TestTopology3Handler::RoomFadeChanged(CpTopology3Room& aRoom)
+{
+    Bws<10> fade;
+    
+    Ascii::AppendDec(fade, aRoom.Fade());
+    
+    Add(Brn("Fade"), aRoom.Name(), fade);
 }
 
 void TestTopology3Handler::RoomMuteChanged(CpTopology3Room& aRoom)
@@ -336,7 +366,7 @@ void TestTopology3Handler::RoomRemoved(CpTopology3Room& aRoom)
     Add(Brn("Removed"), aRoom.Name(), Brx::Empty());
 }
 
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* /*aInitParams*/)
+void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::Initialise(aInitParams);
 
@@ -354,7 +384,9 @@ void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Initi
     Print("Test 1\n");
     Print("Add and remove 1\n");
     
-    CpTopology2Group* group1 = new CpTopology2Group(device, false, Brn("Kitchen"), Brn("Majik DS-I"), 0);
+    CpDevice* cpdevice = 0;
+    
+    CpTopology2Group* group1 = new CpTopology2Group(*cpdevice, device, false, Brn("Kitchen"), Brn("Majik DS-I"), 0);
     
     group1->AddSource(Brn("Playlist"), Brn("Playlist"), true);
     group1->AddSource(Brn("Radio"), Brn("Radio"), true);
@@ -398,7 +430,7 @@ void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Initi
     Print("Test 2\n");
     Print("Add 1, add 2\n");
 
-    CpTopology2Group* group2 = new CpTopology2Group(device, false, Brn("Kitchen"), Brn("Phono"), 0);
+    CpTopology2Group* group2 = new CpTopology2Group(*cpdevice, device, false, Brn("Kitchen"), Brn("Phono"), 0);
     
     group2->AddSource(Brn("Playlist"), Brn("Playlist"), true);
     group2->AddSource(Brn("Radio"), Brn("Radio"), true);

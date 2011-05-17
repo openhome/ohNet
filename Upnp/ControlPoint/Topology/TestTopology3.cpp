@@ -22,7 +22,10 @@ public:
     virtual void RoomRemoved(CpTopology3Room& aRoom);
 	virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
 	virtual void RoomSourceIndexChanged(CpTopology3Room& aRoom);
+    virtual void RoomVolumeLimitChanged(CpTopology3Room& aRoom);
 	virtual void RoomVolumeChanged(CpTopology3Room& aRoom);
+    virtual void RoomBalanceChanged(CpTopology3Room& aRoom);
+    virtual void RoomFadeChanged(CpTopology3Room& aRoom);
 	virtual void RoomMuteChanged(CpTopology3Room& aRoom);
 private:
     void PrintRoomInfo(const char* aPrologue, const CpTopology3Room& aRoom);
@@ -68,10 +71,28 @@ void TopologyLogger::RoomSourceIndexChanged(CpTopology3Room& aRoom)
     Print("%u\n", aRoom.SourceIndex());
 }
 
+void TopologyLogger::RoomVolumeLimitChanged(CpTopology3Room& aRoom)
+{
+    PrintRoomInfo("Vol Limit Changed   ", aRoom);
+    Print("%u\n", aRoom.VolumeLimit());
+}
+
 void TopologyLogger::RoomVolumeChanged(CpTopology3Room& aRoom)
 {
     PrintRoomInfo("Volume Changed      ", aRoom);
     Print("%u\n", aRoom.Volume());
+}
+
+void TopologyLogger::RoomBalanceChanged(CpTopology3Room& aRoom)
+{
+    PrintRoomInfo("Balance Changed     ", aRoom);
+    Print("%u\n", aRoom.Balance());
+}
+
+void TopologyLogger::RoomFadeChanged(CpTopology3Room& aRoom)
+{
+    PrintRoomInfo("Fade Changed        ", aRoom);
+    Print("%u\n", aRoom.Fade());
 }
 
 void TopologyLogger::RoomMuteChanged(CpTopology3Room& aRoom)

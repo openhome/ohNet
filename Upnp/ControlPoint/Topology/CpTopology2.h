@@ -6,7 +6,6 @@
 #include <Thread.h>
 #include <Core/CpAvOpenhomeOrgProduct1.h>
 #include <Core/CpAvOpenhomeOrgVolume1.h>
-#include <Core/CpUpnpOrgRenderingControl1.h>
 
 #include <vector>
 
@@ -65,6 +64,7 @@ class CpTopology2Group
 public:
     void AddRef();
     void RemoveRef();
+    CpDevice& Device() const;
     TBool Standby() const;
     void SetStandby(TBool aValue);
     const Brx& Room() const;
@@ -97,12 +97,12 @@ public:
     void FadeDec();
     TBool Mute() const;
     void SetMute(TBool aValue);
-    void SetUserData(void* aPtr);
+    void SetUserData(void* aValue);
 	void* UserData() const;
 	
 public: // for test purposes
-    CpTopology2Group(ICpTopology2GroupHandler& aHandler, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex, TUint aVolumeMax, TUint aVolumeUnity, TUint aVolumeSteps, TUint aVolumeMilliDbPerStep, TUint aBalanceMax, TUint aFadeMax, TUint aVolumelimit, TUint aVolume, TInt aBalance, TUint aFade, TBool aMute);
-    CpTopology2Group(ICpTopology2GroupHandler& aHandler, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex);
+    CpTopology2Group(CpDevice& aDevice, ICpTopology2GroupHandler& aHandler, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex, TUint aVolumeMax, TUint aVolumeUnity, TUint aVolumeSteps, TUint aVolumeMilliDbPerStep, TUint aBalanceMax, TUint aFadeMax, TUint aVolumelimit, TUint aVolume, TInt aBalance, TUint aFade, TBool aMute);
+    CpTopology2Group(CpDevice& aDevice, ICpTopology2GroupHandler& aHandler, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex);
     void AddSource(const Brx& aName, const Brx& aType, TBool aVisible);
     void UpdateRoom(const Brx& aValue);
     void UpdateName(const Brx& aValue);
@@ -117,6 +117,7 @@ public: // for test purposes
     ~CpTopology2Group();
 
 private:
+    CpDevice& iDevice;
 	ICpTopology2GroupHandler& iHandler;
 	TBool iStandby;
 	Bws<kMaxRoomBytes> iRoom;
@@ -316,8 +317,6 @@ private:
 	// ICpTopology1Handler
 	virtual void ProductAdded(CpDevice& aDevice);
 	virtual void ProductRemoved(CpDevice& aDevice);
-	virtual void UpnpAdded(CpDevice& aDevice);
-	virtual void UpnpRemoved(CpDevice& aDevice);
 
 	void DeviceRemoved(CpDevice& aDevice);
 

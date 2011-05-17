@@ -23,9 +23,12 @@ public:
     virtual void RoomRemoved(CpTopology3Room& aRoom) = 0;
 	virtual void RoomStandbyChanged(CpTopology3Room& aRoom) = 0;
 	virtual void RoomSourceIndexChanged(CpTopology3Room& aRoom) = 0;
+    virtual void RoomVolumeLimitChanged(CpTopology3Room& aRoom) = 0;
 	virtual void RoomVolumeChanged(CpTopology3Room& aRoom) = 0;
+    virtual void RoomBalanceChanged(CpTopology3Room& aRoom) = 0;
+    virtual void RoomFadeChanged(CpTopology3Room& aRoom) = 0;
 	virtual void RoomMuteChanged(CpTopology3Room& aRoom) = 0;
-	~ICpTopology3Handler() {}
+	virtual ~ICpTopology3Handler() {}
 };
 
 class CpTopology3Source;
@@ -48,6 +51,7 @@ private:
 	TUint SourceCount() const;
     const Brx& SourceName(TUint aIndex) const;
     const Brx& SourceType(TUint aIndex) const;
+    CpDevice& SourceDevice(TUint aIndex) const;
 	
 	~CpTopology3Group();
 	
@@ -86,6 +90,7 @@ private:
     TUint SourceCount() const;
     const Brx& SourceName(TUint aIndex) const;
     const Brx& SourceType(TUint aIndex) const;
+    CpDevice& SourceDevice(TUint aIndex) const;
     
 	~CpTopology3Source();
 	
@@ -116,14 +121,33 @@ public:
     TUint SourceCount() const;
     const Brx& SourceName(TUint aIndex) const;
     const Brx& SourceType(TUint aIndex) const;
-    //CpDevice& SourceDevice(TUint aIndex) const;
+    CpDevice& SourceDevice(TUint aIndex) const;
     TUint SourceIndex() const;
     void SetSourceIndex(TUint aIndex);
     TBool HasVolumeControl() const;
+    TUint VolumeMax() const;
+    TUint VolumeUnity() const;
+    TUint VolumeSteps() const;
+    TUint VolumeMilliDbPerStep() const;
+    TUint FadeMax() const;
+    TUint BalanceMax() const;
+    TUint VolumeLimit() const;
     TUint Volume() const;
-    void SetVolume(TUint aValue) const;
+    void SetVolume(TUint aValue);
+    void VolumeInc();
+    void VolumeDec();
+    TInt Balance() const;
+    void SetBalance(TInt aValue);
+    void BalanceInc();
+    void BalanceDec();
+    TInt Fade() const;
+    void SetFade(TInt aValue);
+    void FadeInc();
+    void FadeDec();
     TBool Mute() const;
     void SetMute(TBool aValue);
+    void SetUserData(void* aValue);
+    void* UserData() const;
 
     ~CpTopology3Room();
 
@@ -153,6 +177,7 @@ private:
     std::vector<CpTopology3Group*> iRootList;
     CpTopology3Group* iRoot;
     TBool iHasVolumeControl;
+    void* iUserData;
 };
 
 
@@ -185,7 +210,10 @@ private:
     virtual void RoomRemoved(CpTopology3Room& aRoom);
 	virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
 	virtual void RoomSourceIndexChanged(CpTopology3Room& aRoom);
+    virtual void RoomVolumeLimitChanged(CpTopology3Room& aRoom);
 	virtual void RoomVolumeChanged(CpTopology3Room& aRoom);
+    virtual void RoomBalanceChanged(CpTopology3Room& aRoom);
+    virtual void RoomFadeChanged(CpTopology3Room& aRoom);
 	virtual void RoomMuteChanged(CpTopology3Room& aRoom);
 
 private:
