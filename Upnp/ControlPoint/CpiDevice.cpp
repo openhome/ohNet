@@ -368,10 +368,12 @@ CpiDeviceListUpdater::~CpiDeviceListUpdater()
 {
     Kill();
     Join();
-    for (size_t i=0; i<iList.size(); i++) {
+    while (iList.size() > 0) {
+        iLock.Wait();
         UpdateBase* update = iList.front();
-        delete update;
         iList.pop_front();
+        iLock.Signal();
+        delete update;
     }
 }
 

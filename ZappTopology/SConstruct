@@ -1,7 +1,0 @@
-(_default_env, _tool_env) = SConscript('../BuildSystem/Initialise.py')
-import os
-_default_env.SConsignFile('$sconsign_dir/.sconsign.$hardware-$variant')
-_default_env['variant_dir'] += '/' + os.path.split(os.getcwd())[1]
-_default_env['lib'] = '$install_dir/lib'
-_tool_env['variant_dir'] = _default_env['variant_dir']
-SConscript('SConscript', variant_dir = _default_env['variant_dir'], duplicate = 0, exports = ['_default_env', '_tool_env'])

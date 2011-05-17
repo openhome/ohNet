@@ -10,6 +10,8 @@ def build(aTarget):
     if os.name == 'nt':
         buildCmd = 'nmake -s -f Zapp.mak '
     buildCmd += aTarget
+    if os.environ.has_key('CS_PLATFORM'):
+        buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']
     ret = os.system(buildCmd)
     if (0 != ret):
         print '\nBuild for ' + aTarget + ' failed, aborting'
