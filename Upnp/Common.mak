@@ -91,7 +91,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)ZappCDv.$(objext) \
     		   $(objdir)ZappCCombined.$(objext) \
     		   $(objdir)OsWrapper.$(objext) \
-    		   $(objdir)Os.$(objext)
+    		   $(objdir)Os.$(objext) \
 
 # For simplicity, we make a list of all headers in the project and have all (core) source files depend on them
 headers = $(inc_build)/Ascii.h \
@@ -484,35 +484,45 @@ $(objdir)TestProxyC.$(objext) : Public/C/TestProxyC.cpp $(headers)
 $(objdir)MainC.$(objext) : Os/$(osdir)/MainC.c $(headers)
 	$(compiler)MainC.$(objext) -c $(cflags) $(includes) Os/$(osdir)/MainC.c
 
-TestTopology1: $(objdir)TestTopology1.$(exeext) 
-$(objdir)TestTopology1.$(exeext) :  upnp_core $(objdir)CpTopology1.$(objext) $(objdir)TestTopology1.$(objext) TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestTopology1.$(exeext) $(objdir)CpTopology1.$(objext) $(objdir)TestTopology1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+objects_topology = $(objdir)CpTopology.$(objext) \
+    		       $(objdir)CpTopology1.$(objext) \
+    		       $(objdir)CpTopology2.$(objext) \
+    		       $(objdir)CpTopology3.$(objext) \
+			       $(objdir)CpAvOpenhomeOrgProduct1.$(objext) \
+			       $(objdir)CpAvOpenhomeOrgVolume1.$(objext)
+
+upnp_topology : upnp_core $(objects_topology)
+
 $(objdir)CpTopology1.$(objext) : ControlPoint/Topology/CpTopology1.cpp $(headers)
 	$(compiler)CpTopology1.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/CpTopology1.cpp 
+$(objdir)CpTopology2.$(objext) : ControlPoint/Topology/CpTopology2.cpp $(headers)
+	$(compiler)CpTopology2.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/CpTopology2.cpp 
+$(objdir)CpTopology3.$(objext) : ControlPoint/Topology/CpTopology3.cpp $(headers)
+	$(compiler)CpTopology3.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/CpTopology3.cpp 
+$(objdir)CpTopology.$(objext) : ControlPoint/Topology/CpTopology.cpp $(headers)
+	$(compiler)CpTopology.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/CpTopology.cpp 
+
+TestTopology1: $(objdir)TestTopology1.$(exeext)  
+$(objdir)TestTopology1.$(exeext) :  upnp_core $(objects_topology) $(objdir)TestTopology1.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTopology1.$(exeext) $(objdir)TestTopology1.$(objext) $(objects_topology) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestTopology1.$(objext) : ControlPoint/Topology/TestTopology1.cpp $(headers)
 	$(compiler)TestTopology1.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/TestTopology1.cpp
 
 TestTopology2: $(objdir)TestTopology2.$(exeext) 
-$(objdir)TestTopology2.$(exeext) :  upnp_core $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)TestTopology2.$(objext) $(objdir)CpAvOpenhomeOrgProduct1.$(objext) $(objdir)CpAvOpenhomeOrgVolume1.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestTopology2.$(exeext) $(objdir)CpAvOpenhomeOrgProduct1.$(objext) $(objdir)CpAvOpenhomeOrgVolume1.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)TestTopology2.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
-$(objdir)CpTopology2.$(objext) : ControlPoint/Topology/CpTopology2.cpp $(headers)
-	$(compiler)CpTopology2.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/CpTopology2.cpp 
+$(objdir)TestTopology2.$(exeext) :  upnp_core $(objects_topology) $(objdir)TestTopology2.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTopology2.$(exeext) $(objdir)TestTopology2.$(objext) $(objects_topology) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestTopology2.$(objext) : ControlPoint/Topology/TestTopology2.cpp $(headers)
 	$(compiler)TestTopology2.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/TestTopology2.cpp
 
 TestTopology3: $(objdir)TestTopology3.$(exeext) 
-$(objdir)TestTopology3.$(exeext) :  upnp_core $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)CpTopology3.$(objext) $(objdir)TestTopology3.$(objext) $(objdir)CpAvOpenhomeOrgProduct1.$(objext) $(objdir)CpAvOpenhomeOrgVolume1.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestTopology3.$(exeext) $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)CpTopology3.$(objext) $(objdir)TestTopology3.$(objext) $(objdir)CpAvOpenhomeOrgProduct1.$(objext) $(objdir)CpAvOpenhomeOrgVolume1.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
-$(objdir)CpTopology3.$(objext) : ControlPoint/Topology/CpTopology3.cpp $(headers)
-	$(compiler)CpTopology3.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/CpTopology3.cpp 
+$(objdir)TestTopology3.$(exeext) :  upnp_core $(objects_topology) $(objdir)TestTopology3.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTopology3.$(exeext) $(objdir)TestTopology3.$(objext) $(objects_topology) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestTopology3.$(objext) : ControlPoint/Topology/TestTopology3.cpp $(headers)
 	$(compiler)TestTopology3.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/TestTopology3.cpp
 
 TestTopology: $(objdir)TestTopology.$(exeext) 
-$(objdir)TestTopology.$(exeext) :  upnp_core $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)CpTopology3.$(objext) $(objdir)CpTopology.$(objext) $(objdir)TestTopology.$(objext) $(objdir)CpAvOpenhomeOrgProduct1.$(objext) $(objdir)CpAvOpenhomeOrgVolume1.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestTopology.$(exeext) $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)CpTopology3.$(objext) $(objdir)CpTopology.$(objext) $(objdir)TestTopology.$(objext) $(objdir)CpAvOpenhomeOrgProduct1.$(objext) $(objdir)CpAvOpenhomeOrgVolume1.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
-$(objdir)CpTopology.$(objext) : ControlPoint/Topology/CpTopology.cpp $(headers)
-	$(compiler)CpTopology.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/CpTopology.cpp 
+$(objdir)TestTopology.$(exeext) :  upnp_core $(objects_topology) $(objdir)TestTopology.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTopology.$(exeext) $(objdir)TestTopology.$(objext) $(objects_topology) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestTopology.$(objext) : ControlPoint/Topology/TestTopology.cpp $(headers)
 	$(compiler)TestTopology.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/TestTopology.cpp
 
