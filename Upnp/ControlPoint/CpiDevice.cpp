@@ -242,6 +242,7 @@ void CpiDeviceList::RefreshComplete()
 
 void CpiDeviceList::SetDeviceReady(CpiDevice& aDevice)
 {
+    aDevice.SetReady();
     CpiDeviceListUpdater::QueueAdded(*this, aDevice);
 }
 
@@ -282,7 +283,6 @@ void CpiDeviceList::NotifyAdded(CpiDevice& aDevice)
         iLock.Signal();
         return;
     }
-    aDevice.SetReady();
     iLock.Signal();
     iAdded(aDevice);
 }
