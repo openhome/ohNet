@@ -59,6 +59,8 @@ Mutex::Mutex(const TChar* aName)
     if (iHandle == kHandleNull) {
         throw std::bad_alloc();
     }
+    (void)strncpy(iName, aName, 4);
+    iName[4] = 0;
 }
 
 Mutex::~Mutex()
@@ -68,7 +70,18 @@ Mutex::~Mutex()
 
 void Mutex::Wait()
 {
-    Zapp::Os::MutexLock(iHandle);
+    TInt err = Zapp::Os::MutexLock(iHandle);
+    if (err == -1) {
+        Brhz thBuf;
+        const char* thName = "unknown";
+        Thread* th = Thread::Current();
+        if (th != NULL) {
+            thBuf.Set(th->Name());
+            thName = (const char*)thBuf.Ptr();
+        }    
+        Log::Print("ERROR: Recursive lock attempted on mutex %s from thread %s\n", iName, thName);
+    }
+    ASSERT(err == 0);
 }
 
 void Mutex::Signal()

@@ -32,7 +32,7 @@ public:
     inline static void SemaphoreSignal(THandle aSem);
     inline static THandle MutexCreate(const TChar* aName);
     inline static void MutexDestroy(THandle aMutex);
-    inline static void MutexLock(THandle aMutex);
+    inline static TInt MutexLock(THandle aMutex);
     inline static void MutexUnlock(THandle aMutex);
     inline static THandle ThreadCreate(const TChar* aName, TUint aPriority, TUint aStackBytes,
                                        ThreadEntryPoint aEntryPoint, void* aArg);

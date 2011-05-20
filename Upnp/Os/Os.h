@@ -183,7 +183,9 @@ void OsMutexDestroy(THandle aMutex);
  *
  * @param[in] aMutex  Mutex handle returned from MutexCreate()
  *
- * @return  0 on success; <0 on failure
+ * @return  0 on success
+ *          -1 if called by a thread which already holds the lock
+ *          -2 on any other error
  *          Note that a failure will be treated as a fatal error by the caller
  */
 int32_t OsMutexLock(THandle aMutex);
