@@ -71,7 +71,14 @@ Mutex::~Mutex()
 void Mutex::Wait()
 {
     TInt err = Zapp::Os::MutexLock(iHandle);
-    if (err == -1) {
+    if (err != 0) {
+        const char* msg;
+        if (err == -1) {
+            msg = "Recursive lock attempted on mutex";
+        }
+        else {
+            msg = "Lock attempted on uninitialised mutex";
+        }    
         Brhz thBuf;
         const char* thName = "unknown";
         Thread* th = Thread::Current();
@@ -79,9 +86,9 @@ void Mutex::Wait()
             thBuf.Set(th->Name());
             thName = (const char*)thBuf.Ptr();
         }    
-        Log::Print("ERROR: Recursive lock attempted on mutex %s from thread %s\n", iName, thName);
+        Log::Print("ERROR: %s %s from thread %s\n", msg, iName, thName);
+        ASSERT(err == 0);
     }
-    ASSERT(err == 0);
 }
 
 void Mutex::Signal()
