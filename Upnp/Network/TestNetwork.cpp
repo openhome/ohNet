@@ -50,7 +50,9 @@ public:
                 catch (ReaderError&) {}
                 break;
             }
+            Stack::Mutex().Wait();
             iTestDone = true;
+            Stack::Mutex().Signal();
             iControllerSem.Signal();
         }
         LOG(kNetwork, "<TestServerSession::Run\n");
@@ -73,7 +75,13 @@ public:
         iTestStarted.Wait();
     }
 
-    TBool TestDone() { return iTestDone; }
+    TBool TestDone()
+    {
+        Stack::Mutex().Wait();
+        TBool done = iTestDone;
+        Stack::Mutex().Signal();
+        return done;
+    }
     const Brx& Buffer() { return iBuffer; }
 
 private:
