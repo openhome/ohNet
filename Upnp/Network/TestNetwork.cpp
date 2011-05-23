@@ -6,6 +6,7 @@
 #include <Debug.h>
 #include <OsWrapper.h>
 #include <Arch.h>
+#include <Stack.h>
 
 using namespace Zapp;
 using namespace Zapp::TestFramework;
@@ -735,9 +736,10 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     Endpoint::AddressBuf buf;
     endpt.AppendAddress(buf);
     Print("Using network interface %s\n\n", buf.Ptr());
-    MainTestThread th(addr);
-    th.Start();
-    th.Wait();
+    Thread* th = new MainTestThread(addr);
+    th->Start();
+    th->Wait();
+    delete th;
 
     delete aInitParams;
     UpnpLibrary::Close();

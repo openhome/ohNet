@@ -36,11 +36,15 @@ Stack::Stack()
     : iInitParams(NULL)
     , iTimerManager(NULL)
     , iPublicLock("GMUT")
+    , iNetworkInterfaceList(NULL)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
     , iPrivateLock("SOML")
 {
+    ASSERT(gStackInitCount == 0);
+    gStack = this;
+    gStackInitCount++;
 }
 
 Stack::Stack(InitialisationParams* aInitParams)
@@ -77,7 +81,9 @@ Stack::~Stack()
     iPublicLock.Wait();
     ASSERT(iMulticastListeners.size() == 0);
     iPublicLock.Signal();
-    iTimerManager->Stop();
+    if (iTimerManager != NULL) {
+        iTimerManager->Stop();
+    }
     delete iCpStack;
     delete iDvStack;
     delete iNetworkInterfaceList;
