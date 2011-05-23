@@ -64,6 +64,7 @@ public:
     DllExport void Signal();
 private:
     THandle iHandle;
+    TChar iName[5];
 };
 
 /**

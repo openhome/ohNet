@@ -230,7 +230,11 @@ void OsMutexDestroy(THandle aMutex)
 int32_t OsMutexLock(THandle aMutex)
 {
     int status = pthread_mutex_lock((pthread_mutex_t*)aMutex);
-    return (status==0? 0 : -1);
+    if (status == 0)
+        return 0;
+    else if (status == EDEADLK)
+        return -1;
+    return -2;
 }
 
 int32_t OsMutexUnlock(THandle aMutex)

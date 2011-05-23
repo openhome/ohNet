@@ -361,11 +361,14 @@ void SsdpListenerMulticast::EraseDisabled(VectorNotifyHandler& aVector)
     VectorNotifyHandler::iterator it = aVector.begin();
     while (it != aVector.end()) {
         NotifyHandler* handler = reinterpret_cast<NotifyHandler*>(*it);
+        handler->Lock();
         if (handler->IsDisabled()) {
+            handler->Unlock();
             delete handler;
             it = aVector.erase(it);
         }
         else {
+            handler->Unlock();
             it++;
         }
     }
@@ -376,11 +379,14 @@ void SsdpListenerMulticast::EraseDisabled(VectorMsearchHandler& aVector)
     VectorMsearchHandler::iterator it = aVector.begin();
     while (it != aVector.end()) {
         MsearchHandler* handler = reinterpret_cast<MsearchHandler*>(*it);
+        handler->Lock();
         if (handler->IsDisabled()) {
+            handler->Unlock();
             delete handler;
             it = aVector.erase(it);
         }
         else {
+            handler->Unlock();
             it++;
         }
     }

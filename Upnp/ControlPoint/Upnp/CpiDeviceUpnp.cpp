@@ -347,6 +347,7 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     }
     delete iUnicastListener;
     iXmlFetchLock.Wait();
+    iLock.Wait();
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
         CpiDevice* device = reinterpret_cast<CpiDevice*>(it->second);
@@ -357,14 +358,12 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
         it++;
     }
     iXmlFetchSem.Clear();
+    iLock.Signal();
     iXmlFetchLock.Signal();
     while (xmlWaitCount > 0) {
         iXmlFetchSem.Wait();
         xmlWaitCount--;
     }
-    iXmlFetchLock.Wait();
-    // ensure we don't destroy this class before XmlFetchCompleted completes
-    iXmlFetchLock.Signal();
     delete iRefreshTimer;
 }
 

@@ -45,7 +45,6 @@ public:
     void UpdateMaxAge(TUint aSeconds);
 
     void FetchXml(CpiDeviceListUpnp& aList);
-
     void InterruptXmlFetch();
 private: // ICpiProtocol
     TBool GetAttribute(const char* aKey, Brh& aValue) const;

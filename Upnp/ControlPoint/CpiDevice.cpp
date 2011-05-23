@@ -336,12 +336,20 @@ void CpiDeviceList::NotifyRefreshed()
             }
             else {
                 CpiDevice* device = it->second;
-                device->AddRef();
-                iLock.Signal();
-                DoRemove(device->Udn());
-                device->RemoveRef();
-                iLock.Wait();
-                it = iMap.begin();
+                // skip devices which aren't ready yet
+                // ...assume that they'll either become ready or will be removed via other routes in time
+                // Upnp lists don't cope with devices being removed in this state
+                if (!device->IsReady()) {
+                    it++;
+                }
+                else {    
+                    device->AddRef();
+                    iLock.Signal();
+                    DoRemove(device->Udn());
+                    device->RemoveRef();
+                    iLock.Wait();
+                    it = iMap.begin();
+                }    
             }
         }
     }

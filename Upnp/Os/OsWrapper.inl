@@ -41,11 +41,10 @@ inline THandle Os::MutexCreate(const TChar* aName)
 { return OsMutexCreate(aName); }
 inline void Os::MutexDestroy(THandle aMutex)
 { OsMutexDestroy(aMutex); }
-inline void Os::MutexLock(THandle aMutex)
+inline TInt Os::MutexLock(THandle aMutex)
 {
     ASSERT(aMutex != kHandleNull);
-    int status = OsMutexLock(aMutex);
-    ASSERT(status == 0);
+    return OsMutexLock(aMutex);
 }
 inline void Os::MutexUnlock(THandle aMutex)
 {
