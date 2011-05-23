@@ -142,7 +142,12 @@ class TestCase(object):
         if os.name == 'nt':
             path += '.exe'
         elif not self.native:
-            os.environ['LD_LIBRARY_PATH'] = 'Build/Obj/Posix'
+            libPath = 'Build/Obj/Posix/'
+            if gReleaseBuild == 1:
+                libPath += 'Release'
+            else:
+                libPath += 'Debug'
+            os.environ['LD_LIBRARY_PATH'] = libPath
             path += '.exe'
         else:
             path += '.elf'
