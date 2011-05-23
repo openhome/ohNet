@@ -6,12 +6,14 @@ import shutil
 import signal
 
 def build(aTarget):
-    buildCmd = 'make -s '
+    buildCmd = 'make '
     if os.name == 'nt':
         buildCmd = 'nmake -s -f Zapp.mak '
     buildCmd += aTarget
     if os.environ.has_key('CS_PLATFORM'):
         buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']
+    if gReleaseBuild == 1:
+        buildCmd += ' release=1'
     ret = os.system(buildCmd)
     if (0 != ret):
         print '\nBuild for ' + aTarget + ' failed, aborting'
@@ -90,6 +92,7 @@ gSilent = 0
 gTestsOnly = 0
 gValgrind = 0
 gJsTests = 0
+gReleaseBuild = 0
 for arg in sys.argv[1:]:
     if arg == '-b' or arg == '--buildonly':
         gBuildOnly = 1
@@ -110,6 +113,8 @@ for arg in sys.argv[1:]:
         if os.name == 'nt':
             print 'ERROR - valgrind is only supported on linux'
             sys.exit(1)
+    elif arg == '-r' or arg == '--release':
+        gReleaseBuild = 1
     else:
         print 'Unrecognised argument - ' + arg
         sys.exit(1)
@@ -129,6 +134,10 @@ class TestCase(object):
             path += 'Windows/'
         else:
             path += 'Posix/'
+        if gReleaseBuild == 1:
+            path += 'Release/'
+        else:
+            path += 'Debug/'
         path += self.name
         if os.name == 'nt':
             path += '.exe'

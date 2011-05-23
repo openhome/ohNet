@@ -146,6 +146,7 @@ def getArguments(module,nightly,arch,valgrind,os):
             args += ' --js'
         if nightly == '1':
             args += ' --full'
+            args += ' --release'
             if os == 'Linux' and arch == 'x86':
                 args += ' --valgrind'
 

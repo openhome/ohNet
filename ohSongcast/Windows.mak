@@ -1,6 +1,6 @@
 objdir = Build/Obj/Windows
 incdir = Build/Include
-ohnetdir = ../Upnp/Build/Obj/Windows
+ohnetdir = ../Upnp/Build/Obj/Windows/Debug
 templatesDir = ../Upnp/T4/Templates
 
 # Macros used by Common.mak

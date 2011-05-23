@@ -1,10 +1,18 @@
 # Makefile for linux
 # Could be extended to support Mac in future
 
+ifeq ($(release),1)
+debug_specific_cflags = -O2
+build_dir = Release
+else
+debug_specific_cflags = -g -O0
+build_dir = Debug
+endif
+
 # Macros used by Common.mak
 ar = ${CROSS_COMPILE}ar rc $(objdir)
-cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -g -O0 -Wno-psabi -fvisibility=hidden -DDllImport="__attribute__ ((visibility(\"default\")))" -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))"
-objdir = Build/Obj/Posix/
+cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -Wno-psabi -fvisibility=hidden -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))"
+objdir = Build/Obj/Posix/$(build_dir)/
 inc_build = Build/Include
 includes = -IBuild/Include/ -IBuild/Include/Cpp/
 bundle_build = Build/Bundles

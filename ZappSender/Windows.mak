@@ -1,6 +1,6 @@
 objdir = Build/Obj/Windows
 incdir = Build/Include
-zappdir = ../Upnp/Build/Obj/Windows
+zappdir = ../Upnp/Build/Obj/Windows/Debug
 toolsDir = ../Upnp/Build/Windows/Tools
 templatesDir = ../Upnp/T4/Templates
 

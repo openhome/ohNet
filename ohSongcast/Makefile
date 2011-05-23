@@ -1,6 +1,6 @@
 objdir = Build/Obj/Posix
 incdir = Build/Include
-ohnetdir = ../Upnp/Build/Obj/Posix
+ohnetdir = ../Upnp/Build/Obj/Posix/Debug
 toolsDir = ../Upnp/Build/Posix/Tools
 templatesDir = ../Upnp/T4/Templates
 
