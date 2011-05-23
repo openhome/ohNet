@@ -700,9 +700,10 @@ void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Initi
     UpnpLibrary::InitialiseMinimal(aInitParams);
 
     // many tests rely on Thread::Current() so run all tests in a thread we create
-    MainTestThread th;
-    th.Start();
-    th.Wait();
+    Thread* th = new MainTestThread();
+    th->Start();
+    th->Wait();
+    delete th;
 
     delete aInitParams;
     UpnpLibrary::Close();
