@@ -82,6 +82,36 @@ def runTestsValgrind():
             print '\t' + fail
         sys.exit(-1)
 
+def runTestsHelgrind():
+    # clear any old output files
+    outputDir = 'hgout'
+    if os.path.exists(outputDir):
+        shutil.rmtree(outputDir)
+    os.mkdir(outputDir)
+    failed = []
+    testsToRun = [test for test in gAllTests if test.quick and test.native]
+    if gFullTests == 1:
+        testsToRun = [test for test in gAllTests if test.native]
+    os.system('export GLIBCXX_FORCE_NEW')
+    for test in testsToRun:
+        print '\nTest: ' + test.name
+        cmdLine = []
+        cmdLine.append('valgrind')
+        cmdLine.append('--tool=helgrind')
+        cmdLine.append('--xml=yes')
+        cmdLine.append('--xml-file=' + os.path.join(outputDir, test.name) + '.xml')
+        cmdLine.append(test.Path())
+        for arg in test.args:
+            cmdLine.append(arg)
+        ret = subprocess.call(cmdLine)
+        if ret != 0:
+            failed.append(test.name)
+    if len(failed) > 0:
+        print '\nERROR, the following tests failed:'
+        for fail in failed:
+            print '\t' + fail
+        sys.exit(-1)
+
 gStartTime = time.strftime('%H:%M:%S')
 gBuildsCompleteTime = ''
 gBuildOnly = 0
@@ -91,6 +121,7 @@ gNativeTestsOnly = 0
 gSilent = 0
 gTestsOnly = 0
 gValgrind = 0
+gHelgrind = 0
 gJsTests = 0
 gReleaseBuild = 0
 for arg in sys.argv[1:]:
@@ -112,6 +143,11 @@ for arg in sys.argv[1:]:
         gValgrind = 1
         if os.name == 'nt':
             print 'ERROR - valgrind is only supported on linux'
+            sys.exit(1)
+    elif arg == '-hg' or arg == '--helgrind':
+        gHelgrind = 1
+        if os.name == 'nt':
+            print 'ERROR - helgrind is only supported on linux'
             sys.exit(1)
     elif arg == '-r' or arg == '--release':
         gReleaseBuild = 1
@@ -199,7 +235,9 @@ gBuildsCompleteTime = time.strftime('%H:%M:%S')
 if gBuildOnly == 0:
     if gValgrind == 1:
         runTestsValgrind()
-    else:
+    if gHelgrind == 1:
+        runTestsHelgrind()
+    if gValgrind == 0 and gHelgrind == 0:
         runTests()
     if gJsTests == 1:
         JsTests()
