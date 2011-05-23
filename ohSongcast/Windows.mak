@@ -66,18 +66,18 @@ $(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) : $(objdir)/$(dllprefix)ohSoundc
 
 $(objdir)/TestSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) ohSoundcard/Windows/TestSoundcard.cpp
 	$(compiler)/TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/TestSoundcard.cpp
-	$(link) $(linkoutput)$(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcard.$(objext) $(ohnetdir)/upnp_core.lib $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib $(ohnetdir)/TestFramework.$(libext) 
+	$(link) $(linkoutput)$(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcard.$(objext) $(ohnetdir)/upnp_core.lib $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib $(ohnetdir)/$(libprefix)TestFramework.$(libext) 
 
 $(objdir)/TestReceiverManager.$(exeext) : ohSoundcard/ReceiverManager.cpp ohSoundcard/TestReceiverManager.cpp
 	$(compiler)/ReceiverManager.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager.cpp
 	$(compiler)/TestReceiverManager.$(objext) -c $(cflags) $(includes) ohSoundcard/TestReceiverManager.cpp
-	$(link) $(linkoutput)$(objdir)/TestReceiverManager.$(exeext) $(objdir)/ReceiverManager.$(objext) $(objdir)/TestReceiverManager.$(objext) $(objects_topology) $(ohnetdir)/upnp_core.lib $(ohnetdir)/TestFramework.$(libext) 
+	$(link) $(linkoutput)$(objdir)/TestReceiverManager.$(exeext) $(objdir)/ReceiverManager.$(objext) $(objdir)/TestReceiverManager.$(objext) $(objects_topology) $(ohnetdir)/upnp_core.lib $(ohnetdir)/$(libprefix)TestFramework.$(libext) 
 
 $(objdir)/ZoneWatcher.$(exeext) : ZoneWatcher/ZoneWatcher.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
 	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Ohm.cpp
 	$(compiler)/ZoneWatcher.$(objext) -c $(cflags) $(includes) ZoneWatcher/ZoneWatcher.cpp
-	$(link) $(linkoutput)$(objdir)/ZoneWatcher.$(exeext) $(objdir)/ZoneWatcher.$(objext) $(objdir)/Ohm.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext) $(ohnetdir)/TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)/ZoneWatcher.$(exeext) $(objdir)/ZoneWatcher.$(objext) $(objdir)/Ohm.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext) $(ohnetdir)/$(libprefix)TestFramework.$(libext)
 
 $(objdir)/WavSender.$(exeext) : Services/DvAvOpenhomeOrgSender1.cpp Ohm.cpp OhmSender.cpp WavSender/WavSender.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
@@ -85,7 +85,7 @@ $(objdir)/WavSender.$(exeext) : Services/DvAvOpenhomeOrgSender1.cpp Ohm.cpp OhmS
 	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Ohm.cpp
 	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) OhmSender.cpp
 	$(compiler)/WavSender.$(objext) -c $(cflags) $(includes) WavSender/WavSender.cpp
-	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext) $(ohnetdir)/TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext) $(ohnetdir)/$(libprefix)TestFramework.$(libext)
 
 $(objdir)/WavReceiver.$(exeext) : Services/DvAvOpenhomeOrgProduct1.cpp Services/DvAvOpenhomeOrgReceiver1.cpp Product.cpp WavReceiver/WavReceiver.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
@@ -93,7 +93,7 @@ $(objdir)/WavReceiver.$(exeext) : Services/DvAvOpenhomeOrgProduct1.cpp Services/
 	$(compiler)/DvAvOpenhomeOrgReceiver1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgReceiver1.cpp
 	$(compiler)/Product.$(objext) -c $(cflags) $(includes) Product.cpp
 	$(compiler)/Receiver.$(objext) -c $(cflags) $(includes) WavReceiver/WavReceiver.cpp
-	$(link) $(linkoutput)$(objdir)/WavReceiver.$(exeext) $(objdir)/WavReceiver.$(objext) $(objdir)/Product.$(objext) $(objdir)/DvAvOpenhomeOrgProduct1.$(objext) $(objdir)/DvAvOpenhomeOrgReceiver1.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext) $(ohnetdir)/TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)/WavReceiver.$(exeext) $(objdir)/WavReceiver.$(objext) $(objdir)/Product.$(objext) $(objdir)/DvAvOpenhomeOrgProduct1.$(objext) $(objdir)/DvAvOpenhomeOrgReceiver1.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext) $(ohnetdir)/$(libprefix)TestFramework.$(libext)
 
 t4 = ..\Upnp\Build\Windows\Tools\TextTransform.exe
 
