@@ -298,11 +298,6 @@ void CpiDeviceList::DoRemove(const Brx& aUdn)
     LOG(kDevice, aUdn);
     LOG(kDevice, "\n");
     iLock.Wait();
-    if (!iActive) {
-        LOG(kDevice, "< CpiDeviceList::DoRemove, list not active\n");
-        iLock.Signal();
-        return;
-    }
     TBool callObserver;
     Brn udn(aUdn);
     Map::iterator it = iMap.find(udn);
@@ -314,7 +309,7 @@ void CpiDeviceList::DoRemove(const Brx& aUdn)
     }
     CpiDevice* device = it->second;
     // don't remove our ref to the device yet, re-use it for the observer
-    callObserver = device->IsReady();
+    callObserver = (iActive && device->IsReady());
     it->second = NULL;
     iMap.erase(it);
     iLock.Signal();
