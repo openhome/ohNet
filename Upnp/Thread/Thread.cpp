@@ -2,6 +2,7 @@
 #include <Debug.h>
 #include <OsWrapper.h>
 #include <exception>
+#include <Stack.h>
 
 using namespace Zapp;
 
@@ -252,10 +253,10 @@ TBool Thread::SupportsPriorities()
 
 void Thread::CheckForKill() const
 {
-    // iKill is read/written from multiple threads but doesn't need to be locked
-    // the only read is here and this function is polled.  If callers just miss
-    // the thread being killed, they'll get an exception next time round...
-    if (iKill) {
+    Stack::Mutex().Wait();
+    TBool kill = iKill;
+    Stack::Mutex().Signal();
+    if (kill) {
         THROW(ThreadKill);
     }
 }
@@ -263,7 +264,9 @@ void Thread::CheckForKill() const
 void Thread::Kill()
 {
     LOG(kThread, "Thread::Kill() called for thread: %p\n", this);
+    Stack::Mutex().Wait();
     iKill = true;
+    Stack::Mutex().Signal();
     Signal();
 }
 

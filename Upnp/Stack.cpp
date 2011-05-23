@@ -32,19 +32,32 @@ Stack* gStack = NULL;
 static const TUint kVersionMajor = 1;
 static const TUint kVersionMinor = 0;
 
-Stack::Stack(InitialisationParams* aInitParams)
-    : iInitParams(aInitParams)
-    , iLock("GMUT")
+Stack::Stack()
+    : iInitParams(NULL)
+    , iTimerManager(NULL)
+    , iPublicLock("GMUT")
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
-    , iMapLock("SOML")
+    , iPrivateLock("SOML")
+{
+}
+
+Stack::Stack(InitialisationParams* aInitParams)
+    : iInitParams(aInitParams)
+    , iPublicLock("GMUT")
+    , iNetworkInterfaceList(NULL)
+    , iSequenceNumber(0)
+    , iCpStack(NULL)
+    , iDvStack(NULL)
+    , iPrivateLock("SOML")
 {
     SetAssertHandler(AssertHandlerDefault);
     ASSERT(gStackInitCount == 0);
     gStack = this;
     gStackInitCount++;
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
+    iTimerManager = new Zapp::TimerManager();
     iNetworkInterfaceList = new Zapp::NetworkInterfaceList(iInitParams->DefaultSubnet());
     Functor& subnetChangeListener = iInitParams->SubnetChangedListener();
     if (subnetChangeListener) {
@@ -61,10 +74,10 @@ Stack::~Stack()
 {
     ASSERT(gStackInitCount == 1);
     gStackInitCount = 0;
-    iLock.Wait();
+    iPublicLock.Wait();
     ASSERT(iMulticastListeners.size() == 0);
-    iLock.Signal();
-    iTimerManager.Stop();
+    iPublicLock.Signal();
+    iTimerManager->Stop();
     delete iCpStack;
     delete iDvStack;
     delete iNetworkInterfaceList;
@@ -91,12 +104,12 @@ void Stack::GetVersion(TUint& aMajor, TUint& aMinor)
 
 Zapp::TimerManager& Stack::TimerManager()
 {
-    return gStack->iTimerManager;
+    return *(gStack->iTimerManager);
 }
 
 Zapp::Mutex& Stack::Mutex()
 {
-    return gStack->iLock;
+    return gStack->iPublicLock;
 }
 
 NetworkInterfaceList& Stack::NetworkInterfaceList()
@@ -106,7 +119,7 @@ NetworkInterfaceList& Stack::NetworkInterfaceList()
 
 SsdpListenerMulticast& Stack::MulticastListenerClaim(TIpAddress aInterface)
 {
-    AutoMutex a(gStack->iLock);
+    AutoMutex a(gStack->iPrivateLock);
     const TInt count = (TUint)gStack->iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
         Stack::MListener* listener = gStack->iMulticastListeners[i];
@@ -124,7 +137,7 @@ SsdpListenerMulticast& Stack::MulticastListenerClaim(TIpAddress aInterface)
 
 void Stack::MulticastListenerRelease(TIpAddress aInterface)
 {
-    gStack->iLock.Wait();
+    gStack->iPrivateLock.Wait();
     const TInt count = (TUint)gStack->iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
         Stack::MListener* listener = gStack->iMulticastListeners[i];
@@ -136,7 +149,7 @@ void Stack::MulticastListenerRelease(TIpAddress aInterface)
             }
         }
     }
-    gStack->iLock.Signal();
+    gStack->iPrivateLock.Signal();
 }
 
 TUint Stack::SequenceNumber()
@@ -177,7 +190,7 @@ void Stack::ListObjects()
 
 void Stack::DoAddObject(void* aPtr, const char* aClassName)
 {
-    iMapLock.Wait();
+    iPrivateLock.Wait();
     Brn key(aClassName);
     ObjectType* map = NULL;
     ObjectTypeMap::iterator it = iObjectMap.find(key);
@@ -192,12 +205,12 @@ void Stack::DoAddObject(void* aPtr, const char* aClassName)
         iObjectMap.insert(std::pair<Brn,ObjectType*>(key, o));
     }
     map->Map().insert(std::pair<void*,void*>(aPtr, aPtr));
-    iMapLock.Signal();
+    iPrivateLock.Signal();
 }
 
 void Stack::DoRemoveObject(void* aPtr, const char* aClassName)
 {
-    iMapLock.Wait();
+    iPrivateLock.Wait();
     Brn key(aClassName);
     ObjectTypeMap::iterator it = iObjectMap.find(key);
     if (it != iObjectMap.end()) {
@@ -211,12 +224,12 @@ void Stack::DoRemoveObject(void* aPtr, const char* aClassName)
             }
         }
     }
-    iMapLock.Signal();
+    iPrivateLock.Signal();
 }
 
 void Stack::DoListObjects()
 {
-    iMapLock.Wait();
+    iPrivateLock.Wait();
     ObjectTypeMap::iterator it = iObjectMap.begin();
     while (it != iObjectMap.end()) {
         Log::Print("  ");
@@ -231,7 +244,7 @@ void Stack::DoListObjects()
         }
         it++;
     }
-    iMapLock.Signal();
+    iPrivateLock.Signal();
 }
 
 void Stack::SetCpiStack(IStack* aStack)

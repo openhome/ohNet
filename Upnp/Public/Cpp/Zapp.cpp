@@ -388,19 +388,25 @@ void InitialisationParams::FatalErrorHandlerDefault(const char* aMsg)
 
 // Entrypoint
 
+static void BaseInit(InitialisationParams* aInitParams)
+{
+    Log::RegisterOutput(aInitParams->LogOutput());
+    if (0 != Zapp::Os::Create()) {
+        throw std::bad_alloc();
+    }
+}
+
 void UpnpLibrary::Initialise(InitialisationParams* aInitParams)
 {
-    UpnpLibrary::InitialiseMinimal(aInitParams);
+    BaseInit(aInitParams);
     new Stack(aInitParams);
     //Debug::SetLevel(Debug::kError);
 }
 
 void UpnpLibrary::InitialiseMinimal(InitialisationParams* aInitParams)
 {
-    Log::RegisterOutput(aInitParams->LogOutput());
-    if (0 != Zapp::Os::Create()) {
-        throw std::bad_alloc();
-    }
+    BaseInit(aInitParams);
+    new Stack();
 }
 
 void UpnpLibrary::Close()

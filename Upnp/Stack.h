@@ -31,6 +31,7 @@ class Stack
     friend class CpiStack;
     friend class DviStack;
 public:
+    Stack();
     Stack(InitialisationParams* aInitParams);
     static void Destroy();
     static TBool IsInitialised();
@@ -86,8 +87,8 @@ private:
     };
 private:
     InitialisationParams* iInitParams;
-    Zapp::TimerManager iTimerManager;
-    Zapp::Mutex iLock;
+    Zapp::TimerManager* iTimerManager;
+    Zapp::Mutex iPublicLock;
     Zapp::NetworkInterfaceList* iNetworkInterfaceList;
     typedef std::vector<MListener*> MulticastListeners;
     MulticastListeners iMulticastListeners;
@@ -96,7 +97,7 @@ private:
     IStack* iDvStack;
     typedef std::map<Brn,ObjectType*,BufferCmp> ObjectTypeMap;
     ObjectTypeMap iObjectMap;
-    Zapp::Mutex iMapLock;
+    Zapp::Mutex iPrivateLock;
 };
 
 } // namespace Zapp
