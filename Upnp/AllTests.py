@@ -5,6 +5,16 @@ import time
 import shutil
 import signal
 
+def objPath():
+    plat = 'Posix'
+    if os.name == 'nt':
+        plat = 'Windows'
+    variant = 'Debug'
+    if gReleaseBuild == 1:
+        variant = 'Release'
+    path = os.path.join('Build', 'Obj', plat, variant)
+    return path
+
 def build(aTarget):
     buildCmd = 'make '
     if os.name == 'nt':
@@ -165,20 +175,11 @@ class TestCase(object):
         self.quick = quick
         self.native = native
     def Path(self):
-        path = 'Build/Obj/'
-        if os.name == 'nt':
-            path += 'Windows/'
-        else:
-            path += 'Posix/'
-        if gReleaseBuild == 1:
-            path += 'Release/'
-        else:
-            path += 'Debug/'
-        path += self.name
+        path = objPath() + '/' + self.name
         if os.name == 'nt':
             path += '.exe'
         elif not self.native:
-            os.environ['LD_LIBRARY_PATH'] = 'Build/Obj/Posix'
+            os.environ['LD_LIBRARY_PATH'] = objPath()
             path += '.exe'
         else:
             path += '.elf'
@@ -223,8 +224,8 @@ def JsTests():
     localAppData = os.environ.get('ProgramFiles')
     uiPath = os.path.join(os.getcwd(), 'Build\Include\Js\Tests')
     browser = os.path.join(localAppData, 'Safari\Safari.exe')
-    testbasic = subprocess.Popen(['Build\Obj\Windows\TestDvTestBasic.exe', '-l', '-c', uiPath])
-    devfinder = subprocess.Popen(['Build\Obj\Windows\TestDeviceFinder.exe', '-l', '-s', 'zapp.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    testbasic = subprocess.Popen([os.path.join(objPath(), 'TestDvTestBasic.exe'), '-l', '-c', uiPath])
+    devfinder = subprocess.Popen([os.path.join(objPath(), 'TestDeviceFinder.exe'), '-l', '-s', 'zapp.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     devfinder_out = devfinder.communicate()[1].rstrip()
     subprocess.call([browser, devfinder_out])
     testbasic.terminate()
