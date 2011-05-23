@@ -134,31 +134,20 @@ def getModule():
         
 
 def getArguments(module,nightly,arch,valgrind,os):
-
-    if module == "upnp" and nightly == "1" and arch == "x86":
-        if valgrind != "0":
-            args = ' -s -f -vg'
-            
-        else:
-            args = ' -s -f -j'
-                
-    elif module == "upnp" and arch == 'arm':
-        args = ' -b'
-
-    elif module == "upnp" and arch == 'x64':
-        if nightly == "1":
-            args = ' -s -f -n'
-        else:
-            args = ' -s -n'
-                
-    elif module == "upnp" and arch == 'x86' and os == 'Windows':
-        args = ' -s -j'
-
-    elif module == "upnp":
-        args = ' -s'
-                
-    else:                                
+    if module != 'upnp':
         args = ''
+    else:
+        args = ' --silent'
+        if arch == 'arm':
+            args += ' --buildonly'
+        elif arch == 'x64':
+            args += ' --native'
+        if os == 'Windows' and arch == 'x86':
+            args += ' --js'
+        if nightly == '1':
+            args += ' --full'
+            if os == 'Linux' and arch == 'x86':
+                args += ' --valgrind'
 
     return {'args':args}
     
