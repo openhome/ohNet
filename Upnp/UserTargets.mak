@@ -3,7 +3,7 @@
 # (Note that some of these depend on variables defined in the generated
 # makefiles, and so cannot be defined in Common.mak.)
 
-all : Tests proxies $(proxy_dotnet_assemblies_with_path) $(device_dlls) $(device_dotnet_assemblies_with_path)
+all : Tests proxies CpProxyDotNetAssemblies devices DvDeviceDotNetAssemblies
 
 clean :
 	$(rmdir) $(objdir)
