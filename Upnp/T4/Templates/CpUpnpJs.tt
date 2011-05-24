@@ -1,4 +1,4 @@
-﻿<#@ template language="C#v3.5" debug="true" hostSpecific="true" #>
+<#@ template language="C#v3.5" debug="true" hostSpecific="true" #>
 <#@ output extension=".js" #>
 <#@ Assembly Name="System.Core.dll" #>
 <#@ Assembly Name="System.Windows.Forms.dll" #>
