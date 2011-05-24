@@ -2,8 +2,8 @@
 #include <OptionParser.h>
 #include <ZappTypes.h>
 #include <Core/DvDevice.h>
-#include <Core/DvZappOrgTestBasic1.h>
-#include <Core/CpZappOrgTestBasic1.h>
+#include <Core/DvOpenhomeOrgTestBasic1.h>
+#include <Core/CpOpenhomeOrgTestBasic1.h>
 #include <Zapp.h>
 #include <MimeTypes.h>
 
@@ -14,7 +14,7 @@
 using namespace Zapp;
 using namespace Zapp::TestFramework;
 
-class ProviderTestBasic : public DvProviderZappOrgTestBasic1
+class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
 {
 public:
     ProviderTestBasic(DvDevice& aDevice);
@@ -54,7 +54,7 @@ private:
 
 
 ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
-    : DvProviderZappOrgTestBasic1(aDevice)
+    : DvProviderOpenhomeOrgTestBasic1(aDevice)
 {
     SetPropertyVarUint(0);
     SetPropertyVarInt(0);
@@ -239,7 +239,7 @@ DeviceBasic::DeviceBasic(const Brx& aConfigDir)
     : iConfigDir(aConfigDir)
 {
     iDevice = new DvDeviceStandard(Brn("device-ZappTestBasic"), *this);
-    iDevice->SetAttribute("Upnp.Domain", "zapp.org");
+    iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
     iDevice->SetAttribute("Upnp.FriendlyName", "_ZappTestDevice");

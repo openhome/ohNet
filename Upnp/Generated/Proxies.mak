@@ -61,15 +61,15 @@ objects_proxies = \
                   $(objdir)CpAvOpenhomeOrgRadio1.$(objext) \
                   $(objdir)CpAvOpenhomeOrgRadio1C.$(objext) \
                   $(objdir)CpAvOpenhomeOrgRadio1Std.$(objext) \
-                  $(objdir)CpZappOrgTestBasic1.$(objext) \
-                  $(objdir)CpZappOrgTestBasic1C.$(objext) \
-                  $(objdir)CpZappOrgTestBasic1Std.$(objext) \
-                  $(objdir)CpZappOrgTestLights1.$(objext) \
-                  $(objdir)CpZappOrgTestLights1C.$(objext) \
-                  $(objdir)CpZappOrgTestLights1Std.$(objext) \
-                  $(objdir)CpZappOrgTestDimmableLight1.$(objext) \
-                  $(objdir)CpZappOrgTestDimmableLight1C.$(objext) \
-                  $(objdir)CpZappOrgTestDimmableLight1Std.$(objext) \
+                  $(objdir)CpOpenhomeOrgTestBasic1.$(objext) \
+                  $(objdir)CpOpenhomeOrgTestBasic1C.$(objext) \
+                  $(objdir)CpOpenhomeOrgTestBasic1Std.$(objext) \
+                  $(objdir)CpOpenhomeOrgTestLights1.$(objext) \
+                  $(objdir)CpOpenhomeOrgTestLights1C.$(objext) \
+                  $(objdir)CpOpenhomeOrgTestLights1Std.$(objext) \
+                  $(objdir)CpOpenhomeOrgTestDimmableLight1.$(objext) \
+                  $(objdir)CpOpenhomeOrgTestDimmableLight1C.$(objext) \
+                  $(objdir)CpOpenhomeOrgTestDimmableLight1Std.$(objext) \
 
 # Service proxies have well controlled dependencies so we can document a more limited set of headers
 headers_proxy = $(inc_build)/Cpp/Buffer.h \
@@ -104,9 +104,9 @@ proxy_dotnet_assemblies = \
         CpAvOpenhomeOrgVolume1.net.dll \
         CpAvOpenhomeOrgProduct1.net.dll \
         CpAvOpenhomeOrgRadio1.net.dll \
-        CpZappOrgTestBasic1.net.dll \
-        CpZappOrgTestLights1.net.dll \
-        CpZappOrgTestDimmableLight1.net.dll \
+        CpOpenhomeOrgTestBasic1.net.dll \
+        CpOpenhomeOrgTestLights1.net.dll \
+        CpOpenhomeOrgTestDimmableLight1.net.dll \
 
 proxy_dotnet_assemblies_with_path = \
         $(objdir)CpUpnpOrgAVTransport1.net.dll \
@@ -128,9 +128,9 @@ proxy_dotnet_assemblies_with_path = \
         $(objdir)CpAvOpenhomeOrgVolume1.net.dll \
         $(objdir)CpAvOpenhomeOrgProduct1.net.dll \
         $(objdir)CpAvOpenhomeOrgRadio1.net.dll \
-        $(objdir)CpZappOrgTestBasic1.net.dll \
-        $(objdir)CpZappOrgTestLights1.net.dll \
-        $(objdir)CpZappOrgTestDimmableLight1.net.dll \
+        $(objdir)CpOpenhomeOrgTestBasic1.net.dll \
+        $(objdir)CpOpenhomeOrgTestLights1.net.dll \
+        $(objdir)CpOpenhomeOrgTestDimmableLight1.net.dll \
 
 
 proxies : upnp_core $(objects_proxies)
@@ -249,24 +249,24 @@ $(objdir)CpAvOpenhomeOrgRadio1C.$(objext) : $(proxyC)CpAvOpenhomeOrgRadio1C.cpp 
 	$(compiler)CpAvOpenhomeOrgRadio1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgRadio1C.cpp
 $(objdir)CpAvOpenhomeOrgRadio1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgRadio1Std.cpp $(headers_proxy) ControlPoint/Services/Cpp/Std/CpAvOpenhomeOrgRadio1.h
 	$(compiler)CpAvOpenhomeOrgRadio1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgRadio1Std.cpp
-$(objdir)CpZappOrgTestBasic1.$(objext) : $(proxyCppCore)CpZappOrgTestBasic1.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/CpZappOrgTestBasic1.h
-	$(compiler)CpZappOrgTestBasic1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpZappOrgTestBasic1.cpp
-$(objdir)CpZappOrgTestBasic1C.$(objext) : $(proxyC)CpZappOrgTestBasic1C.cpp $(headers_proxy) ControlPoint/Services/C/CpZappOrgTestBasic1.h
-	$(compiler)CpZappOrgTestBasic1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpZappOrgTestBasic1C.cpp
-$(objdir)CpZappOrgTestBasic1Std.$(objext) : $(proxyCppStd)CpZappOrgTestBasic1Std.cpp $(headers_proxy) ControlPoint/Services/Cpp/Std/CpZappOrgTestBasic1.h
-	$(compiler)CpZappOrgTestBasic1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpZappOrgTestBasic1Std.cpp
-$(objdir)CpZappOrgTestLights1.$(objext) : $(proxyCppCore)CpZappOrgTestLights1.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/CpZappOrgTestLights1.h
-	$(compiler)CpZappOrgTestLights1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpZappOrgTestLights1.cpp
-$(objdir)CpZappOrgTestLights1C.$(objext) : $(proxyC)CpZappOrgTestLights1C.cpp $(headers_proxy) ControlPoint/Services/C/CpZappOrgTestLights1.h
-	$(compiler)CpZappOrgTestLights1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpZappOrgTestLights1C.cpp
-$(objdir)CpZappOrgTestLights1Std.$(objext) : $(proxyCppStd)CpZappOrgTestLights1Std.cpp $(headers_proxy) ControlPoint/Services/Cpp/Std/CpZappOrgTestLights1.h
-	$(compiler)CpZappOrgTestLights1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpZappOrgTestLights1Std.cpp
-$(objdir)CpZappOrgTestDimmableLight1.$(objext) : $(proxyCppCore)CpZappOrgTestDimmableLight1.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/CpZappOrgTestDimmableLight1.h
-	$(compiler)CpZappOrgTestDimmableLight1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpZappOrgTestDimmableLight1.cpp
-$(objdir)CpZappOrgTestDimmableLight1C.$(objext) : $(proxyC)CpZappOrgTestDimmableLight1C.cpp $(headers_proxy) ControlPoint/Services/C/CpZappOrgTestDimmableLight1.h
-	$(compiler)CpZappOrgTestDimmableLight1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpZappOrgTestDimmableLight1C.cpp
-$(objdir)CpZappOrgTestDimmableLight1Std.$(objext) : $(proxyCppStd)CpZappOrgTestDimmableLight1Std.cpp $(headers_proxy) ControlPoint/Services/Cpp/Std/CpZappOrgTestDimmableLight1.h
-	$(compiler)CpZappOrgTestDimmableLight1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpZappOrgTestDimmableLight1Std.cpp
+$(objdir)CpOpenhomeOrgTestBasic1.$(objext) : $(proxyCppCore)CpOpenhomeOrgTestBasic1.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/CpOpenhomeOrgTestBasic1.h
+	$(compiler)CpOpenhomeOrgTestBasic1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpOpenhomeOrgTestBasic1.cpp
+$(objdir)CpOpenhomeOrgTestBasic1C.$(objext) : $(proxyC)CpOpenhomeOrgTestBasic1C.cpp $(headers_proxy) ControlPoint/Services/C/CpOpenhomeOrgTestBasic1.h
+	$(compiler)CpOpenhomeOrgTestBasic1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpOpenhomeOrgTestBasic1C.cpp
+$(objdir)CpOpenhomeOrgTestBasic1Std.$(objext) : $(proxyCppStd)CpOpenhomeOrgTestBasic1Std.cpp $(headers_proxy) ControlPoint/Services/Cpp/Std/CpOpenhomeOrgTestBasic1.h
+	$(compiler)CpOpenhomeOrgTestBasic1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpOpenhomeOrgTestBasic1Std.cpp
+$(objdir)CpOpenhomeOrgTestLights1.$(objext) : $(proxyCppCore)CpOpenhomeOrgTestLights1.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/CpOpenhomeOrgTestLights1.h
+	$(compiler)CpOpenhomeOrgTestLights1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpOpenhomeOrgTestLights1.cpp
+$(objdir)CpOpenhomeOrgTestLights1C.$(objext) : $(proxyC)CpOpenhomeOrgTestLights1C.cpp $(headers_proxy) ControlPoint/Services/C/CpOpenhomeOrgTestLights1.h
+	$(compiler)CpOpenhomeOrgTestLights1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpOpenhomeOrgTestLights1C.cpp
+$(objdir)CpOpenhomeOrgTestLights1Std.$(objext) : $(proxyCppStd)CpOpenhomeOrgTestLights1Std.cpp $(headers_proxy) ControlPoint/Services/Cpp/Std/CpOpenhomeOrgTestLights1.h
+	$(compiler)CpOpenhomeOrgTestLights1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpOpenhomeOrgTestLights1Std.cpp
+$(objdir)CpOpenhomeOrgTestDimmableLight1.$(objext) : $(proxyCppCore)CpOpenhomeOrgTestDimmableLight1.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/CpOpenhomeOrgTestDimmableLight1.h
+	$(compiler)CpOpenhomeOrgTestDimmableLight1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpOpenhomeOrgTestDimmableLight1.cpp
+$(objdir)CpOpenhomeOrgTestDimmableLight1C.$(objext) : $(proxyC)CpOpenhomeOrgTestDimmableLight1C.cpp $(headers_proxy) ControlPoint/Services/C/CpOpenhomeOrgTestDimmableLight1.h
+	$(compiler)CpOpenhomeOrgTestDimmableLight1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpOpenhomeOrgTestDimmableLight1C.cpp
+$(objdir)CpOpenhomeOrgTestDimmableLight1Std.$(objext) : $(proxyCppStd)CpOpenhomeOrgTestDimmableLight1Std.cpp $(headers_proxy) ControlPoint/Services/Cpp/Std/CpOpenhomeOrgTestDimmableLight1.h
+	$(compiler)CpOpenhomeOrgTestDimmableLight1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpOpenhomeOrgTestDimmableLight1Std.cpp
 
 proxy_dlls = \
              CpUpnpOrgAVTransport1Dll \
@@ -288,9 +288,9 @@ proxy_dlls = \
              CpAvOpenhomeOrgVolume1Dll \
              CpAvOpenhomeOrgProduct1Dll \
              CpAvOpenhomeOrgRadio1Dll \
-             CpZappOrgTestBasic1Dll \
-             CpZappOrgTestLights1Dll \
-             CpZappOrgTestDimmableLight1Dll \
+             CpOpenhomeOrgTestBasic1Dll \
+             CpOpenhomeOrgTestLights1Dll \
+             CpOpenhomeOrgTestDimmableLight1Dll \
 
 CpProxyDlls: $(proxy_dlls)
 
@@ -351,15 +351,15 @@ $(objdir)$(dllprefix)CpAvOpenhomeOrgProduct1.$(dllext) : ZappUpnpDll $(objdir)Cp
 CpAvOpenhomeOrgRadio1Dll: $(objdir)$(dllprefix)CpAvOpenhomeOrgRadio1.$(dllext)
 $(objdir)$(dllprefix)CpAvOpenhomeOrgRadio1.$(dllext) : ZappUpnpDll $(objdir)CpAvOpenhomeOrgRadio1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpAvOpenhomeOrgRadio1.$(dllext) $(objdir)CpAvOpenhomeOrgRadio1.$(objext)
-CpZappOrgTestBasic1Dll: $(objdir)$(dllprefix)CpZappOrgTestBasic1.$(dllext)
-$(objdir)$(dllprefix)CpZappOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)CpZappOrgTestBasic1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpZappOrgTestBasic1.$(dllext) $(objdir)CpZappOrgTestBasic1.$(objext)
-CpZappOrgTestLights1Dll: $(objdir)$(dllprefix)CpZappOrgTestLights1.$(dllext)
-$(objdir)$(dllprefix)CpZappOrgTestLights1.$(dllext) : ZappUpnpDll $(objdir)CpZappOrgTestLights1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpZappOrgTestLights1.$(dllext) $(objdir)CpZappOrgTestLights1.$(objext)
-CpZappOrgTestDimmableLight1Dll: $(objdir)$(dllprefix)CpZappOrgTestDimmableLight1.$(dllext)
-$(objdir)$(dllprefix)CpZappOrgTestDimmableLight1.$(dllext) : ZappUpnpDll $(objdir)CpZappOrgTestDimmableLight1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpZappOrgTestDimmableLight1.$(dllext) $(objdir)CpZappOrgTestDimmableLight1.$(objext)
+CpOpenhomeOrgTestBasic1Dll: $(objdir)$(dllprefix)CpOpenhomeOrgTestBasic1.$(dllext)
+$(objdir)$(dllprefix)CpOpenhomeOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)CpOpenhomeOrgTestBasic1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpOpenhomeOrgTestBasic1.$(dllext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext)
+CpOpenhomeOrgTestLights1Dll: $(objdir)$(dllprefix)CpOpenhomeOrgTestLights1.$(dllext)
+$(objdir)$(dllprefix)CpOpenhomeOrgTestLights1.$(dllext) : ZappUpnpDll $(objdir)CpOpenhomeOrgTestLights1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpOpenhomeOrgTestLights1.$(dllext) $(objdir)CpOpenhomeOrgTestLights1.$(objext)
+CpOpenhomeOrgTestDimmableLight1Dll: $(objdir)$(dllprefix)CpOpenhomeOrgTestDimmableLight1.$(dllext)
+$(objdir)$(dllprefix)CpOpenhomeOrgTestDimmableLight1.$(dllext) : ZappUpnpDll $(objdir)CpOpenhomeOrgTestDimmableLight1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpOpenhomeOrgTestDimmableLight1.$(dllext) $(objdir)CpOpenhomeOrgTestDimmableLight1.$(objext)
 
 # Proxy assemblies for .NET:
 
@@ -460,19 +460,19 @@ $(objdir)CpAvOpenhomeOrgRadio1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpAvOpen
 		/out:$(objdir)CpAvOpenhomeOrgRadio1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
 		$(proxyCs)CpAvOpenhomeOrgRadio1.cs
-$(objdir)CpZappOrgTestBasic1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpZappOrgTestBasic1.cs
+$(objdir)CpOpenhomeOrgTestBasic1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpOpenhomeOrgTestBasic1.cs
 	$(csharp) /unsafe /t:library \
-		/out:$(objdir)CpZappOrgTestBasic1.net.dll \
+		/out:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
-		$(proxyCs)CpZappOrgTestBasic1.cs
-$(objdir)CpZappOrgTestLights1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpZappOrgTestLights1.cs
+		$(proxyCs)CpOpenhomeOrgTestBasic1.cs
+$(objdir)CpOpenhomeOrgTestLights1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpOpenhomeOrgTestLights1.cs
 	$(csharp) /unsafe /t:library \
-		/out:$(objdir)CpZappOrgTestLights1.net.dll \
+		/out:$(objdir)CpOpenhomeOrgTestLights1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
-		$(proxyCs)CpZappOrgTestLights1.cs
-$(objdir)CpZappOrgTestDimmableLight1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpZappOrgTestDimmableLight1.cs
+		$(proxyCs)CpOpenhomeOrgTestLights1.cs
+$(objdir)CpOpenhomeOrgTestDimmableLight1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpOpenhomeOrgTestDimmableLight1.cs
 	$(csharp) /unsafe /t:library \
-		/out:$(objdir)CpZappOrgTestDimmableLight1.net.dll \
+		/out:$(objdir)CpOpenhomeOrgTestDimmableLight1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
-		$(proxyCs)CpZappOrgTestDimmableLight1.cs
+		$(proxyCs)CpOpenhomeOrgTestDimmableLight1.cs
 

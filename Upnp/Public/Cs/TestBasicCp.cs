@@ -24,7 +24,7 @@ namespace Zapp
         public void TestActions()
         {
             Console.Write("  Actions\n");
-            CpProxyZappOrgTestBasic1 proxy = new CpProxyZappOrgTestBasic1(iDevice);
+            CpProxyOpenhomeOrgTestBasic1 proxy = new CpProxyOpenhomeOrgTestBasic1(iDevice);
             uint i;
 
             Console.Write("    Unsigned integer arguments...\n");
@@ -129,7 +129,7 @@ namespace Zapp
         public void TestSubscriptions()
         {
             Console.Write("  Subscriptions\n");
-            CpProxyZappOrgTestBasic1 proxy = new CpProxyZappOrgTestBasic1(iDevice);
+            CpProxyOpenhomeOrgTestBasic1 proxy = new CpProxyOpenhomeOrgTestBasic1(iDevice);
             proxy.SetPropertyChanged(UpdatesComplete);
             proxy.Subscribe();
             iUpdatesComplete.WaitOne(); // wait for initial event

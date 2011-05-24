@@ -8,7 +8,7 @@
 #include <Std/CpDevice.h>
 #include <Std/CpDeviceUpnp.h>
 #include <Std/FunctorCpDevice.h>
-#include <Std/CpZappOrgTestBasic1.h>
+#include <Std/CpOpenhomeOrgTestBasic1.h>
 #include <CpProxy.h>
 
 #include <stdlib.h>
@@ -65,7 +65,7 @@ PerformanceTests::~PerformanceTests()
 
 void PerformanceTests::RunTests()
 {
-    std::string domain("zapp.org");
+    std::string domain("openhome.org");
     std::string service("TestBasic");
     iDeviceList = new CpDeviceListCppUpnpServiceType(domain, service, 1, 
                                                      MakeFunctorCpDeviceCpp(*this, &PerformanceTests::Added),
@@ -106,7 +106,7 @@ void PerformanceTests::TestSubscriptions()
     Functor subscribed = MakeFunctor(*this, &PerformanceTests::Subscribed);
     iTestStopTime = Os::TimeInMs() + (iTimeoutSecs * 1000);
     do {
-        CpProxyZappOrgTestBasic1Cpp* proxy = new CpProxyZappOrgTestBasic1Cpp(*iDevice);
+        CpProxyOpenhomeOrgTestBasic1Cpp* proxy = new CpProxyOpenhomeOrgTestBasic1Cpp(*iDevice);
         proxy->SetPropertyInitialEvent(subscribed);
         (void)iSem.Clear();
         proxy->Subscribe();
@@ -151,7 +151,7 @@ void PerformanceTests::Removed(CpDeviceCpp& /*aDevice*/)
 
 void PerformanceTests::ActionThread()
 {
-    CpProxyZappOrgTestBasic1Cpp* proxy = new CpProxyZappOrgTestBasic1Cpp(*iDevice);
+    CpProxyOpenhomeOrgTestBasic1Cpp* proxy = new CpProxyOpenhomeOrgTestBasic1Cpp(*iDevice);
     uint32_t val;
     do {
         proxy->SyncGetUint(val);

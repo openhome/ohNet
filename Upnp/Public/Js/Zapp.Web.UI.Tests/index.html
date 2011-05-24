@@ -7,7 +7,7 @@
     <link href="css/test.css" rel="stylesheet" type="text/css" />
     <script src="extern/xui-2.0.0.min.js" type="text/javascript"></script>
     <script src="extern/ProxyCore.js" type="text/javascript"></script>
-    <script src="proxy/CpZappOrgTestBasic1.js" type="text/javascript"></script>
+    <script src="proxy/CpOpenhomeOrgTestBasic1.js" type="text/javascript"></script>
     <script src="scripts/yui-min.js" type="text/javascript"></script>
     <script src="scripts/io-base-min.js" type="text/javascript"></script>
     <script src="scripts/querystring-stringify-simple-min.js" type="text/javascript"></script>
@@ -60,11 +60,11 @@
                     testSubscriptionManager: function () {
                         _this = this;
                         Zapp.SubscriptionManager.start(function () {
-                            proxy = new CpProxyZappOrgTestBasic1("device-ZappTestBasic");
+                            proxy = new CpProxyOpenhomeOrgTestBasic1("device-ZappTestBasic");
                             proxy.subscribe(function () {
                                 _this.resume();
                             });
-                            proxy2 = new CpProxyZappOrgTestBasic1("device-ZappTestBasic");
+                            proxy2 = new CpProxyOpenhomeOrgTestBasic1("device-ZappTestBasic");
                             proxy2.subscribe();
 
 

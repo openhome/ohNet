@@ -223,7 +223,7 @@ def JsTests():
     uiPath = os.path.join(os.getcwd(), 'Build\Include\Js\Tests')
     browser = os.path.join(localAppData, 'Safari\Safari.exe')
     testbasic = subprocess.Popen([os.path.join(objPath(), 'TestDvTestBasic.exe'), '-l', '-c', uiPath])
-    devfinder = subprocess.Popen([os.path.join(objPath(), 'TestDeviceFinder.exe'), '-l', '-s', 'zapp.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    devfinder = subprocess.Popen([os.path.join(objPath(), 'TestDeviceFinder.exe'), '-l', '-s', 'openhome.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     devfinder_out = devfinder.communicate()[1].rstrip()
     subprocess.call([browser, devfinder_out])
     testbasic.terminate()

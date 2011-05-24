@@ -126,7 +126,7 @@ copy_build_includes:
     copy Public\Js\Zapp.Web.UI.Tests\css\*.css $(inc_build)\Js\Tests\css > nul
     copy Public\Js\Zapp.Web.UI.Tests\Scripts\*.js $(inc_build)\Js\Tests\Scripts > nul
     copy Public\Js\WebUIsdk\*.js $(inc_build)\Js\Tests\extern > nul
-    copy ControlPoint\Services\Js\CpZappOrgTestBasic1.js $(inc_build)\Js\Tests\proxy > nul
+    copy ControlPoint\Services\Js\CpOpenhomeOrgTestBasic1.js $(inc_build)\Js\Tests\proxy > nul
     
 install :
 	if not exist "$(installdir)" mkdir "$(installdir)"
