@@ -2,8 +2,8 @@
 #include <OptionParser.h>
 #include <ZappTypes.h>
 #include <Core/DvDevice.h>
-#include <Core/DvZappOrgTestBasic1.h>
-#include <Core/CpZappOrgTestBasic1.h>
+#include <Core/DvOpenhomeOrgTestBasic1.h>
+#include <Core/CpOpenhomeOrgTestBasic1.h>
 #include <Zapp.h>
 #include <Core/CpDevice.h>
 #include <Core/CpDeviceUpnp.h>
@@ -16,7 +16,7 @@
 using namespace Zapp;
 using namespace Zapp::TestFramework;
 
-class ProviderTestBasic : public DvProviderZappOrgTestBasic1
+class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
 {
 public:
     ProviderTestBasic(DvDevice& aDevice);
@@ -40,7 +40,7 @@ private:
 
 
 ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
-    : DvProviderZappOrgTestBasic1(aDevice)
+    : DvProviderOpenhomeOrgTestBasic1(aDevice)
 {
     // Initialise all properties in case external control points decide to subscribe to this service
     SetPropertyVarUint(0);
@@ -113,7 +113,7 @@ DeviceBasic::DeviceBasic()
 {
     RandomiseUdn(gDeviceName);
     iDevice = new DvDeviceStandard(gDeviceName);
-    iDevice->SetAttribute("Upnp.Domain", "zapp.org");
+    iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
     iDevice->SetAttribute("Upnp.FriendlyName", "ZappTestDevice");
@@ -163,7 +163,7 @@ CpDevices::~CpDevices()
 void CpDevices::Test()
 {
     ASSERT(iList.size() != 0);
-    CpProxyZappOrgTestBasic1* proxy = new CpProxyZappOrgTestBasic1(*(iList[0]));
+    CpProxyOpenhomeOrgTestBasic1* proxy = new CpProxyOpenhomeOrgTestBasic1(*(iList[0]));
     TUint i;
 
     Print("Unsigned integer arguments...\n");
@@ -258,7 +258,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     CpDevices* deviceList = new CpDevices(*sem);;
     FunctorCpDevice added = MakeFunctorCpDevice(*deviceList, &CpDevices::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(*deviceList, &CpDevices::Removed);
-    Brn domainName("zapp.org");
+    Brn domainName("openhome.org");
     Brn serviceType("TestBasic");
     TUint ver = 1;
     CpDeviceListUpnpServiceType* list =

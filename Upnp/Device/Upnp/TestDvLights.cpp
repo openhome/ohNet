@@ -2,7 +2,7 @@
 #include <OptionParser.h>
 #include <ZappTypes.h>
 #include <Core/DvDevice.h>
-#include <Core/DvZappOrgTestLights1.h>
+#include <Core/DvOpenhomeOrgTestLights1.h>
 #include <Zapp.h>
 #include <Ascii.h>
 #include <Maths.h>
@@ -48,7 +48,7 @@ Light::Light(const TChar* aRoom, const TChar* aName, TUint aPosX, TUint aPosY, T
 }
 
 
-class ProviderLights : public DvProviderZappOrgTestLights1
+class ProviderLights : public DvProviderOpenhomeOrgTestLights1
 {
 public:
     ProviderLights(DvDevice& aDevice, TUint aMode);
@@ -84,7 +84,7 @@ private:
 
 
 ProviderLights::ProviderLights(DvDevice& aDevice, TUint aMode)
-    : DvProviderZappOrgTestLights1(aDevice)
+    : DvProviderOpenhomeOrgTestLights1(aDevice)
 {
     EnableActionGetCount();
     EnableActionGetRoom();
@@ -237,7 +237,7 @@ DeviceLights::DeviceLights(TUint aMode, const Brx& aConfigDir)
 {
     RandomiseUdn(gDeviceName);
     iDevice = new DvDeviceStandard(gDeviceName, *this);
-    iDevice->SetAttribute("Upnp.Domain", "zapp.org");
+    iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "TestLights");
     iDevice->SetAttribute("Upnp.Version", "1");
     iDevice->SetAttribute("Upnp.FriendlyName", "__Zapp Lights");

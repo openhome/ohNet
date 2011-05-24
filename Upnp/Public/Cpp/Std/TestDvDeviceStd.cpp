@@ -100,7 +100,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     CpDevices* deviceList = new CpDevices(device->Device().Udn(), *sem);
     FunctorCpDeviceCpp added = MakeFunctorCpDeviceCpp(*deviceList, &CpDevices::Added);
     FunctorCpDeviceCpp removed = MakeFunctorCpDeviceCpp(*deviceList, &CpDevices::Removed);
-    std::string domainName("zapp.org");
+    std::string domainName("openhome.org");
     std::string serviceType("TestBasic");
     TUint ver = 1;
     CpDeviceListCppUpnpServiceType* list =

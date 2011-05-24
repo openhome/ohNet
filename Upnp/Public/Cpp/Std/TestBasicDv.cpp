@@ -1,7 +1,7 @@
 #include <Std/TestBasicDv.h>
 #include <ZappTypes.h>
 #include <Std/DvDevice.h>
-#include <Std/DvZappOrgTestBasic1.h>
+#include <Std/DvOpenhomeOrgTestBasic1.h>
 #include <Ascii.h>
 #include <Maths.h>
 #include <Stack.h>
@@ -10,7 +10,7 @@
 
 using namespace Zapp;
 
-class Zapp::ProviderTestBasic : public DvProviderZappOrgTestBasic1Cpp
+class Zapp::ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1Cpp
 {
 public:
     ProviderTestBasic(DvDeviceStd& aDevice);
@@ -35,7 +35,7 @@ private:
 
 
 ProviderTestBasic::ProviderTestBasic(DvDeviceStd& aDevice)
-    : DvProviderZappOrgTestBasic1Cpp(aDevice)
+    : DvProviderOpenhomeOrgTestBasic1Cpp(aDevice)
 {
     SetPropertyVarUint(0);
     SetPropertyVarInt(0);
@@ -170,7 +170,7 @@ DeviceBasic::DeviceBasic()
 {
     RandomiseUdn(gDeviceName);
     iDevice = new DvDeviceStdStandard(gDeviceName);
-    iDevice->SetAttribute("Upnp.Domain", "zapp.org");
+    iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
     iDevice->SetAttribute("Upnp.FriendlyName", "ZappTestDevice");

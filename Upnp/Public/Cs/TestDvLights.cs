@@ -71,7 +71,7 @@ namespace Zapp
         }
     }
 
-    class ProviderLights : Device.Providers.DvProviderZappOrgTestLights1
+    class ProviderLights : Device.Providers.DvProviderOpenhomeOrgTestLights1
     {
         public List<Light> iLights;
 
@@ -198,7 +198,7 @@ namespace Zapp
             iConfigDir = aConfigDir;
             RandomiseUdn(out iDeviceName);
             iDevice = new Device.DvDeviceStandard(iDeviceName, this);
-            iDevice.SetAttribute("Upnp.Domain", "zapp.org");
+            iDevice.SetAttribute("Upnp.Domain", "openhome.org");
             iDevice.SetAttribute("Upnp.Type", "TestLights");
             iDevice.SetAttribute("Upnp.Version", "1");
             iDevice.SetAttribute("Upnp.FriendlyName", "Zapp Lights");

@@ -8,7 +8,7 @@ using Zapp.Device.Providers;
 
 namespace Zapp
 {
-    class ProviderTestBasic : DvProviderZappOrgTestBasic1
+    class ProviderTestBasic : DvProviderOpenhomeOrgTestBasic1
     {
         public ProviderTestBasic(DvDevice aDevice)
             : base(aDevice)
@@ -128,7 +128,7 @@ namespace Zapp
     {
         public static string gDeviceName = "device";
         private DvDeviceStandard iDevice;
-        private DvProviderZappOrgTestBasic1 iTestBasic;
+        private DvProviderOpenhomeOrgTestBasic1 iTestBasic;
 
         private static void RandomiseUdn(out string aUdn)
         {
@@ -142,7 +142,7 @@ namespace Zapp
         {
             RandomiseUdn(out gDeviceName);
             iDevice = new DvDeviceStandard(gDeviceName);
-            iDevice.SetAttribute("Upnp.Domain", "zapp.org");
+            iDevice.SetAttribute("Upnp.Domain", "openhome.org");
             iDevice.SetAttribute("Upnp.Type", "Test");
             iDevice.SetAttribute("Upnp.Version", "1");
             iDevice.SetAttribute("Upnp.FriendlyName", "ZappTestDevice");

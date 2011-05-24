@@ -133,23 +133,23 @@
     <version>1</version>
   </service>
   <service>
-    <publisher>Zapp</publisher>
+    <publisher>OpenHome</publisher>
     <dcpdir>Test</dcpdir>
-    <domain>zapp.org</domain>
+    <domain>openhome.org</domain>
     <type>TestBasic</type>
     <version>1</version>
   </service>
   <service>
-    <publisher>Zapp</publisher>
+    <publisher>OpenHome</publisher>
     <dcpdir>Test</dcpdir>
-    <domain>zapp.org</domain>
+    <domain>openhome.org</domain>
     <type>TestLights</type>
     <version>1</version>
   </service>
   <service>
-    <publisher>Zapp</publisher>
+    <publisher>OpenHome</publisher>
     <dcpdir>Test</dcpdir>
-    <domain>zapp.org</domain>
+    <domain>openhome.org</domain>
     <type>TestDimmableLight</type>
     <version>1</version>
   </service>
