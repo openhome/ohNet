@@ -1,10 +1,10 @@
 #include "DvAvOpenhomeOrgVolume1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <DviService.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 bool DvProviderAvOpenhomeOrgVolume1Cpp::SetPropertyVolume(uint32_t aValue)
 {
@@ -146,7 +146,7 @@ DvProviderAvOpenhomeOrgVolume1Cpp::DvProviderAvOpenhomeOrgVolume1Cpp(DvDeviceStd
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionCharacteristics()
 {
-    Zapp::Action* action = new Zapp::Action("Characteristics");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Characteristics");
     action->AddOutputParameter(new ParameterRelated("VolumeMax", *iPropertyVolumeMax));
     action->AddOutputParameter(new ParameterRelated("VolumeUnity", *iPropertyVolumeUnity));
     action->AddOutputParameter(new ParameterRelated("VolumeSteps", *iPropertyVolumeSteps));
@@ -159,7 +159,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionCharacteristics()
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionSetVolume()
 {
-    Zapp::Action* action = new Zapp::Action("SetVolume");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetVolume");
     action->AddInputParameter(new ParameterRelated("Value", *iPropertyVolume));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoSetVolume);
     iService->AddAction(action, functor);
@@ -167,21 +167,21 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionSetVolume()
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionVolumeInc()
 {
-    Zapp::Action* action = new Zapp::Action("VolumeInc");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("VolumeInc");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoVolumeInc);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionVolumeDec()
 {
-    Zapp::Action* action = new Zapp::Action("VolumeDec");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("VolumeDec");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoVolumeDec);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionVolume()
 {
-    Zapp::Action* action = new Zapp::Action("Volume");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Volume");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyVolume));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoVolume);
     iService->AddAction(action, functor);
@@ -189,7 +189,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionVolume()
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionSetBalance()
 {
-    Zapp::Action* action = new Zapp::Action("SetBalance");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetBalance");
     action->AddInputParameter(new ParameterRelated("Value", *iPropertyBalance));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoSetBalance);
     iService->AddAction(action, functor);
@@ -197,21 +197,21 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionSetBalance()
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionBalanceInc()
 {
-    Zapp::Action* action = new Zapp::Action("BalanceInc");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("BalanceInc");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoBalanceInc);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionBalanceDec()
 {
-    Zapp::Action* action = new Zapp::Action("BalanceDec");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("BalanceDec");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoBalanceDec);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionBalance()
 {
-    Zapp::Action* action = new Zapp::Action("Balance");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Balance");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyBalance));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoBalance);
     iService->AddAction(action, functor);
@@ -219,7 +219,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionBalance()
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionSetFade()
 {
-    Zapp::Action* action = new Zapp::Action("SetFade");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetFade");
     action->AddInputParameter(new ParameterRelated("Value", *iPropertyFade));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoSetFade);
     iService->AddAction(action, functor);
@@ -227,21 +227,21 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionSetFade()
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionFadeInc()
 {
-    Zapp::Action* action = new Zapp::Action("FadeInc");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("FadeInc");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoFadeInc);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionFadeDec()
 {
-    Zapp::Action* action = new Zapp::Action("FadeDec");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("FadeDec");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoFadeDec);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionFade()
 {
-    Zapp::Action* action = new Zapp::Action("Fade");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Fade");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyFade));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoFade);
     iService->AddAction(action, functor);
@@ -249,7 +249,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionFade()
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionSetMute()
 {
-    Zapp::Action* action = new Zapp::Action("SetMute");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetMute");
     action->AddInputParameter(new ParameterRelated("Value", *iPropertyMute));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoSetMute);
     iService->AddAction(action, functor);
@@ -257,7 +257,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionSetMute()
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionMute()
 {
-    Zapp::Action* action = new Zapp::Action("Mute");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Mute");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyMute));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoMute);
     iService->AddAction(action, functor);
@@ -265,7 +265,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionMute()
 
 void DvProviderAvOpenhomeOrgVolume1Cpp::EnableActionVolumeLimit()
 {
-    Zapp::Action* action = new Zapp::Action("VolumeLimit");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("VolumeLimit");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyVolumeLimit));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgVolume1Cpp::DoVolumeLimit);
     iService->AddAction(action, functor);

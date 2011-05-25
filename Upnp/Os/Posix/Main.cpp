@@ -7,10 +7,10 @@ extern "C" {
 #include <stdio.h>
 }
 
-#include <Zapp.h>
+#include <OhNet.h>
 #include <TestFramework.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 using namespace TestFramework;
 
 class Logger
@@ -31,6 +31,6 @@ int main(int argc, char* argv[])
     Logger logger;
     FunctorMsg functor = MakeFunctorMsg(logger, &Logger::Log);
     initParams->SetLogOutput(functor);
-    Zapp::TestFramework::Runner::Main(argc, argv, initParams);
+    OpenHome::Net::TestFramework::Runner::Main(argc, argv, initParams);
     return 0;
 }

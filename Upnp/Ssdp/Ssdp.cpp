@@ -4,7 +4,7 @@
 #include <Printer.h>
 #include <Stack.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 static const Brn kAlive("ssdp:alive");
 static const Brn kByeBye("ssdp:byebye");
@@ -209,7 +209,7 @@ void Ssdp::WriteServer(IWriterHttpHeader& aWriter)
 	stream.WriteUint(major);
 	stream.Write('.');
 	stream.WriteUint(minor);
-	stream.Write(Brn(" UPnP/1.1 Zapp/"));
+	stream.Write(Brn(" UPnP/1.1 ohNet/"));
 	Stack::GetVersion(major, minor);
 	stream.WriteUint(major);
 	stream.Write('.');

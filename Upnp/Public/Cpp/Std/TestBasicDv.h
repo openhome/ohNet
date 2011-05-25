@@ -1,7 +1,8 @@
 #ifndef HEADER_TESTBASICDV
 #define HEADER_TESTBASICDV
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class DvDeviceStdStandard;
 class ProviderTestBasic;
@@ -17,6 +18,7 @@ private:
     ProviderTestBasic* iTestBasic;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_TESTBASICDV

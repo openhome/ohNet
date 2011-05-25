@@ -11,7 +11,7 @@
 #include <ProtocolUpnp.h>
 #include <Parser.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 const Brn EventSessionUpnp::kMethodNotify("NOTIFY");
 const Brn EventSessionUpnp::kExpectedNt("upnp:event");

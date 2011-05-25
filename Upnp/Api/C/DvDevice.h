@@ -26,39 +26,39 @@ extern "C" {
  */
 typedef THandle DvDeviceC;
 
-typedef void (*ZappCallback)(void* aPtr);
+typedef void (*OhNetCallback)(void* aPtr);
 
 /**
  * Callback which is run before serving a file begins
  *
- * @param[in] aWriterData  Opaque pointer passed to ZappCallbackResourceManager
+ * @param[in] aWriterData  Opaque pointer passed to OhNetCallbackResourceManager
  * @param[in] aTotalBytes  Size in bytes of the file.  Can be 0 if size is unknown.
  * @param[in] aMimeType    MIME type of the file.  May be NULL if this is unknown.
  */
-typedef void (*ZappCallbackWriteResourceBegin)(void* aWriterData, uint32_t aTotalBytes, const char* aMimeType);
+typedef void (*OhNetCallbackWriteResourceBegin)(void* aWriterData, uint32_t aTotalBytes, const char* aMimeType);
 
 /**
  * Callback which runs to serve a chunk of a file
  *
- * Will be called 0..n times after ZappCallbackWriteResourceBegin and before ZappCallbackWriteResourceEnd
+ * Will be called 0..n times after OhNetCallbackWriteResourceBegin and before OhNetCallbackWriteResourceEnd
  *
- * @param[in] aWriterData  Opaque pointer passed to ZappCallbackResourceManager
+ * @param[in] aWriterData  Opaque pointer passed to OhNetCallbackResourceManager
  * @param[in] aData        File data to write
  * @param[in] aBytes       Size in bytes of aData
  */
-typedef void (*ZappCallbackWriteResource)(void* aWriterData, const uint8_t* aData, uint32_t aBytes);
+typedef void (*OhNetCallbackWriteResource)(void* aWriterData, const uint8_t* aData, uint32_t aBytes);
 
 /**
  * Called when serving of a file is complete
  *
- * Will only be called after a call to ZappCallbackWriteResourceBegin.
- * An error writing the file can be inferred if ZappCallbackWriteResource has not been called or
+ * Will only be called after a call to OhNetCallbackWriteResourceBegin.
+ * An error writing the file can be inferred if OhNetCallbackWriteResource has not been called or
  * if aTotalBytes was non-zero in the Begin callback and the sum of aBytes values in the Write
  * callbacks does not match aTotalBytes.
  *
- * @param[in] aWriterData  Opaque pointer passed to ZappCallbackResourceManager
+ * @param[in] aWriterData  Opaque pointer passed to OhNetCallbackResourceManager
  */
-typedef void (*ZappCallbackWriteResourceEnd)(void* aWriterData);
+typedef void (*OhNetCallbackWriteResourceEnd)(void* aWriterData);
 
 /**
  * Callback which runs when a device is asked to serve an unknown file
@@ -66,7 +66,7 @@ typedef void (*ZappCallbackWriteResourceEnd)(void* aWriterData);
  * @param[in] aUserData       'aPtr' passed to DvDeviceCreate
  * @param[in] aUriTail        File being requested
  * @param[in] aInterface      Network interface the file request was made on
- * @param[in] aWriterData     Opaque pointer to be passed to all 3 ZappCallbackWriteResource* callbacks
+ * @param[in] aWriterData     Opaque pointer to be passed to all 3 OhNetCallbackWriteResource* callbacks
  * @param[in] aWriteBegin     Callback to run at the start of serving the file.
  *                            Should not be run if the file cannot be supplied.
  * @param[in] aWriteResource  Callback to run to write file data.  Must be called at least once to
@@ -76,10 +76,10 @@ typedef void (*ZappCallbackWriteResourceEnd)(void* aWriterData);
  * @param[in] aWriteEnd       Callback to be run at the end of serving a file.
  *                            Must be called if aWriteBegin is called.
  */
-typedef void (*ZappCallbackResourceManager)(void* aUserData, const char* aUriTail, TIpAddress aInterface, void* aWriterData,
-	                                        ZappCallbackWriteResourceBegin aWriteBegin,
-                                            ZappCallbackWriteResource aWriteResource,
-                                            ZappCallbackWriteResourceEnd aWriteEnd);
+typedef void (*OhNetCallbackResourceManager)(void* aUserData, const char* aUriTail, TIpAddress aInterface, void* aWriterData,
+	                                        OhNetCallbackWriteResourceBegin aWriteBegin,
+                                            OhNetCallbackWriteResource aWriteResource,
+                                            OhNetCallbackWriteResourceEnd aWriteEnd);
 
 
 /**
@@ -144,7 +144,7 @@ DllExport void DvDeviceSetEnabled(DvDeviceC aDevice);
  *                        Until this runs, the device should be considered to still be enabled.
  * @param[in] aPtr        Data to be passed to the aCompleted callback
  */
-DllExport void DvDeviceSetDisabled(DvDeviceC aDevice, ZappCallback aCompleted, void* aPtr);
+DllExport void DvDeviceSetDisabled(DvDeviceC aDevice, OhNetCallback aCompleted, void* aPtr);
 
 /**
  * Query the value of an atrribute
@@ -199,7 +199,7 @@ DllExport DvDeviceC DvDeviceStandardCreateNoResources(const char* aUdn);
  *
  * @return  Handle to the new device
  */
-DllExport DvDeviceC DvDeviceStandardCreate(const char* aUdn, ZappCallbackResourceManager aResourceManager, void* aPtr);
+DllExport DvDeviceC DvDeviceStandardCreate(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr);
 
 /* @} */
 

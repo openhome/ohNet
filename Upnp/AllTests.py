@@ -18,7 +18,7 @@ def objPath():
 def build(aTarget):
     buildCmd = 'make '
     if os.name == 'nt':
-        buildCmd = 'nmake -s -f Zapp.mak '
+        buildCmd = 'nmake -s -f OhNet.mak '
     buildCmd += aTarget
     if os.environ.has_key('CS_PLATFORM'):
         buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']
@@ -33,7 +33,7 @@ def runBuilds():
     if gIncremental == 0:
         cleanCmd = ''
         if os.name == 'nt':
-            cleanCmd = 'nmake /s /f Zapp.mak clean'
+            cleanCmd = 'nmake /s /f OhNet.mak clean'
         else:
             cleanCmd = 'make clean'
         os.system(cleanCmd)

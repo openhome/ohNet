@@ -3,7 +3,7 @@
 
 #include <TestFramework.h>
 #include <OptionParser.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Discovery.h>
 #include <Thread.h>
 #include <Timer.h>
@@ -13,8 +13,8 @@
 
 #include <string>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class DeviceListLogger
 {
@@ -56,7 +56,7 @@ void DeviceListLogger::PrintDeviceInfo(const char* aPrologue, const CpDeviceCpp&
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionUint mx("-mx", "--mx", 1, "[1..5] number of second to spread response over");
@@ -105,12 +105,12 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         Brn domainName;
         Brn type;
         TUint ver;
-        if (Zapp::Ssdp::ParseUrnDevice(urn.Value(), domainName, type, ver)) {
+        if (OpenHome::Net::Ssdp::ParseUrnDevice(urn.Value(), domainName, type, ver)) {
             std::string domain((const char*)domainName.Ptr(), domainName.Bytes());
             std::string deviceType((const char*)type.Ptr(), type.Bytes());
             deviceList = new CpDeviceListCppUpnpDeviceType(domain, deviceType, ver, added, removed);
         }
-        else if (Zapp::Ssdp::ParseUrnService(urn.Value(), domainName, type, ver)) {
+        else if (OpenHome::Net::Ssdp::ParseUrnService(urn.Value(), domainName, type, ver)) {
             std::string domain((const char*)domainName.Ptr(), domainName.Bytes());
             std::string serviceType((const char*)type.Ptr(), type.Bytes());
             deviceList = new CpDeviceListCppUpnpServiceType(domain, serviceType, ver, added, removed);

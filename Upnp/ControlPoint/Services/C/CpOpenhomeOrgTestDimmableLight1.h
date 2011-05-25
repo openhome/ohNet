@@ -6,7 +6,7 @@
 
 #include <OsTypes.h>
 #include <C/Async.h>
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 #include <C/CpDevice.h>
 
 #ifdef __cplusplus
@@ -60,7 +60,7 @@ DllExport void CpProxyOpenhomeOrgTestDimmableLight1SyncGetLevel(THandle aHandle,
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyOpenhomeOrgTestDimmableLight1BeginGetLevel(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyOpenhomeOrgTestDimmableLight1BeginGetLevel(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -72,7 +72,7 @@ DllExport void CpProxyOpenhomeOrgTestDimmableLight1BeginGetLevel(THandle aHandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyOpenhomeOrgTestDimmableLight1EndGetLevel(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aLevel);
+DllExport int32_t CpProxyOpenhomeOrgTestDimmableLight1EndGetLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aLevel);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -94,7 +94,7 @@ DllExport void CpProxyOpenhomeOrgTestDimmableLight1SyncSetLevel(THandle aHandle,
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyOpenhomeOrgTestDimmableLight1BeginSetLevel(THandle aHandle, uint32_t aLevel, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyOpenhomeOrgTestDimmableLight1BeginSetLevel(THandle aHandle, uint32_t aLevel, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -105,7 +105,7 @@ DllExport void CpProxyOpenhomeOrgTestDimmableLight1BeginSetLevel(THandle aHandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyOpenhomeOrgTestDimmableLight1EndSetLevel(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyOpenhomeOrgTestDimmableLight1EndSetLevel(THandle aHandle, OhNetHandleAsync aAsync);
 /**
  * Set a callback to be run when the A_ARG_Level state variable changes.
  *
@@ -116,7 +116,7 @@ DllExport int32_t CpProxyOpenhomeOrgTestDimmableLight1EndSetLevel(THandle aHandl
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyOpenhomeOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyOpenhomeOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the A_ARG_Level property.

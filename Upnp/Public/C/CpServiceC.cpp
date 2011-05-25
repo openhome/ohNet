@@ -1,14 +1,14 @@
 #include <C/CpService.h>
 #include <C/Service.h>
-#include <ZappTypes.h>
-#include <C/Zapp.h>
+#include <OhNetTypes.h>
+#include <C/OhNet.h>
 #include <CpiService.h>
 #include <Service.h>
 #include <Buffer.h>
 #include <FunctorAsync.h>
 #include <Printer.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 CpService CpServiceCreate(const char* aDomain, const char* aName, uint32_t aVersion, CpDeviceC aDevice)
 {
@@ -22,13 +22,13 @@ void CpServiceDestroy(CpService aService)
     delete service;
 }
 
-CpInvocationC CpServiceInvocation(CpService aService, ServiceAction aAction, ZappCallbackAsync aCallback, void* aPtr)
+CpInvocationC CpServiceInvocation(CpService aService, ServiceAction aAction, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpiService* service = reinterpret_cast<CpiService*>(aService);
     ASSERT(service != NULL);
-    Zapp::Action* action = reinterpret_cast<Zapp::Action*>(aAction);
+    OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
     ASSERT(action != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, reinterpret_cast<ZappFunctorAsync>(aCallback));
+    FunctorAsync functor = MakeFunctorAsync(aPtr, reinterpret_cast<OhNetFunctorAsync>(aCallback));
     return (CpInvocationC)service->Invocation(*action, functor);
 }
 
@@ -44,64 +44,64 @@ void CpServiceInvokeAction(CpService aService, CpInvocationC aInvocation)
 
 ActionArgument ActionArgumentCreateIntInput(ServiceParameter aParameter, int32_t aValue)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentInt(*param, aValue);
 }
 
 ActionArgument ActionArgumentCreateIntOutput(ServiceParameter aParameter)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentInt(*param);
 }
 
 ActionArgument ActionArgumentCreateUintInput(ServiceParameter aParameter, uint32_t aValue)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentUint(*param, aValue);
 }
 
 ActionArgument ActionArgumentCreateUintOutput(ServiceParameter aParameter)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentUint(*param);
 }
 
 ActionArgument ActionArgumentCreateBoolInput(ServiceParameter aParameter, uint32_t aValue)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     TBool val = (aValue!=0);
     return (ActionArgument)new ArgumentBool(*param, val);
 }
 
 ActionArgument ActionArgumentCreateBoolOutput(ServiceParameter aParameter)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentBool(*param);
 }
 
 ActionArgument ActionArgumentCreateStringInput(ServiceParameter aParameter, const char* aValue)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     Brn buf(aValue);
     return (ActionArgument)new ArgumentString(*param, buf);
 }
 
 ActionArgument ActionArgumentCreateStringOutput(ServiceParameter aParameter)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentString(*param);
 }
 
 ActionArgument ActionArgumentCreateBinaryInput(ServiceParameter aParameter, const uint8_t* aData, uint32_t aLen)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     Brn buf(aData, aLen);
     return (ActionArgument)new ArgumentBinary(*param, buf);
 }
 
 ActionArgument ActionArgumentCreateBinaryOutput(ServiceParameter aParameter)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentBinary(*param);
 }
 
@@ -150,7 +150,7 @@ void CpInvocationAddInput(CpInvocationC aInvocation, ActionArgument aArgument)
 {
     Invocation* invocation = reinterpret_cast<Invocation*>(aInvocation);
     ASSERT(invocation != NULL);
-    Zapp::Argument* arg = reinterpret_cast<Zapp::Argument*>(aArgument);
+    OpenHome::Net::Argument* arg = reinterpret_cast<OpenHome::Net::Argument*>(aArgument);
     ASSERT(arg != NULL);
     invocation->AddInput(arg);
 }
@@ -159,7 +159,7 @@ void CpInvocationAddOutput(CpInvocationC aInvocation, ActionArgument aArgument)
 {
     Invocation* invocation = reinterpret_cast<Invocation*>(aInvocation);
     ASSERT(invocation != NULL);
-    Zapp::Argument* arg = reinterpret_cast<Zapp::Argument*>(aArgument);
+    OpenHome::Net::Argument* arg = reinterpret_cast<OpenHome::Net::Argument*>(aArgument);
     ASSERT(arg != NULL);
     invocation->AddOutput(arg);
 }

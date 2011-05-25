@@ -7,7 +7,7 @@
 #else
 
 // MSVC only includes stdint.h from v10
-// define the small subset of stdint types Zapp cares about here
+// define the small subset of stdint types OhNet cares about here
 
 typedef signed char int8_t;
 typedef short int16_t;

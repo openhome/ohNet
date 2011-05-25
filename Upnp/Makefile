@@ -27,13 +27,13 @@ linkoutput = -o
 dllprefix = lib
 dllext = so
 link_dll = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc
-link_dll_service = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc -lZappUpnp -L$(objdir)
+link_dll_service = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc -lohNet -L$(objdir)
 csharp = gmcs /nologo
 publiccsdir = Public/Cs/
 dirsep = /
 prefix = /usr/local
-installlibdir = $(prefix)/lib/zapp
-installincludedir = $(prefix)/include/zapp
+installlibdir = $(prefix)/lib/ohNet
+installincludedir = $(prefix)/include/ohNet
 installpkgconfdir = $(prefix)/lib/pkgconfig
 mkdir = mkdir -p
 rmdir = rm -rf
@@ -106,9 +106,8 @@ install : install-pkgconf install-libs install-includes
 uninstall : uninstall-pkgconf uninstall-libs uninstall-includes
 
 install-pkgconf : tt
-	mkdir -p $(installpkgconfdir)
-	$(t4) -o $(installpkgconfdir)/managed.zapp.pc T4/Templates/managed.zapp.pc.tt -a xml:Service/Services.xml
-	#TODO: Install a pkg-config file for the native interface.
+	echo ERROR: no support for (un)install-pckconf yet
+    echo see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this
 
 install-libs :
 	mkdir -p $(installlibdir)
@@ -119,7 +118,8 @@ install-includes :
 	cp -urt $(installincludedir) $(inc_build)/*
 
 uninstall-pkgconf :
-	rm -f $(installpkgconfdir)/managed.zapp.pc
+	echo ERROR: no support for (un)install-pckconf yet
+    echo see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this
 
 uninstall-libs :
 	rm -rf $(installlibdir)

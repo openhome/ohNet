@@ -1,14 +1,15 @@
 #ifndef HEADER_DVUPNPORGDIMMING1CPP
 #define HEADER_DVUPNPORGDIMMING1CPP
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
 #include <DvProvider.h>
 
 #include <string>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation;
 class PropertyInt;
@@ -408,7 +409,8 @@ private:
     PropertyBool* iPropertyRampPaused;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVUPNPORGDIMMING1CPP
 

@@ -1,14 +1,14 @@
-#include <C/Zapp.h>
-#include <Zapp.h>
+#include <C/OhNet.h>
+#include <OhNet.h>
 #include <Functor.h>
 #include <FunctorMsg.h>
 #include <Stack.h>
 
 #include <stdlib.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
-int32_t ZappLibraryInitialise(ZappHandleInitParams aInitParams)
+int32_t OhNetLibraryInitialise(OhNetHandleInitParams aInitParams)
 {
     if (Stack::IsInitialised()) {
         return -1;
@@ -23,7 +23,7 @@ int32_t ZappLibraryInitialise(ZappHandleInitParams aInitParams)
     return 0;
 }
 
-int32_t ZappLibraryInitialiseMinimal(ZappHandleInitParams aInitParams)
+int32_t OhNetLibraryInitialiseMinimal(OhNetHandleInitParams aInitParams)
 {
     if (Stack::IsInitialised()) {
         return -1;
@@ -38,308 +38,308 @@ int32_t ZappLibraryInitialiseMinimal(ZappHandleInitParams aInitParams)
     return 0;
 }
 
-void ZappLibraryClose()
+void OhNetLibraryClose()
 {
     UpnpLibrary::Close();
 }
 
-void ZappFree(void* aPtr)
+void OhNetFree(void* aPtr)
 {
     free(aPtr);
 }
 
-ZappHandleInitParams ZappInitParamsCreate()
+OhNetHandleInitParams OhNetInitParamsCreate()
 {
-    return (ZappHandleInitParams)InitialisationParams::Create();
+    return (OhNetHandleInitParams)InitialisationParams::Create();
 }
 
-void ZappInitParamsDestroy(ZappHandleInitParams aParams)
+void OhNetInitParamsDestroy(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     delete ip;
 }
 
-void ZappInitParamsSetLogOutput(ZappHandleInitParams aParams, ZappCallbackMsg aCallback, void* aPtr)
+void OhNetInitParamsSetLogOutput(OhNetHandleInitParams aParams, OhNetCallbackMsg aCallback, void* aPtr)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     FunctorMsg functor = MakeFunctorMsgC(aPtr, aCallback);
     ip->SetLogOutput(functor);
 }
 
-void ZappInitParamsSetFatalErrorHandler(ZappHandleInitParams aParams, ZappCallbackMsg aCallback, void* aPtr)
+void OhNetInitParamsSetFatalErrorHandler(OhNetHandleInitParams aParams, OhNetCallbackMsg aCallback, void* aPtr)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     FunctorMsg functor = MakeFunctorMsgC(aPtr, aCallback);
     ip->SetFatalErrorHandler(functor);
 }
 
-void ZappInitParamsSetAsyncBeginHandler(ZappHandleInitParams aParams, ZappCallbackAsync aCallback, void* aPtr)
+void OhNetInitParamsSetAsyncBeginHandler(OhNetHandleInitParams aParams, OhNetCallbackAsync aCallback, void* aPtr)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     ip->SetAsyncBeginHandler(functor);
 }
 
-void ZappInitParamsSetAsyncEndHandler(ZappHandleInitParams aParams, ZappCallbackAsync aCallback, void* aPtr)
+void OhNetInitParamsSetAsyncEndHandler(OhNetHandleInitParams aParams, OhNetCallbackAsync aCallback, void* aPtr)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     ip->SetAsyncEndHandler(functor);
 }
 
-void ZappInitParamsSetAsyncErrorHandler(ZappHandleInitParams aParams, ZappCallbackAsync aCallback, void* aPtr)
+void OhNetInitParamsSetAsyncErrorHandler(OhNetHandleInitParams aParams, OhNetCallbackAsync aCallback, void* aPtr)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     ip->SetAsyncErrorHandler(functor);
 }
 
-void ZappInitParamsSetDefaultSubnet(ZappHandleInitParams aParams, TIpAddress aSubnet)
+void OhNetInitParamsSetDefaultSubnet(OhNetHandleInitParams aParams, TIpAddress aSubnet)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetDefaultSubnet(aSubnet);
 }
 
-void ZappInitParamsSetSubnetChangedListener(ZappHandleInitParams aParams, ZappCallback aCallback, void* aPtr)
+void OhNetInitParamsSetSubnetChangedListener(OhNetHandleInitParams aParams, OhNetCallback aCallback, void* aPtr)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     Functor functor = MakeFunctor(aPtr, aCallback);
     ip->SetSubnetChangedListener(functor);
 }
 
-void ZappInitParamsSetTcpConnectTimeout(ZappHandleInitParams aParams, uint32_t aTimeoutMs)
+void OhNetInitParamsSetTcpConnectTimeout(OhNetHandleInitParams aParams, uint32_t aTimeoutMs)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetTcpConnectTimeout(aTimeoutMs);
 }
 
-void ZappInitParamsSetMsearchTime(ZappHandleInitParams aParams, uint32_t aSecs)
+void OhNetInitParamsSetMsearchTime(OhNetHandleInitParams aParams, uint32_t aSecs)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetMsearchTime(aSecs);
 }
 
-void ZappInitParamsSetMsearchTtl(ZappHandleInitParams aParams, uint32_t aTtl)
+void OhNetInitParamsSetMsearchTtl(OhNetHandleInitParams aParams, uint32_t aTtl)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetMsearchTtl(aTtl);
 }
 
-void ZappInitParamsSetNumEventSessionThreads(ZappHandleInitParams aParams, uint32_t aNumThreads)
+void OhNetInitParamsSetNumEventSessionThreads(OhNetHandleInitParams aParams, uint32_t aNumThreads)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetNumEventSessionThreads(aNumThreads);
 }
 
-void ZappInitParamsSetNumXmlFetcherThreads(ZappHandleInitParams aParams, uint32_t aNumThreads)
+void OhNetInitParamsSetNumXmlFetcherThreads(OhNetHandleInitParams aParams, uint32_t aNumThreads)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetNumXmlFetcherThreads(aNumThreads);
 }
 
-void ZappInitParamsSetNumActionInvokerThreads(ZappHandleInitParams aParams, uint32_t aNumThreads)
+void OhNetInitParamsSetNumActionInvokerThreads(OhNetHandleInitParams aParams, uint32_t aNumThreads)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetNumActionInvokerThreads(aNumThreads);
 }
 
-void ZappInitParamsSetNumInvocations(ZappHandleInitParams aParams, uint32_t aNumInvocations)
+void OhNetInitParamsSetNumInvocations(OhNetHandleInitParams aParams, uint32_t aNumInvocations)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetNumInvocations(aNumInvocations);
 }
 
-void ZappInitParamsSetNumSubscriberThreads(ZappHandleInitParams aParams, uint32_t aNumThreads)
+void OhNetInitParamsSetNumSubscriberThreads(OhNetHandleInitParams aParams, uint32_t aNumThreads)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetNumSubscriberThreads(aNumThreads);
 }
 
-void ZappInitParamsSetPendingSubscriptionTimeout(ZappHandleInitParams aParams, uint32_t aTimeoutMs)
+void OhNetInitParamsSetPendingSubscriptionTimeout(OhNetHandleInitParams aParams, uint32_t aTimeoutMs)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetPendingSubscriptionTimeout(aTimeoutMs);
 }
 
-void ZappInitParamsSetFreeExternalCallback(ZappHandleInitParams aParams, ZappCallbackFreeExternal aCallback)
+void OhNetInitParamsSetFreeExternalCallback(OhNetHandleInitParams aParams, OhNetCallbackFreeExternal aCallback)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetFreeExternalCallback(aCallback);
 }
 
-void ZappInitParamsSetUseLoopbackNetworkInterface(ZappHandleInitParams aParams)
+void OhNetInitParamsSetUseLoopbackNetworkInterface(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetUseLoopbackNetworkInterface();
 }
 
-void ZappInitParamsSetDvMaxUpdateTime(ZappHandleInitParams aParams, uint32_t aSecs)
+void OhNetInitParamsSetDvMaxUpdateTime(OhNetHandleInitParams aParams, uint32_t aSecs)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetDvMaxUpdateTime(aSecs);
 }
 
-void ZappInitParamsSetDvNumServerThreads(ZappHandleInitParams aParams, uint32_t aNumThreads)
+void OhNetInitParamsSetDvNumServerThreads(OhNetHandleInitParams aParams, uint32_t aNumThreads)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
 	ip->SetDvNumServerThreads(aNumThreads);
 }
 
-void ZappInitParamsSetDvNumPublisherThreads(ZappHandleInitParams aParams, uint32_t aNumThreads)
+void OhNetInitParamsSetDvNumPublisherThreads(OhNetHandleInitParams aParams, uint32_t aNumThreads)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
 	ip->SetDvNumPublisherThreads(aNumThreads);
 }
 
-void ZappInitParamsSetDvNumWebSocketThreads(ZappHandleInitParams aParams, uint32_t aNumThreads)
+void OhNetInitParamsSetDvNumWebSocketThreads(OhNetHandleInitParams aParams, uint32_t aNumThreads)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
 	ip->SetDvNumWebSocketThreads(aNumThreads);
 }
 
-void ZappInitParamsSetDvWebSocketPort(ZappHandleInitParams aParams, uint32_t aPort)
+void OhNetInitParamsSetDvWebSocketPort(OhNetHandleInitParams aParams, uint32_t aPort)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
 	ip->SetDvWebSocketPort(aPort);
 }
 
-void ZappInitParamsSetDvEnableBonjour(ZappHandleInitParams aParams)
+void OhNetInitParamsSetDvEnableBonjour(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     ip->SetDvEnableBonjour();
 }
 
-uint32_t ZappInitParamsTcpConnectTimeoutMs(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsTcpConnectTimeoutMs(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     return ip->TcpConnectTimeoutMs();
 }
 
-uint32_t ZappInitParamsMsearchTimeSecs(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsMsearchTimeSecs(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     return ip->MsearchTimeSecs();
 }
 
-uint32_t ZappInitParamsMsearchTtl(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsMsearchTtl(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     return ip->MsearchTtl();
 }
 
-uint32_t ZappInitParamsNumEventSessionThreads(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsNumEventSessionThreads(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     return ip->NumEventSessionThreads();
 }
 
-uint32_t ZappInitParamsNumXmlFetcherThreads(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsNumXmlFetcherThreads(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     return ip->NumXmlFetcherThreads();
 }
 
-uint32_t ZappInitParamsNumActionInvokerThreads(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsNumActionInvokerThreads(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     return ip->NumActionInvokerThreads();
 }
 
-uint32_t ZappInitParamsNumInvocations(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsNumInvocations(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     return ip->NumInvocations();
 }
 
-uint32_t ZappInitParamsNumSubscriberThreads(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsNumSubscriberThreads(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     return ip->NumSubscriberThreads();
 }
 
-uint32_t ZappInitParamsPendingSubscriptionTimeoutMs(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsPendingSubscriptionTimeoutMs(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     return ip->PendingSubscriptionTimeoutMs();
 }
 
-uint32_t ZappInitParamsDvMaxUpdateTimeSecs(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsDvMaxUpdateTimeSecs(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     return ip->DvMaxUpdateTimeSecs();
 }
 
-uint32_t ZappInitParamsDvNumServerThreads(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsDvNumServerThreads(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
 	return ip->DvNumServerThreads();
 }
 
-uint32_t ZappInitParamsDvNumPublisherThreads(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsDvNumPublisherThreads(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
 	return ip->DvNumPublisherThreads();
 }
 
-uint32_t ZappInitParamsDvNumWebSocketThreads(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsDvNumWebSocketThreads(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
 	return ip->DvNumWebSocketThreads();
 }
 
-uint32_t ZappInitParamsDvWebSocketPort(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsDvWebSocketPort(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
 	return ip->DvWebSocketPort();
 }
 
-uint32_t ZappInitParamsDvIsBonjourEnabled(ZappHandleInitParams aParams)
+uint32_t OhNetInitParamsDvIsBonjourEnabled(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
 	return (ip->DvIsBonjourEnabled()? 1 : 0);
 }
 
-TIpAddress ZappNetworkInterfaceAddress(ZappHandleNetworkInterface aNif)
+TIpAddress OhNetNetworkInterfaceAddress(OhNetHandleNetworkInterface aNif)
 {
     NetworkInterface* nif = reinterpret_cast<NetworkInterface*>(aNif);
     ASSERT(nif != NULL);
     return nif->Address();
 }
 
-TIpAddress ZappNetworkInterfaceSubnet(ZappHandleNetworkInterface aNif)
+TIpAddress OhNetNetworkInterfaceSubnet(OhNetHandleNetworkInterface aNif)
 {
     NetworkInterface* nif = reinterpret_cast<NetworkInterface*>(aNif);
     ASSERT(nif != NULL);
     return nif->Subnet();
 }
 
-const char* ZappNetworkInterfaceName(ZappHandleNetworkInterface aNif)
+const char* OhNetNetworkInterfaceName(OhNetHandleNetworkInterface aNif)
 {
     NetworkInterface* nif = reinterpret_cast<NetworkInterface*>(aNif);
     ASSERT(nif != NULL);
     return nif->Name();
 }
 
-ZappHandleNetworkInterfaceList ZappSubnetListCreate()
+OhNetHandleNetworkInterfaceList OhNetSubnetListCreate()
 {
-    return (ZappHandleNetworkInterfaceList)UpnpLibrary::SubnetList();
+    return (OhNetHandleNetworkInterfaceList)UpnpLibrary::SubnetList();
 }
 
-uint32_t ZappSubnetListSize(ZappHandleNetworkInterfaceList aList)
+uint32_t OhNetSubnetListSize(OhNetHandleNetworkInterfaceList aList)
 {
     std::vector<NetworkInterface*>* list = reinterpret_cast<std::vector<NetworkInterface*>*>(aList);
     ASSERT(list != NULL);
     return (TUint)list->size();
 }
 
-ZappHandleNetworkInterface ZappSubnetAt(ZappHandleNetworkInterfaceList aList, uint32_t aIndex)
+OhNetHandleNetworkInterface OhNetSubnetAt(OhNetHandleNetworkInterfaceList aList, uint32_t aIndex)
 {
     std::vector<NetworkInterface*>* list = reinterpret_cast<std::vector<NetworkInterface*>*>(aList);
     ASSERT(list != NULL);
-    return (ZappHandleNetworkInterface)(*list)[aIndex];
+    return (OhNetHandleNetworkInterface)(*list)[aIndex];
 }
 
-void ZappSubnetListDestroy(ZappHandleNetworkInterfaceList aList)
+void OhNetSubnetListDestroy(OhNetHandleNetworkInterfaceList aList)
 {
     std::vector<NetworkInterface*>* list = reinterpret_cast<std::vector<NetworkInterface*>*>(aList);
     if (list != NULL) {
@@ -350,20 +350,20 @@ void ZappSubnetListDestroy(ZappHandleNetworkInterfaceList aList)
     }
 }
 
-void ZappSetCurrentSubnet(ZappHandleNetworkInterface aSubnet)
+void OhNetSetCurrentSubnet(OhNetHandleNetworkInterface aSubnet)
 {
     NetworkInterface* nif = reinterpret_cast<NetworkInterface*>(aSubnet);
     UpnpLibrary::SetCurrentSubnet(*nif);
 }
 
-void ZappSetDefaultSubnet()
+void OhNetSetDefaultSubnet()
 {
     UpnpLibrary::SetDefaultSubnet();
 }
 
-void ZappFreeExternal(void* aPtr)
+void OhNetFreeExternal(void* aPtr)
 {
-	ZappCallbackFreeExternal cb = Stack::InitParams().FreeExternal();
+	OhNetCallbackFreeExternal cb = Stack::InitParams().FreeExternal();
 	if (cb != NULL) {
 		cb(aPtr);
 	}

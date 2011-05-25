@@ -1,11 +1,11 @@
 #include <DvProvider.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <DviDevice.h>
 #include <Printer.h>
 #include <Stack.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 void DvProvider::PropertiesLock()
 {

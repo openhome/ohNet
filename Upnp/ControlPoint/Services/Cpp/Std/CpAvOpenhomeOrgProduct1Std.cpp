@@ -8,7 +8,7 @@
 
 #include <string>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncManufacturerAvOpenhomeOrgProduct1Cpp : public SyncProxyAction
@@ -320,86 +320,86 @@ void SyncSourceXmlChangeCountAvOpenhomeOrgProduct1Cpp::CompleteRequest(IAsync& a
 CpProxyAvOpenhomeOrgProduct1Cpp::CpProxyAvOpenhomeOrgProduct1Cpp(CpDeviceCpp& aDevice)
     : CpProxy("av-openhome-org", "Product", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionManufacturer = new Action("Manufacturer");
-    param = new Zapp::ParameterString("Name");
+    param = new OpenHome::Net::ParameterString("Name");
     iActionManufacturer->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Info");
+    param = new OpenHome::Net::ParameterString("Info");
     iActionManufacturer->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Url");
+    param = new OpenHome::Net::ParameterString("Url");
     iActionManufacturer->AddOutputParameter(param);
-    param = new Zapp::ParameterString("ImageUri");
+    param = new OpenHome::Net::ParameterString("ImageUri");
     iActionManufacturer->AddOutputParameter(param);
 
     iActionModel = new Action("Model");
-    param = new Zapp::ParameterString("Name");
+    param = new OpenHome::Net::ParameterString("Name");
     iActionModel->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Info");
+    param = new OpenHome::Net::ParameterString("Info");
     iActionModel->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Url");
+    param = new OpenHome::Net::ParameterString("Url");
     iActionModel->AddOutputParameter(param);
-    param = new Zapp::ParameterString("ImageUri");
+    param = new OpenHome::Net::ParameterString("ImageUri");
     iActionModel->AddOutputParameter(param);
 
     iActionProduct = new Action("Product");
-    param = new Zapp::ParameterString("Room");
+    param = new OpenHome::Net::ParameterString("Room");
     iActionProduct->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Name");
+    param = new OpenHome::Net::ParameterString("Name");
     iActionProduct->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Info");
+    param = new OpenHome::Net::ParameterString("Info");
     iActionProduct->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Url");
+    param = new OpenHome::Net::ParameterString("Url");
     iActionProduct->AddOutputParameter(param);
-    param = new Zapp::ParameterString("ImageUri");
+    param = new OpenHome::Net::ParameterString("ImageUri");
     iActionProduct->AddOutputParameter(param);
 
     iActionStandby = new Action("Standby");
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionStandby->AddOutputParameter(param);
 
     iActionSetStandby = new Action("SetStandby");
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionSetStandby->AddInputParameter(param);
 
     iActionSourceCount = new Action("SourceCount");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSourceCount->AddOutputParameter(param);
 
     iActionSourceXml = new Action("SourceXml");
-    param = new Zapp::ParameterString("Value");
+    param = new OpenHome::Net::ParameterString("Value");
     iActionSourceXml->AddOutputParameter(param);
 
     iActionSourceIndex = new Action("SourceIndex");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSourceIndex->AddOutputParameter(param);
 
     iActionSetSourceIndex = new Action("SetSourceIndex");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSetSourceIndex->AddInputParameter(param);
 
     iActionSetSourceIndexByName = new Action("SetSourceIndexByName");
-    param = new Zapp::ParameterString("Value");
+    param = new OpenHome::Net::ParameterString("Value");
     iActionSetSourceIndexByName->AddInputParameter(param);
 
     iActionSource = new Action("Source");
-    param = new Zapp::ParameterUint("Index");
+    param = new OpenHome::Net::ParameterUint("Index");
     iActionSource->AddInputParameter(param);
-    param = new Zapp::ParameterString("SystemName");
+    param = new OpenHome::Net::ParameterString("SystemName");
     iActionSource->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Type");
+    param = new OpenHome::Net::ParameterString("Type");
     iActionSource->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Name");
+    param = new OpenHome::Net::ParameterString("Name");
     iActionSource->AddOutputParameter(param);
-    param = new Zapp::ParameterBool("Visible");
+    param = new OpenHome::Net::ParameterBool("Visible");
     iActionSource->AddOutputParameter(param);
 
     iActionAttributes = new Action("Attributes");
-    param = new Zapp::ParameterString("Value");
+    param = new OpenHome::Net::ParameterString("Value");
     iActionAttributes->AddOutputParameter(param);
 
     iActionSourceXmlChangeCount = new Action("SourceXmlChangeCount");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSourceXmlChangeCount->AddOutputParameter(param);
 
     Functor functor;

@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyAvOpenhomeOrgTime1 : ICpProxy, IDisposable
     {
@@ -55,7 +55,7 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyAvOpenhomeOrgTime1 : CpProxy, IDisposable, ICpProxyAvOpenhomeOrgTime1
     {
-        private Zapp.Core.Action iActionTime;
+        private OpenHome.Net.Core.Action iActionTime;
         private PropertyUint iTrackCount;
         private PropertyUint iDuration;
         private PropertyUint iSeconds;
@@ -72,10 +72,10 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyAvOpenhomeOrgTime1(CpDevice aDevice)
             : base("av-openhome-org", "Time", 1, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             
 
-            iActionTime = new Zapp.Core.Action("Time");
+            iActionTime = new OpenHome.Net.Core.Action("Time");
             param = new ParameterUint("TrackCount");
             iActionTime.AddOutputParameter(param);
             param = new ParameterUint("Duration");

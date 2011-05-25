@@ -2,8 +2,8 @@
 #include <Timer.h>
 #include <Maths.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 #ifdef _WIN32
 # pragma warning(disable:4355) // use of 'this' in ctor lists safe in this case
@@ -257,7 +257,7 @@ void SuiteModerator::Test()
     TEST(iCallbacks == 1);
 }
 
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::Initialise(aInitParams);
 

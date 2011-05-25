@@ -1,12 +1,13 @@
 #ifndef HEADER_DVUPNPORGSWITCHPOWER1
 #define HEADER_DVUPNPORGSWITCHPOWER1
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
 #include <DvProvider.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation;
 class PropertyInt;
@@ -92,7 +93,8 @@ private:
     PropertyBool* iPropertyStatus;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVUPNPORGSWITCHPOWER1
 

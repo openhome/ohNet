@@ -1,15 +1,15 @@
 #include "DvUpnpOrgAVTransport2.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
 #include <DvProvider.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class DvProviderUpnpOrgAVTransport2C : public DvProvider
 {
@@ -149,7 +149,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionSetAVTransportURI(CallbackAVTra
 {
     iCallbackSetAVTransportURI = aCallback;
     iPtrSetAVTransportURI = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetAVTransportURI");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetAVTransportURI");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("CurrentURI"));
     action->AddInputParameter(new ParameterString("CurrentURIMetaData"));
@@ -161,7 +161,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionSetNextAVTransportURI(CallbackA
 {
     iCallbackSetNextAVTransportURI = aCallback;
     iPtrSetNextAVTransportURI = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetNextAVTransportURI");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetNextAVTransportURI");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("NextURI"));
     action->AddInputParameter(new ParameterString("NextURIMetaData"));
@@ -173,7 +173,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionGetMediaInfo(CallbackAVTranspor
 {
     iCallbackGetMediaInfo = aCallback;
     iPtrGetMediaInfo = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetMediaInfo");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetMediaInfo");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("NrTracks", 0, 0));
     action->AddOutputParameter(new ParameterString("MediaDuration"));
@@ -192,7 +192,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionGetMediaInfo_Ext(CallbackAVTran
 {
     iCallbackGetMediaInfo_Ext = aCallback;
     iPtrGetMediaInfo_Ext = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetMediaInfo_Ext");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetMediaInfo_Ext");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -220,7 +220,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionGetTransportInfo(CallbackAVTran
 {
     iCallbackGetTransportInfo = aCallback;
     iPtrGetTransportInfo = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetTransportInfo");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetTransportInfo");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -249,7 +249,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionGetPositionInfo(CallbackAVTrans
 {
     iCallbackGetPositionInfo = aCallback;
     iPtrGetPositionInfo = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetPositionInfo");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetPositionInfo");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("Track", 0, 0, 1));
     action->AddOutputParameter(new ParameterString("TrackDuration"));
@@ -267,7 +267,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionGetDeviceCapabilities(CallbackA
 {
     iCallbackGetDeviceCapabilities = aCallback;
     iPtrGetDeviceCapabilities = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetDeviceCapabilities");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetDeviceCapabilities");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterString("PlayMedia"));
     action->AddOutputParameter(new ParameterString("RecMedia"));
@@ -280,7 +280,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionGetTransportSettings(CallbackAV
 {
     iCallbackGetTransportSettings = aCallback;
     iPtrGetTransportSettings = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetTransportSettings");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetTransportSettings");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -298,7 +298,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionStop(CallbackAVTransport2Stop a
 {
     iCallbackStop = aCallback;
     iPtrStop = aPtr;
-    Zapp::Action* action = new Zapp::Action("Stop");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Stop");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2C::DoStop);
     iService->AddAction(action, functor);
@@ -308,7 +308,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionPlay(CallbackAVTransport2Play a
 {
     iCallbackPlay = aCallback;
     iPtrPlay = aPtr;
-    Zapp::Action* action = new Zapp::Action("Play");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Play");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -325,7 +325,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionPause(CallbackAVTransport2Pause
 {
     iCallbackPause = aCallback;
     iPtrPause = aPtr;
-    Zapp::Action* action = new Zapp::Action("Pause");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Pause");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2C::DoPause);
     iService->AddAction(action, functor);
@@ -335,7 +335,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionRecord(CallbackAVTransport2Reco
 {
     iCallbackRecord = aCallback;
     iPtrRecord = aPtr;
-    Zapp::Action* action = new Zapp::Action("Record");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Record");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2C::DoRecord);
     iService->AddAction(action, functor);
@@ -345,7 +345,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionSeek(CallbackAVTransport2Seek a
 {
     iCallbackSeek = aCallback;
     iPtrSeek = aPtr;
-    Zapp::Action* action = new Zapp::Action("Seek");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Seek");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -363,7 +363,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionNext(CallbackAVTransport2Next a
 {
     iCallbackNext = aCallback;
     iPtrNext = aPtr;
-    Zapp::Action* action = new Zapp::Action("Next");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Next");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2C::DoNext);
     iService->AddAction(action, functor);
@@ -373,7 +373,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionPrevious(CallbackAVTransport2Pr
 {
     iCallbackPrevious = aCallback;
     iPtrPrevious = aPtr;
-    Zapp::Action* action = new Zapp::Action("Previous");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Previous");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2C::DoPrevious);
     iService->AddAction(action, functor);
@@ -383,7 +383,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionSetPlayMode(CallbackAVTransport
 {
     iCallbackSetPlayMode = aCallback;
     iPtrSetPlayMode = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetPlayMode");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetPlayMode");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -400,7 +400,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionSetRecordQualityMode(CallbackAV
 {
     iCallbackSetRecordQualityMode = aCallback;
     iPtrSetRecordQualityMode = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetRecordQualityMode");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetRecordQualityMode");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("NewRecordQualityMode"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2C::DoSetRecordQualityMode);
@@ -411,7 +411,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionGetCurrentTransportActions(Call
 {
     iCallbackGetCurrentTransportActions = aCallback;
     iPtrGetCurrentTransportActions = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetCurrentTransportActions");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetCurrentTransportActions");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterString("Actions"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2C::DoGetCurrentTransportActions);
@@ -422,7 +422,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionGetDRMState(CallbackAVTransport
 {
     iCallbackGetDRMState = aCallback;
     iPtrGetDRMState = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetDRMState");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetDRMState");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterRelated("CurrentDRMState", *iPropertyDRMState));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport2C::DoGetDRMState);
@@ -433,7 +433,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionGetStateVariables(CallbackAVTra
 {
     iCallbackGetStateVariables = aCallback;
     iPtrGetStateVariables = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetStateVariables");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetStateVariables");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("StateVariableList"));
     action->AddOutputParameter(new ParameterString("StateVariableValuePairs"));
@@ -445,7 +445,7 @@ void DvProviderUpnpOrgAVTransport2C::EnableActionSetStateVariables(CallbackAVTra
 {
     iCallbackSetStateVariables = aCallback;
     iPtrSetStateVariables = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetStateVariables");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetStateVariables");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("AVTransportUDN"));
     action->AddInputParameter(new ParameterString("ServiceType"));
@@ -526,35 +526,35 @@ void DvProviderUpnpOrgAVTransport2C::DoGetMediaInfo(IDviInvocation& aInvocation,
     resp.Start();
     respNrTracks.Write(NrTracks);
     Brhz bufMediaDuration((const TChar*)MediaDuration);
-    ZappFreeExternal(MediaDuration);
+    OhNetFreeExternal(MediaDuration);
     respMediaDuration.Write(bufMediaDuration);
     respMediaDuration.WriteFlush();
     Brhz bufCurrentURI((const TChar*)CurrentURI);
-    ZappFreeExternal(CurrentURI);
+    OhNetFreeExternal(CurrentURI);
     respCurrentURI.Write(bufCurrentURI);
     respCurrentURI.WriteFlush();
     Brhz bufCurrentURIMetaData((const TChar*)CurrentURIMetaData);
-    ZappFreeExternal(CurrentURIMetaData);
+    OhNetFreeExternal(CurrentURIMetaData);
     respCurrentURIMetaData.Write(bufCurrentURIMetaData);
     respCurrentURIMetaData.WriteFlush();
     Brhz bufNextURI((const TChar*)NextURI);
-    ZappFreeExternal(NextURI);
+    OhNetFreeExternal(NextURI);
     respNextURI.Write(bufNextURI);
     respNextURI.WriteFlush();
     Brhz bufNextURIMetaData((const TChar*)NextURIMetaData);
-    ZappFreeExternal(NextURIMetaData);
+    OhNetFreeExternal(NextURIMetaData);
     respNextURIMetaData.Write(bufNextURIMetaData);
     respNextURIMetaData.WriteFlush();
     Brhz bufPlayMedium((const TChar*)PlayMedium);
-    ZappFreeExternal(PlayMedium);
+    OhNetFreeExternal(PlayMedium);
     respPlayMedium.Write(bufPlayMedium);
     respPlayMedium.WriteFlush();
     Brhz bufRecordMedium((const TChar*)RecordMedium);
-    ZappFreeExternal(RecordMedium);
+    OhNetFreeExternal(RecordMedium);
     respRecordMedium.Write(bufRecordMedium);
     respRecordMedium.WriteFlush();
     Brhz bufWriteStatus((const TChar*)WriteStatus);
-    ZappFreeExternal(WriteStatus);
+    OhNetFreeExternal(WriteStatus);
     respWriteStatus.Write(bufWriteStatus);
     respWriteStatus.WriteFlush();
     resp.End();
@@ -593,40 +593,40 @@ void DvProviderUpnpOrgAVTransport2C::DoGetMediaInfo_Ext(IDviInvocation& aInvocat
     InvocationResponseString respWriteStatus(aInvocation, "WriteStatus");
     resp.Start();
     Brhz bufCurrentType((const TChar*)CurrentType);
-    ZappFreeExternal(CurrentType);
+    OhNetFreeExternal(CurrentType);
     respCurrentType.Write(bufCurrentType);
     respCurrentType.WriteFlush();
     respNrTracks.Write(NrTracks);
     Brhz bufMediaDuration((const TChar*)MediaDuration);
-    ZappFreeExternal(MediaDuration);
+    OhNetFreeExternal(MediaDuration);
     respMediaDuration.Write(bufMediaDuration);
     respMediaDuration.WriteFlush();
     Brhz bufCurrentURI((const TChar*)CurrentURI);
-    ZappFreeExternal(CurrentURI);
+    OhNetFreeExternal(CurrentURI);
     respCurrentURI.Write(bufCurrentURI);
     respCurrentURI.WriteFlush();
     Brhz bufCurrentURIMetaData((const TChar*)CurrentURIMetaData);
-    ZappFreeExternal(CurrentURIMetaData);
+    OhNetFreeExternal(CurrentURIMetaData);
     respCurrentURIMetaData.Write(bufCurrentURIMetaData);
     respCurrentURIMetaData.WriteFlush();
     Brhz bufNextURI((const TChar*)NextURI);
-    ZappFreeExternal(NextURI);
+    OhNetFreeExternal(NextURI);
     respNextURI.Write(bufNextURI);
     respNextURI.WriteFlush();
     Brhz bufNextURIMetaData((const TChar*)NextURIMetaData);
-    ZappFreeExternal(NextURIMetaData);
+    OhNetFreeExternal(NextURIMetaData);
     respNextURIMetaData.Write(bufNextURIMetaData);
     respNextURIMetaData.WriteFlush();
     Brhz bufPlayMedium((const TChar*)PlayMedium);
-    ZappFreeExternal(PlayMedium);
+    OhNetFreeExternal(PlayMedium);
     respPlayMedium.Write(bufPlayMedium);
     respPlayMedium.WriteFlush();
     Brhz bufRecordMedium((const TChar*)RecordMedium);
-    ZappFreeExternal(RecordMedium);
+    OhNetFreeExternal(RecordMedium);
     respRecordMedium.Write(bufRecordMedium);
     respRecordMedium.WriteFlush();
     Brhz bufWriteStatus((const TChar*)WriteStatus);
-    ZappFreeExternal(WriteStatus);
+    OhNetFreeExternal(WriteStatus);
     respWriteStatus.Write(bufWriteStatus);
     respWriteStatus.WriteFlush();
     resp.End();
@@ -651,15 +651,15 @@ void DvProviderUpnpOrgAVTransport2C::DoGetTransportInfo(IDviInvocation& aInvocat
     InvocationResponseString respCurrentSpeed(aInvocation, "CurrentSpeed");
     resp.Start();
     Brhz bufCurrentTransportState((const TChar*)CurrentTransportState);
-    ZappFreeExternal(CurrentTransportState);
+    OhNetFreeExternal(CurrentTransportState);
     respCurrentTransportState.Write(bufCurrentTransportState);
     respCurrentTransportState.WriteFlush();
     Brhz bufCurrentTransportStatus((const TChar*)CurrentTransportStatus);
-    ZappFreeExternal(CurrentTransportStatus);
+    OhNetFreeExternal(CurrentTransportStatus);
     respCurrentTransportStatus.Write(bufCurrentTransportStatus);
     respCurrentTransportStatus.WriteFlush();
     Brhz bufCurrentSpeed((const TChar*)CurrentSpeed);
-    ZappFreeExternal(CurrentSpeed);
+    OhNetFreeExternal(CurrentSpeed);
     respCurrentSpeed.Write(bufCurrentSpeed);
     respCurrentSpeed.WriteFlush();
     resp.End();
@@ -695,23 +695,23 @@ void DvProviderUpnpOrgAVTransport2C::DoGetPositionInfo(IDviInvocation& aInvocati
     resp.Start();
     respTrack.Write(Track);
     Brhz bufTrackDuration((const TChar*)TrackDuration);
-    ZappFreeExternal(TrackDuration);
+    OhNetFreeExternal(TrackDuration);
     respTrackDuration.Write(bufTrackDuration);
     respTrackDuration.WriteFlush();
     Brhz bufTrackMetaData((const TChar*)TrackMetaData);
-    ZappFreeExternal(TrackMetaData);
+    OhNetFreeExternal(TrackMetaData);
     respTrackMetaData.Write(bufTrackMetaData);
     respTrackMetaData.WriteFlush();
     Brhz bufTrackURI((const TChar*)TrackURI);
-    ZappFreeExternal(TrackURI);
+    OhNetFreeExternal(TrackURI);
     respTrackURI.Write(bufTrackURI);
     respTrackURI.WriteFlush();
     Brhz bufRelTime((const TChar*)RelTime);
-    ZappFreeExternal(RelTime);
+    OhNetFreeExternal(RelTime);
     respRelTime.Write(bufRelTime);
     respRelTime.WriteFlush();
     Brhz bufAbsTime((const TChar*)AbsTime);
-    ZappFreeExternal(AbsTime);
+    OhNetFreeExternal(AbsTime);
     respAbsTime.Write(bufAbsTime);
     respAbsTime.WriteFlush();
     respRelCount.Write(RelCount);
@@ -738,15 +738,15 @@ void DvProviderUpnpOrgAVTransport2C::DoGetDeviceCapabilities(IDviInvocation& aIn
     InvocationResponseString respRecQualityModes(aInvocation, "RecQualityModes");
     resp.Start();
     Brhz bufPlayMedia((const TChar*)PlayMedia);
-    ZappFreeExternal(PlayMedia);
+    OhNetFreeExternal(PlayMedia);
     respPlayMedia.Write(bufPlayMedia);
     respPlayMedia.WriteFlush();
     Brhz bufRecMedia((const TChar*)RecMedia);
-    ZappFreeExternal(RecMedia);
+    OhNetFreeExternal(RecMedia);
     respRecMedia.Write(bufRecMedia);
     respRecMedia.WriteFlush();
     Brhz bufRecQualityModes((const TChar*)RecQualityModes);
-    ZappFreeExternal(RecQualityModes);
+    OhNetFreeExternal(RecQualityModes);
     respRecQualityModes.Write(bufRecQualityModes);
     respRecQualityModes.WriteFlush();
     resp.End();
@@ -769,11 +769,11 @@ void DvProviderUpnpOrgAVTransport2C::DoGetTransportSettings(IDviInvocation& aInv
     InvocationResponseString respRecQualityMode(aInvocation, "RecQualityMode");
     resp.Start();
     Brhz bufPlayMode((const TChar*)PlayMode);
-    ZappFreeExternal(PlayMode);
+    OhNetFreeExternal(PlayMode);
     respPlayMode.Write(bufPlayMode);
     respPlayMode.WriteFlush();
     Brhz bufRecQualityMode((const TChar*)RecQualityMode);
-    ZappFreeExternal(RecQualityMode);
+    OhNetFreeExternal(RecQualityMode);
     respRecQualityMode.Write(bufRecQualityMode);
     respRecQualityMode.WriteFlush();
     resp.End();
@@ -939,7 +939,7 @@ void DvProviderUpnpOrgAVTransport2C::DoGetCurrentTransportActions(IDviInvocation
     InvocationResponseString respActions(aInvocation, "Actions");
     resp.Start();
     Brhz bufActions((const TChar*)Actions);
-    ZappFreeExternal(Actions);
+    OhNetFreeExternal(Actions);
     respActions.Write(bufActions);
     respActions.WriteFlush();
     resp.End();
@@ -960,7 +960,7 @@ void DvProviderUpnpOrgAVTransport2C::DoGetDRMState(IDviInvocation& aInvocation, 
     InvocationResponseString respCurrentDRMState(aInvocation, "CurrentDRMState");
     resp.Start();
     Brhz bufCurrentDRMState((const TChar*)CurrentDRMState);
-    ZappFreeExternal(CurrentDRMState);
+    OhNetFreeExternal(CurrentDRMState);
     respCurrentDRMState.Write(bufCurrentDRMState);
     respCurrentDRMState.WriteFlush();
     resp.End();
@@ -983,7 +983,7 @@ void DvProviderUpnpOrgAVTransport2C::DoGetStateVariables(IDviInvocation& aInvoca
     InvocationResponseString respStateVariableValuePairs(aInvocation, "StateVariableValuePairs");
     resp.Start();
     Brhz bufStateVariableValuePairs((const TChar*)StateVariableValuePairs);
-    ZappFreeExternal(StateVariableValuePairs);
+    OhNetFreeExternal(StateVariableValuePairs);
     respStateVariableValuePairs.Write(bufStateVariableValuePairs);
     respStateVariableValuePairs.WriteFlush();
     resp.End();
@@ -1012,7 +1012,7 @@ void DvProviderUpnpOrgAVTransport2C::DoSetStateVariables(IDviInvocation& aInvoca
     InvocationResponseString respStateVariableList(aInvocation, "StateVariableList");
     resp.Start();
     Brhz bufStateVariableList((const TChar*)StateVariableList);
-    ZappFreeExternal(StateVariableList);
+    OhNetFreeExternal(StateVariableList);
     respStateVariableList.Write(bufStateVariableList);
     respStateVariableList.WriteFlush();
     resp.End();

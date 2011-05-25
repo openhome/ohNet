@@ -4,7 +4,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Zapp.Core
+namespace OpenHome.Net.Core
 {
     /// <summary>
     /// Description of the type plus any bounds of action arguments plus properties.  Only intended for use by auto-generated proxies and providers.
@@ -29,7 +29,7 @@ namespace Zapp.Core
     /// </summary>
     public class ParameterInt : Parameter
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServiceParameterCreateInt(IntPtr aName, int aMinValue, int aMaxValue, int aStep);
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Zapp.Core
     /// </summary>
     public class ParameterUint : Parameter
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServiceParameterCreateUint(IntPtr aName, uint aMinValue, uint aMaxValue, uint aStep);
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Zapp.Core
     /// </summary>
     public class ParameterBool : Parameter
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServiceParameterCreateBool(IntPtr aName);
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Zapp.Core
     /// </summary>
     public class ParameterString : Parameter
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServiceParameterCreateString(IntPtr aName, IntPtr* aAllowedValues, uint aCount);
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Zapp.Core
     /// </summary>
     public class ParameterBinary : Parameter
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServiceParameterCreateBinary(IntPtr aName);
 
         /// <summary>
@@ -141,10 +141,10 @@ namespace Zapp.Core
 
     public class ParameterRelated : Parameter
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServiceParameterCreateRelated(IntPtr aName, IntPtr aProperty);
 
-        public unsafe ParameterRelated(String aName, Zapp.Core.Property aProperty)
+        public unsafe ParameterRelated(String aName, OpenHome.Net.Core.Property aProperty)
         {
             IntPtr name = Marshal.StringToHGlobalAnsi(aName);
             iHandle = ServiceParameterCreateRelated(name, aProperty.Handle());
@@ -158,7 +158,7 @@ namespace Zapp.Core
     /// <remarks>One Property will be created per Property (state variable) for the Service</remarks>
     public class Property : IDisposable
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServicePropertyDestroy(IntPtr aHandle);
         
         protected delegate void Callback(IntPtr aPtr);
@@ -222,13 +222,13 @@ namespace Zapp.Core
     /// </summary>
     public class PropertyInt : Property
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServicePropertyCreateIntCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr ServicePropertyCreateIntDv(IntPtr aParameterHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern int ServicePropertyValueInt(IntPtr aHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern uint ServicePropertySetValueInt(IntPtr aHandle, int aValue);
 
         /// <summary>
@@ -281,13 +281,13 @@ namespace Zapp.Core
     /// </summary>
     public class PropertyUint : Property
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServicePropertyCreateUintCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr ServicePropertyCreateUintDv(IntPtr aParameterHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern uint ServicePropertyValueUint(IntPtr aHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern uint ServicePropertySetValueUint(IntPtr aHandle, uint aValue);
 
         /// <summary>
@@ -340,13 +340,13 @@ namespace Zapp.Core
     /// </summary>
     public class PropertyBool : Property
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServicePropertyCreateBoolCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr ServicePropertyCreateBoolDv(IntPtr aParameterHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern uint ServicePropertyValueBool(IntPtr aHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern uint ServicePropertySetValueBool(IntPtr aHandle, uint aValue);
 
         /// <summary>
@@ -401,15 +401,15 @@ namespace Zapp.Core
     /// </summary>
     public class PropertyString : Property
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServicePropertyCreateStringCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr ServicePropertyCreateStringDv(IntPtr aParameterHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServicePropertyValueString(IntPtr aHandle);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(IntPtr aPtr);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
+        static extern unsafe void OhNetFree(IntPtr aPtr);
+        [DllImport("ohNet")]
         static extern uint ServicePropertySetValueString(IntPtr aHandle, IntPtr aValue);
 
         /// <summary>
@@ -444,7 +444,7 @@ namespace Zapp.Core
         {
             IntPtr cStr = ServicePropertyValueString(iHandle);
             String str = Marshal.PtrToStringAnsi(cStr);
-            ZappFree(cStr);
+            OhNetFree(cStr);
             return str;
         }
 
@@ -467,16 +467,16 @@ namespace Zapp.Core
     /// </summary>
     public class PropertyBinary : Property
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServicePropertyCreateBinaryCp(IntPtr aName, Callback aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr ServicePropertyCreateBinaryDv(IntPtr aParameterHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe byte* ServicePropertyGetValueBinary(IntPtr aHandle, IntPtr* aData, uint* aLen);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern uint ServicePropertySetValueBinary(IntPtr aHandle, IntPtr aData, uint aLen);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern unsafe void OhNetFree(IntPtr aPtr);
 
         /// <summary>
         /// Constructor suitable for use by clients of the control point stack
@@ -513,7 +513,7 @@ namespace Zapp.Core
             ServicePropertyGetValueBinary(iHandle, &pData, &len);
             byte[] data = new byte[len];
             Marshal.Copy(pData, data, 0, (int)len);
-            ZappFree(pData);
+            OhNetFree(pData);
             return data;
         }
 
@@ -540,15 +540,15 @@ namespace Zapp.Core
     /// 0..m output parameters.  Each parameter must be either input or output.</remarks>
     public class Action : IDisposable
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServiceActionCreate(IntPtr aName);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void ServiceActionDestroy(IntPtr aAction);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void ServiceActionAddInputParameter(IntPtr aAction, IntPtr aParameter);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void ServiceActionAddOutputParameter(IntPtr aAction, IntPtr aParameter);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ServiceActionName(IntPtr aAction);
 
         private IntPtr iHandle;

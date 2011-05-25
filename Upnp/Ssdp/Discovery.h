@@ -1,7 +1,7 @@
 #ifndef HEADER_SSDP_DISCOVERY
 #define HEADER_SSDP_DISCOVERY
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Thread.h>
 #include <Ssdp.h>
@@ -10,7 +10,8 @@
 
 #include <vector>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 // INotifyHandler - called by MulticastListener on receiving an alive or byebye notification
 class ISsdpNotifyHandler
@@ -77,7 +78,7 @@ class SsdpListenerMulticast : public SsdpListener
     {
     public:
         TInt Id() const { return iId; }
-        Zapp::Mutex& Mutex() { return iLock; }
+        OpenHome::Net::Mutex& Mutex() { return iLock; }
         void Lock() { iLock.Wait(); }
         void Unlock() { iLock.Signal(); }
         void Disable() { iDead = true; }
@@ -87,7 +88,7 @@ class SsdpListenerMulticast : public SsdpListener
     private:
         TBool iDead;
         TInt iId;
-        Zapp::Mutex iLock;
+        OpenHome::Net::Mutex iLock;
     };
     class NotifyHandler : public Handler
     {
@@ -169,6 +170,7 @@ private:
     SsdpHeaderExt iHeaderExt;
 };
 
-} //namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_SSDP_DISCOVERY

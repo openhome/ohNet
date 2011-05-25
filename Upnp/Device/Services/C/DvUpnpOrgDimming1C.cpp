@@ -1,15 +1,15 @@
 #include "DvUpnpOrgDimming1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
 #include <DvProvider.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class DvProviderUpnpOrgDimming1C : public DvProvider
 {
@@ -188,7 +188,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionSetLoadLevelTarget(CallbackDimming1
 {
     iCallbackSetLoadLevelTarget = aCallback;
     iPtrSetLoadLevelTarget = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetLoadLevelTarget");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetLoadLevelTarget");
     action->AddInputParameter(new ParameterUint("newLoadlevelTarget", 0, 100));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoSetLoadLevelTarget);
     iService->AddAction(action, functor);
@@ -198,7 +198,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionGetLoadLevelTarget(CallbackDimming1
 {
     iCallbackGetLoadLevelTarget = aCallback;
     iPtrGetLoadLevelTarget = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetLoadLevelTarget");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetLoadLevelTarget");
     action->AddOutputParameter(new ParameterUint("GetLoadlevelTarget", 0, 100));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetLoadLevelTarget);
     iService->AddAction(action, functor);
@@ -208,7 +208,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionGetLoadLevelStatus(CallbackDimming1
 {
     iCallbackGetLoadLevelStatus = aCallback;
     iPtrGetLoadLevelStatus = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetLoadLevelStatus");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetLoadLevelStatus");
     action->AddOutputParameter(new ParameterRelated("retLoadlevelStatus", *iPropertyLoadLevelStatus));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetLoadLevelStatus);
     iService->AddAction(action, functor);
@@ -218,7 +218,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionSetOnEffectLevel(CallbackDimming1Se
 {
     iCallbackSetOnEffectLevel = aCallback;
     iPtrSetOnEffectLevel = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetOnEffectLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetOnEffectLevel");
     action->AddInputParameter(new ParameterUint("newOnEffectLevel", 0, 100));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoSetOnEffectLevel);
     iService->AddAction(action, functor);
@@ -228,7 +228,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionSetOnEffect(CallbackDimming1SetOnEf
 {
     iCallbackSetOnEffect = aCallback;
     iPtrSetOnEffect = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetOnEffect");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetOnEffect");
     TChar** allowedValues;
     TUint index;
     index = 0;
@@ -246,7 +246,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionGetOnEffectParameters(CallbackDimmi
 {
     iCallbackGetOnEffectParameters = aCallback;
     iPtrGetOnEffectParameters = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetOnEffectParameters");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetOnEffectParameters");
     TChar** allowedValues;
     TUint index;
     index = 0;
@@ -265,7 +265,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionStepUp(CallbackDimming1StepUp aCall
 {
     iCallbackStepUp = aCallback;
     iPtrStepUp = aPtr;
-    Zapp::Action* action = new Zapp::Action("StepUp");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("StepUp");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoStepUp);
     iService->AddAction(action, functor);
 }
@@ -274,7 +274,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionStepDown(CallbackDimming1StepDown a
 {
     iCallbackStepDown = aCallback;
     iPtrStepDown = aPtr;
-    Zapp::Action* action = new Zapp::Action("StepDown");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("StepDown");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoStepDown);
     iService->AddAction(action, functor);
 }
@@ -283,7 +283,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionStartRampUp(CallbackDimming1StartRa
 {
     iCallbackStartRampUp = aCallback;
     iPtrStartRampUp = aPtr;
-    Zapp::Action* action = new Zapp::Action("StartRampUp");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("StartRampUp");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoStartRampUp);
     iService->AddAction(action, functor);
 }
@@ -292,7 +292,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionStartRampDown(CallbackDimming1Start
 {
     iCallbackStartRampDown = aCallback;
     iPtrStartRampDown = aPtr;
-    Zapp::Action* action = new Zapp::Action("StartRampDown");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("StartRampDown");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoStartRampDown);
     iService->AddAction(action, functor);
 }
@@ -301,7 +301,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionStopRamp(CallbackDimming1StopRamp a
 {
     iCallbackStopRamp = aCallback;
     iPtrStopRamp = aPtr;
-    Zapp::Action* action = new Zapp::Action("StopRamp");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("StopRamp");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoStopRamp);
     iService->AddAction(action, functor);
 }
@@ -310,7 +310,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionStartRampToLevel(CallbackDimming1St
 {
     iCallbackStartRampToLevel = aCallback;
     iPtrStartRampToLevel = aPtr;
-    Zapp::Action* action = new Zapp::Action("StartRampToLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("StartRampToLevel");
     action->AddInputParameter(new ParameterUint("newLoadLevelTarget", 0, 100));
     action->AddInputParameter(new ParameterUint("newRampTime"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoStartRampToLevel);
@@ -321,7 +321,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionSetStepDelta(CallbackDimming1SetSte
 {
     iCallbackSetStepDelta = aCallback;
     iPtrSetStepDelta = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetStepDelta");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetStepDelta");
     action->AddInputParameter(new ParameterRelated("newStepDelta", *iPropertyStepDelta));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoSetStepDelta);
     iService->AddAction(action, functor);
@@ -331,7 +331,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionGetStepDelta(CallbackDimming1GetSte
 {
     iCallbackGetStepDelta = aCallback;
     iPtrGetStepDelta = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetStepDelta");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetStepDelta");
     action->AddOutputParameter(new ParameterRelated("retStepDelta", *iPropertyStepDelta));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetStepDelta);
     iService->AddAction(action, functor);
@@ -341,7 +341,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionSetRampRate(CallbackDimming1SetRamp
 {
     iCallbackSetRampRate = aCallback;
     iPtrSetRampRate = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetRampRate");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetRampRate");
     action->AddInputParameter(new ParameterRelated("newRampRate", *iPropertyRampRate));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoSetRampRate);
     iService->AddAction(action, functor);
@@ -351,7 +351,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionGetRampRate(CallbackDimming1GetRamp
 {
     iCallbackGetRampRate = aCallback;
     iPtrGetRampRate = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetRampRate");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRampRate");
     action->AddOutputParameter(new ParameterRelated("retRampRate", *iPropertyRampRate));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetRampRate);
     iService->AddAction(action, functor);
@@ -361,7 +361,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionPauseRamp(CallbackDimming1PauseRamp
 {
     iCallbackPauseRamp = aCallback;
     iPtrPauseRamp = aPtr;
-    Zapp::Action* action = new Zapp::Action("PauseRamp");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PauseRamp");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoPauseRamp);
     iService->AddAction(action, functor);
 }
@@ -370,7 +370,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionResumeRamp(CallbackDimming1ResumeRa
 {
     iCallbackResumeRamp = aCallback;
     iPtrResumeRamp = aPtr;
-    Zapp::Action* action = new Zapp::Action("ResumeRamp");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ResumeRamp");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoResumeRamp);
     iService->AddAction(action, functor);
 }
@@ -379,7 +379,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionGetIsRamping(CallbackDimming1GetIsR
 {
     iCallbackGetIsRamping = aCallback;
     iPtrGetIsRamping = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetIsRamping");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetIsRamping");
     action->AddOutputParameter(new ParameterRelated("retIsRamping", *iPropertyIsRamping));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetIsRamping);
     iService->AddAction(action, functor);
@@ -389,7 +389,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionGetRampPaused(CallbackDimming1GetRa
 {
     iCallbackGetRampPaused = aCallback;
     iPtrGetRampPaused = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetRampPaused");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRampPaused");
     action->AddOutputParameter(new ParameterRelated("retRampPaused", *iPropertyRampPaused));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetRampPaused);
     iService->AddAction(action, functor);
@@ -399,7 +399,7 @@ void DvProviderUpnpOrgDimming1C::EnableActionGetRampTime(CallbackDimming1GetRamp
 {
     iCallbackGetRampTime = aCallback;
     iPtrGetRampTime = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetRampTime");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRampTime");
     action->AddOutputParameter(new ParameterUint("retRampTime"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgDimming1C::DoGetRampTime);
     iService->AddAction(action, functor);
@@ -501,7 +501,7 @@ void DvProviderUpnpOrgDimming1C::DoGetOnEffectParameters(IDviInvocation& aInvoca
     InvocationResponseUint respretOnEffectLevel(aInvocation, "retOnEffectLevel");
     resp.Start();
     Brhz bufretOnEffect((const TChar*)retOnEffect);
-    ZappFreeExternal(retOnEffect);
+    OhNetFreeExternal(retOnEffect);
     respretOnEffect.Write(bufretOnEffect);
     respretOnEffect.WriteFlush();
     respretOnEffectLevel.Write(retOnEffectLevel);

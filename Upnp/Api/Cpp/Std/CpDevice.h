@@ -7,7 +7,8 @@
 #include <string>
 #include <map>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpiDevice;
 /**
@@ -138,6 +139,7 @@ private:
     FunctorCpDeviceCpp iRemoved;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_CPDEVICECPP

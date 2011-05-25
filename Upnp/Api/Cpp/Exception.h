@@ -1,7 +1,7 @@
 #ifndef HEADER_EXCEPTION
 #define HEADER_EXCEPTION
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <exception>
 
 #ifdef DEFINE_TRACE
@@ -10,33 +10,35 @@
 #else
 # define THROW_WITH_FILE_LINE(aClass, aFile, aLine) throw aClass()
 # define THROW(aClass) throw aClass()
-#endif //DEFINE_TRACE
+#endif // DEFINE_TRACE
 
 #ifdef DEFINE_TRACE
 # define EXCEPTION(aClass) \
-namespace Zapp { \
-class aClass : public Zapp::Exception \
+namespace OpenHome { \
+namespace Net { \
+class aClass : public OpenHome::Net::Exception \
 { \
 public: \
     aClass(const TChar* aFile, TUint aLine) \
-        : Zapp::Exception(#aClass, aFile, aLine){} \
+        : OpenHome::Net::Exception(#aClass, aFile, aLine){} \
 }; \
-} \
+} }
 
-#else //DEFINE_TRACE
+#else // DEFINE_TRACE
 # define EXCEPTION(aClass) \
-namespace Zapp { \
-class aClass : public Zapp::Exception \
+namespace OpenHome { \
+namespace Net { \
+class aClass : public OpenHome::Net::Exception \
 { \
 public: \
-    aClass() : Zapp::Exception(#aClass) {} \
+    aClass() : OpenHome::Net::Exception(#aClass) {} \
 }; \
-} \
+} }
 
 #endif // DEFINE_TRACE
 
-namespace Zapp
-{
+namespace OpenHome {
+namespace Net {
 
 /**
  * @internal
@@ -50,7 +52,7 @@ void AssertHandlerDefault(const TChar*, TUint);
 AssertHandler SetAssertHandler(AssertHandler);
 DllExport void CallAssertHandler(const TChar*, TUint);
 
-/** Base class for all Zapp exceptions.  Some may be recoverable, others may
+/** Base class for all ohNet exceptions.  Some may be recoverable, others may
 not. */
 class DllExportClass Exception
 {
@@ -75,6 +77,7 @@ void UnhandledExceptionHandler(Exception& aException);
 
 /* @@} */
 
-} //namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif //HEADER_EXCEPTION

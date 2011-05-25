@@ -1,10 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp.Core;
+using OpenHome.Net.Core;
 using System.Threading;
 
-namespace Zapp.ControlPoint
+namespace OpenHome.Net.ControlPoint
 {
     public class ProxyError : Exception
     {
@@ -45,25 +45,25 @@ namespace Zapp.ControlPoint
     /// </summary>
     public class CpProxy : ICpProxy
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr CpProxyCreate(char* aDomain, char* aName, uint aVersion, IntPtr aDevice);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void CpProxyDestroy(IntPtr Proxy);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr CpProxyService(IntPtr aProxy);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void CpProxySubscribe(IntPtr aHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void CpProxyUnsubscribe(IntPtr aHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void CpProxySetPropertyChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void CpProxySetPropertyInitialEvent(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void CpProxyPropertyReadLock(IntPtr aHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void CpProxyPropertyReadUnlock(IntPtr aHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void CpProxyAddProperty(IntPtr aHandle, IntPtr aProperty);
 
         public delegate void CallbackAsyncComplete(IntPtr aAsyncHandle);

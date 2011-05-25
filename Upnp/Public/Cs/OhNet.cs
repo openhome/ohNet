@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Zapp.Core
+namespace OpenHome.Net.Core
 {
     /// <summary>
     /// Initialisation options
@@ -10,23 +10,23 @@ namespace Zapp.Core
     /// Any functions that are specific to a particular stack include either 'Cp' or 'Dv'</remarks>
     public class InitParams
     {
-        public delegate void ZappCallback(IntPtr aPtr);
-        public delegate void ZappCallbackMsg(IntPtr aPtr, string aMsg);
-        public delegate void ZappCallbackAsync(IntPtr aPtr, IntPtr aAsyncHandle);
+        public delegate void OhNetCallback(IntPtr aPtr);
+        public delegate void OhNetCallbackMsg(IntPtr aPtr, string aMsg);
+        public delegate void OhNetCallbackAsync(IntPtr aPtr, IntPtr aAsyncHandle);
 
-        public ZappCallbackMsg LogOutput { get; set; }
+        public OhNetCallbackMsg LogOutput { get; set; }
         /// <summary>
         /// A callback which will be run if the library encounters an error it cannot recover from
         /// </summary>
         /// <remarks>Suggested action if this is called is to exit the process and restart the library and its owning application.
         /// 
         /// The string passed to the callback is an error message so would be useful to log.</remarks>
-        public ZappCallbackMsg FatalErrorHandler { private get; set; }
-        public ZappCallbackAsync AsyncBeginHandler { private get; set; }
-        public ZappCallbackAsync AsyncEndHandler { private get; set; }
-        public ZappCallbackAsync AsyncErrorHandler { private get; set; }
+        public OhNetCallbackMsg FatalErrorHandler { private get; set; }
+        public OhNetCallbackAsync AsyncBeginHandler { private get; set; }
+        public OhNetCallbackAsync AsyncEndHandler { private get; set; }
+        public OhNetCallbackAsync AsyncErrorHandler { private get; set; }
         public uint DefaultSubnet { get; set; }
-        public ZappCallback SubnetChangedListener { private get; set; }
+        public OhNetCallback SubnetChangedListener { private get; set; }
 
         /// <summary>
         /// A timeout for TCP connections in milliseconds. Must be >0
@@ -142,86 +142,86 @@ namespace Zapp.Core
         /// Note that enabling Bonjour will cause the device stack to run a http server on port 80, requiring root privileges on linux.</remarks>
         public bool DvEnableBonjour { get; set; }
 
-        [DllImport ("ZappUpnp")]
-        static extern IntPtr ZappInitParamsCreate();
-        [DllImport ("ZappUpnp")]
-        static extern void ZappInitParamsDestroy(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetLogOutput(IntPtr aParams, ZappCallbackMsg aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetFatalErrorHandler(IntPtr aParams, ZappCallbackMsg aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetAsyncBeginHandler(IntPtr aParams, ZappCallbackAsync aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetAsyncEndHandler(IntPtr aParams, ZappCallbackAsync aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetAsyncErrorHandler(IntPtr aParams, ZappCallbackAsync aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetDefaultSubnet(IntPtr aParams, uint aSubnet);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetSubnetChangedListener(IntPtr aParams, ZappCallback aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetTcpConnectTimeout(IntPtr aParams, uint aTimeoutMs);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetMsearchTime(IntPtr aParams, uint aSecs);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetMsearchTtl(IntPtr aParams, uint aTtl);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetNumEventSessionThreads(IntPtr aParams, uint aNumThreads);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetNumXmlFetcherThreads(IntPtr aParams, uint aNumThreads);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetNumActionInvokerThreads(IntPtr aParams, uint aNumThreads);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetNumInvocations(IntPtr aParams, uint aNumInvocations);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetNumSubscriberThreads(IntPtr aParams, uint aNumThreads);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetPendingSubscriptionTimeout(IntPtr aParams, uint aTimeoutMs);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetDvMaxUpdateTime(IntPtr aParams, uint aSecs);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetDvNumServerThreads(IntPtr aParams, uint aNumThreads);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetDvNumPublisherThreads(IntPtr aParams, uint aNumThreads);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetDvNumWebSocketThreads(IntPtr aParams, uint aNumThreads);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetDvWebSocketPort(IntPtr aParams, uint aPort);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetDvEnableBonjour(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetUseLoopbackNetworkInterface(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsTcpConnectTimeoutMs(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsMsearchTimeSecs(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsMsearchTtl(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsNumEventSessionThreads(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsNumXmlFetcherThreads(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsNumActionInvokerThreads(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsNumInvocations(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsNumSubscriberThreads(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsPendingSubscriptionTimeoutMs(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsDvMaxUpdateTimeSecs(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsDvNumServerThreads(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsDvNumPublisherThreads(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsDvNumWebSocketThreads(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsDvWebSocketPort(IntPtr aParams);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappInitParamsDvIsBonjourEnabled(IntPtr aParams);
+        [DllImport ("ohNet")]
+        static extern IntPtr OhNetInitParamsCreate();
+        [DllImport ("ohNet")]
+        static extern void OhNetInitParamsDestroy(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetLogOutput(IntPtr aParams, OhNetCallbackMsg aCallback, IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetFatalErrorHandler(IntPtr aParams, OhNetCallbackMsg aCallback, IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetAsyncBeginHandler(IntPtr aParams, OhNetCallbackAsync aCallback, IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetAsyncEndHandler(IntPtr aParams, OhNetCallbackAsync aCallback, IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetAsyncErrorHandler(IntPtr aParams, OhNetCallbackAsync aCallback, IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetDefaultSubnet(IntPtr aParams, uint aSubnet);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetSubnetChangedListener(IntPtr aParams, OhNetCallback aCallback, IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetTcpConnectTimeout(IntPtr aParams, uint aTimeoutMs);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetMsearchTime(IntPtr aParams, uint aSecs);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetMsearchTtl(IntPtr aParams, uint aTtl);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetNumEventSessionThreads(IntPtr aParams, uint aNumThreads);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetNumXmlFetcherThreads(IntPtr aParams, uint aNumThreads);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetNumActionInvokerThreads(IntPtr aParams, uint aNumThreads);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetNumInvocations(IntPtr aParams, uint aNumInvocations);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetNumSubscriberThreads(IntPtr aParams, uint aNumThreads);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetPendingSubscriptionTimeout(IntPtr aParams, uint aTimeoutMs);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetDvMaxUpdateTime(IntPtr aParams, uint aSecs);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetDvNumServerThreads(IntPtr aParams, uint aNumThreads);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetDvNumPublisherThreads(IntPtr aParams, uint aNumThreads);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetDvNumWebSocketThreads(IntPtr aParams, uint aNumThreads);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetDvWebSocketPort(IntPtr aParams, uint aPort);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetDvEnableBonjour(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetUseLoopbackNetworkInterface(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsTcpConnectTimeoutMs(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsMsearchTimeSecs(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsMsearchTtl(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsNumEventSessionThreads(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsNumXmlFetcherThreads(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsNumActionInvokerThreads(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsNumInvocations(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsNumSubscriberThreads(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsPendingSubscriptionTimeoutMs(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsDvMaxUpdateTimeSecs(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsDvNumServerThreads(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsDvNumPublisherThreads(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsDvNumWebSocketThreads(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsDvWebSocketPort(IntPtr aParams);
+        [DllImport("ohNet")]
+        static extern uint OhNetInitParamsDvIsBonjourEnabled(IntPtr aParams);
 
         private static void DefaultActionFunction()
         {
@@ -232,13 +232,13 @@ namespace Zapp.Core
         // and keep whatever value it has. Using this as a sentinel instead of null is
         // useful because it allows the user to write null to the property and have it
         // properly passed through to the library.
-        private static readonly ZappCallback DefaultCallback = aPtr => DefaultActionFunction();
-        private static readonly ZappCallbackMsg DefaultCallbackMsg = (aPtr, aMsg) => DefaultActionFunction();
-        private static readonly ZappCallbackAsync DefaultCallbackAsync = (aPtr, aAsyncHandle) => DefaultActionFunction();
+        private static readonly OhNetCallback DefaultCallback = aPtr => DefaultActionFunction();
+        private static readonly OhNetCallbackMsg DefaultCallbackMsg = (aPtr, aMsg) => DefaultActionFunction();
+        private static readonly OhNetCallbackAsync DefaultCallbackAsync = (aPtr, aAsyncHandle) => DefaultActionFunction();
 
         public InitParams()
         {
-            IntPtr defaultParams = ZappInitParamsCreate();
+            IntPtr defaultParams = OhNetInitParamsCreate();
             
             LogOutput = DefaultCallbackMsg;
             FatalErrorHandler = DefaultCallbackMsg;
@@ -247,81 +247,81 @@ namespace Zapp.Core
             AsyncErrorHandler = DefaultCallbackAsync;
             DefaultSubnet = 0; // FIXME: No getter?
             SubnetChangedListener = DefaultCallback;
-            TcpConnectTimeoutMs = ZappInitParamsTcpConnectTimeoutMs(defaultParams); 
-            MsearchTimeSecs = ZappInitParamsMsearchTimeSecs(defaultParams); 
-            MsearchTtl = ZappInitParamsMsearchTtl(defaultParams); 
-            NumEventSessionThreads = ZappInitParamsNumEventSessionThreads(defaultParams); 
-            NumXmlFetcherThreads = ZappInitParamsNumXmlFetcherThreads(defaultParams); 
-            NumActionInvokerThreads = ZappInitParamsNumActionInvokerThreads(defaultParams); 
-            NumInvocations = ZappInitParamsNumInvocations(defaultParams); 
-            NumSubscriberThreads = ZappInitParamsNumSubscriberThreads(defaultParams); 
-            PendingSubscriptionTimeoutMs = ZappInitParamsPendingSubscriptionTimeoutMs(defaultParams); 
-            DvMaxUpdateTimeSecs = ZappInitParamsDvMaxUpdateTimeSecs(defaultParams); 
-            DvNumServerThreads = ZappInitParamsDvNumServerThreads(defaultParams); 
-            DvNumPublisherThreads = ZappInitParamsDvNumPublisherThreads(defaultParams);
-            DvNumWebSocketThreads = ZappInitParamsDvNumWebSocketThreads(defaultParams);
-            DvWebSocketPort = ZappInitParamsDvWebSocketPort(defaultParams); 
+            TcpConnectTimeoutMs = OhNetInitParamsTcpConnectTimeoutMs(defaultParams); 
+            MsearchTimeSecs = OhNetInitParamsMsearchTimeSecs(defaultParams); 
+            MsearchTtl = OhNetInitParamsMsearchTtl(defaultParams); 
+            NumEventSessionThreads = OhNetInitParamsNumEventSessionThreads(defaultParams); 
+            NumXmlFetcherThreads = OhNetInitParamsNumXmlFetcherThreads(defaultParams); 
+            NumActionInvokerThreads = OhNetInitParamsNumActionInvokerThreads(defaultParams); 
+            NumInvocations = OhNetInitParamsNumInvocations(defaultParams); 
+            NumSubscriberThreads = OhNetInitParamsNumSubscriberThreads(defaultParams); 
+            PendingSubscriptionTimeoutMs = OhNetInitParamsPendingSubscriptionTimeoutMs(defaultParams); 
+            DvMaxUpdateTimeSecs = OhNetInitParamsDvMaxUpdateTimeSecs(defaultParams); 
+            DvNumServerThreads = OhNetInitParamsDvNumServerThreads(defaultParams); 
+            DvNumPublisherThreads = OhNetInitParamsDvNumPublisherThreads(defaultParams);
+            DvNumWebSocketThreads = OhNetInitParamsDvNumWebSocketThreads(defaultParams);
+            DvWebSocketPort = OhNetInitParamsDvWebSocketPort(defaultParams); 
             UseLoopbackNetworkInterface = false; // FIXME: No getter?
-            DvEnableBonjour = ZappInitParamsDvIsBonjourEnabled(defaultParams) != 0; 
+            DvEnableBonjour = OhNetInitParamsDvIsBonjourEnabled(defaultParams) != 0; 
 
-            ZappInitParamsDestroy(defaultParams);
+            OhNetInitParamsDestroy(defaultParams);
         }
         internal IntPtr AllocNativeInitParams(IntPtr aCallbackPtr)
         {
-            IntPtr nativeParams = ZappInitParamsCreate();
+            IntPtr nativeParams = OhNetInitParamsCreate();
 
             if (LogOutput != DefaultCallbackMsg)
             {
-                ZappInitParamsSetLogOutput(nativeParams, LogOutput, aCallbackPtr);
+                OhNetInitParamsSetLogOutput(nativeParams, LogOutput, aCallbackPtr);
             }
             if (FatalErrorHandler != DefaultCallbackMsg)
             {
-                ZappInitParamsSetFatalErrorHandler(nativeParams, FatalErrorHandler, aCallbackPtr);
+                OhNetInitParamsSetFatalErrorHandler(nativeParams, FatalErrorHandler, aCallbackPtr);
             }
             if (AsyncBeginHandler != DefaultCallbackAsync)
             {
-                ZappInitParamsSetAsyncBeginHandler(nativeParams, AsyncBeginHandler, aCallbackPtr);
+                OhNetInitParamsSetAsyncBeginHandler(nativeParams, AsyncBeginHandler, aCallbackPtr);
             }
             if (AsyncEndHandler != DefaultCallbackAsync)
             {
-                ZappInitParamsSetAsyncEndHandler(nativeParams, AsyncEndHandler, aCallbackPtr);
+                OhNetInitParamsSetAsyncEndHandler(nativeParams, AsyncEndHandler, aCallbackPtr);
             }
             if (AsyncErrorHandler != DefaultCallbackAsync)
             {
-                ZappInitParamsSetAsyncErrorHandler(nativeParams, AsyncErrorHandler, aCallbackPtr);
+                OhNetInitParamsSetAsyncErrorHandler(nativeParams, AsyncErrorHandler, aCallbackPtr);
             }
-            ZappInitParamsSetDefaultSubnet(nativeParams, DefaultSubnet);
+            OhNetInitParamsSetDefaultSubnet(nativeParams, DefaultSubnet);
             if (SubnetChangedListener != DefaultCallback)
             {
-                ZappInitParamsSetSubnetChangedListener(nativeParams, SubnetChangedListener, aCallbackPtr);
+                OhNetInitParamsSetSubnetChangedListener(nativeParams, SubnetChangedListener, aCallbackPtr);
             }
-            ZappInitParamsSetTcpConnectTimeout(nativeParams, TcpConnectTimeoutMs);
-            ZappInitParamsSetMsearchTime(nativeParams, MsearchTimeSecs);
-            ZappInitParamsSetMsearchTtl(nativeParams, MsearchTtl);
-            ZappInitParamsSetNumEventSessionThreads(nativeParams, NumEventSessionThreads);
-            ZappInitParamsSetNumXmlFetcherThreads(nativeParams, NumXmlFetcherThreads);
-            ZappInitParamsSetNumActionInvokerThreads(nativeParams, NumActionInvokerThreads);
-            ZappInitParamsSetNumInvocations(nativeParams, NumInvocations);
-            ZappInitParamsSetNumSubscriberThreads(nativeParams, NumSubscriberThreads);
-            ZappInitParamsSetPendingSubscriptionTimeout(nativeParams, PendingSubscriptionTimeoutMs);
-            ZappInitParamsSetDvMaxUpdateTime(nativeParams, DvMaxUpdateTimeSecs);
-            ZappInitParamsSetDvNumServerThreads(nativeParams, DvNumServerThreads);
-            ZappInitParamsSetDvNumPublisherThreads(nativeParams, DvNumPublisherThreads);
-            ZappInitParamsSetDvNumWebSocketThreads(nativeParams, DvNumWebSocketThreads);
-            ZappInitParamsSetDvWebSocketPort(nativeParams, DvWebSocketPort);
+            OhNetInitParamsSetTcpConnectTimeout(nativeParams, TcpConnectTimeoutMs);
+            OhNetInitParamsSetMsearchTime(nativeParams, MsearchTimeSecs);
+            OhNetInitParamsSetMsearchTtl(nativeParams, MsearchTtl);
+            OhNetInitParamsSetNumEventSessionThreads(nativeParams, NumEventSessionThreads);
+            OhNetInitParamsSetNumXmlFetcherThreads(nativeParams, NumXmlFetcherThreads);
+            OhNetInitParamsSetNumActionInvokerThreads(nativeParams, NumActionInvokerThreads);
+            OhNetInitParamsSetNumInvocations(nativeParams, NumInvocations);
+            OhNetInitParamsSetNumSubscriberThreads(nativeParams, NumSubscriberThreads);
+            OhNetInitParamsSetPendingSubscriptionTimeout(nativeParams, PendingSubscriptionTimeoutMs);
+            OhNetInitParamsSetDvMaxUpdateTime(nativeParams, DvMaxUpdateTimeSecs);
+            OhNetInitParamsSetDvNumServerThreads(nativeParams, DvNumServerThreads);
+            OhNetInitParamsSetDvNumPublisherThreads(nativeParams, DvNumPublisherThreads);
+            OhNetInitParamsSetDvNumWebSocketThreads(nativeParams, DvNumWebSocketThreads);
+            OhNetInitParamsSetDvWebSocketPort(nativeParams, DvWebSocketPort);
             if (DvEnableBonjour)
             {
-                ZappInitParamsSetDvEnableBonjour(nativeParams);
+                OhNetInitParamsSetDvEnableBonjour(nativeParams);
             }
             if (UseLoopbackNetworkInterface)
             {
-                ZappInitParamsSetUseLoopbackNetworkInterface(nativeParams);
+                OhNetInitParamsSetUseLoopbackNetworkInterface(nativeParams);
             }
             return nativeParams;
         }
         internal static void FreeNativeInitParams(IntPtr aNativeInitParams)
         {
-            ZappInitParamsDestroy(aNativeInitParams);
+            OhNetInitParamsDestroy(aNativeInitParams);
         }
     }
 
@@ -391,40 +391,40 @@ namespace Zapp.Core
     /// </summary>
     public class Library : IDisposable
     {
-        [DllImport ("ZappUpnp")]
-        static extern int ZappLibraryInitialise(IntPtr aInitParams);
-        [DllImport("ZappUpnp")]
-        static extern int ZappLibraryInitialiseMinimal(IntPtr aInitParams);
-        [DllImport ("ZappUpnp")]
-        static extern void ZappLibraryStartCp();
-        [DllImport ("ZappUpnp")]
-        static extern void ZappLibraryStartDv();
-        [DllImport ("ZappUpnp")]
-        static extern void ZappLibraryStartCombined();
-        [DllImport ("ZappUpnp")]
-        static extern void ZappLibraryClose();
-        [DllImport("ZappUpnp")]
-        static extern void ZappFree(IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappNetworkInterfaceAddress(IntPtr aNif);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappNetworkInterfaceSubnet(IntPtr aNif);
-        [DllImport("ZappUpnp", CallingConvention = CallingConvention.StdCall, EntryPoint = "ZappNetworkInterfaceName", ExactSpelling = false)]
-        static extern IntPtr ZappNetworkInterfaceName(IntPtr aNif);
-        [DllImport("ZappUpnp")]
-        static extern IntPtr ZappSubnetListCreate();
-        [DllImport("ZappUpnp")]
-        static extern uint ZappSubnetListSize(IntPtr aList);
-        [DllImport("ZappUpnp")]
-        static extern uint ZappSubnetAt(IntPtr aList, uint aIndex);
-        [DllImport("ZappUpnp")]
-        static extern void ZappSubnetListDestroy(IntPtr aList);
-        [DllImport("ZappUpnp")]
-        static extern void ZappSetCurrentSubnet(uint aSubnet);
-        [DllImport("ZappUpnp")]
-        static extern void ZappSetDefaultSubnet();
-        [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetFreeExternalCallback(IntPtr aParams, CallbackFreeMemory aCallback);
+        [DllImport ("ohNet")]
+        static extern int OhNetLibraryInitialise(IntPtr aInitParams);
+        [DllImport("ohNet")]
+        static extern int OhNetLibraryInitialiseMinimal(IntPtr aInitParams);
+        [DllImport ("ohNet")]
+        static extern void OhNetLibraryStartCp();
+        [DllImport ("ohNet")]
+        static extern void OhNetLibraryStartDv();
+        [DllImport ("ohNet")]
+        static extern void OhNetLibraryStartCombined();
+        [DllImport ("ohNet")]
+        static extern void OhNetLibraryClose();
+        [DllImport("ohNet")]
+        static extern void OhNetFree(IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern uint OhNetNetworkInterfaceAddress(IntPtr aNif);
+        [DllImport("ohNet")]
+        static extern uint OhNetNetworkInterfaceSubnet(IntPtr aNif);
+        [DllImport("ohNet", CallingConvention = CallingConvention.StdCall, EntryPoint = "OhNetNetworkInterfaceName", ExactSpelling = false)]
+        static extern IntPtr OhNetNetworkInterfaceName(IntPtr aNif);
+        [DllImport("ohNet")]
+        static extern IntPtr OhNetSubnetListCreate();
+        [DllImport("ohNet")]
+        static extern uint OhNetSubnetListSize(IntPtr aList);
+        [DllImport("ohNet")]
+        static extern uint OhNetSubnetAt(IntPtr aList, uint aIndex);
+        [DllImport("ohNet")]
+        static extern void OhNetSubnetListDestroy(IntPtr aList);
+        [DllImport("ohNet")]
+        static extern void OhNetSetCurrentSubnet(uint aSubnet);
+        [DllImport("ohNet")]
+        static extern void OhNetSetDefaultSubnet();
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetFreeExternalCallback(IntPtr aParams, CallbackFreeMemory aCallback);
 
         private bool iIsDisposed;
 
@@ -440,8 +440,8 @@ namespace Zapp.Core
         {
             IntPtr nativeInitParams = aParams.AllocNativeInitParams(IntPtr.Zero);
             iCallbackFreeMemory = new CallbackFreeMemory(FreeMemory);
-            ZappInitParamsSetFreeExternalCallback(nativeInitParams, iCallbackFreeMemory);
-            if (0 != ZappLibraryInitialise(nativeInitParams))
+            OhNetInitParamsSetFreeExternalCallback(nativeInitParams, iCallbackFreeMemory);
+            if (0 != OhNetLibraryInitialise(nativeInitParams))
             {
                 InitParams.FreeNativeInitParams(nativeInitParams);
                 throw new LibraryException();
@@ -464,7 +464,7 @@ namespace Zapp.Core
         /// <param name="aInitParams">Initialisation options.  Ownership of these passes to the library.</param>
         public void InitialiseMinimal(IntPtr aInitParams)
         {
-            if (0 != ZappLibraryInitialiseMinimal(aInitParams))
+            if (0 != OhNetLibraryInitialiseMinimal(aInitParams))
             {
                 throw new LibraryException();
             }
@@ -478,7 +478,7 @@ namespace Zapp.Core
         /// </returns>
         public ControlPointStack StartCp()
         {
-            ZappLibraryStartCp();
+            OhNetLibraryStartCp();
             return new ControlPointStack();
         }
 
@@ -490,7 +490,7 @@ namespace Zapp.Core
         /// </returns>
         public DeviceStack StartDv()
         {
-            ZappLibraryStartDv();
+            OhNetLibraryStartDv();
             return new DeviceStack();
         }
 
@@ -499,7 +499,7 @@ namespace Zapp.Core
         /// </summary>
         public CombinedStack StartCombined()
         {
-            ZappLibraryStartCombined();
+            OhNetLibraryStartCombined();
             return new CombinedStack();
         }
 
@@ -509,7 +509,7 @@ namespace Zapp.Core
         /// <remarks>No more library functions should be called after this.</remarks>
         public void Close()
         {
-            ZappLibraryClose();
+            OhNetLibraryClose();
         }
 
         /// <summary>
@@ -518,7 +518,7 @@ namespace Zapp.Core
         /// <param name="aPtr">IntPtr returned by native code which is documented as requiring explicit destruction</param>
         public void Free(IntPtr aPtr)
         {
-            ZappFree(aPtr);
+            OhNetFree(aPtr);
         }
 
         /// <summary>
@@ -528,7 +528,7 @@ namespace Zapp.Core
         /// <returns>IPv4 address in network byte order</returns>
         public uint NetworkInterfaceAddress(IntPtr aNif)
         {
-            return ZappNetworkInterfaceAddress(aNif);
+            return OhNetNetworkInterfaceAddress(aNif);
         }
 
         /// <summary>
@@ -538,7 +538,7 @@ namespace Zapp.Core
         /// <returns>IPv4 address in network byte order</returns>
         public uint NetworkInterfaceSubnet(IntPtr aNif)
         {
-            return ZappNetworkInterfaceSubnet(aNif);
+            return OhNetNetworkInterfaceSubnet(aNif);
         }
 
         /// <summary>
@@ -548,7 +548,7 @@ namespace Zapp.Core
         /// <returns>Pointer to a nul-terminated character array.  Caller is responsible for Free()ing this</returns>
         public IntPtr NetworkInterfaceName(IntPtr aNif)
         {
-            return ZappNetworkInterfaceName(aNif);
+            return OhNetNetworkInterfaceName(aNif);
         }
 
         /// <summary>
@@ -557,7 +557,7 @@ namespace Zapp.Core
         /// <returns>Subnet list handle.  Caller must later call SubnetListDestroy()</returns>
         public IntPtr SubnetListCreate()
         {
-            return ZappSubnetListCreate();
+            return OhNetSubnetListCreate();
         }
 
         /// <summary>
@@ -567,7 +567,7 @@ namespace Zapp.Core
         /// <returns>The number of items in the subnet</returns>
         public uint SubnetListSize(IntPtr aList)
         {
-            return ZappSubnetListSize(aList);
+            return OhNetSubnetListSize(aList);
         }
 
         /// <summary>
@@ -578,7 +578,7 @@ namespace Zapp.Core
         /// <returns>Handle to the subnet</returns>
         public uint SubnetAt(IntPtr aList, uint aIndex)
         {
-            return ZappSubnetAt(aList, aIndex);
+            return OhNetSubnetAt(aList, aIndex);
         }
 
         /// <summary>
@@ -587,7 +587,7 @@ namespace Zapp.Core
         /// <param name="aList">Subnet list handle returned by SubnetListCreate()</param>
         public void SubnetListDestroy(IntPtr aList)
         {
-            ZappSubnetListDestroy(aList);
+            OhNetSubnetListDestroy(aList);
         }
 
         /// <summary>
@@ -601,7 +601,7 @@ namespace Zapp.Core
         /// <param name="aSubnet">Handle returned by SubnetAt()</param>
         public void SetCurrentSubnet(uint aSubnet)
         {
-            ZappSetCurrentSubnet(aSubnet);
+            OhNetSetCurrentSubnet(aSubnet);
         }
 
         /// <summary>
@@ -611,7 +611,7 @@ namespace Zapp.Core
         /// <remarks>Device lists and subscriptions will be automatically updated if necessary</remarks>
         public void SetDefaultSubnet()
         {
-            ZappSetDefaultSubnet();
+            OhNetSetDefaultSubnet();
         }
 
         private void FreeMemory(IntPtr aPtr)

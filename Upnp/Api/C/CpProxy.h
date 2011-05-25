@@ -2,7 +2,7 @@
 #define HEADER_SERVICE_PROXYC
 
 #include <OsTypes.h>
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 #include <C/Service.h>
 #include <C/CpDevice.h>
 
@@ -72,7 +72,7 @@ DllExport void CpProxyUnsubscribe(THandle aHandle);
  * @param[in] aCallback  The callback to run
  * @param[in] aPtr       Data to be passed to the callback
  */
-DllExport void CpProxySetPropertyChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxySetPropertyChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Register a callback which will run when the state of all properties becomes available.
@@ -82,7 +82,7 @@ DllExport void CpProxySetPropertyChanged(THandle aHandle, ZappCallback aCallback
  * @param[in] aCallback  The callback to run
  * @param[in] aPtr       Data to be passed to the callback
  */
-DllExport void CpProxySetPropertyInitialEvent(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxySetPropertyInitialEvent(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Must be called before reading the value of a property.

@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgDimming1 : ICpProxy, IDisposable
     {
@@ -429,27 +429,27 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyUpnpOrgDimming1 : CpProxy, IDisposable, ICpProxyUpnpOrgDimming1
     {
-        private Zapp.Core.Action iActionSetLoadLevelTarget;
-        private Zapp.Core.Action iActionGetLoadLevelTarget;
-        private Zapp.Core.Action iActionGetLoadLevelStatus;
-        private Zapp.Core.Action iActionSetOnEffectLevel;
-        private Zapp.Core.Action iActionSetOnEffect;
-        private Zapp.Core.Action iActionGetOnEffectParameters;
-        private Zapp.Core.Action iActionStepUp;
-        private Zapp.Core.Action iActionStepDown;
-        private Zapp.Core.Action iActionStartRampUp;
-        private Zapp.Core.Action iActionStartRampDown;
-        private Zapp.Core.Action iActionStopRamp;
-        private Zapp.Core.Action iActionStartRampToLevel;
-        private Zapp.Core.Action iActionSetStepDelta;
-        private Zapp.Core.Action iActionGetStepDelta;
-        private Zapp.Core.Action iActionSetRampRate;
-        private Zapp.Core.Action iActionGetRampRate;
-        private Zapp.Core.Action iActionPauseRamp;
-        private Zapp.Core.Action iActionResumeRamp;
-        private Zapp.Core.Action iActionGetIsRamping;
-        private Zapp.Core.Action iActionGetRampPaused;
-        private Zapp.Core.Action iActionGetRampTime;
+        private OpenHome.Net.Core.Action iActionSetLoadLevelTarget;
+        private OpenHome.Net.Core.Action iActionGetLoadLevelTarget;
+        private OpenHome.Net.Core.Action iActionGetLoadLevelStatus;
+        private OpenHome.Net.Core.Action iActionSetOnEffectLevel;
+        private OpenHome.Net.Core.Action iActionSetOnEffect;
+        private OpenHome.Net.Core.Action iActionGetOnEffectParameters;
+        private OpenHome.Net.Core.Action iActionStepUp;
+        private OpenHome.Net.Core.Action iActionStepDown;
+        private OpenHome.Net.Core.Action iActionStartRampUp;
+        private OpenHome.Net.Core.Action iActionStartRampDown;
+        private OpenHome.Net.Core.Action iActionStopRamp;
+        private OpenHome.Net.Core.Action iActionStartRampToLevel;
+        private OpenHome.Net.Core.Action iActionSetStepDelta;
+        private OpenHome.Net.Core.Action iActionGetStepDelta;
+        private OpenHome.Net.Core.Action iActionSetRampRate;
+        private OpenHome.Net.Core.Action iActionGetRampRate;
+        private OpenHome.Net.Core.Action iActionPauseRamp;
+        private OpenHome.Net.Core.Action iActionResumeRamp;
+        private OpenHome.Net.Core.Action iActionGetIsRamping;
+        private OpenHome.Net.Core.Action iActionGetRampPaused;
+        private OpenHome.Net.Core.Action iActionGetRampTime;
         private PropertyUint iLoadLevelStatus;
         private PropertyUint iStepDelta;
         private PropertyUint iRampRate;
@@ -470,26 +470,26 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyUpnpOrgDimming1(CpDevice aDevice)
             : base("schemas-upnp-org", "Dimming", 1, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             List<String> allowedValues = new List<String>();
 
-            iActionSetLoadLevelTarget = new Zapp.Core.Action("SetLoadLevelTarget");
+            iActionSetLoadLevelTarget = new OpenHome.Net.Core.Action("SetLoadLevelTarget");
             param = new ParameterUint("newLoadlevelTarget", 0, 100);
             iActionSetLoadLevelTarget.AddInputParameter(param);
 
-            iActionGetLoadLevelTarget = new Zapp.Core.Action("GetLoadLevelTarget");
+            iActionGetLoadLevelTarget = new OpenHome.Net.Core.Action("GetLoadLevelTarget");
             param = new ParameterUint("GetLoadlevelTarget", 0, 100);
             iActionGetLoadLevelTarget.AddOutputParameter(param);
 
-            iActionGetLoadLevelStatus = new Zapp.Core.Action("GetLoadLevelStatus");
+            iActionGetLoadLevelStatus = new OpenHome.Net.Core.Action("GetLoadLevelStatus");
             param = new ParameterUint("retLoadlevelStatus", 0, 100);
             iActionGetLoadLevelStatus.AddOutputParameter(param);
 
-            iActionSetOnEffectLevel = new Zapp.Core.Action("SetOnEffectLevel");
+            iActionSetOnEffectLevel = new OpenHome.Net.Core.Action("SetOnEffectLevel");
             param = new ParameterUint("newOnEffectLevel", 0, 100);
             iActionSetOnEffectLevel.AddInputParameter(param);
 
-            iActionSetOnEffect = new Zapp.Core.Action("SetOnEffect");
+            iActionSetOnEffect = new OpenHome.Net.Core.Action("SetOnEffect");
             allowedValues.Add("OnEffectLevel");
             allowedValues.Add("LastSetting");
             allowedValues.Add("Default");
@@ -497,7 +497,7 @@ namespace Zapp.ControlPoint.Proxies
             iActionSetOnEffect.AddInputParameter(param);
             allowedValues.Clear();
 
-            iActionGetOnEffectParameters = new Zapp.Core.Action("GetOnEffectParameters");
+            iActionGetOnEffectParameters = new OpenHome.Net.Core.Action("GetOnEffectParameters");
             allowedValues.Add("OnEffectLevel");
             allowedValues.Add("LastSetting");
             allowedValues.Add("Default");
@@ -507,51 +507,51 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("retOnEffectLevel", 0, 100);
             iActionGetOnEffectParameters.AddOutputParameter(param);
 
-            iActionStepUp = new Zapp.Core.Action("StepUp");
+            iActionStepUp = new OpenHome.Net.Core.Action("StepUp");
 
-            iActionStepDown = new Zapp.Core.Action("StepDown");
+            iActionStepDown = new OpenHome.Net.Core.Action("StepDown");
 
-            iActionStartRampUp = new Zapp.Core.Action("StartRampUp");
+            iActionStartRampUp = new OpenHome.Net.Core.Action("StartRampUp");
 
-            iActionStartRampDown = new Zapp.Core.Action("StartRampDown");
+            iActionStartRampDown = new OpenHome.Net.Core.Action("StartRampDown");
 
-            iActionStopRamp = new Zapp.Core.Action("StopRamp");
+            iActionStopRamp = new OpenHome.Net.Core.Action("StopRamp");
 
-            iActionStartRampToLevel = new Zapp.Core.Action("StartRampToLevel");
+            iActionStartRampToLevel = new OpenHome.Net.Core.Action("StartRampToLevel");
             param = new ParameterUint("newLoadLevelTarget", 0, 100);
             iActionStartRampToLevel.AddInputParameter(param);
             param = new ParameterUint("newRampTime");
             iActionStartRampToLevel.AddInputParameter(param);
 
-            iActionSetStepDelta = new Zapp.Core.Action("SetStepDelta");
+            iActionSetStepDelta = new OpenHome.Net.Core.Action("SetStepDelta");
             param = new ParameterUint("newStepDelta", 1, 100);
             iActionSetStepDelta.AddInputParameter(param);
 
-            iActionGetStepDelta = new Zapp.Core.Action("GetStepDelta");
+            iActionGetStepDelta = new OpenHome.Net.Core.Action("GetStepDelta");
             param = new ParameterUint("retStepDelta", 1, 100);
             iActionGetStepDelta.AddOutputParameter(param);
 
-            iActionSetRampRate = new Zapp.Core.Action("SetRampRate");
+            iActionSetRampRate = new OpenHome.Net.Core.Action("SetRampRate");
             param = new ParameterUint("newRampRate", 0, 100);
             iActionSetRampRate.AddInputParameter(param);
 
-            iActionGetRampRate = new Zapp.Core.Action("GetRampRate");
+            iActionGetRampRate = new OpenHome.Net.Core.Action("GetRampRate");
             param = new ParameterUint("retRampRate", 0, 100);
             iActionGetRampRate.AddOutputParameter(param);
 
-            iActionPauseRamp = new Zapp.Core.Action("PauseRamp");
+            iActionPauseRamp = new OpenHome.Net.Core.Action("PauseRamp");
 
-            iActionResumeRamp = new Zapp.Core.Action("ResumeRamp");
+            iActionResumeRamp = new OpenHome.Net.Core.Action("ResumeRamp");
 
-            iActionGetIsRamping = new Zapp.Core.Action("GetIsRamping");
+            iActionGetIsRamping = new OpenHome.Net.Core.Action("GetIsRamping");
             param = new ParameterBool("retIsRamping");
             iActionGetIsRamping.AddOutputParameter(param);
 
-            iActionGetRampPaused = new Zapp.Core.Action("GetRampPaused");
+            iActionGetRampPaused = new OpenHome.Net.Core.Action("GetRampPaused");
             param = new ParameterBool("retRampPaused");
             iActionGetRampPaused.AddOutputParameter(param);
 
-            iActionGetRampTime = new Zapp.Core.Action("GetRampTime");
+            iActionGetRampTime = new OpenHome.Net.Core.Action("GetRampTime");
             param = new ParameterUint("retRampTime");
             iActionGetRampTime.AddOutputParameter(param);
 

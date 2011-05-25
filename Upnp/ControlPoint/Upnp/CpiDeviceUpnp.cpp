@@ -4,7 +4,7 @@
 #include <Stack.h>
 #include <CpiService.h>
 #include <Stream.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Http.h>
 #include <Ascii.h>
 #include <Parser.h>
@@ -18,7 +18,7 @@
 
 #include <string.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // CpiDeviceUpnp
 

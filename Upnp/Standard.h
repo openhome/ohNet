@@ -1,10 +1,11 @@
 #ifndef HEADER_STANDARD
 #define HEADER_STANDARD
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Exception.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 #define ASSERT(x)                             \
     if(!(x)) {                                \
@@ -22,6 +23,7 @@ private:
     void operator=(const INonCopyable &);
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_STANDARD

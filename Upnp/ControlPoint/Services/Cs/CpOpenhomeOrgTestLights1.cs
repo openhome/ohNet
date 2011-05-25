@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyOpenhomeOrgTestLights1 : ICpProxy, IDisposable
     {
@@ -191,13 +191,13 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyOpenhomeOrgTestLights1 : CpProxy, IDisposable, ICpProxyOpenhomeOrgTestLights1
     {
-        private Zapp.Core.Action iActionGetCount;
-        private Zapp.Core.Action iActionGetRoom;
-        private Zapp.Core.Action iActionGetName;
-        private Zapp.Core.Action iActionGetPosition;
-        private Zapp.Core.Action iActionSetColor;
-        private Zapp.Core.Action iActionGetColor;
-        private Zapp.Core.Action iActionGetColorComponents;
+        private OpenHome.Net.Core.Action iActionGetCount;
+        private OpenHome.Net.Core.Action iActionGetRoom;
+        private OpenHome.Net.Core.Action iActionGetName;
+        private OpenHome.Net.Core.Action iActionGetPosition;
+        private OpenHome.Net.Core.Action iActionSetColor;
+        private OpenHome.Net.Core.Action iActionGetColor;
+        private OpenHome.Net.Core.Action iActionGetColorComponents;
 
         /// <summary>
         /// Constructor
@@ -207,26 +207,26 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyOpenhomeOrgTestLights1(CpDevice aDevice)
             : base("openhome-org", "TestLights", 1, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             List<String> allowedValues = new List<String>();
 
-            iActionGetCount = new Zapp.Core.Action("GetCount");
+            iActionGetCount = new OpenHome.Net.Core.Action("GetCount");
             param = new ParameterUint("Count");
             iActionGetCount.AddOutputParameter(param);
 
-            iActionGetRoom = new Zapp.Core.Action("GetRoom");
+            iActionGetRoom = new OpenHome.Net.Core.Action("GetRoom");
             param = new ParameterUint("Index");
             iActionGetRoom.AddInputParameter(param);
             param = new ParameterString("RoomName", allowedValues);
             iActionGetRoom.AddOutputParameter(param);
 
-            iActionGetName = new Zapp.Core.Action("GetName");
+            iActionGetName = new OpenHome.Net.Core.Action("GetName");
             param = new ParameterUint("Index");
             iActionGetName.AddInputParameter(param);
             param = new ParameterString("FriendlyName", allowedValues);
             iActionGetName.AddOutputParameter(param);
 
-            iActionGetPosition = new Zapp.Core.Action("GetPosition");
+            iActionGetPosition = new OpenHome.Net.Core.Action("GetPosition");
             param = new ParameterUint("Index");
             iActionGetPosition.AddInputParameter(param);
             param = new ParameterUint("X");
@@ -236,19 +236,19 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("Z");
             iActionGetPosition.AddOutputParameter(param);
 
-            iActionSetColor = new Zapp.Core.Action("SetColor");
+            iActionSetColor = new OpenHome.Net.Core.Action("SetColor");
             param = new ParameterUint("Index");
             iActionSetColor.AddInputParameter(param);
             param = new ParameterUint("Color");
             iActionSetColor.AddInputParameter(param);
 
-            iActionGetColor = new Zapp.Core.Action("GetColor");
+            iActionGetColor = new OpenHome.Net.Core.Action("GetColor");
             param = new ParameterUint("Index");
             iActionGetColor.AddInputParameter(param);
             param = new ParameterUint("Color");
             iActionGetColor.AddOutputParameter(param);
 
-            iActionGetColorComponents = new Zapp.Core.Action("GetColorComponents");
+            iActionGetColorComponents = new OpenHome.Net.Core.Action("GetColorComponents");
             param = new ParameterUint("Color");
             iActionGetColorComponents.AddInputParameter(param);
             param = new ParameterUint("Brightness");

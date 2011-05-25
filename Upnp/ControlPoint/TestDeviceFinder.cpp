@@ -4,15 +4,15 @@
 
 #include <TestFramework.h>
 #include <OptionParser.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Thread.h>
 #include <Ssdp.h>
 #include <Core/CpDeviceUpnp.h>
 #include <Core/FunctorCpDevice.h>
 #include <XmlParser.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class DeviceListLogger
 {
@@ -45,7 +45,7 @@ void DeviceListLogger::Removed(CpDevice& /*aDevice*/)
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionString service("-s", "--service", Brn(""), "Search for a service of the form [domain]:service:[type]:[ver]");
@@ -65,7 +65,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     Brn domainName;
     Brn type;
     TUint ver;
-    if (Zapp::Ssdp::ParseUrnService(service.Value(), domainName, type, ver)) {
+    if (OpenHome::Net::Ssdp::ParseUrnService(service.Value(), domainName, type, ver)) {
         DeviceListLogger logger;
         FunctorCpDevice added = MakeFunctorCpDevice(logger, &DeviceListLogger::Added);
         FunctorCpDevice removed = MakeFunctorCpDevice(logger, &DeviceListLogger::Removed);

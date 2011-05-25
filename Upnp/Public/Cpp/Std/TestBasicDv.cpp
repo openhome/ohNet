@@ -1,5 +1,5 @@
 #include <Std/TestBasicDv.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Std/DvDevice.h>
 #include <Std/DvOpenhomeOrgTestBasic1.h>
 #include <Ascii.h>
@@ -8,9 +8,9 @@
 
 #include <string>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
-class Zapp::ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1Cpp
+class OpenHome::Net::ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1Cpp
 {
 public:
     ProviderTestBasic(DvDeviceStd& aDevice);
@@ -173,9 +173,9 @@ DeviceBasic::DeviceBasic()
     iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", "ZappTestDevice");
+    iDevice->SetAttribute("Upnp.FriendlyName", "ohNetTestDevice");
     iDevice->SetAttribute("Upnp.Manufacturer", "None");
-    iDevice->SetAttribute("Upnp.ModelName", "Zapp test device");
+    iDevice->SetAttribute("Upnp.ModelName", "ohNet test device");
     iTestBasic = new ProviderTestBasic(*iDevice);
     iDevice->SetEnabled();
 }

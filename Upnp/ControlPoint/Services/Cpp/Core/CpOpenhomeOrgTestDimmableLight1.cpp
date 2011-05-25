@@ -5,7 +5,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncGetLevelOpenhomeOrgTestDimmableLight1 : public SyncProxyAction
@@ -53,14 +53,14 @@ void SyncSetLevelOpenhomeOrgTestDimmableLight1::CompleteRequest(IAsync& aAsync)
 CpProxyOpenhomeOrgTestDimmableLight1::CpProxyOpenhomeOrgTestDimmableLight1(CpDevice& aDevice)
     : CpProxy("openhome-org", "TestDimmableLight", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionGetLevel = new Action("GetLevel");
-    param = new Zapp::ParameterUint("Level");
+    param = new OpenHome::Net::ParameterUint("Level");
     iActionGetLevel->AddOutputParameter(param);
 
     iActionSetLevel = new Action("SetLevel");
-    param = new Zapp::ParameterUint("Level");
+    param = new OpenHome::Net::ParameterUint("Level");
     iActionSetLevel->AddInputParameter(param);
 
     Functor functor;

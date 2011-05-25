@@ -2,8 +2,8 @@
 #include <Fifo.h>
 #include <Thread.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class I
 {
@@ -362,7 +362,7 @@ void SuiteFifoLiteBasic::Test()
     TEST(q2.SlotsUsed() == 0);
 }
 
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::InitialiseMinimal(aInitParams);
 

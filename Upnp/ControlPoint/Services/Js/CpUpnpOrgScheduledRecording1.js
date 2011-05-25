@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxySchemasUpnpOrgScheduledRecording1
-* @module Zapp
+* @module ohNet
 * @class ScheduledRecording
 */
 	
@@ -18,7 +18,7 @@ var CpProxySchemasUpnpOrgScheduledRecording1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["LastChange"] = new Zapp.ServiceProperty("LastChange","string");
+	this.serviceProperties["LastChange"] = new OhNet.ServiceProperty("LastChange","string");
 }
 
 
@@ -29,7 +29,7 @@ var CpProxySchemasUpnpOrgScheduledRecording1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.subscribe = function (serviceAddedFunction) {
-    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
@@ -38,7 +38,7 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.subscribe = function (service
 * @method Unsubscribe
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.unsubscribe = function () {
-    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+    OhNet.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
@@ -52,7 +52,7 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.unsubscribe = function () {
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.LastChange_Changed = function (stateChangedFunction) {
     this.serviceProperties.LastChange.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 
@@ -64,10 +64,10 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.LastChange_Changed = function
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetSortCapabilities = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetSortCapabilities", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetSortCapabilities", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["SortCaps"] = Zapp.SoapRequest.readStringParameter(result["SortCaps"]);	
-		result["SortLevelCap"] = Zapp.SoapRequest.readIntParameter(result["SortLevelCap"]);	
+		result["SortCaps"] = OhNet.SoapRequest.readStringParameter(result["SortCaps"]);	
+		result["SortLevelCap"] = OhNet.SoapRequest.readIntParameter(result["SortLevelCap"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -86,10 +86,10 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetSortCapabilities = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetPropertyList = function(DataTypeID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetPropertyList", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetPropertyList", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("DataTypeID", DataTypeID);
     request.send(function(result){
-		result["PropertyList"] = Zapp.SoapRequest.readStringParameter(result["PropertyList"]);	
+		result["PropertyList"] = OhNet.SoapRequest.readStringParameter(result["PropertyList"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -109,11 +109,11 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetPropertyList = function(Da
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetAllowedValues = function(DataTypeID, Filter, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetAllowedValues", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetAllowedValues", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("DataTypeID", DataTypeID);
     request.writeStringParameter("Filter", Filter);
     request.send(function(result){
-		result["PropertyInfo"] = Zapp.SoapRequest.readStringParameter(result["PropertyInfo"]);	
+		result["PropertyInfo"] = OhNet.SoapRequest.readStringParameter(result["PropertyInfo"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -131,9 +131,9 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetAllowedValues = function(D
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetStateUpdateID = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetStateUpdateID", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetStateUpdateID", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Id"] = Zapp.SoapRequest.readIntParameter(result["Id"]);	
+		result["Id"] = OhNet.SoapRequest.readIntParameter(result["Id"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -155,16 +155,16 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetStateUpdateID = function(s
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.BrowseRecordSchedules = function(Filter, StartingIndex, RequestedCount, SortCriteria, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("BrowseRecordSchedules", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("BrowseRecordSchedules", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("Filter", Filter);
     request.writeIntParameter("StartingIndex", StartingIndex);
     request.writeIntParameter("RequestedCount", RequestedCount);
     request.writeStringParameter("SortCriteria", SortCriteria);
     request.send(function(result){
-		result["Result"] = Zapp.SoapRequest.readStringParameter(result["Result"]);	
-		result["NumberReturned"] = Zapp.SoapRequest.readIntParameter(result["NumberReturned"]);	
-		result["TotalMatches"] = Zapp.SoapRequest.readIntParameter(result["TotalMatches"]);	
-		result["UpdateID"] = Zapp.SoapRequest.readIntParameter(result["UpdateID"]);	
+		result["Result"] = OhNet.SoapRequest.readStringParameter(result["Result"]);	
+		result["NumberReturned"] = OhNet.SoapRequest.readIntParameter(result["NumberReturned"]);	
+		result["TotalMatches"] = OhNet.SoapRequest.readIntParameter(result["TotalMatches"]);	
+		result["UpdateID"] = OhNet.SoapRequest.readIntParameter(result["UpdateID"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -187,17 +187,17 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.BrowseRecordSchedules = funct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.BrowseRecordTasks = function(RecordScheduleID, Filter, StartingIndex, RequestedCount, SortCriteria, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("BrowseRecordTasks", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("BrowseRecordTasks", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RecordScheduleID", RecordScheduleID);
     request.writeStringParameter("Filter", Filter);
     request.writeIntParameter("StartingIndex", StartingIndex);
     request.writeIntParameter("RequestedCount", RequestedCount);
     request.writeStringParameter("SortCriteria", SortCriteria);
     request.send(function(result){
-		result["Result"] = Zapp.SoapRequest.readStringParameter(result["Result"]);	
-		result["NumberReturned"] = Zapp.SoapRequest.readIntParameter(result["NumberReturned"]);	
-		result["TotalMatches"] = Zapp.SoapRequest.readIntParameter(result["TotalMatches"]);	
-		result["UpdateID"] = Zapp.SoapRequest.readIntParameter(result["UpdateID"]);	
+		result["Result"] = OhNet.SoapRequest.readStringParameter(result["Result"]);	
+		result["NumberReturned"] = OhNet.SoapRequest.readIntParameter(result["NumberReturned"]);	
+		result["TotalMatches"] = OhNet.SoapRequest.readIntParameter(result["TotalMatches"]);	
+		result["UpdateID"] = OhNet.SoapRequest.readIntParameter(result["UpdateID"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -216,12 +216,12 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.BrowseRecordTasks = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.CreateRecordSchedule = function(Elements, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("CreateRecordSchedule", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("CreateRecordSchedule", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("Elements", Elements);
     request.send(function(result){
-		result["RecordScheduleID"] = Zapp.SoapRequest.readStringParameter(result["RecordScheduleID"]);	
-		result["Result"] = Zapp.SoapRequest.readStringParameter(result["Result"]);	
-		result["UpdateID"] = Zapp.SoapRequest.readIntParameter(result["UpdateID"]);	
+		result["RecordScheduleID"] = OhNet.SoapRequest.readStringParameter(result["RecordScheduleID"]);	
+		result["Result"] = OhNet.SoapRequest.readStringParameter(result["Result"]);	
+		result["UpdateID"] = OhNet.SoapRequest.readIntParameter(result["UpdateID"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -240,7 +240,7 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.CreateRecordSchedule = functi
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.DeleteRecordSchedule = function(RecordScheduleID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DeleteRecordSchedule", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("DeleteRecordSchedule", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RecordScheduleID", RecordScheduleID);
     request.send(function(result){
 	
@@ -262,12 +262,12 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.DeleteRecordSchedule = functi
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetRecordSchedule = function(RecordScheduleID, Filter, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRecordSchedule", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetRecordSchedule", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RecordScheduleID", RecordScheduleID);
     request.writeStringParameter("Filter", Filter);
     request.send(function(result){
-		result["Result"] = Zapp.SoapRequest.readStringParameter(result["Result"]);	
-		result["UpdateID"] = Zapp.SoapRequest.readIntParameter(result["UpdateID"]);	
+		result["Result"] = OhNet.SoapRequest.readStringParameter(result["Result"]);	
+		result["UpdateID"] = OhNet.SoapRequest.readIntParameter(result["UpdateID"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -286,7 +286,7 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetRecordSchedule = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.EnableRecordSchedule = function(RecordScheduleID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("EnableRecordSchedule", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("EnableRecordSchedule", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RecordScheduleID", RecordScheduleID);
     request.send(function(result){
 	
@@ -307,7 +307,7 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.EnableRecordSchedule = functi
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.DisableRecordSchedule = function(RecordScheduleID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DisableRecordSchedule", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("DisableRecordSchedule", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RecordScheduleID", RecordScheduleID);
     request.send(function(result){
 	
@@ -328,7 +328,7 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.DisableRecordSchedule = funct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.DeleteRecordTask = function(RecordTaskID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DeleteRecordTask", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("DeleteRecordTask", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RecordTaskID", RecordTaskID);
     request.send(function(result){
 	
@@ -350,12 +350,12 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.DeleteRecordTask = function(R
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetRecordTask = function(RecordTaskID, Filter, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRecordTask", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetRecordTask", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RecordTaskID", RecordTaskID);
     request.writeStringParameter("Filter", Filter);
     request.send(function(result){
-		result["Result"] = Zapp.SoapRequest.readStringParameter(result["Result"]);	
-		result["UpdateID"] = Zapp.SoapRequest.readIntParameter(result["UpdateID"]);	
+		result["Result"] = OhNet.SoapRequest.readStringParameter(result["Result"]);	
+		result["UpdateID"] = OhNet.SoapRequest.readIntParameter(result["UpdateID"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -374,7 +374,7 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetRecordTask = function(Reco
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.EnableRecordTask = function(RecordTaskID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("EnableRecordTask", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("EnableRecordTask", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RecordTaskID", RecordTaskID);
     request.send(function(result){
 	
@@ -395,7 +395,7 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.EnableRecordTask = function(R
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.DisableRecordTask = function(RecordTaskID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DisableRecordTask", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("DisableRecordTask", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RecordTaskID", RecordTaskID);
     request.send(function(result){
 	
@@ -416,7 +416,7 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.DisableRecordTask = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.ResetRecordTask = function(RecordTaskID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ResetRecordTask", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("ResetRecordTask", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RecordTaskID", RecordTaskID);
     request.send(function(result){
 	
@@ -437,11 +437,11 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.ResetRecordTask = function(Re
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetRecordScheduleConflicts = function(RecordScheduleID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRecordScheduleConflicts", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetRecordScheduleConflicts", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RecordScheduleID", RecordScheduleID);
     request.send(function(result){
-		result["RecordScheduleConflictIDList"] = Zapp.SoapRequest.readStringParameter(result["RecordScheduleConflictIDList"]);	
-		result["UpdateID"] = Zapp.SoapRequest.readIntParameter(result["UpdateID"]);	
+		result["RecordScheduleConflictIDList"] = OhNet.SoapRequest.readStringParameter(result["RecordScheduleConflictIDList"]);	
+		result["UpdateID"] = OhNet.SoapRequest.readIntParameter(result["UpdateID"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -460,11 +460,11 @@ CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetRecordScheduleConflicts = 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgScheduledRecording1.prototype.GetRecordTaskConflicts = function(RecordTaskID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRecordTaskConflicts", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetRecordTaskConflicts", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RecordTaskID", RecordTaskID);
     request.send(function(result){
-		result["RecordTaskConflictIDList"] = Zapp.SoapRequest.readStringParameter(result["RecordTaskConflictIDList"]);	
-		result["UpdateID"] = Zapp.SoapRequest.readIntParameter(result["UpdateID"]);	
+		result["RecordTaskConflictIDList"] = OhNet.SoapRequest.readStringParameter(result["RecordTaskConflictIDList"]);	
+		result["UpdateID"] = OhNet.SoapRequest.readIntParameter(result["UpdateID"]);	
 	
 		if (successFunction){
 			successFunction(result);

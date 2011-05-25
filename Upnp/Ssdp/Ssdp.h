@@ -2,12 +2,13 @@
 #define HEADER_SSDP_BASE
 
 #include <Http.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Stream.h>
 #include <Network.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 enum ESsdpTarget
 {
@@ -347,6 +348,7 @@ private:
 	Endpoint iRemote;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_SSDP_BASE

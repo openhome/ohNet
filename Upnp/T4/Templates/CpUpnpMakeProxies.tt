@@ -1,7 +1,7 @@
 <#@ assembly name="UpnpServiceMake.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
 	Document u = new Document(TemplateArgument("xml"));
@@ -25,7 +25,7 @@ headers_proxy = $(inc_build)/Cpp/Buffer.h \
                 $(inc_build)/Cpp/Exception.h \
                 $(inc_build)/Cpp/Functor.h \
                 $(inc_build)/Cpp/FunctorAsync.h \
-                $(inc_build)/Cpp/ZappTypes.h \
+                $(inc_build)/Cpp/OhNetTypes.h \
                 $(inc_build)/Cpp/CpProxy.h \
                 $(inc_build)/CpiService.h \
                 $(inc_build)/Service.h \
@@ -45,7 +45,7 @@ proxy_dotnet_assemblies_with_path = \
 <#  } #>
 
 
-proxies : upnp_core $(objects_proxies)
+proxies : ohNetCore $(objects_proxies)
 	$(ar)ZappProxies.$(libext) $(objects_proxies)
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
@@ -78,10 +78,10 @@ CpProxyDotNetAssemblies: $(proxy_dotnet_assemblies_with_path)
 
 <# foreach (Service s in u.iServices) #>
 <# { #>
-$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll: $(objdir)Zapp.net.dll $(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
+$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll: $(objdir)ohNet.net.dll $(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
 <# } #>
 

@@ -1,14 +1,15 @@
 #ifndef HEADER_DVAVOPENHOMEORGVOLUME1CPP
 #define HEADER_DVAVOPENHOMEORGVOLUME1CPP
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
 #include <DvProvider.h>
 
 #include <string>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation;
 class PropertyInt;
@@ -399,7 +400,8 @@ private:
     PropertyUint* iPropertyFadeMax;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVAVOPENHOMEORGVOLUME1CPP
 

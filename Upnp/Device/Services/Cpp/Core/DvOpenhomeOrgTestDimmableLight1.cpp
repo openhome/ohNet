@@ -1,10 +1,10 @@
 #include "DvOpenhomeOrgTestDimmableLight1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 TBool DvProviderOpenhomeOrgTestDimmableLight1::SetPropertyA_ARG_Level(TUint aValue)
 {
@@ -26,7 +26,7 @@ DvProviderOpenhomeOrgTestDimmableLight1::DvProviderOpenhomeOrgTestDimmableLight1
 
 void DvProviderOpenhomeOrgTestDimmableLight1::EnableActionGetLevel()
 {
-    Zapp::Action* action = new Zapp::Action("GetLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetLevel");
     action->AddOutputParameter(new ParameterRelated("Level", *iPropertyA_ARG_Level));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestDimmableLight1::DoGetLevel);
     iService->AddAction(action, functor);
@@ -34,7 +34,7 @@ void DvProviderOpenhomeOrgTestDimmableLight1::EnableActionGetLevel()
 
 void DvProviderOpenhomeOrgTestDimmableLight1::EnableActionSetLevel()
 {
-    Zapp::Action* action = new Zapp::Action("SetLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetLevel");
     action->AddInputParameter(new ParameterRelated("Level", *iPropertyA_ARG_Level));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestDimmableLight1::DoSetLevel);
     iService->AddAction(action, functor);

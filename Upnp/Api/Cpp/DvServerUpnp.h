@@ -3,7 +3,8 @@
 
 // client is required to include the appropriate version (Std or Core) of DvDevice.h
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class DvDevice;
 class DviServerUpnp;
@@ -45,6 +46,7 @@ private:
     DviServerUpnp* iServer;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVSERVERUPNP

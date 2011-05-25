@@ -7,18 +7,19 @@
 #ifndef HEADER_STACK
 #define HEADER_STACK
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Thread.h>
 #include <Timer.h>
 #include <OsWrapper.h>
 #include <NetworkInterfaceList.h>
 #include <Discovery.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Printer.h>
 
 #include <vector>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IStack
 {
@@ -36,13 +37,13 @@ public:
     static void Destroy();
     static TBool IsInitialised();
 	static void GetVersion(TUint& aMajor, TUint& aMinor);
-    static Zapp::TimerManager& TimerManager();
+    static OpenHome::Net::TimerManager& TimerManager();
     /**
      * Intended for /very/ short operations only
      */
-    static Zapp::Mutex& Mutex();
+    static OpenHome::Net::Mutex& Mutex();
 
-    static Zapp::NetworkInterfaceList& NetworkInterfaceList();
+    static OpenHome::Net::NetworkInterfaceList& NetworkInterfaceList();
     static SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
     static void MulticastListenerRelease(TIpAddress aInterface);
     static TUint SequenceNumber();
@@ -87,9 +88,9 @@ private:
     };
 private:
     InitialisationParams* iInitParams;
-    Zapp::TimerManager* iTimerManager;
-    Zapp::Mutex iPublicLock;
-    Zapp::NetworkInterfaceList* iNetworkInterfaceList;
+    OpenHome::Net::TimerManager* iTimerManager;
+    OpenHome::Net::Mutex iPublicLock;
+    OpenHome::Net::NetworkInterfaceList* iNetworkInterfaceList;
     typedef std::vector<MListener*> MulticastListeners;
     MulticastListeners iMulticastListeners;
     TUint iSequenceNumber;
@@ -97,9 +98,10 @@ private:
     IStack* iDvStack;
     typedef std::map<Brn,ObjectType*,BufferCmp> ObjectTypeMap;
     ObjectTypeMap iObjectMap;
-    Zapp::Mutex iPrivateLock;
+    OpenHome::Net::Mutex iPrivateLock;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_STACK

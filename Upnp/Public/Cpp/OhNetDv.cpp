@@ -1,7 +1,7 @@
-#include <Zapp.h>
+#include <OhNet.h>
 #include <DviStack.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 void UpnpLibrary::StartDv()
 {

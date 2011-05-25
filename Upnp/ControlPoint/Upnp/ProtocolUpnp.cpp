@@ -8,7 +8,7 @@
 #include <CpiSubscription.h>
 #include <Subscription.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // InvocationUpnp
 

@@ -1,10 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp.Core;
+using OpenHome.Net.Core;
 using System.Collections.Generic;
 
-namespace Zapp.ControlPoint
+namespace OpenHome.Net.ControlPoint
 {
     /// <summary>
     /// (Action) Argument.  Only intended for use by auto-generated proxies.
@@ -32,11 +32,11 @@ namespace Zapp.ControlPoint
     /// </summary>
     public class ArgumentInt : Argument
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr ActionArgumentCreateIntInput(IntPtr aParameter, int aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr ActionArgumentCreateIntOutput(IntPtr aParameter);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern int ActionArgumentValueInt(IntPtr aHandle);
 
         /// <summary>
@@ -79,11 +79,11 @@ namespace Zapp.ControlPoint
     /// </summary>
     public class ArgumentUint : Argument
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr ActionArgumentCreateUintInput(IntPtr aParameter, uint aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr ActionArgumentCreateUintOutput(IntPtr aParameter);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern uint ActionArgumentValueUint(IntPtr aHandle);
 
         /// <summary>
@@ -126,11 +126,11 @@ namespace Zapp.ControlPoint
     /// </summary>
     public class ArgumentBool : Argument
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr ActionArgumentCreateBoolInput(IntPtr aParameter, uint aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr ActionArgumentCreateBoolOutput(IntPtr aParameter);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern uint ActionArgumentValueBool(IntPtr aHandle);
 
         /// <summary>
@@ -174,14 +174,14 @@ namespace Zapp.ControlPoint
     /// </summary>
     public class ArgumentString : Argument
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ActionArgumentCreateStringInput(IntPtr aParameter, char* aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr ActionArgumentCreateStringOutput(IntPtr aParameter);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe char* ActionArgumentValueString(IntPtr aHandle);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern unsafe void OhNetFree(IntPtr aPtr);
 
         /// <summary>
         /// Constructor for string input argument for an action
@@ -219,7 +219,7 @@ namespace Zapp.ControlPoint
         {
             char* cStr = ActionArgumentValueString(iHandle);
             String ret = Marshal.PtrToStringAnsi((IntPtr)cStr);
-            ZappFree((IntPtr)cStr);
+            OhNetFree((IntPtr)cStr);
             return ret;
         }
     }
@@ -229,14 +229,14 @@ namespace Zapp.ControlPoint
     /// </summary>
     public class ArgumentBinary : Argument
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr ActionArgumentCreateBinaryInput(IntPtr aParameter, IntPtr aData, int aLength);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr ActionArgumentCreateBinaryOutput(IntPtr aParameter);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe void ActionArgumentGetValueBinary(IntPtr aHandle, IntPtr* aData, uint* aLen);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern unsafe void OhNetFree(IntPtr aPtr);
 
         /// <summary>
         /// Constructor for binary input argument for an action
@@ -278,7 +278,7 @@ namespace Zapp.ControlPoint
             ActionArgumentGetValueBinary(iHandle, &data, &len);
             byte[] ret = new byte[len];
             Marshal.Copy(data, ret, 0, (int)len);
-            ZappFree((IntPtr)data);
+            OhNetFree((IntPtr)data);
             return ret;
         }
     }
@@ -288,25 +288,25 @@ namespace Zapp.ControlPoint
     /// </summary>
     public class Invocation
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr CpServiceInvocation(IntPtr aService, IntPtr aAction, CpProxy.CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void CpInvocationAddInput(IntPtr aInvocation, IntPtr aArgument);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void CpInvocationAddOutput(IntPtr aInvocation, IntPtr aArgument);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern uint CpInvocationError(IntPtr aInvocation);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(IntPtr aPtr);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
+        static extern unsafe void OhNetFree(IntPtr aPtr);
+        [DllImport("ohNet")]
         static extern unsafe int CpInvocationOutputInt(IntPtr aInvocation, uint aIndex);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe uint CpInvocationOutputUint(IntPtr aInvocation, uint aIndex);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe uint CpInvocationOutputBool(IntPtr aInvocation, uint aIndex);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr CpInvocationOutputString(IntPtr aInvocation, uint aIndex);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe void CpInvocationGetOutputBinary(IntPtr aInvocation, uint aIndex, IntPtr* aData, uint* aLen);
 
         private CpProxy.CallbackAsyncComplete iAsyncComplete;
@@ -421,7 +421,7 @@ namespace Zapp.ControlPoint
                 return null;
             }
             String str = Marshal.PtrToStringAnsi(cStr);
-            ZappFree(cStr);
+            OhNetFree(cStr);
             return str;
         }
 
@@ -446,7 +446,7 @@ namespace Zapp.ControlPoint
             }
             byte[] bin = new byte[len];
             Marshal.Copy(data, bin, 0, (int)len);
-            ZappFree((IntPtr)data);
+            OhNetFree((IntPtr)data);
             return bin;
         }
 
@@ -481,11 +481,11 @@ namespace Zapp.ControlPoint
     /// </summary>
     public class CpService
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr CpServiceCreate(char* aDomain, char* aName, uint aVersion, IntPtr aDevice);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void CpServiceDestroy(IntPtr aService);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void CpServiceInvokeAction(IntPtr aService, IntPtr aInvocation);
 
         private IntPtr iHandle;
@@ -507,7 +507,7 @@ namespace Zapp.ControlPoint
         /// <param name="aAction">Action which will be invoked</param>
         /// <param name="aCallback">Delegate to run when the action completes</param>
         /// <returns>Invocation object, ready to receive input and output arguments</returns>
-        public Invocation Invocation(Zapp.Core.Action aAction, CpProxy.CallbackAsyncComplete aCallback)
+        public Invocation Invocation(OpenHome.Net.Core.Action aAction, CpProxy.CallbackAsyncComplete aCallback)
         {
             Invocation invocation = new Invocation(this, aAction.Handle(), aCallback);
             lock (this)

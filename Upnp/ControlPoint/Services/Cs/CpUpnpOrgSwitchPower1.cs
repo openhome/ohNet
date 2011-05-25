@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgSwitchPower1 : ICpProxy, IDisposable
     {
@@ -80,9 +80,9 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyUpnpOrgSwitchPower1 : CpProxy, IDisposable, ICpProxyUpnpOrgSwitchPower1
     {
-        private Zapp.Core.Action iActionSetTarget;
-        private Zapp.Core.Action iActionGetTarget;
-        private Zapp.Core.Action iActionGetStatus;
+        private OpenHome.Net.Core.Action iActionSetTarget;
+        private OpenHome.Net.Core.Action iActionGetTarget;
+        private OpenHome.Net.Core.Action iActionGetStatus;
         private PropertyBool iStatus;
         private System.Action iStatusChanged;
         private Mutex iPropertyLock;
@@ -95,18 +95,18 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyUpnpOrgSwitchPower1(CpDevice aDevice)
             : base("schemas-upnp-org", "SwitchPower", 1, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             
 
-            iActionSetTarget = new Zapp.Core.Action("SetTarget");
+            iActionSetTarget = new OpenHome.Net.Core.Action("SetTarget");
             param = new ParameterBool("newTargetValue");
             iActionSetTarget.AddInputParameter(param);
 
-            iActionGetTarget = new Zapp.Core.Action("GetTarget");
+            iActionGetTarget = new OpenHome.Net.Core.Action("GetTarget");
             param = new ParameterBool("RetTargetValue");
             iActionGetTarget.AddOutputParameter(param);
 
-            iActionGetStatus = new Zapp.Core.Action("GetStatus");
+            iActionGetStatus = new OpenHome.Net.Core.Action("GetStatus");
             param = new ParameterBool("ResultStatus");
             iActionGetStatus.AddOutputParameter(param);
 

@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyAvOpenhomeOrgTime1C : public CpProxyC
 {
@@ -77,14 +77,14 @@ CpProxyAvOpenhomeOrgTime1C::CpProxyAvOpenhomeOrgTime1C(CpDeviceC aDevice)
     : CpProxyC("av-openhome-org", "Time", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionTime = new Action("Time");
-    param = new Zapp::ParameterUint("TrackCount");
+    param = new OpenHome::Net::ParameterUint("TrackCount");
     iActionTime->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Duration");
+    param = new OpenHome::Net::ParameterUint("Duration");
     iActionTime->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Seconds");
+    param = new OpenHome::Net::ParameterUint("Seconds");
     iActionTime->AddOutputParameter(param);
 
     Functor functor;
@@ -217,15 +217,15 @@ void CpProxyAvOpenhomeOrgTime1SyncTime(THandle aHandle, uint32_t* aTrackCount, u
     proxyC->SyncTime(*aTrackCount, *aDuration, *aSeconds);
 }
 
-void CpProxyAvOpenhomeOrgTime1BeginTime(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgTime1BeginTime(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginTime(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgTime1EndTime(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds)
+int32_t CpProxyAvOpenhomeOrgTime1EndTime(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
@@ -241,7 +241,7 @@ int32_t CpProxyAvOpenhomeOrgTime1EndTime(THandle aHandle, ZappHandleAsync aAsync
     return err;
 }
 
-void CpProxyAvOpenhomeOrgTime1SetPropertyTrackCountChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgTime1SetPropertyTrackCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -249,7 +249,7 @@ void CpProxyAvOpenhomeOrgTime1SetPropertyTrackCountChanged(THandle aHandle, Zapp
     proxyC->SetPropertyTrackCountChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgTime1SetPropertyDurationChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgTime1SetPropertyDurationChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -257,7 +257,7 @@ void CpProxyAvOpenhomeOrgTime1SetPropertyDurationChanged(THandle aHandle, ZappCa
     proxyC->SetPropertyDurationChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgTime1SetPropertySecondsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgTime1SetPropertySecondsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     ASSERT(proxyC != NULL);

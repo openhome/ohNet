@@ -1,56 +1,56 @@
 #include <Service.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Ascii.h>
 #include <Ssdp.h>
 #include <Stack.h>
 #include <Thread.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
-// Zapp::Parameter
+// OpenHome::Net::Parameter
 
-Zapp::Parameter::Parameter(const TChar* aName, EType aType)
+OpenHome::Net::Parameter::Parameter(const TChar* aName, EType aType)
     : iName(aName)
     , iType(aType)
 {
 }
 
-Zapp::Parameter::~Parameter()
+OpenHome::Net::Parameter::~Parameter()
 {
 }
 
-const Brx& Zapp::Parameter::Name() const
+const Brx& OpenHome::Net::Parameter::Name() const
 {
     return iName;
 }
 
-Zapp::Parameter::EType Zapp::Parameter::Type() const
+OpenHome::Net::Parameter::EType OpenHome::Net::Parameter::Type() const
 {
     return iType;
 }
 
-void Zapp::Parameter::ValidateBool(TBool /*aValue*/) const
+void OpenHome::Net::Parameter::ValidateBool(TBool /*aValue*/) const
 {
     ASSERTS();
 }
 
-void Zapp::Parameter::ValidateInt(TInt /*aValue*/) const
+void OpenHome::Net::Parameter::ValidateInt(TInt /*aValue*/) const
 {
     ASSERTS();
 }
 
-void Zapp::Parameter::ValidateUint(TUint /*aValue*/) const
+void OpenHome::Net::Parameter::ValidateUint(TUint /*aValue*/) const
 {
     ASSERTS();
 }
 
-void Zapp::Parameter::ValidateString(const Brx& /*aValue*/) const
+void OpenHome::Net::Parameter::ValidateString(const Brx& /*aValue*/) const
 {
     ASSERTS();
 }
 
-void Zapp::Parameter::ValidateBinary(const Brx& /*aValue*/) const
+void OpenHome::Net::Parameter::ValidateBinary(const Brx& /*aValue*/) const
 {
     ASSERTS();
 }
@@ -59,7 +59,7 @@ void Zapp::Parameter::ValidateBinary(const Brx& /*aValue*/) const
 // ParameterBool
 
 ParameterBool::ParameterBool(const TChar* aName)
-    : Parameter(aName, Zapp::Parameter::eTypeBool)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeBool)
 {
 }
 
@@ -75,7 +75,7 @@ void ParameterBool::ValidateBool(TBool /*aValue*/) const
 // ParameterInt
 
 ParameterInt::ParameterInt(const TChar* aName, TInt aMinValue, TInt aMaxValue, TInt aStep)
-    : Parameter(aName, Zapp::Parameter::eTypeInt)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeInt)
     , iMinValue(aMinValue)
     , iMaxValue(aMaxValue)
     , iStep(aStep)
@@ -114,7 +114,7 @@ TInt ParameterInt::Step() const
 // ParameterUint
 
 ParameterUint::ParameterUint(const TChar* aName, TUint aMinValue, TUint aMaxValue, TUint aStep)
-    : Parameter(aName, Zapp::Parameter::eTypeUint)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeUint)
     , iMinValue(aMinValue)
     , iMaxValue(aMaxValue)
     , iStep(aStep)
@@ -153,12 +153,12 @@ TUint ParameterUint::Step() const
 // ParameterString
 
 ParameterString::ParameterString(const TChar* aName)
-    : Parameter(aName, Zapp::Parameter::eTypeString)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeString)
 {
 }
 
 ParameterString::ParameterString(const TChar* aName, TChar** aAllowedValues, TUint aCount)
-    : Parameter(aName, Zapp::Parameter::eTypeString)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeString)
 {
     for (TUint i=0; i<aCount; i++) {
         Brh* buf = new Brh(aAllowedValues[i]);
@@ -198,7 +198,7 @@ const ParameterString::Map& ParameterString::AllowedValues() const
 // ParameterBinary
 
 ParameterBinary::ParameterBinary(const TChar* aName)
-    : Parameter(aName, Zapp::Parameter::eTypeBinary)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeBinary)
 {
 }
 
@@ -214,7 +214,7 @@ void ParameterBinary::ValidateBinary(const Brx& /*aValue*/) const
 // ParameterRelated
 
 ParameterRelated::ParameterRelated(const TChar* aName, const Property& aRelated)
-    : Parameter(aName, Zapp::Parameter::eTypeRelated)
+    : Parameter(aName, OpenHome::Net::Parameter::eTypeRelated)
     , iRelated(aRelated)
 {
 }
@@ -231,7 +231,7 @@ const Property& ParameterRelated::Related() const
 
 // Property
 
-const Zapp::Parameter& Property::Parameter() const
+const OpenHome::Net::Parameter& Property::Parameter() const
 {
     return *iParameter;
 }
@@ -251,32 +251,32 @@ TBool Property::ReportChanged()
     return false;
 }
 
-Property::Property(Zapp::Parameter* aParameter, Functor& aFunctor)
+Property::Property(OpenHome::Net::Parameter* aParameter, Functor& aFunctor)
     : iParameter(aParameter)
     , iFunctor(aFunctor)
 	, iChanged(true)
 	, iSequenceNumber(0)
 {
     ASSERT(iParameter != NULL);
-    ASSERT(iParameter->Type() != Zapp::Parameter::eTypeRelated);
+    ASSERT(iParameter->Type() != OpenHome::Net::Parameter::eTypeRelated);
 }
 
-Property::Property(Zapp::Parameter* aParameter)
+Property::Property(OpenHome::Net::Parameter* aParameter)
     : iParameter(aParameter)
 	, iChanged(true)
 	, iSequenceNumber(0)
 {
     ASSERT(iParameter != NULL);
-    ASSERT(iParameter->Type() != Zapp::Parameter::eTypeRelated);
+    ASSERT(iParameter->Type() != OpenHome::Net::Parameter::eTypeRelated);
 }
 
-void Property::Construct(Zapp::Parameter* aParameter)
+void Property::Construct(OpenHome::Net::Parameter* aParameter)
 {
     iParameter = aParameter;
 	iChanged = true;
 	iSequenceNumber = 0;
     ASSERT(iParameter != NULL);
-    ASSERT(iParameter->Type() != Zapp::Parameter::eTypeRelated);
+    ASSERT(iParameter->Type() != OpenHome::Net::Parameter::eTypeRelated);
 }
 
 Property::~Property()
@@ -292,7 +292,7 @@ PropertyString::PropertyString(const TChar* aName, Functor& aFunctor)
 {
 }
 
-PropertyString::PropertyString(Zapp::Parameter* aParameter)
+PropertyString::PropertyString(OpenHome::Net::Parameter* aParameter)
     : Property(aParameter)
 {
 }
@@ -344,7 +344,7 @@ PropertyInt::PropertyInt(const TChar* aName, Functor& aFunctor)
 {
 }
 
-PropertyInt::PropertyInt(Zapp::Parameter* aParameter)
+PropertyInt::PropertyInt(OpenHome::Net::Parameter* aParameter)
     : Property(aParameter)
 {
 }
@@ -398,7 +398,7 @@ PropertyUint::PropertyUint(const TChar* aName, Functor& aFunctor)
 {
 }
 
-PropertyUint::PropertyUint(Zapp::Parameter* aParameter)
+PropertyUint::PropertyUint(OpenHome::Net::Parameter* aParameter)
     : Property(aParameter)
 {
 }
@@ -452,7 +452,7 @@ PropertyBool::PropertyBool(const TChar* aName, Functor& aFunctor)
 {
 }
 
-PropertyBool::PropertyBool(Zapp::Parameter* aParameter)
+PropertyBool::PropertyBool(OpenHome::Net::Parameter* aParameter)
     : Property(aParameter)
 {
 }
@@ -506,7 +506,7 @@ PropertyBinary::PropertyBinary(const TChar* aName, Functor& aFunctor)
 {
 }
 
-PropertyBinary::PropertyBinary(Zapp::Parameter* aParameter)
+PropertyBinary::PropertyBinary(OpenHome::Net::Parameter* aParameter)
     : Property(aParameter)
 {
 }
@@ -550,14 +550,14 @@ void PropertyBinary::Write(IPropertyWriter& aWriter)
 }
 
 
-// Zapp::Action
+// OpenHome::Net::Action
 
-Zapp::Action::Action(const TChar* aName)
+OpenHome::Net::Action::Action(const TChar* aName)
     : iName(aName)
 {
 }
 
-Zapp::Action::~Action()
+OpenHome::Net::Action::~Action()
 {
     TUint i;
     for (i=0; i<iInputParameters.size(); i++) {
@@ -568,17 +568,17 @@ Zapp::Action::~Action()
     }
 }
 
-void Zapp::Action::AddInputParameter(Parameter* aParameter)
+void OpenHome::Net::Action::AddInputParameter(Parameter* aParameter)
 {
     iInputParameters.push_back(aParameter);
 }
 
-void Zapp::Action::AddOutputParameter(Parameter* aParameter)
+void OpenHome::Net::Action::AddOutputParameter(Parameter* aParameter)
 {
     iOutputParameters.push_back(aParameter);
 }
 
-const Brx& Zapp::Action::Name() const
+const Brx& OpenHome::Net::Action::Name() const
 {
     return iName;
 }
@@ -593,20 +593,20 @@ const Action::VectorParameters& Action::OutputParameters() const
 }
 
 
-// Zapp::ServiceType
+// OpenHome::Net::ServiceType
 
-const Brn Zapp::ServiceType::kUrn("urn:");
-const Brn Zapp::ServiceType::kService(":service:");
-const Brn Zapp::ServiceType::kServiceId(":serviceId:");
+const Brn OpenHome::Net::ServiceType::kUrn("urn:");
+const Brn OpenHome::Net::ServiceType::kService(":service:");
+const Brn OpenHome::Net::ServiceType::kServiceId(":serviceId:");
 
-Zapp::ServiceType::ServiceType(const TChar* aDomain, const TChar* aName, TUint aVersion)
+OpenHome::Net::ServiceType::ServiceType(const TChar* aDomain, const TChar* aName, TUint aVersion)
     : iDomain(aDomain)
     , iName(aName)
     , iVersion(aVersion)
 {
 }
 
-Zapp::ServiceType::ServiceType(const ServiceType& aServiceType)
+OpenHome::Net::ServiceType::ServiceType(const ServiceType& aServiceType)
     : iVersion(aServiceType.iVersion)
     , iFullName(aServiceType.FullName())
 {
@@ -614,26 +614,26 @@ Zapp::ServiceType::ServiceType(const ServiceType& aServiceType)
     iName.Set(aServiceType.iName);
 }
 
-Zapp::ServiceType::~ServiceType()
+OpenHome::Net::ServiceType::~ServiceType()
 {
 }
 
-const Brx& Zapp::ServiceType::Domain() const
+const Brx& OpenHome::Net::ServiceType::Domain() const
 {
     return iDomain;
 }
 
-const Brx& Zapp::ServiceType::Name() const
+const Brx& OpenHome::Net::ServiceType::Name() const
 {
     return iName;
 }
 
-TUint Zapp::ServiceType::Version() const
+TUint OpenHome::Net::ServiceType::Version() const
 {
     return iVersion;
 }
 
-const Brx& Zapp::ServiceType::FullName() const
+const Brx& OpenHome::Net::ServiceType::FullName() const
 {
 	Stack::Mutex().Wait();
 	if (iFullName.Bytes() == 0) {
@@ -652,7 +652,7 @@ const Brx& Zapp::ServiceType::FullName() const
     return iFullName;
 }
 
-const Brx& Zapp::ServiceType::FullNameUpnp() const
+const Brx& OpenHome::Net::ServiceType::FullNameUpnp() const
 {
 	Stack::Mutex().Wait();
     if (iServiceType.Bytes() == 0) {
@@ -673,7 +673,7 @@ const Brx& Zapp::ServiceType::FullNameUpnp() const
     return iServiceType;
 }
 
-const Brx& Zapp::ServiceType::PathUpnp() const
+const Brx& OpenHome::Net::ServiceType::PathUpnp() const
 {
 	Stack::Mutex().Wait();
     if (iPathUpnp.Bytes() == 0) {
@@ -690,7 +690,7 @@ const Brx& Zapp::ServiceType::PathUpnp() const
     return iPathUpnp;
 }
 
-const Brx& Zapp::ServiceType::ServiceId() const
+const Brx& OpenHome::Net::ServiceType::ServiceId() const
 {
 	Stack::Mutex().Wait();
     if (iServiceId.Bytes() == 0) {
@@ -720,7 +720,7 @@ Service::Service(const TChar* aDomain, const TChar* aName, TUint aVersion)
 {
 }
 
-const Zapp::ServiceType& Service::ServiceType() const
+const OpenHome::Net::ServiceType& Service::ServiceType() const
 {
     return iServiceType;
 }

@@ -8,7 +8,7 @@
 #ifndef HEADER_CPIDEVICEUPNP
 #define HEADER_CPIDEVICEUPNP
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Thread.h>
 #include <Discovery.h>
@@ -18,7 +18,8 @@
 #include <DeviceXml.h>
 #include <XmlFetcher.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpiDeviceListUpnp;
 /**
@@ -223,6 +224,7 @@ private:
     TUint iVersion;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_CPIDEVICEUPNP

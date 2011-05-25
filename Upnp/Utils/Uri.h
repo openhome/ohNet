@@ -2,13 +2,13 @@
 #define HEADER_LINN_ASCII_URI
 
 #include <Standard.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 
 EXCEPTION(UriError);
 
-namespace Zapp
-{
+namespace OpenHome {
+namespace Net {
 
 class Uri
 {
@@ -61,6 +61,7 @@ private:
     Brn iFragment;
 };
 
-};  // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif  // HEADER_LINN_ASCII_URI

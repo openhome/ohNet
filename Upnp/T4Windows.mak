@@ -4,11 +4,11 @@
 
 toolsDir = Build\Windows\Tools^\
 t4 = $(toolsDir)TextTransform.exe
-zappgen = $(toolsDir)ZappGen.exe
+ohNetGen = $(toolsDir)OhNetGen.exe
 upnpServiceXml = $(toolsDir)UpnpServiceXml.dll
 upnpServiceMake = $(toolsDir)UpnpServiceMake.dll
 argumentProcessor = $(toolsDir)ArgumentProcessor.dll
-tt = $(toolsDir)UpnpServiceXml.dll $(toolsDir)UpnpServiceMake.dll $(toolsDir)Mono.TextTemplating.dll $(toolsDir)TextTransform.exe $(toolsDir)ZappGen.exe
+tt = $(toolsDir)UpnpServiceXml.dll $(toolsDir)UpnpServiceMake.dll $(toolsDir)Mono.TextTemplating.dll $(toolsDir)TextTransform.exe $(toolsDir)OhNetGen.exe
 
 tt : $(tt)
 
@@ -37,9 +37,9 @@ exesources =	T4\\TextTemplating\\TextTransform\\AssemblyInfo.cs \
                 T4\\TextTemplating\\TextTransform\\Options.cs \
                 T4\\TextTemplating\\TextTransform\\TextTransform.cs
 
-$(toolsDir)ZappGen.exe : $(toolsDir)TextTransform.exe T4\\ZappGen.cs
+$(toolsDir)OhNetGen.exe : $(toolsDir)TextTransform.exe T4\\OhNetGen.cs
 	@if not exist $(toolsDir) mkdir $(toolsDir)
-	csc /t:exe /out:$(toolsDir)ZappGen.exe T4\\ZappGen.cs T4\\AssemblyInfo.cs
+	csc /t:exe /out:$(toolsDir)OhNetGen.exe T4\\OhNetGen.cs T4\\AssemblyInfo.cs
 
 $(toolsDir)TextTransform.exe : $(toolsDir)Mono.TextTemplating.dll $(exesources)
 	@if not exist $(toolsDir) mkdir $(toolsDir)

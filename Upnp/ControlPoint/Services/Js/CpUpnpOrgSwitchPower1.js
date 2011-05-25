@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxySchemasUpnpOrgSwitchPower1
-* @module Zapp
+* @module ohNet
 * @class SwitchPower
 */
 	
@@ -18,7 +18,7 @@ var CpProxySchemasUpnpOrgSwitchPower1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["Status"] = new Zapp.ServiceProperty("Status","bool");
+	this.serviceProperties["Status"] = new OhNet.ServiceProperty("Status","bool");
 }
 
 
@@ -29,7 +29,7 @@ var CpProxySchemasUpnpOrgSwitchPower1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxySchemasUpnpOrgSwitchPower1.prototype.subscribe = function (serviceAddedFunction) {
-    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
@@ -38,7 +38,7 @@ CpProxySchemasUpnpOrgSwitchPower1.prototype.subscribe = function (serviceAddedFu
 * @method Unsubscribe
 */
 CpProxySchemasUpnpOrgSwitchPower1.prototype.unsubscribe = function () {
-    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+    OhNet.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
@@ -52,7 +52,7 @@ CpProxySchemasUpnpOrgSwitchPower1.prototype.unsubscribe = function () {
 CpProxySchemasUpnpOrgSwitchPower1.prototype.Status_Changed = function (stateChangedFunction) {
     this.serviceProperties.Status.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readBoolParameter(state)); 
 	});
 }
 
@@ -65,7 +65,7 @@ CpProxySchemasUpnpOrgSwitchPower1.prototype.Status_Changed = function (stateChan
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgSwitchPower1.prototype.SetTarget = function(newTargetValue, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetTarget", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetTarget", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("newTargetValue", newTargetValue);
     request.send(function(result){
 	
@@ -85,9 +85,9 @@ CpProxySchemasUpnpOrgSwitchPower1.prototype.SetTarget = function(newTargetValue,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgSwitchPower1.prototype.GetTarget = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetTarget", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetTarget", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["RetTargetValue"] = Zapp.SoapRequest.readBoolParameter(result["RetTargetValue"]);	
+		result["RetTargetValue"] = OhNet.SoapRequest.readBoolParameter(result["RetTargetValue"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -105,9 +105,9 @@ CpProxySchemasUpnpOrgSwitchPower1.prototype.GetTarget = function(successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgSwitchPower1.prototype.GetStatus = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetStatus", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetStatus", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["ResultStatus"] = Zapp.SoapRequest.readBoolParameter(result["ResultStatus"]);	
+		result["ResultStatus"] = OhNet.SoapRequest.readBoolParameter(result["ResultStatus"]);	
 	
 		if (successFunction){
 			successFunction(result);

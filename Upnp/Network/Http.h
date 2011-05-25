@@ -11,7 +11,8 @@
 EXCEPTION(HttpError);
 EXCEPTION(HttpInvalidResponse);
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class WriterHttpHeader;
 
@@ -188,7 +189,7 @@ public:
     virtual ~IWriterHttpStatus() {}
 };
 
-class IWriterField : public Zapp::IWriterAscii
+class IWriterField : public OpenHome::Net::IWriterAscii
 {
 };
 
@@ -196,7 +197,7 @@ class IWriterHttpHeader : public IWriter
 {
 public:
     virtual void WriteHeader(const Brx& aField, const Brx& aValue) = 0;
-    virtual Zapp::IWriterAscii& WriteHeaderField(const Brx& aField) = 0; // returns a stream for writing the value
+    virtual OpenHome::Net::IWriterAscii& WriteHeaderField(const Brx& aField) = 0; // returns a stream for writing the value
     virtual ~IWriterHttpHeader() {}
 };
 
@@ -287,7 +288,7 @@ protected:
     Bws<kMaxDescriptionBytes> iDescription;
 };
 
-class WriterHttpField : public Zapp::WriterAscii
+class WriterHttpField : public OpenHome::Net::WriterAscii
 {
     friend class WriterHttpHeader;
 public:
@@ -309,7 +310,7 @@ public:
     virtual void WriteFlush();
     // IWriterHeader
     virtual void WriteHeader(const Brx& aField, const Brx& aValue);
-    virtual Zapp::IWriterAscii& WriteHeaderField(const Brx& aField); // returns a stream for writing the value
+    virtual OpenHome::Net::IWriterAscii& WriteHeaderField(const Brx& aField); // returns a stream for writing the value
 protected:
     WriterHttpHeader(IWriter& aWriter);
 protected:
@@ -336,13 +337,13 @@ public:
 class HttpHeaderHost : public HttpHeader
 {
 public:
-    Zapp::Endpoint& Endpoint();
+    OpenHome::Net::Endpoint& Endpoint();
     const Brx& Host() const;
 private:
     virtual TBool Recognise(const Brx& aHeader);
     virtual void Process(const Brx& aValue);
 private:
-    Zapp::Endpoint iEndpoint;
+    OpenHome::Net::Endpoint iEndpoint;
     Brh iHost;
 };
 
@@ -453,6 +454,7 @@ private:
     TBool iChunked;
 };
 
-} //namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_HTTP_HTTP

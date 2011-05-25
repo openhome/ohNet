@@ -8,7 +8,7 @@
 #ifndef HEADER_CPIDEVICE
 #define HEADER_CPIDEVICE
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Thread.h>
 #include <Discovery.h>
@@ -20,7 +20,8 @@
 #include <map>
 #include <list>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 
 class CpiDeviceList;
@@ -307,6 +308,7 @@ private:
     std::list<UpdateBase*> iList;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_CPIDEVICE

@@ -7,7 +7,8 @@
 #include <ProtocolUpnp.h>
 #include <Subscription.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class Subscription;
 
@@ -47,6 +48,7 @@ private:
     SocketTcpServer iTcpServer;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_EVENT_UPNP

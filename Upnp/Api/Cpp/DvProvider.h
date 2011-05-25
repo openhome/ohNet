@@ -1,11 +1,12 @@
 #ifndef HEADER_DVSERVICE
 #define HEADER_DVSERVICE
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <DviDevice.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class DviService;
 class PropertyInt;
@@ -110,7 +111,8 @@ private:
     TBool iPropertyChanged;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVSERVICE
 

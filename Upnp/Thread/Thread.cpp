@@ -4,7 +4,7 @@
 #include <exception>
 #include <Stack.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 //
 // Semaphore
@@ -12,7 +12,7 @@ using namespace Zapp;
 
 Semaphore::Semaphore(const TChar* aName, TUint aCount)
 {
-    iHandle = Zapp::Os::SemaphoreCreate(aName, aCount);
+    iHandle = OpenHome::Net::Os::SemaphoreCreate(aName, aCount);
     if (iHandle == kHandleNull) {
         throw std::bad_alloc();
     }
@@ -20,12 +20,12 @@ Semaphore::Semaphore(const TChar* aName, TUint aCount)
 
 Semaphore::~Semaphore()
 {
-    Zapp::Os::SemaphoreDestroy(iHandle);
+    OpenHome::Net::Os::SemaphoreDestroy(iHandle);
 }
 
 void Semaphore::Wait()
 {
-    Zapp::Os::SemaphoreWait(iHandle);
+    OpenHome::Net::Os::SemaphoreWait(iHandle);
 }
 
 void Semaphore::Wait(TUint aTimeoutMs)
@@ -34,7 +34,7 @@ void Semaphore::Wait(TUint aTimeoutMs)
         return (Wait());
     }
     ASSERT(iHandle != kHandleNull);
-    if (!Zapp::Os::SemaphoreTimedWait(iHandle, aTimeoutMs)) {
+    if (!OpenHome::Net::Os::SemaphoreTimedWait(iHandle, aTimeoutMs)) {
         THROW(Timeout);
     }
 }
@@ -42,12 +42,12 @@ void Semaphore::Wait(TUint aTimeoutMs)
 TBool Semaphore::Clear()
 {
     ASSERT(iHandle != kHandleNull);
-    return Zapp::Os::SemaphoreClear(iHandle);
+    return OpenHome::Net::Os::SemaphoreClear(iHandle);
 }
 
 void Semaphore::Signal()
 {
-    Zapp::Os::SemaphoreSignal(iHandle);
+    OpenHome::Net::Os::SemaphoreSignal(iHandle);
 }
 
 //
@@ -56,7 +56,7 @@ void Semaphore::Signal()
 
 Mutex::Mutex(const TChar* aName)
 {
-    iHandle = Zapp::Os::MutexCreate(aName);
+    iHandle = OpenHome::Net::Os::MutexCreate(aName);
     if (iHandle == kHandleNull) {
         throw std::bad_alloc();
     }
@@ -66,12 +66,12 @@ Mutex::Mutex(const TChar* aName)
 
 Mutex::~Mutex()
 {
-    Zapp::Os::MutexDestroy(iHandle);
+    OpenHome::Net::Os::MutexDestroy(iHandle);
 }
 
 void Mutex::Wait()
 {
-    TInt err = Zapp::Os::MutexLock(iHandle);
+    TInt err = OpenHome::Net::Os::MutexLock(iHandle);
     if (err != 0) {
         const char* msg;
         if (err == -1) {
@@ -94,7 +94,7 @@ void Mutex::Wait()
 
 void Mutex::Signal()
 {
-    Zapp::Os::MutexUnlock(iHandle);
+    OpenHome::Net::Os::MutexUnlock(iHandle);
 }
 
 //
@@ -158,7 +158,7 @@ void SemaphoreActive::ConsumeAll()
 // Thread
 //
 
-const TUint Zapp::Thread::kDefaultStackBytes = 16 * 1024;
+const TUint OpenHome::Net::Thread::kDefaultStackBytes = 16 * 1024;
 
 Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     : iHandle(kHandleNull)
@@ -182,7 +182,7 @@ Thread::~Thread()
     LOG(kThread, "> Thread::~Thread() called for thread: %p\n", this);
     Kill();
     Join();
-    Zapp::Os::ThreadDestroy(iHandle);
+    OpenHome::Net::Os::ThreadDestroy(iHandle);
     LOG(kThread, "< Thread::~Thread() called for thread: %p\n", this);
 }
 
@@ -190,7 +190,7 @@ void Thread::Start()
 {
     TChar name[kNameBytes+1] = {0};
     (void)memcpy(name, iName.Ptr(), iName.Bytes());
-    iHandle = Zapp::Os::ThreadCreate(name, iPriority, iStackBytes, &Thread::EntryPoint, this);
+    iHandle = OpenHome::Net::Os::ThreadCreate(name, iPriority, iStackBytes, &Thread::EntryPoint, this);
 }
 
 void Thread::EntryPoint(void* aArg)
@@ -243,12 +243,12 @@ void Thread::Sleep(TUint aMilliSecs)
 
 Thread* Thread::Current()
 { // static
-    return (Thread*)Zapp::Os::ThreadTls();
+    return (Thread*)OpenHome::Net::Os::ThreadTls();
 }
 
 TBool Thread::SupportsPriorities()
 { // static
-    return Zapp::Os::ThreadSupportsPriorities();
+    return OpenHome::Net::Os::ThreadSupportsPriorities();
 }
 
 void Thread::CheckForKill() const

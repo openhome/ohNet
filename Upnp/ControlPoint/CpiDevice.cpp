@@ -1,11 +1,11 @@
 #include <CpiDevice.h>
 #include <Thread.h>
 #include <Debug.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Stack.h>
 #include <CpiStack.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // CpiDevice
 

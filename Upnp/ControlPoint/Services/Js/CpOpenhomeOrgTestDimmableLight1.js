@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxyOpenhomeOrgTestDimmableLight1
-* @module Zapp
+* @module ohNet
 * @class TestDimmableLight
 */
 	
@@ -18,7 +18,7 @@ var CpProxyOpenhomeOrgTestDimmableLight1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["A_ARG_Level"] = new Zapp.ServiceProperty("A_ARG_Level","int");
+	this.serviceProperties["A_ARG_Level"] = new OhNet.ServiceProperty("A_ARG_Level","int");
 }
 
 
@@ -29,7 +29,7 @@ var CpProxyOpenhomeOrgTestDimmableLight1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxyOpenhomeOrgTestDimmableLight1.prototype.subscribe = function (serviceAddedFunction) {
-    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
@@ -38,7 +38,7 @@ CpProxyOpenhomeOrgTestDimmableLight1.prototype.subscribe = function (serviceAdde
 * @method Unsubscribe
 */
 CpProxyOpenhomeOrgTestDimmableLight1.prototype.unsubscribe = function () {
-    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+    OhNet.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
@@ -52,7 +52,7 @@ CpProxyOpenhomeOrgTestDimmableLight1.prototype.unsubscribe = function () {
 CpProxyOpenhomeOrgTestDimmableLight1.prototype.A_ARG_Level_Changed = function (stateChangedFunction) {
     this.serviceProperties.A_ARG_Level.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 
@@ -64,9 +64,9 @@ CpProxyOpenhomeOrgTestDimmableLight1.prototype.A_ARG_Level_Changed = function (s
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestDimmableLight1.prototype.GetLevel = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetLevel", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetLevel", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Level"] = Zapp.SoapRequest.readIntParameter(result["Level"]);	
+		result["Level"] = OhNet.SoapRequest.readIntParameter(result["Level"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -85,7 +85,7 @@ CpProxyOpenhomeOrgTestDimmableLight1.prototype.GetLevel = function(successFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestDimmableLight1.prototype.SetLevel = function(Level, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetLevel", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetLevel", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Level", Level);
     request.send(function(result){
 	

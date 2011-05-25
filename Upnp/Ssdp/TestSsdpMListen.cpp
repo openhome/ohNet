@@ -11,14 +11,14 @@
 
 #include <TestFramework.h>
 #include <OptionParser.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Discovery.h>
 #include <Thread.h>
 #include <Timer.h>
 #include <Stack.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class SsdpNotifyLogger : public ISsdpNotifyHandler
 {
@@ -243,7 +243,7 @@ void SuiteListen::TimerExpired()
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionUint duration("-d", "--duration", 30, "Number of seconds to listen for.  Defaults to 30");

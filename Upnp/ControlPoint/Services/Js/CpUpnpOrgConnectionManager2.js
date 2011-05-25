@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxySchemasUpnpOrgConnectionManager2
-* @module Zapp
+* @module ohNet
 * @class ConnectionManager
 */
 	
@@ -18,9 +18,9 @@ var CpProxySchemasUpnpOrgConnectionManager2 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["SourceProtocolInfo"] = new Zapp.ServiceProperty("SourceProtocolInfo","string");
-	this.serviceProperties["SinkProtocolInfo"] = new Zapp.ServiceProperty("SinkProtocolInfo","string");
-	this.serviceProperties["CurrentConnectionIDs"] = new Zapp.ServiceProperty("CurrentConnectionIDs","string");
+	this.serviceProperties["SourceProtocolInfo"] = new OhNet.ServiceProperty("SourceProtocolInfo","string");
+	this.serviceProperties["SinkProtocolInfo"] = new OhNet.ServiceProperty("SinkProtocolInfo","string");
+	this.serviceProperties["CurrentConnectionIDs"] = new OhNet.ServiceProperty("CurrentConnectionIDs","string");
 }
 
 
@@ -31,7 +31,7 @@ var CpProxySchemasUpnpOrgConnectionManager2 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxySchemasUpnpOrgConnectionManager2.prototype.subscribe = function (serviceAddedFunction) {
-    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
@@ -40,7 +40,7 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.subscribe = function (serviceA
 * @method Unsubscribe
 */
 CpProxySchemasUpnpOrgConnectionManager2.prototype.unsubscribe = function () {
-    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+    OhNet.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
@@ -54,7 +54,7 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.unsubscribe = function () {
 CpProxySchemasUpnpOrgConnectionManager2.prototype.SourceProtocolInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.SourceProtocolInfo.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -67,7 +67,7 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.SourceProtocolInfo_Changed = f
 CpProxySchemasUpnpOrgConnectionManager2.prototype.SinkProtocolInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.SinkProtocolInfo.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -80,7 +80,7 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.SinkProtocolInfo_Changed = fun
 CpProxySchemasUpnpOrgConnectionManager2.prototype.CurrentConnectionIDs_Changed = function (stateChangedFunction) {
     this.serviceProperties.CurrentConnectionIDs.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 
@@ -92,10 +92,10 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.CurrentConnectionIDs_Changed =
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager2.prototype.GetProtocolInfo = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetProtocolInfo", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetProtocolInfo", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Source"] = Zapp.SoapRequest.readStringParameter(result["Source"]);	
-		result["Sink"] = Zapp.SoapRequest.readStringParameter(result["Sink"]);	
+		result["Source"] = OhNet.SoapRequest.readStringParameter(result["Source"]);	
+		result["Sink"] = OhNet.SoapRequest.readStringParameter(result["Sink"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -117,15 +117,15 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.GetProtocolInfo = function(suc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager2.prototype.PrepareForConnection = function(RemoteProtocolInfo, PeerConnectionManager, PeerConnectionID, Direction, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("PrepareForConnection", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("PrepareForConnection", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("RemoteProtocolInfo", RemoteProtocolInfo);
     request.writeStringParameter("PeerConnectionManager", PeerConnectionManager);
     request.writeIntParameter("PeerConnectionID", PeerConnectionID);
     request.writeStringParameter("Direction", Direction);
     request.send(function(result){
-		result["ConnectionID"] = Zapp.SoapRequest.readIntParameter(result["ConnectionID"]);	
-		result["AVTransportID"] = Zapp.SoapRequest.readIntParameter(result["AVTransportID"]);	
-		result["RcsID"] = Zapp.SoapRequest.readIntParameter(result["RcsID"]);	
+		result["ConnectionID"] = OhNet.SoapRequest.readIntParameter(result["ConnectionID"]);	
+		result["AVTransportID"] = OhNet.SoapRequest.readIntParameter(result["AVTransportID"]);	
+		result["RcsID"] = OhNet.SoapRequest.readIntParameter(result["RcsID"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -144,7 +144,7 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.PrepareForConnection = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager2.prototype.ConnectionComplete = function(ConnectionID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ConnectionComplete", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("ConnectionComplete", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("ConnectionID", ConnectionID);
     request.send(function(result){
 	
@@ -164,9 +164,9 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.ConnectionComplete = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager2.prototype.GetCurrentConnectionIDs = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetCurrentConnectionIDs", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetCurrentConnectionIDs", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["ConnectionIDs"] = Zapp.SoapRequest.readStringParameter(result["ConnectionIDs"]);	
+		result["ConnectionIDs"] = OhNet.SoapRequest.readStringParameter(result["ConnectionIDs"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -185,16 +185,16 @@ CpProxySchemasUpnpOrgConnectionManager2.prototype.GetCurrentConnectionIDs = func
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgConnectionManager2.prototype.GetCurrentConnectionInfo = function(ConnectionID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetCurrentConnectionInfo", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetCurrentConnectionInfo", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("ConnectionID", ConnectionID);
     request.send(function(result){
-		result["RcsID"] = Zapp.SoapRequest.readIntParameter(result["RcsID"]);	
-		result["AVTransportID"] = Zapp.SoapRequest.readIntParameter(result["AVTransportID"]);	
-		result["ProtocolInfo"] = Zapp.SoapRequest.readStringParameter(result["ProtocolInfo"]);	
-		result["PeerConnectionManager"] = Zapp.SoapRequest.readStringParameter(result["PeerConnectionManager"]);	
-		result["PeerConnectionID"] = Zapp.SoapRequest.readIntParameter(result["PeerConnectionID"]);	
-		result["Direction"] = Zapp.SoapRequest.readStringParameter(result["Direction"]);	
-		result["Status"] = Zapp.SoapRequest.readStringParameter(result["Status"]);	
+		result["RcsID"] = OhNet.SoapRequest.readIntParameter(result["RcsID"]);	
+		result["AVTransportID"] = OhNet.SoapRequest.readIntParameter(result["AVTransportID"]);	
+		result["ProtocolInfo"] = OhNet.SoapRequest.readStringParameter(result["ProtocolInfo"]);	
+		result["PeerConnectionManager"] = OhNet.SoapRequest.readStringParameter(result["PeerConnectionManager"]);	
+		result["PeerConnectionID"] = OhNet.SoapRequest.readIntParameter(result["PeerConnectionID"]);	
+		result["Direction"] = OhNet.SoapRequest.readStringParameter(result["Direction"]);	
+		result["Status"] = OhNet.SoapRequest.readStringParameter(result["Status"]);	
 	
 		if (successFunction){
 			successFunction(result);

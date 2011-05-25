@@ -1,15 +1,15 @@
 #include "DvAvOpenhomeOrgRadio1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
 #include <DvProvider.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class DvProviderAvOpenhomeOrgRadio1C : public DvProvider
 {
@@ -207,7 +207,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionPlay(CallbackRadio1Play aCallba
 {
     iCallbackPlay = aCallback;
     iPtrPlay = aPtr;
-    Zapp::Action* action = new Zapp::Action("Play");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Play");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoPlay);
     iService->AddAction(action, functor);
 }
@@ -216,7 +216,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionPause(CallbackRadio1Pause aCall
 {
     iCallbackPause = aCallback;
     iPtrPause = aPtr;
-    Zapp::Action* action = new Zapp::Action("Pause");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Pause");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoPause);
     iService->AddAction(action, functor);
 }
@@ -225,7 +225,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionStop(CallbackRadio1Stop aCallba
 {
     iCallbackStop = aCallback;
     iPtrStop = aPtr;
-    Zapp::Action* action = new Zapp::Action("Stop");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Stop");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoStop);
     iService->AddAction(action, functor);
 }
@@ -234,7 +234,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionSeekSecondAbsolute(CallbackRadi
 {
     iCallbackSeekSecondAbsolute = aCallback;
     iPtrSeekSecondAbsolute = aPtr;
-    Zapp::Action* action = new Zapp::Action("SeekSecondAbsolute");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SeekSecondAbsolute");
     action->AddInputParameter(new ParameterUint("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoSeekSecondAbsolute);
     iService->AddAction(action, functor);
@@ -244,7 +244,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionSeekSecondRelative(CallbackRadi
 {
     iCallbackSeekSecondRelative = aCallback;
     iPtrSeekSecondRelative = aPtr;
-    Zapp::Action* action = new Zapp::Action("SeekSecondRelative");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SeekSecondRelative");
     action->AddInputParameter(new ParameterInt("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoSeekSecondRelative);
     iService->AddAction(action, functor);
@@ -254,7 +254,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionChannel(CallbackRadio1Channel a
 {
     iCallbackChannel = aCallback;
     iPtrChannel = aPtr;
-    Zapp::Action* action = new Zapp::Action("Channel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Channel");
     action->AddOutputParameter(new ParameterRelated("Uri", *iPropertyUri));
     action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoChannel);
@@ -265,7 +265,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionSetChannel(CallbackRadio1SetCha
 {
     iCallbackSetChannel = aCallback;
     iPtrSetChannel = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetChannel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetChannel");
     action->AddInputParameter(new ParameterRelated("Uri", *iPropertyUri));
     action->AddInputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoSetChannel);
@@ -276,7 +276,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionTransportState(CallbackRadio1Tr
 {
     iCallbackTransportState = aCallback;
     iPtrTransportState = aPtr;
-    Zapp::Action* action = new Zapp::Action("TransportState");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("TransportState");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyTransportState));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoTransportState);
     iService->AddAction(action, functor);
@@ -286,7 +286,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionId(CallbackRadio1Id aCallback, 
 {
     iCallbackId = aCallback;
     iPtrId = aPtr;
-    Zapp::Action* action = new Zapp::Action("Id");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Id");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyId));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoId);
     iService->AddAction(action, functor);
@@ -296,7 +296,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionSetId(CallbackRadio1SetId aCall
 {
     iCallbackSetId = aCallback;
     iPtrSetId = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetId");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetId");
     action->AddInputParameter(new ParameterRelated("Value", *iPropertyId));
     action->AddInputParameter(new ParameterRelated("Uri", *iPropertyUri));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoSetId);
@@ -307,7 +307,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionRead(CallbackRadio1Read aCallba
 {
     iCallbackRead = aCallback;
     iPtrRead = aPtr;
-    Zapp::Action* action = new Zapp::Action("Read");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Read");
     action->AddInputParameter(new ParameterRelated("Id", *iPropertyId));
     action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoRead);
@@ -318,7 +318,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionReadList(CallbackRadio1ReadList
 {
     iCallbackReadList = aCallback;
     iPtrReadList = aPtr;
-    Zapp::Action* action = new Zapp::Action("ReadList");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ReadList");
     action->AddInputParameter(new ParameterString("IdList"));
     action->AddOutputParameter(new ParameterString("ChannelList"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoReadList);
@@ -329,7 +329,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionIdArray(CallbackRadio1IdArray a
 {
     iCallbackIdArray = aCallback;
     iPtrIdArray = aPtr;
-    Zapp::Action* action = new Zapp::Action("IdArray");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("IdArray");
     action->AddOutputParameter(new ParameterUint("Token"));
     action->AddOutputParameter(new ParameterRelated("Array", *iPropertyIdArray));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoIdArray);
@@ -340,7 +340,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionIdArrayChanged(CallbackRadio1Id
 {
     iCallbackIdArrayChanged = aCallback;
     iPtrIdArrayChanged = aPtr;
-    Zapp::Action* action = new Zapp::Action("IdArrayChanged");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("IdArrayChanged");
     action->AddInputParameter(new ParameterUint("Token"));
     action->AddOutputParameter(new ParameterBool("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoIdArrayChanged);
@@ -351,7 +351,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionChannelsMax(CallbackRadio1Chann
 {
     iCallbackChannelsMax = aCallback;
     iPtrChannelsMax = aPtr;
-    Zapp::Action* action = new Zapp::Action("ChannelsMax");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ChannelsMax");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyChannelsMax));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoChannelsMax);
     iService->AddAction(action, functor);
@@ -361,7 +361,7 @@ void DvProviderAvOpenhomeOrgRadio1C::EnableActionProtocolInfo(CallbackRadio1Prot
 {
     iCallbackProtocolInfo = aCallback;
     iPtrProtocolInfo = aPtr;
-    Zapp::Action* action = new Zapp::Action("ProtocolInfo");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ProtocolInfo");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyProtocolInfo));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgRadio1C::DoProtocolInfo);
     iService->AddAction(action, functor);
@@ -455,11 +455,11 @@ void DvProviderAvOpenhomeOrgRadio1C::DoChannel(IDviInvocation& aInvocation, TUin
     InvocationResponseString respMetadata(aInvocation, "Metadata");
     resp.Start();
     Brhz bufUri((const TChar*)Uri);
-    ZappFreeExternal(Uri);
+    OhNetFreeExternal(Uri);
     respUri.Write(bufUri);
     respUri.WriteFlush();
     Brhz bufMetadata((const TChar*)Metadata);
-    ZappFreeExternal(Metadata);
+    OhNetFreeExternal(Metadata);
     respMetadata.Write(bufMetadata);
     respMetadata.WriteFlush();
     resp.End();
@@ -497,7 +497,7 @@ void DvProviderAvOpenhomeOrgRadio1C::DoTransportState(IDviInvocation& aInvocatio
     InvocationResponseString respValue(aInvocation, "Value");
     resp.Start();
     Brhz bufValue((const TChar*)Value);
-    ZappFreeExternal(Value);
+    OhNetFreeExternal(Value);
     respValue.Write(bufValue);
     respValue.WriteFlush();
     resp.End();
@@ -552,7 +552,7 @@ void DvProviderAvOpenhomeOrgRadio1C::DoRead(IDviInvocation& aInvocation, TUint a
     InvocationResponseString respMetadata(aInvocation, "Metadata");
     resp.Start();
     Brhz bufMetadata((const TChar*)Metadata);
-    ZappFreeExternal(Metadata);
+    OhNetFreeExternal(Metadata);
     respMetadata.Write(bufMetadata);
     respMetadata.WriteFlush();
     resp.End();
@@ -574,7 +574,7 @@ void DvProviderAvOpenhomeOrgRadio1C::DoReadList(IDviInvocation& aInvocation, TUi
     InvocationResponseString respChannelList(aInvocation, "ChannelList");
     resp.Start();
     Brhz bufChannelList((const TChar*)ChannelList);
-    ZappFreeExternal(ChannelList);
+    OhNetFreeExternal(ChannelList);
     respChannelList.Write(bufChannelList);
     respChannelList.WriteFlush();
     resp.End();
@@ -599,7 +599,7 @@ void DvProviderAvOpenhomeOrgRadio1C::DoIdArray(IDviInvocation& aInvocation, TUin
     respToken.Write(Token);
     Brh bufArray;
     bufArray.Set((const TByte*)Array, ArrayLen);
-    ZappFreeExternal(Array);
+    OhNetFreeExternal(Array);
     respArray.Write(bufArray);
     respArray.WriteFlush();
     resp.End();
@@ -654,7 +654,7 @@ void DvProviderAvOpenhomeOrgRadio1C::DoProtocolInfo(IDviInvocation& aInvocation,
     InvocationResponseString respValue(aInvocation, "Value");
     resp.Start();
     Brhz bufValue((const TChar*)Value);
-    ZappFreeExternal(Value);
+    OhNetFreeExternal(Value);
     respValue.Write(bufValue);
     respValue.WriteFlush();
     resp.End();

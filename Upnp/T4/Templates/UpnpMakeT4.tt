@@ -1,13 +1,13 @@
 <#@ assembly name="UpnpServiceMake.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
 	Document u = new Document(TemplateArgument("xml"));
 #>
 # Auto-generated file.  DO NOT EDIT DIRECTLY
-# Update CpUpnpMakeT4.tt and run 
+# Update UpnpMakeT4.tt and run 
 #    make generate-makefiles
 # to apply any updates
 
@@ -24,7 +24,7 @@ CpCppCore:  <# foreach (Service s in u.iServices) { #> $(proxyCppCore)Cp<#=FileP
 <#  { #>
 $(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp : $(tt) T4/Templates/CpUpnpCppBufferSource.tt T4/Templates/CpUpnpCppHeader.tt <#=ServiceXmlPath(s)#>
 	echo Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
-	$(zappgen) --language=cppcore --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyCppCore) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+	$(ohNetGen) --language=cppcore --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyCppCore) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
 <#  } #>
 
 CpCppStd:  <# foreach (Service s in u.iServices) { #> $(proxyCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp<# } #>
@@ -33,7 +33,7 @@ CpCppStd:  <# foreach (Service s in u.iServices) { #> $(proxyCppStd)Cp<#=FilePre
 <#  { #>
 $(proxyCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp : $(tt) T4/Templates/CpUpnpCppStringSource.tt T4/Templates/CpUpnpCppHeader.tt <#=ServiceXmlPath(s)#>
 	echo Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
-	$(zappgen) --language=cpp --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyCppStd) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+	$(ohNetGen) --language=cpp --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyCppStd) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
 <#  } #>
 
 CpC:  <# foreach (Service s in u.iServices) { #> $(proxyC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp<# } #>
@@ -42,7 +42,7 @@ CpC:  <# foreach (Service s in u.iServices) { #> $(proxyC)Cp<#=FilePrefix(s)#><#
 <#  { #>
 $(proxyC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp : $(tt) T4/Templates/CpUpnpCSource.tt T4/Templates/CpUpnpCHeader.tt <#=ServiceXmlPath(s)#>
 	echo Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
-	$(zappgen) --language=c --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyC) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+	$(ohNetGen) --language=c --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyC) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
 <#  } #>
 
 CpCs:  <# foreach (Service s in u.iServices) { #> $(proxyCs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs<# } #>
@@ -51,7 +51,7 @@ CpCs:  <# foreach (Service s in u.iServices) { #> $(proxyCs)Cp<#=FilePrefix(s)#>
 <#  { #>
 $(proxyCs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs : $(tt) T4/Templates/CpUpnpCs.tt <#=ServiceXmlPath(s)#>
 	echo Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs
-	$(zappgen) --language=cs --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyCs) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+	$(ohNetGen) --language=cs --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyCs) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
 <#  } #>
 
 CpJs:  <# foreach (Service s in u.iServices) { #> $(proxyJs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.js<# } #>
@@ -60,7 +60,7 @@ CpJs:  <# foreach (Service s in u.iServices) { #> $(proxyJs)Cp<#=FilePrefix(s)#>
 <#  { #>
 $(proxyJs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.js : $(tt) T4/Templates/CpUpnpJs.tt <#=ServiceXmlPath(s)#>
 	echo Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.js
-	$(zappgen) --language=js --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyJs) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+	$(ohNetGen) --language=js --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyJs) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
 <#  } #>
 
 DvCppCore :  <# foreach (Service s in u.iServices) { #> $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp<# } #>
@@ -69,7 +69,7 @@ DvCppCore :  <# foreach (Service s in u.iServices) { #> $(deviceCppCore)Dv<#=Fil
 <#  { #>
 $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp : $(tt) T4/Templates/DvUpnpCppCoreSource.tt T4/Templates/DvUpnpCppCoreHeader.tt <#=ServiceXmlPath(s)#>
 	echo Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
-	$(zappgen) --language=cppcore --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceCppCore) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+	$(ohNetGen) --language=cppcore --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceCppCore) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
 <#  } #>
 
 DvCppStd :  <# foreach (Service s in u.iServices) { #> $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp<# } #>
@@ -78,7 +78,7 @@ DvCppStd :  <# foreach (Service s in u.iServices) { #> $(deviceCppStd)Dv<#=FileP
 <#  { #>
 $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp : $(tt) T4/Templates/DvUpnpCppStdSource.tt T4/Templates/DvUpnpCppStdHeader.tt <#=ServiceXmlPath(s)#>
 	echo Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
-	$(zappgen) --language=cpp --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceCppStd) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+	$(ohNetGen) --language=cpp --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceCppStd) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
 <#  } #>
 
 DvC :  <# foreach (Service s in u.iServices) { #> $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp<# } #>
@@ -87,7 +87,7 @@ DvC :  <# foreach (Service s in u.iServices) { #> $(deviceC)Dv<#=FilePrefix(s)#>
 <#  { #>
 $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp : $(tt) T4/Templates/DvUpnpCSource.tt T4/Templates/DvUpnpCHeader.tt <#=ServiceXmlPath(s)#>
 	echo Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
-	$(zappgen) --language=c --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceC) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+	$(ohNetGen) --language=c --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceC) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
 <#  } #>
 
 DvCs:  <# foreach (Service s in u.iServices) { #> $(deviceCs)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs<# } #>
@@ -96,7 +96,7 @@ DvCs:  <# foreach (Service s in u.iServices) { #> $(deviceCs)Dv<#=FilePrefix(s)#
 <#  { #>
 $(deviceCs)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs : $(tt) T4/Templates/DvUpnpCs.tt <#=ServiceXmlPath(s)#>
 	echo Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs
-	$(zappgen) --language=cs --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceCs) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+	$(ohNetGen) --language=cs --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceCs) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
 <#  } #>
 
 <#+

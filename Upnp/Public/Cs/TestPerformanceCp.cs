@@ -1,11 +1,11 @@
 using System;
 using System.Threading;
 using System.Collections.Generic;
-using Zapp.Core;
-using Zapp.ControlPoint;
-using Zapp.ControlPoint.Proxies;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
+using OpenHome.Net.ControlPoint.Proxies;
 
-namespace Zapp.Device
+namespace OpenHome.Net.Device
 {
     class Program
     {

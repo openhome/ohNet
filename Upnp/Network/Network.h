@@ -1,7 +1,7 @@
 #ifndef HEADER_NETWORK
 #define HEADER_NETWORK
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Thread.h>
 #include <Stream.h>
@@ -12,7 +12,8 @@
 EXCEPTION(NetworkError);
 EXCEPTION(NetworkTimeout);
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 enum ESocketType
 {
@@ -259,7 +260,8 @@ private:
     TBool iOpen;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_NETWORK
 

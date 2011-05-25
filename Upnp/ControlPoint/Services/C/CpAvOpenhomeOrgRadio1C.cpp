@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyAvOpenhomeOrgRadio1C : public CpProxyC
 {
@@ -488,7 +488,7 @@ CpProxyAvOpenhomeOrgRadio1C::CpProxyAvOpenhomeOrgRadio1C(CpDeviceC aDevice)
     : CpProxyC("av-openhome-org", "Radio", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
@@ -499,23 +499,23 @@ CpProxyAvOpenhomeOrgRadio1C::CpProxyAvOpenhomeOrgRadio1C(CpDeviceC aDevice)
     iActionStop = new Action("Stop");
 
     iActionSeekSecondAbsolute = new Action("SeekSecondAbsolute");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSeekSecondAbsolute->AddInputParameter(param);
 
     iActionSeekSecondRelative = new Action("SeekSecondRelative");
-    param = new Zapp::ParameterInt("Value");
+    param = new OpenHome::Net::ParameterInt("Value");
     iActionSeekSecondRelative->AddInputParameter(param);
 
     iActionChannel = new Action("Channel");
-    param = new Zapp::ParameterString("Uri");
+    param = new OpenHome::Net::ParameterString("Uri");
     iActionChannel->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Metadata");
+    param = new OpenHome::Net::ParameterString("Metadata");
     iActionChannel->AddOutputParameter(param);
 
     iActionSetChannel = new Action("SetChannel");
-    param = new Zapp::ParameterString("Uri");
+    param = new OpenHome::Net::ParameterString("Uri");
     iActionSetChannel->AddInputParameter(param);
-    param = new Zapp::ParameterString("Metadata");
+    param = new OpenHome::Net::ParameterString("Metadata");
     iActionSetChannel->AddInputParameter(param);
 
     iActionTransportState = new Action("TransportState");
@@ -525,50 +525,50 @@ CpProxyAvOpenhomeOrgRadio1C::CpProxyAvOpenhomeOrgRadio1C(CpDeviceC aDevice)
     allowedValues[index++] = (TChar*)"Playing";
     allowedValues[index++] = (TChar*)"Paused";
     allowedValues[index++] = (TChar*)"Buffering";
-    param = new Zapp::ParameterString("Value", allowedValues, 4);
+    param = new OpenHome::Net::ParameterString("Value", allowedValues, 4);
     iActionTransportState->AddOutputParameter(param);
     delete[] allowedValues;
 
     iActionId = new Action("Id");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionId->AddOutputParameter(param);
 
     iActionSetId = new Action("SetId");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSetId->AddInputParameter(param);
-    param = new Zapp::ParameterString("Uri");
+    param = new OpenHome::Net::ParameterString("Uri");
     iActionSetId->AddInputParameter(param);
 
     iActionRead = new Action("Read");
-    param = new Zapp::ParameterUint("Id");
+    param = new OpenHome::Net::ParameterUint("Id");
     iActionRead->AddInputParameter(param);
-    param = new Zapp::ParameterString("Metadata");
+    param = new OpenHome::Net::ParameterString("Metadata");
     iActionRead->AddOutputParameter(param);
 
     iActionReadList = new Action("ReadList");
-    param = new Zapp::ParameterString("IdList");
+    param = new OpenHome::Net::ParameterString("IdList");
     iActionReadList->AddInputParameter(param);
-    param = new Zapp::ParameterString("ChannelList");
+    param = new OpenHome::Net::ParameterString("ChannelList");
     iActionReadList->AddOutputParameter(param);
 
     iActionIdArray = new Action("IdArray");
-    param = new Zapp::ParameterUint("Token");
+    param = new OpenHome::Net::ParameterUint("Token");
     iActionIdArray->AddOutputParameter(param);
-    param = new Zapp::ParameterBinary("Array");
+    param = new OpenHome::Net::ParameterBinary("Array");
     iActionIdArray->AddOutputParameter(param);
 
     iActionIdArrayChanged = new Action("IdArrayChanged");
-    param = new Zapp::ParameterUint("Token");
+    param = new OpenHome::Net::ParameterUint("Token");
     iActionIdArrayChanged->AddInputParameter(param);
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionIdArrayChanged->AddOutputParameter(param);
 
     iActionChannelsMax = new Action("ChannelsMax");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionChannelsMax->AddOutputParameter(param);
 
     iActionProtocolInfo = new Action("ProtocolInfo");
-    param = new Zapp::ParameterString("Value");
+    param = new OpenHome::Net::ParameterString("Value");
     iActionProtocolInfo->AddOutputParameter(param);
 
     Functor functor;
@@ -1231,15 +1231,15 @@ void CpProxyAvOpenhomeOrgRadio1SyncPlay(THandle aHandle)
     proxyC->SyncPlay();
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginPlay(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginPlay(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginPlay(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndPlay(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgRadio1EndPlay(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1262,15 +1262,15 @@ void CpProxyAvOpenhomeOrgRadio1SyncPause(THandle aHandle)
     proxyC->SyncPause();
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginPause(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginPause(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginPause(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndPause(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgRadio1EndPause(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1293,15 +1293,15 @@ void CpProxyAvOpenhomeOrgRadio1SyncStop(THandle aHandle)
     proxyC->SyncStop();
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginStop(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginStop(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginStop(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndStop(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgRadio1EndStop(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1324,15 +1324,15 @@ void CpProxyAvOpenhomeOrgRadio1SyncSeekSecondAbsolute(THandle aHandle, uint32_t 
     proxyC->SyncSeekSecondAbsolute(aValue);
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginSeekSecondAbsolute(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginSeekSecondAbsolute(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSeekSecondAbsolute(aValue, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndSeekSecondAbsolute(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgRadio1EndSeekSecondAbsolute(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1355,15 +1355,15 @@ void CpProxyAvOpenhomeOrgRadio1SyncSeekSecondRelative(THandle aHandle, int32_t a
     proxyC->SyncSeekSecondRelative(aValue);
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginSeekSecondRelative(THandle aHandle, int32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginSeekSecondRelative(THandle aHandle, int32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSeekSecondRelative(aValue, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndSeekSecondRelative(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgRadio1EndSeekSecondRelative(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1390,15 +1390,15 @@ void CpProxyAvOpenhomeOrgRadio1SyncChannel(THandle aHandle, char** aUri, char** 
     *aMetadata = buf_aMetadata.Extract();
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginChannel(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginChannel(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginChannel(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndChannel(THandle aHandle, ZappHandleAsync aAsync, char** aUri, char** aMetadata)
+int32_t CpProxyAvOpenhomeOrgRadio1EndChannel(THandle aHandle, OhNetHandleAsync aAsync, char** aUri, char** aMetadata)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1429,17 +1429,17 @@ void CpProxyAvOpenhomeOrgRadio1SyncSetChannel(THandle aHandle, const char* aUri,
     proxyC->SyncSetChannel(buf_aUri, buf_aMetadata);
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginSetChannel(THandle aHandle, const char* aUri, const char* aMetadata, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginSetChannel(THandle aHandle, const char* aUri, const char* aMetadata, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aUri(aUri);
     Brh buf_aMetadata(aMetadata);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetChannel(buf_aUri, buf_aMetadata, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndSetChannel(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgRadio1EndSetChannel(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1464,15 +1464,15 @@ void CpProxyAvOpenhomeOrgRadio1SyncTransportState(THandle aHandle, char** aValue
     *aValue = buf_aValue.Extract();
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginTransportState(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginTransportState(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginTransportState(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndTransportState(THandle aHandle, ZappHandleAsync aAsync, char** aValue)
+int32_t CpProxyAvOpenhomeOrgRadio1EndTransportState(THandle aHandle, OhNetHandleAsync aAsync, char** aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1498,15 +1498,15 @@ void CpProxyAvOpenhomeOrgRadio1SyncId(THandle aHandle, uint32_t* aValue)
     proxyC->SyncId(*aValue);
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginId(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginId(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginId(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndId(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue)
+int32_t CpProxyAvOpenhomeOrgRadio1EndId(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1530,16 +1530,16 @@ void CpProxyAvOpenhomeOrgRadio1SyncSetId(THandle aHandle, uint32_t aValue, const
     proxyC->SyncSetId(aValue, buf_aUri);
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginSetId(THandle aHandle, uint32_t aValue, const char* aUri, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginSetId(THandle aHandle, uint32_t aValue, const char* aUri, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aUri(aUri);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetId(aValue, buf_aUri, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndSetId(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgRadio1EndSetId(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1564,15 +1564,15 @@ void CpProxyAvOpenhomeOrgRadio1SyncRead(THandle aHandle, uint32_t aId, char** aM
     *aMetadata = buf_aMetadata.Extract();
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginRead(THandle aHandle, uint32_t aId, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginRead(THandle aHandle, uint32_t aId, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginRead(aId, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndRead(THandle aHandle, ZappHandleAsync aAsync, char** aMetadata)
+int32_t CpProxyAvOpenhomeOrgRadio1EndRead(THandle aHandle, OhNetHandleAsync aAsync, char** aMetadata)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1601,16 +1601,16 @@ void CpProxyAvOpenhomeOrgRadio1SyncReadList(THandle aHandle, const char* aIdList
     *aChannelList = buf_aChannelList.Extract();
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginReadList(THandle aHandle, const char* aIdList, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginReadList(THandle aHandle, const char* aIdList, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aIdList(aIdList);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginReadList(buf_aIdList, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndReadList(THandle aHandle, ZappHandleAsync aAsync, char** aChannelList)
+int32_t CpProxyAvOpenhomeOrgRadio1EndReadList(THandle aHandle, OhNetHandleAsync aAsync, char** aChannelList)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1639,15 +1639,15 @@ void CpProxyAvOpenhomeOrgRadio1SyncIdArray(THandle aHandle, uint32_t* aToken, ch
     *aArray = buf_aArray.Extract();
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginIdArray(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginIdArray(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginIdArray(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndIdArray(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aToken, char** aArray, uint32_t* aArrayLen)
+int32_t CpProxyAvOpenhomeOrgRadio1EndIdArray(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aToken, char** aArray, uint32_t* aArrayLen)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1676,15 +1676,15 @@ void CpProxyAvOpenhomeOrgRadio1SyncIdArrayChanged(THandle aHandle, uint32_t aTok
     proxyC->SyncIdArrayChanged(aToken, *(TBool*)aValue);
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginIdArrayChanged(THandle aHandle, uint32_t aToken, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginIdArrayChanged(THandle aHandle, uint32_t aToken, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginIdArrayChanged(aToken, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndIdArrayChanged(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue)
+int32_t CpProxyAvOpenhomeOrgRadio1EndIdArrayChanged(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1708,15 +1708,15 @@ void CpProxyAvOpenhomeOrgRadio1SyncChannelsMax(THandle aHandle, uint32_t* aValue
     proxyC->SyncChannelsMax(*aValue);
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginChannelsMax(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginChannelsMax(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginChannelsMax(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndChannelsMax(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue)
+int32_t CpProxyAvOpenhomeOrgRadio1EndChannelsMax(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1741,15 +1741,15 @@ void CpProxyAvOpenhomeOrgRadio1SyncProtocolInfo(THandle aHandle, char** aValue)
     *aValue = buf_aValue.Extract();
 }
 
-void CpProxyAvOpenhomeOrgRadio1BeginProtocolInfo(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1BeginProtocolInfo(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginProtocolInfo(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgRadio1EndProtocolInfo(THandle aHandle, ZappHandleAsync aAsync, char** aValue)
+int32_t CpProxyAvOpenhomeOrgRadio1EndProtocolInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
@@ -1768,7 +1768,7 @@ int32_t CpProxyAvOpenhomeOrgRadio1EndProtocolInfo(THandle aHandle, ZappHandleAsy
     return err;
 }
 
-void CpProxyAvOpenhomeOrgRadio1SetPropertyUriChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1SetPropertyUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1776,7 +1776,7 @@ void CpProxyAvOpenhomeOrgRadio1SetPropertyUriChanged(THandle aHandle, ZappCallba
     proxyC->SetPropertyUriChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgRadio1SetPropertyMetadataChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1SetPropertyMetadataChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1784,7 +1784,7 @@ void CpProxyAvOpenhomeOrgRadio1SetPropertyMetadataChanged(THandle aHandle, ZappC
     proxyC->SetPropertyMetadataChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgRadio1SetPropertyTransportStateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1SetPropertyTransportStateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1792,7 +1792,7 @@ void CpProxyAvOpenhomeOrgRadio1SetPropertyTransportStateChanged(THandle aHandle,
     proxyC->SetPropertyTransportStateChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgRadio1SetPropertyIdChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1SetPropertyIdChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1800,7 +1800,7 @@ void CpProxyAvOpenhomeOrgRadio1SetPropertyIdChanged(THandle aHandle, ZappCallbac
     proxyC->SetPropertyIdChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgRadio1SetPropertyIdArrayChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1SetPropertyIdArrayChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1808,7 +1808,7 @@ void CpProxyAvOpenhomeOrgRadio1SetPropertyIdArrayChanged(THandle aHandle, ZappCa
     proxyC->SetPropertyIdArrayChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgRadio1SetPropertyChannelsMaxChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1SetPropertyChannelsMaxChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1816,7 +1816,7 @@ void CpProxyAvOpenhomeOrgRadio1SetPropertyChannelsMaxChanged(THandle aHandle, Za
     proxyC->SetPropertyChannelsMaxChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgRadio1SetPropertyProtocolInfoChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgRadio1SetPropertyProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgRadio1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgRadio1C*>(aHandle);
     ASSERT(proxyC != NULL);

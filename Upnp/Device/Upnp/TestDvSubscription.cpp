@@ -1,10 +1,10 @@
 #include <TestFramework.h>
 #include <OptionParser.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvDevice.h>
 #include <Core/DvOpenhomeOrgTestBasic1.h>
 #include <Core/CpOpenhomeOrgTestBasic1.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Core/CpDevice.h>
 #include <Core/CpDeviceUpnp.h>
 #include <Ascii.h>
@@ -13,8 +13,8 @@
 
 #include <vector>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
 {
@@ -183,9 +183,9 @@ DeviceBasic::DeviceBasic()
     iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", "ZappTestDevice");
+    iDevice->SetAttribute("Upnp.FriendlyName", "ohNetTestDevice");
     iDevice->SetAttribute("Upnp.Manufacturer", "None");
-    iDevice->SetAttribute("Upnp.ModelName", "Zapp test device");
+    iDevice->SetAttribute("Upnp.ModelName", "ohNet test device");
     iTestBasic = new ProviderTestBasic(*iDevice);
     iDevice->SetEnabled();
 }
@@ -355,7 +355,7 @@ void CpDevices::UpdatesComplete()
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");

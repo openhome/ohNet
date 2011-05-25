@@ -77,7 +77,7 @@ headers_proxy = $(inc_build)/Cpp/Buffer.h \
                 $(inc_build)/Cpp/Exception.h \
                 $(inc_build)/Cpp/Functor.h \
                 $(inc_build)/Cpp/FunctorAsync.h \
-                $(inc_build)/Cpp/ZappTypes.h \
+                $(inc_build)/Cpp/OhNetTypes.h \
                 $(inc_build)/Cpp/CpProxy.h \
                 $(inc_build)/CpiService.h \
                 $(inc_build)/Service.h \
@@ -133,7 +133,7 @@ proxy_dotnet_assemblies_with_path = \
         $(objdir)CpOpenhomeOrgTestDimmableLight1.net.dll \
 
 
-proxies : upnp_core $(objects_proxies)
+proxies : ohNetCore $(objects_proxies)
 	$(ar)ZappProxies.$(libext) $(objects_proxies)
 $(objdir)CpUpnpOrgAVTransport1.$(objext) : $(proxyCppCore)CpUpnpOrgAVTransport1.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/CpUpnpOrgAVTransport1.h
 	$(compiler)CpUpnpOrgAVTransport1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgAVTransport1.cpp
@@ -365,114 +365,114 @@ $(objdir)$(dllprefix)CpOpenhomeOrgTestDimmableLight1.$(dllext) : ZappUpnpDll $(o
 
 CpProxyDotNetAssemblies: $(proxy_dotnet_assemblies_with_path)
 
-$(objdir)CpUpnpOrgAVTransport1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpUpnpOrgAVTransport1.cs
+$(objdir)CpUpnpOrgAVTransport1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgAVTransport1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpUpnpOrgAVTransport1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpUpnpOrgAVTransport1.cs
-$(objdir)CpUpnpOrgAVTransport2.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpUpnpOrgAVTransport2.cs
+$(objdir)CpUpnpOrgAVTransport2.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgAVTransport2.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpUpnpOrgAVTransport2.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpUpnpOrgAVTransport2.cs
-$(objdir)CpUpnpOrgConnectionManager1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpUpnpOrgConnectionManager1.cs
+$(objdir)CpUpnpOrgConnectionManager1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgConnectionManager1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpUpnpOrgConnectionManager1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpUpnpOrgConnectionManager1.cs
-$(objdir)CpUpnpOrgConnectionManager2.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpUpnpOrgConnectionManager2.cs
+$(objdir)CpUpnpOrgConnectionManager2.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgConnectionManager2.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpUpnpOrgConnectionManager2.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpUpnpOrgConnectionManager2.cs
-$(objdir)CpUpnpOrgContentDirectory1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpUpnpOrgContentDirectory1.cs
+$(objdir)CpUpnpOrgContentDirectory1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgContentDirectory1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpUpnpOrgContentDirectory1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpUpnpOrgContentDirectory1.cs
-$(objdir)CpUpnpOrgContentDirectory2.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpUpnpOrgContentDirectory2.cs
+$(objdir)CpUpnpOrgContentDirectory2.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgContentDirectory2.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpUpnpOrgContentDirectory2.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpUpnpOrgContentDirectory2.cs
-$(objdir)CpUpnpOrgContentDirectory3.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpUpnpOrgContentDirectory3.cs
+$(objdir)CpUpnpOrgContentDirectory3.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgContentDirectory3.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpUpnpOrgContentDirectory3.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpUpnpOrgContentDirectory3.cs
-$(objdir)CpUpnpOrgRenderingControl1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpUpnpOrgRenderingControl1.cs
+$(objdir)CpUpnpOrgRenderingControl1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgRenderingControl1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpUpnpOrgRenderingControl1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpUpnpOrgRenderingControl1.cs
-$(objdir)CpUpnpOrgRenderingControl2.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpUpnpOrgRenderingControl2.cs
+$(objdir)CpUpnpOrgRenderingControl2.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgRenderingControl2.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpUpnpOrgRenderingControl2.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpUpnpOrgRenderingControl2.cs
-$(objdir)CpUpnpOrgScheduledRecording1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpUpnpOrgScheduledRecording1.cs
+$(objdir)CpUpnpOrgScheduledRecording1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgScheduledRecording1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpUpnpOrgScheduledRecording1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpUpnpOrgScheduledRecording1.cs
-$(objdir)CpUpnpOrgScheduledRecording2.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpUpnpOrgScheduledRecording2.cs
+$(objdir)CpUpnpOrgScheduledRecording2.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgScheduledRecording2.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpUpnpOrgScheduledRecording2.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpUpnpOrgScheduledRecording2.cs
-$(objdir)CpUpnpOrgSwitchPower1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpUpnpOrgSwitchPower1.cs
+$(objdir)CpUpnpOrgSwitchPower1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgSwitchPower1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpUpnpOrgSwitchPower1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpUpnpOrgSwitchPower1.cs
-$(objdir)CpUpnpOrgDimming1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpUpnpOrgDimming1.cs
+$(objdir)CpUpnpOrgDimming1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpUpnpOrgDimming1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpUpnpOrgDimming1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpUpnpOrgDimming1.cs
-$(objdir)CpAvOpenhomeOrgInfo1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpAvOpenhomeOrgInfo1.cs
+$(objdir)CpAvOpenhomeOrgInfo1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgInfo1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpAvOpenhomeOrgInfo1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpAvOpenhomeOrgInfo1.cs
-$(objdir)CpAvOpenhomeOrgTime1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpAvOpenhomeOrgTime1.cs
+$(objdir)CpAvOpenhomeOrgTime1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgTime1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpAvOpenhomeOrgTime1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpAvOpenhomeOrgTime1.cs
-$(objdir)CpAvOpenhomeOrgPlaylist1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpAvOpenhomeOrgPlaylist1.cs
+$(objdir)CpAvOpenhomeOrgPlaylist1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgPlaylist1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpAvOpenhomeOrgPlaylist1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpAvOpenhomeOrgPlaylist1.cs
-$(objdir)CpAvOpenhomeOrgVolume1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpAvOpenhomeOrgVolume1.cs
+$(objdir)CpAvOpenhomeOrgVolume1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgVolume1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpAvOpenhomeOrgVolume1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpAvOpenhomeOrgVolume1.cs
-$(objdir)CpAvOpenhomeOrgProduct1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpAvOpenhomeOrgProduct1.cs
+$(objdir)CpAvOpenhomeOrgProduct1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgProduct1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpAvOpenhomeOrgProduct1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpAvOpenhomeOrgProduct1.cs
-$(objdir)CpAvOpenhomeOrgRadio1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpAvOpenhomeOrgRadio1.cs
+$(objdir)CpAvOpenhomeOrgRadio1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgRadio1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpAvOpenhomeOrgRadio1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpAvOpenhomeOrgRadio1.cs
-$(objdir)CpOpenhomeOrgTestBasic1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpOpenhomeOrgTestBasic1.cs
+$(objdir)CpOpenhomeOrgTestBasic1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOpenhomeOrgTestBasic1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpOpenhomeOrgTestBasic1.cs
-$(objdir)CpOpenhomeOrgTestLights1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpOpenhomeOrgTestLights1.cs
+$(objdir)CpOpenhomeOrgTestLights1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOpenhomeOrgTestLights1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpOpenhomeOrgTestLights1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpOpenhomeOrgTestLights1.cs
-$(objdir)CpOpenhomeOrgTestDimmableLight1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpOpenhomeOrgTestDimmableLight1.cs
+$(objdir)CpOpenhomeOrgTestDimmableLight1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOpenhomeOrgTestDimmableLight1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpOpenhomeOrgTestDimmableLight1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpOpenhomeOrgTestDimmableLight1.cs
 

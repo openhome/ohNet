@@ -2,7 +2,7 @@
 #define HEADER_TOPOLOGY
 
 #include <Standard.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Fifo.h>
 #include <Thread.h>
 #include <Core/CpDevice.h>
@@ -10,7 +10,8 @@
 #include <vector>
 #include <list>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IHouse : private INonCopyable
 {
@@ -86,6 +87,7 @@ private:
     IHouse* iHouse;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_TOPOLOGY

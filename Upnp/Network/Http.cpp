@@ -3,7 +3,7 @@
 #include <Http.h>
 #include <Debug.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // Http Methods
 
@@ -649,10 +649,10 @@ void HttpHeader::Reset()
 
 // class HttpHeaderHost
 
-Zapp::Endpoint& HttpHeaderHost::Endpoint()
+OpenHome::Net::Endpoint& HttpHeaderHost::Endpoint()
 {
     if (!Received()) {
-        Zapp::Endpoint defaultEndpoint;
+        OpenHome::Net::Endpoint defaultEndpoint;
         iEndpoint = defaultEndpoint;
     }
     return iEndpoint;
@@ -670,7 +670,7 @@ TBool HttpHeaderHost::Recognise(const Brx& aHeader)
 
 void HttpHeaderHost::Process(const Brx& aValue)
 {
-    Zapp::Endpoint defaultEndpoint;
+    OpenHome::Net::Endpoint defaultEndpoint;
     iEndpoint = defaultEndpoint;
     iHost.Set(aValue);
     SetReceived();
@@ -683,7 +683,7 @@ void HttpHeaderHost::Process(const Brx& aValue)
             Brn portBuf = aValue.Split(index+1, aValue.Bytes()-index-1);
             port = Ascii::Uint(portBuf);
         }
-        iEndpoint = Zapp::Endpoint(port, address);
+        iEndpoint = OpenHome::Net::Endpoint(port, address);
     }
     catch(AsciiError&) {
         THROW(HttpError);

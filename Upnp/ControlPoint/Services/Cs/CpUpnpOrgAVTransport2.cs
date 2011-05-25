@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgAVTransport2 : ICpProxy, IDisposable
     {
@@ -573,27 +573,27 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyUpnpOrgAVTransport2 : CpProxy, IDisposable, ICpProxyUpnpOrgAVTransport2
     {
-        private Zapp.Core.Action iActionSetAVTransportURI;
-        private Zapp.Core.Action iActionSetNextAVTransportURI;
-        private Zapp.Core.Action iActionGetMediaInfo;
-        private Zapp.Core.Action iActionGetMediaInfo_Ext;
-        private Zapp.Core.Action iActionGetTransportInfo;
-        private Zapp.Core.Action iActionGetPositionInfo;
-        private Zapp.Core.Action iActionGetDeviceCapabilities;
-        private Zapp.Core.Action iActionGetTransportSettings;
-        private Zapp.Core.Action iActionStop;
-        private Zapp.Core.Action iActionPlay;
-        private Zapp.Core.Action iActionPause;
-        private Zapp.Core.Action iActionRecord;
-        private Zapp.Core.Action iActionSeek;
-        private Zapp.Core.Action iActionNext;
-        private Zapp.Core.Action iActionPrevious;
-        private Zapp.Core.Action iActionSetPlayMode;
-        private Zapp.Core.Action iActionSetRecordQualityMode;
-        private Zapp.Core.Action iActionGetCurrentTransportActions;
-        private Zapp.Core.Action iActionGetDRMState;
-        private Zapp.Core.Action iActionGetStateVariables;
-        private Zapp.Core.Action iActionSetStateVariables;
+        private OpenHome.Net.Core.Action iActionSetAVTransportURI;
+        private OpenHome.Net.Core.Action iActionSetNextAVTransportURI;
+        private OpenHome.Net.Core.Action iActionGetMediaInfo;
+        private OpenHome.Net.Core.Action iActionGetMediaInfo_Ext;
+        private OpenHome.Net.Core.Action iActionGetTransportInfo;
+        private OpenHome.Net.Core.Action iActionGetPositionInfo;
+        private OpenHome.Net.Core.Action iActionGetDeviceCapabilities;
+        private OpenHome.Net.Core.Action iActionGetTransportSettings;
+        private OpenHome.Net.Core.Action iActionStop;
+        private OpenHome.Net.Core.Action iActionPlay;
+        private OpenHome.Net.Core.Action iActionPause;
+        private OpenHome.Net.Core.Action iActionRecord;
+        private OpenHome.Net.Core.Action iActionSeek;
+        private OpenHome.Net.Core.Action iActionNext;
+        private OpenHome.Net.Core.Action iActionPrevious;
+        private OpenHome.Net.Core.Action iActionSetPlayMode;
+        private OpenHome.Net.Core.Action iActionSetRecordQualityMode;
+        private OpenHome.Net.Core.Action iActionGetCurrentTransportActions;
+        private OpenHome.Net.Core.Action iActionGetDRMState;
+        private OpenHome.Net.Core.Action iActionGetStateVariables;
+        private OpenHome.Net.Core.Action iActionSetStateVariables;
         private PropertyString iLastChange;
         private PropertyString iDRMState;
         private System.Action iLastChangeChanged;
@@ -608,10 +608,10 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyUpnpOrgAVTransport2(CpDevice aDevice)
             : base("schemas-upnp-org", "AVTransport", 2, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             List<String> allowedValues = new List<String>();
 
-            iActionSetAVTransportURI = new Zapp.Core.Action("SetAVTransportURI");
+            iActionSetAVTransportURI = new OpenHome.Net.Core.Action("SetAVTransportURI");
             param = new ParameterUint("InstanceID");
             iActionSetAVTransportURI.AddInputParameter(param);
             param = new ParameterString("CurrentURI", allowedValues);
@@ -619,7 +619,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("CurrentURIMetaData", allowedValues);
             iActionSetAVTransportURI.AddInputParameter(param);
 
-            iActionSetNextAVTransportURI = new Zapp.Core.Action("SetNextAVTransportURI");
+            iActionSetNextAVTransportURI = new OpenHome.Net.Core.Action("SetNextAVTransportURI");
             param = new ParameterUint("InstanceID");
             iActionSetNextAVTransportURI.AddInputParameter(param);
             param = new ParameterString("NextURI", allowedValues);
@@ -627,7 +627,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("NextURIMetaData", allowedValues);
             iActionSetNextAVTransportURI.AddInputParameter(param);
 
-            iActionGetMediaInfo = new Zapp.Core.Action("GetMediaInfo");
+            iActionGetMediaInfo = new OpenHome.Net.Core.Action("GetMediaInfo");
             param = new ParameterUint("InstanceID");
             iActionGetMediaInfo.AddInputParameter(param);
             param = new ParameterUint("NrTracks", 0, 0);
@@ -649,7 +649,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("WriteStatus", allowedValues);
             iActionGetMediaInfo.AddOutputParameter(param);
 
-            iActionGetMediaInfo_Ext = new Zapp.Core.Action("GetMediaInfo_Ext");
+            iActionGetMediaInfo_Ext = new OpenHome.Net.Core.Action("GetMediaInfo_Ext");
             param = new ParameterUint("InstanceID");
             iActionGetMediaInfo_Ext.AddInputParameter(param);
             allowedValues.Add("NO_MEDIA");
@@ -677,7 +677,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("WriteStatus", allowedValues);
             iActionGetMediaInfo_Ext.AddOutputParameter(param);
 
-            iActionGetTransportInfo = new Zapp.Core.Action("GetTransportInfo");
+            iActionGetTransportInfo = new OpenHome.Net.Core.Action("GetTransportInfo");
             param = new ParameterUint("InstanceID");
             iActionGetTransportInfo.AddInputParameter(param);
             allowedValues.Add("STOPPED");
@@ -695,7 +695,7 @@ namespace Zapp.ControlPoint.Proxies
             iActionGetTransportInfo.AddOutputParameter(param);
             allowedValues.Clear();
 
-            iActionGetPositionInfo = new Zapp.Core.Action("GetPositionInfo");
+            iActionGetPositionInfo = new OpenHome.Net.Core.Action("GetPositionInfo");
             param = new ParameterUint("InstanceID");
             iActionGetPositionInfo.AddInputParameter(param);
             param = new ParameterUint("Track", 0, 0, 1);
@@ -715,7 +715,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterInt("AbsCount");
             iActionGetPositionInfo.AddOutputParameter(param);
 
-            iActionGetDeviceCapabilities = new Zapp.Core.Action("GetDeviceCapabilities");
+            iActionGetDeviceCapabilities = new OpenHome.Net.Core.Action("GetDeviceCapabilities");
             param = new ParameterUint("InstanceID");
             iActionGetDeviceCapabilities.AddInputParameter(param);
             param = new ParameterString("PlayMedia", allowedValues);
@@ -725,7 +725,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("RecQualityModes", allowedValues);
             iActionGetDeviceCapabilities.AddOutputParameter(param);
 
-            iActionGetTransportSettings = new Zapp.Core.Action("GetTransportSettings");
+            iActionGetTransportSettings = new OpenHome.Net.Core.Action("GetTransportSettings");
             param = new ParameterUint("InstanceID");
             iActionGetTransportSettings.AddInputParameter(param);
             allowedValues.Add("NORMAL");
@@ -735,11 +735,11 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("RecQualityMode", allowedValues);
             iActionGetTransportSettings.AddOutputParameter(param);
 
-            iActionStop = new Zapp.Core.Action("Stop");
+            iActionStop = new OpenHome.Net.Core.Action("Stop");
             param = new ParameterUint("InstanceID");
             iActionStop.AddInputParameter(param);
 
-            iActionPlay = new Zapp.Core.Action("Play");
+            iActionPlay = new OpenHome.Net.Core.Action("Play");
             param = new ParameterUint("InstanceID");
             iActionPlay.AddInputParameter(param);
             allowedValues.Add("1");
@@ -747,15 +747,15 @@ namespace Zapp.ControlPoint.Proxies
             iActionPlay.AddInputParameter(param);
             allowedValues.Clear();
 
-            iActionPause = new Zapp.Core.Action("Pause");
+            iActionPause = new OpenHome.Net.Core.Action("Pause");
             param = new ParameterUint("InstanceID");
             iActionPause.AddInputParameter(param);
 
-            iActionRecord = new Zapp.Core.Action("Record");
+            iActionRecord = new OpenHome.Net.Core.Action("Record");
             param = new ParameterUint("InstanceID");
             iActionRecord.AddInputParameter(param);
 
-            iActionSeek = new Zapp.Core.Action("Seek");
+            iActionSeek = new OpenHome.Net.Core.Action("Seek");
             param = new ParameterUint("InstanceID");
             iActionSeek.AddInputParameter(param);
             allowedValues.Add("TRACK_NR");
@@ -765,15 +765,15 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("Target", allowedValues);
             iActionSeek.AddInputParameter(param);
 
-            iActionNext = new Zapp.Core.Action("Next");
+            iActionNext = new OpenHome.Net.Core.Action("Next");
             param = new ParameterUint("InstanceID");
             iActionNext.AddInputParameter(param);
 
-            iActionPrevious = new Zapp.Core.Action("Previous");
+            iActionPrevious = new OpenHome.Net.Core.Action("Previous");
             param = new ParameterUint("InstanceID");
             iActionPrevious.AddInputParameter(param);
 
-            iActionSetPlayMode = new Zapp.Core.Action("SetPlayMode");
+            iActionSetPlayMode = new OpenHome.Net.Core.Action("SetPlayMode");
             param = new ParameterUint("InstanceID");
             iActionSetPlayMode.AddInputParameter(param);
             allowedValues.Add("NORMAL");
@@ -781,19 +781,19 @@ namespace Zapp.ControlPoint.Proxies
             iActionSetPlayMode.AddInputParameter(param);
             allowedValues.Clear();
 
-            iActionSetRecordQualityMode = new Zapp.Core.Action("SetRecordQualityMode");
+            iActionSetRecordQualityMode = new OpenHome.Net.Core.Action("SetRecordQualityMode");
             param = new ParameterUint("InstanceID");
             iActionSetRecordQualityMode.AddInputParameter(param);
             param = new ParameterString("NewRecordQualityMode", allowedValues);
             iActionSetRecordQualityMode.AddInputParameter(param);
 
-            iActionGetCurrentTransportActions = new Zapp.Core.Action("GetCurrentTransportActions");
+            iActionGetCurrentTransportActions = new OpenHome.Net.Core.Action("GetCurrentTransportActions");
             param = new ParameterUint("InstanceID");
             iActionGetCurrentTransportActions.AddInputParameter(param);
             param = new ParameterString("Actions", allowedValues);
             iActionGetCurrentTransportActions.AddOutputParameter(param);
 
-            iActionGetDRMState = new Zapp.Core.Action("GetDRMState");
+            iActionGetDRMState = new OpenHome.Net.Core.Action("GetDRMState");
             param = new ParameterUint("InstanceID");
             iActionGetDRMState.AddInputParameter(param);
             allowedValues.Add("OK");
@@ -801,7 +801,7 @@ namespace Zapp.ControlPoint.Proxies
             iActionGetDRMState.AddOutputParameter(param);
             allowedValues.Clear();
 
-            iActionGetStateVariables = new Zapp.Core.Action("GetStateVariables");
+            iActionGetStateVariables = new OpenHome.Net.Core.Action("GetStateVariables");
             param = new ParameterUint("InstanceID");
             iActionGetStateVariables.AddInputParameter(param);
             param = new ParameterString("StateVariableList", allowedValues);
@@ -809,7 +809,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("StateVariableValuePairs", allowedValues);
             iActionGetStateVariables.AddOutputParameter(param);
 
-            iActionSetStateVariables = new Zapp.Core.Action("SetStateVariables");
+            iActionSetStateVariables = new OpenHome.Net.Core.Action("SetStateVariables");
             param = new ParameterUint("InstanceID");
             iActionSetStateVariables.AddInputParameter(param);
             param = new ParameterString("AVTransportUDN", allowedValues);

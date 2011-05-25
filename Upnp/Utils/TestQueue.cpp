@@ -1,8 +1,8 @@
 #include <TestFramework.h>
 #include <Queue.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class ByteEntry : public QueueSortedEntry
 {
@@ -322,7 +322,7 @@ void SuiteQueueRemove::Test()
     TEST(queue.IsEmpty());
 }
 
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::Initialise(aInitParams);
 

@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyOpenhomeOrgTestBasic1C : public CpProxyC
 {
@@ -551,92 +551,92 @@ CpProxyOpenhomeOrgTestBasic1C::CpProxyOpenhomeOrgTestBasic1C(CpDeviceC aDevice)
     : CpProxyC("openhome-org", "TestBasic", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionIncrement = new Action("Increment");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionIncrement->AddInputParameter(param);
-    param = new Zapp::ParameterUint("Result");
+    param = new OpenHome::Net::ParameterUint("Result");
     iActionIncrement->AddOutputParameter(param);
 
     iActionDecrement = new Action("Decrement");
-    param = new Zapp::ParameterInt("Value");
+    param = new OpenHome::Net::ParameterInt("Value");
     iActionDecrement->AddInputParameter(param);
-    param = new Zapp::ParameterInt("Result");
+    param = new OpenHome::Net::ParameterInt("Result");
     iActionDecrement->AddOutputParameter(param);
 
     iActionToggle = new Action("Toggle");
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionToggle->AddInputParameter(param);
-    param = new Zapp::ParameterBool("Result");
+    param = new OpenHome::Net::ParameterBool("Result");
     iActionToggle->AddOutputParameter(param);
 
     iActionEchoString = new Action("EchoString");
-    param = new Zapp::ParameterString("Value");
+    param = new OpenHome::Net::ParameterString("Value");
     iActionEchoString->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionEchoString->AddOutputParameter(param);
 
     iActionEchoBinary = new Action("EchoBinary");
-    param = new Zapp::ParameterBinary("Value");
+    param = new OpenHome::Net::ParameterBinary("Value");
     iActionEchoBinary->AddInputParameter(param);
-    param = new Zapp::ParameterBinary("Result");
+    param = new OpenHome::Net::ParameterBinary("Result");
     iActionEchoBinary->AddOutputParameter(param);
 
     iActionSetUint = new Action("SetUint");
-    param = new Zapp::ParameterUint("ValueUint");
+    param = new OpenHome::Net::ParameterUint("ValueUint");
     iActionSetUint->AddInputParameter(param);
 
     iActionGetUint = new Action("GetUint");
-    param = new Zapp::ParameterUint("ValueUint");
+    param = new OpenHome::Net::ParameterUint("ValueUint");
     iActionGetUint->AddOutputParameter(param);
 
     iActionSetInt = new Action("SetInt");
-    param = new Zapp::ParameterInt("ValueInt");
+    param = new OpenHome::Net::ParameterInt("ValueInt");
     iActionSetInt->AddInputParameter(param);
 
     iActionGetInt = new Action("GetInt");
-    param = new Zapp::ParameterInt("ValueInt");
+    param = new OpenHome::Net::ParameterInt("ValueInt");
     iActionGetInt->AddOutputParameter(param);
 
     iActionSetBool = new Action("SetBool");
-    param = new Zapp::ParameterBool("ValueBool");
+    param = new OpenHome::Net::ParameterBool("ValueBool");
     iActionSetBool->AddInputParameter(param);
 
     iActionGetBool = new Action("GetBool");
-    param = new Zapp::ParameterBool("ValueBool");
+    param = new OpenHome::Net::ParameterBool("ValueBool");
     iActionGetBool->AddOutputParameter(param);
 
     iActionSetMultiple = new Action("SetMultiple");
-    param = new Zapp::ParameterUint("ValueUint");
+    param = new OpenHome::Net::ParameterUint("ValueUint");
     iActionSetMultiple->AddInputParameter(param);
-    param = new Zapp::ParameterInt("ValueInt");
+    param = new OpenHome::Net::ParameterInt("ValueInt");
     iActionSetMultiple->AddInputParameter(param);
-    param = new Zapp::ParameterBool("ValueBool");
+    param = new OpenHome::Net::ParameterBool("ValueBool");
     iActionSetMultiple->AddInputParameter(param);
 
     iActionSetString = new Action("SetString");
-    param = new Zapp::ParameterString("ValueStr");
+    param = new OpenHome::Net::ParameterString("ValueStr");
     iActionSetString->AddInputParameter(param);
 
     iActionGetString = new Action("GetString");
-    param = new Zapp::ParameterString("ValueStr");
+    param = new OpenHome::Net::ParameterString("ValueStr");
     iActionGetString->AddOutputParameter(param);
 
     iActionSetBinary = new Action("SetBinary");
-    param = new Zapp::ParameterBinary("ValueBin");
+    param = new OpenHome::Net::ParameterBinary("ValueBin");
     iActionSetBinary->AddInputParameter(param);
 
     iActionGetBinary = new Action("GetBinary");
-    param = new Zapp::ParameterBinary("ValueBin");
+    param = new OpenHome::Net::ParameterBinary("ValueBin");
     iActionGetBinary->AddOutputParameter(param);
 
     iActionToggleBool = new Action("ToggleBool");
 
     iActionWriteFile = new Action("WriteFile");
-    param = new Zapp::ParameterString("Data");
+    param = new OpenHome::Net::ParameterString("Data");
     iActionWriteFile->AddInputParameter(param);
-    param = new Zapp::ParameterString("FileFullName");
+    param = new OpenHome::Net::ParameterString("FileFullName");
     iActionWriteFile->AddInputParameter(param);
 
     iActionShutdown = new Action("Shutdown");
@@ -1347,15 +1347,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncIncrement(THandle aHandle, uint32_t aValue,
     proxyC->SyncIncrement(aValue, *aResult);
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginIncrement(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginIncrement(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginIncrement(aValue, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndIncrement(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aResult)
+int32_t CpProxyOpenhomeOrgTestBasic1EndIncrement(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aResult)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1378,15 +1378,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncDecrement(THandle aHandle, int32_t aValue, 
     proxyC->SyncDecrement(aValue, *aResult);
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginDecrement(THandle aHandle, int32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginDecrement(THandle aHandle, int32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginDecrement(aValue, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndDecrement(THandle aHandle, ZappHandleAsync aAsync, int32_t* aResult)
+int32_t CpProxyOpenhomeOrgTestBasic1EndDecrement(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aResult)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1410,15 +1410,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncToggle(THandle aHandle, uint32_t aValue, ui
     proxyC->SyncToggle((aValue==0? false : true), *(TBool*)aResult);
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginToggle(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginToggle(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginToggle((aValue==0? false : true), functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndToggle(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aResult)
+int32_t CpProxyOpenhomeOrgTestBasic1EndToggle(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aResult)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1445,16 +1445,16 @@ void CpProxyOpenhomeOrgTestBasic1SyncEchoString(THandle aHandle, const char* aVa
     *aResult = buf_aResult.Extract();
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginEchoString(THandle aHandle, const char* aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginEchoString(THandle aHandle, const char* aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue(aValue);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginEchoString(buf_aValue, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndEchoString(THandle aHandle, ZappHandleAsync aAsync, char** aResult)
+int32_t CpProxyOpenhomeOrgTestBasic1EndEchoString(THandle aHandle, OhNetHandleAsync aAsync, char** aResult)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1485,17 +1485,17 @@ void CpProxyOpenhomeOrgTestBasic1SyncEchoBinary(THandle aHandle, const char* aVa
     *aResult = buf_aResult.Extract();
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginEchoBinary(THandle aHandle, const char* aValue, uint32_t aValueLen, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginEchoBinary(THandle aHandle, const char* aValue, uint32_t aValueLen, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue;
     buf_aValue.Set((const TByte*)aValue, aValueLen);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginEchoBinary(buf_aValue, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndEchoBinary(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aResultLen)
+int32_t CpProxyOpenhomeOrgTestBasic1EndEchoBinary(THandle aHandle, OhNetHandleAsync aAsync, char** aResult, uint32_t* aResultLen)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1523,15 +1523,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncSetUint(THandle aHandle, uint32_t aValueUin
     proxyC->SyncSetUint(aValueUint);
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginSetUint(THandle aHandle, uint32_t aValueUint, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginSetUint(THandle aHandle, uint32_t aValueUint, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetUint(aValueUint, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndSetUint(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyOpenhomeOrgTestBasic1EndSetUint(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1554,15 +1554,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncGetUint(THandle aHandle, uint32_t* aValueUi
     proxyC->SyncGetUint(*aValueUint);
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginGetUint(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginGetUint(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetUint(functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndGetUint(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValueUint)
+int32_t CpProxyOpenhomeOrgTestBasic1EndGetUint(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValueUint)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1585,15 +1585,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncSetInt(THandle aHandle, int32_t aValueInt)
     proxyC->SyncSetInt(aValueInt);
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginSetInt(THandle aHandle, int32_t aValueInt, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginSetInt(THandle aHandle, int32_t aValueInt, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetInt(aValueInt, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndSetInt(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyOpenhomeOrgTestBasic1EndSetInt(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1616,15 +1616,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncGetInt(THandle aHandle, int32_t* aValueInt)
     proxyC->SyncGetInt(*aValueInt);
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginGetInt(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginGetInt(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetInt(functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndGetInt(THandle aHandle, ZappHandleAsync aAsync, int32_t* aValueInt)
+int32_t CpProxyOpenhomeOrgTestBasic1EndGetInt(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aValueInt)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1647,15 +1647,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncSetBool(THandle aHandle, uint32_t aValueBoo
     proxyC->SyncSetBool((aValueBool==0? false : true));
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginSetBool(THandle aHandle, uint32_t aValueBool, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginSetBool(THandle aHandle, uint32_t aValueBool, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetBool((aValueBool==0? false : true), functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndSetBool(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyOpenhomeOrgTestBasic1EndSetBool(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1679,15 +1679,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncGetBool(THandle aHandle, uint32_t* aValueBo
     proxyC->SyncGetBool(*(TBool*)aValueBool);
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginGetBool(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginGetBool(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetBool(functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndGetBool(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValueBool)
+int32_t CpProxyOpenhomeOrgTestBasic1EndGetBool(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValueBool)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1711,15 +1711,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncSetMultiple(THandle aHandle, uint32_t aValu
     proxyC->SyncSetMultiple(aValueUint, aValueInt, (aValueBool==0? false : true));
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginSetMultiple(THandle aHandle, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginSetMultiple(THandle aHandle, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetMultiple(aValueUint, aValueInt, (aValueBool==0? false : true), functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndSetMultiple(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyOpenhomeOrgTestBasic1EndSetMultiple(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1743,16 +1743,16 @@ void CpProxyOpenhomeOrgTestBasic1SyncSetString(THandle aHandle, const char* aVal
     proxyC->SyncSetString(buf_aValueStr);
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginSetString(THandle aHandle, const char* aValueStr, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginSetString(THandle aHandle, const char* aValueStr, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValueStr(aValueStr);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetString(buf_aValueStr, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndSetString(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyOpenhomeOrgTestBasic1EndSetString(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1777,15 +1777,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncGetString(THandle aHandle, char** aValueStr
     *aValueStr = buf_aValueStr.Extract();
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginGetString(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginGetString(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetString(functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndGetString(THandle aHandle, ZappHandleAsync aAsync, char** aValueStr)
+int32_t CpProxyOpenhomeOrgTestBasic1EndGetString(THandle aHandle, OhNetHandleAsync aAsync, char** aValueStr)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1813,17 +1813,17 @@ void CpProxyOpenhomeOrgTestBasic1SyncSetBinary(THandle aHandle, const char* aVal
     proxyC->SyncSetBinary(buf_aValueBin);
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginSetBinary(THandle aHandle, const char* aValueBin, uint32_t aValueBinLen, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginSetBinary(THandle aHandle, const char* aValueBin, uint32_t aValueBinLen, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValueBin;
     buf_aValueBin.Set((const TByte*)aValueBin, aValueBinLen);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetBinary(buf_aValueBin, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndSetBinary(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyOpenhomeOrgTestBasic1EndSetBinary(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1849,15 +1849,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncGetBinary(THandle aHandle, char** aValueBin
     *aValueBin = buf_aValueBin.Extract();
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginGetBinary(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginGetBinary(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetBinary(functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndGetBinary(THandle aHandle, ZappHandleAsync aAsync, char** aValueBin, uint32_t* aValueBinLen)
+int32_t CpProxyOpenhomeOrgTestBasic1EndGetBinary(THandle aHandle, OhNetHandleAsync aAsync, char** aValueBin, uint32_t* aValueBinLen)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1885,15 +1885,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncToggleBool(THandle aHandle)
     proxyC->SyncToggleBool();
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginToggleBool(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginToggleBool(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginToggleBool(functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndToggleBool(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyOpenhomeOrgTestBasic1EndToggleBool(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1918,17 +1918,17 @@ void CpProxyOpenhomeOrgTestBasic1SyncWriteFile(THandle aHandle, const char* aDat
     proxyC->SyncWriteFile(buf_aData, buf_aFileFullName);
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginWriteFile(THandle aHandle, const char* aData, const char* aFileFullName, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginWriteFile(THandle aHandle, const char* aData, const char* aFileFullName, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aData(aData);
     Brh buf_aFileFullName(aFileFullName);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginWriteFile(buf_aData, buf_aFileFullName, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndWriteFile(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyOpenhomeOrgTestBasic1EndWriteFile(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1951,15 +1951,15 @@ void CpProxyOpenhomeOrgTestBasic1SyncShutdown(THandle aHandle)
     proxyC->SyncShutdown();
 }
 
-void CpProxyOpenhomeOrgTestBasic1BeginShutdown(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1BeginShutdown(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginShutdown(functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestBasic1EndShutdown(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyOpenhomeOrgTestBasic1EndShutdown(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
@@ -1975,7 +1975,7 @@ int32_t CpProxyOpenhomeOrgTestBasic1EndShutdown(THandle aHandle, ZappHandleAsync
     return err;
 }
 
-void CpProxyOpenhomeOrgTestBasic1SetPropertyVarUintChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1SetPropertyVarUintChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1983,7 +1983,7 @@ void CpProxyOpenhomeOrgTestBasic1SetPropertyVarUintChanged(THandle aHandle, Zapp
     proxyC->SetPropertyVarUintChanged(functor);
 }
 
-void CpProxyOpenhomeOrgTestBasic1SetPropertyVarIntChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1SetPropertyVarIntChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1991,7 +1991,7 @@ void CpProxyOpenhomeOrgTestBasic1SetPropertyVarIntChanged(THandle aHandle, ZappC
     proxyC->SetPropertyVarIntChanged(functor);
 }
 
-void CpProxyOpenhomeOrgTestBasic1SetPropertyVarBoolChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1SetPropertyVarBoolChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1999,7 +1999,7 @@ void CpProxyOpenhomeOrgTestBasic1SetPropertyVarBoolChanged(THandle aHandle, Zapp
     proxyC->SetPropertyVarBoolChanged(functor);
 }
 
-void CpProxyOpenhomeOrgTestBasic1SetPropertyVarStrChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1SetPropertyVarStrChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2007,7 +2007,7 @@ void CpProxyOpenhomeOrgTestBasic1SetPropertyVarStrChanged(THandle aHandle, ZappC
     proxyC->SetPropertyVarStrChanged(functor);
 }
 
-void CpProxyOpenhomeOrgTestBasic1SetPropertyVarBinChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestBasic1SetPropertyVarBinChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestBasic1C*>(aHandle);
     ASSERT(proxyC != NULL);

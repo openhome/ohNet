@@ -6,7 +6,7 @@
 
 #include <OsTypes.h>
 #include <C/Async.h>
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 #include <C/CpDevice.h>
 
 #ifdef __cplusplus
@@ -62,7 +62,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SyncCounters(THandle aHandle, uint32_t* 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1BeginCounters(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1BeginCounters(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -76,7 +76,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1BeginCounters(THandle aHandle, ZappCallb
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndCounters(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount);
+DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndCounters(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -98,7 +98,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SyncTrack(THandle aHandle, char** aUri, 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1BeginTrack(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1BeginTrack(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -111,7 +111,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1BeginTrack(THandle aHandle, ZappCallback
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndTrack(THandle aHandle, ZappHandleAsync aAsync, char** aUri, char** aMetadata);
+DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndTrack(THandle aHandle, OhNetHandleAsync aAsync, char** aUri, char** aMetadata);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -137,7 +137,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SyncDetails(THandle aHandle, uint32_t* a
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1BeginDetails(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1BeginDetails(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -154,7 +154,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1BeginDetails(THandle aHandle, ZappCallba
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndDetails(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName);
+DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndDetails(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -175,7 +175,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SyncMetatext(THandle aHandle, char** aVa
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1BeginMetatext(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1BeginMetatext(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -187,7 +187,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1BeginMetatext(THandle aHandle, ZappCallb
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndMetatext(THandle aHandle, ZappHandleAsync aAsync, char** aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndMetatext(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
 /**
  * Set a callback to be run when the TrackCount state variable changes.
  *
@@ -198,7 +198,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndMetatext(THandle aHandle, ZappHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyTrackCountChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyTrackCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the DetailsCount state variable changes.
  *
@@ -209,7 +209,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyTrackCountChanged(THandle aHa
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyDetailsCountChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyDetailsCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the MetatextCount state variable changes.
  *
@@ -220,7 +220,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyDetailsCountChanged(THandle a
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextCountChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Uri state variable changes.
  *
@@ -231,7 +231,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextCountChanged(THandle 
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyUriChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Metadata state variable changes.
  *
@@ -242,7 +242,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyUriChanged(THandle aHandle, Z
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetadataChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetadataChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Duration state variable changes.
  *
@@ -253,7 +253,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetadataChanged(THandle aHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyDurationChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyDurationChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the BitRate state variable changes.
  *
@@ -264,7 +264,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyDurationChanged(THandle aHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyBitRateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyBitRateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the BitDepth state variable changes.
  *
@@ -275,7 +275,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyBitRateChanged(THandle aHandl
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyBitDepthChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyBitDepthChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the SampleRate state variable changes.
  *
@@ -286,7 +286,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyBitDepthChanged(THandle aHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertySampleRateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertySampleRateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Lossless state variable changes.
  *
@@ -297,7 +297,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertySampleRateChanged(THandle aHa
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyLosslessChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyLosslessChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the CodecName state variable changes.
  *
@@ -308,7 +308,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyLosslessChanged(THandle aHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyCodecNameChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyCodecNameChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Metatext state variable changes.
  *
@@ -319,7 +319,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyCodecNameChanged(THandle aHan
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the TrackCount property.

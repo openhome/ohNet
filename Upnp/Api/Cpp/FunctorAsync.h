@@ -1,11 +1,12 @@
 #ifndef HEADER_IFACE_ASYNC
 #define HEADER_IFACE_ASYNC
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <stddef.h>
 #include <string.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IAsyncOutput
 {
@@ -19,7 +20,7 @@ public:
     virtual void Output(IAsyncOutput& aConsole) = 0;
 };
 
-typedef void (*ZappFunctorAsync)(void* aPtr, IAsync* aAsync);
+typedef void (*OhNetFunctorAsync)(void* aPtr, IAsync* aAsync);
 
 /**
  * Callback used to indicate that an asynchronous operation has completed
@@ -40,7 +41,7 @@ public:
     static const TUint kFudgeFactor = 2;
 
     union {
-        ZappFunctorAsync iCallback;
+        OhNetFunctorAsync iCallback;
         TByte iCallbackMember[kFudgeFactor * sizeof(MemberFunction)];
     };
     TAny* iObject;
@@ -53,7 +54,7 @@ protected:
         iObject = (TAny*)aObject;
         memcpy(iCallbackMember, aCallback, aBytes);
     }
-    FunctorAsync(Thunk aT, const TAny* aObject, ZappFunctorAsync aCallback)
+    FunctorAsync(Thunk aT, const TAny* aObject, OhNetFunctorAsync aCallback)
         : iThunk(aT)
     {
         iObject = (TAny*)aObject;
@@ -81,11 +82,11 @@ public:
 class FunctionTranslatorAsync : public FunctorAsync
 {
 public:
-    FunctionTranslatorAsync(void* aPtr, ZappFunctorAsync aCallback) :
+    FunctionTranslatorAsync(void* aPtr, OhNetFunctorAsync aCallback) :
         FunctorAsync(Thunk,aPtr,aCallback) {}
     static void Thunk(const FunctorAsync& aFb, IAsync& aAsync)
     {
-        ((ZappFunctorAsync)aFb.iCallback)(aFb.iObject, &aAsync);
+        ((OhNetFunctorAsync)aFb.iCallback)(aFb.iObject, &aAsync);
     }
 };
 
@@ -118,11 +119,12 @@ MakeFunctorAsync(Object& aC, void(CallType::* const &aF)(IAsync&))
  * @return  a FunctorAsync object
  */
 inline FunctionTranslatorAsync
-MakeFunctorAsync(void* aPtr, ZappFunctorAsync aCallback)
+MakeFunctorAsync(void* aPtr, OhNetFunctorAsync aCallback)
     {
     return FunctionTranslatorAsync(aPtr, aCallback);
     }
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_IFACE_ASYNC

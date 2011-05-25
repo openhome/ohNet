@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxyAvOpenhomeOrgTime1
-* @module Zapp
+* @module ohNet
 * @class Time
 */
 	
@@ -18,9 +18,9 @@ var CpProxyAvOpenhomeOrgTime1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["TrackCount"] = new Zapp.ServiceProperty("TrackCount","int");
-	this.serviceProperties["Duration"] = new Zapp.ServiceProperty("Duration","int");
-	this.serviceProperties["Seconds"] = new Zapp.ServiceProperty("Seconds","int");
+	this.serviceProperties["TrackCount"] = new OhNet.ServiceProperty("TrackCount","int");
+	this.serviceProperties["Duration"] = new OhNet.ServiceProperty("Duration","int");
+	this.serviceProperties["Seconds"] = new OhNet.ServiceProperty("Seconds","int");
 }
 
 
@@ -31,7 +31,7 @@ var CpProxyAvOpenhomeOrgTime1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxyAvOpenhomeOrgTime1.prototype.subscribe = function (serviceAddedFunction) {
-    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
@@ -40,7 +40,7 @@ CpProxyAvOpenhomeOrgTime1.prototype.subscribe = function (serviceAddedFunction) 
 * @method Unsubscribe
 */
 CpProxyAvOpenhomeOrgTime1.prototype.unsubscribe = function () {
-    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+    OhNet.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
@@ -54,7 +54,7 @@ CpProxyAvOpenhomeOrgTime1.prototype.unsubscribe = function () {
 CpProxyAvOpenhomeOrgTime1.prototype.TrackCount_Changed = function (stateChangedFunction) {
     this.serviceProperties.TrackCount.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -67,7 +67,7 @@ CpProxyAvOpenhomeOrgTime1.prototype.TrackCount_Changed = function (stateChangedF
 CpProxyAvOpenhomeOrgTime1.prototype.Duration_Changed = function (stateChangedFunction) {
     this.serviceProperties.Duration.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -80,7 +80,7 @@ CpProxyAvOpenhomeOrgTime1.prototype.Duration_Changed = function (stateChangedFun
 CpProxyAvOpenhomeOrgTime1.prototype.Seconds_Changed = function (stateChangedFunction) {
     this.serviceProperties.Seconds.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 
@@ -92,11 +92,11 @@ CpProxyAvOpenhomeOrgTime1.prototype.Seconds_Changed = function (stateChangedFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgTime1.prototype.Time = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Time", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Time", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["TrackCount"] = Zapp.SoapRequest.readIntParameter(result["TrackCount"]);	
-		result["Duration"] = Zapp.SoapRequest.readIntParameter(result["Duration"]);	
-		result["Seconds"] = Zapp.SoapRequest.readIntParameter(result["Seconds"]);	
+		result["TrackCount"] = OhNet.SoapRequest.readIntParameter(result["TrackCount"]);	
+		result["Duration"] = OhNet.SoapRequest.readIntParameter(result["Duration"]);	
+		result["Seconds"] = OhNet.SoapRequest.readIntParameter(result["Seconds"]);	
 	
 		if (successFunction){
 			successFunction(result);

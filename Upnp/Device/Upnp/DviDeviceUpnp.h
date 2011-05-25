@@ -2,12 +2,12 @@
 #define HEADER_DVIDEVICEUPNP
 
 #include <Standard.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <DviDevice.h>
 #include <Discovery.h>
 #include <Thread.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Timer.h>
 #include <Ssdp.h>
 #include <Functor.h>
@@ -15,7 +15,8 @@
 
 #include <vector>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class DeviceMsgScheduler;
 class DviDeviceUpnpXmlWriter;
@@ -52,7 +53,7 @@ private:
     void WriteServiceXml(const DviService& aService, IResourceWriter& aResourceWriter);
     void WriteServiceActionParams(WriterBwh& aWriter, const Action& aAction, TBool aIn);
     void GetRelatedVariableName(Bwh& aName, const Brx& aActionName, const Brx& aParameterName);
-    void WriteStateVariable(IWriter& aWriter, const Zapp::Parameter& aParam, TBool aEvented, const Action* aAction);
+    void WriteStateVariable(IWriter& aWriter, const OpenHome::Net::Parameter& aParam, TBool aEvented, const Action* aAction);
     void WriteTechnicalStateVariables(IWriter& aWriter, const Action* aAction, const Action::VectorParameters& aParams);
 public:
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
@@ -219,12 +220,12 @@ class DeviceMsgSchedulerMsearchServiceType : public DeviceMsgSchedulerMsearch
 {
 public:
     DeviceMsgSchedulerMsearchServiceType(DviDevice& aDevice, DviDeviceUpnp& aDeviceUpnp, const Endpoint& aRemote, TUint aMx,
-                                         const Zapp::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId);
+                                         const OpenHome::Net::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId);
     ~DeviceMsgSchedulerMsearchServiceType();
 private:
     void Next(TUint aIndex);
 private:
-    const Zapp::ServiceType& iServiceType;
+    const OpenHome::Net::ServiceType& iServiceType;
 };
 
 class DeviceMsgSchedulerNotify : public DeviceMsgScheduler
@@ -269,6 +270,7 @@ private:
     Functor iCompleted;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVIDEVICEUPNP

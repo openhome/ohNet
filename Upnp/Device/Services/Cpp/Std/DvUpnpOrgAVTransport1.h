@@ -1,14 +1,15 @@
 #ifndef HEADER_DVUPNPORGAVTRANSPORT1CPP
 #define HEADER_DVUPNPORGAVTRANSPORT1CPP
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
 #include <DvProvider.h>
 
 #include <string>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation;
 class PropertyInt;
@@ -304,7 +305,8 @@ private:
     PropertyString* iPropertyLastChange;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVUPNPORGAVTRANSPORT1CPP
 

@@ -1,10 +1,10 @@
 #include "DvOpenhomeOrgTestLights1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 DvProviderOpenhomeOrgTestLights1::DvProviderOpenhomeOrgTestLights1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "openhome.org", "TestLights", 1)
@@ -14,7 +14,7 @@ DvProviderOpenhomeOrgTestLights1::DvProviderOpenhomeOrgTestLights1(DvDevice& aDe
 
 void DvProviderOpenhomeOrgTestLights1::EnableActionGetCount()
 {
-    Zapp::Action* action = new Zapp::Action("GetCount");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetCount");
     action->AddOutputParameter(new ParameterUint("Count"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestLights1::DoGetCount);
     iService->AddAction(action, functor);
@@ -22,7 +22,7 @@ void DvProviderOpenhomeOrgTestLights1::EnableActionGetCount()
 
 void DvProviderOpenhomeOrgTestLights1::EnableActionGetRoom()
 {
-    Zapp::Action* action = new Zapp::Action("GetRoom");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRoom");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddOutputParameter(new ParameterString("RoomName"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestLights1::DoGetRoom);
@@ -31,7 +31,7 @@ void DvProviderOpenhomeOrgTestLights1::EnableActionGetRoom()
 
 void DvProviderOpenhomeOrgTestLights1::EnableActionGetName()
 {
-    Zapp::Action* action = new Zapp::Action("GetName");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetName");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddOutputParameter(new ParameterString("FriendlyName"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestLights1::DoGetName);
@@ -40,7 +40,7 @@ void DvProviderOpenhomeOrgTestLights1::EnableActionGetName()
 
 void DvProviderOpenhomeOrgTestLights1::EnableActionGetPosition()
 {
-    Zapp::Action* action = new Zapp::Action("GetPosition");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetPosition");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddOutputParameter(new ParameterUint("X"));
     action->AddOutputParameter(new ParameterUint("Y"));
@@ -51,7 +51,7 @@ void DvProviderOpenhomeOrgTestLights1::EnableActionGetPosition()
 
 void DvProviderOpenhomeOrgTestLights1::EnableActionSetColor()
 {
-    Zapp::Action* action = new Zapp::Action("SetColor");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetColor");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddInputParameter(new ParameterUint("Color"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestLights1::DoSetColor);
@@ -60,7 +60,7 @@ void DvProviderOpenhomeOrgTestLights1::EnableActionSetColor()
 
 void DvProviderOpenhomeOrgTestLights1::EnableActionGetColor()
 {
-    Zapp::Action* action = new Zapp::Action("GetColor");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetColor");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddOutputParameter(new ParameterUint("Color"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestLights1::DoGetColor);
@@ -69,7 +69,7 @@ void DvProviderOpenhomeOrgTestLights1::EnableActionGetColor()
 
 void DvProviderOpenhomeOrgTestLights1::EnableActionGetColorComponents()
 {
-    Zapp::Action* action = new Zapp::Action("GetColorComponents");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetColorComponents");
     action->AddInputParameter(new ParameterUint("Color"));
     action->AddOutputParameter(new ParameterUint("Brightness"));
     action->AddOutputParameter(new ParameterUint("Red"));

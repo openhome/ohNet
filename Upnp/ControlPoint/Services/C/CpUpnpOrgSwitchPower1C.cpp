@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyUpnpOrgSwitchPower1C : public CpProxyC
 {
@@ -115,18 +115,18 @@ CpProxyUpnpOrgSwitchPower1C::CpProxyUpnpOrgSwitchPower1C(CpDeviceC aDevice)
     : CpProxyC("schemas-upnp-org", "SwitchPower", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionSetTarget = new Action("SetTarget");
-    param = new Zapp::ParameterBool("newTargetValue");
+    param = new OpenHome::Net::ParameterBool("newTargetValue");
     iActionSetTarget->AddInputParameter(param);
 
     iActionGetTarget = new Action("GetTarget");
-    param = new Zapp::ParameterBool("RetTargetValue");
+    param = new OpenHome::Net::ParameterBool("RetTargetValue");
     iActionGetTarget->AddOutputParameter(param);
 
     iActionGetStatus = new Action("GetStatus");
-    param = new Zapp::ParameterBool("ResultStatus");
+    param = new OpenHome::Net::ParameterBool("ResultStatus");
     iActionGetStatus->AddOutputParameter(param);
 
     Functor functor;
@@ -267,15 +267,15 @@ void CpProxyUpnpOrgSwitchPower1SyncSetTarget(THandle aHandle, uint32_t anewTarge
     proxyC->SyncSetTarget((anewTargetValue==0? false : true));
 }
 
-void CpProxyUpnpOrgSwitchPower1BeginSetTarget(THandle aHandle, uint32_t anewTargetValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgSwitchPower1BeginSetTarget(THandle aHandle, uint32_t anewTargetValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetTarget((anewTargetValue==0? false : true), functor);
 }
 
-int32_t CpProxyUpnpOrgSwitchPower1EndSetTarget(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgSwitchPower1EndSetTarget(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
@@ -299,15 +299,15 @@ void CpProxyUpnpOrgSwitchPower1SyncGetTarget(THandle aHandle, uint32_t* aRetTarg
     proxyC->SyncGetTarget(*(TBool*)aRetTargetValue);
 }
 
-void CpProxyUpnpOrgSwitchPower1BeginGetTarget(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgSwitchPower1BeginGetTarget(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetTarget(functor);
 }
 
-int32_t CpProxyUpnpOrgSwitchPower1EndGetTarget(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aRetTargetValue)
+int32_t CpProxyUpnpOrgSwitchPower1EndGetTarget(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aRetTargetValue)
 {
     int32_t err = 0;
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
@@ -332,15 +332,15 @@ void CpProxyUpnpOrgSwitchPower1SyncGetStatus(THandle aHandle, uint32_t* aResultS
     proxyC->SyncGetStatus(*(TBool*)aResultStatus);
 }
 
-void CpProxyUpnpOrgSwitchPower1BeginGetStatus(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgSwitchPower1BeginGetStatus(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetStatus(functor);
 }
 
-int32_t CpProxyUpnpOrgSwitchPower1EndGetStatus(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aResultStatus)
+int32_t CpProxyUpnpOrgSwitchPower1EndGetStatus(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aResultStatus)
 {
     int32_t err = 0;
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
@@ -357,7 +357,7 @@ int32_t CpProxyUpnpOrgSwitchPower1EndGetStatus(THandle aHandle, ZappHandleAsync 
     return err;
 }
 
-void CpProxyUpnpOrgSwitchPower1SetPropertyStatusChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgSwitchPower1SetPropertyStatusChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);

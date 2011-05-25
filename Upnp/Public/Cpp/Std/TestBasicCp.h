@@ -1,7 +1,8 @@
 #ifndef HEADER_TESTBASICCP
 #define HEADER_TESTBASICCP
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpDevice;
 
@@ -13,6 +14,7 @@ public:
     static void TestSubscriptions(CpDeviceCpp& aDevice);
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_TESTBASICCP

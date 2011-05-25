@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
 
-namespace Zapp
+namespace OpenHome.Net
 {
     class TemplateFile
     {
@@ -265,7 +265,7 @@ namespace Zapp
 
         private static void PrintUsage()
         {
-            Console.WriteLine("Usage is ZappGen");
+            Console.WriteLine("Usage is OhNetGen");
             Console.WriteLine("\t--language=[cpp|cppcore|c|cs|js]");
             Console.WriteLine("\t--stack=[cp|dv]");
             Console.WriteLine("\t--xml=[path + name of xml service description]");

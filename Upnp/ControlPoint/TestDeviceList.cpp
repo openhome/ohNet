@@ -4,7 +4,7 @@
 
 #include <TestFramework.h>
 #include <OptionParser.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Discovery.h>
 #include <Thread.h>
 #include <Timer.h>
@@ -12,8 +12,8 @@
 #include <Core/CpDeviceUpnp.h>
 #include <Core/FunctorCpDevice.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class DeviceListLogger
 {
@@ -59,7 +59,7 @@ void DeviceListLogger::PrintDeviceInfo(const char* aPrologue, const CpDevice& aD
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionUint mx("-mx", "--mx", 1, "[1..5] number of second to spread response over");
@@ -107,10 +107,10 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         Brn domainName;
         Brn type;
         TUint ver;
-        if (Zapp::Ssdp::ParseUrnDevice(urn.Value(), domainName, type, ver)) {
+        if (OpenHome::Net::Ssdp::ParseUrnDevice(urn.Value(), domainName, type, ver)) {
             deviceList = new CpDeviceListUpnpDeviceType(domainName, type, ver, added, removed);
         }
-        else if (Zapp::Ssdp::ParseUrnService(urn.Value(), domainName, type, ver)) {
+        else if (OpenHome::Net::Ssdp::ParseUrnService(urn.Value(), domainName, type, ver)) {
             deviceList = new CpDeviceListUpnpServiceType(domainName, type, ver, added, removed);
         }
         else {

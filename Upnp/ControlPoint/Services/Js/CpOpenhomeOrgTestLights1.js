@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxyOpenhomeOrgTestLights1
-* @module Zapp
+* @module ohNet
 * @class TestLights
 */
 	
@@ -28,7 +28,7 @@ var CpProxyOpenhomeOrgTestLights1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxyOpenhomeOrgTestLights1.prototype.subscribe = function (serviceAddedFunction) {
-    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
@@ -37,7 +37,7 @@ CpProxyOpenhomeOrgTestLights1.prototype.subscribe = function (serviceAddedFuncti
 * @method Unsubscribe
 */
 CpProxyOpenhomeOrgTestLights1.prototype.unsubscribe = function () {
-    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+    OhNet.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
@@ -50,9 +50,9 @@ CpProxyOpenhomeOrgTestLights1.prototype.unsubscribe = function () {
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestLights1.prototype.GetCount = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetCount", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetCount", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Count"] = Zapp.SoapRequest.readIntParameter(result["Count"]);	
+		result["Count"] = OhNet.SoapRequest.readIntParameter(result["Count"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -71,10 +71,10 @@ CpProxyOpenhomeOrgTestLights1.prototype.GetCount = function(successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestLights1.prototype.GetRoom = function(Index, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRoom", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetRoom", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.send(function(result){
-		result["RoomName"] = Zapp.SoapRequest.readStringParameter(result["RoomName"]);	
+		result["RoomName"] = OhNet.SoapRequest.readStringParameter(result["RoomName"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -93,10 +93,10 @@ CpProxyOpenhomeOrgTestLights1.prototype.GetRoom = function(Index, successFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestLights1.prototype.GetName = function(Index, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetName", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetName", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.send(function(result){
-		result["FriendlyName"] = Zapp.SoapRequest.readStringParameter(result["FriendlyName"]);	
+		result["FriendlyName"] = OhNet.SoapRequest.readStringParameter(result["FriendlyName"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -115,12 +115,12 @@ CpProxyOpenhomeOrgTestLights1.prototype.GetName = function(Index, successFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestLights1.prototype.GetPosition = function(Index, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetPosition", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetPosition", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.send(function(result){
-		result["X"] = Zapp.SoapRequest.readIntParameter(result["X"]);	
-		result["Y"] = Zapp.SoapRequest.readIntParameter(result["Y"]);	
-		result["Z"] = Zapp.SoapRequest.readIntParameter(result["Z"]);	
+		result["X"] = OhNet.SoapRequest.readIntParameter(result["X"]);	
+		result["Y"] = OhNet.SoapRequest.readIntParameter(result["Y"]);	
+		result["Z"] = OhNet.SoapRequest.readIntParameter(result["Z"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -140,7 +140,7 @@ CpProxyOpenhomeOrgTestLights1.prototype.GetPosition = function(Index, successFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestLights1.prototype.SetColor = function(Index, Color, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetColor", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetColor", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.writeIntParameter("Color", Color);
     request.send(function(result){
@@ -162,10 +162,10 @@ CpProxyOpenhomeOrgTestLights1.prototype.SetColor = function(Index, Color, succes
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestLights1.prototype.GetColor = function(Index, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetColor", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetColor", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.send(function(result){
-		result["Color"] = Zapp.SoapRequest.readIntParameter(result["Color"]);	
+		result["Color"] = OhNet.SoapRequest.readIntParameter(result["Color"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -184,13 +184,13 @@ CpProxyOpenhomeOrgTestLights1.prototype.GetColor = function(Index, successFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyOpenhomeOrgTestLights1.prototype.GetColorComponents = function(Color, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetColorComponents", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetColorComponents", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Color", Color);
     request.send(function(result){
-		result["Brightness"] = Zapp.SoapRequest.readIntParameter(result["Brightness"]);	
-		result["Red"] = Zapp.SoapRequest.readIntParameter(result["Red"]);	
-		result["Green"] = Zapp.SoapRequest.readIntParameter(result["Green"]);	
-		result["Blue"] = Zapp.SoapRequest.readIntParameter(result["Blue"]);	
+		result["Brightness"] = OhNet.SoapRequest.readIntParameter(result["Brightness"]);	
+		result["Red"] = OhNet.SoapRequest.readIntParameter(result["Red"]);	
+		result["Green"] = OhNet.SoapRequest.readIntParameter(result["Green"]);	
+		result["Blue"] = OhNet.SoapRequest.readIntParameter(result["Blue"]);	
 	
 		if (successFunction){
 			successFunction(result);

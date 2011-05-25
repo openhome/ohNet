@@ -6,7 +6,7 @@
 #include <Converter.h>
 #include <Stack.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // DeviceXmlDocument
 

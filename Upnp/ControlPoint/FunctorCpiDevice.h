@@ -1,14 +1,15 @@
 #ifndef HEADER_IFACE_CPIDEVICE
 #define HEADER_IFACE_CPIDEVICE
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <stddef.h>
 #include <string.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpiDevice;
-typedef void (*ZappFunctorDevice)(void* aPtr, CpiDevice* aDevice);
+typedef void (*OhNetFunctorDevice)(void* aPtr, CpiDevice* aDevice);
 
 class FunctorCpiDevice
 {
@@ -21,7 +22,7 @@ public:
     static const TUint kFudgeFactor = 2;
 
     union {
-        ZappFunctorDevice iCallback;
+        OhNetFunctorDevice iCallback;
         TByte iCallbackMember[kFudgeFactor * sizeof(MemberFunction)];
     };
     TAny* iObject;
@@ -34,7 +35,7 @@ protected:
         iObject = (TAny*)aObject;
         memcpy(iCallbackMember, aCallback, aBytes);
     }
-    FunctorCpiDevice(Thunk aT, const TAny* aObject, ZappFunctorDevice aCallback)
+    FunctorCpiDevice(Thunk aT, const TAny* aObject, OhNetFunctorDevice aCallback)
         : iThunk(aT)
     {
         iObject = (TAny*)aObject;
@@ -62,7 +63,7 @@ public:
 class FunctionTranslatorCpiDevice : public FunctorCpiDevice
 {
 public:
-    FunctionTranslatorCpiDevice(void* aPtr, ZappFunctorDevice aCallback) :
+    FunctionTranslatorCpiDevice(void* aPtr, OhNetFunctorDevice aCallback) :
         FunctorCpiDevice(Thunk,aPtr,aCallback) {}
     static void Thunk(const FunctorCpiDevice& aFb, CpiDevice& aDevice)
     {
@@ -79,11 +80,12 @@ MakeFunctorCpiDevice(Object& aC, void(CallType::* const &aF)(CpiDevice&))
     }
 
 inline FunctionTranslatorCpiDevice
-MakeFunctorCpiDeviceC(void* aPtr, ZappFunctorDevice aCallback)
+MakeFunctorCpiDeviceC(void* aPtr, OhNetFunctorDevice aCallback)
     {
     return FunctionTranslatorCpiDevice(aPtr, aCallback);
     }
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_IFACE_CPIDEVICE

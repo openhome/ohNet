@@ -5,7 +5,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncTimeAvOpenhomeOrgTime1 : public SyncProxyAction
@@ -37,14 +37,14 @@ void SyncTimeAvOpenhomeOrgTime1::CompleteRequest(IAsync& aAsync)
 CpProxyAvOpenhomeOrgTime1::CpProxyAvOpenhomeOrgTime1(CpDevice& aDevice)
     : CpProxy("av-openhome-org", "Time", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionTime = new Action("Time");
-    param = new Zapp::ParameterUint("TrackCount");
+    param = new OpenHome::Net::ParameterUint("TrackCount");
     iActionTime->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Duration");
+    param = new OpenHome::Net::ParameterUint("Duration");
     iActionTime->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Seconds");
+    param = new OpenHome::Net::ParameterUint("Seconds");
     iActionTime->AddOutputParameter(param);
 
     Functor functor;

@@ -1,6 +1,6 @@
 #include <C/TestBasicCp.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <TestFramework.h>
 #include <C/CpProxy.h>
 #include <C/CpOpenhomeOrgTestBasic1.h>
@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 
 void TestBasicCpC::TestActions(CpDeviceC aDevice)

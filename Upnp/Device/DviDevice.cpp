@@ -1,5 +1,5 @@
 #include <DviDevice.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Parser.h>
@@ -7,7 +7,7 @@
 #include <DviDeviceUpnp.h> // for DviDeviceUpnp ctor only
 #include <DviStack.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // DviDevice
 
@@ -352,10 +352,10 @@ void DviDevice::ProtocolDisabled()
     iLock.Signal();
 }
 
-TBool DviDevice::HasService(const Zapp::ServiceType& aServiceType) const
+TBool DviDevice::HasService(const OpenHome::Net::ServiceType& aServiceType) const
 {
     for (TUint i=0; i<iServices.size(); i++) {
-        const Zapp::ServiceType& serviceType = iServices[i]->ServiceType();
+        const OpenHome::Net::ServiceType& serviceType = iServices[i]->ServiceType();
         if (serviceType.Version() == aServiceType.Version() &&
             serviceType.Domain()  == aServiceType.Domain() &&
             serviceType.Name()    == aServiceType.Name()) {
@@ -365,7 +365,7 @@ TBool DviDevice::HasService(const Zapp::ServiceType& aServiceType) const
     return ChildHasService(aServiceType);
 }
 
-TBool DviDevice::ChildHasService(const Zapp::ServiceType& aServiceType) const
+TBool DviDevice::ChildHasService(const OpenHome::Net::ServiceType& aServiceType) const
 {
     for (TUint i=0; i<iDevices.size(); i++) {
         if (iDevices[i]->HasService(aServiceType)) {

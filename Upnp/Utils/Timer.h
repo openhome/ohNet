@@ -2,12 +2,13 @@
 #define HEADER_TIMER
 
 #include <Standard.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Queue.h>
 #include <Thread.h>
 #include <Functor.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class Time
 {
@@ -54,7 +55,7 @@ public:
 private:
     void Run();
     void Fire();
-    Zapp::Thread* Thread() const;
+    OpenHome::Net::Thread* Thread() const;
     virtual void HeadChanged(QueueSortedEntry& aEntry);
     virtual TInt Compare(QueueSortedEntry& aEntry1, QueueSortedEntry& aEntry2);
 private:
@@ -68,7 +69,7 @@ private:
     TBool iStop;
     Semaphore iStopped;
     Mutex iCallbackMutex;
-    Zapp::Thread* iThreadHandle;
+    OpenHome::Net::Thread* iThreadHandle;
 };
 
 class Moderator
@@ -86,6 +87,7 @@ private:
     TUint iModerationMs;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_TIMER

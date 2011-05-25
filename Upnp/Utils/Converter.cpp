@@ -1,9 +1,9 @@
 #include <Converter.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Stream.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 void Converter::ToXmlEscaped(IWriter& aWriter, TByte aValue)
 {

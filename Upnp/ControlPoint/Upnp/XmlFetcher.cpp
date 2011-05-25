@@ -8,11 +8,11 @@
 
 #include <stdlib.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // XmlFetch
 
-void XmlFetch::Set(Zapp::Uri* aUri, FunctorAsync& aFunctor)
+void XmlFetch::Set(OpenHome::Net::Uri* aUri, FunctorAsync& aFunctor)
 {
     iUri = aUri;
     iFunctor = aFunctor;
@@ -24,7 +24,7 @@ XmlFetch::~XmlFetch()
     delete iUri;
 }
 
-const Zapp::Uri& XmlFetch::Uri() const
+const OpenHome::Net::Uri& XmlFetch::Uri() const
 {
     return *iUri;
 }

@@ -1,15 +1,15 @@
 #include "DvUpnpOrgConnectionManager1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
 #include <DvProvider.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class DvProviderUpnpOrgConnectionManager1C : public DvProvider
 {
@@ -94,7 +94,7 @@ void DvProviderUpnpOrgConnectionManager1C::EnableActionGetProtocolInfo(CallbackC
 {
     iCallbackGetProtocolInfo = aCallback;
     iPtrGetProtocolInfo = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetProtocolInfo");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetProtocolInfo");
     action->AddOutputParameter(new ParameterRelated("Source", *iPropertySourceProtocolInfo));
     action->AddOutputParameter(new ParameterRelated("Sink", *iPropertySinkProtocolInfo));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgConnectionManager1C::DoGetProtocolInfo);
@@ -105,7 +105,7 @@ void DvProviderUpnpOrgConnectionManager1C::EnableActionPrepareForConnection(Call
 {
     iCallbackPrepareForConnection = aCallback;
     iPtrPrepareForConnection = aPtr;
-    Zapp::Action* action = new Zapp::Action("PrepareForConnection");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PrepareForConnection");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterString("RemoteProtocolInfo"));
@@ -128,7 +128,7 @@ void DvProviderUpnpOrgConnectionManager1C::EnableActionConnectionComplete(Callba
 {
     iCallbackConnectionComplete = aCallback;
     iPtrConnectionComplete = aPtr;
-    Zapp::Action* action = new Zapp::Action("ConnectionComplete");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ConnectionComplete");
     action->AddInputParameter(new ParameterInt("ConnectionID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgConnectionManager1C::DoConnectionComplete);
     iService->AddAction(action, functor);
@@ -138,7 +138,7 @@ void DvProviderUpnpOrgConnectionManager1C::EnableActionGetCurrentConnectionIDs(C
 {
     iCallbackGetCurrentConnectionIDs = aCallback;
     iPtrGetCurrentConnectionIDs = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetCurrentConnectionIDs");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetCurrentConnectionIDs");
     action->AddOutputParameter(new ParameterRelated("ConnectionIDs", *iPropertyCurrentConnectionIDs));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionIDs);
     iService->AddAction(action, functor);
@@ -148,7 +148,7 @@ void DvProviderUpnpOrgConnectionManager1C::EnableActionGetCurrentConnectionInfo(
 {
     iCallbackGetCurrentConnectionInfo = aCallback;
     iPtrGetCurrentConnectionInfo = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetCurrentConnectionInfo");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetCurrentConnectionInfo");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterInt("ConnectionID"));
@@ -192,11 +192,11 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetProtocolInfo(IDviInvocation& aIn
     InvocationResponseString respSink(aInvocation, "Sink");
     resp.Start();
     Brhz bufSource((const TChar*)Source);
-    ZappFreeExternal(Source);
+    OhNetFreeExternal(Source);
     respSource.Write(bufSource);
     respSource.WriteFlush();
     Brhz bufSink((const TChar*)Sink);
-    ZappFreeExternal(Sink);
+    OhNetFreeExternal(Sink);
     respSink.Write(bufSink);
     respSink.WriteFlush();
     resp.End();
@@ -261,7 +261,7 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionIDs(IDviInvocat
     InvocationResponseString respConnectionIDs(aInvocation, "ConnectionIDs");
     resp.Start();
     Brhz bufConnectionIDs((const TChar*)ConnectionIDs);
-    ZappFreeExternal(ConnectionIDs);
+    OhNetFreeExternal(ConnectionIDs);
     respConnectionIDs.Write(bufConnectionIDs);
     respConnectionIDs.WriteFlush();
     resp.End();
@@ -296,20 +296,20 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionInfo(IDviInvoca
     respRcsID.Write(RcsID);
     respAVTransportID.Write(AVTransportID);
     Brhz bufProtocolInfo((const TChar*)ProtocolInfo);
-    ZappFreeExternal(ProtocolInfo);
+    OhNetFreeExternal(ProtocolInfo);
     respProtocolInfo.Write(bufProtocolInfo);
     respProtocolInfo.WriteFlush();
     Brhz bufPeerConnectionManager((const TChar*)PeerConnectionManager);
-    ZappFreeExternal(PeerConnectionManager);
+    OhNetFreeExternal(PeerConnectionManager);
     respPeerConnectionManager.Write(bufPeerConnectionManager);
     respPeerConnectionManager.WriteFlush();
     respPeerConnectionID.Write(PeerConnectionID);
     Brhz bufDirection((const TChar*)Direction);
-    ZappFreeExternal(Direction);
+    OhNetFreeExternal(Direction);
     respDirection.Write(bufDirection);
     respDirection.WriteFlush();
     Brhz bufStatus((const TChar*)Status);
-    ZappFreeExternal(Status);
+    OhNetFreeExternal(Status);
     respStatus.Write(bufStatus);
     respStatus.WriteFlush();
     resp.End();

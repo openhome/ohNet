@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxyAvOpenhomeOrgInfo1
-* @module Zapp
+* @module ohNet
 * @class Info
 */
 	
@@ -18,18 +18,18 @@ var CpProxyAvOpenhomeOrgInfo1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["TrackCount"] = new Zapp.ServiceProperty("TrackCount","int");
-	this.serviceProperties["DetailsCount"] = new Zapp.ServiceProperty("DetailsCount","int");
-	this.serviceProperties["MetatextCount"] = new Zapp.ServiceProperty("MetatextCount","int");
-	this.serviceProperties["Uri"] = new Zapp.ServiceProperty("Uri","string");
-	this.serviceProperties["Metadata"] = new Zapp.ServiceProperty("Metadata","string");
-	this.serviceProperties["Duration"] = new Zapp.ServiceProperty("Duration","int");
-	this.serviceProperties["BitRate"] = new Zapp.ServiceProperty("BitRate","int");
-	this.serviceProperties["BitDepth"] = new Zapp.ServiceProperty("BitDepth","int");
-	this.serviceProperties["SampleRate"] = new Zapp.ServiceProperty("SampleRate","int");
-	this.serviceProperties["Lossless"] = new Zapp.ServiceProperty("Lossless","bool");
-	this.serviceProperties["CodecName"] = new Zapp.ServiceProperty("CodecName","string");
-	this.serviceProperties["Metatext"] = new Zapp.ServiceProperty("Metatext","string");
+	this.serviceProperties["TrackCount"] = new OhNet.ServiceProperty("TrackCount","int");
+	this.serviceProperties["DetailsCount"] = new OhNet.ServiceProperty("DetailsCount","int");
+	this.serviceProperties["MetatextCount"] = new OhNet.ServiceProperty("MetatextCount","int");
+	this.serviceProperties["Uri"] = new OhNet.ServiceProperty("Uri","string");
+	this.serviceProperties["Metadata"] = new OhNet.ServiceProperty("Metadata","string");
+	this.serviceProperties["Duration"] = new OhNet.ServiceProperty("Duration","int");
+	this.serviceProperties["BitRate"] = new OhNet.ServiceProperty("BitRate","int");
+	this.serviceProperties["BitDepth"] = new OhNet.ServiceProperty("BitDepth","int");
+	this.serviceProperties["SampleRate"] = new OhNet.ServiceProperty("SampleRate","int");
+	this.serviceProperties["Lossless"] = new OhNet.ServiceProperty("Lossless","bool");
+	this.serviceProperties["CodecName"] = new OhNet.ServiceProperty("CodecName","string");
+	this.serviceProperties["Metatext"] = new OhNet.ServiceProperty("Metatext","string");
 }
 
 
@@ -40,7 +40,7 @@ var CpProxyAvOpenhomeOrgInfo1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxyAvOpenhomeOrgInfo1.prototype.subscribe = function (serviceAddedFunction) {
-    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
@@ -49,7 +49,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.subscribe = function (serviceAddedFunction) 
 * @method Unsubscribe
 */
 CpProxyAvOpenhomeOrgInfo1.prototype.unsubscribe = function () {
-    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+    OhNet.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
@@ -63,7 +63,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.unsubscribe = function () {
 CpProxyAvOpenhomeOrgInfo1.prototype.TrackCount_Changed = function (stateChangedFunction) {
     this.serviceProperties.TrackCount.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -76,7 +76,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.TrackCount_Changed = function (stateChangedF
 CpProxyAvOpenhomeOrgInfo1.prototype.DetailsCount_Changed = function (stateChangedFunction) {
     this.serviceProperties.DetailsCount.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -89,7 +89,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.DetailsCount_Changed = function (stateChange
 CpProxyAvOpenhomeOrgInfo1.prototype.MetatextCount_Changed = function (stateChangedFunction) {
     this.serviceProperties.MetatextCount.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -102,7 +102,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.MetatextCount_Changed = function (stateChang
 CpProxyAvOpenhomeOrgInfo1.prototype.Uri_Changed = function (stateChangedFunction) {
     this.serviceProperties.Uri.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -115,7 +115,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Uri_Changed = function (stateChangedFunction
 CpProxyAvOpenhomeOrgInfo1.prototype.Metadata_Changed = function (stateChangedFunction) {
     this.serviceProperties.Metadata.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -128,7 +128,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Metadata_Changed = function (stateChangedFun
 CpProxyAvOpenhomeOrgInfo1.prototype.Duration_Changed = function (stateChangedFunction) {
     this.serviceProperties.Duration.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -141,7 +141,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Duration_Changed = function (stateChangedFun
 CpProxyAvOpenhomeOrgInfo1.prototype.BitRate_Changed = function (stateChangedFunction) {
     this.serviceProperties.BitRate.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -154,7 +154,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.BitRate_Changed = function (stateChangedFunc
 CpProxyAvOpenhomeOrgInfo1.prototype.BitDepth_Changed = function (stateChangedFunction) {
     this.serviceProperties.BitDepth.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -167,7 +167,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.BitDepth_Changed = function (stateChangedFun
 CpProxyAvOpenhomeOrgInfo1.prototype.SampleRate_Changed = function (stateChangedFunction) {
     this.serviceProperties.SampleRate.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -180,7 +180,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.SampleRate_Changed = function (stateChangedF
 CpProxyAvOpenhomeOrgInfo1.prototype.Lossless_Changed = function (stateChangedFunction) {
     this.serviceProperties.Lossless.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readBoolParameter(state)); 
 	});
 }
 	
@@ -193,7 +193,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Lossless_Changed = function (stateChangedFun
 CpProxyAvOpenhomeOrgInfo1.prototype.CodecName_Changed = function (stateChangedFunction) {
     this.serviceProperties.CodecName.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -206,7 +206,7 @@ CpProxyAvOpenhomeOrgInfo1.prototype.CodecName_Changed = function (stateChangedFu
 CpProxyAvOpenhomeOrgInfo1.prototype.Metatext_Changed = function (stateChangedFunction) {
     this.serviceProperties.Metatext.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 
@@ -218,11 +218,11 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Metatext_Changed = function (stateChangedFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgInfo1.prototype.Counters = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Counters", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Counters", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["TrackCount"] = Zapp.SoapRequest.readIntParameter(result["TrackCount"]);	
-		result["DetailsCount"] = Zapp.SoapRequest.readIntParameter(result["DetailsCount"]);	
-		result["MetatextCount"] = Zapp.SoapRequest.readIntParameter(result["MetatextCount"]);	
+		result["TrackCount"] = OhNet.SoapRequest.readIntParameter(result["TrackCount"]);	
+		result["DetailsCount"] = OhNet.SoapRequest.readIntParameter(result["DetailsCount"]);	
+		result["MetatextCount"] = OhNet.SoapRequest.readIntParameter(result["MetatextCount"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -240,10 +240,10 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Counters = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgInfo1.prototype.Track = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Track", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Track", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Uri"] = Zapp.SoapRequest.readStringParameter(result["Uri"]);	
-		result["Metadata"] = Zapp.SoapRequest.readStringParameter(result["Metadata"]);	
+		result["Uri"] = OhNet.SoapRequest.readStringParameter(result["Uri"]);	
+		result["Metadata"] = OhNet.SoapRequest.readStringParameter(result["Metadata"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -261,14 +261,14 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Track = function(successFunction, errorFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgInfo1.prototype.Details = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Details", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Details", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Duration"] = Zapp.SoapRequest.readIntParameter(result["Duration"]);	
-		result["BitRate"] = Zapp.SoapRequest.readIntParameter(result["BitRate"]);	
-		result["BitDepth"] = Zapp.SoapRequest.readIntParameter(result["BitDepth"]);	
-		result["SampleRate"] = Zapp.SoapRequest.readIntParameter(result["SampleRate"]);	
-		result["Lossless"] = Zapp.SoapRequest.readBoolParameter(result["Lossless"]);	
-		result["CodecName"] = Zapp.SoapRequest.readStringParameter(result["CodecName"]);	
+		result["Duration"] = OhNet.SoapRequest.readIntParameter(result["Duration"]);	
+		result["BitRate"] = OhNet.SoapRequest.readIntParameter(result["BitRate"]);	
+		result["BitDepth"] = OhNet.SoapRequest.readIntParameter(result["BitDepth"]);	
+		result["SampleRate"] = OhNet.SoapRequest.readIntParameter(result["SampleRate"]);	
+		result["Lossless"] = OhNet.SoapRequest.readBoolParameter(result["Lossless"]);	
+		result["CodecName"] = OhNet.SoapRequest.readStringParameter(result["CodecName"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -286,9 +286,9 @@ CpProxyAvOpenhomeOrgInfo1.prototype.Details = function(successFunction, errorFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgInfo1.prototype.Metatext = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Metatext", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Metatext", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readStringParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readStringParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);

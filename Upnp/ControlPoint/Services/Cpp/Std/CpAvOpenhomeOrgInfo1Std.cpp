@@ -8,7 +8,7 @@
 
 #include <string>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncCountersAvOpenhomeOrgInfo1Cpp : public SyncProxyAction
@@ -118,38 +118,38 @@ void SyncMetatextAvOpenhomeOrgInfo1Cpp::CompleteRequest(IAsync& aAsync)
 CpProxyAvOpenhomeOrgInfo1Cpp::CpProxyAvOpenhomeOrgInfo1Cpp(CpDeviceCpp& aDevice)
     : CpProxy("av-openhome-org", "Info", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionCounters = new Action("Counters");
-    param = new Zapp::ParameterUint("TrackCount");
+    param = new OpenHome::Net::ParameterUint("TrackCount");
     iActionCounters->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("DetailsCount");
+    param = new OpenHome::Net::ParameterUint("DetailsCount");
     iActionCounters->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("MetatextCount");
+    param = new OpenHome::Net::ParameterUint("MetatextCount");
     iActionCounters->AddOutputParameter(param);
 
     iActionTrack = new Action("Track");
-    param = new Zapp::ParameterString("Uri");
+    param = new OpenHome::Net::ParameterString("Uri");
     iActionTrack->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Metadata");
+    param = new OpenHome::Net::ParameterString("Metadata");
     iActionTrack->AddOutputParameter(param);
 
     iActionDetails = new Action("Details");
-    param = new Zapp::ParameterUint("Duration");
+    param = new OpenHome::Net::ParameterUint("Duration");
     iActionDetails->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("BitRate");
+    param = new OpenHome::Net::ParameterUint("BitRate");
     iActionDetails->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("BitDepth");
+    param = new OpenHome::Net::ParameterUint("BitDepth");
     iActionDetails->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("SampleRate");
+    param = new OpenHome::Net::ParameterUint("SampleRate");
     iActionDetails->AddOutputParameter(param);
-    param = new Zapp::ParameterBool("Lossless");
+    param = new OpenHome::Net::ParameterBool("Lossless");
     iActionDetails->AddOutputParameter(param);
-    param = new Zapp::ParameterString("CodecName");
+    param = new OpenHome::Net::ParameterString("CodecName");
     iActionDetails->AddOutputParameter(param);
 
     iActionMetatext = new Action("Metatext");
-    param = new Zapp::ParameterString("Value");
+    param = new OpenHome::Net::ParameterString("Value");
     iActionMetatext->AddOutputParameter(param);
 
     Functor functor;

@@ -1,11 +1,12 @@
 #ifndef HEADER_ASYNC_PRIVATE
 #define HEADER_ASYNC_PRIVATE
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <FunctorAsync.h>
 #include <Thread.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class Async : public IAsync
 {
@@ -36,6 +37,7 @@ private:
     TBool iError;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_ASYNC_PRIVATE

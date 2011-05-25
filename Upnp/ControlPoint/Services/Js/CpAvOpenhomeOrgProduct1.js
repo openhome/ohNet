@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxyAvOpenhomeOrgProduct1
-* @module Zapp
+* @module ohNet
 * @class Product
 */
 	
@@ -18,24 +18,24 @@ var CpProxyAvOpenhomeOrgProduct1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["ManufacturerName"] = new Zapp.ServiceProperty("ManufacturerName","string");
-	this.serviceProperties["ManufacturerInfo"] = new Zapp.ServiceProperty("ManufacturerInfo","string");
-	this.serviceProperties["ManufacturerUrl"] = new Zapp.ServiceProperty("ManufacturerUrl","string");
-	this.serviceProperties["ManufacturerImageUri"] = new Zapp.ServiceProperty("ManufacturerImageUri","string");
-	this.serviceProperties["ModelName"] = new Zapp.ServiceProperty("ModelName","string");
-	this.serviceProperties["ModelInfo"] = new Zapp.ServiceProperty("ModelInfo","string");
-	this.serviceProperties["ModelUrl"] = new Zapp.ServiceProperty("ModelUrl","string");
-	this.serviceProperties["ModelImageUri"] = new Zapp.ServiceProperty("ModelImageUri","string");
-	this.serviceProperties["ProductRoom"] = new Zapp.ServiceProperty("ProductRoom","string");
-	this.serviceProperties["ProductName"] = new Zapp.ServiceProperty("ProductName","string");
-	this.serviceProperties["ProductInfo"] = new Zapp.ServiceProperty("ProductInfo","string");
-	this.serviceProperties["ProductUrl"] = new Zapp.ServiceProperty("ProductUrl","string");
-	this.serviceProperties["ProductImageUri"] = new Zapp.ServiceProperty("ProductImageUri","string");
-	this.serviceProperties["Standby"] = new Zapp.ServiceProperty("Standby","bool");
-	this.serviceProperties["SourceIndex"] = new Zapp.ServiceProperty("SourceIndex","int");
-	this.serviceProperties["SourceCount"] = new Zapp.ServiceProperty("SourceCount","int");
-	this.serviceProperties["SourceXml"] = new Zapp.ServiceProperty("SourceXml","string");
-	this.serviceProperties["Attributes"] = new Zapp.ServiceProperty("Attributes","string");
+	this.serviceProperties["ManufacturerName"] = new OhNet.ServiceProperty("ManufacturerName","string");
+	this.serviceProperties["ManufacturerInfo"] = new OhNet.ServiceProperty("ManufacturerInfo","string");
+	this.serviceProperties["ManufacturerUrl"] = new OhNet.ServiceProperty("ManufacturerUrl","string");
+	this.serviceProperties["ManufacturerImageUri"] = new OhNet.ServiceProperty("ManufacturerImageUri","string");
+	this.serviceProperties["ModelName"] = new OhNet.ServiceProperty("ModelName","string");
+	this.serviceProperties["ModelInfo"] = new OhNet.ServiceProperty("ModelInfo","string");
+	this.serviceProperties["ModelUrl"] = new OhNet.ServiceProperty("ModelUrl","string");
+	this.serviceProperties["ModelImageUri"] = new OhNet.ServiceProperty("ModelImageUri","string");
+	this.serviceProperties["ProductRoom"] = new OhNet.ServiceProperty("ProductRoom","string");
+	this.serviceProperties["ProductName"] = new OhNet.ServiceProperty("ProductName","string");
+	this.serviceProperties["ProductInfo"] = new OhNet.ServiceProperty("ProductInfo","string");
+	this.serviceProperties["ProductUrl"] = new OhNet.ServiceProperty("ProductUrl","string");
+	this.serviceProperties["ProductImageUri"] = new OhNet.ServiceProperty("ProductImageUri","string");
+	this.serviceProperties["Standby"] = new OhNet.ServiceProperty("Standby","bool");
+	this.serviceProperties["SourceIndex"] = new OhNet.ServiceProperty("SourceIndex","int");
+	this.serviceProperties["SourceCount"] = new OhNet.ServiceProperty("SourceCount","int");
+	this.serviceProperties["SourceXml"] = new OhNet.ServiceProperty("SourceXml","string");
+	this.serviceProperties["Attributes"] = new OhNet.ServiceProperty("Attributes","string");
 }
 
 
@@ -46,7 +46,7 @@ var CpProxyAvOpenhomeOrgProduct1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.subscribe = function (serviceAddedFunction) {
-    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
@@ -55,7 +55,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.subscribe = function (serviceAddedFunctio
 * @method Unsubscribe
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.unsubscribe = function () {
-    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+    OhNet.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
@@ -69,7 +69,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.unsubscribe = function () {
 CpProxyAvOpenhomeOrgProduct1.prototype.ManufacturerName_Changed = function (stateChangedFunction) {
     this.serviceProperties.ManufacturerName.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -82,7 +82,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.ManufacturerName_Changed = function (stat
 CpProxyAvOpenhomeOrgProduct1.prototype.ManufacturerInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.ManufacturerInfo.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -95,7 +95,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.ManufacturerInfo_Changed = function (stat
 CpProxyAvOpenhomeOrgProduct1.prototype.ManufacturerUrl_Changed = function (stateChangedFunction) {
     this.serviceProperties.ManufacturerUrl.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -108,7 +108,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.ManufacturerUrl_Changed = function (state
 CpProxyAvOpenhomeOrgProduct1.prototype.ManufacturerImageUri_Changed = function (stateChangedFunction) {
     this.serviceProperties.ManufacturerImageUri.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -121,7 +121,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.ManufacturerImageUri_Changed = function (
 CpProxyAvOpenhomeOrgProduct1.prototype.ModelName_Changed = function (stateChangedFunction) {
     this.serviceProperties.ModelName.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -134,7 +134,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.ModelName_Changed = function (stateChange
 CpProxyAvOpenhomeOrgProduct1.prototype.ModelInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.ModelInfo.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -147,7 +147,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.ModelInfo_Changed = function (stateChange
 CpProxyAvOpenhomeOrgProduct1.prototype.ModelUrl_Changed = function (stateChangedFunction) {
     this.serviceProperties.ModelUrl.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -160,7 +160,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.ModelUrl_Changed = function (stateChanged
 CpProxyAvOpenhomeOrgProduct1.prototype.ModelImageUri_Changed = function (stateChangedFunction) {
     this.serviceProperties.ModelImageUri.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -173,7 +173,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.ModelImageUri_Changed = function (stateCh
 CpProxyAvOpenhomeOrgProduct1.prototype.ProductRoom_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductRoom.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -186,7 +186,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.ProductRoom_Changed = function (stateChan
 CpProxyAvOpenhomeOrgProduct1.prototype.ProductName_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductName.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -199,7 +199,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.ProductName_Changed = function (stateChan
 CpProxyAvOpenhomeOrgProduct1.prototype.ProductInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductInfo.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -212,7 +212,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.ProductInfo_Changed = function (stateChan
 CpProxyAvOpenhomeOrgProduct1.prototype.ProductUrl_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductUrl.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -225,7 +225,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.ProductUrl_Changed = function (stateChang
 CpProxyAvOpenhomeOrgProduct1.prototype.ProductImageUri_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProductImageUri.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -238,7 +238,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.ProductImageUri_Changed = function (state
 CpProxyAvOpenhomeOrgProduct1.prototype.Standby_Changed = function (stateChangedFunction) {
     this.serviceProperties.Standby.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readBoolParameter(state)); 
 	});
 }
 	
@@ -251,7 +251,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.Standby_Changed = function (stateChangedF
 CpProxyAvOpenhomeOrgProduct1.prototype.SourceIndex_Changed = function (stateChangedFunction) {
     this.serviceProperties.SourceIndex.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -264,7 +264,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.SourceIndex_Changed = function (stateChan
 CpProxyAvOpenhomeOrgProduct1.prototype.SourceCount_Changed = function (stateChangedFunction) {
     this.serviceProperties.SourceCount.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -277,7 +277,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.SourceCount_Changed = function (stateChan
 CpProxyAvOpenhomeOrgProduct1.prototype.SourceXml_Changed = function (stateChangedFunction) {
     this.serviceProperties.SourceXml.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -290,7 +290,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.SourceXml_Changed = function (stateChange
 CpProxyAvOpenhomeOrgProduct1.prototype.Attributes_Changed = function (stateChangedFunction) {
     this.serviceProperties.Attributes.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 
@@ -302,12 +302,12 @@ CpProxyAvOpenhomeOrgProduct1.prototype.Attributes_Changed = function (stateChang
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.Manufacturer = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Manufacturer", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Manufacturer", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Name"] = Zapp.SoapRequest.readStringParameter(result["Name"]);	
-		result["Info"] = Zapp.SoapRequest.readStringParameter(result["Info"]);	
-		result["Url"] = Zapp.SoapRequest.readStringParameter(result["Url"]);	
-		result["ImageUri"] = Zapp.SoapRequest.readStringParameter(result["ImageUri"]);	
+		result["Name"] = OhNet.SoapRequest.readStringParameter(result["Name"]);	
+		result["Info"] = OhNet.SoapRequest.readStringParameter(result["Info"]);	
+		result["Url"] = OhNet.SoapRequest.readStringParameter(result["Url"]);	
+		result["ImageUri"] = OhNet.SoapRequest.readStringParameter(result["ImageUri"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -325,12 +325,12 @@ CpProxyAvOpenhomeOrgProduct1.prototype.Manufacturer = function(successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.Model = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Model", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Model", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Name"] = Zapp.SoapRequest.readStringParameter(result["Name"]);	
-		result["Info"] = Zapp.SoapRequest.readStringParameter(result["Info"]);	
-		result["Url"] = Zapp.SoapRequest.readStringParameter(result["Url"]);	
-		result["ImageUri"] = Zapp.SoapRequest.readStringParameter(result["ImageUri"]);	
+		result["Name"] = OhNet.SoapRequest.readStringParameter(result["Name"]);	
+		result["Info"] = OhNet.SoapRequest.readStringParameter(result["Info"]);	
+		result["Url"] = OhNet.SoapRequest.readStringParameter(result["Url"]);	
+		result["ImageUri"] = OhNet.SoapRequest.readStringParameter(result["ImageUri"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -348,13 +348,13 @@ CpProxyAvOpenhomeOrgProduct1.prototype.Model = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.Product = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Product", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Product", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Room"] = Zapp.SoapRequest.readStringParameter(result["Room"]);	
-		result["Name"] = Zapp.SoapRequest.readStringParameter(result["Name"]);	
-		result["Info"] = Zapp.SoapRequest.readStringParameter(result["Info"]);	
-		result["Url"] = Zapp.SoapRequest.readStringParameter(result["Url"]);	
-		result["ImageUri"] = Zapp.SoapRequest.readStringParameter(result["ImageUri"]);	
+		result["Room"] = OhNet.SoapRequest.readStringParameter(result["Room"]);	
+		result["Name"] = OhNet.SoapRequest.readStringParameter(result["Name"]);	
+		result["Info"] = OhNet.SoapRequest.readStringParameter(result["Info"]);	
+		result["Url"] = OhNet.SoapRequest.readStringParameter(result["Url"]);	
+		result["ImageUri"] = OhNet.SoapRequest.readStringParameter(result["ImageUri"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -372,9 +372,9 @@ CpProxyAvOpenhomeOrgProduct1.prototype.Product = function(successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.Standby = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Standby", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Standby", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readBoolParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readBoolParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -393,7 +393,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.Standby = function(successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.SetStandby = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetStandby", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetStandby", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("Value", Value);
     request.send(function(result){
 	
@@ -413,9 +413,9 @@ CpProxyAvOpenhomeOrgProduct1.prototype.SetStandby = function(Value, successFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.SourceCount = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SourceCount", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SourceCount", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readIntParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readIntParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -433,9 +433,9 @@ CpProxyAvOpenhomeOrgProduct1.prototype.SourceCount = function(successFunction, e
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.SourceXml = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SourceXml", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SourceXml", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readStringParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readStringParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -453,9 +453,9 @@ CpProxyAvOpenhomeOrgProduct1.prototype.SourceXml = function(successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.SourceIndex = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SourceIndex", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SourceIndex", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readIntParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readIntParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -474,7 +474,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.SourceIndex = function(successFunction, e
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.SetSourceIndex = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetSourceIndex", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetSourceIndex", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
 	
@@ -495,7 +495,7 @@ CpProxyAvOpenhomeOrgProduct1.prototype.SetSourceIndex = function(Value, successF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.SetSourceIndexByName = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetSourceIndexByName", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetSourceIndexByName", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("Value", Value);
     request.send(function(result){
 	
@@ -516,13 +516,13 @@ CpProxyAvOpenhomeOrgProduct1.prototype.SetSourceIndexByName = function(Value, su
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.Source = function(Index, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Source", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Source", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Index", Index);
     request.send(function(result){
-		result["SystemName"] = Zapp.SoapRequest.readStringParameter(result["SystemName"]);	
-		result["Type"] = Zapp.SoapRequest.readStringParameter(result["Type"]);	
-		result["Name"] = Zapp.SoapRequest.readStringParameter(result["Name"]);	
-		result["Visible"] = Zapp.SoapRequest.readBoolParameter(result["Visible"]);	
+		result["SystemName"] = OhNet.SoapRequest.readStringParameter(result["SystemName"]);	
+		result["Type"] = OhNet.SoapRequest.readStringParameter(result["Type"]);	
+		result["Name"] = OhNet.SoapRequest.readStringParameter(result["Name"]);	
+		result["Visible"] = OhNet.SoapRequest.readBoolParameter(result["Visible"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -540,9 +540,9 @@ CpProxyAvOpenhomeOrgProduct1.prototype.Source = function(Index, successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.Attributes = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Attributes", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Attributes", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readStringParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readStringParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -560,9 +560,9 @@ CpProxyAvOpenhomeOrgProduct1.prototype.Attributes = function(successFunction, er
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgProduct1.prototype.SourceXmlChangeCount = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SourceXmlChangeCount", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SourceXmlChangeCount", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readIntParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readIntParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);

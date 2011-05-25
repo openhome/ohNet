@@ -1,10 +1,10 @@
 #include "DvUpnpOrgScheduledRecording2.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 TBool DvProviderUpnpOrgScheduledRecording2::SetPropertyLastChange(const Brx& aValue)
 {
@@ -26,7 +26,7 @@ DvProviderUpnpOrgScheduledRecording2::DvProviderUpnpOrgScheduledRecording2(DvDev
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionGetSortCapabilities()
 {
-    Zapp::Action* action = new Zapp::Action("GetSortCapabilities");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetSortCapabilities");
     action->AddOutputParameter(new ParameterString("SortCaps"));
     action->AddOutputParameter(new ParameterUint("SortLevelCap"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoGetSortCapabilities);
@@ -35,7 +35,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionGetSortCapabilities()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionGetPropertyList()
 {
-    Zapp::Action* action = new Zapp::Action("GetPropertyList");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetPropertyList");
     TChar** allowedValues;
     TUint index;
     index = 0;
@@ -52,7 +52,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionGetPropertyList()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionGetAllowedValues()
 {
-    Zapp::Action* action = new Zapp::Action("GetAllowedValues");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetAllowedValues");
     TChar** allowedValues;
     TUint index;
     index = 0;
@@ -70,7 +70,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionGetAllowedValues()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionGetStateUpdateID()
 {
-    Zapp::Action* action = new Zapp::Action("GetStateUpdateID");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetStateUpdateID");
     action->AddOutputParameter(new ParameterUint("Id"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoGetStateUpdateID);
     iService->AddAction(action, functor);
@@ -78,7 +78,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionGetStateUpdateID()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionBrowseRecordSchedules()
 {
-    Zapp::Action* action = new Zapp::Action("BrowseRecordSchedules");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("BrowseRecordSchedules");
     action->AddInputParameter(new ParameterString("Filter"));
     action->AddInputParameter(new ParameterUint("StartingIndex"));
     action->AddInputParameter(new ParameterUint("RequestedCount"));
@@ -93,7 +93,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionBrowseRecordSchedules()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionBrowseRecordTasks()
 {
-    Zapp::Action* action = new Zapp::Action("BrowseRecordTasks");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("BrowseRecordTasks");
     action->AddInputParameter(new ParameterString("RecordScheduleID"));
     action->AddInputParameter(new ParameterString("Filter"));
     action->AddInputParameter(new ParameterUint("StartingIndex"));
@@ -109,7 +109,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionBrowseRecordTasks()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionCreateRecordSchedule()
 {
-    Zapp::Action* action = new Zapp::Action("CreateRecordSchedule");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("CreateRecordSchedule");
     action->AddInputParameter(new ParameterString("Elements"));
     action->AddOutputParameter(new ParameterString("RecordScheduleID"));
     action->AddOutputParameter(new ParameterString("Result"));
@@ -120,7 +120,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionCreateRecordSchedule()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionDeleteRecordSchedule()
 {
-    Zapp::Action* action = new Zapp::Action("DeleteRecordSchedule");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("DeleteRecordSchedule");
     action->AddInputParameter(new ParameterString("RecordScheduleID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoDeleteRecordSchedule);
     iService->AddAction(action, functor);
@@ -128,7 +128,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionDeleteRecordSchedule()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionGetRecordSchedule()
 {
-    Zapp::Action* action = new Zapp::Action("GetRecordSchedule");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRecordSchedule");
     action->AddInputParameter(new ParameterString("RecordScheduleID"));
     action->AddInputParameter(new ParameterString("Filter"));
     action->AddOutputParameter(new ParameterString("Result"));
@@ -139,7 +139,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionGetRecordSchedule()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionEnableRecordSchedule()
 {
-    Zapp::Action* action = new Zapp::Action("EnableRecordSchedule");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("EnableRecordSchedule");
     action->AddInputParameter(new ParameterString("RecordScheduleID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoEnableRecordSchedule);
     iService->AddAction(action, functor);
@@ -147,7 +147,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionEnableRecordSchedule()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionDisableRecordSchedule()
 {
-    Zapp::Action* action = new Zapp::Action("DisableRecordSchedule");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("DisableRecordSchedule");
     action->AddInputParameter(new ParameterString("RecordScheduleID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoDisableRecordSchedule);
     iService->AddAction(action, functor);
@@ -155,7 +155,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionDisableRecordSchedule()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionDeleteRecordTask()
 {
-    Zapp::Action* action = new Zapp::Action("DeleteRecordTask");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("DeleteRecordTask");
     action->AddInputParameter(new ParameterString("RecordTaskID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoDeleteRecordTask);
     iService->AddAction(action, functor);
@@ -163,7 +163,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionDeleteRecordTask()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionGetRecordTask()
 {
-    Zapp::Action* action = new Zapp::Action("GetRecordTask");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRecordTask");
     action->AddInputParameter(new ParameterString("RecordTaskID"));
     action->AddInputParameter(new ParameterString("Filter"));
     action->AddOutputParameter(new ParameterString("Result"));
@@ -174,7 +174,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionGetRecordTask()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionEnableRecordTask()
 {
-    Zapp::Action* action = new Zapp::Action("EnableRecordTask");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("EnableRecordTask");
     action->AddInputParameter(new ParameterString("RecordTaskID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoEnableRecordTask);
     iService->AddAction(action, functor);
@@ -182,7 +182,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionEnableRecordTask()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionDisableRecordTask()
 {
-    Zapp::Action* action = new Zapp::Action("DisableRecordTask");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("DisableRecordTask");
     action->AddInputParameter(new ParameterString("RecordTaskID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoDisableRecordTask);
     iService->AddAction(action, functor);
@@ -190,7 +190,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionDisableRecordTask()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionResetRecordTask()
 {
-    Zapp::Action* action = new Zapp::Action("ResetRecordTask");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ResetRecordTask");
     action->AddInputParameter(new ParameterString("RecordTaskID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoResetRecordTask);
     iService->AddAction(action, functor);
@@ -198,7 +198,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionResetRecordTask()
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionGetRecordScheduleConflicts()
 {
-    Zapp::Action* action = new Zapp::Action("GetRecordScheduleConflicts");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRecordScheduleConflicts");
     action->AddInputParameter(new ParameterString("RecordScheduleID"));
     action->AddOutputParameter(new ParameterString("RecordScheduleConflictIDList"));
     action->AddOutputParameter(new ParameterUint("UpdateID"));
@@ -208,7 +208,7 @@ void DvProviderUpnpOrgScheduledRecording2::EnableActionGetRecordScheduleConflict
 
 void DvProviderUpnpOrgScheduledRecording2::EnableActionGetRecordTaskConflicts()
 {
-    Zapp::Action* action = new Zapp::Action("GetRecordTaskConflicts");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRecordTaskConflicts");
     action->AddInputParameter(new ParameterString("RecordTaskID"));
     action->AddOutputParameter(new ParameterString("RecordTaskConflictIDList"));
     action->AddOutputParameter(new ParameterUint("UpdateID"));

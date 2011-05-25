@@ -8,8 +8,8 @@
 #include <Arch.h>
 #include <Stack.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 // SuiteTcpClient
 
@@ -207,7 +207,7 @@ void TcpSessionEcho::Run()
 class SuiteSocketServer : public Suite, public INonCopyable
 {
 public:
-    SuiteSocketServer(TIpAddress aInterface) : Suite("Zapp Socket Server Tests"), iInterface(aInterface) {}
+    SuiteSocketServer(TIpAddress aInterface) : Suite("ohNet Socket Server Tests"), iInterface(aInterface) {}
     void Test();
 private:
     TIpAddress iInterface;
@@ -714,7 +714,7 @@ void MainTestThread::Run()
     Signal();
 }
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionUint adapter("-i", "--interface", 0, "index of network adapter to use");

@@ -5,14 +5,15 @@
 #define HEADER_LINN_OS_CPP
 
 #include <Os.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Standard.h>
 #include <Network.h>
-#include <Zapp.h>
+#include <OhNet.h>
 
 #include <vector>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class Os
 {
@@ -66,5 +67,6 @@ public:
 
 #include <OsWrapper.inl>
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 #endif // HEADER_LINN_OS_C

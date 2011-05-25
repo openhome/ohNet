@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderAvOpenhomeOrgPlaylist1 : IDisposable
     {
@@ -309,7 +309,7 @@ namespace Zapp.Device.Providers
         /// Play must be overridden if this is called.</remarks>
         protected void EnableActionPlay()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Play");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Play");
             iDelegatePlay = new ActionDelegate(DoPlay);
             EnableAction(action, iDelegatePlay, GCHandle.ToIntPtr(iGch));
         }
@@ -321,7 +321,7 @@ namespace Zapp.Device.Providers
         /// Pause must be overridden if this is called.</remarks>
         protected void EnableActionPause()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Pause");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Pause");
             iDelegatePause = new ActionDelegate(DoPause);
             EnableAction(action, iDelegatePause, GCHandle.ToIntPtr(iGch));
         }
@@ -333,7 +333,7 @@ namespace Zapp.Device.Providers
         /// Stop must be overridden if this is called.</remarks>
         protected void EnableActionStop()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Stop");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Stop");
             iDelegateStop = new ActionDelegate(DoStop);
             EnableAction(action, iDelegateStop, GCHandle.ToIntPtr(iGch));
         }
@@ -345,7 +345,7 @@ namespace Zapp.Device.Providers
         /// Next must be overridden if this is called.</remarks>
         protected void EnableActionNext()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Next");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Next");
             iDelegateNext = new ActionDelegate(DoNext);
             EnableAction(action, iDelegateNext, GCHandle.ToIntPtr(iGch));
         }
@@ -357,7 +357,7 @@ namespace Zapp.Device.Providers
         /// Previous must be overridden if this is called.</remarks>
         protected void EnableActionPrevious()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Previous");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Previous");
             iDelegatePrevious = new ActionDelegate(DoPrevious);
             EnableAction(action, iDelegatePrevious, GCHandle.ToIntPtr(iGch));
         }
@@ -369,7 +369,7 @@ namespace Zapp.Device.Providers
         /// SetRepeat must be overridden if this is called.</remarks>
         protected void EnableActionSetRepeat()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetRepeat");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetRepeat");
             action.AddInputParameter(new ParameterRelated("Value", iPropertyRepeat));
             iDelegateSetRepeat = new ActionDelegate(DoSetRepeat);
             EnableAction(action, iDelegateSetRepeat, GCHandle.ToIntPtr(iGch));
@@ -382,7 +382,7 @@ namespace Zapp.Device.Providers
         /// Repeat must be overridden if this is called.</remarks>
         protected void EnableActionRepeat()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Repeat");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Repeat");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyRepeat));
             iDelegateRepeat = new ActionDelegate(DoRepeat);
             EnableAction(action, iDelegateRepeat, GCHandle.ToIntPtr(iGch));
@@ -395,7 +395,7 @@ namespace Zapp.Device.Providers
         /// SetShuffle must be overridden if this is called.</remarks>
         protected void EnableActionSetShuffle()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetShuffle");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetShuffle");
             action.AddInputParameter(new ParameterRelated("Value", iPropertyShuffle));
             iDelegateSetShuffle = new ActionDelegate(DoSetShuffle);
             EnableAction(action, iDelegateSetShuffle, GCHandle.ToIntPtr(iGch));
@@ -408,7 +408,7 @@ namespace Zapp.Device.Providers
         /// Shuffle must be overridden if this is called.</remarks>
         protected void EnableActionShuffle()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Shuffle");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Shuffle");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyShuffle));
             iDelegateShuffle = new ActionDelegate(DoShuffle);
             EnableAction(action, iDelegateShuffle, GCHandle.ToIntPtr(iGch));
@@ -421,7 +421,7 @@ namespace Zapp.Device.Providers
         /// SeekSecondAbsolute must be overridden if this is called.</remarks>
         protected void EnableActionSeekSecondAbsolute()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SeekSecondAbsolute");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SeekSecondAbsolute");
             action.AddInputParameter(new ParameterUint("Value"));
             iDelegateSeekSecondAbsolute = new ActionDelegate(DoSeekSecondAbsolute);
             EnableAction(action, iDelegateSeekSecondAbsolute, GCHandle.ToIntPtr(iGch));
@@ -434,7 +434,7 @@ namespace Zapp.Device.Providers
         /// SeekSecondRelative must be overridden if this is called.</remarks>
         protected void EnableActionSeekSecondRelative()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SeekSecondRelative");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SeekSecondRelative");
             action.AddInputParameter(new ParameterInt("Value"));
             iDelegateSeekSecondRelative = new ActionDelegate(DoSeekSecondRelative);
             EnableAction(action, iDelegateSeekSecondRelative, GCHandle.ToIntPtr(iGch));
@@ -447,7 +447,7 @@ namespace Zapp.Device.Providers
         /// SeekId must be overridden if this is called.</remarks>
         protected void EnableActionSeekId()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SeekId");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SeekId");
             action.AddInputParameter(new ParameterRelated("Value", iPropertyId));
             iDelegateSeekId = new ActionDelegate(DoSeekId);
             EnableAction(action, iDelegateSeekId, GCHandle.ToIntPtr(iGch));
@@ -460,7 +460,7 @@ namespace Zapp.Device.Providers
         /// SeekIndex must be overridden if this is called.</remarks>
         protected void EnableActionSeekIndex()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SeekIndex");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SeekIndex");
             action.AddInputParameter(new ParameterUint("Value"));
             iDelegateSeekIndex = new ActionDelegate(DoSeekIndex);
             EnableAction(action, iDelegateSeekIndex, GCHandle.ToIntPtr(iGch));
@@ -473,7 +473,7 @@ namespace Zapp.Device.Providers
         /// TransportState must be overridden if this is called.</remarks>
         protected void EnableActionTransportState()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("TransportState");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("TransportState");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyTransportState));
             iDelegateTransportState = new ActionDelegate(DoTransportState);
             EnableAction(action, iDelegateTransportState, GCHandle.ToIntPtr(iGch));
@@ -486,7 +486,7 @@ namespace Zapp.Device.Providers
         /// Id must be overridden if this is called.</remarks>
         protected void EnableActionId()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Id");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Id");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyId));
             iDelegateId = new ActionDelegate(DoId);
             EnableAction(action, iDelegateId, GCHandle.ToIntPtr(iGch));
@@ -499,7 +499,7 @@ namespace Zapp.Device.Providers
         /// Read must be overridden if this is called.</remarks>
         protected void EnableActionRead()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Read");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Read");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("Id", iPropertyId));
             action.AddOutputParameter(new ParameterString("Uri", allowedValues));
@@ -515,7 +515,7 @@ namespace Zapp.Device.Providers
         /// ReadList must be overridden if this is called.</remarks>
         protected void EnableActionReadList()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("ReadList");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("ReadList");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("IdList", allowedValues));
             action.AddOutputParameter(new ParameterString("TrackList", allowedValues));
@@ -530,7 +530,7 @@ namespace Zapp.Device.Providers
         /// Insert must be overridden if this is called.</remarks>
         protected void EnableActionInsert()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Insert");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Insert");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("AfterId", iPropertyId));
             action.AddInputParameter(new ParameterString("Uri", allowedValues));
@@ -547,7 +547,7 @@ namespace Zapp.Device.Providers
         /// DeleteId must be overridden if this is called.</remarks>
         protected void EnableActionDeleteId()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("DeleteId");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("DeleteId");
             action.AddInputParameter(new ParameterRelated("Value", iPropertyId));
             iDelegateDeleteId = new ActionDelegate(DoDeleteId);
             EnableAction(action, iDelegateDeleteId, GCHandle.ToIntPtr(iGch));
@@ -560,7 +560,7 @@ namespace Zapp.Device.Providers
         /// DeleteAll must be overridden if this is called.</remarks>
         protected void EnableActionDeleteAll()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("DeleteAll");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("DeleteAll");
             iDelegateDeleteAll = new ActionDelegate(DoDeleteAll);
             EnableAction(action, iDelegateDeleteAll, GCHandle.ToIntPtr(iGch));
         }
@@ -572,7 +572,7 @@ namespace Zapp.Device.Providers
         /// TracksMax must be overridden if this is called.</remarks>
         protected void EnableActionTracksMax()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("TracksMax");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("TracksMax");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyTracksMax));
             iDelegateTracksMax = new ActionDelegate(DoTracksMax);
             EnableAction(action, iDelegateTracksMax, GCHandle.ToIntPtr(iGch));
@@ -585,7 +585,7 @@ namespace Zapp.Device.Providers
         /// IdArray must be overridden if this is called.</remarks>
         protected void EnableActionIdArray()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("IdArray");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("IdArray");
             action.AddOutputParameter(new ParameterUint("Token"));
             action.AddOutputParameter(new ParameterRelated("Array", iPropertyIdArray));
             iDelegateIdArray = new ActionDelegate(DoIdArray);
@@ -599,7 +599,7 @@ namespace Zapp.Device.Providers
         /// IdArrayChanged must be overridden if this is called.</remarks>
         protected void EnableActionIdArrayChanged()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("IdArrayChanged");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("IdArrayChanged");
             action.AddInputParameter(new ParameterUint("Token"));
             action.AddOutputParameter(new ParameterBool("Value"));
             iDelegateIdArrayChanged = new ActionDelegate(DoIdArrayChanged);
@@ -613,7 +613,7 @@ namespace Zapp.Device.Providers
         /// ProtocolInfo must be overridden if this is called.</remarks>
         protected void EnableActionProtocolInfo()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("ProtocolInfo");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("ProtocolInfo");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyProtocolInfo));
             iDelegateProtocolInfo = new ActionDelegate(DoProtocolInfo);
             EnableAction(action, iDelegateProtocolInfo, GCHandle.ToIntPtr(iGch));

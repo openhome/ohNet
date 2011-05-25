@@ -1,7 +1,7 @@
 #include <TestFramework.h>
 #include <OptionParser.h>
-#include <ZappTypes.h>
-#include <Zapp.h>
+#include <OhNetTypes.h>
+#include <OhNet.h>
 #include <Functor.h>
 #include <Timer.h>
 #include <OsWrapper.h>
@@ -15,8 +15,8 @@
 #include <vector>
 #include <sys/stat.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class PerformanceTests
 {
@@ -165,7 +165,7 @@ void PerformanceTests::Subscribed()
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     Brn emptyString("");

@@ -1,15 +1,15 @@
 #include "DvUpnpOrgContentDirectory1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
 #include <DvProvider.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class DvProviderUpnpOrgContentDirectory1C : public DvProvider
 {
@@ -130,7 +130,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionGetSearchCapabilities(Call
 {
     iCallbackGetSearchCapabilities = aCallback;
     iPtrGetSearchCapabilities = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetSearchCapabilities");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetSearchCapabilities");
     action->AddOutputParameter(new ParameterString("SearchCaps"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory1C::DoGetSearchCapabilities);
     iService->AddAction(action, functor);
@@ -140,7 +140,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionGetSortCapabilities(Callba
 {
     iCallbackGetSortCapabilities = aCallback;
     iPtrGetSortCapabilities = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetSortCapabilities");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetSortCapabilities");
     action->AddOutputParameter(new ParameterString("SortCaps"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory1C::DoGetSortCapabilities);
     iService->AddAction(action, functor);
@@ -150,7 +150,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionGetSystemUpdateID(Callback
 {
     iCallbackGetSystemUpdateID = aCallback;
     iPtrGetSystemUpdateID = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetSystemUpdateID");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetSystemUpdateID");
     action->AddOutputParameter(new ParameterRelated("Id", *iPropertySystemUpdateID));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory1C::DoGetSystemUpdateID);
     iService->AddAction(action, functor);
@@ -160,7 +160,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionBrowse(CallbackContentDire
 {
     iCallbackBrowse = aCallback;
     iPtrBrowse = aPtr;
-    Zapp::Action* action = new Zapp::Action("Browse");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Browse");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterString("ObjectID"));
@@ -186,7 +186,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionSearch(CallbackContentDire
 {
     iCallbackSearch = aCallback;
     iPtrSearch = aPtr;
-    Zapp::Action* action = new Zapp::Action("Search");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Search");
     action->AddInputParameter(new ParameterString("ContainerID"));
     action->AddInputParameter(new ParameterString("SearchCriteria"));
     action->AddInputParameter(new ParameterString("Filter"));
@@ -205,7 +205,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionCreateObject(CallbackConte
 {
     iCallbackCreateObject = aCallback;
     iPtrCreateObject = aPtr;
-    Zapp::Action* action = new Zapp::Action("CreateObject");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("CreateObject");
     action->AddInputParameter(new ParameterString("ContainerID"));
     action->AddInputParameter(new ParameterString("Elements"));
     action->AddOutputParameter(new ParameterString("ObjectID"));
@@ -218,7 +218,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionDestroyObject(CallbackCont
 {
     iCallbackDestroyObject = aCallback;
     iPtrDestroyObject = aPtr;
-    Zapp::Action* action = new Zapp::Action("DestroyObject");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("DestroyObject");
     action->AddInputParameter(new ParameterString("ObjectID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory1C::DoDestroyObject);
     iService->AddAction(action, functor);
@@ -228,7 +228,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionUpdateObject(CallbackConte
 {
     iCallbackUpdateObject = aCallback;
     iPtrUpdateObject = aPtr;
-    Zapp::Action* action = new Zapp::Action("UpdateObject");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("UpdateObject");
     action->AddInputParameter(new ParameterString("ObjectID"));
     action->AddInputParameter(new ParameterString("CurrentTagValue"));
     action->AddInputParameter(new ParameterString("NewTagValue"));
@@ -240,7 +240,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionImportResource(CallbackCon
 {
     iCallbackImportResource = aCallback;
     iPtrImportResource = aPtr;
-    Zapp::Action* action = new Zapp::Action("ImportResource");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ImportResource");
     action->AddInputParameter(new ParameterString("SourceURI"));
     action->AddInputParameter(new ParameterString("DestinationURI"));
     action->AddOutputParameter(new ParameterUint("TransferID"));
@@ -252,7 +252,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionExportResource(CallbackCon
 {
     iCallbackExportResource = aCallback;
     iPtrExportResource = aPtr;
-    Zapp::Action* action = new Zapp::Action("ExportResource");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ExportResource");
     action->AddInputParameter(new ParameterString("SourceURI"));
     action->AddInputParameter(new ParameterString("DestinationURI"));
     action->AddOutputParameter(new ParameterUint("TransferID"));
@@ -264,7 +264,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionStopTransferResource(Callb
 {
     iCallbackStopTransferResource = aCallback;
     iPtrStopTransferResource = aPtr;
-    Zapp::Action* action = new Zapp::Action("StopTransferResource");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("StopTransferResource");
     action->AddInputParameter(new ParameterUint("TransferID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory1C::DoStopTransferResource);
     iService->AddAction(action, functor);
@@ -274,7 +274,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionGetTransferProgress(Callba
 {
     iCallbackGetTransferProgress = aCallback;
     iPtrGetTransferProgress = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetTransferProgress");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetTransferProgress");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("TransferID"));
@@ -296,7 +296,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionDeleteResource(CallbackCon
 {
     iCallbackDeleteResource = aCallback;
     iPtrDeleteResource = aPtr;
-    Zapp::Action* action = new Zapp::Action("DeleteResource");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("DeleteResource");
     action->AddInputParameter(new ParameterString("ResourceURI"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory1C::DoDeleteResource);
     iService->AddAction(action, functor);
@@ -306,7 +306,7 @@ void DvProviderUpnpOrgContentDirectory1C::EnableActionCreateReference(CallbackCo
 {
     iCallbackCreateReference = aCallback;
     iPtrCreateReference = aPtr;
-    Zapp::Action* action = new Zapp::Action("CreateReference");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("CreateReference");
     action->AddInputParameter(new ParameterString("ContainerID"));
     action->AddInputParameter(new ParameterString("ObjectID"));
     action->AddOutputParameter(new ParameterString("NewID"));
@@ -328,7 +328,7 @@ void DvProviderUpnpOrgContentDirectory1C::DoGetSearchCapabilities(IDviInvocation
     InvocationResponseString respSearchCaps(aInvocation, "SearchCaps");
     resp.Start();
     Brhz bufSearchCaps((const TChar*)SearchCaps);
-    ZappFreeExternal(SearchCaps);
+    OhNetFreeExternal(SearchCaps);
     respSearchCaps.Write(bufSearchCaps);
     respSearchCaps.WriteFlush();
     resp.End();
@@ -348,7 +348,7 @@ void DvProviderUpnpOrgContentDirectory1C::DoGetSortCapabilities(IDviInvocation& 
     InvocationResponseString respSortCaps(aInvocation, "SortCaps");
     resp.Start();
     Brhz bufSortCaps((const TChar*)SortCaps);
-    ZappFreeExternal(SortCaps);
+    OhNetFreeExternal(SortCaps);
     respSortCaps.Write(bufSortCaps);
     respSortCaps.WriteFlush();
     resp.End();
@@ -401,7 +401,7 @@ void DvProviderUpnpOrgContentDirectory1C::DoBrowse(IDviInvocation& aInvocation, 
     InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
     resp.Start();
     Brhz bufResult((const TChar*)Result);
-    ZappFreeExternal(Result);
+    OhNetFreeExternal(Result);
     respResult.Write(bufResult);
     respResult.WriteFlush();
     respNumberReturned.Write(NumberReturned);
@@ -440,7 +440,7 @@ void DvProviderUpnpOrgContentDirectory1C::DoSearch(IDviInvocation& aInvocation, 
     InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
     resp.Start();
     Brhz bufResult((const TChar*)Result);
-    ZappFreeExternal(Result);
+    OhNetFreeExternal(Result);
     respResult.Write(bufResult);
     respResult.WriteFlush();
     respNumberReturned.Write(NumberReturned);
@@ -469,11 +469,11 @@ void DvProviderUpnpOrgContentDirectory1C::DoCreateObject(IDviInvocation& aInvoca
     InvocationResponseString respResult(aInvocation, "Result");
     resp.Start();
     Brhz bufObjectID((const TChar*)ObjectID);
-    ZappFreeExternal(ObjectID);
+    OhNetFreeExternal(ObjectID);
     respObjectID.Write(bufObjectID);
     respObjectID.WriteFlush();
     Brhz bufResult((const TChar*)Result);
-    ZappFreeExternal(Result);
+    OhNetFreeExternal(Result);
     respResult.Write(bufResult);
     respResult.WriteFlush();
     resp.End();
@@ -591,15 +591,15 @@ void DvProviderUpnpOrgContentDirectory1C::DoGetTransferProgress(IDviInvocation& 
     InvocationResponseString respTransferTotal(aInvocation, "TransferTotal");
     resp.Start();
     Brhz bufTransferStatus((const TChar*)TransferStatus);
-    ZappFreeExternal(TransferStatus);
+    OhNetFreeExternal(TransferStatus);
     respTransferStatus.Write(bufTransferStatus);
     respTransferStatus.WriteFlush();
     Brhz bufTransferLength((const TChar*)TransferLength);
-    ZappFreeExternal(TransferLength);
+    OhNetFreeExternal(TransferLength);
     respTransferLength.Write(bufTransferLength);
     respTransferLength.WriteFlush();
     Brhz bufTransferTotal((const TChar*)TransferTotal);
-    ZappFreeExternal(TransferTotal);
+    OhNetFreeExternal(TransferTotal);
     respTransferTotal.Write(bufTransferTotal);
     respTransferTotal.WriteFlush();
     resp.End();
@@ -639,7 +639,7 @@ void DvProviderUpnpOrgContentDirectory1C::DoCreateReference(IDviInvocation& aInv
     InvocationResponseString respNewID(aInvocation, "NewID");
     resp.Start();
     Brhz bufNewID((const TChar*)NewID);
-    ZappFreeExternal(NewID);
+    OhNetFreeExternal(NewID);
     respNewID.Write(bufNewID);
     respNewID.WriteFlush();
     resp.End();

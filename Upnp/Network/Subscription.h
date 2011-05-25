@@ -1,11 +1,12 @@
 #ifndef HEADER_SUBSCRIPTION
 #define HEADER_SUBSCRIPTION
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Http.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class HeaderSid : public HttpHeader
 {
@@ -46,6 +47,7 @@ private:
     Brh iValue;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_SUBSCRIPTION

@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderUpnpOrgSwitchPower1 : IDisposable
     {
@@ -72,7 +72,7 @@ namespace Zapp.Device.Providers
         /// SetTarget must be overridden if this is called.</remarks>
         protected void EnableActionSetTarget()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetTarget");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetTarget");
             action.AddInputParameter(new ParameterBool("newTargetValue"));
             iDelegateSetTarget = new ActionDelegate(DoSetTarget);
             EnableAction(action, iDelegateSetTarget, GCHandle.ToIntPtr(iGch));
@@ -85,7 +85,7 @@ namespace Zapp.Device.Providers
         /// GetTarget must be overridden if this is called.</remarks>
         protected void EnableActionGetTarget()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetTarget");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetTarget");
             action.AddOutputParameter(new ParameterBool("RetTargetValue"));
             iDelegateGetTarget = new ActionDelegate(DoGetTarget);
             EnableAction(action, iDelegateGetTarget, GCHandle.ToIntPtr(iGch));
@@ -98,7 +98,7 @@ namespace Zapp.Device.Providers
         /// GetStatus must be overridden if this is called.</remarks>
         protected void EnableActionGetStatus()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetStatus");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetStatus");
             action.AddOutputParameter(new ParameterRelated("ResultStatus", iPropertyStatus));
             iDelegateGetStatus = new ActionDelegate(DoGetStatus);
             EnableAction(action, iDelegateGetStatus, GCHandle.ToIntPtr(iGch));

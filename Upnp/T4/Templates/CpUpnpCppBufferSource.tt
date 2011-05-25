@@ -1,7 +1,7 @@
 <#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -56,7 +56,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
@@ -109,7 +109,7 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
     allowedValues[index++] = (TChar*)"<#=val#>";
 <#              } #>
 <#          } #>
-    param = new Zapp::<#=paramclass[i.variable.type]#>("<#=i.name#>"<#=ParameterAllowedValues(i)#>);
+    param = new OpenHome::Net::<#=paramclass[i.variable.type]#>("<#=i.name#>"<#=ParameterAllowedValues(i)#>);
     iAction<#=a.name#>->AddInputParameter(param);
 <#          if (i.variable.values.Count > 0) #>
 <#          { #>
@@ -127,7 +127,7 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
     allowedValues[index++] = (TChar*)"<#=val#>";
 <#              } #>
 <#          } #>
-    param = new Zapp::<#=paramclass[o.variable.type]#>("<#=o.name#>"<#=ParameterAllowedValues(o)#>);
+    param = new OpenHome::Net::<#=paramclass[o.variable.type]#>("<#=o.name#>"<#=ParameterAllowedValues(o)#>);
     iAction<#=a.name#>->AddOutputParameter(param);
 <#          if (o.variable.values.Count > 0) #>
 <#          { #>
@@ -485,7 +485,7 @@ string DeclareConstructLocalVars(Document u)
     string result = "";
     if (u.methods.Count > 0)
     {
-        result += "Zapp::Parameter* param;";
+        result += "OpenHome::Net::Parameter* param;";
     }
 
     foreach (Method a in u.methods)

@@ -1,10 +1,11 @@
 #ifndef HEADER_BONJOUR
 #define HEADER_BONJOUR
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IMdnsProvider
 {
@@ -30,6 +31,7 @@ private:
 	TUint iMdnsHandle;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_BONJOUR

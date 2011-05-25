@@ -1,4 +1,4 @@
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Stack.h>
 #include <Standard.h>
 #include <OsWrapper.h>
@@ -10,18 +10,18 @@
 
 #include <time.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // Strings declared in MimeTypes.h
 
-const char kZappMimeTypeCss[]  = "text/css";
-const char kZappMimeTypeHtml[] = "text/html";
-const char kZappMimeTypeJs[]   = "application/x-javascript";
-const char kZappMimeTypeXml[]  = "application/xml";
-const char kZappMimeTypeBmp[]  = "image/bmp";
-const char kZappMimeTypeGif[]  = "image/gif";
-const char kZappMimeTypeJpeg[] = "image/jpeg";
-const char kZappMimeTypePng[]  = "image/png";
+const char kOhNetMimeTypeCss[]  = "text/css";
+const char kOhNetMimeTypeHtml[] = "text/html";
+const char kOhNetMimeTypeJs[]   = "application/x-javascript";
+const char kOhNetMimeTypeXml[]  = "application/xml";
+const char kOhNetMimeTypeBmp[]  = "image/bmp";
+const char kOhNetMimeTypeGif[]  = "image/gif";
+const char kOhNetMimeTypeJpeg[] = "image/jpeg";
+const char kOhNetMimeTypePng[]  = "image/png";
 
 
 // Stack
@@ -61,8 +61,8 @@ Stack::Stack(InitialisationParams* aInitParams)
     gStack = this;
     gStackInitCount++;
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
-    iTimerManager = new Zapp::TimerManager();
-    iNetworkInterfaceList = new Zapp::NetworkInterfaceList(iInitParams->DefaultSubnet());
+    iTimerManager = new OpenHome::Net::TimerManager();
+    iNetworkInterfaceList = new OpenHome::Net::NetworkInterfaceList(iInitParams->DefaultSubnet());
     Functor& subnetChangeListener = iInitParams->SubnetChangedListener();
     if (subnetChangeListener) {
         iNetworkInterfaceList->AddSubnetChangeListener(subnetChangeListener);
@@ -108,12 +108,12 @@ void Stack::GetVersion(TUint& aMajor, TUint& aMinor)
 	aMinor = kVersionMinor;
 }
 
-Zapp::TimerManager& Stack::TimerManager()
+OpenHome::Net::TimerManager& Stack::TimerManager()
 {
     return *(gStack->iTimerManager);
 }
 
-Zapp::Mutex& Stack::Mutex()
+OpenHome::Net::Mutex& Stack::Mutex()
 {
     return gStack->iPublicLock;
 }
@@ -161,7 +161,7 @@ void Stack::MulticastListenerRelease(TIpAddress aInterface)
 TUint Stack::SequenceNumber()
 {
     TUint seq;
-    Zapp::Mutex& lock = Stack::Mutex();
+    OpenHome::Net::Mutex& lock = Stack::Mutex();
     lock.Wait();
     seq = gStack->iSequenceNumber++;
     lock.Signal();

@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxySchemasUpnpOrgRenderingControl1
-* @module Zapp
+* @module ohNet
 * @class RenderingControl
 */
 	
@@ -18,7 +18,7 @@ var CpProxySchemasUpnpOrgRenderingControl1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["LastChange"] = new Zapp.ServiceProperty("LastChange","string");
+	this.serviceProperties["LastChange"] = new OhNet.ServiceProperty("LastChange","string");
 }
 
 
@@ -29,7 +29,7 @@ var CpProxySchemasUpnpOrgRenderingControl1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.subscribe = function (serviceAddedFunction) {
-    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
@@ -38,7 +38,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.subscribe = function (serviceAd
 * @method Unsubscribe
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.unsubscribe = function () {
-    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+    OhNet.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
@@ -52,7 +52,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.unsubscribe = function () {
 CpProxySchemasUpnpOrgRenderingControl1.prototype.LastChange_Changed = function (stateChangedFunction) {
     this.serviceProperties.LastChange.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 
@@ -65,10 +65,10 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.LastChange_Changed = function (
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.ListPresets = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ListPresets", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("ListPresets", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentPresetNameList"] = Zapp.SoapRequest.readStringParameter(result["CurrentPresetNameList"]);	
+		result["CurrentPresetNameList"] = OhNet.SoapRequest.readStringParameter(result["CurrentPresetNameList"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -88,7 +88,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.ListPresets = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SelectPreset = function(InstanceID, PresetName, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SelectPreset", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SelectPreset", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("PresetName", PresetName);
     request.send(function(result){
@@ -110,10 +110,10 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SelectPreset = function(Instanc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetBrightness = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetBrightness", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetBrightness", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentBrightness"] = Zapp.SoapRequest.readIntParameter(result["CurrentBrightness"]);	
+		result["CurrentBrightness"] = OhNet.SoapRequest.readIntParameter(result["CurrentBrightness"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -133,7 +133,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetBrightness = function(Instan
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetBrightness = function(InstanceID, DesiredBrightness, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetBrightness", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetBrightness", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredBrightness", DesiredBrightness);
     request.send(function(result){
@@ -155,10 +155,10 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetBrightness = function(Instan
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetContrast = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetContrast", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetContrast", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentContrast"] = Zapp.SoapRequest.readIntParameter(result["CurrentContrast"]);	
+		result["CurrentContrast"] = OhNet.SoapRequest.readIntParameter(result["CurrentContrast"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -178,7 +178,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetContrast = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetContrast = function(InstanceID, DesiredContrast, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetContrast", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetContrast", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredContrast", DesiredContrast);
     request.send(function(result){
@@ -200,10 +200,10 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetContrast = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetSharpness = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetSharpness", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetSharpness", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentSharpness"] = Zapp.SoapRequest.readIntParameter(result["CurrentSharpness"]);	
+		result["CurrentSharpness"] = OhNet.SoapRequest.readIntParameter(result["CurrentSharpness"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -223,7 +223,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetSharpness = function(Instanc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetSharpness = function(InstanceID, DesiredSharpness, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetSharpness", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetSharpness", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredSharpness", DesiredSharpness);
     request.send(function(result){
@@ -245,10 +245,10 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetSharpness = function(Instanc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetRedVideoGain = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRedVideoGain", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetRedVideoGain", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentRedVideoGain"] = Zapp.SoapRequest.readIntParameter(result["CurrentRedVideoGain"]);	
+		result["CurrentRedVideoGain"] = OhNet.SoapRequest.readIntParameter(result["CurrentRedVideoGain"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -268,7 +268,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetRedVideoGain = function(Inst
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetRedVideoGain = function(InstanceID, DesiredRedVideoGain, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetRedVideoGain", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetRedVideoGain", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredRedVideoGain", DesiredRedVideoGain);
     request.send(function(result){
@@ -290,10 +290,10 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetRedVideoGain = function(Inst
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetGreenVideoGain = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetGreenVideoGain", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetGreenVideoGain", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentGreenVideoGain"] = Zapp.SoapRequest.readIntParameter(result["CurrentGreenVideoGain"]);	
+		result["CurrentGreenVideoGain"] = OhNet.SoapRequest.readIntParameter(result["CurrentGreenVideoGain"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -313,7 +313,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetGreenVideoGain = function(In
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetGreenVideoGain = function(InstanceID, DesiredGreenVideoGain, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetGreenVideoGain", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetGreenVideoGain", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredGreenVideoGain", DesiredGreenVideoGain);
     request.send(function(result){
@@ -335,10 +335,10 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetGreenVideoGain = function(In
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetBlueVideoGain = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetBlueVideoGain", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetBlueVideoGain", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentBlueVideoGain"] = Zapp.SoapRequest.readIntParameter(result["CurrentBlueVideoGain"]);	
+		result["CurrentBlueVideoGain"] = OhNet.SoapRequest.readIntParameter(result["CurrentBlueVideoGain"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -358,7 +358,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetBlueVideoGain = function(Ins
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetBlueVideoGain = function(InstanceID, DesiredBlueVideoGain, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetBlueVideoGain", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetBlueVideoGain", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredBlueVideoGain", DesiredBlueVideoGain);
     request.send(function(result){
@@ -380,10 +380,10 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetBlueVideoGain = function(Ins
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetRedVideoBlackLevel = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRedVideoBlackLevel", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetRedVideoBlackLevel", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentRedVideoBlackLevel"] = Zapp.SoapRequest.readIntParameter(result["CurrentRedVideoBlackLevel"]);	
+		result["CurrentRedVideoBlackLevel"] = OhNet.SoapRequest.readIntParameter(result["CurrentRedVideoBlackLevel"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -403,7 +403,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetRedVideoBlackLevel = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetRedVideoBlackLevel = function(InstanceID, DesiredRedVideoBlackLevel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetRedVideoBlackLevel", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetRedVideoBlackLevel", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredRedVideoBlackLevel", DesiredRedVideoBlackLevel);
     request.send(function(result){
@@ -425,10 +425,10 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetRedVideoBlackLevel = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetGreenVideoBlackLevel = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetGreenVideoBlackLevel", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetGreenVideoBlackLevel", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentGreenVideoBlackLevel"] = Zapp.SoapRequest.readIntParameter(result["CurrentGreenVideoBlackLevel"]);	
+		result["CurrentGreenVideoBlackLevel"] = OhNet.SoapRequest.readIntParameter(result["CurrentGreenVideoBlackLevel"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -448,7 +448,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetGreenVideoBlackLevel = funct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetGreenVideoBlackLevel = function(InstanceID, DesiredGreenVideoBlackLevel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetGreenVideoBlackLevel", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetGreenVideoBlackLevel", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredGreenVideoBlackLevel", DesiredGreenVideoBlackLevel);
     request.send(function(result){
@@ -470,10 +470,10 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetGreenVideoBlackLevel = funct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetBlueVideoBlackLevel = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetBlueVideoBlackLevel", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetBlueVideoBlackLevel", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentBlueVideoBlackLevel"] = Zapp.SoapRequest.readIntParameter(result["CurrentBlueVideoBlackLevel"]);	
+		result["CurrentBlueVideoBlackLevel"] = OhNet.SoapRequest.readIntParameter(result["CurrentBlueVideoBlackLevel"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -493,7 +493,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetBlueVideoBlackLevel = functi
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetBlueVideoBlackLevel = function(InstanceID, DesiredBlueVideoBlackLevel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetBlueVideoBlackLevel", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetBlueVideoBlackLevel", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredBlueVideoBlackLevel", DesiredBlueVideoBlackLevel);
     request.send(function(result){
@@ -515,10 +515,10 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetBlueVideoBlackLevel = functi
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetColorTemperature = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetColorTemperature", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetColorTemperature", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentColorTemperature"] = Zapp.SoapRequest.readIntParameter(result["CurrentColorTemperature"]);	
+		result["CurrentColorTemperature"] = OhNet.SoapRequest.readIntParameter(result["CurrentColorTemperature"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -538,7 +538,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetColorTemperature = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetColorTemperature = function(InstanceID, DesiredColorTemperature, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetColorTemperature", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetColorTemperature", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredColorTemperature", DesiredColorTemperature);
     request.send(function(result){
@@ -560,10 +560,10 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetColorTemperature = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetHorizontalKeystone = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetHorizontalKeystone", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetHorizontalKeystone", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentHorizontalKeystone"] = Zapp.SoapRequest.readIntParameter(result["CurrentHorizontalKeystone"]);	
+		result["CurrentHorizontalKeystone"] = OhNet.SoapRequest.readIntParameter(result["CurrentHorizontalKeystone"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -583,7 +583,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetHorizontalKeystone = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetHorizontalKeystone = function(InstanceID, DesiredHorizontalKeystone, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetHorizontalKeystone", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetHorizontalKeystone", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredHorizontalKeystone", DesiredHorizontalKeystone);
     request.send(function(result){
@@ -605,10 +605,10 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetHorizontalKeystone = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetVerticalKeystone = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetVerticalKeystone", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetVerticalKeystone", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentVerticalKeystone"] = Zapp.SoapRequest.readIntParameter(result["CurrentVerticalKeystone"]);	
+		result["CurrentVerticalKeystone"] = OhNet.SoapRequest.readIntParameter(result["CurrentVerticalKeystone"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -628,7 +628,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetVerticalKeystone = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetVerticalKeystone = function(InstanceID, DesiredVerticalKeystone, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetVerticalKeystone", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetVerticalKeystone", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeIntParameter("DesiredVerticalKeystone", DesiredVerticalKeystone);
     request.send(function(result){
@@ -651,11 +651,11 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetVerticalKeystone = function(
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetMute = function(InstanceID, Channel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetMute", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetMute", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.send(function(result){
-		result["CurrentMute"] = Zapp.SoapRequest.readBoolParameter(result["CurrentMute"]);	
+		result["CurrentMute"] = OhNet.SoapRequest.readBoolParameter(result["CurrentMute"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -676,7 +676,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetMute = function(InstanceID, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetMute = function(InstanceID, Channel, DesiredMute, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetMute", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetMute", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.writeBoolParameter("DesiredMute", DesiredMute);
@@ -700,11 +700,11 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetMute = function(InstanceID, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetVolume = function(InstanceID, Channel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetVolume", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetVolume", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.send(function(result){
-		result["CurrentVolume"] = Zapp.SoapRequest.readIntParameter(result["CurrentVolume"]);	
+		result["CurrentVolume"] = OhNet.SoapRequest.readIntParameter(result["CurrentVolume"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -725,7 +725,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetVolume = function(InstanceID
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetVolume = function(InstanceID, Channel, DesiredVolume, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetVolume", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetVolume", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.writeIntParameter("DesiredVolume", DesiredVolume);
@@ -749,11 +749,11 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetVolume = function(InstanceID
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetVolumeDB = function(InstanceID, Channel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetVolumeDB", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetVolumeDB", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.send(function(result){
-		result["CurrentVolume"] = Zapp.SoapRequest.readIntParameter(result["CurrentVolume"]);	
+		result["CurrentVolume"] = OhNet.SoapRequest.readIntParameter(result["CurrentVolume"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -774,7 +774,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetVolumeDB = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetVolumeDB = function(InstanceID, Channel, DesiredVolume, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetVolumeDB", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetVolumeDB", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.writeIntParameter("DesiredVolume", DesiredVolume);
@@ -798,12 +798,12 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.SetVolumeDB = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetVolumeDBRange = function(InstanceID, Channel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetVolumeDBRange", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetVolumeDBRange", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.send(function(result){
-		result["MinValue"] = Zapp.SoapRequest.readIntParameter(result["MinValue"]);	
-		result["MaxValue"] = Zapp.SoapRequest.readIntParameter(result["MaxValue"]);	
+		result["MinValue"] = OhNet.SoapRequest.readIntParameter(result["MinValue"]);	
+		result["MaxValue"] = OhNet.SoapRequest.readIntParameter(result["MaxValue"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -823,11 +823,11 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetVolumeDBRange = function(Ins
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.GetLoudness = function(InstanceID, Channel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetLoudness", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetLoudness", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.send(function(result){
-		result["CurrentLoudness"] = Zapp.SoapRequest.readBoolParameter(result["CurrentLoudness"]);	
+		result["CurrentLoudness"] = OhNet.SoapRequest.readBoolParameter(result["CurrentLoudness"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -848,7 +848,7 @@ CpProxySchemasUpnpOrgRenderingControl1.prototype.GetLoudness = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgRenderingControl1.prototype.SetLoudness = function(InstanceID, Channel, DesiredLoudness, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetLoudness", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetLoudness", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Channel", Channel);
     request.writeBoolParameter("DesiredLoudness", DesiredLoudness);

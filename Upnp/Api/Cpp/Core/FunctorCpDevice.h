@@ -1,11 +1,12 @@
 #ifndef HEADER_IFACE_DEVICE
 #define HEADER_IFACE_DEVICE
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <stddef.h>
 #include <string.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpDevice;
 
@@ -74,6 +75,7 @@ MakeFunctorCpDevice(Object& aC, void(CallType::* const &aF)(CpDevice&))
     return MemberTranslatorCpDevice<Object,MemFunc>(aC,aF);
     }
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_IFACE_DEVICE

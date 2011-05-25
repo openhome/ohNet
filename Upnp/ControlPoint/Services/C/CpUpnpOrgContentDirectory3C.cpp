@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyUpnpOrgContentDirectory3C : public CpProxyC
 {
@@ -603,139 +603,139 @@ CpProxyUpnpOrgContentDirectory3C::CpProxyUpnpOrgContentDirectory3C(CpDeviceC aDe
     : CpProxyC("schemas-upnp-org", "ContentDirectory", 3, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
     iActionGetSearchCapabilities = new Action("GetSearchCapabilities");
-    param = new Zapp::ParameterString("SearchCaps");
+    param = new OpenHome::Net::ParameterString("SearchCaps");
     iActionGetSearchCapabilities->AddOutputParameter(param);
 
     iActionGetSortCapabilities = new Action("GetSortCapabilities");
-    param = new Zapp::ParameterString("SortCaps");
+    param = new OpenHome::Net::ParameterString("SortCaps");
     iActionGetSortCapabilities->AddOutputParameter(param);
 
     iActionGetSortExtensionCapabilities = new Action("GetSortExtensionCapabilities");
-    param = new Zapp::ParameterString("SortExtensionCaps");
+    param = new OpenHome::Net::ParameterString("SortExtensionCaps");
     iActionGetSortExtensionCapabilities->AddOutputParameter(param);
 
     iActionGetFeatureList = new Action("GetFeatureList");
-    param = new Zapp::ParameterString("FeatureList");
+    param = new OpenHome::Net::ParameterString("FeatureList");
     iActionGetFeatureList->AddOutputParameter(param);
 
     iActionGetSystemUpdateID = new Action("GetSystemUpdateID");
-    param = new Zapp::ParameterUint("Id");
+    param = new OpenHome::Net::ParameterUint("Id");
     iActionGetSystemUpdateID->AddOutputParameter(param);
 
     iActionGetServiceResetToken = new Action("GetServiceResetToken");
-    param = new Zapp::ParameterString("ResetToken");
+    param = new OpenHome::Net::ParameterString("ResetToken");
     iActionGetServiceResetToken->AddOutputParameter(param);
 
     iActionBrowse = new Action("Browse");
-    param = new Zapp::ParameterString("ObjectID");
+    param = new OpenHome::Net::ParameterString("ObjectID");
     iActionBrowse->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[2];
     allowedValues[index++] = (TChar*)"BrowseMetadata";
     allowedValues[index++] = (TChar*)"BrowseDirectChildren";
-    param = new Zapp::ParameterString("BrowseFlag", allowedValues, 2);
+    param = new OpenHome::Net::ParameterString("BrowseFlag", allowedValues, 2);
     iActionBrowse->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionBrowse->AddInputParameter(param);
-    param = new Zapp::ParameterUint("StartingIndex");
+    param = new OpenHome::Net::ParameterUint("StartingIndex");
     iActionBrowse->AddInputParameter(param);
-    param = new Zapp::ParameterUint("RequestedCount");
+    param = new OpenHome::Net::ParameterUint("RequestedCount");
     iActionBrowse->AddInputParameter(param);
-    param = new Zapp::ParameterString("SortCriteria");
+    param = new OpenHome::Net::ParameterString("SortCriteria");
     iActionBrowse->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionBrowse->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("NumberReturned");
+    param = new OpenHome::Net::ParameterUint("NumberReturned");
     iActionBrowse->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("TotalMatches");
+    param = new OpenHome::Net::ParameterUint("TotalMatches");
     iActionBrowse->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionBrowse->AddOutputParameter(param);
 
     iActionSearch = new Action("Search");
-    param = new Zapp::ParameterString("ContainerID");
+    param = new OpenHome::Net::ParameterString("ContainerID");
     iActionSearch->AddInputParameter(param);
-    param = new Zapp::ParameterString("SearchCriteria");
+    param = new OpenHome::Net::ParameterString("SearchCriteria");
     iActionSearch->AddInputParameter(param);
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionSearch->AddInputParameter(param);
-    param = new Zapp::ParameterUint("StartingIndex");
+    param = new OpenHome::Net::ParameterUint("StartingIndex");
     iActionSearch->AddInputParameter(param);
-    param = new Zapp::ParameterUint("RequestedCount");
+    param = new OpenHome::Net::ParameterUint("RequestedCount");
     iActionSearch->AddInputParameter(param);
-    param = new Zapp::ParameterString("SortCriteria");
+    param = new OpenHome::Net::ParameterString("SortCriteria");
     iActionSearch->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionSearch->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("NumberReturned");
+    param = new OpenHome::Net::ParameterUint("NumberReturned");
     iActionSearch->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("TotalMatches");
+    param = new OpenHome::Net::ParameterUint("TotalMatches");
     iActionSearch->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionSearch->AddOutputParameter(param);
 
     iActionCreateObject = new Action("CreateObject");
-    param = new Zapp::ParameterString("ContainerID");
+    param = new OpenHome::Net::ParameterString("ContainerID");
     iActionCreateObject->AddInputParameter(param);
-    param = new Zapp::ParameterString("Elements");
+    param = new OpenHome::Net::ParameterString("Elements");
     iActionCreateObject->AddInputParameter(param);
-    param = new Zapp::ParameterString("ObjectID");
+    param = new OpenHome::Net::ParameterString("ObjectID");
     iActionCreateObject->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionCreateObject->AddOutputParameter(param);
 
     iActionDestroyObject = new Action("DestroyObject");
-    param = new Zapp::ParameterString("ObjectID");
+    param = new OpenHome::Net::ParameterString("ObjectID");
     iActionDestroyObject->AddInputParameter(param);
 
     iActionUpdateObject = new Action("UpdateObject");
-    param = new Zapp::ParameterString("ObjectID");
+    param = new OpenHome::Net::ParameterString("ObjectID");
     iActionUpdateObject->AddInputParameter(param);
-    param = new Zapp::ParameterString("CurrentTagValue");
+    param = new OpenHome::Net::ParameterString("CurrentTagValue");
     iActionUpdateObject->AddInputParameter(param);
-    param = new Zapp::ParameterString("NewTagValue");
+    param = new OpenHome::Net::ParameterString("NewTagValue");
     iActionUpdateObject->AddInputParameter(param);
 
     iActionMoveObject = new Action("MoveObject");
-    param = new Zapp::ParameterString("ObjectID");
+    param = new OpenHome::Net::ParameterString("ObjectID");
     iActionMoveObject->AddInputParameter(param);
-    param = new Zapp::ParameterString("NewParentID");
+    param = new OpenHome::Net::ParameterString("NewParentID");
     iActionMoveObject->AddInputParameter(param);
-    param = new Zapp::ParameterString("NewObjectID");
+    param = new OpenHome::Net::ParameterString("NewObjectID");
     iActionMoveObject->AddOutputParameter(param);
 
     iActionImportResource = new Action("ImportResource");
-    param = new Zapp::ParameterString("SourceURI");
+    param = new OpenHome::Net::ParameterString("SourceURI");
     iActionImportResource->AddInputParameter(param);
-    param = new Zapp::ParameterString("DestinationURI");
+    param = new OpenHome::Net::ParameterString("DestinationURI");
     iActionImportResource->AddInputParameter(param);
-    param = new Zapp::ParameterUint("TransferID");
+    param = new OpenHome::Net::ParameterUint("TransferID");
     iActionImportResource->AddOutputParameter(param);
 
     iActionExportResource = new Action("ExportResource");
-    param = new Zapp::ParameterString("SourceURI");
+    param = new OpenHome::Net::ParameterString("SourceURI");
     iActionExportResource->AddInputParameter(param);
-    param = new Zapp::ParameterString("DestinationURI");
+    param = new OpenHome::Net::ParameterString("DestinationURI");
     iActionExportResource->AddInputParameter(param);
-    param = new Zapp::ParameterUint("TransferID");
+    param = new OpenHome::Net::ParameterUint("TransferID");
     iActionExportResource->AddOutputParameter(param);
 
     iActionDeleteResource = new Action("DeleteResource");
-    param = new Zapp::ParameterString("ResourceURI");
+    param = new OpenHome::Net::ParameterString("ResourceURI");
     iActionDeleteResource->AddInputParameter(param);
 
     iActionStopTransferResource = new Action("StopTransferResource");
-    param = new Zapp::ParameterUint("TransferID");
+    param = new OpenHome::Net::ParameterUint("TransferID");
     iActionStopTransferResource->AddInputParameter(param);
 
     iActionGetTransferProgress = new Action("GetTransferProgress");
-    param = new Zapp::ParameterUint("TransferID");
+    param = new OpenHome::Net::ParameterUint("TransferID");
     iActionGetTransferProgress->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[4];
@@ -743,36 +743,36 @@ CpProxyUpnpOrgContentDirectory3C::CpProxyUpnpOrgContentDirectory3C(CpDeviceC aDe
     allowedValues[index++] = (TChar*)"ERROR";
     allowedValues[index++] = (TChar*)"IN_PROGRESS";
     allowedValues[index++] = (TChar*)"STOPPED";
-    param = new Zapp::ParameterString("TransferStatus", allowedValues, 4);
+    param = new OpenHome::Net::ParameterString("TransferStatus", allowedValues, 4);
     iActionGetTransferProgress->AddOutputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterString("TransferLength");
+    param = new OpenHome::Net::ParameterString("TransferLength");
     iActionGetTransferProgress->AddOutputParameter(param);
-    param = new Zapp::ParameterString("TransferTotal");
+    param = new OpenHome::Net::ParameterString("TransferTotal");
     iActionGetTransferProgress->AddOutputParameter(param);
 
     iActionCreateReference = new Action("CreateReference");
-    param = new Zapp::ParameterString("ContainerID");
+    param = new OpenHome::Net::ParameterString("ContainerID");
     iActionCreateReference->AddInputParameter(param);
-    param = new Zapp::ParameterString("ObjectID");
+    param = new OpenHome::Net::ParameterString("ObjectID");
     iActionCreateReference->AddInputParameter(param);
-    param = new Zapp::ParameterString("NewID");
+    param = new OpenHome::Net::ParameterString("NewID");
     iActionCreateReference->AddOutputParameter(param);
 
     iActionFreeFormQuery = new Action("FreeFormQuery");
-    param = new Zapp::ParameterString("ContainerID");
+    param = new OpenHome::Net::ParameterString("ContainerID");
     iActionFreeFormQuery->AddInputParameter(param);
-    param = new Zapp::ParameterUint("CDSView");
+    param = new OpenHome::Net::ParameterUint("CDSView");
     iActionFreeFormQuery->AddInputParameter(param);
-    param = new Zapp::ParameterString("QueryRequest");
+    param = new OpenHome::Net::ParameterString("QueryRequest");
     iActionFreeFormQuery->AddInputParameter(param);
-    param = new Zapp::ParameterString("QueryResult");
+    param = new OpenHome::Net::ParameterString("QueryResult");
     iActionFreeFormQuery->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionFreeFormQuery->AddOutputParameter(param);
 
     iActionGetFreeFormQueryCapabilities = new Action("GetFreeFormQueryCapabilities");
-    param = new Zapp::ParameterString("FFQCapabilities");
+    param = new OpenHome::Net::ParameterString("FFQCapabilities");
     iActionGetFreeFormQueryCapabilities->AddOutputParameter(param);
 
     Functor functor;
@@ -1554,15 +1554,15 @@ void CpProxyUpnpOrgContentDirectory3SyncGetSearchCapabilities(THandle aHandle, c
     *aSearchCaps = buf_aSearchCaps.Extract();
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginGetSearchCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginGetSearchCapabilities(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetSearchCapabilities(functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndGetSearchCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aSearchCaps)
+int32_t CpProxyUpnpOrgContentDirectory3EndGetSearchCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aSearchCaps)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -1590,15 +1590,15 @@ void CpProxyUpnpOrgContentDirectory3SyncGetSortCapabilities(THandle aHandle, cha
     *aSortCaps = buf_aSortCaps.Extract();
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginGetSortCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginGetSortCapabilities(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetSortCapabilities(functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndGetSortCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aSortCaps)
+int32_t CpProxyUpnpOrgContentDirectory3EndGetSortCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aSortCaps)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -1626,15 +1626,15 @@ void CpProxyUpnpOrgContentDirectory3SyncGetSortExtensionCapabilities(THandle aHa
     *aSortExtensionCaps = buf_aSortExtensionCaps.Extract();
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginGetSortExtensionCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginGetSortExtensionCapabilities(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetSortExtensionCapabilities(functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndGetSortExtensionCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aSortExtensionCaps)
+int32_t CpProxyUpnpOrgContentDirectory3EndGetSortExtensionCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aSortExtensionCaps)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -1662,15 +1662,15 @@ void CpProxyUpnpOrgContentDirectory3SyncGetFeatureList(THandle aHandle, char** a
     *aFeatureList = buf_aFeatureList.Extract();
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginGetFeatureList(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginGetFeatureList(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetFeatureList(functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndGetFeatureList(THandle aHandle, ZappHandleAsync aAsync, char** aFeatureList)
+int32_t CpProxyUpnpOrgContentDirectory3EndGetFeatureList(THandle aHandle, OhNetHandleAsync aAsync, char** aFeatureList)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -1696,15 +1696,15 @@ void CpProxyUpnpOrgContentDirectory3SyncGetSystemUpdateID(THandle aHandle, uint3
     proxyC->SyncGetSystemUpdateID(*aId);
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginGetSystemUpdateID(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginGetSystemUpdateID(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetSystemUpdateID(functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndGetSystemUpdateID(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aId)
+int32_t CpProxyUpnpOrgContentDirectory3EndGetSystemUpdateID(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aId)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -1729,15 +1729,15 @@ void CpProxyUpnpOrgContentDirectory3SyncGetServiceResetToken(THandle aHandle, ch
     *aResetToken = buf_aResetToken.Extract();
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginGetServiceResetToken(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginGetServiceResetToken(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetServiceResetToken(functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndGetServiceResetToken(THandle aHandle, ZappHandleAsync aAsync, char** aResetToken)
+int32_t CpProxyUpnpOrgContentDirectory3EndGetServiceResetToken(THandle aHandle, OhNetHandleAsync aAsync, char** aResetToken)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -1769,7 +1769,7 @@ void CpProxyUpnpOrgContentDirectory3SyncBrowse(THandle aHandle, const char* aObj
     *aResult = buf_aResult.Extract();
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginBrowse(THandle aHandle, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginBrowse(THandle aHandle, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1777,11 +1777,11 @@ void CpProxyUpnpOrgContentDirectory3BeginBrowse(THandle aHandle, const char* aOb
     Brh buf_aBrowseFlag(aBrowseFlag);
     Brh buf_aFilter(aFilter);
     Brh buf_aSortCriteria(aSortCriteria);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginBrowse(buf_aObjectID, buf_aBrowseFlag, buf_aFilter, aStartingIndex, aRequestedCount, buf_aSortCriteria, functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndBrowse(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
+int32_t CpProxyUpnpOrgContentDirectory3EndBrowse(THandle aHandle, OhNetHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -1813,7 +1813,7 @@ void CpProxyUpnpOrgContentDirectory3SyncSearch(THandle aHandle, const char* aCon
     *aResult = buf_aResult.Extract();
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginSearch(THandle aHandle, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginSearch(THandle aHandle, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1821,11 +1821,11 @@ void CpProxyUpnpOrgContentDirectory3BeginSearch(THandle aHandle, const char* aCo
     Brh buf_aSearchCriteria(aSearchCriteria);
     Brh buf_aFilter(aFilter);
     Brh buf_aSortCriteria(aSortCriteria);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSearch(buf_aContainerID, buf_aSearchCriteria, buf_aFilter, aStartingIndex, aRequestedCount, buf_aSortCriteria, functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndSearch(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
+int32_t CpProxyUpnpOrgContentDirectory3EndSearch(THandle aHandle, OhNetHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -1857,17 +1857,17 @@ void CpProxyUpnpOrgContentDirectory3SyncCreateObject(THandle aHandle, const char
     *aResult = buf_aResult.Extract();
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginCreateObject(THandle aHandle, const char* aContainerID, const char* aElements, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginCreateObject(THandle aHandle, const char* aContainerID, const char* aElements, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aContainerID(aContainerID);
     Brh buf_aElements(aElements);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginCreateObject(buf_aContainerID, buf_aElements, functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndCreateObject(THandle aHandle, ZappHandleAsync aAsync, char** aObjectID, char** aResult)
+int32_t CpProxyUpnpOrgContentDirectory3EndCreateObject(THandle aHandle, OhNetHandleAsync aAsync, char** aObjectID, char** aResult)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -1897,16 +1897,16 @@ void CpProxyUpnpOrgContentDirectory3SyncDestroyObject(THandle aHandle, const cha
     proxyC->SyncDestroyObject(buf_aObjectID);
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginDestroyObject(THandle aHandle, const char* aObjectID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginDestroyObject(THandle aHandle, const char* aObjectID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aObjectID(aObjectID);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginDestroyObject(buf_aObjectID, functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndDestroyObject(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgContentDirectory3EndDestroyObject(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -1932,18 +1932,18 @@ void CpProxyUpnpOrgContentDirectory3SyncUpdateObject(THandle aHandle, const char
     proxyC->SyncUpdateObject(buf_aObjectID, buf_aCurrentTagValue, buf_aNewTagValue);
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginUpdateObject(THandle aHandle, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginUpdateObject(THandle aHandle, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aObjectID(aObjectID);
     Brh buf_aCurrentTagValue(aCurrentTagValue);
     Brh buf_aNewTagValue(aNewTagValue);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginUpdateObject(buf_aObjectID, buf_aCurrentTagValue, buf_aNewTagValue, functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndUpdateObject(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgContentDirectory3EndUpdateObject(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -1970,17 +1970,17 @@ void CpProxyUpnpOrgContentDirectory3SyncMoveObject(THandle aHandle, const char* 
     *aNewObjectID = buf_aNewObjectID.Extract();
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginMoveObject(THandle aHandle, const char* aObjectID, const char* aNewParentID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginMoveObject(THandle aHandle, const char* aObjectID, const char* aNewParentID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aObjectID(aObjectID);
     Brh buf_aNewParentID(aNewParentID);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginMoveObject(buf_aObjectID, buf_aNewParentID, functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndMoveObject(THandle aHandle, ZappHandleAsync aAsync, char** aNewObjectID)
+int32_t CpProxyUpnpOrgContentDirectory3EndMoveObject(THandle aHandle, OhNetHandleAsync aAsync, char** aNewObjectID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -2008,17 +2008,17 @@ void CpProxyUpnpOrgContentDirectory3SyncImportResource(THandle aHandle, const ch
     proxyC->SyncImportResource(buf_aSourceURI, buf_aDestinationURI, *aTransferID);
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginImportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginImportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSourceURI(aSourceURI);
     Brh buf_aDestinationURI(aDestinationURI);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginImportResource(buf_aSourceURI, buf_aDestinationURI, functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndImportResource(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aTransferID)
+int32_t CpProxyUpnpOrgContentDirectory3EndImportResource(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTransferID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -2043,17 +2043,17 @@ void CpProxyUpnpOrgContentDirectory3SyncExportResource(THandle aHandle, const ch
     proxyC->SyncExportResource(buf_aSourceURI, buf_aDestinationURI, *aTransferID);
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginExportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginExportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSourceURI(aSourceURI);
     Brh buf_aDestinationURI(aDestinationURI);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginExportResource(buf_aSourceURI, buf_aDestinationURI, functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndExportResource(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aTransferID)
+int32_t CpProxyUpnpOrgContentDirectory3EndExportResource(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTransferID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -2077,16 +2077,16 @@ void CpProxyUpnpOrgContentDirectory3SyncDeleteResource(THandle aHandle, const ch
     proxyC->SyncDeleteResource(buf_aResourceURI);
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginDeleteResource(THandle aHandle, const char* aResourceURI, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginDeleteResource(THandle aHandle, const char* aResourceURI, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aResourceURI(aResourceURI);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginDeleteResource(buf_aResourceURI, functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndDeleteResource(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgContentDirectory3EndDeleteResource(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -2109,15 +2109,15 @@ void CpProxyUpnpOrgContentDirectory3SyncStopTransferResource(THandle aHandle, ui
     proxyC->SyncStopTransferResource(aTransferID);
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginStopTransferResource(THandle aHandle, uint32_t aTransferID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginStopTransferResource(THandle aHandle, uint32_t aTransferID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginStopTransferResource(aTransferID, functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndStopTransferResource(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgContentDirectory3EndStopTransferResource(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -2146,15 +2146,15 @@ void CpProxyUpnpOrgContentDirectory3SyncGetTransferProgress(THandle aHandle, uin
     *aTransferTotal = buf_aTransferTotal.Extract();
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginGetTransferProgress(THandle aHandle, uint32_t aTransferID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginGetTransferProgress(THandle aHandle, uint32_t aTransferID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetTransferProgress(aTransferID, functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndGetTransferProgress(THandle aHandle, ZappHandleAsync aAsync, char** aTransferStatus, char** aTransferLength, char** aTransferTotal)
+int32_t CpProxyUpnpOrgContentDirectory3EndGetTransferProgress(THandle aHandle, OhNetHandleAsync aAsync, char** aTransferStatus, char** aTransferLength, char** aTransferTotal)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -2190,17 +2190,17 @@ void CpProxyUpnpOrgContentDirectory3SyncCreateReference(THandle aHandle, const c
     *aNewID = buf_aNewID.Extract();
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginCreateReference(THandle aHandle, const char* aContainerID, const char* aObjectID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginCreateReference(THandle aHandle, const char* aContainerID, const char* aObjectID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aContainerID(aContainerID);
     Brh buf_aObjectID(aObjectID);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginCreateReference(buf_aContainerID, buf_aObjectID, functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndCreateReference(THandle aHandle, ZappHandleAsync aAsync, char** aNewID)
+int32_t CpProxyUpnpOrgContentDirectory3EndCreateReference(THandle aHandle, OhNetHandleAsync aAsync, char** aNewID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -2230,17 +2230,17 @@ void CpProxyUpnpOrgContentDirectory3SyncFreeFormQuery(THandle aHandle, const cha
     *aQueryResult = buf_aQueryResult.Extract();
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginFreeFormQuery(THandle aHandle, const char* aContainerID, uint32_t aCDSView, const char* aQueryRequest, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginFreeFormQuery(THandle aHandle, const char* aContainerID, uint32_t aCDSView, const char* aQueryRequest, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aContainerID(aContainerID);
     Brh buf_aQueryRequest(aQueryRequest);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginFreeFormQuery(buf_aContainerID, aCDSView, buf_aQueryRequest, functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndFreeFormQuery(THandle aHandle, ZappHandleAsync aAsync, char** aQueryResult, uint32_t* aUpdateID)
+int32_t CpProxyUpnpOrgContentDirectory3EndFreeFormQuery(THandle aHandle, OhNetHandleAsync aAsync, char** aQueryResult, uint32_t* aUpdateID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -2268,15 +2268,15 @@ void CpProxyUpnpOrgContentDirectory3SyncGetFreeFormQueryCapabilities(THandle aHa
     *aFFQCapabilities = buf_aFFQCapabilities.Extract();
 }
 
-void CpProxyUpnpOrgContentDirectory3BeginGetFreeFormQueryCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3BeginGetFreeFormQueryCapabilities(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetFreeFormQueryCapabilities(functor);
 }
 
-int32_t CpProxyUpnpOrgContentDirectory3EndGetFreeFormQueryCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aFFQCapabilities)
+int32_t CpProxyUpnpOrgContentDirectory3EndGetFreeFormQueryCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aFFQCapabilities)
 {
     int32_t err = 0;
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
@@ -2295,7 +2295,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndGetFreeFormQueryCapabilities(THandle a
     return err;
 }
 
-void CpProxyUpnpOrgContentDirectory3SetPropertySystemUpdateIDChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3SetPropertySystemUpdateIDChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2303,7 +2303,7 @@ void CpProxyUpnpOrgContentDirectory3SetPropertySystemUpdateIDChanged(THandle aHa
     proxyC->SetPropertySystemUpdateIDChanged(functor);
 }
 
-void CpProxyUpnpOrgContentDirectory3SetPropertyContainerUpdateIDsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3SetPropertyContainerUpdateIDsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2311,7 +2311,7 @@ void CpProxyUpnpOrgContentDirectory3SetPropertyContainerUpdateIDsChanged(THandle
     proxyC->SetPropertyContainerUpdateIDsChanged(functor);
 }
 
-void CpProxyUpnpOrgContentDirectory3SetPropertyLastChangeChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2319,7 +2319,7 @@ void CpProxyUpnpOrgContentDirectory3SetPropertyLastChangeChanged(THandle aHandle
     proxyC->SetPropertyLastChangeChanged(functor);
 }
 
-void CpProxyUpnpOrgContentDirectory3SetPropertyTransferIDsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgContentDirectory3SetPropertyTransferIDsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);

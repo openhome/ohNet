@@ -2,7 +2,7 @@
 #define HEADER_TOPOLOGY3
 
 #include <Standard.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Fifo.h>
 #include <Thread.h>
 
@@ -11,7 +11,8 @@
 
 #include "CpTopology2.h"
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpTopology3Room;
 
@@ -222,6 +223,7 @@ private:
     std::list<CpTopology3Room*> iRoomList;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_TOPOLOGY3

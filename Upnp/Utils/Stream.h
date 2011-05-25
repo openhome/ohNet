@@ -2,13 +2,14 @@
 #define HEADER_STREAM
 
 #include <Standard.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 
 EXCEPTION(ReaderError);
 EXCEPTION(WriterError);
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IReader
 {
@@ -216,6 +217,7 @@ private:
     IWriter& iWriter;
 };
 
-} //namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_STREAM

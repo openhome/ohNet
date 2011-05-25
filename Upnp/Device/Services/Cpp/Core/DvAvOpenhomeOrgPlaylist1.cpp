@@ -1,10 +1,10 @@
 #include "DvAvOpenhomeOrgPlaylist1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 TBool DvProviderAvOpenhomeOrgPlaylist1::SetPropertyTransportState(const Brx& aValue)
 {
@@ -107,42 +107,42 @@ DvProviderAvOpenhomeOrgPlaylist1::DvProviderAvOpenhomeOrgPlaylist1(DvDevice& aDe
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionPlay()
 {
-    Zapp::Action* action = new Zapp::Action("Play");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Play");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoPlay);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionPause()
 {
-    Zapp::Action* action = new Zapp::Action("Pause");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Pause");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoPause);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionStop()
 {
-    Zapp::Action* action = new Zapp::Action("Stop");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Stop");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoStop);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionNext()
 {
-    Zapp::Action* action = new Zapp::Action("Next");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Next");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoNext);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionPrevious()
 {
-    Zapp::Action* action = new Zapp::Action("Previous");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Previous");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoPrevious);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionSetRepeat()
 {
-    Zapp::Action* action = new Zapp::Action("SetRepeat");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetRepeat");
     action->AddInputParameter(new ParameterRelated("Value", *iPropertyRepeat));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoSetRepeat);
     iService->AddAction(action, functor);
@@ -150,7 +150,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionSetRepeat()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionRepeat()
 {
-    Zapp::Action* action = new Zapp::Action("Repeat");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Repeat");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyRepeat));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoRepeat);
     iService->AddAction(action, functor);
@@ -158,7 +158,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionRepeat()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionSetShuffle()
 {
-    Zapp::Action* action = new Zapp::Action("SetShuffle");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetShuffle");
     action->AddInputParameter(new ParameterRelated("Value", *iPropertyShuffle));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoSetShuffle);
     iService->AddAction(action, functor);
@@ -166,7 +166,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionSetShuffle()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionShuffle()
 {
-    Zapp::Action* action = new Zapp::Action("Shuffle");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Shuffle");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyShuffle));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoShuffle);
     iService->AddAction(action, functor);
@@ -174,7 +174,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionShuffle()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionSeekSecondAbsolute()
 {
-    Zapp::Action* action = new Zapp::Action("SeekSecondAbsolute");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SeekSecondAbsolute");
     action->AddInputParameter(new ParameterUint("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoSeekSecondAbsolute);
     iService->AddAction(action, functor);
@@ -182,7 +182,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionSeekSecondAbsolute()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionSeekSecondRelative()
 {
-    Zapp::Action* action = new Zapp::Action("SeekSecondRelative");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SeekSecondRelative");
     action->AddInputParameter(new ParameterInt("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoSeekSecondRelative);
     iService->AddAction(action, functor);
@@ -190,7 +190,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionSeekSecondRelative()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionSeekId()
 {
-    Zapp::Action* action = new Zapp::Action("SeekId");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SeekId");
     action->AddInputParameter(new ParameterRelated("Value", *iPropertyId));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoSeekId);
     iService->AddAction(action, functor);
@@ -198,7 +198,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionSeekId()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionSeekIndex()
 {
-    Zapp::Action* action = new Zapp::Action("SeekIndex");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SeekIndex");
     action->AddInputParameter(new ParameterUint("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoSeekIndex);
     iService->AddAction(action, functor);
@@ -206,7 +206,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionSeekIndex()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionTransportState()
 {
-    Zapp::Action* action = new Zapp::Action("TransportState");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("TransportState");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyTransportState));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoTransportState);
     iService->AddAction(action, functor);
@@ -214,7 +214,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionTransportState()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionId()
 {
-    Zapp::Action* action = new Zapp::Action("Id");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Id");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyId));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoId);
     iService->AddAction(action, functor);
@@ -222,7 +222,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionId()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionRead()
 {
-    Zapp::Action* action = new Zapp::Action("Read");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Read");
     action->AddInputParameter(new ParameterRelated("Id", *iPropertyId));
     action->AddOutputParameter(new ParameterString("Uri"));
     action->AddOutputParameter(new ParameterString("Metadata"));
@@ -232,7 +232,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionRead()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionReadList()
 {
-    Zapp::Action* action = new Zapp::Action("ReadList");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ReadList");
     action->AddInputParameter(new ParameterString("IdList"));
     action->AddOutputParameter(new ParameterString("TrackList"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoReadList);
@@ -241,7 +241,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionReadList()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionInsert()
 {
-    Zapp::Action* action = new Zapp::Action("Insert");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Insert");
     action->AddInputParameter(new ParameterRelated("AfterId", *iPropertyId));
     action->AddInputParameter(new ParameterString("Uri"));
     action->AddInputParameter(new ParameterString("Metadata"));
@@ -252,7 +252,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionInsert()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionDeleteId()
 {
-    Zapp::Action* action = new Zapp::Action("DeleteId");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("DeleteId");
     action->AddInputParameter(new ParameterRelated("Value", *iPropertyId));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoDeleteId);
     iService->AddAction(action, functor);
@@ -260,14 +260,14 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionDeleteId()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionDeleteAll()
 {
-    Zapp::Action* action = new Zapp::Action("DeleteAll");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("DeleteAll");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoDeleteAll);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionTracksMax()
 {
-    Zapp::Action* action = new Zapp::Action("TracksMax");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("TracksMax");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyTracksMax));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoTracksMax);
     iService->AddAction(action, functor);
@@ -275,7 +275,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionTracksMax()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionIdArray()
 {
-    Zapp::Action* action = new Zapp::Action("IdArray");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("IdArray");
     action->AddOutputParameter(new ParameterUint("Token"));
     action->AddOutputParameter(new ParameterRelated("Array", *iPropertyIdArray));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoIdArray);
@@ -284,7 +284,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionIdArray()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionIdArrayChanged()
 {
-    Zapp::Action* action = new Zapp::Action("IdArrayChanged");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("IdArrayChanged");
     action->AddInputParameter(new ParameterUint("Token"));
     action->AddOutputParameter(new ParameterBool("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoIdArrayChanged);
@@ -293,7 +293,7 @@ void DvProviderAvOpenhomeOrgPlaylist1::EnableActionIdArrayChanged()
 
 void DvProviderAvOpenhomeOrgPlaylist1::EnableActionProtocolInfo()
 {
-    Zapp::Action* action = new Zapp::Action("ProtocolInfo");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ProtocolInfo");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyProtocolInfo));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylist1::DoProtocolInfo);
     iService->AddAction(action, functor);

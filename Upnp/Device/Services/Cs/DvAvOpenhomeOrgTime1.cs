@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderAvOpenhomeOrgTime1 : IDisposable
     {
@@ -140,7 +140,7 @@ namespace Zapp.Device.Providers
         /// Time must be overridden if this is called.</remarks>
         protected void EnableActionTime()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Time");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Time");
             action.AddOutputParameter(new ParameterRelated("TrackCount", iPropertyTrackCount));
             action.AddOutputParameter(new ParameterRelated("Duration", iPropertyDuration));
             action.AddOutputParameter(new ParameterRelated("Seconds", iPropertySeconds));

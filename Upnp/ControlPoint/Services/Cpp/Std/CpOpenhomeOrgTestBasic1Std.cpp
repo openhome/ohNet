@@ -8,7 +8,7 @@
 
 #include <string>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncIncrementOpenhomeOrgTestBasic1Cpp : public SyncProxyAction
@@ -414,92 +414,92 @@ void SyncShutdownOpenhomeOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 CpProxyOpenhomeOrgTestBasic1Cpp::CpProxyOpenhomeOrgTestBasic1Cpp(CpDeviceCpp& aDevice)
     : CpProxy("openhome-org", "TestBasic", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionIncrement = new Action("Increment");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionIncrement->AddInputParameter(param);
-    param = new Zapp::ParameterUint("Result");
+    param = new OpenHome::Net::ParameterUint("Result");
     iActionIncrement->AddOutputParameter(param);
 
     iActionDecrement = new Action("Decrement");
-    param = new Zapp::ParameterInt("Value");
+    param = new OpenHome::Net::ParameterInt("Value");
     iActionDecrement->AddInputParameter(param);
-    param = new Zapp::ParameterInt("Result");
+    param = new OpenHome::Net::ParameterInt("Result");
     iActionDecrement->AddOutputParameter(param);
 
     iActionToggle = new Action("Toggle");
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionToggle->AddInputParameter(param);
-    param = new Zapp::ParameterBool("Result");
+    param = new OpenHome::Net::ParameterBool("Result");
     iActionToggle->AddOutputParameter(param);
 
     iActionEchoString = new Action("EchoString");
-    param = new Zapp::ParameterString("Value");
+    param = new OpenHome::Net::ParameterString("Value");
     iActionEchoString->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionEchoString->AddOutputParameter(param);
 
     iActionEchoBinary = new Action("EchoBinary");
-    param = new Zapp::ParameterBinary("Value");
+    param = new OpenHome::Net::ParameterBinary("Value");
     iActionEchoBinary->AddInputParameter(param);
-    param = new Zapp::ParameterBinary("Result");
+    param = new OpenHome::Net::ParameterBinary("Result");
     iActionEchoBinary->AddOutputParameter(param);
 
     iActionSetUint = new Action("SetUint");
-    param = new Zapp::ParameterUint("ValueUint");
+    param = new OpenHome::Net::ParameterUint("ValueUint");
     iActionSetUint->AddInputParameter(param);
 
     iActionGetUint = new Action("GetUint");
-    param = new Zapp::ParameterUint("ValueUint");
+    param = new OpenHome::Net::ParameterUint("ValueUint");
     iActionGetUint->AddOutputParameter(param);
 
     iActionSetInt = new Action("SetInt");
-    param = new Zapp::ParameterInt("ValueInt");
+    param = new OpenHome::Net::ParameterInt("ValueInt");
     iActionSetInt->AddInputParameter(param);
 
     iActionGetInt = new Action("GetInt");
-    param = new Zapp::ParameterInt("ValueInt");
+    param = new OpenHome::Net::ParameterInt("ValueInt");
     iActionGetInt->AddOutputParameter(param);
 
     iActionSetBool = new Action("SetBool");
-    param = new Zapp::ParameterBool("ValueBool");
+    param = new OpenHome::Net::ParameterBool("ValueBool");
     iActionSetBool->AddInputParameter(param);
 
     iActionGetBool = new Action("GetBool");
-    param = new Zapp::ParameterBool("ValueBool");
+    param = new OpenHome::Net::ParameterBool("ValueBool");
     iActionGetBool->AddOutputParameter(param);
 
     iActionSetMultiple = new Action("SetMultiple");
-    param = new Zapp::ParameterUint("ValueUint");
+    param = new OpenHome::Net::ParameterUint("ValueUint");
     iActionSetMultiple->AddInputParameter(param);
-    param = new Zapp::ParameterInt("ValueInt");
+    param = new OpenHome::Net::ParameterInt("ValueInt");
     iActionSetMultiple->AddInputParameter(param);
-    param = new Zapp::ParameterBool("ValueBool");
+    param = new OpenHome::Net::ParameterBool("ValueBool");
     iActionSetMultiple->AddInputParameter(param);
 
     iActionSetString = new Action("SetString");
-    param = new Zapp::ParameterString("ValueStr");
+    param = new OpenHome::Net::ParameterString("ValueStr");
     iActionSetString->AddInputParameter(param);
 
     iActionGetString = new Action("GetString");
-    param = new Zapp::ParameterString("ValueStr");
+    param = new OpenHome::Net::ParameterString("ValueStr");
     iActionGetString->AddOutputParameter(param);
 
     iActionSetBinary = new Action("SetBinary");
-    param = new Zapp::ParameterBinary("ValueBin");
+    param = new OpenHome::Net::ParameterBinary("ValueBin");
     iActionSetBinary->AddInputParameter(param);
 
     iActionGetBinary = new Action("GetBinary");
-    param = new Zapp::ParameterBinary("ValueBin");
+    param = new OpenHome::Net::ParameterBinary("ValueBin");
     iActionGetBinary->AddOutputParameter(param);
 
     iActionToggleBool = new Action("ToggleBool");
 
     iActionWriteFile = new Action("WriteFile");
-    param = new Zapp::ParameterString("Data");
+    param = new OpenHome::Net::ParameterString("Data");
     iActionWriteFile->AddInputParameter(param);
-    param = new Zapp::ParameterString("FileFullName");
+    param = new OpenHome::Net::ParameterString("FileFullName");
     iActionWriteFile->AddInputParameter(param);
 
     iActionShutdown = new Action("Shutdown");

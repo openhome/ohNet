@@ -1,7 +1,7 @@
 #include <Std/CpDevice.h>
 #include <CpiDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // CpDevice
 

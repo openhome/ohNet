@@ -1,14 +1,15 @@
 #ifndef HEADER_DVOPENHOMEORGTESTBASIC1CPP
 #define HEADER_DVOPENHOMEORGTESTBASIC1CPP
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
 #include <DvProvider.h>
 
 #include <string>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation;
 class PropertyInt;
@@ -378,7 +379,8 @@ private:
     PropertyBinary* iPropertyVarBin;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVOPENHOMEORGTESTBASIC1CPP
 

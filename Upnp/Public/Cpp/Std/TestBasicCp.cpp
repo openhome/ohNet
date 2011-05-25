@@ -1,4 +1,4 @@
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Std/CpOpenhomeOrgTestBasic1.h>
 #include <Std/CpDevice.h>
 #include <Std/TestBasicCp.h>
@@ -6,8 +6,8 @@
 
 #include <string>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 
 void TestBasicCp::TestActions(CpDeviceCpp& aDevice)

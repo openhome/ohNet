@@ -5,7 +5,7 @@
 #include <Thread.h>
 #include <Timer.h>
 #include <Network.h>
-#include <Zapp.h>
+#include <OhNet.h>
 
 // Bonjour source code available from  http://developer.apple.com/networking/bonjour/index.html
 // We take the mDNSCore folder from their source release and discard the rest
@@ -15,7 +15,8 @@
 #include <vector>
 #include <map>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class MdnsPlatform
 {
@@ -87,6 +88,7 @@ private:
     TBool iStop;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_MDNSPLATFORM

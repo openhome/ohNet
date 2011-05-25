@@ -1,7 +1,7 @@
 <#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -55,7 +55,7 @@
 
 #include <OsTypes.h>
 #include <C/Async.h>
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 #include <C/CpDevice.h>
 
 #ifdef __cplusplus
@@ -134,7 +134,7 @@ DllExport void <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InStringTrailingComma(a)#>ZappCallbackAsync aCallback, void* aPtr);
+DllExport void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InStringTrailingComma(a)#>OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -153,7 +153,7 @@ DllExport void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InStringTraili
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=OutputArgStringPrefix("ZappHandleAsync aAsync", a)#>);
+DllExport int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=OutputArgStringPrefix("OhNetHandleAsync aAsync", a)#>);
 <#  } #>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
@@ -167,7 +167,7 @@ DllExport int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=OutputArgStri
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 <#  } #>
 
 <#  foreach (Variable s in u.evented) #>

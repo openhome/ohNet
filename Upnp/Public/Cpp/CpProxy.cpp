@@ -2,7 +2,7 @@
 #include <CpiService.h>
 #include <Thread.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 void CpProxy::Subscribe()
 {

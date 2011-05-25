@@ -3,7 +3,7 @@
 #include <Std/DvDevice.h>
 #include <DviDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 CpDeviceDvCpp* CpDeviceDvCpp::New(DvDeviceStd& aDevice)
 {

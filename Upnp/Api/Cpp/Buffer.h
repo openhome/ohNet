@@ -1,14 +1,15 @@
 #ifndef HEADER_BUFFER
 #define HEADER_BUFFER
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Exception.h>
 #include <Standard.h>
 
 EXCEPTION(BufferFull);
 EXCEPTION(BufferOverflow);
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class Brn;
 
@@ -193,6 +194,7 @@ public:
 
 #include <Buffer.inl>
 
-} //namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif

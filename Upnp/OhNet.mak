@@ -36,11 +36,11 @@ linkoutput = /out:
 dllprefix =
 dllext = dll
 link_dll = link /nologo $(link_flag_debug) /map Ws2_32.lib Iphlpapi.lib /dll
-link_dll_service = link /nologo $(link_flag_debug)  /map $(objdir)ZappUpnp.lib Ws2_32.lib Iphlpapi.lib /dll
+link_dll_service = link /nologo $(link_flag_debug)  /map $(objdir)ohNet.lib Ws2_32.lib Iphlpapi.lib /dll
 csharp = csc /nologo /platform:$(csplatform)
 publiccsdir = Public\Cs^\
 dirsep = ^\
-installdir = $(PROGRAMFILES)\Zapp
+installdir = $(PROGRAMFILES)\ohNet
 installlibdir = $(installdir)\lib
 installincludedir = $(installdir)\include
 mkdir = Scripts\mkdir.bat
@@ -122,9 +122,9 @@ copy_build_includes:
 	copy Thread\Thread.h $(inc_build) > nul
 	copy Utils\*.h $(inc_build) > nul
 	copy TestFramework\*.h $(inc_build) > nul
-    copy Public\Js\Zapp.Web.UI.Tests\*.html $(inc_build)\Js\Tests > nul
-    copy Public\Js\Zapp.Web.UI.Tests\css\*.css $(inc_build)\Js\Tests\css > nul
-    copy Public\Js\Zapp.Web.UI.Tests\Scripts\*.js $(inc_build)\Js\Tests\Scripts > nul
+    copy Public\Js\OhNet.Web.UI.Tests\*.html $(inc_build)\Js\Tests > nul
+    copy Public\Js\OhNet.Web.UI.Tests\css\*.css $(inc_build)\Js\Tests\css > nul
+    copy Public\Js\OhNet.Web.UI.Tests\Scripts\*.js $(inc_build)\Js\Tests\Scripts > nul
     copy Public\Js\WebUIsdk\*.js $(inc_build)\Js\Tests\extern > nul
     copy ControlPoint\Services\Js\CpOpenhomeOrgTestBasic1.js $(inc_build)\Js\Tests\proxy > nul
     

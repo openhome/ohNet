@@ -1,10 +1,11 @@
 #ifndef HEADER_DV_INVOCATION_RESPONSE
 #define HEADER_DV_INVOCATION_RESPONSE
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 /**
  * @addtogroup Device
@@ -61,6 +62,7 @@ public:
 
 /* @} */
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DV_INVOCATION_RESPONSE

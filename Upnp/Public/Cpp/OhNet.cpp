@@ -1,11 +1,11 @@
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Stack.h>
 #include <Standard.h>
 #include <Printer.h>
 #include <NetworkInterfaceList.h>
 #include <Debug.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // NetworkInterface
 
@@ -55,19 +55,19 @@ const char* NetworkInterface::Name() const
 
 // InitialisationParams
 
-class Zapp::DefaultLogger
+class OpenHome::Net::DefaultLogger
 {
 public:
     void Log(const char* aMsg);
 };
 
-void Zapp::DefaultLogger::Log(const char* aMsg)
+void OpenHome::Net::DefaultLogger::Log(const char* aMsg)
 {
     fprintf(stdout, "%s", aMsg);
     fflush(stdout);
 }
 
-class Zapp::DefaultAsyncHandler : private IAsyncOutput
+class OpenHome::Net::DefaultAsyncHandler : private IAsyncOutput
 {
 public:
     void LogError(IAsync& aAsync);
@@ -75,14 +75,14 @@ private:
     void Output(const TChar* aKey, const TChar* aValue);
 };
 
-void Zapp::DefaultAsyncHandler::LogError(IAsync& aAsync)
+void OpenHome::Net::DefaultAsyncHandler::LogError(IAsync& aAsync)
 {
     Log::Print("------------------------------\n");
     aAsync.Output(*this);
     Log::Print("------------------------------\n");
 }
 
-void Zapp::DefaultAsyncHandler::Output(const TChar* aKey, const TChar* aValue)
+void OpenHome::Net::DefaultAsyncHandler::Output(const TChar* aKey, const TChar* aValue)
 {
     Log::Print("%s:  %s\n", aKey, aValue);
 }
@@ -188,7 +188,7 @@ void InitialisationParams::SetPendingSubscriptionTimeout(uint32_t aTimeoutMs)
     iPendingSubscriptionTimeoutMs = aTimeoutMs;
 }
 
-void InitialisationParams::SetFreeExternalCallback(ZappCallbackFreeExternal aCallback)
+void InitialisationParams::SetFreeExternalCallback(OhNetCallbackFreeExternal aCallback)
 {
     iFreeExternal = aCallback;
 }
@@ -311,7 +311,7 @@ uint32_t InitialisationParams::PendingSubscriptionTimeoutMs() const
     return iPendingSubscriptionTimeoutMs;
 }
 
-ZappCallbackFreeExternal InitialisationParams::FreeExternal() const
+OhNetCallbackFreeExternal InitialisationParams::FreeExternal() const
 {
     return iFreeExternal;
 }
@@ -372,7 +372,7 @@ InitialisationParams::InitialisationParams()
     , iEnableBonjour(false)
 {
     iDefaultLogger = new DefaultLogger;
-    FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &Zapp::DefaultLogger::Log);
+    FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &OpenHome::Net::DefaultLogger::Log);
     SetLogOutput(functor);
     iDefaultAsyncHandler = new DefaultAsyncHandler;
     iAsyncErrorHandler = MakeFunctorAsync(*iDefaultAsyncHandler, &DefaultAsyncHandler::LogError);
@@ -391,7 +391,7 @@ void InitialisationParams::FatalErrorHandlerDefault(const char* aMsg)
 static void BaseInit(InitialisationParams* aInitParams)
 {
     Log::RegisterOutput(aInitParams->LogOutput());
-    if (0 != Zapp::Os::Create()) {
+    if (0 != OpenHome::Net::Os::Create()) {
         throw std::bad_alloc();
     }
 }
@@ -412,7 +412,7 @@ void UpnpLibrary::InitialiseMinimal(InitialisationParams* aInitParams)
 void UpnpLibrary::Close()
 {
     Stack::Destroy();
-    Zapp::Os::Destroy();
+    OpenHome::Net::Os::Destroy();
 }
 
 std::vector<NetworkInterface*>* UpnpLibrary::SubnetList()

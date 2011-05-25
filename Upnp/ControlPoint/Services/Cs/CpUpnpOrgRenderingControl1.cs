@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgRenderingControl1 : ICpProxy, IDisposable
     {
@@ -709,41 +709,41 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyUpnpOrgRenderingControl1 : CpProxy, IDisposable, ICpProxyUpnpOrgRenderingControl1
     {
-        private Zapp.Core.Action iActionListPresets;
-        private Zapp.Core.Action iActionSelectPreset;
-        private Zapp.Core.Action iActionGetBrightness;
-        private Zapp.Core.Action iActionSetBrightness;
-        private Zapp.Core.Action iActionGetContrast;
-        private Zapp.Core.Action iActionSetContrast;
-        private Zapp.Core.Action iActionGetSharpness;
-        private Zapp.Core.Action iActionSetSharpness;
-        private Zapp.Core.Action iActionGetRedVideoGain;
-        private Zapp.Core.Action iActionSetRedVideoGain;
-        private Zapp.Core.Action iActionGetGreenVideoGain;
-        private Zapp.Core.Action iActionSetGreenVideoGain;
-        private Zapp.Core.Action iActionGetBlueVideoGain;
-        private Zapp.Core.Action iActionSetBlueVideoGain;
-        private Zapp.Core.Action iActionGetRedVideoBlackLevel;
-        private Zapp.Core.Action iActionSetRedVideoBlackLevel;
-        private Zapp.Core.Action iActionGetGreenVideoBlackLevel;
-        private Zapp.Core.Action iActionSetGreenVideoBlackLevel;
-        private Zapp.Core.Action iActionGetBlueVideoBlackLevel;
-        private Zapp.Core.Action iActionSetBlueVideoBlackLevel;
-        private Zapp.Core.Action iActionGetColorTemperature;
-        private Zapp.Core.Action iActionSetColorTemperature;
-        private Zapp.Core.Action iActionGetHorizontalKeystone;
-        private Zapp.Core.Action iActionSetHorizontalKeystone;
-        private Zapp.Core.Action iActionGetVerticalKeystone;
-        private Zapp.Core.Action iActionSetVerticalKeystone;
-        private Zapp.Core.Action iActionGetMute;
-        private Zapp.Core.Action iActionSetMute;
-        private Zapp.Core.Action iActionGetVolume;
-        private Zapp.Core.Action iActionSetVolume;
-        private Zapp.Core.Action iActionGetVolumeDB;
-        private Zapp.Core.Action iActionSetVolumeDB;
-        private Zapp.Core.Action iActionGetVolumeDBRange;
-        private Zapp.Core.Action iActionGetLoudness;
-        private Zapp.Core.Action iActionSetLoudness;
+        private OpenHome.Net.Core.Action iActionListPresets;
+        private OpenHome.Net.Core.Action iActionSelectPreset;
+        private OpenHome.Net.Core.Action iActionGetBrightness;
+        private OpenHome.Net.Core.Action iActionSetBrightness;
+        private OpenHome.Net.Core.Action iActionGetContrast;
+        private OpenHome.Net.Core.Action iActionSetContrast;
+        private OpenHome.Net.Core.Action iActionGetSharpness;
+        private OpenHome.Net.Core.Action iActionSetSharpness;
+        private OpenHome.Net.Core.Action iActionGetRedVideoGain;
+        private OpenHome.Net.Core.Action iActionSetRedVideoGain;
+        private OpenHome.Net.Core.Action iActionGetGreenVideoGain;
+        private OpenHome.Net.Core.Action iActionSetGreenVideoGain;
+        private OpenHome.Net.Core.Action iActionGetBlueVideoGain;
+        private OpenHome.Net.Core.Action iActionSetBlueVideoGain;
+        private OpenHome.Net.Core.Action iActionGetRedVideoBlackLevel;
+        private OpenHome.Net.Core.Action iActionSetRedVideoBlackLevel;
+        private OpenHome.Net.Core.Action iActionGetGreenVideoBlackLevel;
+        private OpenHome.Net.Core.Action iActionSetGreenVideoBlackLevel;
+        private OpenHome.Net.Core.Action iActionGetBlueVideoBlackLevel;
+        private OpenHome.Net.Core.Action iActionSetBlueVideoBlackLevel;
+        private OpenHome.Net.Core.Action iActionGetColorTemperature;
+        private OpenHome.Net.Core.Action iActionSetColorTemperature;
+        private OpenHome.Net.Core.Action iActionGetHorizontalKeystone;
+        private OpenHome.Net.Core.Action iActionSetHorizontalKeystone;
+        private OpenHome.Net.Core.Action iActionGetVerticalKeystone;
+        private OpenHome.Net.Core.Action iActionSetVerticalKeystone;
+        private OpenHome.Net.Core.Action iActionGetMute;
+        private OpenHome.Net.Core.Action iActionSetMute;
+        private OpenHome.Net.Core.Action iActionGetVolume;
+        private OpenHome.Net.Core.Action iActionSetVolume;
+        private OpenHome.Net.Core.Action iActionGetVolumeDB;
+        private OpenHome.Net.Core.Action iActionSetVolumeDB;
+        private OpenHome.Net.Core.Action iActionGetVolumeDBRange;
+        private OpenHome.Net.Core.Action iActionGetLoudness;
+        private OpenHome.Net.Core.Action iActionSetLoudness;
         private PropertyString iLastChange;
         private System.Action iLastChangeChanged;
         private Mutex iPropertyLock;
@@ -756,16 +756,16 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyUpnpOrgRenderingControl1(CpDevice aDevice)
             : base("schemas-upnp-org", "RenderingControl", 1, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             List<String> allowedValues = new List<String>();
 
-            iActionListPresets = new Zapp.Core.Action("ListPresets");
+            iActionListPresets = new OpenHome.Net.Core.Action("ListPresets");
             param = new ParameterUint("InstanceID");
             iActionListPresets.AddInputParameter(param);
             param = new ParameterString("CurrentPresetNameList", allowedValues);
             iActionListPresets.AddOutputParameter(param);
 
-            iActionSelectPreset = new Zapp.Core.Action("SelectPreset");
+            iActionSelectPreset = new OpenHome.Net.Core.Action("SelectPreset");
             param = new ParameterUint("InstanceID");
             iActionSelectPreset.AddInputParameter(param);
             allowedValues.Add("FactoryDefaults");
@@ -773,151 +773,151 @@ namespace Zapp.ControlPoint.Proxies
             iActionSelectPreset.AddInputParameter(param);
             allowedValues.Clear();
 
-            iActionGetBrightness = new Zapp.Core.Action("GetBrightness");
+            iActionGetBrightness = new OpenHome.Net.Core.Action("GetBrightness");
             param = new ParameterUint("InstanceID");
             iActionGetBrightness.AddInputParameter(param);
             param = new ParameterUint("CurrentBrightness", 0, 0, 1);
             iActionGetBrightness.AddOutputParameter(param);
 
-            iActionSetBrightness = new Zapp.Core.Action("SetBrightness");
+            iActionSetBrightness = new OpenHome.Net.Core.Action("SetBrightness");
             param = new ParameterUint("InstanceID");
             iActionSetBrightness.AddInputParameter(param);
             param = new ParameterUint("DesiredBrightness", 0, 0, 1);
             iActionSetBrightness.AddInputParameter(param);
 
-            iActionGetContrast = new Zapp.Core.Action("GetContrast");
+            iActionGetContrast = new OpenHome.Net.Core.Action("GetContrast");
             param = new ParameterUint("InstanceID");
             iActionGetContrast.AddInputParameter(param);
             param = new ParameterUint("CurrentContrast", 0, 0, 1);
             iActionGetContrast.AddOutputParameter(param);
 
-            iActionSetContrast = new Zapp.Core.Action("SetContrast");
+            iActionSetContrast = new OpenHome.Net.Core.Action("SetContrast");
             param = new ParameterUint("InstanceID");
             iActionSetContrast.AddInputParameter(param);
             param = new ParameterUint("DesiredContrast", 0, 0, 1);
             iActionSetContrast.AddInputParameter(param);
 
-            iActionGetSharpness = new Zapp.Core.Action("GetSharpness");
+            iActionGetSharpness = new OpenHome.Net.Core.Action("GetSharpness");
             param = new ParameterUint("InstanceID");
             iActionGetSharpness.AddInputParameter(param);
             param = new ParameterUint("CurrentSharpness", 0, 0, 1);
             iActionGetSharpness.AddOutputParameter(param);
 
-            iActionSetSharpness = new Zapp.Core.Action("SetSharpness");
+            iActionSetSharpness = new OpenHome.Net.Core.Action("SetSharpness");
             param = new ParameterUint("InstanceID");
             iActionSetSharpness.AddInputParameter(param);
             param = new ParameterUint("DesiredSharpness", 0, 0, 1);
             iActionSetSharpness.AddInputParameter(param);
 
-            iActionGetRedVideoGain = new Zapp.Core.Action("GetRedVideoGain");
+            iActionGetRedVideoGain = new OpenHome.Net.Core.Action("GetRedVideoGain");
             param = new ParameterUint("InstanceID");
             iActionGetRedVideoGain.AddInputParameter(param);
             param = new ParameterUint("CurrentRedVideoGain");
             iActionGetRedVideoGain.AddOutputParameter(param);
 
-            iActionSetRedVideoGain = new Zapp.Core.Action("SetRedVideoGain");
+            iActionSetRedVideoGain = new OpenHome.Net.Core.Action("SetRedVideoGain");
             param = new ParameterUint("InstanceID");
             iActionSetRedVideoGain.AddInputParameter(param);
             param = new ParameterUint("DesiredRedVideoGain");
             iActionSetRedVideoGain.AddInputParameter(param);
 
-            iActionGetGreenVideoGain = new Zapp.Core.Action("GetGreenVideoGain");
+            iActionGetGreenVideoGain = new OpenHome.Net.Core.Action("GetGreenVideoGain");
             param = new ParameterUint("InstanceID");
             iActionGetGreenVideoGain.AddInputParameter(param);
             param = new ParameterUint("CurrentGreenVideoGain", 0, 0, 1);
             iActionGetGreenVideoGain.AddOutputParameter(param);
 
-            iActionSetGreenVideoGain = new Zapp.Core.Action("SetGreenVideoGain");
+            iActionSetGreenVideoGain = new OpenHome.Net.Core.Action("SetGreenVideoGain");
             param = new ParameterUint("InstanceID");
             iActionSetGreenVideoGain.AddInputParameter(param);
             param = new ParameterUint("DesiredGreenVideoGain", 0, 0, 1);
             iActionSetGreenVideoGain.AddInputParameter(param);
 
-            iActionGetBlueVideoGain = new Zapp.Core.Action("GetBlueVideoGain");
+            iActionGetBlueVideoGain = new OpenHome.Net.Core.Action("GetBlueVideoGain");
             param = new ParameterUint("InstanceID");
             iActionGetBlueVideoGain.AddInputParameter(param);
             param = new ParameterUint("CurrentBlueVideoGain", 0, 0, 1);
             iActionGetBlueVideoGain.AddOutputParameter(param);
 
-            iActionSetBlueVideoGain = new Zapp.Core.Action("SetBlueVideoGain");
+            iActionSetBlueVideoGain = new OpenHome.Net.Core.Action("SetBlueVideoGain");
             param = new ParameterUint("InstanceID");
             iActionSetBlueVideoGain.AddInputParameter(param);
             param = new ParameterUint("DesiredBlueVideoGain", 0, 0, 1);
             iActionSetBlueVideoGain.AddInputParameter(param);
 
-            iActionGetRedVideoBlackLevel = new Zapp.Core.Action("GetRedVideoBlackLevel");
+            iActionGetRedVideoBlackLevel = new OpenHome.Net.Core.Action("GetRedVideoBlackLevel");
             param = new ParameterUint("InstanceID");
             iActionGetRedVideoBlackLevel.AddInputParameter(param);
             param = new ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1);
             iActionGetRedVideoBlackLevel.AddOutputParameter(param);
 
-            iActionSetRedVideoBlackLevel = new Zapp.Core.Action("SetRedVideoBlackLevel");
+            iActionSetRedVideoBlackLevel = new OpenHome.Net.Core.Action("SetRedVideoBlackLevel");
             param = new ParameterUint("InstanceID");
             iActionSetRedVideoBlackLevel.AddInputParameter(param);
             param = new ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1);
             iActionSetRedVideoBlackLevel.AddInputParameter(param);
 
-            iActionGetGreenVideoBlackLevel = new Zapp.Core.Action("GetGreenVideoBlackLevel");
+            iActionGetGreenVideoBlackLevel = new OpenHome.Net.Core.Action("GetGreenVideoBlackLevel");
             param = new ParameterUint("InstanceID");
             iActionGetGreenVideoBlackLevel.AddInputParameter(param);
             param = new ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1);
             iActionGetGreenVideoBlackLevel.AddOutputParameter(param);
 
-            iActionSetGreenVideoBlackLevel = new Zapp.Core.Action("SetGreenVideoBlackLevel");
+            iActionSetGreenVideoBlackLevel = new OpenHome.Net.Core.Action("SetGreenVideoBlackLevel");
             param = new ParameterUint("InstanceID");
             iActionSetGreenVideoBlackLevel.AddInputParameter(param);
             param = new ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1);
             iActionSetGreenVideoBlackLevel.AddInputParameter(param);
 
-            iActionGetBlueVideoBlackLevel = new Zapp.Core.Action("GetBlueVideoBlackLevel");
+            iActionGetBlueVideoBlackLevel = new OpenHome.Net.Core.Action("GetBlueVideoBlackLevel");
             param = new ParameterUint("InstanceID");
             iActionGetBlueVideoBlackLevel.AddInputParameter(param);
             param = new ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1);
             iActionGetBlueVideoBlackLevel.AddOutputParameter(param);
 
-            iActionSetBlueVideoBlackLevel = new Zapp.Core.Action("SetBlueVideoBlackLevel");
+            iActionSetBlueVideoBlackLevel = new OpenHome.Net.Core.Action("SetBlueVideoBlackLevel");
             param = new ParameterUint("InstanceID");
             iActionSetBlueVideoBlackLevel.AddInputParameter(param);
             param = new ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1);
             iActionSetBlueVideoBlackLevel.AddInputParameter(param);
 
-            iActionGetColorTemperature = new Zapp.Core.Action("GetColorTemperature");
+            iActionGetColorTemperature = new OpenHome.Net.Core.Action("GetColorTemperature");
             param = new ParameterUint("InstanceID");
             iActionGetColorTemperature.AddInputParameter(param);
             param = new ParameterUint("CurrentColorTemperature", 0, 0, 1);
             iActionGetColorTemperature.AddOutputParameter(param);
 
-            iActionSetColorTemperature = new Zapp.Core.Action("SetColorTemperature");
+            iActionSetColorTemperature = new OpenHome.Net.Core.Action("SetColorTemperature");
             param = new ParameterUint("InstanceID");
             iActionSetColorTemperature.AddInputParameter(param);
             param = new ParameterUint("DesiredColorTemperature", 0, 0, 1);
             iActionSetColorTemperature.AddInputParameter(param);
 
-            iActionGetHorizontalKeystone = new Zapp.Core.Action("GetHorizontalKeystone");
+            iActionGetHorizontalKeystone = new OpenHome.Net.Core.Action("GetHorizontalKeystone");
             param = new ParameterUint("InstanceID");
             iActionGetHorizontalKeystone.AddInputParameter(param);
             param = new ParameterInt("CurrentHorizontalKeystone");
             iActionGetHorizontalKeystone.AddOutputParameter(param);
 
-            iActionSetHorizontalKeystone = new Zapp.Core.Action("SetHorizontalKeystone");
+            iActionSetHorizontalKeystone = new OpenHome.Net.Core.Action("SetHorizontalKeystone");
             param = new ParameterUint("InstanceID");
             iActionSetHorizontalKeystone.AddInputParameter(param);
             param = new ParameterInt("DesiredHorizontalKeystone");
             iActionSetHorizontalKeystone.AddInputParameter(param);
 
-            iActionGetVerticalKeystone = new Zapp.Core.Action("GetVerticalKeystone");
+            iActionGetVerticalKeystone = new OpenHome.Net.Core.Action("GetVerticalKeystone");
             param = new ParameterUint("InstanceID");
             iActionGetVerticalKeystone.AddInputParameter(param);
             param = new ParameterInt("CurrentVerticalKeystone");
             iActionGetVerticalKeystone.AddOutputParameter(param);
 
-            iActionSetVerticalKeystone = new Zapp.Core.Action("SetVerticalKeystone");
+            iActionSetVerticalKeystone = new OpenHome.Net.Core.Action("SetVerticalKeystone");
             param = new ParameterUint("InstanceID");
             iActionSetVerticalKeystone.AddInputParameter(param);
             param = new ParameterInt("DesiredVerticalKeystone");
             iActionSetVerticalKeystone.AddInputParameter(param);
 
-            iActionGetMute = new Zapp.Core.Action("GetMute");
+            iActionGetMute = new OpenHome.Net.Core.Action("GetMute");
             param = new ParameterUint("InstanceID");
             iActionGetMute.AddInputParameter(param);
             allowedValues.Add("Master");
@@ -927,7 +927,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterBool("CurrentMute");
             iActionGetMute.AddOutputParameter(param);
 
-            iActionSetMute = new Zapp.Core.Action("SetMute");
+            iActionSetMute = new OpenHome.Net.Core.Action("SetMute");
             param = new ParameterUint("InstanceID");
             iActionSetMute.AddInputParameter(param);
             allowedValues.Add("Master");
@@ -937,7 +937,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterBool("DesiredMute");
             iActionSetMute.AddInputParameter(param);
 
-            iActionGetVolume = new Zapp.Core.Action("GetVolume");
+            iActionGetVolume = new OpenHome.Net.Core.Action("GetVolume");
             param = new ParameterUint("InstanceID");
             iActionGetVolume.AddInputParameter(param);
             allowedValues.Add("Master");
@@ -947,7 +947,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("CurrentVolume", 0, 0, 1);
             iActionGetVolume.AddOutputParameter(param);
 
-            iActionSetVolume = new Zapp.Core.Action("SetVolume");
+            iActionSetVolume = new OpenHome.Net.Core.Action("SetVolume");
             param = new ParameterUint("InstanceID");
             iActionSetVolume.AddInputParameter(param);
             allowedValues.Add("Master");
@@ -957,7 +957,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("DesiredVolume", 0, 0, 1);
             iActionSetVolume.AddInputParameter(param);
 
-            iActionGetVolumeDB = new Zapp.Core.Action("GetVolumeDB");
+            iActionGetVolumeDB = new OpenHome.Net.Core.Action("GetVolumeDB");
             param = new ParameterUint("InstanceID");
             iActionGetVolumeDB.AddInputParameter(param);
             allowedValues.Add("Master");
@@ -967,7 +967,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterInt("CurrentVolume");
             iActionGetVolumeDB.AddOutputParameter(param);
 
-            iActionSetVolumeDB = new Zapp.Core.Action("SetVolumeDB");
+            iActionSetVolumeDB = new OpenHome.Net.Core.Action("SetVolumeDB");
             param = new ParameterUint("InstanceID");
             iActionSetVolumeDB.AddInputParameter(param);
             allowedValues.Add("Master");
@@ -977,7 +977,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterInt("DesiredVolume");
             iActionSetVolumeDB.AddInputParameter(param);
 
-            iActionGetVolumeDBRange = new Zapp.Core.Action("GetVolumeDBRange");
+            iActionGetVolumeDBRange = new OpenHome.Net.Core.Action("GetVolumeDBRange");
             param = new ParameterUint("InstanceID");
             iActionGetVolumeDBRange.AddInputParameter(param);
             allowedValues.Add("Master");
@@ -989,7 +989,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterInt("MaxValue");
             iActionGetVolumeDBRange.AddOutputParameter(param);
 
-            iActionGetLoudness = new Zapp.Core.Action("GetLoudness");
+            iActionGetLoudness = new OpenHome.Net.Core.Action("GetLoudness");
             param = new ParameterUint("InstanceID");
             iActionGetLoudness.AddInputParameter(param);
             allowedValues.Add("Master");
@@ -999,7 +999,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterBool("CurrentLoudness");
             iActionGetLoudness.AddOutputParameter(param);
 
-            iActionSetLoudness = new Zapp.Core.Action("SetLoudness");
+            iActionSetLoudness = new OpenHome.Net.Core.Action("SetLoudness");
             param = new ParameterUint("InstanceID");
             iActionSetLoudness.AddInputParameter(param);
             allowedValues.Add("Master");

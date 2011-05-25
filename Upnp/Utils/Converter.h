@@ -1,11 +1,12 @@
 #ifndef HEADER_CONVERTER
 #define HEADER_CONVERTER
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Stream.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 /**
  * Utilities for converting to/from base64 and (un)escaping XML
@@ -28,6 +29,7 @@ public:
     static void FromXmlEscaped(Bwx& aValue);
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_CONVERTER

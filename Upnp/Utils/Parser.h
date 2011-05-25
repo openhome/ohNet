@@ -2,11 +2,11 @@
 #define HEADER_ASCII_PARSER
 
 #include <Standard.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 
-namespace Zapp
-{
+namespace OpenHome {
+namespace Net {
 
 class Parser
 {
@@ -32,6 +32,7 @@ private:
     TUint iIndex;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_ASCII_PARSER

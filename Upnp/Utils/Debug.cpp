@@ -3,7 +3,7 @@
 #include <Buffer.h>
 #include <Debug.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 TUint Debug::iLevel = Debug::kNone;
 TBool Debug::iBreak = false;
@@ -42,13 +42,13 @@ AutoLog::AutoLog(TUint aLevel, const TChar* aString)
     : iLevel(aLevel)
     , iString(aString)
 {
-    if( Zapp::Debug::TestLevel(iLevel) )
-        Zapp::Log::Print(">%s\n", iString);
+    if( OpenHome::Net::Debug::TestLevel(iLevel) )
+        OpenHome::Net::Log::Print(">%s\n", iString);
 }
 
 AutoLog::~AutoLog()
 {
-    if( Zapp::Debug::TestLevel(iLevel) )
-        Zapp::Log::Print("<%s\n", iString);
+    if( OpenHome::Net::Debug::TestLevel(iLevel) )
+        OpenHome::Net::Log::Print("<%s\n", iString);
 }
 

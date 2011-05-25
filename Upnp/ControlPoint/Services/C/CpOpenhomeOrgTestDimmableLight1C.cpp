@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyOpenhomeOrgTestDimmableLight1C : public CpProxyC
 {
@@ -88,14 +88,14 @@ CpProxyOpenhomeOrgTestDimmableLight1C::CpProxyOpenhomeOrgTestDimmableLight1C(CpD
     : CpProxyC("openhome-org", "TestDimmableLight", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionGetLevel = new Action("GetLevel");
-    param = new Zapp::ParameterUint("Level");
+    param = new OpenHome::Net::ParameterUint("Level");
     iActionGetLevel->AddOutputParameter(param);
 
     iActionSetLevel = new Action("SetLevel");
-    param = new Zapp::ParameterUint("Level");
+    param = new OpenHome::Net::ParameterUint("Level");
     iActionSetLevel->AddInputParameter(param);
 
     Functor functor;
@@ -206,15 +206,15 @@ void CpProxyOpenhomeOrgTestDimmableLight1SyncGetLevel(THandle aHandle, uint32_t*
     proxyC->SyncGetLevel(*aLevel);
 }
 
-void CpProxyOpenhomeOrgTestDimmableLight1BeginGetLevel(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestDimmableLight1BeginGetLevel(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestDimmableLight1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestDimmableLight1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetLevel(functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestDimmableLight1EndGetLevel(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aLevel)
+int32_t CpProxyOpenhomeOrgTestDimmableLight1EndGetLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aLevel)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestDimmableLight1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestDimmableLight1C*>(aHandle);
@@ -237,15 +237,15 @@ void CpProxyOpenhomeOrgTestDimmableLight1SyncSetLevel(THandle aHandle, uint32_t 
     proxyC->SyncSetLevel(aLevel);
 }
 
-void CpProxyOpenhomeOrgTestDimmableLight1BeginSetLevel(THandle aHandle, uint32_t aLevel, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestDimmableLight1BeginSetLevel(THandle aHandle, uint32_t aLevel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestDimmableLight1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestDimmableLight1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetLevel(aLevel, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestDimmableLight1EndSetLevel(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyOpenhomeOrgTestDimmableLight1EndSetLevel(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestDimmableLight1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestDimmableLight1C*>(aHandle);
@@ -261,7 +261,7 @@ int32_t CpProxyOpenhomeOrgTestDimmableLight1EndSetLevel(THandle aHandle, ZappHan
     return err;
 }
 
-void CpProxyOpenhomeOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestDimmableLight1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestDimmableLight1C*>(aHandle);
     ASSERT(proxyC != NULL);

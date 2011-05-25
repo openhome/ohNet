@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 
 
 void logger(void* aPtr, const char* aMsg)
@@ -14,19 +14,19 @@ void logger(void* aPtr, const char* aMsg)
     fflush(stdout);
 }
 
-extern void ZappTestRunner(ZappHandleInitParams aInitParams);
+extern void OhNetTestRunner(OhNetHandleInitParams aInitParams);
 
 int __cdecl main(int argc, char* argv[])
 {
-    ZappHandleInitParams initParams;
+    OhNetHandleInitParams initParams;
     char* noErrDlgs = getenv("NO_ERROR_DIALOGS");
     if (noErrDlgs != NULL && strcmp(noErrDlgs, "1") == 0) {
         _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
     }
-    initParams = ZappInitParamsCreate();
+    initParams = OhNetInitParamsCreate();
     argc = argc;
     argv = argv;
-    ZappInitParamsSetLogOutput(initParams, logger, NULL);
-    ZappTestRunner(initParams);
+    OhNetInitParamsSetLogOutput(initParams, logger, NULL);
+    OhNetTestRunner(initParams);
     return 0;
 }

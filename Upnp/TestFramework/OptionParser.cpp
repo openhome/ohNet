@@ -5,7 +5,7 @@
 
 #include <string.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 using namespace TestFramework;
 
 

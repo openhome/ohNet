@@ -9,7 +9,8 @@
 EXCEPTION(ThreadKill);
 EXCEPTION(Timeout);
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 enum ThreadPriority {
     //Total priority range is 50 -> 150 inclusive = 101 possible priorities
@@ -224,6 +225,7 @@ private:
     Mutex& iMutex;
 };
 
-} //namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif

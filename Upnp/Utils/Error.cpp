@@ -1,10 +1,10 @@
 #include <Error.h>
 #include <Buffer.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Standard.h>
 #include <Ascii.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 const Brn Error::kDescriptionUnknown("Unknown");
 const Brn Error::kDescriptionSocketTimeout("Connection timed out");

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
-using Zapp.Core;
-using Zapp.ControlPoint;
-using Zapp.Device;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
+using OpenHome.Net.Device;
 
-namespace Zapp.Device
+namespace OpenHome.Net.Device
 {
     class Program
     {

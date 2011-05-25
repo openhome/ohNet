@@ -1,7 +1,7 @@
 #include <CpiDeviceDv.h>
 #include <DviDevice.h>
 #include <DviService.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <CpiService.h>
 #include <CpiSubscription.h>
@@ -10,7 +10,7 @@
 #include <Printer.h>
 #include <Stack.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // CpiDeviceDv
 
@@ -44,7 +44,7 @@ DviService* CpiDeviceDv::Service(const ServiceType& aServiceType)
 
 void CpiDeviceDv::InvokeAction(Invocation& aInvocation)
 {
-    const Zapp::ServiceType& serviceType = aInvocation.ServiceType();
+    const OpenHome::Net::ServiceType& serviceType = aInvocation.ServiceType();
     DviService* service = Service(serviceType);
     if (service == NULL) {
         const HttpStatus& err = HttpStatus::kNotFound;
@@ -272,23 +272,23 @@ void InvocationDv::InvocationWriteEnd()
 {
 }
 
-Zapp::Argument* InvocationDv::InputArgument(const TChar* aName)
+OpenHome::Net::Argument* InvocationDv::InputArgument(const TChar* aName)
 {
     return Argument(aName, iInvocation.InputArguments(), iReadIndex);
 }
 
-Zapp::Argument* InvocationDv::OutputArgument(const TChar* aName)
+OpenHome::Net::Argument* InvocationDv::OutputArgument(const TChar* aName)
 {
     return Argument(aName, iInvocation.OutputArguments(), iWriteIndex);
 }
 
-Zapp::Argument* InvocationDv::Argument(const TChar* aName, const Invocation::VectorArguments& aVector, TUint& aIndex)
+OpenHome::Net::Argument* InvocationDv::Argument(const TChar* aName, const Invocation::VectorArguments& aVector, TUint& aIndex)
 {
-    Zapp::Argument* ret = NULL;
+    OpenHome::Net::Argument* ret = NULL;
     Brn name(aName);
     TUint index = aIndex;
     do {
-        Zapp::Argument* arg = aVector[index];
+        OpenHome::Net::Argument* arg = aVector[index];
         if (arg->Parameter().Name() == name) {
             ret = arg;
             break;

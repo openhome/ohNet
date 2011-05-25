@@ -73,7 +73,7 @@ DllExport int32_t CpDeviceCGetAttribute(CpDeviceC aDevice, const char* aKey, cha
  *                           callback; any reference should normally be removed if
  *                           the device has been removed from its container list.
  */
-typedef void (*ZappCallbackDevice)(void* aPtr, CpDeviceC aDevice);
+typedef void (*OhNetCallbackDevice)(void* aPtr, CpDeviceC aDevice);
 
 /* @} */
 /**

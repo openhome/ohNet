@@ -1,2 +1,2 @@
 @echo off
-nmake /f Zapp.mak %*
+nmake /f OhNet.mak %*

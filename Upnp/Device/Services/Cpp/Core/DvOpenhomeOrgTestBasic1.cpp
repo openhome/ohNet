@@ -1,10 +1,10 @@
 #include "DvOpenhomeOrgTestBasic1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 TBool DvProviderOpenhomeOrgTestBasic1::SetPropertyVarUint(TUint aValue)
 {
@@ -74,7 +74,7 @@ DvProviderOpenhomeOrgTestBasic1::DvProviderOpenhomeOrgTestBasic1(DvDevice& aDevi
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionIncrement()
 {
-    Zapp::Action* action = new Zapp::Action("Increment");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Increment");
     action->AddInputParameter(new ParameterUint("Value"));
     action->AddOutputParameter(new ParameterUint("Result"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoIncrement);
@@ -83,7 +83,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionIncrement()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionDecrement()
 {
-    Zapp::Action* action = new Zapp::Action("Decrement");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Decrement");
     action->AddInputParameter(new ParameterInt("Value"));
     action->AddOutputParameter(new ParameterInt("Result"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoDecrement);
@@ -92,7 +92,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionDecrement()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionToggle()
 {
-    Zapp::Action* action = new Zapp::Action("Toggle");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Toggle");
     action->AddInputParameter(new ParameterBool("Value"));
     action->AddOutputParameter(new ParameterBool("Result"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoToggle);
@@ -101,7 +101,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionToggle()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionEchoString()
 {
-    Zapp::Action* action = new Zapp::Action("EchoString");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("EchoString");
     action->AddInputParameter(new ParameterString("Value"));
     action->AddOutputParameter(new ParameterString("Result"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoEchoString);
@@ -110,7 +110,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionEchoString()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionEchoBinary()
 {
-    Zapp::Action* action = new Zapp::Action("EchoBinary");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("EchoBinary");
     action->AddInputParameter(new ParameterBinary("Value"));
     action->AddOutputParameter(new ParameterBinary("Result"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoEchoBinary);
@@ -119,7 +119,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionEchoBinary()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionSetUint()
 {
-    Zapp::Action* action = new Zapp::Action("SetUint");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetUint");
     action->AddInputParameter(new ParameterRelated("ValueUint", *iPropertyVarUint));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoSetUint);
     iService->AddAction(action, functor);
@@ -127,7 +127,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionSetUint()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionGetUint()
 {
-    Zapp::Action* action = new Zapp::Action("GetUint");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetUint");
     action->AddOutputParameter(new ParameterRelated("ValueUint", *iPropertyVarUint));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoGetUint);
     iService->AddAction(action, functor);
@@ -135,7 +135,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionGetUint()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionSetInt()
 {
-    Zapp::Action* action = new Zapp::Action("SetInt");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetInt");
     action->AddInputParameter(new ParameterRelated("ValueInt", *iPropertyVarInt));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoSetInt);
     iService->AddAction(action, functor);
@@ -143,7 +143,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionSetInt()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionGetInt()
 {
-    Zapp::Action* action = new Zapp::Action("GetInt");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetInt");
     action->AddOutputParameter(new ParameterRelated("ValueInt", *iPropertyVarInt));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoGetInt);
     iService->AddAction(action, functor);
@@ -151,7 +151,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionGetInt()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionSetBool()
 {
-    Zapp::Action* action = new Zapp::Action("SetBool");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetBool");
     action->AddInputParameter(new ParameterRelated("ValueBool", *iPropertyVarBool));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoSetBool);
     iService->AddAction(action, functor);
@@ -159,7 +159,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionSetBool()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionGetBool()
 {
-    Zapp::Action* action = new Zapp::Action("GetBool");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetBool");
     action->AddOutputParameter(new ParameterRelated("ValueBool", *iPropertyVarBool));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoGetBool);
     iService->AddAction(action, functor);
@@ -167,7 +167,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionGetBool()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionSetMultiple()
 {
-    Zapp::Action* action = new Zapp::Action("SetMultiple");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetMultiple");
     action->AddInputParameter(new ParameterRelated("ValueUint", *iPropertyVarUint));
     action->AddInputParameter(new ParameterRelated("ValueInt", *iPropertyVarInt));
     action->AddInputParameter(new ParameterRelated("ValueBool", *iPropertyVarBool));
@@ -177,7 +177,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionSetMultiple()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionSetString()
 {
-    Zapp::Action* action = new Zapp::Action("SetString");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetString");
     action->AddInputParameter(new ParameterRelated("ValueStr", *iPropertyVarStr));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoSetString);
     iService->AddAction(action, functor);
@@ -185,7 +185,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionSetString()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionGetString()
 {
-    Zapp::Action* action = new Zapp::Action("GetString");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetString");
     action->AddOutputParameter(new ParameterRelated("ValueStr", *iPropertyVarStr));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoGetString);
     iService->AddAction(action, functor);
@@ -193,7 +193,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionGetString()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionSetBinary()
 {
-    Zapp::Action* action = new Zapp::Action("SetBinary");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetBinary");
     action->AddInputParameter(new ParameterRelated("ValueBin", *iPropertyVarBin));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoSetBinary);
     iService->AddAction(action, functor);
@@ -201,7 +201,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionSetBinary()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionGetBinary()
 {
-    Zapp::Action* action = new Zapp::Action("GetBinary");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetBinary");
     action->AddOutputParameter(new ParameterRelated("ValueBin", *iPropertyVarBin));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoGetBinary);
     iService->AddAction(action, functor);
@@ -209,14 +209,14 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionGetBinary()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionToggleBool()
 {
-    Zapp::Action* action = new Zapp::Action("ToggleBool");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ToggleBool");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoToggleBool);
     iService->AddAction(action, functor);
 }
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionWriteFile()
 {
-    Zapp::Action* action = new Zapp::Action("WriteFile");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("WriteFile");
     action->AddInputParameter(new ParameterString("Data"));
     action->AddInputParameter(new ParameterString("FileFullName"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoWriteFile);
@@ -225,7 +225,7 @@ void DvProviderOpenhomeOrgTestBasic1::EnableActionWriteFile()
 
 void DvProviderOpenhomeOrgTestBasic1::EnableActionShutdown()
 {
-    Zapp::Action* action = new Zapp::Action("Shutdown");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Shutdown");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestBasic1::DoShutdown);
     iService->AddAction(action, functor);
 }

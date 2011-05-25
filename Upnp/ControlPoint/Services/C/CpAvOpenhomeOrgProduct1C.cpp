@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyAvOpenhomeOrgProduct1C : public CpProxyC
 {
@@ -492,86 +492,86 @@ CpProxyAvOpenhomeOrgProduct1C::CpProxyAvOpenhomeOrgProduct1C(CpDeviceC aDevice)
     : CpProxyC("av-openhome-org", "Product", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionManufacturer = new Action("Manufacturer");
-    param = new Zapp::ParameterString("Name");
+    param = new OpenHome::Net::ParameterString("Name");
     iActionManufacturer->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Info");
+    param = new OpenHome::Net::ParameterString("Info");
     iActionManufacturer->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Url");
+    param = new OpenHome::Net::ParameterString("Url");
     iActionManufacturer->AddOutputParameter(param);
-    param = new Zapp::ParameterString("ImageUri");
+    param = new OpenHome::Net::ParameterString("ImageUri");
     iActionManufacturer->AddOutputParameter(param);
 
     iActionModel = new Action("Model");
-    param = new Zapp::ParameterString("Name");
+    param = new OpenHome::Net::ParameterString("Name");
     iActionModel->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Info");
+    param = new OpenHome::Net::ParameterString("Info");
     iActionModel->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Url");
+    param = new OpenHome::Net::ParameterString("Url");
     iActionModel->AddOutputParameter(param);
-    param = new Zapp::ParameterString("ImageUri");
+    param = new OpenHome::Net::ParameterString("ImageUri");
     iActionModel->AddOutputParameter(param);
 
     iActionProduct = new Action("Product");
-    param = new Zapp::ParameterString("Room");
+    param = new OpenHome::Net::ParameterString("Room");
     iActionProduct->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Name");
+    param = new OpenHome::Net::ParameterString("Name");
     iActionProduct->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Info");
+    param = new OpenHome::Net::ParameterString("Info");
     iActionProduct->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Url");
+    param = new OpenHome::Net::ParameterString("Url");
     iActionProduct->AddOutputParameter(param);
-    param = new Zapp::ParameterString("ImageUri");
+    param = new OpenHome::Net::ParameterString("ImageUri");
     iActionProduct->AddOutputParameter(param);
 
     iActionStandby = new Action("Standby");
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionStandby->AddOutputParameter(param);
 
     iActionSetStandby = new Action("SetStandby");
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionSetStandby->AddInputParameter(param);
 
     iActionSourceCount = new Action("SourceCount");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSourceCount->AddOutputParameter(param);
 
     iActionSourceXml = new Action("SourceXml");
-    param = new Zapp::ParameterString("Value");
+    param = new OpenHome::Net::ParameterString("Value");
     iActionSourceXml->AddOutputParameter(param);
 
     iActionSourceIndex = new Action("SourceIndex");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSourceIndex->AddOutputParameter(param);
 
     iActionSetSourceIndex = new Action("SetSourceIndex");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSetSourceIndex->AddInputParameter(param);
 
     iActionSetSourceIndexByName = new Action("SetSourceIndexByName");
-    param = new Zapp::ParameterString("Value");
+    param = new OpenHome::Net::ParameterString("Value");
     iActionSetSourceIndexByName->AddInputParameter(param);
 
     iActionSource = new Action("Source");
-    param = new Zapp::ParameterUint("Index");
+    param = new OpenHome::Net::ParameterUint("Index");
     iActionSource->AddInputParameter(param);
-    param = new Zapp::ParameterString("SystemName");
+    param = new OpenHome::Net::ParameterString("SystemName");
     iActionSource->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Type");
+    param = new OpenHome::Net::ParameterString("Type");
     iActionSource->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Name");
+    param = new OpenHome::Net::ParameterString("Name");
     iActionSource->AddOutputParameter(param);
-    param = new Zapp::ParameterBool("Visible");
+    param = new OpenHome::Net::ParameterBool("Visible");
     iActionSource->AddOutputParameter(param);
 
     iActionAttributes = new Action("Attributes");
-    param = new Zapp::ParameterString("Value");
+    param = new OpenHome::Net::ParameterString("Value");
     iActionAttributes->AddOutputParameter(param);
 
     iActionSourceXmlChangeCount = new Action("SourceXmlChangeCount");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSourceXmlChangeCount->AddOutputParameter(param);
 
     Functor functor;
@@ -1436,15 +1436,15 @@ void CpProxyAvOpenhomeOrgProduct1SyncManufacturer(THandle aHandle, char** aName,
     *aImageUri = buf_aImageUri.Extract();
 }
 
-void CpProxyAvOpenhomeOrgProduct1BeginManufacturer(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1BeginManufacturer(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginManufacturer(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgProduct1EndManufacturer(THandle aHandle, ZappHandleAsync aAsync, char** aName, char** aInfo, char** aUrl, char** aImageUri)
+int32_t CpProxyAvOpenhomeOrgProduct1EndManufacturer(THandle aHandle, OhNetHandleAsync aAsync, char** aName, char** aInfo, char** aUrl, char** aImageUri)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
@@ -1487,15 +1487,15 @@ void CpProxyAvOpenhomeOrgProduct1SyncModel(THandle aHandle, char** aName, char**
     *aImageUri = buf_aImageUri.Extract();
 }
 
-void CpProxyAvOpenhomeOrgProduct1BeginModel(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1BeginModel(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginModel(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgProduct1EndModel(THandle aHandle, ZappHandleAsync aAsync, char** aName, char** aInfo, char** aUrl, char** aImageUri)
+int32_t CpProxyAvOpenhomeOrgProduct1EndModel(THandle aHandle, OhNetHandleAsync aAsync, char** aName, char** aInfo, char** aUrl, char** aImageUri)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
@@ -1540,15 +1540,15 @@ void CpProxyAvOpenhomeOrgProduct1SyncProduct(THandle aHandle, char** aRoom, char
     *aImageUri = buf_aImageUri.Extract();
 }
 
-void CpProxyAvOpenhomeOrgProduct1BeginProduct(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1BeginProduct(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginProduct(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgProduct1EndProduct(THandle aHandle, ZappHandleAsync aAsync, char** aRoom, char** aName, char** aInfo, char** aUrl, char** aImageUri)
+int32_t CpProxyAvOpenhomeOrgProduct1EndProduct(THandle aHandle, OhNetHandleAsync aAsync, char** aRoom, char** aName, char** aInfo, char** aUrl, char** aImageUri)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
@@ -1587,15 +1587,15 @@ void CpProxyAvOpenhomeOrgProduct1SyncStandby(THandle aHandle, uint32_t* aValue)
     proxyC->SyncStandby(*(TBool*)aValue);
 }
 
-void CpProxyAvOpenhomeOrgProduct1BeginStandby(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1BeginStandby(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginStandby(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgProduct1EndStandby(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue)
+int32_t CpProxyAvOpenhomeOrgProduct1EndStandby(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
@@ -1619,15 +1619,15 @@ void CpProxyAvOpenhomeOrgProduct1SyncSetStandby(THandle aHandle, uint32_t aValue
     proxyC->SyncSetStandby((aValue==0? false : true));
 }
 
-void CpProxyAvOpenhomeOrgProduct1BeginSetStandby(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1BeginSetStandby(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetStandby((aValue==0? false : true), functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgProduct1EndSetStandby(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgProduct1EndSetStandby(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
@@ -1650,15 +1650,15 @@ void CpProxyAvOpenhomeOrgProduct1SyncSourceCount(THandle aHandle, uint32_t* aVal
     proxyC->SyncSourceCount(*aValue);
 }
 
-void CpProxyAvOpenhomeOrgProduct1BeginSourceCount(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1BeginSourceCount(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSourceCount(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgProduct1EndSourceCount(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue)
+int32_t CpProxyAvOpenhomeOrgProduct1EndSourceCount(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
@@ -1683,15 +1683,15 @@ void CpProxyAvOpenhomeOrgProduct1SyncSourceXml(THandle aHandle, char** aValue)
     *aValue = buf_aValue.Extract();
 }
 
-void CpProxyAvOpenhomeOrgProduct1BeginSourceXml(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1BeginSourceXml(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSourceXml(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgProduct1EndSourceXml(THandle aHandle, ZappHandleAsync aAsync, char** aValue)
+int32_t CpProxyAvOpenhomeOrgProduct1EndSourceXml(THandle aHandle, OhNetHandleAsync aAsync, char** aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
@@ -1717,15 +1717,15 @@ void CpProxyAvOpenhomeOrgProduct1SyncSourceIndex(THandle aHandle, uint32_t* aVal
     proxyC->SyncSourceIndex(*aValue);
 }
 
-void CpProxyAvOpenhomeOrgProduct1BeginSourceIndex(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1BeginSourceIndex(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSourceIndex(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgProduct1EndSourceIndex(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue)
+int32_t CpProxyAvOpenhomeOrgProduct1EndSourceIndex(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
@@ -1748,15 +1748,15 @@ void CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndex(THandle aHandle, uint32_t aV
     proxyC->SyncSetSourceIndex(aValue);
 }
 
-void CpProxyAvOpenhomeOrgProduct1BeginSetSourceIndex(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1BeginSetSourceIndex(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetSourceIndex(aValue, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgProduct1EndSetSourceIndex(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgProduct1EndSetSourceIndex(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
@@ -1780,16 +1780,16 @@ void CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndexByName(THandle aHandle, const
     proxyC->SyncSetSourceIndexByName(buf_aValue);
 }
 
-void CpProxyAvOpenhomeOrgProduct1BeginSetSourceIndexByName(THandle aHandle, const char* aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1BeginSetSourceIndexByName(THandle aHandle, const char* aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aValue(aValue);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetSourceIndexByName(buf_aValue, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgProduct1EndSetSourceIndexByName(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgProduct1EndSetSourceIndexByName(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
@@ -1819,15 +1819,15 @@ void CpProxyAvOpenhomeOrgProduct1SyncSource(THandle aHandle, uint32_t aIndex, ch
     *aName = buf_aName.Extract();
 }
 
-void CpProxyAvOpenhomeOrgProduct1BeginSource(THandle aHandle, uint32_t aIndex, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1BeginSource(THandle aHandle, uint32_t aIndex, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSource(aIndex, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgProduct1EndSource(THandle aHandle, ZappHandleAsync aAsync, char** aSystemName, char** aType, char** aName, uint32_t* aVisible)
+int32_t CpProxyAvOpenhomeOrgProduct1EndSource(THandle aHandle, OhNetHandleAsync aAsync, char** aSystemName, char** aType, char** aName, uint32_t* aVisible)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
@@ -1862,15 +1862,15 @@ void CpProxyAvOpenhomeOrgProduct1SyncAttributes(THandle aHandle, char** aValue)
     *aValue = buf_aValue.Extract();
 }
 
-void CpProxyAvOpenhomeOrgProduct1BeginAttributes(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1BeginAttributes(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginAttributes(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgProduct1EndAttributes(THandle aHandle, ZappHandleAsync aAsync, char** aValue)
+int32_t CpProxyAvOpenhomeOrgProduct1EndAttributes(THandle aHandle, OhNetHandleAsync aAsync, char** aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
@@ -1896,15 +1896,15 @@ void CpProxyAvOpenhomeOrgProduct1SyncSourceXmlChangeCount(THandle aHandle, uint3
     proxyC->SyncSourceXmlChangeCount(*aValue);
 }
 
-void CpProxyAvOpenhomeOrgProduct1BeginSourceXmlChangeCount(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1BeginSourceXmlChangeCount(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSourceXmlChangeCount(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgProduct1EndSourceXmlChangeCount(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue)
+int32_t CpProxyAvOpenhomeOrgProduct1EndSourceXmlChangeCount(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
@@ -1920,7 +1920,7 @@ int32_t CpProxyAvOpenhomeOrgProduct1EndSourceXmlChangeCount(THandle aHandle, Zap
     return err;
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerNameChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerNameChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1928,7 +1928,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerNameChanged(THandle aHan
     proxyC->SetPropertyManufacturerNameChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerInfoChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1936,7 +1936,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerInfoChanged(THandle aHan
     proxyC->SetPropertyManufacturerInfoChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerUrlChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerUrlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1944,7 +1944,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerUrlChanged(THandle aHand
     proxyC->SetPropertyManufacturerUrlChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerImageUriChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerImageUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1952,7 +1952,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerImageUriChanged(THandle 
     proxyC->SetPropertyManufacturerImageUriChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyModelNameChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyModelNameChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1960,7 +1960,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyModelNameChanged(THandle aHandle, Za
     proxyC->SetPropertyModelNameChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyModelInfoChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyModelInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1968,7 +1968,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyModelInfoChanged(THandle aHandle, Za
     proxyC->SetPropertyModelInfoChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyModelUrlChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyModelUrlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1976,7 +1976,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyModelUrlChanged(THandle aHandle, Zap
     proxyC->SetPropertyModelUrlChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyModelImageUriChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyModelImageUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1984,7 +1984,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyModelImageUriChanged(THandle aHandle
     proxyC->SetPropertyModelImageUriChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyProductRoomChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyProductRoomChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1992,7 +1992,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyProductRoomChanged(THandle aHandle, 
     proxyC->SetPropertyProductRoomChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyProductNameChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyProductNameChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2000,7 +2000,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyProductNameChanged(THandle aHandle, 
     proxyC->SetPropertyProductNameChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyProductInfoChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyProductInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2008,7 +2008,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyProductInfoChanged(THandle aHandle, 
     proxyC->SetPropertyProductInfoChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyProductUrlChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyProductUrlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2016,7 +2016,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyProductUrlChanged(THandle aHandle, Z
     proxyC->SetPropertyProductUrlChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyProductImageUriChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyProductImageUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2024,7 +2024,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyProductImageUriChanged(THandle aHand
     proxyC->SetPropertyProductImageUriChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyStandbyChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyStandbyChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2032,7 +2032,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertyStandbyChanged(THandle aHandle, Zapp
     proxyC->SetPropertyStandbyChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertySourceIndexChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertySourceIndexChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2040,7 +2040,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertySourceIndexChanged(THandle aHandle, 
     proxyC->SetPropertySourceIndexChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertySourceCountChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertySourceCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2048,7 +2048,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertySourceCountChanged(THandle aHandle, 
     proxyC->SetPropertySourceCountChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertySourceXmlChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertySourceXmlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2056,7 +2056,7 @@ void CpProxyAvOpenhomeOrgProduct1SetPropertySourceXmlChanged(THandle aHandle, Za
     proxyC->SetPropertySourceXmlChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgProduct1SetPropertyAttributesChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgProduct1SetPropertyAttributesChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgProduct1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgProduct1C*>(aHandle);
     ASSERT(proxyC != NULL);

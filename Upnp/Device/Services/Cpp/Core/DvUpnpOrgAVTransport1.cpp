@@ -1,10 +1,10 @@
 #include "DvUpnpOrgAVTransport1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 TBool DvProviderUpnpOrgAVTransport1::SetPropertyLastChange(const Brx& aValue)
 {
@@ -26,7 +26,7 @@ DvProviderUpnpOrgAVTransport1::DvProviderUpnpOrgAVTransport1(DvDevice& aDevice)
 
 void DvProviderUpnpOrgAVTransport1::EnableActionSetAVTransportURI()
 {
-    Zapp::Action* action = new Zapp::Action("SetAVTransportURI");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetAVTransportURI");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("CurrentURI"));
     action->AddInputParameter(new ParameterString("CurrentURIMetaData"));
@@ -36,7 +36,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionSetAVTransportURI()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionSetNextAVTransportURI()
 {
-    Zapp::Action* action = new Zapp::Action("SetNextAVTransportURI");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetNextAVTransportURI");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("NextURI"));
     action->AddInputParameter(new ParameterString("NextURIMetaData"));
@@ -46,7 +46,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionSetNextAVTransportURI()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionGetMediaInfo()
 {
-    Zapp::Action* action = new Zapp::Action("GetMediaInfo");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetMediaInfo");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("NrTracks", 0, 0));
     action->AddOutputParameter(new ParameterString("MediaDuration"));
@@ -63,7 +63,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionGetMediaInfo()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionGetTransportInfo()
 {
-    Zapp::Action* action = new Zapp::Action("GetTransportInfo");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetTransportInfo");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -90,7 +90,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionGetTransportInfo()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionGetPositionInfo()
 {
-    Zapp::Action* action = new Zapp::Action("GetPositionInfo");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetPositionInfo");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("Track", 0, 0, 1));
     action->AddOutputParameter(new ParameterString("TrackDuration"));
@@ -106,7 +106,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionGetPositionInfo()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionGetDeviceCapabilities()
 {
-    Zapp::Action* action = new Zapp::Action("GetDeviceCapabilities");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetDeviceCapabilities");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterString("PlayMedia"));
     action->AddOutputParameter(new ParameterString("RecMedia"));
@@ -117,7 +117,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionGetDeviceCapabilities()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionGetTransportSettings()
 {
-    Zapp::Action* action = new Zapp::Action("GetTransportSettings");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetTransportSettings");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -133,7 +133,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionGetTransportSettings()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionStop()
 {
-    Zapp::Action* action = new Zapp::Action("Stop");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Stop");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1::DoStop);
     iService->AddAction(action, functor);
@@ -141,7 +141,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionStop()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionPlay()
 {
-    Zapp::Action* action = new Zapp::Action("Play");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Play");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -156,7 +156,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionPlay()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionPause()
 {
-    Zapp::Action* action = new Zapp::Action("Pause");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Pause");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1::DoPause);
     iService->AddAction(action, functor);
@@ -164,7 +164,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionPause()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionRecord()
 {
-    Zapp::Action* action = new Zapp::Action("Record");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Record");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1::DoRecord);
     iService->AddAction(action, functor);
@@ -172,7 +172,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionRecord()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionSeek()
 {
-    Zapp::Action* action = new Zapp::Action("Seek");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Seek");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -188,7 +188,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionSeek()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionNext()
 {
-    Zapp::Action* action = new Zapp::Action("Next");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Next");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1::DoNext);
     iService->AddAction(action, functor);
@@ -196,7 +196,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionNext()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionPrevious()
 {
-    Zapp::Action* action = new Zapp::Action("Previous");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Previous");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1::DoPrevious);
     iService->AddAction(action, functor);
@@ -204,7 +204,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionPrevious()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionSetPlayMode()
 {
-    Zapp::Action* action = new Zapp::Action("SetPlayMode");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetPlayMode");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -219,7 +219,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionSetPlayMode()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionSetRecordQualityMode()
 {
-    Zapp::Action* action = new Zapp::Action("SetRecordQualityMode");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetRecordQualityMode");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("NewRecordQualityMode"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1::DoSetRecordQualityMode);
@@ -228,7 +228,7 @@ void DvProviderUpnpOrgAVTransport1::EnableActionSetRecordQualityMode()
 
 void DvProviderUpnpOrgAVTransport1::EnableActionGetCurrentTransportActions()
 {
-    Zapp::Action* action = new Zapp::Action("GetCurrentTransportActions");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetCurrentTransportActions");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterString("Actions"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgAVTransport1::DoGetCurrentTransportActions);

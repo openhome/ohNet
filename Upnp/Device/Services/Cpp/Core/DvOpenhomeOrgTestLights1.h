@@ -1,12 +1,13 @@
 #ifndef HEADER_DVOPENHOMEORGTESTLIGHTS1
 #define HEADER_DVOPENHOMEORGTESTLIGHTS1
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
 #include <DvProvider.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation;
 class PropertyInt;
@@ -141,7 +142,8 @@ private:
 private:
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVOPENHOMEORGTESTLIGHTS1
 

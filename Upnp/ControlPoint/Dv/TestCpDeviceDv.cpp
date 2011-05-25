@@ -1,9 +1,9 @@
 #include <TestFramework.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvDevice.h>
 #include <Core/DvOpenhomeOrgTestBasic1.h>
 #include <Core/CpOpenhomeOrgTestBasic1.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Core/CpDeviceDv.h>
 #include <Ascii.h>
 #include <Maths.h>
@@ -11,8 +11,8 @@
 
 #include <vector>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
 {
@@ -229,9 +229,9 @@ DeviceBasic::DeviceBasic()
     iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", "ZappTestDevice");
+    iDevice->SetAttribute("Upnp.FriendlyName", "ohNetTestDevice");
     iDevice->SetAttribute("Upnp.Manufacturer", "None");
-    iDevice->SetAttribute("Upnp.ModelName", "Zapp test device");
+    iDevice->SetAttribute("Upnp.ModelName", "ohNet test device");
     iTestBasic = new ProviderTestBasic(*iDevice);
     iDevice->SetEnabled();
 }
@@ -410,7 +410,7 @@ static void TestSubscription(CpDevice& aDevice)
     delete proxy; // automatically unsubscribes
 }
 
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartCombined();

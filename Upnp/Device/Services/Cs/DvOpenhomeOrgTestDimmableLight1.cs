@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderOpenhomeOrgTestDimmableLight1 : IDisposable
     {
@@ -71,7 +71,7 @@ namespace Zapp.Device.Providers
         /// GetLevel must be overridden if this is called.</remarks>
         protected void EnableActionGetLevel()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetLevel");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetLevel");
             action.AddOutputParameter(new ParameterRelated("Level", iPropertyA_ARG_Level));
             iDelegateGetLevel = new ActionDelegate(DoGetLevel);
             EnableAction(action, iDelegateGetLevel, GCHandle.ToIntPtr(iGch));
@@ -84,7 +84,7 @@ namespace Zapp.Device.Providers
         /// SetLevel must be overridden if this is called.</remarks>
         protected void EnableActionSetLevel()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetLevel");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetLevel");
             action.AddInputParameter(new ParameterRelated("Level", iPropertyA_ARG_Level));
             iDelegateSetLevel = new ActionDelegate(DoSetLevel);
             EnableAction(action, iDelegateSetLevel, GCHandle.ToIntPtr(iGch));

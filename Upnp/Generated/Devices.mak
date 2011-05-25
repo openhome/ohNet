@@ -72,7 +72,7 @@ objects_devices = \
                   $(objdir)DvOpenhomeOrgTestDimmableLight1C.$(objext) \
 
 # Devices have well controlled dependencies so we can document a more limited set of headers
-headers_device = $(inc_build)/Cpp/ZappTypes.h \
+headers_device = $(inc_build)/Cpp/OhNetTypes.h \
                  $(inc_build)/DviService.h \
                  $(inc_build)/Cpp/Functor.h \
                  $(inc_build)/Service.h \
@@ -126,7 +126,7 @@ device_dotnet_assemblies_with_path = \
         $(objdir)DvOpenhomeOrgTestLights1.net.dll \
         $(objdir)DvOpenhomeOrgTestDimmableLight1.net.dll \
 
-devices : upnp_core $(objects_devices)
+devices : ohNetCore $(objects_devices)
 	$(ar)ZappDevices.$(libext) $(objects_devices)
 $(objdir)DvUpnpOrgAVTransport1.$(objext) : $(deviceCppCore)DvUpnpOrgAVTransport1.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgAVTransport1.h
 	$(compiler)DvUpnpOrgAVTransport1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgAVTransport1.cpp
@@ -358,115 +358,115 @@ $(objdir)$(dllprefix)DvOpenhomeOrgTestDimmableLight1.$(dllext) : ZappUpnpDll $(o
 
 DvDeviceDotNetAssemblies: $(device_dotnet_assemblies_with_path)
 
-$(objdir)DvUpnpOrgAVTransport1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgAVTransport1.cs
+$(objdir)DvUpnpOrgAVTransport1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgAVTransport1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvUpnpOrgAVTransport1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvUpnpOrgAVTransport1.cs
-$(objdir)DvUpnpOrgAVTransport2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgAVTransport2.cs
+$(objdir)DvUpnpOrgAVTransport2.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgAVTransport2.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvUpnpOrgAVTransport2.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvUpnpOrgAVTransport2.cs
-$(objdir)DvUpnpOrgConnectionManager1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgConnectionManager1.cs
+$(objdir)DvUpnpOrgConnectionManager1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgConnectionManager1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvUpnpOrgConnectionManager1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvUpnpOrgConnectionManager1.cs
-$(objdir)DvUpnpOrgConnectionManager2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgConnectionManager2.cs
+$(objdir)DvUpnpOrgConnectionManager2.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgConnectionManager2.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvUpnpOrgConnectionManager2.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvUpnpOrgConnectionManager2.cs
-$(objdir)DvUpnpOrgContentDirectory1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgContentDirectory1.cs
+$(objdir)DvUpnpOrgContentDirectory1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgContentDirectory1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvUpnpOrgContentDirectory1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvUpnpOrgContentDirectory1.cs
-$(objdir)DvUpnpOrgContentDirectory2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgContentDirectory2.cs
+$(objdir)DvUpnpOrgContentDirectory2.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgContentDirectory2.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvUpnpOrgContentDirectory2.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvUpnpOrgContentDirectory2.cs
-$(objdir)DvUpnpOrgContentDirectory3.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgContentDirectory3.cs
+$(objdir)DvUpnpOrgContentDirectory3.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgContentDirectory3.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvUpnpOrgContentDirectory3.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvUpnpOrgContentDirectory3.cs
-$(objdir)DvUpnpOrgRenderingControl1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgRenderingControl1.cs
+$(objdir)DvUpnpOrgRenderingControl1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgRenderingControl1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvUpnpOrgRenderingControl1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvUpnpOrgRenderingControl1.cs
-$(objdir)DvUpnpOrgRenderingControl2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgRenderingControl2.cs
+$(objdir)DvUpnpOrgRenderingControl2.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgRenderingControl2.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvUpnpOrgRenderingControl2.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvUpnpOrgRenderingControl2.cs
-$(objdir)DvUpnpOrgScheduledRecording1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgScheduledRecording1.cs
+$(objdir)DvUpnpOrgScheduledRecording1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgScheduledRecording1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvUpnpOrgScheduledRecording1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvUpnpOrgScheduledRecording1.cs
-$(objdir)DvUpnpOrgScheduledRecording2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgScheduledRecording2.cs
+$(objdir)DvUpnpOrgScheduledRecording2.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgScheduledRecording2.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvUpnpOrgScheduledRecording2.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvUpnpOrgScheduledRecording2.cs
-$(objdir)DvUpnpOrgSwitchPower1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgSwitchPower1.cs
+$(objdir)DvUpnpOrgSwitchPower1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgSwitchPower1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvUpnpOrgSwitchPower1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvUpnpOrgSwitchPower1.cs
-$(objdir)DvUpnpOrgDimming1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgDimming1.cs
+$(objdir)DvUpnpOrgDimming1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvUpnpOrgDimming1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvUpnpOrgDimming1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvUpnpOrgDimming1.cs
-$(objdir)DvAvOpenhomeOrgInfo1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvAvOpenhomeOrgInfo1.cs
+$(objdir)DvAvOpenhomeOrgInfo1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvOpenhomeOrgInfo1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvAvOpenhomeOrgInfo1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvAvOpenhomeOrgInfo1.cs
-$(objdir)DvAvOpenhomeOrgTime1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvAvOpenhomeOrgTime1.cs
+$(objdir)DvAvOpenhomeOrgTime1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvOpenhomeOrgTime1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvAvOpenhomeOrgTime1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvAvOpenhomeOrgTime1.cs
-$(objdir)DvAvOpenhomeOrgPlaylist1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvAvOpenhomeOrgPlaylist1.cs
+$(objdir)DvAvOpenhomeOrgPlaylist1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvOpenhomeOrgPlaylist1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvAvOpenhomeOrgPlaylist1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvAvOpenhomeOrgPlaylist1.cs
-$(objdir)DvAvOpenhomeOrgVolume1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvAvOpenhomeOrgVolume1.cs
+$(objdir)DvAvOpenhomeOrgVolume1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvOpenhomeOrgVolume1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvAvOpenhomeOrgVolume1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvAvOpenhomeOrgVolume1.cs
-$(objdir)DvAvOpenhomeOrgProduct1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvAvOpenhomeOrgProduct1.cs
+$(objdir)DvAvOpenhomeOrgProduct1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvOpenhomeOrgProduct1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvAvOpenhomeOrgProduct1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvAvOpenhomeOrgProduct1.cs
-$(objdir)DvAvOpenhomeOrgRadio1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvAvOpenhomeOrgRadio1.cs
+$(objdir)DvAvOpenhomeOrgRadio1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvOpenhomeOrgRadio1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvAvOpenhomeOrgRadio1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvAvOpenhomeOrgRadio1.cs
-$(objdir)DvOpenhomeOrgTestBasic1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvOpenhomeOrgTestBasic1.cs
+$(objdir)DvOpenhomeOrgTestBasic1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvOpenhomeOrgTestBasic1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvOpenhomeOrgTestBasic1.cs
-$(objdir)DvOpenhomeOrgTestLights1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvOpenhomeOrgTestLights1.cs
+$(objdir)DvOpenhomeOrgTestLights1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvOpenhomeOrgTestLights1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvOpenhomeOrgTestLights1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvOpenhomeOrgTestLights1.cs
-$(objdir)DvOpenhomeOrgTestDimmableLight1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvOpenhomeOrgTestDimmableLight1.cs
+$(objdir)DvOpenhomeOrgTestDimmableLight1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvOpenhomeOrgTestDimmableLight1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvOpenhomeOrgTestDimmableLight1.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvOpenhomeOrgTestDimmableLight1.cs
 
 

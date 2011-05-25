@@ -3,8 +3,8 @@
    ...but C versions of all APIs being tested are used
 */
 
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <TestFramework.h>
 #include <DviDevice.h>
 #include <C/DvProvider.h>
@@ -23,8 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class DeviceList
 {
@@ -109,13 +109,13 @@ void DeviceList::Removed(CpDeviceC aDevice)
 }
 
 
-extern "C" void ZappTestRunner(ZappHandleInitParams aInitParams)
+extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
 {
-    ZappInitParamsSetMsearchTime(aInitParams, 1);
-    ZappInitParamsSetUseLoopbackNetworkInterface(aInitParams);
-    ZappLibraryInitialise(aInitParams);
+    OhNetInitParamsSetMsearchTime(aInitParams, 1);
+    OhNetInitParamsSetUseLoopbackNetworkInterface(aInitParams);
+    OhNetLibraryInitialise(aInitParams);
     Print("TestDvDeviceC - starting\n");
-    ZappLibraryStartCombined();
+    OhNetLibraryStartCombined();
 //    Debug::SetLevel(Debug::kService);
 
     Semaphore* sem = new Semaphore("SEM1", 0);
@@ -134,5 +134,5 @@ extern "C" void ZappTestRunner(ZappHandleInitParams aInitParams)
     delete device;
 
     Print("TestDvDeviceC - completed\n");
-    ZappLibraryClose();
+    OhNetLibraryClose();
 }

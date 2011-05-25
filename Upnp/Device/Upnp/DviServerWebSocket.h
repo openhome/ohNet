@@ -6,7 +6,7 @@
 #include <Thread.h>
 #include <Network.h>
 #include <Service.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Stream.h>
 #include <Http.h>
 #include <Exception.h>
@@ -17,7 +17,8 @@
 
 EXCEPTION(WebSocketError);
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class WebSocket
 {
@@ -216,6 +217,7 @@ protected:
     virtual SocketTcpServer* CreateServer(const NetworkInterface& aNif);
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVI_SERVER_WEBSOCKET

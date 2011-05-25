@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxyAvOpenhomeOrgPlaylist1
-* @module Zapp
+* @module ohNet
 * @class Playlist
 */
 	
@@ -18,13 +18,13 @@ var CpProxyAvOpenhomeOrgPlaylist1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["TransportState"] = new Zapp.ServiceProperty("TransportState","string");
-	this.serviceProperties["Repeat"] = new Zapp.ServiceProperty("Repeat","bool");
-	this.serviceProperties["Shuffle"] = new Zapp.ServiceProperty("Shuffle","bool");
-	this.serviceProperties["Id"] = new Zapp.ServiceProperty("Id","int");
-	this.serviceProperties["IdArray"] = new Zapp.ServiceProperty("IdArray","binary");
-	this.serviceProperties["TracksMax"] = new Zapp.ServiceProperty("TracksMax","int");
-	this.serviceProperties["ProtocolInfo"] = new Zapp.ServiceProperty("ProtocolInfo","string");
+	this.serviceProperties["TransportState"] = new OhNet.ServiceProperty("TransportState","string");
+	this.serviceProperties["Repeat"] = new OhNet.ServiceProperty("Repeat","bool");
+	this.serviceProperties["Shuffle"] = new OhNet.ServiceProperty("Shuffle","bool");
+	this.serviceProperties["Id"] = new OhNet.ServiceProperty("Id","int");
+	this.serviceProperties["IdArray"] = new OhNet.ServiceProperty("IdArray","binary");
+	this.serviceProperties["TracksMax"] = new OhNet.ServiceProperty("TracksMax","int");
+	this.serviceProperties["ProtocolInfo"] = new OhNet.ServiceProperty("ProtocolInfo","string");
 }
 
 ServicePlaylist.kTransportStatePlaying = "Playing";
@@ -39,7 +39,7 @@ ServicePlaylist.kTransportStateBuffering = "Buffering";
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.subscribe = function (serviceAddedFunction) {
-    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
@@ -48,7 +48,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.subscribe = function (serviceAddedFuncti
 * @method Unsubscribe
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.unsubscribe = function () {
-    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+    OhNet.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
@@ -62,7 +62,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.unsubscribe = function () {
 CpProxyAvOpenhomeOrgPlaylist1.prototype.TransportState_Changed = function (stateChangedFunction) {
     this.serviceProperties.TransportState.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -75,7 +75,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.TransportState_Changed = function (state
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Repeat_Changed = function (stateChangedFunction) {
     this.serviceProperties.Repeat.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readBoolParameter(state)); 
 	});
 }
 	
@@ -88,7 +88,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Repeat_Changed = function (stateChangedF
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Shuffle_Changed = function (stateChangedFunction) {
     this.serviceProperties.Shuffle.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readBoolParameter(state)); 
 	});
 }
 	
@@ -101,7 +101,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Shuffle_Changed = function (stateChanged
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Id_Changed = function (stateChangedFunction) {
     this.serviceProperties.Id.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -114,7 +114,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Id_Changed = function (stateChangedFunct
 CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArray_Changed = function (stateChangedFunction) {
     this.serviceProperties.IdArray.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBinaryParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readBinaryParameter(state)); 
 	});
 }
 	
@@ -127,7 +127,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArray_Changed = function (stateChanged
 CpProxyAvOpenhomeOrgPlaylist1.prototype.TracksMax_Changed = function (stateChangedFunction) {
     this.serviceProperties.TracksMax.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -140,7 +140,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.TracksMax_Changed = function (stateChang
 CpProxyAvOpenhomeOrgPlaylist1.prototype.ProtocolInfo_Changed = function (stateChangedFunction) {
     this.serviceProperties.ProtocolInfo.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 
@@ -152,7 +152,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.ProtocolInfo_Changed = function (stateCh
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Play = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Play", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Play", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -171,7 +171,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Play = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Pause = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Pause", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Pause", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -190,7 +190,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Pause = function(successFunction, errorF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Stop = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Stop", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Stop", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -209,7 +209,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Stop = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Next = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Next", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Next", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -228,7 +228,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Next = function(successFunction, errorFu
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Previous = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Previous", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Previous", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -248,7 +248,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Previous = function(successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.SetRepeat = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetRepeat", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetRepeat", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("Value", Value);
     request.send(function(result){
 	
@@ -268,9 +268,9 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.SetRepeat = function(Value, successFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Repeat = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Repeat", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Repeat", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readBoolParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readBoolParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -289,7 +289,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Repeat = function(successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.SetShuffle = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetShuffle", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetShuffle", this.url, this.domain, this.type, this.version);		
     request.writeBoolParameter("Value", Value);
     request.send(function(result){
 	
@@ -309,9 +309,9 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.SetShuffle = function(Value, successFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Shuffle = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Shuffle", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Shuffle", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readBoolParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readBoolParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -330,7 +330,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Shuffle = function(successFunction, erro
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekSecondAbsolute = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SeekSecondAbsolute", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SeekSecondAbsolute", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
 	
@@ -351,7 +351,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekSecondAbsolute = function(Value, suc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekSecondRelative = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SeekSecondRelative", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SeekSecondRelative", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
 	
@@ -372,7 +372,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekSecondRelative = function(Value, suc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekId = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SeekId", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SeekId", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
 	
@@ -393,7 +393,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekId = function(Value, successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekIndex = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SeekIndex", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SeekIndex", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
 	
@@ -413,9 +413,9 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.SeekIndex = function(Value, successFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.TransportState = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("TransportState", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("TransportState", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readStringParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readStringParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -433,9 +433,9 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.TransportState = function(successFunctio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Id = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Id", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Id", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readIntParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readIntParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -454,11 +454,11 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Id = function(successFunction, errorFunc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Read = function(Id, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Read", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Read", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Id", Id);
     request.send(function(result){
-		result["Uri"] = Zapp.SoapRequest.readStringParameter(result["Uri"]);	
-		result["Metadata"] = Zapp.SoapRequest.readStringParameter(result["Metadata"]);	
+		result["Uri"] = OhNet.SoapRequest.readStringParameter(result["Uri"]);	
+		result["Metadata"] = OhNet.SoapRequest.readStringParameter(result["Metadata"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -477,10 +477,10 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Read = function(Id, successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.ReadList = function(IdList, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ReadList", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("ReadList", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("IdList", IdList);
     request.send(function(result){
-		result["TrackList"] = Zapp.SoapRequest.readStringParameter(result["TrackList"]);	
+		result["TrackList"] = OhNet.SoapRequest.readStringParameter(result["TrackList"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -501,12 +501,12 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.ReadList = function(IdList, successFunct
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.Insert = function(AfterId, Uri, Metadata, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Insert", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Insert", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("AfterId", AfterId);
     request.writeStringParameter("Uri", Uri);
     request.writeStringParameter("Metadata", Metadata);
     request.send(function(result){
-		result["NewId"] = Zapp.SoapRequest.readIntParameter(result["NewId"]);	
+		result["NewId"] = OhNet.SoapRequest.readIntParameter(result["NewId"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -525,7 +525,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.Insert = function(AfterId, Uri, Metadata
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.DeleteId = function(Value, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DeleteId", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("DeleteId", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
     request.send(function(result){
 	
@@ -545,7 +545,7 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.DeleteId = function(Value, successFuncti
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.DeleteAll = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("DeleteAll", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("DeleteAll", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -564,9 +564,9 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.DeleteAll = function(successFunction, er
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.TracksMax = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("TracksMax", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("TracksMax", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readIntParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readIntParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -584,10 +584,10 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.TracksMax = function(successFunction, er
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArray = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("IdArray", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("IdArray", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Token"] = Zapp.SoapRequest.readIntParameter(result["Token"]);	
-		result["Array"] = Zapp.SoapRequest.readBinaryParameter(result["Array"]);	
+		result["Token"] = OhNet.SoapRequest.readIntParameter(result["Token"]);	
+		result["Array"] = OhNet.SoapRequest.readBinaryParameter(result["Array"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -606,10 +606,10 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArray = function(successFunction, erro
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArrayChanged = function(Token, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("IdArrayChanged", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("IdArrayChanged", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Token", Token);
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readBoolParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readBoolParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -627,9 +627,9 @@ CpProxyAvOpenhomeOrgPlaylist1.prototype.IdArrayChanged = function(Token, success
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxyAvOpenhomeOrgPlaylist1.prototype.ProtocolInfo = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ProtocolInfo", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("ProtocolInfo", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["Value"] = Zapp.SoapRequest.readStringParameter(result["Value"]);	
+		result["Value"] = OhNet.SoapRequest.readStringParameter(result["Value"]);	
 	
 		if (successFunction){
 			successFunction(result);

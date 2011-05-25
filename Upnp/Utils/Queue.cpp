@@ -1,6 +1,6 @@
 #include <Queue.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // QueueBase
 

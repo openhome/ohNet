@@ -9,11 +9,12 @@
 #include <Functor.h>
 #include <FunctorAsync.h>
 #include <FunctorMsg.h>
-#include <C/Zapp.h> // for ZappCallbackFreeExternal only
+#include <C/OhNet.h> // for OhNetCallbackFreeExternal only
 
 #include <vector>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 /**
  * Represents a single network interface
@@ -172,7 +173,7 @@ public:
 	 * Set a callback which will be used to free memory that is allocated outside the library
 	 * This is intended for C# wrappers and can be ignored by most (all?) other clients
 	 */
-	void SetFreeExternalCallback(ZappCallbackFreeExternal aCallback);
+	void SetFreeExternalCallback(OhNetCallbackFreeExternal aCallback);
     /**
      * Limit the library to using only the loopback network interface.
      * Useful for testing but not expected to be used in production code
@@ -235,7 +236,7 @@ public:
     uint32_t NumInvocations() const;
     uint32_t NumSubscriberThreads() const;
     uint32_t PendingSubscriptionTimeoutMs() const;
-	ZappCallbackFreeExternal FreeExternal() const;
+	OhNetCallbackFreeExternal FreeExternal() const;
     bool UseLoopbackNetworkInterface() const;
 	uint32_t DvMaxUpdateTimeSecs() const;
     uint32_t DvNumServerThreads() const;
@@ -265,7 +266,7 @@ private:
     uint32_t iNumInvocations;
     uint32_t iNumSubscriberThreads;
     uint32_t iPendingSubscriptionTimeoutMs;
-	ZappCallbackFreeExternal iFreeExternal;
+	OhNetCallbackFreeExternal iFreeExternal;
     bool iUseLoopbackNetworkInterface;
 	uint32_t iDvMaxUpdateTimeSecs;
     uint32_t iDvNumServerThreads;
@@ -356,5 +357,6 @@ public:
     static void SetDefaultSubnet();
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 #endif // HEADER_UPNP

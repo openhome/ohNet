@@ -1,6 +1,6 @@
 #include <TestFramework.h>
 #include <OptionParser.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Discovery.h>
 #include <Thread.h>
 #include <Timer.h>
@@ -12,8 +12,8 @@
 
 #include <vector>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class DimmableLight
 {
@@ -75,7 +75,7 @@ DimmableLightList::DimmableLightList()
     Brn type;
     TUint ver;
 
-    Zapp::Ssdp::ParseUrnDevice(Brn("upnp.org:device:DimmableLight:1"), domainName, type, ver);
+    OpenHome::Net::Ssdp::ParseUrnDevice(Brn("upnp.org:device:DimmableLight:1"), domainName, type, ver);
     iDeviceList = new CpDeviceListUpnpDeviceType(domainName, type, ver, added, removed);
 }
 
@@ -114,7 +114,7 @@ void DimmableLightList::Show()
     }
 }
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartCp();

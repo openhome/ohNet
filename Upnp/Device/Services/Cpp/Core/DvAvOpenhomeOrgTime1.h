@@ -1,12 +1,13 @@
 #ifndef HEADER_DVAVOPENHOMEORGTIME1
 #define HEADER_DVAVOPENHOMEORGTIME1
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
 #include <DvProvider.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation;
 class PropertyInt;
@@ -84,7 +85,8 @@ private:
     PropertyUint* iPropertySeconds;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVAVOPENHOMEORGTIME1
 

@@ -8,7 +8,7 @@
 
 #include <string>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncGetSortCapabilitiesUpnpOrgScheduledRecording1Cpp : public SyncProxyAction
@@ -422,14 +422,14 @@ void SyncGetRecordTaskConflictsUpnpOrgScheduledRecording1Cpp::CompleteRequest(IA
 CpProxyUpnpOrgScheduledRecording1Cpp::CpProxyUpnpOrgScheduledRecording1Cpp(CpDeviceCpp& aDevice)
     : CpProxy("schemas-upnp-org", "ScheduledRecording", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
     iActionGetSortCapabilities = new Action("GetSortCapabilities");
-    param = new Zapp::ParameterString("SortCaps");
+    param = new OpenHome::Net::ParameterString("SortCaps");
     iActionGetSortCapabilities->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("SortLevelCap");
+    param = new OpenHome::Net::ParameterUint("SortLevelCap");
     iActionGetSortCapabilities->AddOutputParameter(param);
 
     iActionGetPropertyList = new Action("GetPropertyList");
@@ -438,10 +438,10 @@ CpProxyUpnpOrgScheduledRecording1Cpp::CpProxyUpnpOrgScheduledRecording1Cpp(CpDev
     allowedValues[index++] = (TChar*)"A_ARG_TYPE_RecordSchedule";
     allowedValues[index++] = (TChar*)"A_ARG_TYPE_RecordTask";
     allowedValues[index++] = (TChar*)"A_ARG_TYPE_RecordScheduleParts";
-    param = new Zapp::ParameterString("DataTypeID", allowedValues, 3);
+    param = new OpenHome::Net::ParameterString("DataTypeID", allowedValues, 3);
     iActionGetPropertyList->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterString("PropertyList");
+    param = new OpenHome::Net::ParameterString("PropertyList");
     iActionGetPropertyList->AddOutputParameter(param);
 
     iActionGetAllowedValues = new Action("GetAllowedValues");
@@ -450,128 +450,128 @@ CpProxyUpnpOrgScheduledRecording1Cpp::CpProxyUpnpOrgScheduledRecording1Cpp(CpDev
     allowedValues[index++] = (TChar*)"A_ARG_TYPE_RecordSchedule";
     allowedValues[index++] = (TChar*)"A_ARG_TYPE_RecordTask";
     allowedValues[index++] = (TChar*)"A_ARG_TYPE_RecordScheduleParts";
-    param = new Zapp::ParameterString("DataTypeID", allowedValues, 3);
+    param = new OpenHome::Net::ParameterString("DataTypeID", allowedValues, 3);
     iActionGetAllowedValues->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionGetAllowedValues->AddInputParameter(param);
-    param = new Zapp::ParameterString("PropertyInfo");
+    param = new OpenHome::Net::ParameterString("PropertyInfo");
     iActionGetAllowedValues->AddOutputParameter(param);
 
     iActionGetStateUpdateID = new Action("GetStateUpdateID");
-    param = new Zapp::ParameterUint("Id");
+    param = new OpenHome::Net::ParameterUint("Id");
     iActionGetStateUpdateID->AddOutputParameter(param);
 
     iActionBrowseRecordSchedules = new Action("BrowseRecordSchedules");
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionBrowseRecordSchedules->AddInputParameter(param);
-    param = new Zapp::ParameterUint("StartingIndex");
+    param = new OpenHome::Net::ParameterUint("StartingIndex");
     iActionBrowseRecordSchedules->AddInputParameter(param);
-    param = new Zapp::ParameterUint("RequestedCount");
+    param = new OpenHome::Net::ParameterUint("RequestedCount");
     iActionBrowseRecordSchedules->AddInputParameter(param);
-    param = new Zapp::ParameterString("SortCriteria");
+    param = new OpenHome::Net::ParameterString("SortCriteria");
     iActionBrowseRecordSchedules->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionBrowseRecordSchedules->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("NumberReturned");
+    param = new OpenHome::Net::ParameterUint("NumberReturned");
     iActionBrowseRecordSchedules->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("TotalMatches");
+    param = new OpenHome::Net::ParameterUint("TotalMatches");
     iActionBrowseRecordSchedules->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionBrowseRecordSchedules->AddOutputParameter(param);
 
     iActionBrowseRecordTasks = new Action("BrowseRecordTasks");
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionBrowseRecordTasks->AddInputParameter(param);
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionBrowseRecordTasks->AddInputParameter(param);
-    param = new Zapp::ParameterUint("StartingIndex");
+    param = new OpenHome::Net::ParameterUint("StartingIndex");
     iActionBrowseRecordTasks->AddInputParameter(param);
-    param = new Zapp::ParameterUint("RequestedCount");
+    param = new OpenHome::Net::ParameterUint("RequestedCount");
     iActionBrowseRecordTasks->AddInputParameter(param);
-    param = new Zapp::ParameterString("SortCriteria");
+    param = new OpenHome::Net::ParameterString("SortCriteria");
     iActionBrowseRecordTasks->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionBrowseRecordTasks->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("NumberReturned");
+    param = new OpenHome::Net::ParameterUint("NumberReturned");
     iActionBrowseRecordTasks->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("TotalMatches");
+    param = new OpenHome::Net::ParameterUint("TotalMatches");
     iActionBrowseRecordTasks->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionBrowseRecordTasks->AddOutputParameter(param);
 
     iActionCreateRecordSchedule = new Action("CreateRecordSchedule");
-    param = new Zapp::ParameterString("Elements");
+    param = new OpenHome::Net::ParameterString("Elements");
     iActionCreateRecordSchedule->AddInputParameter(param);
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionCreateRecordSchedule->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionCreateRecordSchedule->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionCreateRecordSchedule->AddOutputParameter(param);
 
     iActionDeleteRecordSchedule = new Action("DeleteRecordSchedule");
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionDeleteRecordSchedule->AddInputParameter(param);
 
     iActionGetRecordSchedule = new Action("GetRecordSchedule");
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionGetRecordSchedule->AddInputParameter(param);
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionGetRecordSchedule->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionGetRecordSchedule->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionGetRecordSchedule->AddOutputParameter(param);
 
     iActionEnableRecordSchedule = new Action("EnableRecordSchedule");
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionEnableRecordSchedule->AddInputParameter(param);
 
     iActionDisableRecordSchedule = new Action("DisableRecordSchedule");
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionDisableRecordSchedule->AddInputParameter(param);
 
     iActionDeleteRecordTask = new Action("DeleteRecordTask");
-    param = new Zapp::ParameterString("RecordTaskID");
+    param = new OpenHome::Net::ParameterString("RecordTaskID");
     iActionDeleteRecordTask->AddInputParameter(param);
 
     iActionGetRecordTask = new Action("GetRecordTask");
-    param = new Zapp::ParameterString("RecordTaskID");
+    param = new OpenHome::Net::ParameterString("RecordTaskID");
     iActionGetRecordTask->AddInputParameter(param);
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionGetRecordTask->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionGetRecordTask->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionGetRecordTask->AddOutputParameter(param);
 
     iActionEnableRecordTask = new Action("EnableRecordTask");
-    param = new Zapp::ParameterString("RecordTaskID");
+    param = new OpenHome::Net::ParameterString("RecordTaskID");
     iActionEnableRecordTask->AddInputParameter(param);
 
     iActionDisableRecordTask = new Action("DisableRecordTask");
-    param = new Zapp::ParameterString("RecordTaskID");
+    param = new OpenHome::Net::ParameterString("RecordTaskID");
     iActionDisableRecordTask->AddInputParameter(param);
 
     iActionResetRecordTask = new Action("ResetRecordTask");
-    param = new Zapp::ParameterString("RecordTaskID");
+    param = new OpenHome::Net::ParameterString("RecordTaskID");
     iActionResetRecordTask->AddInputParameter(param);
 
     iActionGetRecordScheduleConflicts = new Action("GetRecordScheduleConflicts");
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionGetRecordScheduleConflicts->AddInputParameter(param);
-    param = new Zapp::ParameterString("RecordScheduleConflictIDList");
+    param = new OpenHome::Net::ParameterString("RecordScheduleConflictIDList");
     iActionGetRecordScheduleConflicts->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionGetRecordScheduleConflicts->AddOutputParameter(param);
 
     iActionGetRecordTaskConflicts = new Action("GetRecordTaskConflicts");
-    param = new Zapp::ParameterString("RecordTaskID");
+    param = new OpenHome::Net::ParameterString("RecordTaskID");
     iActionGetRecordTaskConflicts->AddInputParameter(param);
-    param = new Zapp::ParameterString("RecordTaskConflictIDList");
+    param = new OpenHome::Net::ParameterString("RecordTaskConflictIDList");
     iActionGetRecordTaskConflicts->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionGetRecordTaskConflicts->AddOutputParameter(param);
 
     Functor functor;

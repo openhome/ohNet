@@ -1,7 +1,7 @@
 #ifndef HEADER_AVOPENHOMEORGTIME1CPP
 #define HEADER_AVOPENHOMEORGTIME1CPP
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Exception.h>
 #include <Functor.h>
 #include <FunctorAsync.h>
@@ -9,7 +9,8 @@
 
 #include <string>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpDeviceCpp;
 class Action;
@@ -146,7 +147,8 @@ private:
     Functor iSecondsChanged;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_AVOPENHOMEORGTIME1CPP
 

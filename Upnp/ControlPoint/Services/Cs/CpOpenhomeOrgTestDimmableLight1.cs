@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyOpenhomeOrgTestDimmableLight1 : ICpProxy, IDisposable
     {
@@ -58,8 +58,8 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyOpenhomeOrgTestDimmableLight1 : CpProxy, IDisposable, ICpProxyOpenhomeOrgTestDimmableLight1
     {
-        private Zapp.Core.Action iActionGetLevel;
-        private Zapp.Core.Action iActionSetLevel;
+        private OpenHome.Net.Core.Action iActionGetLevel;
+        private OpenHome.Net.Core.Action iActionSetLevel;
         private PropertyUint iA_ARG_Level;
         private System.Action iA_ARG_LevelChanged;
         private Mutex iPropertyLock;
@@ -72,14 +72,14 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyOpenhomeOrgTestDimmableLight1(CpDevice aDevice)
             : base("openhome-org", "TestDimmableLight", 1, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             
 
-            iActionGetLevel = new Zapp.Core.Action("GetLevel");
+            iActionGetLevel = new OpenHome.Net.Core.Action("GetLevel");
             param = new ParameterUint("Level");
             iActionGetLevel.AddOutputParameter(param);
 
-            iActionSetLevel = new Zapp.Core.Action("SetLevel");
+            iActionSetLevel = new OpenHome.Net.Core.Action("SetLevel");
             param = new ParameterUint("Level");
             iActionSetLevel.AddInputParameter(param);
 

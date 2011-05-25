@@ -1,6 +1,6 @@
 #include <Ascii.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 const Brn kAsciiNewline("\r\n");
 const Brn kAsciiHexPrefix("0x");
@@ -658,14 +658,14 @@ void WriterAscii::WriteFlush()
 
 // Static functions
 
-void Zapp::Ascii::StreamWriteUint(IWriter& aStream, TUint aValue)
+void OpenHome::Net::Ascii::StreamWriteUint(IWriter& aStream, TUint aValue)
 {
     Bws<Ascii::kMaxUintStringBytes> value;
     Ascii::AppendDec(value, aValue);
     aStream.Write(value);
 }
 
-void Zapp::Ascii::StreamWriteInt(IWriter& aStream, TInt aValue)
+void OpenHome::Net::Ascii::StreamWriteInt(IWriter& aStream, TInt aValue)
 {
     Bws<Ascii::kMaxIntStringBytes> value;
     Ascii::AppendDec(value, aValue);

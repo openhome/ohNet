@@ -1,8 +1,8 @@
 #include <Bonjour.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 BonjourWebPage::BonjourWebPage(IMdnsProvider& aMdns)
     : iMdns(aMdns)

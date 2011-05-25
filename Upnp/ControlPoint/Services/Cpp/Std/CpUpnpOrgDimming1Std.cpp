@@ -8,7 +8,7 @@
 
 #include <string>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncSetLoadLevelTargetUpnpOrgDimming1Cpp : public SyncProxyAction
@@ -452,24 +452,24 @@ void SyncGetRampTimeUpnpOrgDimming1Cpp::CompleteRequest(IAsync& aAsync)
 CpProxyUpnpOrgDimming1Cpp::CpProxyUpnpOrgDimming1Cpp(CpDeviceCpp& aDevice)
     : CpProxy("schemas-upnp-org", "Dimming", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
     iActionSetLoadLevelTarget = new Action("SetLoadLevelTarget");
-    param = new Zapp::ParameterUint("newLoadlevelTarget", 0, 100);
+    param = new OpenHome::Net::ParameterUint("newLoadlevelTarget", 0, 100);
     iActionSetLoadLevelTarget->AddInputParameter(param);
 
     iActionGetLoadLevelTarget = new Action("GetLoadLevelTarget");
-    param = new Zapp::ParameterUint("GetLoadlevelTarget", 0, 100);
+    param = new OpenHome::Net::ParameterUint("GetLoadlevelTarget", 0, 100);
     iActionGetLoadLevelTarget->AddOutputParameter(param);
 
     iActionGetLoadLevelStatus = new Action("GetLoadLevelStatus");
-    param = new Zapp::ParameterUint("retLoadlevelStatus", 0, 100);
+    param = new OpenHome::Net::ParameterUint("retLoadlevelStatus", 0, 100);
     iActionGetLoadLevelStatus->AddOutputParameter(param);
 
     iActionSetOnEffectLevel = new Action("SetOnEffectLevel");
-    param = new Zapp::ParameterUint("newOnEffectLevel", 0, 100);
+    param = new OpenHome::Net::ParameterUint("newOnEffectLevel", 0, 100);
     iActionSetOnEffectLevel->AddInputParameter(param);
 
     iActionSetOnEffect = new Action("SetOnEffect");
@@ -478,7 +478,7 @@ CpProxyUpnpOrgDimming1Cpp::CpProxyUpnpOrgDimming1Cpp(CpDeviceCpp& aDevice)
     allowedValues[index++] = (TChar*)"OnEffectLevel";
     allowedValues[index++] = (TChar*)"LastSetting";
     allowedValues[index++] = (TChar*)"Default";
-    param = new Zapp::ParameterString("newOnEffect", allowedValues, 3);
+    param = new OpenHome::Net::ParameterString("newOnEffect", allowedValues, 3);
     iActionSetOnEffect->AddInputParameter(param);
     delete[] allowedValues;
 
@@ -488,10 +488,10 @@ CpProxyUpnpOrgDimming1Cpp::CpProxyUpnpOrgDimming1Cpp(CpDeviceCpp& aDevice)
     allowedValues[index++] = (TChar*)"OnEffectLevel";
     allowedValues[index++] = (TChar*)"LastSetting";
     allowedValues[index++] = (TChar*)"Default";
-    param = new Zapp::ParameterString("retOnEffect", allowedValues, 3);
+    param = new OpenHome::Net::ParameterString("retOnEffect", allowedValues, 3);
     iActionGetOnEffectParameters->AddOutputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterUint("retOnEffectLevel", 0, 100);
+    param = new OpenHome::Net::ParameterUint("retOnEffectLevel", 0, 100);
     iActionGetOnEffectParameters->AddOutputParameter(param);
 
     iActionStepUp = new Action("StepUp");
@@ -505,25 +505,25 @@ CpProxyUpnpOrgDimming1Cpp::CpProxyUpnpOrgDimming1Cpp(CpDeviceCpp& aDevice)
     iActionStopRamp = new Action("StopRamp");
 
     iActionStartRampToLevel = new Action("StartRampToLevel");
-    param = new Zapp::ParameterUint("newLoadLevelTarget", 0, 100);
+    param = new OpenHome::Net::ParameterUint("newLoadLevelTarget", 0, 100);
     iActionStartRampToLevel->AddInputParameter(param);
-    param = new Zapp::ParameterUint("newRampTime");
+    param = new OpenHome::Net::ParameterUint("newRampTime");
     iActionStartRampToLevel->AddInputParameter(param);
 
     iActionSetStepDelta = new Action("SetStepDelta");
-    param = new Zapp::ParameterUint("newStepDelta", 1, 100);
+    param = new OpenHome::Net::ParameterUint("newStepDelta", 1, 100);
     iActionSetStepDelta->AddInputParameter(param);
 
     iActionGetStepDelta = new Action("GetStepDelta");
-    param = new Zapp::ParameterUint("retStepDelta", 1, 100);
+    param = new OpenHome::Net::ParameterUint("retStepDelta", 1, 100);
     iActionGetStepDelta->AddOutputParameter(param);
 
     iActionSetRampRate = new Action("SetRampRate");
-    param = new Zapp::ParameterUint("newRampRate", 0, 100);
+    param = new OpenHome::Net::ParameterUint("newRampRate", 0, 100);
     iActionSetRampRate->AddInputParameter(param);
 
     iActionGetRampRate = new Action("GetRampRate");
-    param = new Zapp::ParameterUint("retRampRate", 0, 100);
+    param = new OpenHome::Net::ParameterUint("retRampRate", 0, 100);
     iActionGetRampRate->AddOutputParameter(param);
 
     iActionPauseRamp = new Action("PauseRamp");
@@ -531,15 +531,15 @@ CpProxyUpnpOrgDimming1Cpp::CpProxyUpnpOrgDimming1Cpp(CpDeviceCpp& aDevice)
     iActionResumeRamp = new Action("ResumeRamp");
 
     iActionGetIsRamping = new Action("GetIsRamping");
-    param = new Zapp::ParameterBool("retIsRamping");
+    param = new OpenHome::Net::ParameterBool("retIsRamping");
     iActionGetIsRamping->AddOutputParameter(param);
 
     iActionGetRampPaused = new Action("GetRampPaused");
-    param = new Zapp::ParameterBool("retRampPaused");
+    param = new OpenHome::Net::ParameterBool("retRampPaused");
     iActionGetRampPaused->AddOutputParameter(param);
 
     iActionGetRampTime = new Action("GetRampTime");
-    param = new Zapp::ParameterUint("retRampTime");
+    param = new OpenHome::Net::ParameterUint("retRampTime");
     iActionGetRampTime->AddOutputParameter(param);
 
     Functor functor;

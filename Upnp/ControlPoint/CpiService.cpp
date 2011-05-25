@@ -1,5 +1,5 @@
 #include <CpiService.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <CpiDevice.h>
 #include <Stack.h>
@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // CpiService
 
@@ -54,7 +54,7 @@ Invocation* CpiService::Invocation(const Action& aAction, FunctorAsync& aFunctor
     iLock.Wait();
     iPendingInvocations++;
     iLock.Signal();
-    Zapp::Invocation* invocation = InvocationManager::Invocation();
+    OpenHome::Net::Invocation* invocation = InvocationManager::Invocation();
     invocation->Set(*this, aAction, iDevice, aFunctor);
     return invocation;
 }
@@ -98,12 +98,12 @@ CpiDevice& CpiService::Device()
 
 // Argument
 
-const Zapp::Parameter& Argument::Parameter() const
+const OpenHome::Net::Parameter& Argument::Parameter() const
 {
     return iParameter;
 }
 
-Argument::Argument(const Zapp::Parameter& aParameter)
+Argument::Argument(const OpenHome::Net::Parameter& aParameter)
     : iParameter(aParameter)
 {
 }
@@ -112,7 +112,7 @@ Argument::~Argument()
 {
 }
 
-void Argument::ValidationFailed(const Zapp::Parameter& aParameter)
+void Argument::ValidationFailed(const OpenHome::Net::Parameter& aParameter)
 {
     Log::Print("Validation of Parameter ");
     Log::Print(aParameter.Name());
@@ -123,12 +123,12 @@ void Argument::ValidationFailed(const Zapp::Parameter& aParameter)
 
 // ArgumentString
 
-ArgumentString::ArgumentString(const Zapp::Parameter& aParameter)
+ArgumentString::ArgumentString(const OpenHome::Net::Parameter& aParameter)
     : Argument(aParameter)
 {
 }
 
-ArgumentString::ArgumentString(const Zapp::Parameter& aParameter, const Brx& aValue)
+ArgumentString::ArgumentString(const OpenHome::Net::Parameter& aParameter, const Brx& aValue)
     : Argument(aParameter)
 {
     try {
@@ -170,13 +170,13 @@ void ArgumentString::ProcessOutput(IOutputProcessor& aProcessor, const Brx& aBuf
 
 // ArgumentInt
 
-ArgumentInt::ArgumentInt(const Zapp::Parameter& aParameter)
+ArgumentInt::ArgumentInt(const OpenHome::Net::Parameter& aParameter)
     : Argument(aParameter)
     , iValue(0)
 {
 }
 
-ArgumentInt::ArgumentInt(const Zapp::Parameter& aParameter, TInt aValue)
+ArgumentInt::ArgumentInt(const OpenHome::Net::Parameter& aParameter, TInt aValue)
     : Argument(aParameter)
     , iValue(aValue)
 {
@@ -211,13 +211,13 @@ void ArgumentInt::ProcessOutput(IOutputProcessor& aProcessor, const Brx& aBuffer
 
 // ArgumentUint
 
-ArgumentUint::ArgumentUint(const Zapp::Parameter& aParameter)
+ArgumentUint::ArgumentUint(const OpenHome::Net::Parameter& aParameter)
     : Argument(aParameter)
     , iValue(0)
 {
 }
 
-ArgumentUint::ArgumentUint(const Zapp::Parameter& aParameter, TUint aValue)
+ArgumentUint::ArgumentUint(const OpenHome::Net::Parameter& aParameter, TUint aValue)
     : Argument(aParameter)
     , iValue(aValue)
 {
@@ -252,13 +252,13 @@ void ArgumentUint::ProcessOutput(IOutputProcessor& aProcessor, const Brx& aBuffe
 
 // ArgumentBool
 
-ArgumentBool::ArgumentBool(const Zapp::Parameter& aParameter)
+ArgumentBool::ArgumentBool(const OpenHome::Net::Parameter& aParameter)
     : Argument(aParameter)
     , iValue(false)
 {
 }
 
-ArgumentBool::ArgumentBool(const Zapp::Parameter& aParameter, TBool aValue)
+ArgumentBool::ArgumentBool(const OpenHome::Net::Parameter& aParameter, TBool aValue)
     : Argument(aParameter)
     , iValue(aValue)
 {
@@ -293,12 +293,12 @@ void ArgumentBool::ProcessOutput(IOutputProcessor& aProcessor, const Brx& aBuffe
 
 // ArgumentBinary
 
-ArgumentBinary::ArgumentBinary(const Zapp::Parameter& aParameter)
+ArgumentBinary::ArgumentBinary(const OpenHome::Net::Parameter& aParameter)
     : Argument(aParameter)
 {
 }
 
-ArgumentBinary::ArgumentBinary(const Zapp::Parameter& aParameter, const Brx& aValue)
+ArgumentBinary::ArgumentBinary(const OpenHome::Net::Parameter& aParameter, const Brx& aValue)
     : Argument(aParameter)
 {
     try {
@@ -338,9 +338,9 @@ void ArgumentBinary::ProcessOutput(IOutputProcessor& aProcessor, const Brx& aBuf
 }
 
 
-// Zapp::Invocation
+// OpenHome::Net::Invocation
 
-void Zapp::Invocation::SignalCompleted()
+void OpenHome::Net::Invocation::SignalCompleted()
 {
     iCompleted = !Error();
     // log completion before running the client callback as that may transfer the content of ArgumentStrings
@@ -367,17 +367,17 @@ void Zapp::Invocation::SignalCompleted()
     iFree.Write(this);
 }
 
-TBool Zapp::Invocation::Error() const
+TBool OpenHome::Net::Invocation::Error() const
 {
     return (iError.Level() != Error::eNone);
 }
 
-TBool Zapp::Invocation::Interrupt() const
+TBool OpenHome::Net::Invocation::Interrupt() const
 {
     return iService->Interrupt();
 }
 
-void Zapp::Invocation::Set(CpiService& aService, const Zapp::Action& aAction, CpiDevice& aDevice, FunctorAsync& aFunctor)
+void OpenHome::Net::Invocation::Set(CpiService& aService, const OpenHome::Net::Action& aAction, CpiDevice& aDevice, FunctorAsync& aFunctor)
 {
     iService = &aService;
     iAction = &aAction;
@@ -386,17 +386,17 @@ void Zapp::Invocation::Set(CpiService& aService, const Zapp::Action& aAction, Cp
     iSequenceNumber = Stack::SequenceNumber();
 }
 
-void Zapp::Invocation::AddInput(Argument* aArgument)
+void OpenHome::Net::Invocation::AddInput(Argument* aArgument)
 {
     iInput.push_back(aArgument);
 }
 
-void Zapp::Invocation::AddOutput(Argument* aArgument)
+void OpenHome::Net::Invocation::AddOutput(Argument* aArgument)
 {
     iOutput.push_back(aArgument);
 }
 
-void Zapp::Invocation::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescription)
+void OpenHome::Net::Invocation::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescription)
 {
     /* If an error is set repeatedly, assume that the first setter will have had
        access to the most accurate description */
@@ -405,7 +405,7 @@ void Zapp::Invocation::SetError(Error::ELevel aLevel, TUint aCode, const Brx& aD
     }
 }
 
-void Zapp::Invocation::SetInterruptHandler(IInterruptHandler* aHandler)
+void OpenHome::Net::Invocation::SetInterruptHandler(IInterruptHandler* aHandler)
 {
     AutoMutex a(iLock);
     iInterruptHandler = aHandler;
@@ -414,7 +414,7 @@ void Zapp::Invocation::SetInterruptHandler(IInterruptHandler* aHandler)
     }
 }
 
-void Zapp::Invocation::Interrupt(const Service& aService)
+void OpenHome::Net::Invocation::Interrupt(const Service& aService)
 {
     AutoMutex a(iLock);
     if (iService == &aService && iInterruptHandler != NULL) {
@@ -423,24 +423,24 @@ void Zapp::Invocation::Interrupt(const Service& aService)
     }
 }
 
-const Zapp::ServiceType& Zapp::Invocation::ServiceType() const
+const OpenHome::Net::ServiceType& OpenHome::Net::Invocation::ServiceType() const
 {
     ASSERT(iService != NULL);
     return iService->ServiceType();
 }
 
-const Zapp::Action& Zapp::Invocation::Action() const
+const OpenHome::Net::Action& OpenHome::Net::Invocation::Action() const
 {
     ASSERT(iAction != NULL);
     return *iAction;
 }
 
-CpiDevice& Zapp::Invocation::Device()
+CpiDevice& OpenHome::Net::Invocation::Device()
 {
     return *iDevice;
 }
 
-void Zapp::Invocation::Output(IAsyncOutput& aConsole)
+void OpenHome::Net::Invocation::Output(IAsyncOutput& aConsole)
 {
     AutoMutex a(iLock); /* using iLock doesn't prevent logging for multiple invocations overlapping
 						   Using Stack::Mutex() causes problems though as the call to
@@ -469,21 +469,21 @@ void Zapp::Invocation::Output(IAsyncOutput& aConsole)
     }
 }
 
-void Zapp::Invocation::OutputArgument(IAsyncOutput& aConsole, const TChar* aKey, const Argument& aArgument)
+void OpenHome::Net::Invocation::OutputArgument(IAsyncOutput& aConsole, const TChar* aKey, const Argument& aArgument)
 {
     static const TUint kMaxStackBytes = 1024;
     TChar str[kMaxStackBytes];
     TChar* bigStr = NULL;
     ASSERT(aArgument.Parameter().Name().Bytes() < kMaxStackBytes-40); // add code to support mega-names if this ever fails
-    Zapp::Parameter::EType paramType = aArgument.Parameter().Type();
-	if (paramType == Zapp::Parameter::eTypeRelated) {
+    OpenHome::Net::Parameter::EType paramType = aArgument.Parameter().Type();
+	if (paramType == OpenHome::Net::Parameter::eTypeRelated) {
 		paramType = ((const ParameterRelated&)aArgument.Parameter()).Related().Parameter().Type();
 	}
     const Brx& paramName = aArgument.Parameter().Name();
-    if (paramType == Zapp::Parameter::eTypeBinary) {
+    if (paramType == OpenHome::Net::Parameter::eTypeBinary) {
         (void)sprintf(str, "%s (binary - size %u)", paramName.Ptr(), ((const ArgumentBinary&)aArgument).Value().Bytes());
     }
-    else if (paramType == Zapp::Parameter::eTypeString) {
+    else if (paramType == OpenHome::Net::Parameter::eTypeString) {
         char fmt[] = "%s (%s)";
         const ArgumentString& argString = (const ArgumentString&)aArgument;
         const TUint len = paramName.Bytes() + argString.Value().Bytes() + sizeof(*fmt);
@@ -498,13 +498,13 @@ void Zapp::Invocation::OutputArgument(IAsyncOutput& aConsole, const TChar* aKey,
     else {
         switch (paramType)
         {
-        case Zapp::Parameter::eTypeBool:
+        case OpenHome::Net::Parameter::eTypeBool:
             (void)sprintf(str, "%s (%d)", paramName.Ptr(), ((const ArgumentBool&)aArgument).Value());
             break;
-        case Zapp::Parameter::eTypeInt:
+        case OpenHome::Net::Parameter::eTypeInt:
             (void)sprintf(str, "%s (%d)", paramName.Ptr(), ((const ArgumentInt&)aArgument).Value());
             break;
-        case Zapp::Parameter::eTypeUint:
+        case OpenHome::Net::Parameter::eTypeUint:
             (void)sprintf(str, "%s (%u)", paramName.Ptr(), ((const ArgumentUint&)aArgument).Value());
             break;
         default:
@@ -516,33 +516,33 @@ void Zapp::Invocation::OutputArgument(IAsyncOutput& aConsole, const TChar* aKey,
     delete bigStr;
 }
 
-const Zapp::Invocation::VectorArguments& Zapp::Invocation::InputArguments() const
+const OpenHome::Net::Invocation::VectorArguments& OpenHome::Net::Invocation::InputArguments() const
 {
     return iInput;
 }
 
-Zapp::Invocation::VectorArguments& Zapp::Invocation::OutputArguments()
+OpenHome::Net::Invocation::VectorArguments& OpenHome::Net::Invocation::OutputArguments()
 {
     return iOutput;
 }
 
-void Zapp::Invocation::SetInvoker(IInvocable& aInvocable)
+void OpenHome::Net::Invocation::SetInvoker(IInvocable& aInvocable)
 {
     iInvoker = &aInvocable;
 }
 
-IInvocable& Zapp::Invocation::Invoker()
+IInvocable& OpenHome::Net::Invocation::Invoker()
 {
     ASSERT(iInvoker != NULL);
     return *iInvoker;
 }
 
-TUint Zapp::Invocation::Type() const
+TUint OpenHome::Net::Invocation::Type() const
 {
     return eInvocation;
 }
 
-Zapp::Invocation::Invocation(Fifo<Zapp::Invocation*>& aFree)
+OpenHome::Net::Invocation::Invocation(Fifo<OpenHome::Net::Invocation*>& aFree)
     : iLock("MINV")
     , iFree(aFree)
     , iService(NULL)
@@ -553,11 +553,11 @@ Zapp::Invocation::Invocation(Fifo<Zapp::Invocation*>& aFree)
 {
 }
 
-Zapp::Invocation::~Invocation()
+OpenHome::Net::Invocation::~Invocation()
 {
 }
 
-void Zapp::Invocation::Clear()
+void OpenHome::Net::Invocation::Clear()
 {
     LOG(kService, "Invocation::Clear for %p\n", this);
     iLock.Wait();
@@ -694,7 +694,7 @@ InvocationManager::InvocationManager()
     }
 
     for (i=0; i<Stack::InitParams().NumInvocations(); i++) {
-        iFreeInvocations.Write(new Zapp::Invocation(iFreeInvocations));
+        iFreeInvocations.Write(new OpenHome::Net::Invocation(iFreeInvocations));
     }
     iActive = true;
     Start();
@@ -717,23 +717,23 @@ InvocationManager::~InvocationManager()
     free(iInvokers);
 
     for (i=0; i<Stack::InitParams().NumInvocations(); i++) {
-        Zapp::Invocation* invocation = iFreeInvocations.Read();
+        OpenHome::Net::Invocation* invocation = iFreeInvocations.Read();
         delete invocation;
     }
 }
 
-Zapp::Invocation* InvocationManager::Invocation()
+OpenHome::Net::Invocation* InvocationManager::Invocation()
 {
     InvocationManager& self = Self();
     AutoMutex a(self.iLock);
     if (!self.iActive) {
         return NULL;
     }
-    Zapp::Invocation* invocation = self.iFreeInvocations.Read();
+    OpenHome::Net::Invocation* invocation = self.iFreeInvocations.Read();
     return invocation;
 }
 
-void InvocationManager::Invoke(Zapp::Invocation* aInvocation)
+void InvocationManager::Invoke(OpenHome::Net::Invocation* aInvocation)
 {
     FunctorAsync& asyncBeginHandler = Stack::InitParams().AsyncBeginHandler();
     if (asyncBeginHandler) {
@@ -761,7 +761,7 @@ void InvocationManager::Run()
 {
     for (;;) {
         Wait();
-        Zapp::Invocation* invocation = NULL;
+        OpenHome::Net::Invocation* invocation = NULL;
         try {
             invocation = iWaitingInvocations.Read();
             if (invocation->Interrupt()) {

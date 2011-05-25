@@ -6,7 +6,8 @@
 #include <FunctorMsg.h>
 #include <stdio.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 const TUint kMaxPrintBytes = 1024;
     
@@ -26,6 +27,7 @@ private:
     static TInt DoPrint(FunctorMsg& aOutput, const TByte* aMessage);
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_PRINTER

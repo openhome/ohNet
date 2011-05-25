@@ -4,10 +4,10 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 using System.Linq;
-using Zapp.ControlPoint;
-using Zapp.ControlPoint.Proxies;
+using OpenHome.Net.ControlPoint;
+using OpenHome.Net.ControlPoint.Proxies;
 
-namespace Zapp
+namespace OpenHome.Net
 {
     class TestBasicCp
     {

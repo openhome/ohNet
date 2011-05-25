@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Zapp.Device
+namespace OpenHome.Net.Device
 {
     /// <summary>
     /// Interface passed to implementors of DvDevice allowing them to serve UI files to Control Points
@@ -96,14 +96,14 @@ namespace Zapp.Device
         /// This should only be used with CpDeviceDv.
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
-        Zapp.Device.DvDevice CreateDevice(string aUdn);
+        OpenHome.Net.Device.DvDevice CreateDevice(string aUdn);
 
         /// <summary>
         /// Constructor.  Creates a device capable of operating on any of the protocols the device
         /// stack supports as standard but with no services or attributes as yet
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
-        Zapp.Device.DvDevice CreateDeviceStandard(string aUdn);
+        OpenHome.Net.Device.DvDevice CreateDeviceStandard(string aUdn);
 
         /// <summary>
         /// Constructor.  Creates a device capable of serving UI files and of operating on any of the
@@ -111,7 +111,7 @@ namespace Zapp.Device
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
         /// <param name="aResourceManager">Allows the owner of a device to serve UI files.</param>
-        Zapp.Device.DvDevice CreateDeviceStandard(string aUdn, IResourceManager aResourceManager);
+        OpenHome.Net.Device.DvDevice CreateDeviceStandard(string aUdn, IResourceManager aResourceManager);
     }
 
     /// <summary>
@@ -119,12 +119,12 @@ namespace Zapp.Device
     /// </summary>
     public class DvDeviceFactory : IDvDeviceFactory
     {
-        private Zapp.Core.DeviceStack iDeviceStack;
+        private OpenHome.Net.Core.DeviceStack iDeviceStack;
 
         /// <summary>
         /// Create a new device factory. Requires a running device stack.
         /// </summary>
-        public DvDeviceFactory(Zapp.Core.DeviceStack aDeviceStack)
+        public DvDeviceFactory(OpenHome.Net.Core.DeviceStack aDeviceStack)
         {
             iDeviceStack = aDeviceStack;
             if (iDeviceStack == null)
@@ -138,7 +138,7 @@ namespace Zapp.Device
         /// This should only be used with CpDeviceDv.
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
-        public Zapp.Device.DvDevice CreateDevice(string aUdn)
+        public OpenHome.Net.Device.DvDevice CreateDevice(string aUdn)
         {
             return new DvDevice(aUdn);
         }
@@ -148,7 +148,7 @@ namespace Zapp.Device
         /// stack supports as standard but with no services or attributes as yet
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
-        public Zapp.Device.DvDevice CreateDeviceStandard(string aUdn)
+        public OpenHome.Net.Device.DvDevice CreateDeviceStandard(string aUdn)
         {
             return new DvDeviceStandard(aUdn);
         }
@@ -159,7 +159,7 @@ namespace Zapp.Device
         /// </summary>
         /// <param name="aUdn">Universally unique identifier.</param>
         /// <param name="aResourceManager">Allows the owner of a device to serve UI files</param>
-        public Zapp.Device.DvDevice CreateDeviceStandard(string aUdn, IResourceManager aResourceManager)
+        public OpenHome.Net.Device.DvDevice CreateDeviceStandard(string aUdn, IResourceManager aResourceManager)
         {
             return new DvDeviceStandard(aUdn, aResourceManager);
         }
@@ -167,26 +167,26 @@ namespace Zapp.Device
     
     public class DvDevice : IDisposable
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr DvDeviceCreate(char* aUdn);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void DvDeviceDestroy(IntPtr aDevice);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe char* DvDeviceUdn(IntPtr aDevice);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern int DvDeviceEnabled(IntPtr aDevice);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void DvDeviceSetEnabled(IntPtr aDevice);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe void DvDeviceSetDisabled(IntPtr aDevice, System.Action<IntPtr> aCompleted, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe void DvDeviceGetAttribute(IntPtr aDevice, char* aKey, char** aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe void DvDeviceSetAttribute(IntPtr aDevice, char* aKey, char* aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe void DvDeviceSetXmlExtension(IntPtr aDevice, char* aXml);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
+        [DllImport("ohNet")]
+        static extern unsafe void OhNetFree(void* aPtr);
 
         protected IntPtr iHandle;
         protected GCHandle iGch;
@@ -356,9 +356,9 @@ namespace Zapp.Device
 
     public class DvDeviceStandard : DvDevice
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr DvDeviceStandardCreateNoResources(char* aUdn);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr DvDeviceStandardCreate(char* aUdn, CallbackResourceManager aResourceManager, IntPtr aPtr);
 
         public unsafe delegate void CallbackWriteResourceBegin(IntPtr aPtr, int aTotalBytes, char* aMimeType);

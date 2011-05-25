@@ -1,15 +1,15 @@
 #include "DvUpnpOrgRenderingControl2.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
 #include <DvProvider.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class DvProviderUpnpOrgRenderingControl2C : public DvProvider
 {
@@ -192,7 +192,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionListPresets(CallbackRender
 {
     iCallbackListPresets = aCallback;
     iPtrListPresets = aPtr;
-    Zapp::Action* action = new Zapp::Action("ListPresets");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ListPresets");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterString("CurrentPresetNameList"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoListPresets);
@@ -203,7 +203,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSelectPreset(CallbackRende
 {
     iCallbackSelectPreset = aCallback;
     iPtrSelectPreset = aPtr;
-    Zapp::Action* action = new Zapp::Action("SelectPreset");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SelectPreset");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -220,7 +220,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetBrightness(CallbackRend
 {
     iCallbackGetBrightness = aCallback;
     iPtrGetBrightness = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetBrightness");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetBrightness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentBrightness", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetBrightness);
@@ -231,7 +231,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetBrightness(CallbackRend
 {
     iCallbackSetBrightness = aCallback;
     iPtrSetBrightness = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetBrightness");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetBrightness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredBrightness", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetBrightness);
@@ -242,7 +242,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetContrast(CallbackRender
 {
     iCallbackGetContrast = aCallback;
     iPtrGetContrast = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetContrast");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetContrast");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentContrast", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetContrast);
@@ -253,7 +253,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetContrast(CallbackRender
 {
     iCallbackSetContrast = aCallback;
     iPtrSetContrast = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetContrast");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetContrast");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredContrast", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetContrast);
@@ -264,7 +264,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetSharpness(CallbackRende
 {
     iCallbackGetSharpness = aCallback;
     iPtrGetSharpness = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetSharpness");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetSharpness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentSharpness", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetSharpness);
@@ -275,7 +275,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetSharpness(CallbackRende
 {
     iCallbackSetSharpness = aCallback;
     iPtrSetSharpness = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetSharpness");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetSharpness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredSharpness", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetSharpness);
@@ -286,7 +286,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetRedVideoGain(CallbackRe
 {
     iCallbackGetRedVideoGain = aCallback;
     iPtrGetRedVideoGain = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetRedVideoGain");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRedVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentRedVideoGain", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetRedVideoGain);
@@ -297,7 +297,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetRedVideoGain(CallbackRe
 {
     iCallbackSetRedVideoGain = aCallback;
     iPtrSetRedVideoGain = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetRedVideoGain");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetRedVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredRedVideoGain", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetRedVideoGain);
@@ -308,7 +308,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetGreenVideoGain(Callback
 {
     iCallbackGetGreenVideoGain = aCallback;
     iPtrGetGreenVideoGain = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetGreenVideoGain");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetGreenVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentGreenVideoGain", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetGreenVideoGain);
@@ -319,7 +319,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetGreenVideoGain(Callback
 {
     iCallbackSetGreenVideoGain = aCallback;
     iPtrSetGreenVideoGain = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetGreenVideoGain");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetGreenVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredGreenVideoGain", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetGreenVideoGain);
@@ -330,7 +330,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetBlueVideoGain(CallbackR
 {
     iCallbackGetBlueVideoGain = aCallback;
     iPtrGetBlueVideoGain = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetBlueVideoGain");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetBlueVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentBlueVideoGain", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetBlueVideoGain);
@@ -341,7 +341,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetBlueVideoGain(CallbackR
 {
     iCallbackSetBlueVideoGain = aCallback;
     iPtrSetBlueVideoGain = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetBlueVideoGain");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetBlueVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredBlueVideoGain", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetBlueVideoGain);
@@ -352,7 +352,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetRedVideoBlackLevel(Call
 {
     iCallbackGetRedVideoBlackLevel = aCallback;
     iPtrGetRedVideoBlackLevel = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetRedVideoBlackLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRedVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetRedVideoBlackLevel);
@@ -363,7 +363,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetRedVideoBlackLevel(Call
 {
     iCallbackSetRedVideoBlackLevel = aCallback;
     iPtrSetRedVideoBlackLevel = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetRedVideoBlackLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetRedVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetRedVideoBlackLevel);
@@ -374,7 +374,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetGreenVideoBlackLevel(Ca
 {
     iCallbackGetGreenVideoBlackLevel = aCallback;
     iPtrGetGreenVideoBlackLevel = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetGreenVideoBlackLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetGreenVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetGreenVideoBlackLevel);
@@ -385,7 +385,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetGreenVideoBlackLevel(Ca
 {
     iCallbackSetGreenVideoBlackLevel = aCallback;
     iPtrSetGreenVideoBlackLevel = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetGreenVideoBlackLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetGreenVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetGreenVideoBlackLevel);
@@ -396,7 +396,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetBlueVideoBlackLevel(Cal
 {
     iCallbackGetBlueVideoBlackLevel = aCallback;
     iPtrGetBlueVideoBlackLevel = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetBlueVideoBlackLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetBlueVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetBlueVideoBlackLevel);
@@ -407,7 +407,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetBlueVideoBlackLevel(Cal
 {
     iCallbackSetBlueVideoBlackLevel = aCallback;
     iPtrSetBlueVideoBlackLevel = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetBlueVideoBlackLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetBlueVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetBlueVideoBlackLevel);
@@ -418,7 +418,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetColorTemperature(Callba
 {
     iCallbackGetColorTemperature = aCallback;
     iPtrGetColorTemperature = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetColorTemperature");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetColorTemperature");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentColorTemperature", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetColorTemperature);
@@ -429,7 +429,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetColorTemperature(Callba
 {
     iCallbackSetColorTemperature = aCallback;
     iPtrSetColorTemperature = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetColorTemperature");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetColorTemperature");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredColorTemperature", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetColorTemperature);
@@ -440,7 +440,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetHorizontalKeystone(Call
 {
     iCallbackGetHorizontalKeystone = aCallback;
     iPtrGetHorizontalKeystone = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetHorizontalKeystone");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetHorizontalKeystone");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterInt("CurrentHorizontalKeystone"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetHorizontalKeystone);
@@ -451,7 +451,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetHorizontalKeystone(Call
 {
     iCallbackSetHorizontalKeystone = aCallback;
     iPtrSetHorizontalKeystone = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetHorizontalKeystone");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetHorizontalKeystone");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterInt("DesiredHorizontalKeystone"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetHorizontalKeystone);
@@ -462,7 +462,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetVerticalKeystone(Callba
 {
     iCallbackGetVerticalKeystone = aCallback;
     iPtrGetVerticalKeystone = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetVerticalKeystone");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetVerticalKeystone");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterInt("CurrentVerticalKeystone"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoGetVerticalKeystone);
@@ -473,7 +473,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetVerticalKeystone(Callba
 {
     iCallbackSetVerticalKeystone = aCallback;
     iPtrSetVerticalKeystone = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetVerticalKeystone");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetVerticalKeystone");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterInt("DesiredVerticalKeystone"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2C::DoSetVerticalKeystone);
@@ -484,7 +484,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetMute(CallbackRenderingC
 {
     iCallbackGetMute = aCallback;
     iPtrGetMute = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetMute");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetMute");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -502,7 +502,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetMute(CallbackRenderingC
 {
     iCallbackSetMute = aCallback;
     iPtrSetMute = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetMute");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetMute");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -520,7 +520,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetVolume(CallbackRenderin
 {
     iCallbackGetVolume = aCallback;
     iPtrGetVolume = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetVolume");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetVolume");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -538,7 +538,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetVolume(CallbackRenderin
 {
     iCallbackSetVolume = aCallback;
     iPtrSetVolume = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetVolume");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetVolume");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -556,7 +556,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetVolumeDB(CallbackRender
 {
     iCallbackGetVolumeDB = aCallback;
     iPtrGetVolumeDB = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetVolumeDB");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetVolumeDB");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -574,7 +574,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetVolumeDB(CallbackRender
 {
     iCallbackSetVolumeDB = aCallback;
     iPtrSetVolumeDB = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetVolumeDB");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetVolumeDB");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -592,7 +592,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetVolumeDBRange(CallbackR
 {
     iCallbackGetVolumeDBRange = aCallback;
     iPtrGetVolumeDBRange = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetVolumeDBRange");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetVolumeDBRange");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -611,7 +611,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetLoudness(CallbackRender
 {
     iCallbackGetLoudness = aCallback;
     iPtrGetLoudness = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetLoudness");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetLoudness");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -629,7 +629,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetLoudness(CallbackRender
 {
     iCallbackSetLoudness = aCallback;
     iPtrSetLoudness = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetLoudness");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetLoudness");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -647,7 +647,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionGetStateVariables(Callback
 {
     iCallbackGetStateVariables = aCallback;
     iPtrGetStateVariables = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetStateVariables");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetStateVariables");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("StateVariableList"));
     action->AddOutputParameter(new ParameterString("StateVariableValuePairs"));
@@ -659,7 +659,7 @@ void DvProviderUpnpOrgRenderingControl2C::EnableActionSetStateVariables(Callback
 {
     iCallbackSetStateVariables = aCallback;
     iPtrSetStateVariables = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetStateVariables");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetStateVariables");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("RenderingControlUDN"));
     action->AddInputParameter(new ParameterString("ServiceType"));
@@ -685,7 +685,7 @@ void DvProviderUpnpOrgRenderingControl2C::DoListPresets(IDviInvocation& aInvocat
     InvocationResponseString respCurrentPresetNameList(aInvocation, "CurrentPresetNameList");
     resp.Start();
     Brhz bufCurrentPresetNameList((const TChar*)CurrentPresetNameList);
-    ZappFreeExternal(CurrentPresetNameList);
+    OhNetFreeExternal(CurrentPresetNameList);
     respCurrentPresetNameList.Write(bufCurrentPresetNameList);
     respCurrentPresetNameList.WriteFlush();
     resp.End();
@@ -1308,7 +1308,7 @@ void DvProviderUpnpOrgRenderingControl2C::DoGetStateVariables(IDviInvocation& aI
     InvocationResponseString respStateVariableValuePairs(aInvocation, "StateVariableValuePairs");
     resp.Start();
     Brhz bufStateVariableValuePairs((const TChar*)StateVariableValuePairs);
-    ZappFreeExternal(StateVariableValuePairs);
+    OhNetFreeExternal(StateVariableValuePairs);
     respStateVariableValuePairs.Write(bufStateVariableValuePairs);
     respStateVariableValuePairs.WriteFlush();
     resp.End();
@@ -1337,7 +1337,7 @@ void DvProviderUpnpOrgRenderingControl2C::DoSetStateVariables(IDviInvocation& aI
     InvocationResponseString respStateVariableList(aInvocation, "StateVariableList");
     resp.Start();
     Brhz bufStateVariableList((const TChar*)StateVariableList);
-    ZappFreeExternal(StateVariableList);
+    OhNetFreeExternal(StateVariableList);
     respStateVariableList.Write(bufStateVariableList);
     respStateVariableList.WriteFlush();
     resp.End();

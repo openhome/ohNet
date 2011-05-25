@@ -1,11 +1,11 @@
 #include <Std/CpDeviceUpnp.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <CpiDeviceUpnp.h>
 #include <Std/FunctorCpDevice.h>
 #include <FunctorCpiDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 // CpDeviceListCppUpnpAll

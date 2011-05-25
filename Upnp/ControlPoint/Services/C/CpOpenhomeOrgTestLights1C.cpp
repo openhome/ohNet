@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyOpenhomeOrgTestLights1C : public CpProxyC
 {
@@ -228,56 +228,56 @@ CpProxyOpenhomeOrgTestLights1C::CpProxyOpenhomeOrgTestLights1C(CpDeviceC aDevice
     : CpProxyC("openhome-org", "TestLights", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionGetCount = new Action("GetCount");
-    param = new Zapp::ParameterUint("Count");
+    param = new OpenHome::Net::ParameterUint("Count");
     iActionGetCount->AddOutputParameter(param);
 
     iActionGetRoom = new Action("GetRoom");
-    param = new Zapp::ParameterUint("Index");
+    param = new OpenHome::Net::ParameterUint("Index");
     iActionGetRoom->AddInputParameter(param);
-    param = new Zapp::ParameterString("RoomName");
+    param = new OpenHome::Net::ParameterString("RoomName");
     iActionGetRoom->AddOutputParameter(param);
 
     iActionGetName = new Action("GetName");
-    param = new Zapp::ParameterUint("Index");
+    param = new OpenHome::Net::ParameterUint("Index");
     iActionGetName->AddInputParameter(param);
-    param = new Zapp::ParameterString("FriendlyName");
+    param = new OpenHome::Net::ParameterString("FriendlyName");
     iActionGetName->AddOutputParameter(param);
 
     iActionGetPosition = new Action("GetPosition");
-    param = new Zapp::ParameterUint("Index");
+    param = new OpenHome::Net::ParameterUint("Index");
     iActionGetPosition->AddInputParameter(param);
-    param = new Zapp::ParameterUint("X");
+    param = new OpenHome::Net::ParameterUint("X");
     iActionGetPosition->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Y");
+    param = new OpenHome::Net::ParameterUint("Y");
     iActionGetPosition->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Z");
+    param = new OpenHome::Net::ParameterUint("Z");
     iActionGetPosition->AddOutputParameter(param);
 
     iActionSetColor = new Action("SetColor");
-    param = new Zapp::ParameterUint("Index");
+    param = new OpenHome::Net::ParameterUint("Index");
     iActionSetColor->AddInputParameter(param);
-    param = new Zapp::ParameterUint("Color");
+    param = new OpenHome::Net::ParameterUint("Color");
     iActionSetColor->AddInputParameter(param);
 
     iActionGetColor = new Action("GetColor");
-    param = new Zapp::ParameterUint("Index");
+    param = new OpenHome::Net::ParameterUint("Index");
     iActionGetColor->AddInputParameter(param);
-    param = new Zapp::ParameterUint("Color");
+    param = new OpenHome::Net::ParameterUint("Color");
     iActionGetColor->AddOutputParameter(param);
 
     iActionGetColorComponents = new Action("GetColorComponents");
-    param = new Zapp::ParameterUint("Color");
+    param = new OpenHome::Net::ParameterUint("Color");
     iActionGetColorComponents->AddInputParameter(param);
-    param = new Zapp::ParameterUint("Brightness");
+    param = new OpenHome::Net::ParameterUint("Brightness");
     iActionGetColorComponents->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Red");
+    param = new OpenHome::Net::ParameterUint("Red");
     iActionGetColorComponents->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Green");
+    param = new OpenHome::Net::ParameterUint("Green");
     iActionGetColorComponents->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Blue");
+    param = new OpenHome::Net::ParameterUint("Blue");
     iActionGetColorComponents->AddOutputParameter(param);
 }
 
@@ -539,15 +539,15 @@ void CpProxyOpenhomeOrgTestLights1SyncGetCount(THandle aHandle, uint32_t* aCount
     proxyC->SyncGetCount(*aCount);
 }
 
-void CpProxyOpenhomeOrgTestLights1BeginGetCount(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestLights1BeginGetCount(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetCount(functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestLights1EndGetCount(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCount)
+int32_t CpProxyOpenhomeOrgTestLights1EndGetCount(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCount)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
@@ -572,15 +572,15 @@ void CpProxyOpenhomeOrgTestLights1SyncGetRoom(THandle aHandle, uint32_t aIndex, 
     *aRoomName = buf_aRoomName.Extract();
 }
 
-void CpProxyOpenhomeOrgTestLights1BeginGetRoom(THandle aHandle, uint32_t aIndex, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestLights1BeginGetRoom(THandle aHandle, uint32_t aIndex, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetRoom(aIndex, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestLights1EndGetRoom(THandle aHandle, ZappHandleAsync aAsync, char** aRoomName)
+int32_t CpProxyOpenhomeOrgTestLights1EndGetRoom(THandle aHandle, OhNetHandleAsync aAsync, char** aRoomName)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
@@ -608,15 +608,15 @@ void CpProxyOpenhomeOrgTestLights1SyncGetName(THandle aHandle, uint32_t aIndex, 
     *aFriendlyName = buf_aFriendlyName.Extract();
 }
 
-void CpProxyOpenhomeOrgTestLights1BeginGetName(THandle aHandle, uint32_t aIndex, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestLights1BeginGetName(THandle aHandle, uint32_t aIndex, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetName(aIndex, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestLights1EndGetName(THandle aHandle, ZappHandleAsync aAsync, char** aFriendlyName)
+int32_t CpProxyOpenhomeOrgTestLights1EndGetName(THandle aHandle, OhNetHandleAsync aAsync, char** aFriendlyName)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
@@ -642,15 +642,15 @@ void CpProxyOpenhomeOrgTestLights1SyncGetPosition(THandle aHandle, uint32_t aInd
     proxyC->SyncGetPosition(aIndex, *aX, *aY, *aZ);
 }
 
-void CpProxyOpenhomeOrgTestLights1BeginGetPosition(THandle aHandle, uint32_t aIndex, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestLights1BeginGetPosition(THandle aHandle, uint32_t aIndex, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetPosition(aIndex, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestLights1EndGetPosition(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aX, uint32_t* aY, uint32_t* aZ)
+int32_t CpProxyOpenhomeOrgTestLights1EndGetPosition(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aX, uint32_t* aY, uint32_t* aZ)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
@@ -673,15 +673,15 @@ void CpProxyOpenhomeOrgTestLights1SyncSetColor(THandle aHandle, uint32_t aIndex,
     proxyC->SyncSetColor(aIndex, aColor);
 }
 
-void CpProxyOpenhomeOrgTestLights1BeginSetColor(THandle aHandle, uint32_t aIndex, uint32_t aColor, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestLights1BeginSetColor(THandle aHandle, uint32_t aIndex, uint32_t aColor, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetColor(aIndex, aColor, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestLights1EndSetColor(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyOpenhomeOrgTestLights1EndSetColor(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
@@ -704,15 +704,15 @@ void CpProxyOpenhomeOrgTestLights1SyncGetColor(THandle aHandle, uint32_t aIndex,
     proxyC->SyncGetColor(aIndex, *aColor);
 }
 
-void CpProxyOpenhomeOrgTestLights1BeginGetColor(THandle aHandle, uint32_t aIndex, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestLights1BeginGetColor(THandle aHandle, uint32_t aIndex, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetColor(aIndex, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestLights1EndGetColor(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aColor)
+int32_t CpProxyOpenhomeOrgTestLights1EndGetColor(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aColor)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
@@ -735,15 +735,15 @@ void CpProxyOpenhomeOrgTestLights1SyncGetColorComponents(THandle aHandle, uint32
     proxyC->SyncGetColorComponents(aColor, *aBrightness, *aRed, *aGreen, *aBlue);
 }
 
-void CpProxyOpenhomeOrgTestLights1BeginGetColorComponents(THandle aHandle, uint32_t aColor, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyOpenhomeOrgTestLights1BeginGetColorComponents(THandle aHandle, uint32_t aColor, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetColorComponents(aColor, functor);
 }
 
-int32_t CpProxyOpenhomeOrgTestLights1EndGetColorComponents(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aBrightness, uint32_t* aRed, uint32_t* aGreen, uint32_t* aBlue)
+int32_t CpProxyOpenhomeOrgTestLights1EndGetColorComponents(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aBrightness, uint32_t* aRed, uint32_t* aGreen, uint32_t* aBlue)
 {
     int32_t err = 0;
     CpProxyOpenhomeOrgTestLights1C* proxyC = reinterpret_cast<CpProxyOpenhomeOrgTestLights1C*>(aHandle);

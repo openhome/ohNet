@@ -1,13 +1,14 @@
 #ifndef HEADER_CPDEVICE
 #define HEADER_CPDEVICE
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Core/FunctorCpDevice.h>
 
 #include <map>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpiDevice;
 /**
@@ -136,6 +137,7 @@ private:
     FunctorCpDevice iRemoved;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_CPDEVICE

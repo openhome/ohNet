@@ -1,13 +1,14 @@
 #ifndef HEADER_IFACE_MSG
 #define HEADER_IFACE_MSG
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <stddef.h>
 #include <string.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
-typedef void (*ZappFunctorMsg)(void* aPtr, const char* aMsg);
+typedef void (*OhNetFunctorMsg)(void* aPtr, const char* aMsg);
 
 /**
  * Callback used to pass a message (a nul-terminated const char*).
@@ -28,7 +29,7 @@ public:
     static const TUint kFudgeFactor = 2;
 
     union {
-        ZappFunctorMsg iCallback;
+        OhNetFunctorMsg iCallback;
         TByte iCallbackMember[kFudgeFactor * sizeof(MemberFunction)];
     };
     TAny* iObject;
@@ -41,7 +42,7 @@ protected:
         iObject = (TAny*)aObject;
         memcpy(iCallbackMember, aCallback, aBytes);
     }
-    FunctorMsg(Thunk aT, const TAny* aObject, ZappFunctorMsg aCallback)
+    FunctorMsg(Thunk aT, const TAny* aObject, OhNetFunctorMsg aCallback)
         : iThunk(aT)
     {
         iObject = (TAny*)aObject;
@@ -69,7 +70,7 @@ public:
 class FunctionTranslatorMsg : public FunctorMsg
 {
 public:
-    FunctionTranslatorMsg(void* aPtr, ZappFunctorMsg aCallback) :
+    FunctionTranslatorMsg(void* aPtr, OhNetFunctorMsg aCallback) :
         FunctorMsg(Thunk,aPtr,aCallback) {}
     static void Thunk(const FunctorMsg& aFb, const char* aMsg)
     {
@@ -106,11 +107,12 @@ MakeFunctorMsg(Object& aC, void(CallType::* const &aF)(const char*))
  * @return  a FunctorMsg object
  */
 inline FunctionTranslatorMsg
-MakeFunctorMsgC(void* aPtr, ZappFunctorMsg aCallback)
+MakeFunctorMsgC(void* aPtr, OhNetFunctorMsg aCallback)
     {
     return FunctionTranslatorMsg(aPtr, aCallback);
     }
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_IFACE_MSG

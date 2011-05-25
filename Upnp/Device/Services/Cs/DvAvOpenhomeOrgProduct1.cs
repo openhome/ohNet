@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderAvOpenhomeOrgProduct1 : IDisposable
     {
@@ -678,7 +678,7 @@ namespace Zapp.Device.Providers
         /// Manufacturer must be overridden if this is called.</remarks>
         protected void EnableActionManufacturer()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Manufacturer");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Manufacturer");
             action.AddOutputParameter(new ParameterRelated("Name", iPropertyManufacturerName));
             action.AddOutputParameter(new ParameterRelated("Info", iPropertyManufacturerInfo));
             action.AddOutputParameter(new ParameterRelated("Url", iPropertyManufacturerUrl));
@@ -694,7 +694,7 @@ namespace Zapp.Device.Providers
         /// Model must be overridden if this is called.</remarks>
         protected void EnableActionModel()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Model");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Model");
             action.AddOutputParameter(new ParameterRelated("Name", iPropertyModelName));
             action.AddOutputParameter(new ParameterRelated("Info", iPropertyModelInfo));
             action.AddOutputParameter(new ParameterRelated("Url", iPropertyModelUrl));
@@ -710,7 +710,7 @@ namespace Zapp.Device.Providers
         /// Product must be overridden if this is called.</remarks>
         protected void EnableActionProduct()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Product");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Product");
             action.AddOutputParameter(new ParameterRelated("Room", iPropertyProductRoom));
             action.AddOutputParameter(new ParameterRelated("Name", iPropertyProductName));
             action.AddOutputParameter(new ParameterRelated("Info", iPropertyProductInfo));
@@ -727,7 +727,7 @@ namespace Zapp.Device.Providers
         /// Standby must be overridden if this is called.</remarks>
         protected void EnableActionStandby()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Standby");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Standby");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyStandby));
             iDelegateStandby = new ActionDelegate(DoStandby);
             EnableAction(action, iDelegateStandby, GCHandle.ToIntPtr(iGch));
@@ -740,7 +740,7 @@ namespace Zapp.Device.Providers
         /// SetStandby must be overridden if this is called.</remarks>
         protected void EnableActionSetStandby()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetStandby");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetStandby");
             action.AddInputParameter(new ParameterRelated("Value", iPropertyStandby));
             iDelegateSetStandby = new ActionDelegate(DoSetStandby);
             EnableAction(action, iDelegateSetStandby, GCHandle.ToIntPtr(iGch));
@@ -753,7 +753,7 @@ namespace Zapp.Device.Providers
         /// SourceCount must be overridden if this is called.</remarks>
         protected void EnableActionSourceCount()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SourceCount");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SourceCount");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertySourceCount));
             iDelegateSourceCount = new ActionDelegate(DoSourceCount);
             EnableAction(action, iDelegateSourceCount, GCHandle.ToIntPtr(iGch));
@@ -766,7 +766,7 @@ namespace Zapp.Device.Providers
         /// SourceXml must be overridden if this is called.</remarks>
         protected void EnableActionSourceXml()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SourceXml");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SourceXml");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertySourceXml));
             iDelegateSourceXml = new ActionDelegate(DoSourceXml);
             EnableAction(action, iDelegateSourceXml, GCHandle.ToIntPtr(iGch));
@@ -779,7 +779,7 @@ namespace Zapp.Device.Providers
         /// SourceIndex must be overridden if this is called.</remarks>
         protected void EnableActionSourceIndex()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SourceIndex");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SourceIndex");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertySourceIndex));
             iDelegateSourceIndex = new ActionDelegate(DoSourceIndex);
             EnableAction(action, iDelegateSourceIndex, GCHandle.ToIntPtr(iGch));
@@ -792,7 +792,7 @@ namespace Zapp.Device.Providers
         /// SetSourceIndex must be overridden if this is called.</remarks>
         protected void EnableActionSetSourceIndex()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetSourceIndex");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetSourceIndex");
             action.AddInputParameter(new ParameterRelated("Value", iPropertySourceIndex));
             iDelegateSetSourceIndex = new ActionDelegate(DoSetSourceIndex);
             EnableAction(action, iDelegateSetSourceIndex, GCHandle.ToIntPtr(iGch));
@@ -805,7 +805,7 @@ namespace Zapp.Device.Providers
         /// SetSourceIndexByName must be overridden if this is called.</remarks>
         protected void EnableActionSetSourceIndexByName()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetSourceIndexByName");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetSourceIndexByName");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("Value", allowedValues));
             iDelegateSetSourceIndexByName = new ActionDelegate(DoSetSourceIndexByName);
@@ -819,7 +819,7 @@ namespace Zapp.Device.Providers
         /// Source must be overridden if this is called.</remarks>
         protected void EnableActionSource()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Source");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Source");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("Index", iPropertySourceIndex));
             action.AddOutputParameter(new ParameterString("SystemName", allowedValues));
@@ -837,7 +837,7 @@ namespace Zapp.Device.Providers
         /// Attributes must be overridden if this is called.</remarks>
         protected void EnableActionAttributes()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Attributes");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Attributes");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyAttributes));
             iDelegateAttributes = new ActionDelegate(DoAttributes);
             EnableAction(action, iDelegateAttributes, GCHandle.ToIntPtr(iGch));
@@ -850,7 +850,7 @@ namespace Zapp.Device.Providers
         /// SourceXmlChangeCount must be overridden if this is called.</remarks>
         protected void EnableActionSourceXmlChangeCount()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SourceXmlChangeCount");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SourceXmlChangeCount");
             action.AddOutputParameter(new ParameterUint("Value"));
             iDelegateSourceXmlChangeCount = new ActionDelegate(DoSourceXmlChangeCount);
             EnableAction(action, iDelegateSourceXmlChangeCount, GCHandle.ToIntPtr(iGch));

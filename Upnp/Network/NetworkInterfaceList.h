@@ -1,15 +1,16 @@
 #ifndef HEADER_NETWORKINTERFACELIST
 #define HEADER_NETWORKINTERFACELIST
 
-#include <ZappTypes.h>
-#include <Zapp.h>
+#include <OhNetTypes.h>
+#include <OhNet.h>
 #include <Functor.h>
 #include <Thread.h>
 
 #include <vector>
 #include <map>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class NetworkInterfaceList
 {
@@ -52,6 +53,7 @@ private:
     TUint iNextListenerId;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_NETWORKINTERFACELIST

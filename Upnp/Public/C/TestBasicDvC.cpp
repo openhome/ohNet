@@ -1,6 +1,6 @@
 #include <C/TestBasicDv.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <TestFramework.h>
 #include <DviDevice.h>
 #include <C/DvProvider.h>
@@ -12,8 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 static int32_t increment(void* /*aPtr*/, uint32_t /*aVersion*/, uint32_t aValue, uint32_t* aResult)
 {
@@ -145,9 +145,9 @@ DeviceBasicC::DeviceBasicC()
     DvDeviceSetAttribute(iDevice, "Upnp.Domain", "openhome.org");
     DvDeviceSetAttribute(iDevice, "Upnp.Type", "Test");
     DvDeviceSetAttribute(iDevice, "Upnp.Version", "1");
-    DvDeviceSetAttribute(iDevice, "Upnp.FriendlyName", "ZappTestDevice");
+    DvDeviceSetAttribute(iDevice, "Upnp.FriendlyName", "ohNetTestDevice");
     DvDeviceSetAttribute(iDevice, "Upnp.Manufacturer", "None");
-    DvDeviceSetAttribute(iDevice, "Upnp.ModelName", "Zapp test device");
+    DvDeviceSetAttribute(iDevice, "Upnp.ModelName", "ohNet test device");
     iTestBasic = DvProviderOpenhomeOrgTestBasic1Create(iDevice);
 
     uint32_t ignore;

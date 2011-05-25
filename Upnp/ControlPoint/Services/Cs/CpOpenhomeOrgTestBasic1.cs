@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyOpenhomeOrgTestBasic1 : ICpProxy, IDisposable
     {
@@ -400,25 +400,25 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyOpenhomeOrgTestBasic1 : CpProxy, IDisposable, ICpProxyOpenhomeOrgTestBasic1
     {
-        private Zapp.Core.Action iActionIncrement;
-        private Zapp.Core.Action iActionDecrement;
-        private Zapp.Core.Action iActionToggle;
-        private Zapp.Core.Action iActionEchoString;
-        private Zapp.Core.Action iActionEchoBinary;
-        private Zapp.Core.Action iActionSetUint;
-        private Zapp.Core.Action iActionGetUint;
-        private Zapp.Core.Action iActionSetInt;
-        private Zapp.Core.Action iActionGetInt;
-        private Zapp.Core.Action iActionSetBool;
-        private Zapp.Core.Action iActionGetBool;
-        private Zapp.Core.Action iActionSetMultiple;
-        private Zapp.Core.Action iActionSetString;
-        private Zapp.Core.Action iActionGetString;
-        private Zapp.Core.Action iActionSetBinary;
-        private Zapp.Core.Action iActionGetBinary;
-        private Zapp.Core.Action iActionToggleBool;
-        private Zapp.Core.Action iActionWriteFile;
-        private Zapp.Core.Action iActionShutdown;
+        private OpenHome.Net.Core.Action iActionIncrement;
+        private OpenHome.Net.Core.Action iActionDecrement;
+        private OpenHome.Net.Core.Action iActionToggle;
+        private OpenHome.Net.Core.Action iActionEchoString;
+        private OpenHome.Net.Core.Action iActionEchoBinary;
+        private OpenHome.Net.Core.Action iActionSetUint;
+        private OpenHome.Net.Core.Action iActionGetUint;
+        private OpenHome.Net.Core.Action iActionSetInt;
+        private OpenHome.Net.Core.Action iActionGetInt;
+        private OpenHome.Net.Core.Action iActionSetBool;
+        private OpenHome.Net.Core.Action iActionGetBool;
+        private OpenHome.Net.Core.Action iActionSetMultiple;
+        private OpenHome.Net.Core.Action iActionSetString;
+        private OpenHome.Net.Core.Action iActionGetString;
+        private OpenHome.Net.Core.Action iActionSetBinary;
+        private OpenHome.Net.Core.Action iActionGetBinary;
+        private OpenHome.Net.Core.Action iActionToggleBool;
+        private OpenHome.Net.Core.Action iActionWriteFile;
+        private OpenHome.Net.Core.Action iActionShutdown;
         private PropertyUint iVarUint;
         private PropertyInt iVarInt;
         private PropertyBool iVarBool;
@@ -439,64 +439,64 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyOpenhomeOrgTestBasic1(CpDevice aDevice)
             : base("openhome-org", "TestBasic", 1, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             List<String> allowedValues = new List<String>();
 
-            iActionIncrement = new Zapp.Core.Action("Increment");
+            iActionIncrement = new OpenHome.Net.Core.Action("Increment");
             param = new ParameterUint("Value");
             iActionIncrement.AddInputParameter(param);
             param = new ParameterUint("Result");
             iActionIncrement.AddOutputParameter(param);
 
-            iActionDecrement = new Zapp.Core.Action("Decrement");
+            iActionDecrement = new OpenHome.Net.Core.Action("Decrement");
             param = new ParameterInt("Value");
             iActionDecrement.AddInputParameter(param);
             param = new ParameterInt("Result");
             iActionDecrement.AddOutputParameter(param);
 
-            iActionToggle = new Zapp.Core.Action("Toggle");
+            iActionToggle = new OpenHome.Net.Core.Action("Toggle");
             param = new ParameterBool("Value");
             iActionToggle.AddInputParameter(param);
             param = new ParameterBool("Result");
             iActionToggle.AddOutputParameter(param);
 
-            iActionEchoString = new Zapp.Core.Action("EchoString");
+            iActionEchoString = new OpenHome.Net.Core.Action("EchoString");
             param = new ParameterString("Value", allowedValues);
             iActionEchoString.AddInputParameter(param);
             param = new ParameterString("Result", allowedValues);
             iActionEchoString.AddOutputParameter(param);
 
-            iActionEchoBinary = new Zapp.Core.Action("EchoBinary");
+            iActionEchoBinary = new OpenHome.Net.Core.Action("EchoBinary");
             param = new ParameterBinary("Value");
             iActionEchoBinary.AddInputParameter(param);
             param = new ParameterBinary("Result");
             iActionEchoBinary.AddOutputParameter(param);
 
-            iActionSetUint = new Zapp.Core.Action("SetUint");
+            iActionSetUint = new OpenHome.Net.Core.Action("SetUint");
             param = new ParameterUint("ValueUint");
             iActionSetUint.AddInputParameter(param);
 
-            iActionGetUint = new Zapp.Core.Action("GetUint");
+            iActionGetUint = new OpenHome.Net.Core.Action("GetUint");
             param = new ParameterUint("ValueUint");
             iActionGetUint.AddOutputParameter(param);
 
-            iActionSetInt = new Zapp.Core.Action("SetInt");
+            iActionSetInt = new OpenHome.Net.Core.Action("SetInt");
             param = new ParameterInt("ValueInt");
             iActionSetInt.AddInputParameter(param);
 
-            iActionGetInt = new Zapp.Core.Action("GetInt");
+            iActionGetInt = new OpenHome.Net.Core.Action("GetInt");
             param = new ParameterInt("ValueInt");
             iActionGetInt.AddOutputParameter(param);
 
-            iActionSetBool = new Zapp.Core.Action("SetBool");
+            iActionSetBool = new OpenHome.Net.Core.Action("SetBool");
             param = new ParameterBool("ValueBool");
             iActionSetBool.AddInputParameter(param);
 
-            iActionGetBool = new Zapp.Core.Action("GetBool");
+            iActionGetBool = new OpenHome.Net.Core.Action("GetBool");
             param = new ParameterBool("ValueBool");
             iActionGetBool.AddOutputParameter(param);
 
-            iActionSetMultiple = new Zapp.Core.Action("SetMultiple");
+            iActionSetMultiple = new OpenHome.Net.Core.Action("SetMultiple");
             param = new ParameterUint("ValueUint");
             iActionSetMultiple.AddInputParameter(param);
             param = new ParameterInt("ValueInt");
@@ -504,31 +504,31 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterBool("ValueBool");
             iActionSetMultiple.AddInputParameter(param);
 
-            iActionSetString = new Zapp.Core.Action("SetString");
+            iActionSetString = new OpenHome.Net.Core.Action("SetString");
             param = new ParameterString("ValueStr", allowedValues);
             iActionSetString.AddInputParameter(param);
 
-            iActionGetString = new Zapp.Core.Action("GetString");
+            iActionGetString = new OpenHome.Net.Core.Action("GetString");
             param = new ParameterString("ValueStr", allowedValues);
             iActionGetString.AddOutputParameter(param);
 
-            iActionSetBinary = new Zapp.Core.Action("SetBinary");
+            iActionSetBinary = new OpenHome.Net.Core.Action("SetBinary");
             param = new ParameterBinary("ValueBin");
             iActionSetBinary.AddInputParameter(param);
 
-            iActionGetBinary = new Zapp.Core.Action("GetBinary");
+            iActionGetBinary = new OpenHome.Net.Core.Action("GetBinary");
             param = new ParameterBinary("ValueBin");
             iActionGetBinary.AddOutputParameter(param);
 
-            iActionToggleBool = new Zapp.Core.Action("ToggleBool");
+            iActionToggleBool = new OpenHome.Net.Core.Action("ToggleBool");
 
-            iActionWriteFile = new Zapp.Core.Action("WriteFile");
+            iActionWriteFile = new OpenHome.Net.Core.Action("WriteFile");
             param = new ParameterString("Data", allowedValues);
             iActionWriteFile.AddInputParameter(param);
             param = new ParameterString("FileFullName", allowedValues);
             iActionWriteFile.AddInputParameter(param);
 
-            iActionShutdown = new Zapp.Core.Action("Shutdown");
+            iActionShutdown = new OpenHome.Net.Core.Action("Shutdown");
 
             iVarUint = new PropertyUint("VarUint", VarUintPropertyChanged);
             AddProperty(iVarUint);

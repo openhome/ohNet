@@ -1,7 +1,7 @@
 #ifndef HEADER_TOPOLOGY2
 #define HEADER_TOPOLOGY2
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Fifo.h>
 #include <Thread.h>
 #include <Core/CpAvOpenhomeOrgProduct1.h>
@@ -11,7 +11,8 @@
 
 #include "CpTopology1.h"
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpTopology2Group;
 
@@ -342,6 +343,7 @@ private:
     std::vector<CpTopology2Device*> iDeviceList;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_TOPOLOGY2

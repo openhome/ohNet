@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderOpenhomeOrgTestLights1 : IDisposable
     {
@@ -41,7 +41,7 @@ namespace Zapp.Device.Providers
         /// GetCount must be overridden if this is called.</remarks>
         protected void EnableActionGetCount()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetCount");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetCount");
             action.AddOutputParameter(new ParameterUint("Count"));
             iDelegateGetCount = new ActionDelegate(DoGetCount);
             EnableAction(action, iDelegateGetCount, GCHandle.ToIntPtr(iGch));
@@ -54,7 +54,7 @@ namespace Zapp.Device.Providers
         /// GetRoom must be overridden if this is called.</remarks>
         protected void EnableActionGetRoom()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetRoom");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetRoom");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("Index"));
             action.AddOutputParameter(new ParameterString("RoomName", allowedValues));
@@ -69,7 +69,7 @@ namespace Zapp.Device.Providers
         /// GetName must be overridden if this is called.</remarks>
         protected void EnableActionGetName()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetName");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetName");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("Index"));
             action.AddOutputParameter(new ParameterString("FriendlyName", allowedValues));
@@ -84,7 +84,7 @@ namespace Zapp.Device.Providers
         /// GetPosition must be overridden if this is called.</remarks>
         protected void EnableActionGetPosition()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetPosition");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetPosition");
             action.AddInputParameter(new ParameterUint("Index"));
             action.AddOutputParameter(new ParameterUint("X"));
             action.AddOutputParameter(new ParameterUint("Y"));
@@ -100,7 +100,7 @@ namespace Zapp.Device.Providers
         /// SetColor must be overridden if this is called.</remarks>
         protected void EnableActionSetColor()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetColor");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetColor");
             action.AddInputParameter(new ParameterUint("Index"));
             action.AddInputParameter(new ParameterUint("Color"));
             iDelegateSetColor = new ActionDelegate(DoSetColor);
@@ -114,7 +114,7 @@ namespace Zapp.Device.Providers
         /// GetColor must be overridden if this is called.</remarks>
         protected void EnableActionGetColor()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetColor");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetColor");
             action.AddInputParameter(new ParameterUint("Index"));
             action.AddOutputParameter(new ParameterUint("Color"));
             iDelegateGetColor = new ActionDelegate(DoGetColor);
@@ -128,7 +128,7 @@ namespace Zapp.Device.Providers
         /// GetColorComponents must be overridden if this is called.</remarks>
         protected void EnableActionGetColorComponents()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetColorComponents");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetColorComponents");
             action.AddInputParameter(new ParameterUint("Color"));
             action.AddOutputParameter(new ParameterUint("Brightness"));
             action.AddOutputParameter(new ParameterUint("Red"));

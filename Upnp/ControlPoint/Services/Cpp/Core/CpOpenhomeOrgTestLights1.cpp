@@ -5,7 +5,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncGetCountOpenhomeOrgTestLights1 : public SyncProxyAction
@@ -173,56 +173,56 @@ void SyncGetColorComponentsOpenhomeOrgTestLights1::CompleteRequest(IAsync& aAsyn
 CpProxyOpenhomeOrgTestLights1::CpProxyOpenhomeOrgTestLights1(CpDevice& aDevice)
     : CpProxy("openhome-org", "TestLights", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionGetCount = new Action("GetCount");
-    param = new Zapp::ParameterUint("Count");
+    param = new OpenHome::Net::ParameterUint("Count");
     iActionGetCount->AddOutputParameter(param);
 
     iActionGetRoom = new Action("GetRoom");
-    param = new Zapp::ParameterUint("Index");
+    param = new OpenHome::Net::ParameterUint("Index");
     iActionGetRoom->AddInputParameter(param);
-    param = new Zapp::ParameterString("RoomName");
+    param = new OpenHome::Net::ParameterString("RoomName");
     iActionGetRoom->AddOutputParameter(param);
 
     iActionGetName = new Action("GetName");
-    param = new Zapp::ParameterUint("Index");
+    param = new OpenHome::Net::ParameterUint("Index");
     iActionGetName->AddInputParameter(param);
-    param = new Zapp::ParameterString("FriendlyName");
+    param = new OpenHome::Net::ParameterString("FriendlyName");
     iActionGetName->AddOutputParameter(param);
 
     iActionGetPosition = new Action("GetPosition");
-    param = new Zapp::ParameterUint("Index");
+    param = new OpenHome::Net::ParameterUint("Index");
     iActionGetPosition->AddInputParameter(param);
-    param = new Zapp::ParameterUint("X");
+    param = new OpenHome::Net::ParameterUint("X");
     iActionGetPosition->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Y");
+    param = new OpenHome::Net::ParameterUint("Y");
     iActionGetPosition->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Z");
+    param = new OpenHome::Net::ParameterUint("Z");
     iActionGetPosition->AddOutputParameter(param);
 
     iActionSetColor = new Action("SetColor");
-    param = new Zapp::ParameterUint("Index");
+    param = new OpenHome::Net::ParameterUint("Index");
     iActionSetColor->AddInputParameter(param);
-    param = new Zapp::ParameterUint("Color");
+    param = new OpenHome::Net::ParameterUint("Color");
     iActionSetColor->AddInputParameter(param);
 
     iActionGetColor = new Action("GetColor");
-    param = new Zapp::ParameterUint("Index");
+    param = new OpenHome::Net::ParameterUint("Index");
     iActionGetColor->AddInputParameter(param);
-    param = new Zapp::ParameterUint("Color");
+    param = new OpenHome::Net::ParameterUint("Color");
     iActionGetColor->AddOutputParameter(param);
 
     iActionGetColorComponents = new Action("GetColorComponents");
-    param = new Zapp::ParameterUint("Color");
+    param = new OpenHome::Net::ParameterUint("Color");
     iActionGetColorComponents->AddInputParameter(param);
-    param = new Zapp::ParameterUint("Brightness");
+    param = new OpenHome::Net::ParameterUint("Brightness");
     iActionGetColorComponents->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Red");
+    param = new OpenHome::Net::ParameterUint("Red");
     iActionGetColorComponents->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Green");
+    param = new OpenHome::Net::ParameterUint("Green");
     iActionGetColorComponents->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Blue");
+    param = new OpenHome::Net::ParameterUint("Blue");
     iActionGetColorComponents->AddOutputParameter(param);
 }
 

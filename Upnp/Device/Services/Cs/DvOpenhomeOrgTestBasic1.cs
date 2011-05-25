@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderOpenhomeOrgTestBasic1 : IDisposable
     {
@@ -229,7 +229,7 @@ namespace Zapp.Device.Providers
         /// Increment must be overridden if this is called.</remarks>
         protected void EnableActionIncrement()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Increment");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Increment");
             action.AddInputParameter(new ParameterUint("Value"));
             action.AddOutputParameter(new ParameterUint("Result"));
             iDelegateIncrement = new ActionDelegate(DoIncrement);
@@ -243,7 +243,7 @@ namespace Zapp.Device.Providers
         /// Decrement must be overridden if this is called.</remarks>
         protected void EnableActionDecrement()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Decrement");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Decrement");
             action.AddInputParameter(new ParameterInt("Value"));
             action.AddOutputParameter(new ParameterInt("Result"));
             iDelegateDecrement = new ActionDelegate(DoDecrement);
@@ -257,7 +257,7 @@ namespace Zapp.Device.Providers
         /// Toggle must be overridden if this is called.</remarks>
         protected void EnableActionToggle()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Toggle");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Toggle");
             action.AddInputParameter(new ParameterBool("Value"));
             action.AddOutputParameter(new ParameterBool("Result"));
             iDelegateToggle = new ActionDelegate(DoToggle);
@@ -271,7 +271,7 @@ namespace Zapp.Device.Providers
         /// EchoString must be overridden if this is called.</remarks>
         protected void EnableActionEchoString()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("EchoString");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("EchoString");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("Value", allowedValues));
             action.AddOutputParameter(new ParameterString("Result", allowedValues));
@@ -286,7 +286,7 @@ namespace Zapp.Device.Providers
         /// EchoBinary must be overridden if this is called.</remarks>
         protected void EnableActionEchoBinary()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("EchoBinary");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("EchoBinary");
             action.AddInputParameter(new ParameterBinary("Value"));
             action.AddOutputParameter(new ParameterBinary("Result"));
             iDelegateEchoBinary = new ActionDelegate(DoEchoBinary);
@@ -300,7 +300,7 @@ namespace Zapp.Device.Providers
         /// SetUint must be overridden if this is called.</remarks>
         protected void EnableActionSetUint()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetUint");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetUint");
             action.AddInputParameter(new ParameterRelated("ValueUint", iPropertyVarUint));
             iDelegateSetUint = new ActionDelegate(DoSetUint);
             EnableAction(action, iDelegateSetUint, GCHandle.ToIntPtr(iGch));
@@ -313,7 +313,7 @@ namespace Zapp.Device.Providers
         /// GetUint must be overridden if this is called.</remarks>
         protected void EnableActionGetUint()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetUint");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetUint");
             action.AddOutputParameter(new ParameterRelated("ValueUint", iPropertyVarUint));
             iDelegateGetUint = new ActionDelegate(DoGetUint);
             EnableAction(action, iDelegateGetUint, GCHandle.ToIntPtr(iGch));
@@ -326,7 +326,7 @@ namespace Zapp.Device.Providers
         /// SetInt must be overridden if this is called.</remarks>
         protected void EnableActionSetInt()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetInt");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetInt");
             action.AddInputParameter(new ParameterRelated("ValueInt", iPropertyVarInt));
             iDelegateSetInt = new ActionDelegate(DoSetInt);
             EnableAction(action, iDelegateSetInt, GCHandle.ToIntPtr(iGch));
@@ -339,7 +339,7 @@ namespace Zapp.Device.Providers
         /// GetInt must be overridden if this is called.</remarks>
         protected void EnableActionGetInt()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetInt");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetInt");
             action.AddOutputParameter(new ParameterRelated("ValueInt", iPropertyVarInt));
             iDelegateGetInt = new ActionDelegate(DoGetInt);
             EnableAction(action, iDelegateGetInt, GCHandle.ToIntPtr(iGch));
@@ -352,7 +352,7 @@ namespace Zapp.Device.Providers
         /// SetBool must be overridden if this is called.</remarks>
         protected void EnableActionSetBool()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetBool");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetBool");
             action.AddInputParameter(new ParameterRelated("ValueBool", iPropertyVarBool));
             iDelegateSetBool = new ActionDelegate(DoSetBool);
             EnableAction(action, iDelegateSetBool, GCHandle.ToIntPtr(iGch));
@@ -365,7 +365,7 @@ namespace Zapp.Device.Providers
         /// GetBool must be overridden if this is called.</remarks>
         protected void EnableActionGetBool()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetBool");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetBool");
             action.AddOutputParameter(new ParameterRelated("ValueBool", iPropertyVarBool));
             iDelegateGetBool = new ActionDelegate(DoGetBool);
             EnableAction(action, iDelegateGetBool, GCHandle.ToIntPtr(iGch));
@@ -378,7 +378,7 @@ namespace Zapp.Device.Providers
         /// SetMultiple must be overridden if this is called.</remarks>
         protected void EnableActionSetMultiple()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetMultiple");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetMultiple");
             action.AddInputParameter(new ParameterRelated("ValueUint", iPropertyVarUint));
             action.AddInputParameter(new ParameterRelated("ValueInt", iPropertyVarInt));
             action.AddInputParameter(new ParameterRelated("ValueBool", iPropertyVarBool));
@@ -393,7 +393,7 @@ namespace Zapp.Device.Providers
         /// SetString must be overridden if this is called.</remarks>
         protected void EnableActionSetString()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetString");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetString");
             action.AddInputParameter(new ParameterRelated("ValueStr", iPropertyVarStr));
             iDelegateSetString = new ActionDelegate(DoSetString);
             EnableAction(action, iDelegateSetString, GCHandle.ToIntPtr(iGch));
@@ -406,7 +406,7 @@ namespace Zapp.Device.Providers
         /// GetString must be overridden if this is called.</remarks>
         protected void EnableActionGetString()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetString");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetString");
             action.AddOutputParameter(new ParameterRelated("ValueStr", iPropertyVarStr));
             iDelegateGetString = new ActionDelegate(DoGetString);
             EnableAction(action, iDelegateGetString, GCHandle.ToIntPtr(iGch));
@@ -419,7 +419,7 @@ namespace Zapp.Device.Providers
         /// SetBinary must be overridden if this is called.</remarks>
         protected void EnableActionSetBinary()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetBinary");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetBinary");
             action.AddInputParameter(new ParameterRelated("ValueBin", iPropertyVarBin));
             iDelegateSetBinary = new ActionDelegate(DoSetBinary);
             EnableAction(action, iDelegateSetBinary, GCHandle.ToIntPtr(iGch));
@@ -432,7 +432,7 @@ namespace Zapp.Device.Providers
         /// GetBinary must be overridden if this is called.</remarks>
         protected void EnableActionGetBinary()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetBinary");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetBinary");
             action.AddOutputParameter(new ParameterRelated("ValueBin", iPropertyVarBin));
             iDelegateGetBinary = new ActionDelegate(DoGetBinary);
             EnableAction(action, iDelegateGetBinary, GCHandle.ToIntPtr(iGch));
@@ -445,7 +445,7 @@ namespace Zapp.Device.Providers
         /// ToggleBool must be overridden if this is called.</remarks>
         protected void EnableActionToggleBool()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("ToggleBool");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("ToggleBool");
             iDelegateToggleBool = new ActionDelegate(DoToggleBool);
             EnableAction(action, iDelegateToggleBool, GCHandle.ToIntPtr(iGch));
         }
@@ -457,7 +457,7 @@ namespace Zapp.Device.Providers
         /// WriteFile must be overridden if this is called.</remarks>
         protected void EnableActionWriteFile()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("WriteFile");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("WriteFile");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("Data", allowedValues));
             action.AddInputParameter(new ParameterString("FileFullName", allowedValues));
@@ -472,7 +472,7 @@ namespace Zapp.Device.Providers
         /// Shutdown must be overridden if this is called.</remarks>
         protected void EnableActionShutdown()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Shutdown");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Shutdown");
             iDelegateShutdown = new ActionDelegate(DoShutdown);
             EnableAction(action, iDelegateShutdown, GCHandle.ToIntPtr(iGch));
         }

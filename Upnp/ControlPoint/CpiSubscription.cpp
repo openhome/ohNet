@@ -1,9 +1,9 @@
 #include <CpiSubscription.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Stream.h>
 #include <Http.h>
 #include <Uri.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <CpiDevice.h>
 #include <Buffer.h>
 #include <Timer.h>
@@ -18,7 +18,7 @@
 #include <vector>
 #include <stdlib.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // Subscription
 
@@ -90,7 +90,7 @@ void CpiSubscription::SetSid(Brh& aSid)
     Stack::Mutex().Signal();
 }
 
-const Zapp::ServiceType& CpiSubscription::ServiceType() const
+const OpenHome::Net::ServiceType& CpiSubscription::ServiceType() const
 {
     return iServiceType;
 }
@@ -123,7 +123,7 @@ void CpiSubscription::RunInSubscriber()
     RemoveRef();
 }
 
-CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const Zapp::ServiceType& aServiceType)
+CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType)
     : iLock("SUBM")
     , iDevice(aDevice)
     , iEventProcessor(&aEventProcessor)
@@ -447,7 +447,7 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
     LOG(kEvent, "< ~CpiSubscriptionManager()\n");
 }
 
-CpiSubscription* CpiSubscriptionManager::NewSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const Zapp::ServiceType& aServiceType)
+CpiSubscription* CpiSubscriptionManager::NewSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType)
 {
     return new CpiSubscription(aDevice, aEventProcessor, aServiceType);
 }

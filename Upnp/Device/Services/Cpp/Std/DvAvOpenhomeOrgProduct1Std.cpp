@@ -1,10 +1,10 @@
 #include "DvAvOpenhomeOrgProduct1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <DviService.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 bool DvProviderAvOpenhomeOrgProduct1Cpp::SetPropertyManufacturerName(const std::string& aValue)
 {
@@ -260,7 +260,7 @@ DvProviderAvOpenhomeOrgProduct1Cpp::DvProviderAvOpenhomeOrgProduct1Cpp(DvDeviceS
 
 void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionManufacturer()
 {
-    Zapp::Action* action = new Zapp::Action("Manufacturer");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Manufacturer");
     action->AddOutputParameter(new ParameterRelated("Name", *iPropertyManufacturerName));
     action->AddOutputParameter(new ParameterRelated("Info", *iPropertyManufacturerInfo));
     action->AddOutputParameter(new ParameterRelated("Url", *iPropertyManufacturerUrl));
@@ -271,7 +271,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionManufacturer()
 
 void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionModel()
 {
-    Zapp::Action* action = new Zapp::Action("Model");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Model");
     action->AddOutputParameter(new ParameterRelated("Name", *iPropertyModelName));
     action->AddOutputParameter(new ParameterRelated("Info", *iPropertyModelInfo));
     action->AddOutputParameter(new ParameterRelated("Url", *iPropertyModelUrl));
@@ -282,7 +282,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionModel()
 
 void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionProduct()
 {
-    Zapp::Action* action = new Zapp::Action("Product");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Product");
     action->AddOutputParameter(new ParameterRelated("Room", *iPropertyProductRoom));
     action->AddOutputParameter(new ParameterRelated("Name", *iPropertyProductName));
     action->AddOutputParameter(new ParameterRelated("Info", *iPropertyProductInfo));
@@ -294,7 +294,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionProduct()
 
 void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionStandby()
 {
-    Zapp::Action* action = new Zapp::Action("Standby");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Standby");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyStandby));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1Cpp::DoStandby);
     iService->AddAction(action, functor);
@@ -302,7 +302,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionStandby()
 
 void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSetStandby()
 {
-    Zapp::Action* action = new Zapp::Action("SetStandby");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetStandby");
     action->AddInputParameter(new ParameterRelated("Value", *iPropertyStandby));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1Cpp::DoSetStandby);
     iService->AddAction(action, functor);
@@ -310,7 +310,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSetStandby()
 
 void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSourceCount()
 {
-    Zapp::Action* action = new Zapp::Action("SourceCount");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SourceCount");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertySourceCount));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceCount);
     iService->AddAction(action, functor);
@@ -318,7 +318,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSourceCount()
 
 void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSourceXml()
 {
-    Zapp::Action* action = new Zapp::Action("SourceXml");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SourceXml");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertySourceXml));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceXml);
     iService->AddAction(action, functor);
@@ -326,7 +326,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSourceXml()
 
 void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSourceIndex()
 {
-    Zapp::Action* action = new Zapp::Action("SourceIndex");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SourceIndex");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertySourceIndex));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceIndex);
     iService->AddAction(action, functor);
@@ -334,7 +334,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSourceIndex()
 
 void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSetSourceIndex()
 {
-    Zapp::Action* action = new Zapp::Action("SetSourceIndex");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetSourceIndex");
     action->AddInputParameter(new ParameterRelated("Value", *iPropertySourceIndex));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1Cpp::DoSetSourceIndex);
     iService->AddAction(action, functor);
@@ -342,7 +342,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSetSourceIndex()
 
 void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSetSourceIndexByName()
 {
-    Zapp::Action* action = new Zapp::Action("SetSourceIndexByName");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetSourceIndexByName");
     action->AddInputParameter(new ParameterString("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1Cpp::DoSetSourceIndexByName);
     iService->AddAction(action, functor);
@@ -350,7 +350,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSetSourceIndexByName()
 
 void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSource()
 {
-    Zapp::Action* action = new Zapp::Action("Source");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Source");
     action->AddInputParameter(new ParameterRelated("Index", *iPropertySourceIndex));
     action->AddOutputParameter(new ParameterString("SystemName"));
     action->AddOutputParameter(new ParameterString("Type"));
@@ -362,7 +362,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSource()
 
 void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionAttributes()
 {
-    Zapp::Action* action = new Zapp::Action("Attributes");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Attributes");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyAttributes));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1Cpp::DoAttributes);
     iService->AddAction(action, functor);
@@ -370,7 +370,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionAttributes()
 
 void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSourceXmlChangeCount()
 {
-    Zapp::Action* action = new Zapp::Action("SourceXmlChangeCount");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SourceXmlChangeCount");
     action->AddOutputParameter(new ParameterUint("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceXmlChangeCount);
     iService->AddAction(action, functor);

@@ -2,7 +2,7 @@
 #define HEADER_SERVICE_PROXY
 
 #include <Functor.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Exception.h>
 #include <Buffer.h>
 
@@ -10,7 +10,8 @@
 
 EXCEPTION(ProxyError);
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpiDevice;
 class CpiService;
@@ -118,6 +119,7 @@ private:
     friend class CpProxyC;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_SERVICE_PROXY

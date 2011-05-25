@@ -1,6 +1,6 @@
 #include <DviDeviceUpnp.h>
 #include <DviDevice.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Stack.h>
 #include <DviStack.h>
@@ -16,7 +16,7 @@
 #include <Parser.h>
 #include <MimeTypes.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // DviDeviceUpnp
 
@@ -249,7 +249,7 @@ void DviDeviceUpnp::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IR
                 xmlBuf.Set(xml);
             }
         }
-        aResourceWriter.WriteResourceBegin(xmlBuf.Bytes(), kZappMimeTypeXml);
+        aResourceWriter.WriteResourceBegin(xmlBuf.Bytes(), kOhNetMimeTypeXml);
         aResourceWriter.WriteResource(xmlBuf.Ptr(), xmlBuf.Bytes());
         aResourceWriter.WriteResourceEnd();
     }
@@ -491,7 +491,7 @@ void DviDeviceUpnp::WriteServiceXml(const DviService& aService, IResourceWriter&
 
     Brh xml;
     writer.TransferTo(xml);
-    aResourceWriter.WriteResourceBegin(xml.Bytes(), kZappMimeTypeXml);
+    aResourceWriter.WriteResourceBegin(xml.Bytes(), kOhNetMimeTypeXml);
     aResourceWriter.WriteResource(xml.Ptr(), xml.Bytes());
     aResourceWriter.WriteResourceEnd();
 }
@@ -500,7 +500,7 @@ void DviDeviceUpnp::WriteServiceActionParams(WriterBwh& aWriter, const Action& a
 {
     const Action::VectorParameters& params = (aIn? aAction.InputParameters() : aAction.OutputParameters());
     for (TUint i=0; i<params.size(); i++) {
-        Zapp::Parameter* param = params[i];
+        OpenHome::Net::Parameter* param = params[i];
         aWriter.Write("<argument>");
         aWriter.Write("<name>");
         aWriter.Write(param->Name());
@@ -509,7 +509,7 @@ void DviDeviceUpnp::WriteServiceActionParams(WriterBwh& aWriter, const Action& a
         aWriter.Write(aIn? "in" : "out");
         aWriter.Write("</direction>");
         aWriter.Write("<relatedStateVariable>");
-        if (param->Type() == Zapp::Parameter::eTypeRelated) {
+        if (param->Type() == OpenHome::Net::Parameter::eTypeRelated) {
             const Brx& relatedVar = static_cast<ParameterRelated*>(param)->Related().Parameter().Name();
             aWriter.Write(relatedVar);
         }
@@ -535,7 +535,7 @@ void DviDeviceUpnp::GetRelatedVariableName(Bwh& aName, const Brx& aActionName, c
 }
 
 
-void DviDeviceUpnp::WriteStateVariable(IWriter& aWriter, const Zapp::Parameter& aParam, TBool aEvented, const Action* aAction)
+void DviDeviceUpnp::WriteStateVariable(IWriter& aWriter, const OpenHome::Net::Parameter& aParam, TBool aEvented, const Action* aAction)
 {
     aWriter.Write(Brn("<stateVariable sendEvents="));
     if (aEvented) {
@@ -557,34 +557,34 @@ void DviDeviceUpnp::WriteStateVariable(IWriter& aWriter, const Zapp::Parameter& 
     aWriter.Write(Brn("<dataType>"));
     switch (aParam.Type())
     {
-    case Zapp::Parameter::eTypeBool:
+    case OpenHome::Net::Parameter::eTypeBool:
         aWriter.Write(Brn("boolean"));
         break;
-    case Zapp::Parameter::eTypeInt:
+    case OpenHome::Net::Parameter::eTypeInt:
         aWriter.Write(Brn("i4"));
         break;
-    case Zapp::Parameter::eTypeUint:
+    case OpenHome::Net::Parameter::eTypeUint:
         aWriter.Write(Brn("ui4"));
         break;
-    case Zapp::Parameter::eTypeString:
+    case OpenHome::Net::Parameter::eTypeString:
         aWriter.Write(Brn("string"));
         break;
-    case Zapp::Parameter::eTypeBinary:
+    case OpenHome::Net::Parameter::eTypeBinary:
         aWriter.Write(Brn("bin.base64"));
         break;
-    case Zapp::Parameter::eTypeRelated:
+    case OpenHome::Net::Parameter::eTypeRelated:
         ASSERTS();
         break;
     }
     aWriter.Write(Brn("</dataType>"));
     switch (aParam.Type())
     {
-    case Zapp::Parameter::eTypeBool:
-    case Zapp::Parameter::eTypeBinary:
+    case OpenHome::Net::Parameter::eTypeBool:
+    case OpenHome::Net::Parameter::eTypeBinary:
         break;
-    case Zapp::Parameter::eTypeInt:
+    case OpenHome::Net::Parameter::eTypeInt:
     {
-        const Zapp::ParameterInt& paramInt = static_cast<const Zapp::ParameterInt&>(aParam);
+        const OpenHome::Net::ParameterInt& paramInt = static_cast<const OpenHome::Net::ParameterInt&>(aParam);
         if (paramInt.MinValue() != ParameterInt::kValueMin ||
             paramInt.MaxValue() != ParameterInt::kValueMax ||
             paramInt.Step()     != ParameterInt::kStep) {
@@ -603,9 +603,9 @@ void DviDeviceUpnp::WriteStateVariable(IWriter& aWriter, const Zapp::Parameter& 
             }
     }
         break;
-    case Zapp::Parameter::eTypeUint:
+    case OpenHome::Net::Parameter::eTypeUint:
     {
-        const Zapp::ParameterUint& paramUint = static_cast<const Zapp::ParameterUint&>(aParam);
+        const OpenHome::Net::ParameterUint& paramUint = static_cast<const OpenHome::Net::ParameterUint&>(aParam);
         if (paramUint.MinValue() != ParameterUint::kValueMin ||
             paramUint.MaxValue() != ParameterUint::kValueMax ||
             paramUint.Step()     != ParameterUint::kStep) {
@@ -624,9 +624,9 @@ void DviDeviceUpnp::WriteStateVariable(IWriter& aWriter, const Zapp::Parameter& 
             }
     }
         break;
-    case Zapp::Parameter::eTypeString:
+    case OpenHome::Net::Parameter::eTypeString:
     {
-        const Zapp::ParameterString& paramStr = static_cast<const Zapp::ParameterString&>(aParam);
+        const OpenHome::Net::ParameterString& paramStr = static_cast<const OpenHome::Net::ParameterString&>(aParam);
         const ParameterString::Map& allowedVals = paramStr.AllowedValues();
         if (allowedVals.size() > 0) {
             aWriter.Write(Brn("<allowedValueList>"));
@@ -641,7 +641,7 @@ void DviDeviceUpnp::WriteStateVariable(IWriter& aWriter, const Zapp::Parameter& 
         }
     }
         break;
-    case Zapp::Parameter::eTypeRelated:
+    case OpenHome::Net::Parameter::eTypeRelated:
         ASSERTS();
         break;
     }
@@ -651,7 +651,7 @@ void DviDeviceUpnp::WriteStateVariable(IWriter& aWriter, const Zapp::Parameter& 
 void DviDeviceUpnp::WriteTechnicalStateVariables(IWriter& aWriter, const Action* aAction, const Action::VectorParameters& aParams)
 {
     for (TUint i=0; i<aParams.size(); i++) {
-        if (aParams[i]->Type() != Zapp::Parameter::eTypeRelated) {
+        if (aParams[i]->Type() != OpenHome::Net::Parameter::eTypeRelated) {
             WriteStateVariable(aWriter, *(aParams[i]), false, aAction);
         }
     }
@@ -723,7 +723,7 @@ void DviDeviceUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, 
     if (iDevice.Enabled()) {
         const TUint count = iDevice.ServiceCount();
         for (TUint i=0; i<count; i++) {
-            const Zapp::ServiceType& serviceType = iDevice.Service(i).ServiceType();
+            const OpenHome::Net::ServiceType& serviceType = iDevice.Service(i).ServiceType();
             if (serviceType.Version() >= aVersion && serviceType.Domain() == aDomain && serviceType.Name() == aType) {
                 TInt index = FindListenerForInterface(aInterface);
                 if (index != -1) {
@@ -977,7 +977,7 @@ void DviDeviceUpnpXmlWriter::Write(TIpAddress aInterface)
     if (serviceCount > 0) {
         iWriter.Write("<serviceList>");
         for (TUint i=0; i<serviceCount; i++) {
-            const Zapp::ServiceType& serviceType = iDeviceUpnp.iDevice.Service(i).ServiceType();
+            const OpenHome::Net::ServiceType& serviceType = iDeviceUpnp.iDevice.Service(i).ServiceType();
             iWriter.Write("<service>");
             iWriter.Write("<serviceType>");
             iWriter.Write(serviceType.FullNameUpnp());
@@ -1127,7 +1127,7 @@ void DeviceMsgScheduler::Next(TUint aIndex)
         break;
     default:
         DviService& service = iDevice.Service(aIndex - 3);
-        const Zapp::ServiceType& serviceType = service.ServiceType();
+        const OpenHome::Net::ServiceType& serviceType = service.ServiceType();
         iNotifier->SsdpNotifyServiceType(serviceType.Domain(), serviceType.Name(), serviceType.Version(), iDevice.Udn(), iUri);
         break;
     }
@@ -1266,7 +1266,7 @@ void DeviceMsgSchedulerMsearchDeviceType::Next(TUint aIndex)
 
 DeviceMsgSchedulerMsearchServiceType::DeviceMsgSchedulerMsearchServiceType(DviDevice& aDevice, DviDeviceUpnp& aDeviceUpnp,
                                                                            const Endpoint& aRemote, TUint aMx,
-                                                                           const Zapp::ServiceType& aServiceType,
+                                                                           const OpenHome::Net::ServiceType& aServiceType,
                                                                            Bwh& aUri, TUint aConfigId)
     : DeviceMsgSchedulerMsearch(aDevice, aDeviceUpnp, aRemote, aMx, 1, aUri, aConfigId)
     , iServiceType(aServiceType)

@@ -3,7 +3,7 @@
 #include <Stack.h>
 #include <Debug.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // Time
 
@@ -56,7 +56,7 @@ void Timer::FireIn(TUint aTime)
 void Timer::FireAt(TUint aTime)
 {
     LOG(kTimer, ">Timer::FireAt(%d)\n", aTime);
-    TimerManager& manager = Zapp::Stack::TimerManager();
+    TimerManager& manager = OpenHome::Net::Stack::TimerManager();
     manager.Remove(*this);
     iTime = aTime;
     manager.Add(*this);
@@ -74,7 +74,7 @@ void Timer::Cancel()
 void Timer::DoCancel()
 {
     LOG(kTimer, ">Timer::DoCancel()\n");
-    Zapp::Stack::TimerManager().Remove(*this);
+    OpenHome::Net::Stack::TimerManager().Remove(*this);
     LOG(kTimer, "<Timer::DoCancel()\n");
 }
 
@@ -225,7 +225,7 @@ void TimerManager::Fire()
     CallbackUnlock();
 }
 
-Zapp::Thread* TimerManager::Thread() const
+OpenHome::Net::Thread* TimerManager::Thread() const
 {
     return iThreadHandle;
 }

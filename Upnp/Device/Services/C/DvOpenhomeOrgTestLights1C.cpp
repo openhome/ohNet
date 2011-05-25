@@ -1,15 +1,15 @@
 #include "DvOpenhomeOrgTestLights1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
 #include <DvProvider.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class DvProviderOpenhomeOrgTestLights1C : public DvProvider
 {
@@ -57,7 +57,7 @@ void DvProviderOpenhomeOrgTestLights1C::EnableActionGetCount(CallbackTestLights1
 {
     iCallbackGetCount = aCallback;
     iPtrGetCount = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetCount");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetCount");
     action->AddOutputParameter(new ParameterUint("Count"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestLights1C::DoGetCount);
     iService->AddAction(action, functor);
@@ -67,7 +67,7 @@ void DvProviderOpenhomeOrgTestLights1C::EnableActionGetRoom(CallbackTestLights1G
 {
     iCallbackGetRoom = aCallback;
     iPtrGetRoom = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetRoom");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRoom");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddOutputParameter(new ParameterString("RoomName"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestLights1C::DoGetRoom);
@@ -78,7 +78,7 @@ void DvProviderOpenhomeOrgTestLights1C::EnableActionGetName(CallbackTestLights1G
 {
     iCallbackGetName = aCallback;
     iPtrGetName = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetName");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetName");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddOutputParameter(new ParameterString("FriendlyName"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestLights1C::DoGetName);
@@ -89,7 +89,7 @@ void DvProviderOpenhomeOrgTestLights1C::EnableActionGetPosition(CallbackTestLigh
 {
     iCallbackGetPosition = aCallback;
     iPtrGetPosition = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetPosition");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetPosition");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddOutputParameter(new ParameterUint("X"));
     action->AddOutputParameter(new ParameterUint("Y"));
@@ -102,7 +102,7 @@ void DvProviderOpenhomeOrgTestLights1C::EnableActionSetColor(CallbackTestLights1
 {
     iCallbackSetColor = aCallback;
     iPtrSetColor = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetColor");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetColor");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddInputParameter(new ParameterUint("Color"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestLights1C::DoSetColor);
@@ -113,7 +113,7 @@ void DvProviderOpenhomeOrgTestLights1C::EnableActionGetColor(CallbackTestLights1
 {
     iCallbackGetColor = aCallback;
     iPtrGetColor = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetColor");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetColor");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddOutputParameter(new ParameterUint("Color"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderOpenhomeOrgTestLights1C::DoGetColor);
@@ -124,7 +124,7 @@ void DvProviderOpenhomeOrgTestLights1C::EnableActionGetColorComponents(CallbackT
 {
     iCallbackGetColorComponents = aCallback;
     iPtrGetColorComponents = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetColorComponents");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetColorComponents");
     action->AddInputParameter(new ParameterUint("Color"));
     action->AddOutputParameter(new ParameterUint("Brightness"));
     action->AddOutputParameter(new ParameterUint("Red"));
@@ -166,7 +166,7 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetRoom(IDviInvocation& aInvocation, T
     InvocationResponseString respRoomName(aInvocation, "RoomName");
     resp.Start();
     Brhz bufRoomName((const TChar*)RoomName);
-    ZappFreeExternal(RoomName);
+    OhNetFreeExternal(RoomName);
     respRoomName.Write(bufRoomName);
     respRoomName.WriteFlush();
     resp.End();
@@ -187,7 +187,7 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetName(IDviInvocation& aInvocation, T
     InvocationResponseString respFriendlyName(aInvocation, "FriendlyName");
     resp.Start();
     Brhz bufFriendlyName((const TChar*)FriendlyName);
-    ZappFreeExternal(FriendlyName);
+    OhNetFreeExternal(FriendlyName);
     respFriendlyName.Write(bufFriendlyName);
     respFriendlyName.WriteFlush();
     resp.End();
