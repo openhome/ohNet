@@ -1,7 +1,7 @@
 #ifndef HEADER_OHMRECEIVER
 #define HEADER_OHMRECEIVER
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
 #include <Thread.h>
@@ -9,10 +9,12 @@
 
 #include "Ohm.h"
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_OHMRECEIVER
 

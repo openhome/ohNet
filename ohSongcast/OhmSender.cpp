@@ -11,7 +11,8 @@
 # pragma warning(disable:4355) // use of 'this' in ctor lists safe in this case
 #endif
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 	class ProviderSender : public DvProviderAvOpenhomeOrgSender1
 	{
@@ -46,9 +47,10 @@ namespace Zapp {
 	    mutable Mutex iMutex;
 	    Timer iTimerAudioPresent;
 	};
-}
+} // namespace Net
+} // namespace OpenHome
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // ProviderSender
 

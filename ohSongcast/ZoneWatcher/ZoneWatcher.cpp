@@ -1,5 +1,5 @@
-#include <ZappTypes.h>
-#include <Zapp.h>
+#include <OhNetTypes.h>
+#include <OhNet.h>
 #include <Ascii.h>
 #include <Maths.h>
 #include <Stack.h>
@@ -47,8 +47,8 @@ int mygetch()
 
 #endif
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class Watcher
 {

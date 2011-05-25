@@ -1,7 +1,7 @@
 #ifndef HEADER_SOUNDCARD
 #define HEADER_SOUNDCARD
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Timer.h>
 #include <Exception.h>
@@ -29,7 +29,8 @@ DllExport void SoundcardDestroy(THandle aSoundcard);
 } // extern "C"
 #endif
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class OhmSenderDriverWindows : public IOhmSenderDriver
 {
@@ -72,7 +73,8 @@ private:
 	DvDeviceStandard* iDevice;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_SOUNDCARD
 

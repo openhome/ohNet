@@ -1,10 +1,10 @@
 #include "DvAvOpenhomeOrgSender1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 TBool DvProviderAvOpenhomeOrgSender1::SetPropertyPresentationUrl(const Brx& aValue)
 {
@@ -82,7 +82,7 @@ DvProviderAvOpenhomeOrgSender1::DvProviderAvOpenhomeOrgSender1(DvDevice& aDevice
 
 void DvProviderAvOpenhomeOrgSender1::EnableActionPresentationUrl()
 {
-    Zapp::Action* action = new Zapp::Action("PresentationUrl");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PresentationUrl");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyPresentationUrl));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoPresentationUrl);
     iService->AddAction(action, functor);
@@ -90,7 +90,7 @@ void DvProviderAvOpenhomeOrgSender1::EnableActionPresentationUrl()
 
 void DvProviderAvOpenhomeOrgSender1::EnableActionMetadata()
 {
-    Zapp::Action* action = new Zapp::Action("Metadata");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Metadata");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoMetadata);
     iService->AddAction(action, functor);
@@ -98,7 +98,7 @@ void DvProviderAvOpenhomeOrgSender1::EnableActionMetadata()
 
 void DvProviderAvOpenhomeOrgSender1::EnableActionAudio()
 {
-    Zapp::Action* action = new Zapp::Action("Audio");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Audio");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyAudio));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoAudio);
     iService->AddAction(action, functor);
@@ -106,7 +106,7 @@ void DvProviderAvOpenhomeOrgSender1::EnableActionAudio()
 
 void DvProviderAvOpenhomeOrgSender1::EnableActionStatus()
 {
-    Zapp::Action* action = new Zapp::Action("Status");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Status");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyStatus));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoStatus);
     iService->AddAction(action, functor);
@@ -114,7 +114,7 @@ void DvProviderAvOpenhomeOrgSender1::EnableActionStatus()
 
 void DvProviderAvOpenhomeOrgSender1::EnableActionAttributes()
 {
-    Zapp::Action* action = new Zapp::Action("Attributes");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Attributes");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyAttributes));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoAttributes);
     iService->AddAction(action, functor);

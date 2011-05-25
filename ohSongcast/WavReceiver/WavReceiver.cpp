@@ -1,6 +1,6 @@
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvDevice.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Core/CpDevice.h>
 #include <Core/CpDeviceUpnp.h>
 #include <Ascii.h>
@@ -31,8 +31,8 @@ int mygetch(void)
 	return ch;
 }
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 using namespace Openhome::Av;
 

@@ -1,7 +1,7 @@
 #ifndef HEADER_OHM
 #define HEADER_OHM
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Stream.h>
 #include <Network.h>
@@ -9,7 +9,8 @@
 EXCEPTION(OhmError);
 EXCEPTION(OhzError);
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class Ohm
 {
@@ -351,7 +352,8 @@ private:
     TUint iUriBytes;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_OHM
 

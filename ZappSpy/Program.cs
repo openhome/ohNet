@@ -10,7 +10,7 @@ namespace ZappSpy
     {
         static void Main(string[] args)
         {
-            using (ZappLibraryWrapper library = new ZappLibraryWrapper())
+            using (OhNetLibraryWrapper library = new OhNetLibraryWrapper())
             using (UpnpDeviceFinder finder = new UpnpDeviceFinder(library, "7076436f-6e65-1063-8074-001cc0c0e64e"))
             {
                 Console.WriteLine("Searching for devices...");

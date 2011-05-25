@@ -25,7 +25,6 @@ linkoutput = -o
 dllprefix = lib
 dllext = so
 link_dll = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc
-link_dll_service = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc -lZappUpnp -L$(objdir)
 csharp = gmcs /nologo
 publiccsdir = Public/Cs/
 dirsep = /
@@ -45,7 +44,7 @@ $(objdir)/WavSender.exe :
 	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Ohm.cpp
 	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) OhmSender.cpp
 	$(compiler)/WavSender.$(objext) -c $(cflags) $(includes) WavSender.cpp
-	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(zappdir)/$(libprefix)upnp_core.$(libext) $(zappdir)/$(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(zappdir)/$(libprefix)ohNetCore.$(libext) $(zappdir)/$(libprefix)TestFramework.$(libext)
 
 $(objdir)/Receiver.exe :
 	mkdir -p $(objdir)
@@ -53,7 +52,7 @@ $(objdir)/Receiver.exe :
 	$(compiler)/DvAvOpenhomeOrgReceiver1.$(objext) -c $(cflags) $(includes) DvAvOpenhomeOrgReceiver1.cpp
 	$(compiler)/Product.$(objext) -c $(cflags) $(includes) Product.cpp
 	$(compiler)/Receiver.$(objext) -c $(cflags) $(includes) Receiver.cpp
-	$(link) $(linkoutput)$(objdir)/Receiver.$(exeext) $(objdir)/Receiver.$(objext) $(objdir)/Product.$(objext) $(objdir)/DvAvOpenhomeOrgProduct1.$(objext) $(objdir)/DvAvOpenhomeOrgReceiver1.$(objext) $(zappdir)/$(libprefix)upnp_core.$(libext) $(zappdir)/$(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)/Receiver.$(exeext) $(objdir)/Receiver.$(objext) $(objdir)/Product.$(objext) $(objdir)/DvAvOpenhomeOrgProduct1.$(objext) $(objdir)/DvAvOpenhomeOrgReceiver1.$(objext) $(zappdir)/$(libprefix)ohNetCore.$(libext) $(zappdir)/$(libprefix)TestFramework.$(libext)
 
 t4 = $(toolsDir)/TextTransform.exe
 
