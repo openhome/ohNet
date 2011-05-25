@@ -534,11 +534,11 @@ void CpTopology3Group::GroupRemoved()
 CpTopology3Room::CpTopology3Room(const Brx& aName, ICpTopology3Handler& aHandler)
 	: iName(aName)
 	, iHandler(aHandler)
+	, iCurrentGroup(0)
 	, iActive(false)
 	, iMutex("T3RM")
 	, iSourceCount(0)
 	, iRefCount(1)
-	, iCurrentGroup(0)
 	, iUserData(0)
 {
 }
