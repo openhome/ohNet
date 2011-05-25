@@ -1,7 +1,7 @@
 #ifndef HEADER_OHMSENDER
 #define HEADER_OHMSENDER
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
 #include <Thread.h>
@@ -9,7 +9,8 @@
 
 #include "Ohm.h"
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class ProviderSender;
 
@@ -153,7 +154,8 @@ private:
     TUint iSequenceMetatext;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_OHMSENDER
 

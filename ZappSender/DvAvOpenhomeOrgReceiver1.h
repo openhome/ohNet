@@ -1,12 +1,13 @@
 #ifndef HEADER_DVAVOPENHOMEORGRECEIVER1
 #define HEADER_DVAVOPENHOMEORGRECEIVER1
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
 #include <DvProvider.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation;
 class PropertyInt;
@@ -170,7 +171,8 @@ private:
     PropertyString* iPropertyProtocolInfo;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVAVOPENHOMEORGRECEIVER1
 

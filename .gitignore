@@ -13,5 +13,6 @@ _ReSharper.*
 /build/
 /install/
 /ZappSender/Build/
+/ohSongcast/Build/
 obj/
 

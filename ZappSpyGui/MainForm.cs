@@ -11,7 +11,7 @@ namespace ZapSpyGui
 {
     public partial class MainForm : Form
     {
-        private ZappSpy.ZappLibraryWrapper iZappLibrary;
+        private ZappSpy.OhNetLibraryWrapper iOhNetLibrary;
         private ZappSpy.UpnpDeviceFinder iDeviceFinder;
         private DeviceGrapher iDeviceGrapher;
         private ContextMenuStrip iContextMenu;
@@ -26,8 +26,8 @@ namespace ZapSpyGui
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            iZappLibrary = new ZappSpy.ZappLibraryWrapper();
-            iDeviceFinder = new ZappSpy.UpnpDeviceFinder(iZappLibrary);
+            iOhNetLibrary = new ZappSpy.OhNetLibraryWrapper();
+            iDeviceFinder = new ZappSpy.UpnpDeviceFinder(iOhNetLibrary);
             iDeviceFinder.DeviceAdded += HandleDeviceAdded;
             iDeviceFinder.DeviceRemoved += HandleDeviceRemoved;
             iContextMenu.Opening += iContextMenu_Opening;
@@ -48,8 +48,8 @@ namespace ZapSpyGui
             iDeviceTreeView.AfterSelect -= iDeviceTreeView_AfterSelect;
             iDeviceFinder.Dispose();
             iDeviceFinder = null;
-            iZappLibrary.Dispose();
-            iZappLibrary = null;
+            iOhNetLibrary.Dispose();
+            iOhNetLibrary = null;
         }
 
         void iDeviceTreeView_AfterSelect(object aSender, TreeViewEventArgs aE)

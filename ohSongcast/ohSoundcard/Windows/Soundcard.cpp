@@ -13,7 +13,7 @@
 
 EXCEPTION(SoundcardError);
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // OhmSenderDriverWindows
 

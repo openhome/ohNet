@@ -7,7 +7,7 @@
 
 #include "Product.h"
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 using namespace Openhome::Av;
 

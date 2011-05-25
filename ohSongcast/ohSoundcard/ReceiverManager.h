@@ -1,14 +1,15 @@
 #ifndef HEADER_RECEIVERS
 #define HEADER_RECEIVERS
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Timer.h>
 #include <Exception.h>
 #include <Functor.h>
 #include <Core/CpTopology.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class ReceiverManager : public IHouseHandler
 {
@@ -65,7 +66,8 @@ private:
 
 
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_SOUNDCARD
 

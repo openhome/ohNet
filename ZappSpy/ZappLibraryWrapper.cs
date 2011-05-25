@@ -5,25 +5,25 @@ using System.Text;
 
 namespace ZappSpy
 {
-    public class ZappLibraryWrapper : IDisposable
+    public class OhNetLibraryWrapper : IDisposable
     {
-        private Zapp.Core.Library iLibrary;
-        public ZappLibraryWrapper()
+        private OpenHome.Net.Core.Library iLibrary;
+        public OhNetLibraryWrapper()
         {
-            Zapp.Core.InitParams initialisationParams = new Zapp.Core.InitParams
+            OpenHome.Net.Core.InitParams initialisationParams = new OpenHome.Net.Core.InitParams
             {
                 // Nothing to set, yet!
             };
-            iLibrary = new Zapp.Core.Library();
+            iLibrary = new OpenHome.Net.Core.Library();
             iLibrary.Initialise(initialisationParams);
             iLibrary.StartCp();
         }
 
-        public Zapp.ControlPoint.CpDeviceList GetUpnpRootDeviceList(
-            Zapp.ControlPoint.CpDeviceList.ChangeHandler aAdded,
-            Zapp.ControlPoint.CpDeviceList.ChangeHandler aRemoved)
+        public OpenHome.Net.ControlPoint.CpDeviceList GetUpnpRootDeviceList(
+            OpenHome.Net.ControlPoint.CpDeviceList.ChangeHandler aAdded,
+            OpenHome.Net.ControlPoint.CpDeviceList.ChangeHandler aRemoved)
         {
-            return new Zapp.ControlPoint.CpDeviceListUpnpRoot(aAdded, aRemoved);
+            return new OpenHome.Net.ControlPoint.CpDeviceListUpnpRoot(aAdded, aRemoved);
         }
 
         public void Dispose()

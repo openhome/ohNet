@@ -1,10 +1,10 @@
 #include "DvAvOpenhomeOrgReceiver1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 TBool DvProviderAvOpenhomeOrgReceiver1::SetPropertyUri(const Brx& aValue)
 {
@@ -71,21 +71,21 @@ DvProviderAvOpenhomeOrgReceiver1::DvProviderAvOpenhomeOrgReceiver1(DvDevice& aDe
 
 void DvProviderAvOpenhomeOrgReceiver1::EnableActionPlay()
 {
-    Zapp::Action* action = new Zapp::Action("Play");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Play");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgReceiver1::DoPlay);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgReceiver1::EnableActionStop()
 {
-    Zapp::Action* action = new Zapp::Action("Stop");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Stop");
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgReceiver1::DoStop);
     iService->AddAction(action, functor);
 }
 
 void DvProviderAvOpenhomeOrgReceiver1::EnableActionSetSender()
 {
-    Zapp::Action* action = new Zapp::Action("SetSender");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetSender");
     action->AddInputParameter(new ParameterRelated("Uri", *iPropertyUri));
     action->AddInputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgReceiver1::DoSetSender);
@@ -94,7 +94,7 @@ void DvProviderAvOpenhomeOrgReceiver1::EnableActionSetSender()
 
 void DvProviderAvOpenhomeOrgReceiver1::EnableActionSender()
 {
-    Zapp::Action* action = new Zapp::Action("Sender");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Sender");
     action->AddOutputParameter(new ParameterRelated("Uri", *iPropertyUri));
     action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgReceiver1::DoSender);
@@ -103,7 +103,7 @@ void DvProviderAvOpenhomeOrgReceiver1::EnableActionSender()
 
 void DvProviderAvOpenhomeOrgReceiver1::EnableActionProtocolInfo()
 {
-    Zapp::Action* action = new Zapp::Action("ProtocolInfo");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ProtocolInfo");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyProtocolInfo));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgReceiver1::DoProtocolInfo);
     iService->AddAction(action, functor);
@@ -111,7 +111,7 @@ void DvProviderAvOpenhomeOrgReceiver1::EnableActionProtocolInfo()
 
 void DvProviderAvOpenhomeOrgReceiver1::EnableActionTransportState()
 {
-    Zapp::Action* action = new Zapp::Action("TransportState");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("TransportState");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyTransportState));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgReceiver1::DoTransportState);
     iService->AddAction(action, functor);

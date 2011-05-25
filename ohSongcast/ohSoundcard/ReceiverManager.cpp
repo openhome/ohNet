@@ -5,7 +5,7 @@
 #include <Arch.h>
 #include <Debug.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 #ifdef _WIN32
 # pragma warning(disable:4355) // use of 'this' in ctor lists safe in this case

@@ -1,7 +1,7 @@
 #ifndef HEADER_OPENHOME_PRODUCT
 #define HEADER_OPENHOME_PRODUCT
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
 #include <Thread.h>
@@ -9,7 +9,7 @@
 
 #include "DvAvOpenhomeOrgProduct1.h"
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 namespace Openhome {
 namespace Av {
@@ -103,7 +103,7 @@ private:
 	Bws<kMaxSourceXmlBytes> iSourceXml;
 };
 
-class CProduct : public Zapp::DvProviderAvOpenhomeOrgProduct1
+class CProduct : public OpenHome::Net::DvProviderAvOpenhomeOrgProduct1
 {
 	static const TUint kMaxRoomBytes = 30;
 	static const TUint kMaxNameBytes = 30;

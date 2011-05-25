@@ -60,10 +60,10 @@ namespace ZappSpy
             }
         }
 
-        public UpnpDeviceFinder(ZappLibraryWrapper aZappLibrary)
+        public UpnpDeviceFinder(OhNetLibraryWrapper aOhNetLibrary)
         {
-            iZappLibrary = aZappLibrary;
-            iDeviceList = new Zapp.ControlPoint.CpDeviceListUpnpRoot(
+            iOhNetLibrary = aOhNetLibrary;
+            iDeviceList = new OpenHome.Net.ControlPoint.CpDeviceListUpnpRoot(
                 HandleDeviceAdded,
                 HandleDeviceRemoved);
             iDeviceList.Refresh();
@@ -74,10 +74,10 @@ namespace ZappSpy
         /// by its UUID.
         /// </summary>
         /// <param name="aUuid">UUID of the device to find.</param>
-        public UpnpDeviceFinder(ZappLibraryWrapper aZappLibrary, string aUuid)
+        public UpnpDeviceFinder(OhNetLibraryWrapper aOhNetLibrary, string aUuid)
         {
-            iZappLibrary = aZappLibrary;
-            iDeviceList = new Zapp.ControlPoint.CpDeviceListUpnpUuid(
+            iOhNetLibrary = aOhNetLibrary;
+            iDeviceList = new OpenHome.Net.ControlPoint.CpDeviceListUpnpUuid(
                 aUuid,
                 HandleDeviceAdded,
                 HandleDeviceRemoved);
@@ -135,11 +135,11 @@ namespace ZappSpy
             }
         }
 
-        private ZappLibraryWrapper iZappLibrary;
+        private OhNetLibraryWrapper iOhNetLibrary;
         private UpnpDeviceCollection iDevices = new UpnpDeviceCollection();
-        private Zapp.ControlPoint.CpDeviceList iDeviceList;
+        private OpenHome.Net.ControlPoint.CpDeviceList iDeviceList;
 
-        private void HandleDeviceAdded(Zapp.ControlPoint.CpDeviceList aList, Zapp.ControlPoint.CpDevice aDevice)
+        private void HandleDeviceAdded(OpenHome.Net.ControlPoint.CpDeviceList aList, OpenHome.Net.ControlPoint.CpDevice aDevice)
         {
             string xml;
             if (!aDevice.GetAttribute("Upnp.DeviceXml", out xml))
@@ -167,7 +167,7 @@ namespace ZappSpy
             }
         }
 
-        private void HandleDeviceRemoved(Zapp.ControlPoint.CpDeviceList aList, Zapp.ControlPoint.CpDevice aDevice)
+        private void HandleDeviceRemoved(OpenHome.Net.ControlPoint.CpDeviceList aList, OpenHome.Net.ControlPoint.CpDevice aDevice)
         {
             UpnpDeviceInfo info;
             if (iDevices.TryGetDevice(aDevice.Udn(), out info))
