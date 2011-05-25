@@ -94,3 +94,4 @@ private:
 } // namespace Net
 } // namespace OpenHome
 
+#endif // HEADER_TOPOLOGY
