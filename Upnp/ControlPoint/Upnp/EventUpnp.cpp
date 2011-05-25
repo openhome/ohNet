@@ -49,14 +49,17 @@ void EventSessionUpnp::Error(const HttpStatus& aStatus)
 }
 
 #ifdef DEFINE_TRACE
-void EventSessionUpnp::LogError(const TChar* aErr)
+void EventSessionUpnp::LogError(CpiSubscription* aSubscription, const TChar* aErr)
 #else
-void EventSessionUpnp::LogError(const TChar* /*aErr*/)
+void EventSessionUpnp::LogError(CpiSubscription* aSubscription, const TChar* /*aErr*/)
 #endif
 {
     LOG2(kEvent, kError, "EventSessionUpnp::Run, %s handling\n    sid - ", aErr);
     LOG2(kEvent, kError, iHeaderSid.Sid());
     LOG2(kEvent, kError, " seq - %u\n", iHeaderSeq.Seq());
+    if (aSubscription != NULL) {
+        aSubscription->SetNotificationError();
+    }
 }
 
 void EventSessionUpnp::Run()
@@ -141,24 +144,19 @@ void EventSessionUpnp::Run()
         }
     }
     catch(HttpError) {
-        LogError("HttpError");
-        subscription->SetNotificationError();
+        LogError(subscription, "HttpError");
     }
     catch(ReaderError) {
-        LogError("ReaderError");
-        subscription->SetNotificationError();
+        LogError(subscription, "ReaderError");
     }
     catch(WriterError) {
-        LogError("WriterError");
-        subscription->SetNotificationError();
+        LogError(subscription, "WriterError");
     }
     catch(NetworkError) {
-        LogError("NetworkError");
-        subscription->SetNotificationError();
+        LogError(subscription, "NetworkError");
     }
     catch(XmlError) {
-        LogError("XmlError");
-        subscription->SetNotificationError();
+        LogError(subscription, "XmlError");
     }
     if (subscription != NULL) {
         subscription->RemoveRef();

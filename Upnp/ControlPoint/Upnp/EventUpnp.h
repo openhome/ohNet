@@ -19,7 +19,7 @@ public:
     ~EventSessionUpnp();
 private:
     void Error(const HttpStatus& aStatus);
-    void LogError(const TChar* aErr);
+    void LogError(CpiSubscription* aSubscription, const TChar* aErr);
     virtual void Run();
     void ProcessNotification(IEventProcessor& aEventProcessor, const Brx& aEntity);
 private:
