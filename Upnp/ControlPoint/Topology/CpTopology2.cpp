@@ -154,7 +154,7 @@ void CpTopology2Group::AddRef()
 
 void CpTopology2Group::RemoveRef()
 {
-    if (--iRefCount == 0) {
+	if (--iRefCount == 0) {
         delete this;
     }
 }
@@ -360,7 +360,7 @@ void* CpTopology2Group::UserData() const
 CpTopology2Device::CpTopology2Device(CpDevice& aDevice)
     : iDevice(aDevice)
 {
-    //iDevice.AddRef();
+    iDevice.AddRef();
 }
 	
 TBool CpTopology2Device::IsAttachedTo(CpDevice& aDevice)
@@ -370,7 +370,7 @@ TBool CpTopology2Device::IsAttachedTo(CpDevice& aDevice)
 
 CpTopology2Device::~CpTopology2Device()
 {
-    //iDevice.RemoveRef();
+    iDevice.RemoveRef();
 }
 	
 // CpTopology2Product
@@ -411,6 +411,8 @@ CpTopology2Product::CpTopology2Product(CpDevice& aDevice, ICpTopology2Handler& a
 
 CpTopology2Product::~CpTopology2Product()
 {
+    LOG(kTopology, "CpTopology2Product::~CpTopology2Product\n");
+
 	delete (iServiceProduct);
 	delete (iServiceVolume);
 	
@@ -901,8 +903,12 @@ CpTopology2::CpTopology2(ICpTopology2Handler& aHandler)
 
 CpTopology2::~CpTopology2()
 {
-    delete (iTopology1);
+    LOG(kTopology, "CpTopology2::~CpTopology2\n");
+
+	delete (iTopology1);
     
+    LOG(kTopology, "CpTopology2::~CpTopology2 deleted layer 1\n");
+
     std::vector<CpTopology2Device*>::iterator it = iDeviceList.begin();
 
     while (it != iDeviceList.end()) {
@@ -910,13 +916,19 @@ CpTopology2::~CpTopology2()
         it++;
     }   
 
-	iReady.Write(iFree.Read());
+    LOG(kTopology, "CpTopology2::~CpTopology2 deleted devices\n");
+
+	iReady.Write(iFree.Read()); // this null job causes the thread to complete
 
 	delete (iThread);
 	
+    LOG(kTopology, "CpTopology2::~CpTopology2 deleted thread\n");
+
 	for (TUint i = 0; i < kMaxJobCount; i++) {
 		delete (iFree.Read());
 	}
+
+    LOG(kTopology, "CpTopology2::~CpTopology2 deleted jobs\n");
 }
     
 void CpTopology2::Refresh()

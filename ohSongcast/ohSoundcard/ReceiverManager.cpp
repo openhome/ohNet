@@ -20,6 +20,7 @@ ReceiverManager::ReceiverManager(Functor aStatusChanged, Functor aListChanged, c
 	, iTimerListChanged(MakeFunctor(*this, &ReceiverManager::TimerListChangedExpired))
 	, iMutex("SCRM")
 	, iStatus(eOff)
+	, iCurrentRoom(0)
 {
 	iHouse = new House(*this);
 }
@@ -57,50 +58,29 @@ ReceiverManager::~ReceiverManager()
 
 void ReceiverManager::RoomAdded(IRoom& aRoom)
 {
-	TUint count = aRoom.SourceCount();
-
-	for (TUint i = 0; i < count; i++) {
-		if (aRoom.SourceType(i) == Brn("Receiver")) {
-			iRoomList.push_back(&aRoom);
-			UpdateList();
-			break;
-		}
-	}
+	iRoomList.push_back(&aRoom);
+	UpdateList();
 }
 
-void ReceiverManager::RoomChanged(IRoom& aRoom)
+void ReceiverManager::RoomChanged(IRoom& /* aRoom */)
 {
-	TUint count = aRoom.SourceCount();
-
-	for (TUint i = 0; i < count; i++) {
-		if (aRoom.SourceType(i) == Brn("Receiver")) {
-			UpdateList();
-			break;
-		}
-	}
+	UpdateList();
 }
 
 void ReceiverManager::RoomRemoved(IRoom& aRoom)
 {
-	TUint count = aRoom.SourceCount();
+	std::vector<IRoom*>::iterator it = iRoomList.begin();
 
-	for (TUint i = 0; i < count; i++) {
-		if (aRoom.SourceType(i) == Brn("Receiver")) {
-			std::vector<IRoom*>::iterator it = iRoomList.begin();
-			TBool found = false;
-			while (it != iRoomList.end()) {
-				if (*it == &aRoom) {
-					iRoomList.erase(it);
-					found = true;
-					break;
-				}
-			it++;
-			}
-			ASSERT(found);
+	while (it != iRoomList.end()) {
+		if (*it == &aRoom) {
+			iRoomList.erase(it);
 			UpdateList();
-			break;
+			return;
 		}
+	it++;
 	}
+
+	ASSERTS();
 }
 
 void ReceiverManager::RoomStandbyChanged(IRoom& /* aRoom */)
@@ -108,7 +88,7 @@ void ReceiverManager::RoomStandbyChanged(IRoom& /* aRoom */)
 	UpdateStatus();
 }
 
-void ReceiverManager::RoomSourceIndexChanged(IRoom& /* aRoom */)
+void ReceiverManager::RoomSourceChanged(IRoom& /* aRoom */)
 {
 	UpdateStatus();
 }
@@ -137,15 +117,16 @@ void ReceiverManager::RoomMuteChanged(IRoom& /* aRoom */)
 void ReceiverManager::UpdateList()
 {
 	iNewList.SetBytes(0);
+
+	IRoom* currentRoom = NULL;
+	TUint currentSource;
+
 	std::vector<IRoom*>::iterator it = iRoomList.begin();
+
 	while (it != iRoomList.end()) {
 		IRoom* room = *it;
 
-		printf("about to get source count\n");
-
 		TUint count = room->SourceCount();
-
-		printf("count: %d\n", count);
 
 		TUint index = 0;
 
@@ -162,24 +143,28 @@ void ReceiverManager::UpdateList()
 		if (index > 0) {
 			TUint remaining = iNewList.MaxBytes() - iNewList.Bytes();
 
-			if (index == 1) {
-				const Brx& name = room->Name();
-				if (remaining >= name.Bytes() + 1) {
-					iNewList.Append(name);
-					iNewList.Append('\n');
-				}
-			}
-			else {
-				const Brx& name1 = room->Name();
-				for (TUint i = 0; i < index; i++) {
-					TUint j = receivers[i];
-					const Brx& name2 = room->SourceName(j);
-					if (remaining >= name1.Bytes() + name2.Bytes() + 3) {
-						iNewList.Append(name1);
-						iNewList.Append('(');
-						iNewList.Append(name2);
-						iNewList.Append(')');
+			Bws<kMaxNameBytes> name;
+
+			const Brx& r = room->Name();
+
+			for (TUint i = 0; i < index; i++) {
+				TUint j = receivers[i];
+				const Brx& g = room->SourceGroup(j);
+				if (r.Bytes() + g.Bytes() + 3 <= kMaxNameBytes) {
+					name.Replace(r);
+					name.Append(' ');
+					name.Append('(');
+					name.Append(g);
+					name.Append(')');
+
+					if (remaining > name.Bytes()) {
+						iNewList.Append(name);
 						iNewList.Append('\n');
+
+						if (name == iReceiverName) {
+							currentRoom = room;
+							currentSource = j;
+						}
 					}
 				}
 			}
@@ -187,24 +172,49 @@ void ReceiverManager::UpdateList()
 	it++;
 	}
 
-	iMutex.Wait();
-
 	TBool changed = false;
+
+	iMutex.Wait();
 
 	if (iList != iNewList) {
 		changed = true;
 		iList.Replace(iNewList);
+		iCurrentRoom = currentRoom;
+		iCurrentSource = currentSource;
 	}
 
 	iMutex.Signal();
 
 	if (changed) {
 		iTimerListChanged.FireIn(kTimerListChangedTimeoutMs);
+		UpdateStatus();
 	}
 }
 
 void ReceiverManager::UpdateStatus()
 {
+	printf("update\n");
+
+	EStatus status = eOff;
+
+	if (iCurrentRoom) {
+		status = eOn;
+	}
+
+	TBool changed = false;
+
+	iMutex.Wait();
+
+	if (iStatus != status) {
+		iStatus = status;
+		changed = true;
+	}
+
+	iMutex.Signal();
+
+	if (changed) {
+		iStatusChanged();
+	}
 }
 
 void ReceiverManager::TimerListChangedExpired()

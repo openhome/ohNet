@@ -21,7 +21,7 @@ public:
     virtual void RoomChanged(CpTopology3Room& aRoom);
     virtual void RoomRemoved(CpTopology3Room& aRoom);
 	virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
-	virtual void RoomSourceIndexChanged(CpTopology3Room& aRoom);
+	virtual void RoomSourceChanged(CpTopology3Room& aRoom);
     virtual void RoomVolumeLimitChanged(CpTopology3Room& aRoom);
 	virtual void RoomVolumeChanged(CpTopology3Room& aRoom);
     virtual void RoomBalanceChanged(CpTopology3Room& aRoom);
@@ -54,7 +54,7 @@ void TopologyLogger::RoomChanged(CpTopology3Room& aRoom)
 
 void TopologyLogger::RoomRemoved(CpTopology3Room& aRoom)
 {
-    PrintRoomInfo("Room Removed       ", aRoom);
+    PrintRoomInfo("Room Removed        ", aRoom);
     Print("\n");
 }
 
@@ -65,10 +65,11 @@ void TopologyLogger::RoomStandbyChanged(CpTopology3Room& aRoom)
     Print("\n");
 }
 
-void TopologyLogger::RoomSourceIndexChanged(CpTopology3Room& aRoom)
+void TopologyLogger::RoomSourceChanged(CpTopology3Room& aRoom)
 {
-    PrintRoomInfo("Source Index Changed", aRoom);
-    Print("%u\n", aRoom.SourceIndex());
+    PrintRoomInfo("Source Changed", aRoom);
+    Print(aRoom.CurrentSourceName());
+    Print("\n");
 }
 
 void TopologyLogger::RoomVolumeLimitChanged(CpTopology3Room& aRoom)
@@ -174,4 +175,5 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     delete topology;
 
     UpnpLibrary::Close();
+
 }

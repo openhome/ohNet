@@ -31,6 +31,7 @@ private:
 	ICpTopology1HandlerFunction iFunction;
 };
 
+
 class CpTopology1
 {
 	static const TUint kMaxJobCount = 20;
