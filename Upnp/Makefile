@@ -106,20 +106,20 @@ install : install-pkgconf install-libs install-includes
 uninstall : uninstall-pkgconf uninstall-libs uninstall-includes
 
 install-pkgconf : tt
-	echo ERROR: no support for (un)install-pckconf yet
-    echo see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this
+	@echo "ERROR: no support for (un)install-pckconf yet"
+    #@echo "see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this"
 
 install-libs :
 	mkdir -p $(installlibdir)
-	cp -ut $(installlibdir) $(objdir)* 
+	cp -ut $(installlibdir) $(objdir)*
 
 install-includes :
 	mkdir -p $(installincludedir)
 	cp -urt $(installincludedir) $(inc_build)/*
 
 uninstall-pkgconf :
-	echo ERROR: no support for (un)install-pckconf yet
-    echo see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this
+	@echo "ERROR: no support for (un)install-pckconf yet"
+    #@echo "see http://www.mono-project.com/Guidelines:Application_Deployment for an example of how to implement this"
 
 uninstall-libs :
 	rm -rf $(installlibdir)
