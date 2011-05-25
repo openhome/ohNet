@@ -105,8 +105,8 @@ private:
 
 class CProduct : public OpenHome::Net::DvProviderAvOpenhomeOrgProduct1
 {
-	static const TUint kMaxRoomBytes = 30;
-	static const TUint kMaxNameBytes = 30;
+	static const TUint kMaxRoomBytes = 20;
+	static const TUint kMaxNameBytes = 20;
 
 public:
 	CProduct(DvDevice& aDevice

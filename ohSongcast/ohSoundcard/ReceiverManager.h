@@ -14,7 +14,7 @@ namespace Net {
 class ReceiverManager : public IHouseHandler
 {
 	static const TUint kMaxReceiversPerRoom = 100;
-	static const TUint kTimerListChangedTimeoutMs = 300;
+	static const TUint kTimerListChangedTimeoutMs = 200;
 
 public:
 	static const TUint kMaxListBytes = 5000;
@@ -40,7 +40,7 @@ private:
     virtual void RoomChanged(IRoom& aRoom);
     virtual void RoomRemoved(IRoom& aRoom);
     virtual void RoomStandbyChanged(IRoom& aRoom);
-    virtual void RoomSourceIndexChanged(IRoom& aRoom);
+    virtual void RoomSourceChanged(IRoom& aRoom);
     virtual void RoomVolumeLimitChanged(IRoom& aRoom);
     virtual void RoomVolumeChanged(IRoom& aRoom);
     virtual void RoomBalanceChanged(IRoom& aRoom);
@@ -62,6 +62,8 @@ private:
 	Bws<kMaxListBytes> iList;
 	Bws<kMaxListBytes> iNewList;
     House* iHouse;
+	IRoom* iCurrentRoom;
+	TUint iCurrentSource;
 };
 
 

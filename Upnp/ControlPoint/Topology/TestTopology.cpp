@@ -193,7 +193,7 @@ private:
     virtual void RoomChanged(CpTopology3Room& aRoom);
     virtual void RoomRemoved(CpTopology3Room& aRoom);
 	virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
-	virtual void RoomSourceIndexChanged(CpTopology3Room& aRoom);
+	virtual void RoomSourceChanged(CpTopology3Room& aRoom);
     virtual void RoomVolumeLimitChanged(CpTopology3Room& aRoom);
 	virtual void RoomVolumeChanged(CpTopology3Room& aRoom);
     virtual void RoomBalanceChanged(CpTopology3Room& aRoom);
@@ -298,13 +298,9 @@ void TestTopology3Handler::RoomStandbyChanged(CpTopology3Room& aRoom)
     Add(Brn("Standby"), aRoom.Name(), aRoom.Standby() ? Brn("Y") : Brn("N"));
 }
 
-void TestTopology3Handler::RoomSourceIndexChanged(CpTopology3Room& aRoom)
+void TestTopology3Handler::RoomSourceChanged(CpTopology3Room& aRoom)
 {
-    Bws<10> index;
-    
-    Ascii::AppendDec(index, aRoom.SourceIndex());
-    
-    Add(Brn("Index"), aRoom.Name(), index);
+    Add(Brn("Source"), aRoom.Name(), aRoom.CurrentSourceName());
 }
 
 void TestTopology3Handler::RoomChanged(CpTopology3Room& aRoom)

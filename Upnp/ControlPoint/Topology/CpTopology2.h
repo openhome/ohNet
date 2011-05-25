@@ -16,6 +16,22 @@ namespace Net {
 
 class CpTopology2Group;
 
+class ICpTopology2Handler
+{
+public:
+	virtual void GroupAdded(CpTopology2Group& aGroup) = 0;
+	virtual void GroupStandbyChanged(CpTopology2Group& aGroup) = 0;
+	virtual void GroupSourceIndexChanged(CpTopology2Group& aGroup) = 0;
+	virtual void GroupSourceListChanged(CpTopology2Group& aGroup) = 0;
+    virtual void GroupVolumeLimitChanged(CpTopology2Group& aGroup) = 0;
+	virtual void GroupVolumeChanged(CpTopology2Group& aGroup) = 0;
+    virtual void GroupBalanceChanged(CpTopology2Group& aGroup) = 0;
+    virtual void GroupFadeChanged(CpTopology2Group& aGroup) = 0;
+	virtual void GroupMuteChanged(CpTopology2Group& aGroup) = 0;
+	virtual void GroupRemoved(CpTopology2Group& aDevice) = 0;
+	~ICpTopology2Handler() {}
+};
+
 class ICpTopology2GroupHandler
 {
 public:
@@ -139,22 +155,6 @@ private:
 	void* iUserData;
     TUint iRefCount;
     std::vector<CpTopology2Source*> iSourceList;
-};
-
-class ICpTopology2Handler
-{
-public:
-	virtual void GroupAdded(CpTopology2Group& aGroup) = 0;
-	virtual void GroupStandbyChanged(CpTopology2Group& aGroup) = 0;
-	virtual void GroupSourceIndexChanged(CpTopology2Group& aGroup) = 0;
-	virtual void GroupSourceListChanged(CpTopology2Group& aGroup) = 0;
-    virtual void GroupVolumeLimitChanged(CpTopology2Group& aGroup) = 0;
-	virtual void GroupVolumeChanged(CpTopology2Group& aGroup) = 0;
-    virtual void GroupBalanceChanged(CpTopology2Group& aGroup) = 0;
-    virtual void GroupFadeChanged(CpTopology2Group& aGroup) = 0;
-	virtual void GroupMuteChanged(CpTopology2Group& aGroup) = 0;
-	virtual void GroupRemoved(CpTopology2Group& aDevice) = 0;
-	~ICpTopology2Handler() {}
 };
 
 typedef void (ICpTopology2Handler::*ICpTopology2HandlerFunction)(CpTopology2Group&);

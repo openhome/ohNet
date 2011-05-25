@@ -21,8 +21,12 @@ public:
     virtual TUint SourceCount() const;
     virtual const Brx& SourceName(TUint aIndex) const;
     virtual const Brx& SourceType(TUint aIndex) const;
+    virtual const Brx& SourceGroup(TUint aIndex) const;
     virtual CpDevice& SourceDevice(TUint aIndex) const;
-    virtual TUint SourceIndex() const;
+    virtual const Brx& CurrentSourceName() const;
+    virtual const Brx& CurrentSourceType() const;
+    virtual const Brx& CurrentSourceGroup() const;
+    virtual CpDevice& CurrentSourceDevice() const;
     virtual void SetSourceIndex(TUint aIndex);
     virtual TBool HasVolumeControl() const;
     virtual TUint VolumeMax() const;
@@ -105,23 +109,41 @@ const Brx& CpTopologyRoom::SourceType(TUint aIndex) const
 }
 
 
+const Brx& CpTopologyRoom::SourceGroup(TUint aIndex) const
+{
+    return (iRoom.SourceGroup(aIndex));
+}
+
 CpDevice& CpTopologyRoom::SourceDevice(TUint aIndex) const
 {
     return (iRoom.SourceDevice(aIndex));
 }
 
 
-TUint CpTopologyRoom::SourceIndex() const
+const Brx& CpTopologyRoom::CurrentSourceName() const
 {
-    return (iRoom.SourceIndex());
+    return (iRoom.CurrentSourceName());
 }
 
+const Brx& CpTopologyRoom::CurrentSourceType() const
+{
+    return (iRoom.CurrentSourceType());
+}
+
+const Brx& CpTopologyRoom::CurrentSourceGroup() const
+{
+    return (iRoom.CurrentSourceGroup());
+}
+
+CpDevice& CpTopologyRoom::CurrentSourceDevice() const
+{
+    return (iRoom.CurrentSourceDevice());
+}
 
 void CpTopologyRoom::SetSourceIndex(TUint aIndex)
 {
     iRoom.SetSourceIndex(aIndex);
 }
-
 
 TBool CpTopologyRoom::HasVolumeControl() const
 {
@@ -274,7 +296,7 @@ private:
     virtual void RoomChanged(CpTopology3Room& aRoom);
     virtual void RoomRemoved(CpTopology3Room& aRoom);
     virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
-    virtual void RoomSourceIndexChanged(CpTopology3Room& aRoom);
+    virtual void RoomSourceChanged(CpTopology3Room& aRoom);
     virtual void RoomVolumeLimitChanged(CpTopology3Room& aRoom);
     virtual void RoomVolumeChanged(CpTopology3Room& aRoom);
     virtual void RoomBalanceChanged(CpTopology3Room& aRoom);
@@ -331,9 +353,9 @@ void CpTopology::RoomStandbyChanged(CpTopology3Room& aRoom)
     iHandler.RoomStandbyChanged(*(CpTopologyRoom*)aRoom.UserData());
 }
 
-void CpTopology::RoomSourceIndexChanged(CpTopology3Room& aRoom)
+void CpTopology::RoomSourceChanged(CpTopology3Room& aRoom)
 {
-    iHandler.RoomSourceIndexChanged(*(CpTopologyRoom*)aRoom.UserData());
+    iHandler.RoomSourceChanged(*(CpTopologyRoom*)aRoom.UserData());
 }
 
 void CpTopology::RoomVolumeLimitChanged(CpTopology3Room& aRoom)

@@ -31,8 +31,12 @@ public:
     virtual TUint SourceCount() const = 0;
     virtual const Brx& SourceName(TUint aIndex) const = 0;
     virtual const Brx& SourceType(TUint aIndex) const = 0;
+    virtual const Brx& SourceGroup(TUint aIndex) const = 0;
     virtual CpDevice& SourceDevice(TUint aIndex) const = 0;
-    virtual TUint SourceIndex() const = 0;
+    virtual const Brx& CurrentSourceName() const = 0;
+    virtual const Brx& CurrentSourceType() const = 0;
+    virtual const Brx& CurrentSourceGroup() const = 0;
+    virtual CpDevice& CurrentSourceDevice() const = 0;
     virtual void SetSourceIndex(TUint aIndex) = 0;
     virtual TBool HasVolumeControl() const = 0;
     virtual TUint VolumeMax() const = 0;
@@ -68,7 +72,7 @@ public:
     virtual void RoomChanged(IRoom& aRoom) = 0;
     virtual void RoomRemoved(IRoom& aRoom) = 0;
     virtual void RoomStandbyChanged(IRoom& aRoom) = 0;
-    virtual void RoomSourceIndexChanged(IRoom& aRoom) = 0;
+    virtual void RoomSourceChanged(IRoom& aRoom) = 0;
     virtual void RoomVolumeLimitChanged(IRoom& aRoom) = 0;
     virtual void RoomVolumeChanged(IRoom& aRoom) = 0;
     virtual void RoomBalanceChanged(IRoom& aRoom) = 0;
@@ -90,4 +94,3 @@ private:
 } // namespace Net
 } // namespace OpenHome
 
-#endif // HEADER_TOPOLOGY
