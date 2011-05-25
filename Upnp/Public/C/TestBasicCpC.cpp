@@ -1,29 +1,29 @@
 #include <C/TestBasicCp.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <TestFramework.h>
 #include <C/CpProxy.h>
-#include <C/CpZappOrgTestBasic1.h>
+#include <C/CpOpenhomeOrgTestBasic1.h>
 #include <C/CpDevice.h>
 
 #include <stdlib.h>
 #include <string.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 
 void TestBasicCpC::TestActions(CpDeviceC aDevice)
 {
     Print("  Actions\n");
-    THandle proxy = CpProxyZappOrgTestBasic1Create(aDevice);
+    THandle proxy = CpProxyOpenhomeOrgTestBasic1Create(aDevice);
     TUint i;
 
     Print("    Unsigned integer arguments...\n");
     uint32_t valUint = 15;
     for (i=0; i<kTestIterations; i++) {
         uint32_t result;
-        CpProxyZappOrgTestBasic1SyncIncrement(proxy, valUint, &result);
+        CpProxyOpenhomeOrgTestBasic1SyncIncrement(proxy, valUint, &result);
         ASSERT(result == valUint+1);
         valUint = result;
     }
@@ -32,7 +32,7 @@ void TestBasicCpC::TestActions(CpDeviceC aDevice)
     int32_t valInt = 3;
     for (i=0; i<kTestIterations; i++) {
         int32_t result;
-        CpProxyZappOrgTestBasic1SyncDecrement(proxy, valInt, &result);
+        CpProxyOpenhomeOrgTestBasic1SyncDecrement(proxy, valInt, &result);
         ASSERT(result == valInt-1);
         valInt = result;
     }
@@ -41,7 +41,7 @@ void TestBasicCpC::TestActions(CpDeviceC aDevice)
     uint32_t valBool = 1;
     for (i=0; i<kTestIterations; i++) {
         uint32_t result;
-        CpProxyZappOrgTestBasic1SyncToggle(proxy, valBool, &result);
+        CpProxyOpenhomeOrgTestBasic1SyncToggle(proxy, valBool, &result);
         ASSERT((result==1 && valBool==0) || (result==0 && valBool==1));
         valBool = result;
     }
@@ -50,7 +50,7 @@ void TestBasicCpC::TestActions(CpDeviceC aDevice)
     const char* valStr = "<&'tag\">";
     for (i=0; i<kTestIterations; i++) {
         char* result;
-        CpProxyZappOrgTestBasic1SyncEchoString(proxy, valStr, &result);
+        CpProxyOpenhomeOrgTestBasic1SyncEchoString(proxy, valStr, &result);
         ASSERT(strcmp(result, valStr) == 0);
         free(result);
     }
@@ -63,13 +63,13 @@ void TestBasicCpC::TestActions(CpDeviceC aDevice)
     for (i=0; i<kTestIterations; i++) {
         char* result;
         uint32_t resultLen;
-        CpProxyZappOrgTestBasic1SyncEchoBinary(proxy, valBin, 256, &result, &resultLen);
+        CpProxyOpenhomeOrgTestBasic1SyncEchoBinary(proxy, valBin, 256, &result, &resultLen);
         ASSERT(resultLen == 256);
         ASSERT(strncmp(result, valBin, resultLen) == 0);
         free(result);
     }
 
-    CpProxyZappOrgTestBasic1Destroy(proxy);
+    CpProxyOpenhomeOrgTestBasic1Destroy(proxy);
 }
 
 static void updatesComplete(void* aPtr)
@@ -80,7 +80,7 @@ static void updatesComplete(void* aPtr)
 void TestBasicCpC::TestSubscriptions(CpDeviceC aDevice)
 {
     Print("  Subscriptions\n");
-    THandle proxy = CpProxyZappOrgTestBasic1Create(aDevice);
+    THandle proxy = CpProxyOpenhomeOrgTestBasic1Create(aDevice);
     Semaphore sem("TSEM", 0);
     CpProxySetPropertyChanged(proxy, updatesComplete, &sem);
     CpProxySubscribe(proxy);
@@ -94,48 +94,48 @@ void TestBasicCpC::TestSubscriptions(CpDeviceC aDevice)
     */
 
     Print("    Uint...\n");
-    CpProxyZappOrgTestBasic1SyncSetUint(proxy, 1);
+    CpProxyOpenhomeOrgTestBasic1SyncSetUint(proxy, 1);
     sem.Wait();
     uint32_t propUint;
-    CpProxyZappOrgTestBasic1PropertyVarUint(proxy, &propUint);
+    CpProxyOpenhomeOrgTestBasic1PropertyVarUint(proxy, &propUint);
     ASSERT(propUint == 1);
     uint32_t valUint;
-    CpProxyZappOrgTestBasic1SyncGetUint(proxy, &valUint);
+    CpProxyOpenhomeOrgTestBasic1SyncGetUint(proxy, &valUint);
     ASSERT(propUint == valUint);
 
     Print("    Int...\n");
-    CpProxyZappOrgTestBasic1SyncSetInt(proxy, -99);
+    CpProxyOpenhomeOrgTestBasic1SyncSetInt(proxy, -99);
     sem.Wait();
     int32_t propInt;
-    CpProxyZappOrgTestBasic1PropertyVarInt(proxy, &propInt);
+    CpProxyOpenhomeOrgTestBasic1PropertyVarInt(proxy, &propInt);
     ASSERT(propInt == -99);
     int32_t valInt;
-    CpProxyZappOrgTestBasic1SyncGetInt(proxy, &valInt);
+    CpProxyOpenhomeOrgTestBasic1SyncGetInt(proxy, &valInt);
     ASSERT(propInt == valInt);
 
     Print("    Bool...\n");
-    CpProxyZappOrgTestBasic1SyncSetBool(proxy, 1);
+    CpProxyOpenhomeOrgTestBasic1SyncSetBool(proxy, 1);
     sem.Wait();
     uint32_t propBool;
-    CpProxyZappOrgTestBasic1PropertyVarBool(proxy, &propBool);
+    CpProxyOpenhomeOrgTestBasic1PropertyVarBool(proxy, &propBool);
     ASSERT(propBool == 1);
     uint32_t valBool;
-    CpProxyZappOrgTestBasic1SyncGetBool(proxy, &valBool);
+    CpProxyOpenhomeOrgTestBasic1SyncGetBool(proxy, &valBool);
     ASSERT(valBool == 1);
 
     Print("    String...\n");
     const char* str = "<&'tag\">";
-    CpProxyZappOrgTestBasic1SyncSetString(proxy, str);
+    CpProxyOpenhomeOrgTestBasic1SyncSetString(proxy, str);
     sem.Wait();
     char* propStr;
-    CpProxyZappOrgTestBasic1PropertyVarStr(proxy, &propStr);
+    CpProxyOpenhomeOrgTestBasic1PropertyVarStr(proxy, &propStr);
     ASSERT(strcmp(propStr, str) == 0);
     // test again to check that PropertyVarStr didn't TransferTo the property
     free(propStr);
-    CpProxyZappOrgTestBasic1PropertyVarStr(proxy, &propStr);
+    CpProxyOpenhomeOrgTestBasic1PropertyVarStr(proxy, &propStr);
     ASSERT(strcmp(propStr, str) == 0);
     char* valStr;
-    CpProxyZappOrgTestBasic1SyncGetString(proxy, &valStr);
+    CpProxyOpenhomeOrgTestBasic1SyncGetString(proxy, &valStr);
     ASSERT(strcmp(propStr, valStr) == 0);
     free(propStr);
     free(valStr);
@@ -145,41 +145,41 @@ void TestBasicCpC::TestSubscriptions(CpDeviceC aDevice)
     for (TUint i=0; i<256; i++) {
         bufBin[i] = (char)i;
     }
-    CpProxyZappOrgTestBasic1SyncSetBinary(proxy, &bufBin[0], 256);
+    CpProxyOpenhomeOrgTestBasic1SyncSetBinary(proxy, &bufBin[0], 256);
     sem.Wait();
     char* propBin;
     uint32_t propBinLen;
-    CpProxyZappOrgTestBasic1PropertyVarBin(proxy, &propBin, &propBinLen);
+    CpProxyOpenhomeOrgTestBasic1PropertyVarBin(proxy, &propBin, &propBinLen);
     ASSERT(propBinLen == 256);
     ASSERT(strncmp(propBin, bufBin, propBinLen) == 0);
     // test again to check that PropertyVarBin didn't TransferTo the property
     free(propBin);
-    CpProxyZappOrgTestBasic1PropertyVarBin(proxy, &propBin, &propBinLen);
+    CpProxyOpenhomeOrgTestBasic1PropertyVarBin(proxy, &propBin, &propBinLen);
     ASSERT(propBinLen == 256);
     ASSERT(strncmp(propBin, bufBin, propBinLen) == 0);
     char* valBin;
     uint32_t valBinLen;
-    CpProxyZappOrgTestBasic1SyncGetBinary(proxy, &valBin, &valBinLen);
+    CpProxyOpenhomeOrgTestBasic1SyncGetBinary(proxy, &valBin, &valBinLen);
     ASSERT(valBinLen == 256)
     ASSERT(strncmp(propBin, valBin, valBinLen) ==0);
     free(propBin);
     free(valBin);
 
     Print("    Multiple...\n");
-    CpProxyZappOrgTestBasic1SyncSetMultiple(proxy, 15, 658, 0);
+    CpProxyOpenhomeOrgTestBasic1SyncSetMultiple(proxy, 15, 658, 0);
     sem.Wait();
-    CpProxyZappOrgTestBasic1PropertyVarUint(proxy, &propUint);
+    CpProxyOpenhomeOrgTestBasic1PropertyVarUint(proxy, &propUint);
     ASSERT(propUint == 15);
-    CpProxyZappOrgTestBasic1SyncGetUint(proxy, &valUint);
+    CpProxyOpenhomeOrgTestBasic1SyncGetUint(proxy, &valUint);
     ASSERT(propUint == valUint);
-    CpProxyZappOrgTestBasic1PropertyVarInt(proxy, &propInt);
+    CpProxyOpenhomeOrgTestBasic1PropertyVarInt(proxy, &propInt);
     ASSERT(propInt == 658);
-    CpProxyZappOrgTestBasic1SyncGetInt(proxy, &valInt);
+    CpProxyOpenhomeOrgTestBasic1SyncGetInt(proxy, &valInt);
     ASSERT(propInt == valInt);
-    CpProxyZappOrgTestBasic1PropertyVarBool(proxy, &propBool);
+    CpProxyOpenhomeOrgTestBasic1PropertyVarBool(proxy, &propBool);
     ASSERT(propBool == 0);
-    CpProxyZappOrgTestBasic1SyncGetBool(proxy, &valBool);
+    CpProxyOpenhomeOrgTestBasic1SyncGetBool(proxy, &valBool);
     ASSERT(valBool == 0);
 
-    CpProxyZappOrgTestBasic1Destroy(proxy); // automatically unsubscribes
+    CpProxyOpenhomeOrgTestBasic1Destroy(proxy); // automatically unsubscribes
 }

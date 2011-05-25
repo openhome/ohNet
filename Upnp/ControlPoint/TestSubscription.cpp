@@ -1,10 +1,10 @@
 // Test for service subscription
-// Builds a list of providers of the (Zapp) UI service
+// Builds a list of providers of the (ohNet) UI service
 // ... then checks how many times we can (un)subscribe (to changes in the
 //     service's state variables) on each device in a second
 
 #include <TestFramework.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Discovery.h>
 #include <Thread.h>
 #include <Timer.h>
@@ -17,8 +17,8 @@
 
 #include <vector>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 const TUint kDevicePollMs = 1000;
 static TUint gSubscriptionCount = 0;
@@ -133,7 +133,7 @@ void DeviceList::Removed(CpDevice& aDevice)
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartCp();

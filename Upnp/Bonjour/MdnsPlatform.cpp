@@ -9,14 +9,14 @@
 #include <Arch.h>
 #include <Stack.h>
 #include <NetworkInterfaceList.h>
-#include <Zapp.h>
+#include <OhNet.h>
 
 #include <stdlib.h>
 #include <string.h>
 
 #include <mDNSEmbeddedAPI.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 static const mDNSInterfaceID kInterfaceId = (mDNSInterfaceID)2;
 

@@ -1,8 +1,8 @@
 using System;
-using Zapp.Core;
-using Zapp.Device;
+using OpenHome.Net.Core;
+using OpenHome.Net.Device;
 
-namespace Zapp.Device
+namespace OpenHome.Net.Device
 {
     class Program
     {

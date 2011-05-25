@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyAvOpenhomeOrgProduct1 : ICpProxy, IDisposable
     {
@@ -389,19 +389,19 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyAvOpenhomeOrgProduct1 : CpProxy, IDisposable, ICpProxyAvOpenhomeOrgProduct1
     {
-        private Zapp.Core.Action iActionManufacturer;
-        private Zapp.Core.Action iActionModel;
-        private Zapp.Core.Action iActionProduct;
-        private Zapp.Core.Action iActionStandby;
-        private Zapp.Core.Action iActionSetStandby;
-        private Zapp.Core.Action iActionSourceCount;
-        private Zapp.Core.Action iActionSourceXml;
-        private Zapp.Core.Action iActionSourceIndex;
-        private Zapp.Core.Action iActionSetSourceIndex;
-        private Zapp.Core.Action iActionSetSourceIndexByName;
-        private Zapp.Core.Action iActionSource;
-        private Zapp.Core.Action iActionAttributes;
-        private Zapp.Core.Action iActionSourceXmlChangeCount;
+        private OpenHome.Net.Core.Action iActionManufacturer;
+        private OpenHome.Net.Core.Action iActionModel;
+        private OpenHome.Net.Core.Action iActionProduct;
+        private OpenHome.Net.Core.Action iActionStandby;
+        private OpenHome.Net.Core.Action iActionSetStandby;
+        private OpenHome.Net.Core.Action iActionSourceCount;
+        private OpenHome.Net.Core.Action iActionSourceXml;
+        private OpenHome.Net.Core.Action iActionSourceIndex;
+        private OpenHome.Net.Core.Action iActionSetSourceIndex;
+        private OpenHome.Net.Core.Action iActionSetSourceIndexByName;
+        private OpenHome.Net.Core.Action iActionSource;
+        private OpenHome.Net.Core.Action iActionAttributes;
+        private OpenHome.Net.Core.Action iActionSourceXmlChangeCount;
         private PropertyString iManufacturerName;
         private PropertyString iManufacturerInfo;
         private PropertyString iManufacturerUrl;
@@ -448,10 +448,10 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyAvOpenhomeOrgProduct1(CpDevice aDevice)
             : base("av-openhome-org", "Product", 1, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             List<String> allowedValues = new List<String>();
 
-            iActionManufacturer = new Zapp.Core.Action("Manufacturer");
+            iActionManufacturer = new OpenHome.Net.Core.Action("Manufacturer");
             param = new ParameterString("Name", allowedValues);
             iActionManufacturer.AddOutputParameter(param);
             param = new ParameterString("Info", allowedValues);
@@ -461,7 +461,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("ImageUri", allowedValues);
             iActionManufacturer.AddOutputParameter(param);
 
-            iActionModel = new Zapp.Core.Action("Model");
+            iActionModel = new OpenHome.Net.Core.Action("Model");
             param = new ParameterString("Name", allowedValues);
             iActionModel.AddOutputParameter(param);
             param = new ParameterString("Info", allowedValues);
@@ -471,7 +471,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("ImageUri", allowedValues);
             iActionModel.AddOutputParameter(param);
 
-            iActionProduct = new Zapp.Core.Action("Product");
+            iActionProduct = new OpenHome.Net.Core.Action("Product");
             param = new ParameterString("Room", allowedValues);
             iActionProduct.AddOutputParameter(param);
             param = new ParameterString("Name", allowedValues);
@@ -483,35 +483,35 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("ImageUri", allowedValues);
             iActionProduct.AddOutputParameter(param);
 
-            iActionStandby = new Zapp.Core.Action("Standby");
+            iActionStandby = new OpenHome.Net.Core.Action("Standby");
             param = new ParameterBool("Value");
             iActionStandby.AddOutputParameter(param);
 
-            iActionSetStandby = new Zapp.Core.Action("SetStandby");
+            iActionSetStandby = new OpenHome.Net.Core.Action("SetStandby");
             param = new ParameterBool("Value");
             iActionSetStandby.AddInputParameter(param);
 
-            iActionSourceCount = new Zapp.Core.Action("SourceCount");
+            iActionSourceCount = new OpenHome.Net.Core.Action("SourceCount");
             param = new ParameterUint("Value");
             iActionSourceCount.AddOutputParameter(param);
 
-            iActionSourceXml = new Zapp.Core.Action("SourceXml");
+            iActionSourceXml = new OpenHome.Net.Core.Action("SourceXml");
             param = new ParameterString("Value", allowedValues);
             iActionSourceXml.AddOutputParameter(param);
 
-            iActionSourceIndex = new Zapp.Core.Action("SourceIndex");
+            iActionSourceIndex = new OpenHome.Net.Core.Action("SourceIndex");
             param = new ParameterUint("Value");
             iActionSourceIndex.AddOutputParameter(param);
 
-            iActionSetSourceIndex = new Zapp.Core.Action("SetSourceIndex");
+            iActionSetSourceIndex = new OpenHome.Net.Core.Action("SetSourceIndex");
             param = new ParameterUint("Value");
             iActionSetSourceIndex.AddInputParameter(param);
 
-            iActionSetSourceIndexByName = new Zapp.Core.Action("SetSourceIndexByName");
+            iActionSetSourceIndexByName = new OpenHome.Net.Core.Action("SetSourceIndexByName");
             param = new ParameterString("Value", allowedValues);
             iActionSetSourceIndexByName.AddInputParameter(param);
 
-            iActionSource = new Zapp.Core.Action("Source");
+            iActionSource = new OpenHome.Net.Core.Action("Source");
             param = new ParameterUint("Index");
             iActionSource.AddInputParameter(param);
             param = new ParameterString("SystemName", allowedValues);
@@ -523,11 +523,11 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterBool("Visible");
             iActionSource.AddOutputParameter(param);
 
-            iActionAttributes = new Zapp.Core.Action("Attributes");
+            iActionAttributes = new OpenHome.Net.Core.Action("Attributes");
             param = new ParameterString("Value", allowedValues);
             iActionAttributes.AddOutputParameter(param);
 
-            iActionSourceXmlChangeCount = new Zapp.Core.Action("SourceXmlChangeCount");
+            iActionSourceXmlChangeCount = new OpenHome.Net.Core.Action("SourceXmlChangeCount");
             param = new ParameterUint("Value");
             iActionSourceXmlChangeCount.AddOutputParameter(param);
 

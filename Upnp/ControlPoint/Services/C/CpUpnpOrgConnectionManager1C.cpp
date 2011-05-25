@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyUpnpOrgConnectionManager1C : public CpProxyC
 {
@@ -197,63 +197,63 @@ CpProxyUpnpOrgConnectionManager1C::CpProxyUpnpOrgConnectionManager1C(CpDeviceC a
     : CpProxyC("schemas-upnp-org", "ConnectionManager", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
     iActionGetProtocolInfo = new Action("GetProtocolInfo");
-    param = new Zapp::ParameterString("Source");
+    param = new OpenHome::Net::ParameterString("Source");
     iActionGetProtocolInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Sink");
+    param = new OpenHome::Net::ParameterString("Sink");
     iActionGetProtocolInfo->AddOutputParameter(param);
 
     iActionPrepareForConnection = new Action("PrepareForConnection");
-    param = new Zapp::ParameterString("RemoteProtocolInfo");
+    param = new OpenHome::Net::ParameterString("RemoteProtocolInfo");
     iActionPrepareForConnection->AddInputParameter(param);
-    param = new Zapp::ParameterString("PeerConnectionManager");
+    param = new OpenHome::Net::ParameterString("PeerConnectionManager");
     iActionPrepareForConnection->AddInputParameter(param);
-    param = new Zapp::ParameterInt("PeerConnectionID");
+    param = new OpenHome::Net::ParameterInt("PeerConnectionID");
     iActionPrepareForConnection->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[2];
     allowedValues[index++] = (TChar*)"Input";
     allowedValues[index++] = (TChar*)"Output";
-    param = new Zapp::ParameterString("Direction", allowedValues, 2);
+    param = new OpenHome::Net::ParameterString("Direction", allowedValues, 2);
     iActionPrepareForConnection->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterInt("ConnectionID");
+    param = new OpenHome::Net::ParameterInt("ConnectionID");
     iActionPrepareForConnection->AddOutputParameter(param);
-    param = new Zapp::ParameterInt("AVTransportID");
+    param = new OpenHome::Net::ParameterInt("AVTransportID");
     iActionPrepareForConnection->AddOutputParameter(param);
-    param = new Zapp::ParameterInt("RcsID");
+    param = new OpenHome::Net::ParameterInt("RcsID");
     iActionPrepareForConnection->AddOutputParameter(param);
 
     iActionConnectionComplete = new Action("ConnectionComplete");
-    param = new Zapp::ParameterInt("ConnectionID");
+    param = new OpenHome::Net::ParameterInt("ConnectionID");
     iActionConnectionComplete->AddInputParameter(param);
 
     iActionGetCurrentConnectionIDs = new Action("GetCurrentConnectionIDs");
-    param = new Zapp::ParameterString("ConnectionIDs");
+    param = new OpenHome::Net::ParameterString("ConnectionIDs");
     iActionGetCurrentConnectionIDs->AddOutputParameter(param);
 
     iActionGetCurrentConnectionInfo = new Action("GetCurrentConnectionInfo");
-    param = new Zapp::ParameterInt("ConnectionID");
+    param = new OpenHome::Net::ParameterInt("ConnectionID");
     iActionGetCurrentConnectionInfo->AddInputParameter(param);
-    param = new Zapp::ParameterInt("RcsID");
+    param = new OpenHome::Net::ParameterInt("RcsID");
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterInt("AVTransportID");
+    param = new OpenHome::Net::ParameterInt("AVTransportID");
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("ProtocolInfo");
+    param = new OpenHome::Net::ParameterString("ProtocolInfo");
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("PeerConnectionManager");
+    param = new OpenHome::Net::ParameterString("PeerConnectionManager");
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterInt("PeerConnectionID");
+    param = new OpenHome::Net::ParameterInt("PeerConnectionID");
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
     index = 0;
     allowedValues = new TChar*[2];
     allowedValues[index++] = (TChar*)"Input";
     allowedValues[index++] = (TChar*)"Output";
-    param = new Zapp::ParameterString("Direction", allowedValues, 2);
+    param = new OpenHome::Net::ParameterString("Direction", allowedValues, 2);
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
     delete[] allowedValues;
     index = 0;
@@ -263,7 +263,7 @@ CpProxyUpnpOrgConnectionManager1C::CpProxyUpnpOrgConnectionManager1C(CpDeviceC a
     allowedValues[index++] = (TChar*)"InsufficientBandwidth";
     allowedValues[index++] = (TChar*)"UnreliableChannel";
     allowedValues[index++] = (TChar*)"Unknown";
-    param = new Zapp::ParameterString("Status", allowedValues, 5);
+    param = new OpenHome::Net::ParameterString("Status", allowedValues, 5);
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
     delete[] allowedValues;
 
@@ -542,15 +542,15 @@ void CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHandle, char**
     *aSink = buf_aSink.Extract();
 }
 
-void CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetProtocolInfo(functor);
 }
 
-int32_t CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(THandle aHandle, ZappHandleAsync aAsync, char** aSource, char** aSink)
+int32_t CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aSource, char** aSink)
 {
     int32_t err = 0;
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
@@ -582,18 +582,18 @@ void CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle aHandle, c
     proxyC->SyncPrepareForConnection(buf_aRemoteProtocolInfo, buf_aPeerConnectionManager, aPeerConnectionID, buf_aDirection, *aConnectionID, *aAVTransportID, *aRcsID);
 }
 
-void CpProxyUpnpOrgConnectionManager1BeginPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgConnectionManager1BeginPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRemoteProtocolInfo(aRemoteProtocolInfo);
     Brh buf_aPeerConnectionManager(aPeerConnectionManager);
     Brh buf_aDirection(aDirection);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginPrepareForConnection(buf_aRemoteProtocolInfo, buf_aPeerConnectionManager, aPeerConnectionID, buf_aDirection, functor);
 }
 
-int32_t CpProxyUpnpOrgConnectionManager1EndPrepareForConnection(THandle aHandle, ZappHandleAsync aAsync, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID)
+int32_t CpProxyUpnpOrgConnectionManager1EndPrepareForConnection(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
@@ -616,15 +616,15 @@ void CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(THandle aHandle, int
     proxyC->SyncConnectionComplete(aConnectionID);
 }
 
-void CpProxyUpnpOrgConnectionManager1BeginConnectionComplete(THandle aHandle, int32_t aConnectionID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgConnectionManager1BeginConnectionComplete(THandle aHandle, int32_t aConnectionID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginConnectionComplete(aConnectionID, functor);
 }
 
-int32_t CpProxyUpnpOrgConnectionManager1EndConnectionComplete(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgConnectionManager1EndConnectionComplete(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
@@ -649,15 +649,15 @@ void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THandle aHandle
     *aConnectionIDs = buf_aConnectionIDs.Extract();
 }
 
-void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionIDs(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionIDs(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetCurrentConnectionIDs(functor);
 }
 
-int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionIDs(THandle aHandle, ZappHandleAsync aAsync, char** aConnectionIDs)
+int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionIDs(THandle aHandle, OhNetHandleAsync aAsync, char** aConnectionIDs)
 {
     int32_t err = 0;
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
@@ -691,15 +691,15 @@ void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandle aHandl
     *aStatus = buf_aStatus.Extract();
 }
 
-void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetCurrentConnectionInfo(aConnectionID, functor);
 }
 
-int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionInfo(THandle aHandle, ZappHandleAsync aAsync, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus)
+int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionInfo(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus)
 {
     int32_t err = 0;
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
@@ -727,7 +727,7 @@ int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionInfo(THandle aHan
     return err;
 }
 
-void CpProxyUpnpOrgConnectionManager1SetPropertySourceProtocolInfoChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgConnectionManager1SetPropertySourceProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -735,7 +735,7 @@ void CpProxyUpnpOrgConnectionManager1SetPropertySourceProtocolInfoChanged(THandl
     proxyC->SetPropertySourceProtocolInfoChanged(functor);
 }
 
-void CpProxyUpnpOrgConnectionManager1SetPropertySinkProtocolInfoChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgConnectionManager1SetPropertySinkProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -743,7 +743,7 @@ void CpProxyUpnpOrgConnectionManager1SetPropertySinkProtocolInfoChanged(THandle 
     proxyC->SetPropertySinkProtocolInfoChanged(functor);
 }
 
-void CpProxyUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);

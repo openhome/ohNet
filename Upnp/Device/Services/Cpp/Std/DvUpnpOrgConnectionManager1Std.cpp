@@ -1,10 +1,10 @@
 #include "DvUpnpOrgConnectionManager1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <DviService.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 bool DvProviderUpnpOrgConnectionManager1Cpp::SetPropertySourceProtocolInfo(const std::string& aValue)
 {
@@ -56,7 +56,7 @@ DvProviderUpnpOrgConnectionManager1Cpp::DvProviderUpnpOrgConnectionManager1Cpp(D
 
 void DvProviderUpnpOrgConnectionManager1Cpp::EnableActionGetProtocolInfo()
 {
-    Zapp::Action* action = new Zapp::Action("GetProtocolInfo");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetProtocolInfo");
     action->AddOutputParameter(new ParameterRelated("Source", *iPropertySourceProtocolInfo));
     action->AddOutputParameter(new ParameterRelated("Sink", *iPropertySinkProtocolInfo));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgConnectionManager1Cpp::DoGetProtocolInfo);
@@ -65,7 +65,7 @@ void DvProviderUpnpOrgConnectionManager1Cpp::EnableActionGetProtocolInfo()
 
 void DvProviderUpnpOrgConnectionManager1Cpp::EnableActionPrepareForConnection()
 {
-    Zapp::Action* action = new Zapp::Action("PrepareForConnection");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PrepareForConnection");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterString("RemoteProtocolInfo"));
@@ -86,7 +86,7 @@ void DvProviderUpnpOrgConnectionManager1Cpp::EnableActionPrepareForConnection()
 
 void DvProviderUpnpOrgConnectionManager1Cpp::EnableActionConnectionComplete()
 {
-    Zapp::Action* action = new Zapp::Action("ConnectionComplete");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ConnectionComplete");
     action->AddInputParameter(new ParameterInt("ConnectionID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgConnectionManager1Cpp::DoConnectionComplete);
     iService->AddAction(action, functor);
@@ -94,7 +94,7 @@ void DvProviderUpnpOrgConnectionManager1Cpp::EnableActionConnectionComplete()
 
 void DvProviderUpnpOrgConnectionManager1Cpp::EnableActionGetCurrentConnectionIDs()
 {
-    Zapp::Action* action = new Zapp::Action("GetCurrentConnectionIDs");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetCurrentConnectionIDs");
     action->AddOutputParameter(new ParameterRelated("ConnectionIDs", *iPropertyCurrentConnectionIDs));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgConnectionManager1Cpp::DoGetCurrentConnectionIDs);
     iService->AddAction(action, functor);
@@ -102,7 +102,7 @@ void DvProviderUpnpOrgConnectionManager1Cpp::EnableActionGetCurrentConnectionIDs
 
 void DvProviderUpnpOrgConnectionManager1Cpp::EnableActionGetCurrentConnectionInfo()
 {
-    Zapp::Action* action = new Zapp::Action("GetCurrentConnectionInfo");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetCurrentConnectionInfo");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterInt("ConnectionID"));

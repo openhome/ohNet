@@ -55,7 +55,7 @@ DllExport void CpServiceDestroy(CpService aService);
  *
  * @return   Invocation handle
  */
-DllExport CpInvocationC CpServiceInvocation(CpService aService, ServiceAction aAction, ZappCallbackAsync aCallback, void* aPtr);
+DllExport CpInvocationC CpServiceInvocation(CpService aService, ServiceAction aAction, OhNetCallbackAsync aCallback, void* aPtr);
 
 /**
  * Invoke an action
@@ -254,7 +254,7 @@ DllExport uint32_t ActionArgumentValueBool(ActionArgument aArgument);
  *
  * @param[in] aArgument  Returned by ActionArgumentCreateStringOutput
  *
- * @return  Current value of the argument.  Ownership passes to the client.  Use ZappFree() to later destroy it.
+ * @return  Current value of the argument.  Ownership passes to the client.  Use OhNetFree() to later destroy it.
  */
 DllExport char* ActionArgumentValueString(ActionArgument aArgument);
 
@@ -265,7 +265,7 @@ DllExport char* ActionArgumentValueString(ActionArgument aArgument);
  *
  * @param[in]  aArgument  Returned by ActionArgumentCreateStringOutput
  * @param[out] aData      Current value of the argument.  Ownership passes to the client.
- *                        Use ZappFree() to later destroy it.
+ *                        Use OhNetFree() to later destroy it.
  * @param[out] aLen       Length (in bytes) of aData
  */
 DllExport void ActionArgumentGetValueBinary(ActionArgument aArgument, uint8_t** aData, uint32_t* aLen);
@@ -339,7 +339,7 @@ DllExport uint32_t CpInvocationOutputBool(CpInvocationC aInvocation, uint32_t aI
  * @param[in] aInvocation  Returned by CpServiceInvocation
  * @param[in] aIndex       Zero-based index into array of output arguments.  Must refer to a string argument.
  *
- * @return  Value of the string output argument.  Ownership passes to the caller.  Use ZappFree() to destroy this.
+ * @return  Value of the string output argument.  Ownership passes to the caller.  Use OhNetFree() to destroy this.
  */
 DllExport char* CpInvocationOutputString(CpInvocationC aInvocation, uint32_t aIndex);
 
@@ -348,7 +348,7 @@ DllExport char* CpInvocationOutputString(CpInvocationC aInvocation, uint32_t aIn
  *
  * @param[in]  aInvocation  Returned by CpServiceInvocation
  * @param[in]  aIndex       Zero-based index into array of output arguments.  Must refer to a binary argument.
- * @param[out] aData        Value of the binary output argument.  Ownership passes to the caller.  Use ZappFree() to destroy this.
+ * @param[out] aData        Value of the binary output argument.  Ownership passes to the caller.  Use OhNetFree() to destroy this.
  * @param[out] aLen         Length (in bytes) of aData
  */
 DllExport void CpInvocationGetOutputBinary(CpInvocationC aInvocation, uint32_t aIndex, char** aData, uint32_t* aLen);

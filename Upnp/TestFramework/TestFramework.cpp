@@ -5,13 +5,13 @@
 #include <Thread.h>
 #include <Printer.h>
 #include <OsWrapper.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Debug.h>
 
 #include <stdlib.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 TUint gFail;
 TUint gPass;
@@ -32,7 +32,7 @@ void TestConsole::Log(const char* aMsg)
 
 // AssertHandler
 
-void Zapp::TestFramework::AssertHandlerTest(const TChar* aFile, TUint aLine)
+void OpenHome::Net::TestFramework::AssertHandlerTest(const TChar* aFile, TUint aLine)
 {
     THROW_WITH_FILE_LINE(AssertionFailed, aFile, aLine);
 }
@@ -89,7 +89,7 @@ void Runner::Run()
         Print("Suite %d: %s\n", i,suite->Description());
         try {
             suite->Test();
-        } catch(Zapp::Exception& e) {
+        } catch(OpenHome::Net::Exception& e) {
             Print("\nFAILURE: Suite: %d caused an unhandled exception: %s.  Exception thrown at:  File: %s.  Line: %d\n",i,e.Message(),e.File(),e.Line());
             Print("Last successful test: %s:%d\n", gLastSuccessfulFile, gLastSuccessfulLine);
             gFail++;
@@ -115,7 +115,7 @@ void Runner::Run()
     }
 }
 
-void Zapp::TestFramework::Fail(const TChar* aFile, TUint aLine,
+void OpenHome::Net::TestFramework::Fail(const TChar* aFile, TUint aLine,
     const TChar* /*aExp*/, const TChar* aMsg)
 {
     gFail++;
@@ -126,13 +126,13 @@ void Zapp::TestFramework::Fail(const TChar* aFile, TUint aLine,
     Print("\n");
 }
 
-void Zapp::TestFramework::Succeed(const TChar* aFile, TUint aLine)
+void OpenHome::Net::TestFramework::Succeed(const TChar* aFile, TUint aLine)
 {
     SucceedQuietly( aFile, aLine );
     Print(".");
 }
 
-void Zapp::TestFramework::SucceedQuietly(const TChar* aFile, TUint aLine)
+void OpenHome::Net::TestFramework::SucceedQuietly(const TChar* aFile, TUint aLine)
 {
     gPass++;
     gLastSuccessfulFile = aFile;
@@ -142,18 +142,18 @@ void Zapp::TestFramework::SucceedQuietly(const TChar* aFile, TUint aLine)
 
 
 
-TUint Zapp::TestFramework::TimeStart()
+TUint OpenHome::Net::TestFramework::TimeStart()
 {
-    return Zapp::Os::TimeInMs();
+    return OpenHome::Net::Os::TimeInMs();
 }
 
-TUint Zapp::TestFramework::TimeStop(TUint aStartTime)
+TUint OpenHome::Net::TestFramework::TimeStop(TUint aStartTime)
 {
-    TUint time = Zapp::Os::TimeInMs();
+    TUint time = OpenHome::Net::Os::TimeInMs();
     return time - aStartTime;
 }
 
-TInt Zapp::TestFramework::Print(const TChar* aFormat, ...)
+TInt OpenHome::Net::TestFramework::Print(const TChar* aFormat, ...)
 {
     TestConsole console;
     FunctorMsg functor = MakeFunctorMsg(console, &TestConsole::Log);
@@ -164,21 +164,21 @@ TInt Zapp::TestFramework::Print(const TChar* aFormat, ...)
     return n;
 }
 
-TInt Zapp::TestFramework::Print(const TChar* aFormat, va_list aArgs)
+TInt OpenHome::Net::TestFramework::Print(const TChar* aFormat, va_list aArgs)
 {
     TestConsole console;
     FunctorMsg functor = MakeFunctorMsg(console, &TestConsole::Log);
     return Log::Print(functor, aFormat, aArgs);
 }
 
-TInt Zapp::TestFramework::Print(const Brx& aB)
+TInt OpenHome::Net::TestFramework::Print(const Brx& aB)
 {
     TestConsole console;
     FunctorMsg functor = MakeFunctorMsg(console, &TestConsole::Log);
     return Log::Print(functor, aB);
 }
 
-TInt Zapp::TestFramework::PrintHex(const Brx& aB)
+TInt OpenHome::Net::TestFramework::PrintHex(const Brx& aB)
 {
     TestConsole console;
     FunctorMsg functor = MakeFunctorMsg(console, &TestConsole::Log);

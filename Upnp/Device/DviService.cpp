@@ -1,6 +1,6 @@
 #include <DviService.h>
 #include <Service.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Http.h>
 #include <Printer.h>
@@ -10,22 +10,22 @@
 
 #include <stdlib.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // DvAction
 
-DvAction::DvAction(Zapp::Action* aAction, FunctorDviInvocation aFunctor)
+DvAction::DvAction(OpenHome::Net::Action* aAction, FunctorDviInvocation aFunctor)
     : iAction(aAction)
     , iFunctor(aFunctor)
 {
 }
 
-Zapp::Action* DvAction::Action()
+OpenHome::Net::Action* DvAction::Action()
 {
     return iAction;
 }
 
-const Zapp::Action* DvAction::Action() const
+const OpenHome::Net::Action* DvAction::Action() const
 {
     return iAction;
 }

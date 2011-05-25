@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderUpnpOrgContentDirectory3 : IDisposable
     {
@@ -195,7 +195,7 @@ namespace Zapp.Device.Providers
         /// GetSearchCapabilities must be overridden if this is called.</remarks>
         protected void EnableActionGetSearchCapabilities()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetSearchCapabilities");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetSearchCapabilities");
             List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterString("SearchCaps", allowedValues));
             iDelegateGetSearchCapabilities = new ActionDelegate(DoGetSearchCapabilities);
@@ -209,7 +209,7 @@ namespace Zapp.Device.Providers
         /// GetSortCapabilities must be overridden if this is called.</remarks>
         protected void EnableActionGetSortCapabilities()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetSortCapabilities");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetSortCapabilities");
             List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterString("SortCaps", allowedValues));
             iDelegateGetSortCapabilities = new ActionDelegate(DoGetSortCapabilities);
@@ -223,7 +223,7 @@ namespace Zapp.Device.Providers
         /// GetSortExtensionCapabilities must be overridden if this is called.</remarks>
         protected void EnableActionGetSortExtensionCapabilities()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetSortExtensionCapabilities");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetSortExtensionCapabilities");
             List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterString("SortExtensionCaps", allowedValues));
             iDelegateGetSortExtensionCapabilities = new ActionDelegate(DoGetSortExtensionCapabilities);
@@ -237,7 +237,7 @@ namespace Zapp.Device.Providers
         /// GetFeatureList must be overridden if this is called.</remarks>
         protected void EnableActionGetFeatureList()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetFeatureList");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetFeatureList");
             List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterString("FeatureList", allowedValues));
             iDelegateGetFeatureList = new ActionDelegate(DoGetFeatureList);
@@ -251,7 +251,7 @@ namespace Zapp.Device.Providers
         /// GetSystemUpdateID must be overridden if this is called.</remarks>
         protected void EnableActionGetSystemUpdateID()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetSystemUpdateID");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetSystemUpdateID");
             action.AddOutputParameter(new ParameterRelated("Id", iPropertySystemUpdateID));
             iDelegateGetSystemUpdateID = new ActionDelegate(DoGetSystemUpdateID);
             EnableAction(action, iDelegateGetSystemUpdateID, GCHandle.ToIntPtr(iGch));
@@ -264,7 +264,7 @@ namespace Zapp.Device.Providers
         /// GetServiceResetToken must be overridden if this is called.</remarks>
         protected void EnableActionGetServiceResetToken()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetServiceResetToken");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetServiceResetToken");
             List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterString("ResetToken", allowedValues));
             iDelegateGetServiceResetToken = new ActionDelegate(DoGetServiceResetToken);
@@ -278,7 +278,7 @@ namespace Zapp.Device.Providers
         /// Browse must be overridden if this is called.</remarks>
         protected void EnableActionBrowse()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Browse");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Browse");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("ObjectID", allowedValues));
             allowedValues.Add("BrowseMetadata");
@@ -304,7 +304,7 @@ namespace Zapp.Device.Providers
         /// Search must be overridden if this is called.</remarks>
         protected void EnableActionSearch()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Search");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Search");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("ContainerID", allowedValues));
             action.AddInputParameter(new ParameterString("SearchCriteria", allowedValues));
@@ -327,7 +327,7 @@ namespace Zapp.Device.Providers
         /// CreateObject must be overridden if this is called.</remarks>
         protected void EnableActionCreateObject()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("CreateObject");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("CreateObject");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("ContainerID", allowedValues));
             action.AddInputParameter(new ParameterString("Elements", allowedValues));
@@ -344,7 +344,7 @@ namespace Zapp.Device.Providers
         /// DestroyObject must be overridden if this is called.</remarks>
         protected void EnableActionDestroyObject()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("DestroyObject");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("DestroyObject");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("ObjectID", allowedValues));
             iDelegateDestroyObject = new ActionDelegate(DoDestroyObject);
@@ -358,7 +358,7 @@ namespace Zapp.Device.Providers
         /// UpdateObject must be overridden if this is called.</remarks>
         protected void EnableActionUpdateObject()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("UpdateObject");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("UpdateObject");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("ObjectID", allowedValues));
             action.AddInputParameter(new ParameterString("CurrentTagValue", allowedValues));
@@ -374,7 +374,7 @@ namespace Zapp.Device.Providers
         /// MoveObject must be overridden if this is called.</remarks>
         protected void EnableActionMoveObject()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("MoveObject");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("MoveObject");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("ObjectID", allowedValues));
             action.AddInputParameter(new ParameterString("NewParentID", allowedValues));
@@ -390,7 +390,7 @@ namespace Zapp.Device.Providers
         /// ImportResource must be overridden if this is called.</remarks>
         protected void EnableActionImportResource()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("ImportResource");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("ImportResource");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("SourceURI", allowedValues));
             action.AddInputParameter(new ParameterString("DestinationURI", allowedValues));
@@ -406,7 +406,7 @@ namespace Zapp.Device.Providers
         /// ExportResource must be overridden if this is called.</remarks>
         protected void EnableActionExportResource()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("ExportResource");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("ExportResource");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("SourceURI", allowedValues));
             action.AddInputParameter(new ParameterString("DestinationURI", allowedValues));
@@ -422,7 +422,7 @@ namespace Zapp.Device.Providers
         /// DeleteResource must be overridden if this is called.</remarks>
         protected void EnableActionDeleteResource()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("DeleteResource");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("DeleteResource");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("ResourceURI", allowedValues));
             iDelegateDeleteResource = new ActionDelegate(DoDeleteResource);
@@ -436,7 +436,7 @@ namespace Zapp.Device.Providers
         /// StopTransferResource must be overridden if this is called.</remarks>
         protected void EnableActionStopTransferResource()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("StopTransferResource");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("StopTransferResource");
             action.AddInputParameter(new ParameterUint("TransferID"));
             iDelegateStopTransferResource = new ActionDelegate(DoStopTransferResource);
             EnableAction(action, iDelegateStopTransferResource, GCHandle.ToIntPtr(iGch));
@@ -449,7 +449,7 @@ namespace Zapp.Device.Providers
         /// GetTransferProgress must be overridden if this is called.</remarks>
         protected void EnableActionGetTransferProgress()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetTransferProgress");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetTransferProgress");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("TransferID"));
             allowedValues.Add("COMPLETED");
@@ -471,7 +471,7 @@ namespace Zapp.Device.Providers
         /// CreateReference must be overridden if this is called.</remarks>
         protected void EnableActionCreateReference()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("CreateReference");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("CreateReference");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("ContainerID", allowedValues));
             action.AddInputParameter(new ParameterString("ObjectID", allowedValues));
@@ -487,7 +487,7 @@ namespace Zapp.Device.Providers
         /// FreeFormQuery must be overridden if this is called.</remarks>
         protected void EnableActionFreeFormQuery()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("FreeFormQuery");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("FreeFormQuery");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("ContainerID", allowedValues));
             action.AddInputParameter(new ParameterUint("CDSView"));
@@ -505,7 +505,7 @@ namespace Zapp.Device.Providers
         /// GetFreeFormQueryCapabilities must be overridden if this is called.</remarks>
         protected void EnableActionGetFreeFormQueryCapabilities()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetFreeFormQueryCapabilities");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetFreeFormQueryCapabilities");
             List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterString("FFQCapabilities", allowedValues));
             iDelegateGetFreeFormQueryCapabilities = new ActionDelegate(DoGetFreeFormQueryCapabilities);

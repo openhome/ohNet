@@ -2,7 +2,7 @@
 
 #include <Debug.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // CpTopology1Job
 

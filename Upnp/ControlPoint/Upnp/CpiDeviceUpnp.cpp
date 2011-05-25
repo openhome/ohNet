@@ -4,7 +4,7 @@
 #include <Stack.h>
 #include <CpiService.h>
 #include <Stream.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Http.h>
 #include <Ascii.h>
 #include <Parser.h>
@@ -18,7 +18,7 @@
 
 #include <string.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // CpiDeviceUpnp
 
@@ -346,6 +346,7 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
         Stack::MulticastListenerRelease(iInterface);
     }
     delete iUnicastListener;
+    iXmlFetchLock.Wait();
     iLock.Wait();
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
@@ -358,13 +359,11 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     }
     iXmlFetchSem.Clear();
     iLock.Signal();
+    iXmlFetchLock.Signal();
     while (xmlWaitCount > 0) {
         iXmlFetchSem.Wait();
         xmlWaitCount--;
     }
-    iXmlFetchLock.Wait();
-    // ensure we don't destroy this class before XmlFetchCompleted completes
-    iXmlFetchLock.Signal();
     delete iRefreshTimer;
 }
 

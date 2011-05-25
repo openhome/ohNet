@@ -8,7 +8,7 @@
 #include <AsyncPrivate.h>
 #include <Thread.h>
 #include <Uri.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Fifo.h>
 #include <Stream.h>
 #include <Error.h>
@@ -17,15 +17,16 @@
 
 EXCEPTION(XmlFetchError);
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class SocketTcpClient;
 class XmlFetch : public Async
 {
 public:
-    void Set(Zapp::Uri* aUri, FunctorAsync& aFunctor);
+    void Set(OpenHome::Net::Uri* aUri, FunctorAsync& aFunctor);
     ~XmlFetch();
-    const Zapp::Uri& Uri() const;
+    const OpenHome::Net::Uri& Uri() const;
     void SignalCompleted();
     void SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescription);
     static Bwh& Xml(IAsync& aAsync);
@@ -41,11 +42,11 @@ private:
     virtual TUint Type() const;
 private:
     static const TUint kRwBufferLength = 1024;
-    Zapp::Uri* iUri;
+    OpenHome::Net::Uri* iUri;
     FunctorAsync iFunctor;
     TUint iSequenceNumber;
     Bwh iXml;
-    Zapp::Error iError;
+    OpenHome::Net::Error iError;
     mutable Mutex iLock;
     TBool iInterrupted;
     SocketTcpClient* iSocket;
@@ -85,6 +86,7 @@ private:
     TBool iActive;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_XML_FETCHER

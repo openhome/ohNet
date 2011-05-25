@@ -1,20 +1,20 @@
 #include <C/Async.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class AsyncOutput : public IAsyncOutput
 {
 public:
-    AsyncOutput(ZappCallbackAsyncOutput aOutput);
+    AsyncOutput(OhNetCallbackAsyncOutput aOutput);
     void Output(const TChar* aKey, const TChar* aValue);
 private:
-    ZappCallbackAsyncOutput iOutput;
+    OhNetCallbackAsyncOutput iOutput;
 };
 
-AsyncOutput::AsyncOutput(ZappCallbackAsyncOutput aOutput)
+AsyncOutput::AsyncOutput(OhNetCallbackAsyncOutput aOutput)
 {
     iOutput = aOutput;
 }
@@ -25,7 +25,7 @@ void AsyncOutput::Output(const TChar* aKey, const TChar* aValue)
 }
 
 
-void ZappAsyncOutput(ZappHandleAsync aAsync, ZappCallbackAsyncOutput aOutput)
+void OhNetAsyncOutput(OhNetHandleAsync aAsync, OhNetCallbackAsyncOutput aOutput)
 {
     AsyncOutput ao(aOutput);
     ((IAsync*)aAsync)->Output(ao);

@@ -8,13 +8,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 const TUint kMinBwdMaxBytes = 4;
 
 const Brn kBrnEmpty((TByte*)"EMPTY", 0);
 
-#define ZappStrlen(s) (TUint)strlen(s)
+#define OhNetStrlen(s) (TUint)strlen(s)
 
 // Brx
 
@@ -59,14 +59,14 @@ TBool Brx::BeginsWith(const Brx& aBrx) const
 
 // Brn
 
-Brn::Brn(const TChar* aPtr) : Brx(ZappStrlen(aPtr)), iPtr((TByte*)aPtr)
+Brn::Brn(const TChar* aPtr) : Brx(OhNetStrlen(aPtr)), iPtr((TByte*)aPtr)
 {
 }
 
 void Brn::Set(const TChar* aStr)
 {
     iPtr = (const TByte*)aStr;
-    iBytes = ZappStrlen(aStr);
+    iBytes = OhNetStrlen(aStr);
 }
 
 const TByte* Brn::Ptr() const
@@ -109,7 +109,7 @@ void Brh::Set(const TByte* aPtr, TUint aBytes)
 
 void Brh::Set(const TChar* aPtr)
 {
-    Set((const TByte*)aPtr, ZappStrlen(aPtr));
+    Set((const TByte*)aPtr, OhNetStrlen(aPtr));
 }
 
 void Brh::TransferTo(Brh& aBrh)
@@ -153,7 +153,7 @@ void Brhz::Set(const TByte* aPtr, TUint aBytes)
 
 void Brhz::Set(const TChar* aPtr)
 {
-    Set((const TByte*)aPtr, ZappStrlen(aPtr));
+    Set((const TByte*)aPtr, OhNetStrlen(aPtr));
 }
 
 void Brhz::Shrink(TUint aBytes)
@@ -229,7 +229,7 @@ void Bwx::Replace(const TByte* aPtr, TUint aBytes)
 
 void Bwx::Replace(const TChar* aStr)
 {
-    TUint bytes = ZappStrlen(aStr);
+    TUint bytes = OhNetStrlen(aStr);
     ASSERT(bytes <= MaxBytes());
     memcpy(const_cast<TByte*>(Ptr()), aStr, bytes);
     iBytes = bytes;
@@ -237,7 +237,7 @@ void Bwx::Replace(const TChar* aStr)
 
 void Bwx::Append(const TChar* aStr)
 {
-    Append((TByte*)aStr, ZappStrlen(aStr));
+    Append((TByte*)aStr, OhNetStrlen(aStr));
 }
 
 void Bwx::Append(const Brx& aB)
@@ -384,9 +384,9 @@ const TByte* Bwh::Ptr() const
     return iPtr;
 }
 
-Bwh::Bwh(const TChar* aStr) : Bwx(0, ZappStrlen(aStr))
+Bwh::Bwh(const TChar* aStr) : Bwx(0, OhNetStrlen(aStr))
 {
-    iPtr = (TByte*)malloc(ZappStrlen(aStr));
+    iPtr = (TByte*)malloc(OhNetStrlen(aStr));
     Replace(aStr);
 }
 

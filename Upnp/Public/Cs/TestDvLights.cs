@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 
-namespace Zapp
+namespace OpenHome.Net
 {
     class Program
     {
@@ -71,7 +71,7 @@ namespace Zapp
         }
     }
 
-    class ProviderLights : Device.Providers.DvProviderZappOrgTestLights1
+    class ProviderLights : Device.Providers.DvProviderOpenhomeOrgTestLights1
     {
         public List<Light> iLights;
 
@@ -198,12 +198,12 @@ namespace Zapp
             iConfigDir = aConfigDir;
             RandomiseUdn(out iDeviceName);
             iDevice = new Device.DvDeviceStandard(iDeviceName, this);
-            iDevice.SetAttribute("Upnp.Domain", "zapp.org");
+            iDevice.SetAttribute("Upnp.Domain", "openhome.org");
             iDevice.SetAttribute("Upnp.Type", "TestLights");
             iDevice.SetAttribute("Upnp.Version", "1");
-            iDevice.SetAttribute("Upnp.FriendlyName", "Zapp Lights");
+            iDevice.SetAttribute("Upnp.FriendlyName", "ohNet Lights");
             iDevice.SetAttribute("Upnp.Manufacturer", "None");
-            iDevice.SetAttribute("Upnp.ModelName", "Zapp Lights v1");
+            iDevice.SetAttribute("Upnp.ModelName", "ohNet Lights v1");
             iLights = new ProviderLights(iDevice, aMode);
             iDevice.SetEnabled();
         }
@@ -237,7 +237,7 @@ namespace Zapp
             aUdn += "-";
             /*Random rnd = new Random();
             aUdn += rnd.Next();*/
-            aUdn += "ZappLights";
+            aUdn += "ohNetLights";
         }
 
     }

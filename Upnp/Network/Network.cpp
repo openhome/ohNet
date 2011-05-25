@@ -9,21 +9,21 @@
 
 #include <errno.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // OS sockets interface
 
 static THandle SocketCreate(ESocketType aSocketType)
 {
     LOGF(kNetwork, "SocketCreate  ST = %d, \n", aSocketType);
-    THandle handle = Zapp::Os::NetworkCreate(aSocketType);
+    THandle handle = OpenHome::Net::Os::NetworkCreate(aSocketType);
     LOGF(kNetwork, "SocketCreate  Socket H = %d\n", handle);
     return handle;
 }
 
 static TUint32 GetHostByName(const Brx& aAddress)
 {
-    return Zapp::Os::NetworkGetHostByName(aAddress);
+    return OpenHome::Net::Os::NetworkGetHostByName(aAddress);
 }
 
 
@@ -165,7 +165,7 @@ void Socket::Interrupt(TBool aInterrupt)
         return;
     }
     LOGF(kNetwork, "Socket::Interrupt H = %d\n", iHandle);
-    TInt err = Zapp::Os::NetworkInterrupt(iHandle, aInterrupt);
+    TInt err = OpenHome::Net::Os::NetworkInterrupt(iHandle, aInterrupt);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Socket::Interrupt H = %d, RETURN VALUE = %d\n", iHandle, err);
     }
@@ -175,7 +175,7 @@ void Socket::Close()
 {
     // close connection and allow caller to handle any exceptions
     LOGF(kNetwork, "Socket::Close H = %d\n", iHandle);
-    TInt err = Zapp::Os::NetworkClose(iHandle);
+    TInt err = OpenHome::Net::Os::NetworkClose(iHandle);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Socket::Close H = %d, RETURN VALUE = %d\n", iHandle, err);
     }
@@ -184,17 +184,17 @@ void Socket::Close()
 
 void Socket::SetSendBufBytes(TUint aBytes)
 {
-    Zapp::Os::NetworkSocketSetSendBufBytes(iHandle, aBytes);
+    OpenHome::Net::Os::NetworkSocketSetSendBufBytes(iHandle, aBytes);
 }
 
 void Socket::SetRecvBufBytes(TUint aBytes)
 {
-    Zapp::Os::NetworkSocketSetRecvBufBytes(iHandle, aBytes);
+    OpenHome::Net::Os::NetworkSocketSetRecvBufBytes(iHandle, aBytes);
 }
 
 void Socket::SetRecvTimeout(TUint aMs)
 {
-    Zapp::Os::NetworkSocketSetReceiveTimeout(iHandle, aMs);
+    OpenHome::Net::Os::NetworkSocketSetReceiveTimeout(iHandle, aMs);
 }
 
 void Socket::LogVerbose(TBool aLog, TBool aHex)
@@ -215,7 +215,7 @@ void Socket::Send(const Brx& aBuffer)
 {
     LOGF(kNetwork, "Socket::Send  H = %d, BC = %d\n", iHandle, aBuffer.Bytes());
     Log("Socket::Send, sending\n", aBuffer);
-    TInt sent = Zapp::Os::NetworkSend(iHandle, aBuffer);
+    TInt sent = OpenHome::Net::Os::NetworkSend(iHandle, aBuffer);
     if(sent < 0) {
         LOG2F(kNetwork, kError, "Socket::Send H = %d, RETURN VALUE = %d\n", iHandle, sent);
         THROW(NetworkError);
@@ -230,7 +230,7 @@ void Socket::SendTo(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
     LOGF(kNetwork, "Socket::SendTo  H = %d, BC = %d, E = %x:%d\n", iHandle, aBuffer.Bytes(), aEndpoint.Address(), aEndpoint.Port());
     Log("Socket::SendTo, sending\n", aBuffer);
-    TInt sent = Zapp::Os::NetworkSendTo(iHandle, aBuffer, aEndpoint);
+    TInt sent = OpenHome::Net::Os::NetworkSendTo(iHandle, aBuffer, aEndpoint);
     if(sent < 0) {
         LOG2F(kNetwork, kError, "Socket::SendTo H = %d, RETURN VALUE = %d\n", iHandle, sent);
         THROW(NetworkError);
@@ -247,7 +247,7 @@ void Socket::Receive(Bwx& aBuffer)
     // range [0, aBuffer.MaxBytes()] (0 means socket was closed at the other end)
     LOGF(kNetwork, ">Socket::Receive H = %d, MAX = %d\n", iHandle, aBuffer.MaxBytes());
     aBuffer.SetBytes(0);
-    TInt received = Zapp::Os::NetworkReceive(iHandle, aBuffer);
+    TInt received = OpenHome::Net::Os::NetworkReceive(iHandle, aBuffer);
     if(received < 0) {
         LOG2F(kNetwork, kError, "Socket::Receive H = %d, RETURN VALUE = %d\n", iHandle, received);
         THROW(NetworkError);
@@ -271,7 +271,7 @@ void Socket::Receive(Bwx& aBuffer, TUint aBytes)
     TByte* ptr = (TByte*)aBuffer.Ptr();
     while(received < aBytes) {
         Bwn buf(ptr+received, aBytes-received);
-        TInt ret = Zapp::Os::NetworkReceive(iHandle, buf);
+        TInt ret = OpenHome::Net::Os::NetworkReceive(iHandle, buf);
         if(ret < 0) {
             LOG2F(kNetwork, kError, "Socket::Receive H = %d, RETURN VALUE = %d\n", iHandle, ret);
             THROW(NetworkError);
@@ -289,7 +289,7 @@ void Socket::Receive(Bwx& aBuffer, TUint aBytes)
 void Socket::ReceiveFrom(Bwx& aBuffer, Endpoint& aEndpoint)
 {
     LOGF(kNetwork, "Socket::ReceiveFrom H = %d\n", iHandle);
-    TInt received = Zapp::Os::NetworkReceiveFrom(iHandle, aBuffer, aEndpoint);
+    TInt received = OpenHome::Net::Os::NetworkReceiveFrom(iHandle, aBuffer, aEndpoint);
     if(received < 0) {
         LOG2F(kNetwork, kError, "Socket::ReceiveFrom H = %d, RETURN VALUE = %d\n", iHandle, received);
         THROW(NetworkError);
@@ -302,7 +302,7 @@ void Socket::ReceiveFrom(Bwx& aBuffer, Endpoint& aEndpoint)
 void Socket::Bind(const Endpoint& aEndpoint)
 {
     LOGF(kNetwork, "Socket::Bind H = %d\n", iHandle);
-    TInt err = Zapp::Os::NetworkBind(iHandle, aEndpoint);
+    TInt err = OpenHome::Net::Os::NetworkBind(iHandle, aEndpoint);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Socket::Bind H = %d, RETURN VALUE = %d\n", iHandle, err);
         THROW(NetworkError);
@@ -312,7 +312,7 @@ void Socket::Bind(const Endpoint& aEndpoint)
 void Socket::GetPort(TUint& aPort)
 {
     LOGF(kNetwork, "Socket::GetPort H = %d\n", iHandle);
-    TInt err = Zapp::Os::NetworkPort(iHandle, aPort);
+    TInt err = OpenHome::Net::Os::NetworkPort(iHandle, aPort);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Socket::GetPort H = %d, RETURN VALUE = %d\n", iHandle, err);
         THROW(NetworkError);
@@ -322,7 +322,7 @@ void Socket::GetPort(TUint& aPort)
 void Socket::Listen(TUint aSlots)
 {
     LOGF(kNetwork, "Socket::Listen H = %d S = %d\n", iHandle, aSlots);
-    TInt err = Zapp::Os::NetworkListen(iHandle, aSlots);
+    TInt err = OpenHome::Net::Os::NetworkListen(iHandle, aSlots);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Socket::Listen H = %d, RETURN VALUE = %d\n", iHandle, err);
         THROW(NetworkError);
@@ -332,7 +332,7 @@ void Socket::Listen(TUint aSlots)
 THandle Socket::Accept()
 {
     LOGF(kNetwork, "Socket::Accept H = %d\n", iHandle);
-    THandle handle = Zapp::Os::NetworkAccept(iHandle);
+    THandle handle = OpenHome::Net::Os::NetworkAccept(iHandle);
     LOGF(kNetwork,"Socket::Accept Accepted Handle = %d\n", handle);
     if(handle == kHandleNull) {
         LOG2F(kNetwork, kError, "Socket::Accept H = %d\n", handle);
@@ -457,13 +457,13 @@ void SocketTcpClient::Open()
 {
     LOGF(kNetwork, "SocketTcpClient::Open\n");
     iHandle = SocketCreate(eSocketTypeStream);
-    Zapp::Os::NetworkTcpSetNoDelay(iHandle);
+    OpenHome::Net::Os::NetworkTcpSetNoDelay(iHandle);
 }
 
 void SocketTcpClient::Connect(const Endpoint& aEndpoint, TUint aTimeout)
 {
     LOGF(kNetwork, "SocketTcpClient::Connect\n");
-    Zapp::Os::NetworkConnect(iHandle, aEndpoint, aTimeout);
+    OpenHome::Net::Os::NetworkConnect(iHandle, aEndpoint, aTimeout);
 }
 
 // Tcp Server
@@ -477,8 +477,8 @@ SocketTcpServer::SocketTcpServer(const TChar* aName, TUint aPort, TIpAddress aIn
 {
     LOGF(kNetwork, "SocketTcpServer::SocketTcpServer\n");
     iHandle = SocketCreate(eSocketTypeStream);
-    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
-    Zapp::Os::NetworkTcpSetNoDelay(iHandle);
+    OpenHome::Net::Os::NetworkSocketSetReuseAddress(iHandle);
+    OpenHome::Net::Os::NetworkTcpSetNoDelay(iHandle);
 	iInterface = aInterface;
     Bind(Endpoint(aPort, aInterface));
     GetPort(iPort);
@@ -591,7 +591,7 @@ void SocketTcpSession::Open(THandle aHandle)
     LOGF(kNetwork, "SocketTcpSession::Open %d\n", aHandle);
     iMutex.Wait();
     iHandle = aHandle;
-    Zapp::Os::NetworkTcpSetNoDelay(iHandle);
+    OpenHome::Net::Os::NetworkTcpSetNoDelay(iHandle);
 
     iOpen = true;
     if (iServer->Terminating()) {       // catches the case where the server is destroyed between
@@ -636,7 +636,7 @@ SocketUdp::SocketUdp()
 {
     LOGF(kNetwork, "> SocketUdp::SocketUdp\n");
     iHandle = SocketCreate(eSocketTypeDatagram);
-    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
+    OpenHome::Net::Os::NetworkSocketSetReuseAddress(iHandle);
     Bind(Endpoint(0, 0));
     GetPort(iPort);
     LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
@@ -646,7 +646,7 @@ SocketUdp::SocketUdp(TUint aPort)
 {
     LOGF(kNetwork, "> SocketUdp::SocketUdp P = %d\n", aPort);
     iHandle = SocketCreate(eSocketTypeDatagram);
-    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
+    OpenHome::Net::Os::NetworkSocketSetReuseAddress(iHandle);
     Bind(Endpoint(aPort, 0));
     GetPort(iPort);
     LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
@@ -656,7 +656,7 @@ SocketUdp::SocketUdp(TUint aPort, TIpAddress aInterface)
 {
     LOGF(kNetwork, "> SocketUdp::SocketUdp P = %d, I = %x\n", aPort, aInterface);
     iHandle = SocketCreate(eSocketTypeDatagram);
-    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
+    OpenHome::Net::Os::NetworkSocketSetReuseAddress(iHandle);
     Bind(Endpoint(aPort, aInterface));
     GetPort(iPort);
     LOGF(kNetwork, "< SocketUdp::SocketUdp H = %d, P = %d\n", iHandle, iPort);
@@ -665,7 +665,7 @@ SocketUdp::SocketUdp(TUint aPort, TIpAddress aInterface)
 void SocketUdp::SetTtl(TUint aTtl)
 {
     LOGF(kNetwork, "> SocketUdp::SetTtl T = %d\n", aTtl);
-    Zapp::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
+    OpenHome::Net::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
     LOGF(kNetwork, "< SocketUdp::SetTtl\n");
 }
 
@@ -702,14 +702,14 @@ SocketUdpMulticast::SocketUdpMulticast(TIpAddress aInterface, const Endpoint& aE
     , iAddress(aEndpoint.Address())
 {
     LOGF(kNetwork, "> SocketUdpMulticast::SocketUdpMulticast I = %x, E = %x:%d\n", iInterface, iAddress, iPort);
-    Zapp::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iAddress);
+    OpenHome::Net::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iAddress);
     LOGF(kNetwork, "< SocketUdpMulticast::SocketUdpMulticast H = %d, I = %x, A = %x, P = %d\n", iHandle, iInterface, iAddress, iPort);
 }
 
 SocketUdpMulticast::~SocketUdpMulticast()
 {
     LOGF(kNetwork, "> SocketUdpMulticast::~SocketUdpMulticast\n");
-    Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iAddress);
+    OpenHome::Net::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iAddress);
     LOGF(kNetwork, "< SocketUdpMulticast::~SocketUdpMulticast\n");
 }
 

@@ -1,12 +1,13 @@
 #ifndef HEADER_DVUPNPORGCONTENTDIRECTORY2
 #define HEADER_DVUPNPORGCONTENTDIRECTORY2
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
 #include <DvProvider.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation;
 class PropertyInt;
@@ -324,7 +325,8 @@ private:
     PropertyString* iPropertyTransferIDs;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVUPNPORGCONTENTDIRECTORY2
 

@@ -6,7 +6,7 @@
 
 #include <OsTypes.h>
 #include <C/Async.h>
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 #include <C/CpDevice.h>
 
 #ifdef __cplusplus
@@ -59,7 +59,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncPlay(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginPlay(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginPlay(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -70,7 +70,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginPlay(THandle aHandle, ZappCallback
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndPlay(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndPlay(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -90,7 +90,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncPause(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginPause(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginPause(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -101,7 +101,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginPause(THandle aHandle, ZappCallbac
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndPause(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndPause(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -121,7 +121,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncStop(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginStop(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginStop(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -132,7 +132,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginStop(THandle aHandle, ZappCallback
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndStop(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndStop(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -154,7 +154,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncSeekSecondAbsolute(THandle aHandle,
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginSeekSecondAbsolute(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginSeekSecondAbsolute(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -165,7 +165,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginSeekSecondAbsolute(THandle aHandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndSeekSecondAbsolute(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndSeekSecondAbsolute(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -187,7 +187,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncSeekSecondRelative(THandle aHandle,
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginSeekSecondRelative(THandle aHandle, int32_t aValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginSeekSecondRelative(THandle aHandle, int32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -198,7 +198,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginSeekSecondRelative(THandle aHandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndSeekSecondRelative(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndSeekSecondRelative(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -220,7 +220,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncChannel(THandle aHandle, char** aUr
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginChannel(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginChannel(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -233,7 +233,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginChannel(THandle aHandle, ZappCallb
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndChannel(THandle aHandle, ZappHandleAsync aAsync, char** aUri, char** aMetadata);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndChannel(THandle aHandle, OhNetHandleAsync aAsync, char** aUri, char** aMetadata);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -257,7 +257,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncSetChannel(THandle aHandle, const c
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginSetChannel(THandle aHandle, const char* aUri, const char* aMetadata, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginSetChannel(THandle aHandle, const char* aUri, const char* aMetadata, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -268,7 +268,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginSetChannel(THandle aHandle, const 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndSetChannel(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndSetChannel(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -289,7 +289,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncTransportState(THandle aHandle, cha
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginTransportState(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginTransportState(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -301,7 +301,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginTransportState(THandle aHandle, Za
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndTransportState(THandle aHandle, ZappHandleAsync aAsync, char** aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndTransportState(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -322,7 +322,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncId(THandle aHandle, uint32_t* aValu
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginId(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginId(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -334,7 +334,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginId(THandle aHandle, ZappCallbackAs
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndId(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndId(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -358,7 +358,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncSetId(THandle aHandle, uint32_t aVa
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginSetId(THandle aHandle, uint32_t aValue, const char* aUri, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginSetId(THandle aHandle, uint32_t aValue, const char* aUri, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -369,7 +369,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginSetId(THandle aHandle, uint32_t aV
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndSetId(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndSetId(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -392,7 +392,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncRead(THandle aHandle, uint32_t aId,
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginRead(THandle aHandle, uint32_t aId, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginRead(THandle aHandle, uint32_t aId, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -404,7 +404,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginRead(THandle aHandle, uint32_t aId
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndRead(THandle aHandle, ZappHandleAsync aAsync, char** aMetadata);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndRead(THandle aHandle, OhNetHandleAsync aAsync, char** aMetadata);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -427,7 +427,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncReadList(THandle aHandle, const cha
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginReadList(THandle aHandle, const char* aIdList, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginReadList(THandle aHandle, const char* aIdList, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -439,7 +439,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginReadList(THandle aHandle, const ch
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndReadList(THandle aHandle, ZappHandleAsync aAsync, char** aChannelList);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndReadList(THandle aHandle, OhNetHandleAsync aAsync, char** aChannelList);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -462,7 +462,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncIdArray(THandle aHandle, uint32_t* 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginIdArray(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginIdArray(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -476,7 +476,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginIdArray(THandle aHandle, ZappCallb
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndIdArray(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aToken, char** aArray, uint32_t* aArrayLen);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndIdArray(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aToken, char** aArray, uint32_t* aArrayLen);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -499,7 +499,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncIdArrayChanged(THandle aHandle, uin
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginIdArrayChanged(THandle aHandle, uint32_t aToken, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginIdArrayChanged(THandle aHandle, uint32_t aToken, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -511,7 +511,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginIdArrayChanged(THandle aHandle, ui
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndIdArrayChanged(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndIdArrayChanged(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -532,7 +532,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncChannelsMax(THandle aHandle, uint32
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginChannelsMax(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginChannelsMax(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -544,7 +544,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginChannelsMax(THandle aHandle, ZappC
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndChannelsMax(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndChannelsMax(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -565,7 +565,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SyncProtocolInfo(THandle aHandle, char*
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1BeginProtocolInfo(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1BeginProtocolInfo(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -577,7 +577,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1BeginProtocolInfo(THandle aHandle, Zapp
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndProtocolInfo(THandle aHandle, ZappHandleAsync aAsync, char** aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndProtocolInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
 /**
  * Set a callback to be run when the Uri state variable changes.
  *
@@ -588,7 +588,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgRadio1EndProtocolInfo(THandle aHandle, Zap
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyUriChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Metadata state variable changes.
  *
@@ -599,7 +599,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyUriChanged(THandle aHandle, 
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyMetadataChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyMetadataChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the TransportState state variable changes.
  *
@@ -610,7 +610,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyMetadataChanged(THandle aHan
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyTransportStateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyTransportStateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Id state variable changes.
  *
@@ -621,7 +621,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyTransportStateChanged(THandl
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyIdChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyIdChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the IdArray state variable changes.
  *
@@ -632,7 +632,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyIdChanged(THandle aHandle, Z
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyIdArrayChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyIdArrayChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ChannelsMax state variable changes.
  *
@@ -643,7 +643,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyIdArrayChanged(THandle aHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyChannelsMaxChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyChannelsMaxChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ProtocolInfo state variable changes.
  *
@@ -654,7 +654,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyChannelsMaxChanged(THandle a
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyProtocolInfoChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the Uri property.

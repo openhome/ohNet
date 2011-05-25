@@ -1,15 +1,15 @@
 #include "DvAvOpenhomeOrgInfo1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
 #include <DvProvider.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class DvProviderAvOpenhomeOrgInfo1C : public DvProvider
 {
@@ -225,7 +225,7 @@ void DvProviderAvOpenhomeOrgInfo1C::EnableActionCounters(CallbackInfo1Counters a
 {
     iCallbackCounters = aCallback;
     iPtrCounters = aPtr;
-    Zapp::Action* action = new Zapp::Action("Counters");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Counters");
     action->AddOutputParameter(new ParameterRelated("TrackCount", *iPropertyTrackCount));
     action->AddOutputParameter(new ParameterRelated("DetailsCount", *iPropertyDetailsCount));
     action->AddOutputParameter(new ParameterRelated("MetatextCount", *iPropertyMetatextCount));
@@ -237,7 +237,7 @@ void DvProviderAvOpenhomeOrgInfo1C::EnableActionTrack(CallbackInfo1Track aCallba
 {
     iCallbackTrack = aCallback;
     iPtrTrack = aPtr;
-    Zapp::Action* action = new Zapp::Action("Track");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Track");
     action->AddOutputParameter(new ParameterRelated("Uri", *iPropertyUri));
     action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgInfo1C::DoTrack);
@@ -248,7 +248,7 @@ void DvProviderAvOpenhomeOrgInfo1C::EnableActionDetails(CallbackInfo1Details aCa
 {
     iCallbackDetails = aCallback;
     iPtrDetails = aPtr;
-    Zapp::Action* action = new Zapp::Action("Details");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Details");
     action->AddOutputParameter(new ParameterRelated("Duration", *iPropertyDuration));
     action->AddOutputParameter(new ParameterRelated("BitRate", *iPropertyBitRate));
     action->AddOutputParameter(new ParameterRelated("BitDepth", *iPropertyBitDepth));
@@ -263,7 +263,7 @@ void DvProviderAvOpenhomeOrgInfo1C::EnableActionMetatext(CallbackInfo1Metatext a
 {
     iCallbackMetatext = aCallback;
     iPtrMetatext = aPtr;
-    Zapp::Action* action = new Zapp::Action("Metatext");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Metatext");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyMetatext));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgInfo1C::DoMetatext);
     iService->AddAction(action, functor);
@@ -308,11 +308,11 @@ void DvProviderAvOpenhomeOrgInfo1C::DoTrack(IDviInvocation& aInvocation, TUint a
     InvocationResponseString respMetadata(aInvocation, "Metadata");
     resp.Start();
     Brhz bufUri((const TChar*)Uri);
-    ZappFreeExternal(Uri);
+    OhNetFreeExternal(Uri);
     respUri.Write(bufUri);
     respUri.WriteFlush();
     Brhz bufMetadata((const TChar*)Metadata);
-    ZappFreeExternal(Metadata);
+    OhNetFreeExternal(Metadata);
     respMetadata.Write(bufMetadata);
     respMetadata.WriteFlush();
     resp.End();
@@ -347,7 +347,7 @@ void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation, TUint
     respSampleRate.Write(SampleRate);
     respLossless.Write((Lossless!=0));
     Brhz bufCodecName((const TChar*)CodecName);
-    ZappFreeExternal(CodecName);
+    OhNetFreeExternal(CodecName);
     respCodecName.Write(bufCodecName);
     respCodecName.WriteFlush();
     resp.End();
@@ -367,7 +367,7 @@ void DvProviderAvOpenhomeOrgInfo1C::DoMetatext(IDviInvocation& aInvocation, TUin
     InvocationResponseString respValue(aInvocation, "Value");
     resp.Start();
     Brhz bufValue((const TChar*)Value);
-    ZappFreeExternal(Value);
+    OhNetFreeExternal(Value);
     respValue.Write(bufValue);
     respValue.WriteFlush();
     resp.End();

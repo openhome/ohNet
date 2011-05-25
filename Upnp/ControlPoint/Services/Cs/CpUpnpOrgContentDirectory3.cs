@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgContentDirectory3 : ICpProxy, IDisposable
     {
@@ -495,26 +495,26 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyUpnpOrgContentDirectory3 : CpProxy, IDisposable, ICpProxyUpnpOrgContentDirectory3
     {
-        private Zapp.Core.Action iActionGetSearchCapabilities;
-        private Zapp.Core.Action iActionGetSortCapabilities;
-        private Zapp.Core.Action iActionGetSortExtensionCapabilities;
-        private Zapp.Core.Action iActionGetFeatureList;
-        private Zapp.Core.Action iActionGetSystemUpdateID;
-        private Zapp.Core.Action iActionGetServiceResetToken;
-        private Zapp.Core.Action iActionBrowse;
-        private Zapp.Core.Action iActionSearch;
-        private Zapp.Core.Action iActionCreateObject;
-        private Zapp.Core.Action iActionDestroyObject;
-        private Zapp.Core.Action iActionUpdateObject;
-        private Zapp.Core.Action iActionMoveObject;
-        private Zapp.Core.Action iActionImportResource;
-        private Zapp.Core.Action iActionExportResource;
-        private Zapp.Core.Action iActionDeleteResource;
-        private Zapp.Core.Action iActionStopTransferResource;
-        private Zapp.Core.Action iActionGetTransferProgress;
-        private Zapp.Core.Action iActionCreateReference;
-        private Zapp.Core.Action iActionFreeFormQuery;
-        private Zapp.Core.Action iActionGetFreeFormQueryCapabilities;
+        private OpenHome.Net.Core.Action iActionGetSearchCapabilities;
+        private OpenHome.Net.Core.Action iActionGetSortCapabilities;
+        private OpenHome.Net.Core.Action iActionGetSortExtensionCapabilities;
+        private OpenHome.Net.Core.Action iActionGetFeatureList;
+        private OpenHome.Net.Core.Action iActionGetSystemUpdateID;
+        private OpenHome.Net.Core.Action iActionGetServiceResetToken;
+        private OpenHome.Net.Core.Action iActionBrowse;
+        private OpenHome.Net.Core.Action iActionSearch;
+        private OpenHome.Net.Core.Action iActionCreateObject;
+        private OpenHome.Net.Core.Action iActionDestroyObject;
+        private OpenHome.Net.Core.Action iActionUpdateObject;
+        private OpenHome.Net.Core.Action iActionMoveObject;
+        private OpenHome.Net.Core.Action iActionImportResource;
+        private OpenHome.Net.Core.Action iActionExportResource;
+        private OpenHome.Net.Core.Action iActionDeleteResource;
+        private OpenHome.Net.Core.Action iActionStopTransferResource;
+        private OpenHome.Net.Core.Action iActionGetTransferProgress;
+        private OpenHome.Net.Core.Action iActionCreateReference;
+        private OpenHome.Net.Core.Action iActionFreeFormQuery;
+        private OpenHome.Net.Core.Action iActionGetFreeFormQueryCapabilities;
         private PropertyUint iSystemUpdateID;
         private PropertyString iContainerUpdateIDs;
         private PropertyString iLastChange;
@@ -533,34 +533,34 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyUpnpOrgContentDirectory3(CpDevice aDevice)
             : base("schemas-upnp-org", "ContentDirectory", 3, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             List<String> allowedValues = new List<String>();
 
-            iActionGetSearchCapabilities = new Zapp.Core.Action("GetSearchCapabilities");
+            iActionGetSearchCapabilities = new OpenHome.Net.Core.Action("GetSearchCapabilities");
             param = new ParameterString("SearchCaps", allowedValues);
             iActionGetSearchCapabilities.AddOutputParameter(param);
 
-            iActionGetSortCapabilities = new Zapp.Core.Action("GetSortCapabilities");
+            iActionGetSortCapabilities = new OpenHome.Net.Core.Action("GetSortCapabilities");
             param = new ParameterString("SortCaps", allowedValues);
             iActionGetSortCapabilities.AddOutputParameter(param);
 
-            iActionGetSortExtensionCapabilities = new Zapp.Core.Action("GetSortExtensionCapabilities");
+            iActionGetSortExtensionCapabilities = new OpenHome.Net.Core.Action("GetSortExtensionCapabilities");
             param = new ParameterString("SortExtensionCaps", allowedValues);
             iActionGetSortExtensionCapabilities.AddOutputParameter(param);
 
-            iActionGetFeatureList = new Zapp.Core.Action("GetFeatureList");
+            iActionGetFeatureList = new OpenHome.Net.Core.Action("GetFeatureList");
             param = new ParameterString("FeatureList", allowedValues);
             iActionGetFeatureList.AddOutputParameter(param);
 
-            iActionGetSystemUpdateID = new Zapp.Core.Action("GetSystemUpdateID");
+            iActionGetSystemUpdateID = new OpenHome.Net.Core.Action("GetSystemUpdateID");
             param = new ParameterUint("Id");
             iActionGetSystemUpdateID.AddOutputParameter(param);
 
-            iActionGetServiceResetToken = new Zapp.Core.Action("GetServiceResetToken");
+            iActionGetServiceResetToken = new OpenHome.Net.Core.Action("GetServiceResetToken");
             param = new ParameterString("ResetToken", allowedValues);
             iActionGetServiceResetToken.AddOutputParameter(param);
 
-            iActionBrowse = new Zapp.Core.Action("Browse");
+            iActionBrowse = new OpenHome.Net.Core.Action("Browse");
             param = new ParameterString("ObjectID", allowedValues);
             iActionBrowse.AddInputParameter(param);
             allowedValues.Add("BrowseMetadata");
@@ -585,7 +585,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("UpdateID");
             iActionBrowse.AddOutputParameter(param);
 
-            iActionSearch = new Zapp.Core.Action("Search");
+            iActionSearch = new OpenHome.Net.Core.Action("Search");
             param = new ParameterString("ContainerID", allowedValues);
             iActionSearch.AddInputParameter(param);
             param = new ParameterString("SearchCriteria", allowedValues);
@@ -607,7 +607,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("UpdateID");
             iActionSearch.AddOutputParameter(param);
 
-            iActionCreateObject = new Zapp.Core.Action("CreateObject");
+            iActionCreateObject = new OpenHome.Net.Core.Action("CreateObject");
             param = new ParameterString("ContainerID", allowedValues);
             iActionCreateObject.AddInputParameter(param);
             param = new ParameterString("Elements", allowedValues);
@@ -617,11 +617,11 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("Result", allowedValues);
             iActionCreateObject.AddOutputParameter(param);
 
-            iActionDestroyObject = new Zapp.Core.Action("DestroyObject");
+            iActionDestroyObject = new OpenHome.Net.Core.Action("DestroyObject");
             param = new ParameterString("ObjectID", allowedValues);
             iActionDestroyObject.AddInputParameter(param);
 
-            iActionUpdateObject = new Zapp.Core.Action("UpdateObject");
+            iActionUpdateObject = new OpenHome.Net.Core.Action("UpdateObject");
             param = new ParameterString("ObjectID", allowedValues);
             iActionUpdateObject.AddInputParameter(param);
             param = new ParameterString("CurrentTagValue", allowedValues);
@@ -629,7 +629,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("NewTagValue", allowedValues);
             iActionUpdateObject.AddInputParameter(param);
 
-            iActionMoveObject = new Zapp.Core.Action("MoveObject");
+            iActionMoveObject = new OpenHome.Net.Core.Action("MoveObject");
             param = new ParameterString("ObjectID", allowedValues);
             iActionMoveObject.AddInputParameter(param);
             param = new ParameterString("NewParentID", allowedValues);
@@ -637,7 +637,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("NewObjectID", allowedValues);
             iActionMoveObject.AddOutputParameter(param);
 
-            iActionImportResource = new Zapp.Core.Action("ImportResource");
+            iActionImportResource = new OpenHome.Net.Core.Action("ImportResource");
             param = new ParameterString("SourceURI", allowedValues);
             iActionImportResource.AddInputParameter(param);
             param = new ParameterString("DestinationURI", allowedValues);
@@ -645,7 +645,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("TransferID");
             iActionImportResource.AddOutputParameter(param);
 
-            iActionExportResource = new Zapp.Core.Action("ExportResource");
+            iActionExportResource = new OpenHome.Net.Core.Action("ExportResource");
             param = new ParameterString("SourceURI", allowedValues);
             iActionExportResource.AddInputParameter(param);
             param = new ParameterString("DestinationURI", allowedValues);
@@ -653,15 +653,15 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("TransferID");
             iActionExportResource.AddOutputParameter(param);
 
-            iActionDeleteResource = new Zapp.Core.Action("DeleteResource");
+            iActionDeleteResource = new OpenHome.Net.Core.Action("DeleteResource");
             param = new ParameterString("ResourceURI", allowedValues);
             iActionDeleteResource.AddInputParameter(param);
 
-            iActionStopTransferResource = new Zapp.Core.Action("StopTransferResource");
+            iActionStopTransferResource = new OpenHome.Net.Core.Action("StopTransferResource");
             param = new ParameterUint("TransferID");
             iActionStopTransferResource.AddInputParameter(param);
 
-            iActionGetTransferProgress = new Zapp.Core.Action("GetTransferProgress");
+            iActionGetTransferProgress = new OpenHome.Net.Core.Action("GetTransferProgress");
             param = new ParameterUint("TransferID");
             iActionGetTransferProgress.AddInputParameter(param);
             allowedValues.Add("COMPLETED");
@@ -676,7 +676,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("TransferTotal", allowedValues);
             iActionGetTransferProgress.AddOutputParameter(param);
 
-            iActionCreateReference = new Zapp.Core.Action("CreateReference");
+            iActionCreateReference = new OpenHome.Net.Core.Action("CreateReference");
             param = new ParameterString("ContainerID", allowedValues);
             iActionCreateReference.AddInputParameter(param);
             param = new ParameterString("ObjectID", allowedValues);
@@ -684,7 +684,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("NewID", allowedValues);
             iActionCreateReference.AddOutputParameter(param);
 
-            iActionFreeFormQuery = new Zapp.Core.Action("FreeFormQuery");
+            iActionFreeFormQuery = new OpenHome.Net.Core.Action("FreeFormQuery");
             param = new ParameterString("ContainerID", allowedValues);
             iActionFreeFormQuery.AddInputParameter(param);
             param = new ParameterUint("CDSView");
@@ -696,7 +696,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("UpdateID");
             iActionFreeFormQuery.AddOutputParameter(param);
 
-            iActionGetFreeFormQueryCapabilities = new Zapp.Core.Action("GetFreeFormQueryCapabilities");
+            iActionGetFreeFormQueryCapabilities = new OpenHome.Net.Core.Action("GetFreeFormQueryCapabilities");
             param = new ParameterString("FFQCapabilities", allowedValues);
             iActionGetFreeFormQueryCapabilities.AddOutputParameter(param);
 

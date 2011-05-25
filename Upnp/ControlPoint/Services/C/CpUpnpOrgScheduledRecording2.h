@@ -6,7 +6,7 @@
 
 #include <OsTypes.h>
 #include <C/Async.h>
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 #include <C/CpDevice.h>
 
 #ifdef __cplusplus
@@ -61,7 +61,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncGetSortCapabilities(THandle 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetSortCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetSortCapabilities(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -74,7 +74,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetSortCapabilities(THandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetSortCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aSortCaps, uint32_t* aSortLevelCap);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetSortCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aSortCaps, uint32_t* aSortLevelCap);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -97,7 +97,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncGetPropertyList(THandle aHan
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetPropertyList(THandle aHandle, const char* aDataTypeID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetPropertyList(THandle aHandle, const char* aDataTypeID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -109,7 +109,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetPropertyList(THandle aHa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetPropertyList(THandle aHandle, ZappHandleAsync aAsync, char** aPropertyList);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetPropertyList(THandle aHandle, OhNetHandleAsync aAsync, char** aPropertyList);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -134,7 +134,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncGetAllowedValues(THandle aHa
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetAllowedValues(THandle aHandle, const char* aDataTypeID, const char* aFilter, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetAllowedValues(THandle aHandle, const char* aDataTypeID, const char* aFilter, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -146,7 +146,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetAllowedValues(THandle aH
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetAllowedValues(THandle aHandle, ZappHandleAsync aAsync, char** aPropertyInfo);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetAllowedValues(THandle aHandle, OhNetHandleAsync aAsync, char** aPropertyInfo);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -167,7 +167,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncGetStateUpdateID(THandle aHa
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetStateUpdateID(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetStateUpdateID(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -179,7 +179,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetStateUpdateID(THandle aH
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetStateUpdateID(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aId);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetStateUpdateID(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aId);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -211,7 +211,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncBrowseRecordSchedules(THandl
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginBrowseRecordSchedules(THandle aHandle, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginBrowseRecordSchedules(THandle aHandle, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -226,7 +226,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginBrowseRecordSchedules(THand
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndBrowseRecordSchedules(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndBrowseRecordSchedules(THandle aHandle, OhNetHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -260,7 +260,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncBrowseRecordTasks(THandle aH
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginBrowseRecordTasks(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginBrowseRecordTasks(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -275,7 +275,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginBrowseRecordTasks(THandle a
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndBrowseRecordTasks(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndBrowseRecordTasks(THandle aHandle, OhNetHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -300,7 +300,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncCreateRecordSchedule(THandle
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginCreateRecordSchedule(THandle aHandle, const char* aElements, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginCreateRecordSchedule(THandle aHandle, const char* aElements, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -314,7 +314,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginCreateRecordSchedule(THandl
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndCreateRecordSchedule(THandle aHandle, ZappHandleAsync aAsync, char** aRecordScheduleID, char** aResult, uint32_t* aUpdateID);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndCreateRecordSchedule(THandle aHandle, OhNetHandleAsync aAsync, char** aRecordScheduleID, char** aResult, uint32_t* aUpdateID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -336,7 +336,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncDeleteRecordSchedule(THandle
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginDeleteRecordSchedule(THandle aHandle, const char* aRecordScheduleID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginDeleteRecordSchedule(THandle aHandle, const char* aRecordScheduleID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -347,7 +347,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginDeleteRecordSchedule(THandl
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndDeleteRecordSchedule(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndDeleteRecordSchedule(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -373,7 +373,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncGetRecordSchedule(THandle aH
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetRecordSchedule(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetRecordSchedule(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -386,7 +386,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetRecordSchedule(THandle a
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordSchedule(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aUpdateID);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordSchedule(THandle aHandle, OhNetHandleAsync aAsync, char** aResult, uint32_t* aUpdateID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -408,7 +408,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncEnableRecordSchedule(THandle
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginEnableRecordSchedule(THandle aHandle, const char* aRecordScheduleID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginEnableRecordSchedule(THandle aHandle, const char* aRecordScheduleID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -419,7 +419,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginEnableRecordSchedule(THandl
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndEnableRecordSchedule(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndEnableRecordSchedule(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -441,7 +441,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncDisableRecordSchedule(THandl
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginDisableRecordSchedule(THandle aHandle, const char* aRecordScheduleID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginDisableRecordSchedule(THandle aHandle, const char* aRecordScheduleID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -452,7 +452,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginDisableRecordSchedule(THand
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndDisableRecordSchedule(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndDisableRecordSchedule(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -474,7 +474,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncDeleteRecordTask(THandle aHa
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginDeleteRecordTask(THandle aHandle, const char* aRecordTaskID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginDeleteRecordTask(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -485,7 +485,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginDeleteRecordTask(THandle aH
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndDeleteRecordTask(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndDeleteRecordTask(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -511,7 +511,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncGetRecordTask(THandle aHandl
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetRecordTask(THandle aHandle, const char* aRecordTaskID, const char* aFilter, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetRecordTask(THandle aHandle, const char* aRecordTaskID, const char* aFilter, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -524,7 +524,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetRecordTask(THandle aHand
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordTask(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aUpdateID);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordTask(THandle aHandle, OhNetHandleAsync aAsync, char** aResult, uint32_t* aUpdateID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -546,7 +546,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncEnableRecordTask(THandle aHa
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginEnableRecordTask(THandle aHandle, const char* aRecordTaskID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginEnableRecordTask(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -557,7 +557,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginEnableRecordTask(THandle aH
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndEnableRecordTask(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndEnableRecordTask(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -579,7 +579,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncDisableRecordTask(THandle aH
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginDisableRecordTask(THandle aHandle, const char* aRecordTaskID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginDisableRecordTask(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -590,7 +590,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginDisableRecordTask(THandle a
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndDisableRecordTask(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndDisableRecordTask(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -612,7 +612,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncResetRecordTask(THandle aHan
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginResetRecordTask(THandle aHandle, const char* aRecordTaskID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginResetRecordTask(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -623,7 +623,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginResetRecordTask(THandle aHa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndResetRecordTask(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndResetRecordTask(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -647,7 +647,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncGetRecordScheduleConflicts(T
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetRecordScheduleConflicts(THandle aHandle, const char* aRecordScheduleID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetRecordScheduleConflicts(THandle aHandle, const char* aRecordScheduleID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -660,7 +660,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetRecordScheduleConflicts(
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordScheduleConflicts(THandle aHandle, ZappHandleAsync aAsync, char** aRecordScheduleConflictIDList, uint32_t* aUpdateID);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordScheduleConflicts(THandle aHandle, OhNetHandleAsync aAsync, char** aRecordScheduleConflictIDList, uint32_t* aUpdateID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -684,7 +684,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2SyncGetRecordTaskConflicts(THand
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetRecordTaskConflicts(THandle aHandle, const char* aRecordTaskID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetRecordTaskConflicts(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -697,7 +697,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording2BeginGetRecordTaskConflicts(THan
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordTaskConflicts(THandle aHandle, ZappHandleAsync aAsync, char** aRecordTaskConflictIDList, uint32_t* aUpdateID);
+DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordTaskConflicts(THandle aHandle, OhNetHandleAsync aAsync, char** aRecordTaskConflictIDList, uint32_t* aUpdateID);
 /**
  * Set a callback to be run when the LastChange state variable changes.
  *
@@ -708,7 +708,7 @@ DllExport int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordTaskConflicts(THa
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgScheduledRecording2SetPropertyLastChangeChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgScheduledRecording2SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the LastChange property.

@@ -8,7 +8,7 @@
 
 #include <string>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncCharacteristicsAvOpenhomeOrgVolume1Cpp : public SyncProxyAction
@@ -356,24 +356,24 @@ void SyncVolumeLimitAvOpenhomeOrgVolume1Cpp::CompleteRequest(IAsync& aAsync)
 CpProxyAvOpenhomeOrgVolume1Cpp::CpProxyAvOpenhomeOrgVolume1Cpp(CpDeviceCpp& aDevice)
     : CpProxy("av-openhome-org", "Volume", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionCharacteristics = new Action("Characteristics");
-    param = new Zapp::ParameterUint("VolumeMax");
+    param = new OpenHome::Net::ParameterUint("VolumeMax");
     iActionCharacteristics->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("VolumeUnity");
+    param = new OpenHome::Net::ParameterUint("VolumeUnity");
     iActionCharacteristics->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("VolumeSteps");
+    param = new OpenHome::Net::ParameterUint("VolumeSteps");
     iActionCharacteristics->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("VolumeMilliDbPerStep");
+    param = new OpenHome::Net::ParameterUint("VolumeMilliDbPerStep");
     iActionCharacteristics->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("BalanceMax");
+    param = new OpenHome::Net::ParameterUint("BalanceMax");
     iActionCharacteristics->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("FadeMax");
+    param = new OpenHome::Net::ParameterUint("FadeMax");
     iActionCharacteristics->AddOutputParameter(param);
 
     iActionSetVolume = new Action("SetVolume");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSetVolume->AddInputParameter(param);
 
     iActionVolumeInc = new Action("VolumeInc");
@@ -381,11 +381,11 @@ CpProxyAvOpenhomeOrgVolume1Cpp::CpProxyAvOpenhomeOrgVolume1Cpp(CpDeviceCpp& aDev
     iActionVolumeDec = new Action("VolumeDec");
 
     iActionVolume = new Action("Volume");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionVolume->AddOutputParameter(param);
 
     iActionSetBalance = new Action("SetBalance");
-    param = new Zapp::ParameterInt("Value");
+    param = new OpenHome::Net::ParameterInt("Value");
     iActionSetBalance->AddInputParameter(param);
 
     iActionBalanceInc = new Action("BalanceInc");
@@ -393,11 +393,11 @@ CpProxyAvOpenhomeOrgVolume1Cpp::CpProxyAvOpenhomeOrgVolume1Cpp(CpDeviceCpp& aDev
     iActionBalanceDec = new Action("BalanceDec");
 
     iActionBalance = new Action("Balance");
-    param = new Zapp::ParameterInt("Value");
+    param = new OpenHome::Net::ParameterInt("Value");
     iActionBalance->AddOutputParameter(param);
 
     iActionSetFade = new Action("SetFade");
-    param = new Zapp::ParameterInt("Value");
+    param = new OpenHome::Net::ParameterInt("Value");
     iActionSetFade->AddInputParameter(param);
 
     iActionFadeInc = new Action("FadeInc");
@@ -405,19 +405,19 @@ CpProxyAvOpenhomeOrgVolume1Cpp::CpProxyAvOpenhomeOrgVolume1Cpp(CpDeviceCpp& aDev
     iActionFadeDec = new Action("FadeDec");
 
     iActionFade = new Action("Fade");
-    param = new Zapp::ParameterInt("Value");
+    param = new OpenHome::Net::ParameterInt("Value");
     iActionFade->AddOutputParameter(param);
 
     iActionSetMute = new Action("SetMute");
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionSetMute->AddInputParameter(param);
 
     iActionMute = new Action("Mute");
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionMute->AddOutputParameter(param);
 
     iActionVolumeLimit = new Action("VolumeLimit");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionVolumeLimit->AddOutputParameter(param);
 
     Functor functor;

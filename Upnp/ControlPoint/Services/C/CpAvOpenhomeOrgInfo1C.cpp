@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyAvOpenhomeOrgInfo1C : public CpProxyC
 {
@@ -215,38 +215,38 @@ CpProxyAvOpenhomeOrgInfo1C::CpProxyAvOpenhomeOrgInfo1C(CpDeviceC aDevice)
     : CpProxyC("av-openhome-org", "Info", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionCounters = new Action("Counters");
-    param = new Zapp::ParameterUint("TrackCount");
+    param = new OpenHome::Net::ParameterUint("TrackCount");
     iActionCounters->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("DetailsCount");
+    param = new OpenHome::Net::ParameterUint("DetailsCount");
     iActionCounters->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("MetatextCount");
+    param = new OpenHome::Net::ParameterUint("MetatextCount");
     iActionCounters->AddOutputParameter(param);
 
     iActionTrack = new Action("Track");
-    param = new Zapp::ParameterString("Uri");
+    param = new OpenHome::Net::ParameterString("Uri");
     iActionTrack->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Metadata");
+    param = new OpenHome::Net::ParameterString("Metadata");
     iActionTrack->AddOutputParameter(param);
 
     iActionDetails = new Action("Details");
-    param = new Zapp::ParameterUint("Duration");
+    param = new OpenHome::Net::ParameterUint("Duration");
     iActionDetails->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("BitRate");
+    param = new OpenHome::Net::ParameterUint("BitRate");
     iActionDetails->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("BitDepth");
+    param = new OpenHome::Net::ParameterUint("BitDepth");
     iActionDetails->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("SampleRate");
+    param = new OpenHome::Net::ParameterUint("SampleRate");
     iActionDetails->AddOutputParameter(param);
-    param = new Zapp::ParameterBool("Lossless");
+    param = new OpenHome::Net::ParameterBool("Lossless");
     iActionDetails->AddOutputParameter(param);
-    param = new Zapp::ParameterString("CodecName");
+    param = new OpenHome::Net::ParameterString("CodecName");
     iActionDetails->AddOutputParameter(param);
 
     iActionMetatext = new Action("Metatext");
-    param = new Zapp::ParameterString("Value");
+    param = new OpenHome::Net::ParameterString("Value");
     iActionMetatext->AddOutputParameter(param);
 
     Functor functor;
@@ -688,15 +688,15 @@ void CpProxyAvOpenhomeOrgInfo1SyncCounters(THandle aHandle, uint32_t* aTrackCoun
     proxyC->SyncCounters(*aTrackCount, *aDetailsCount, *aMetatextCount);
 }
 
-void CpProxyAvOpenhomeOrgInfo1BeginCounters(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1BeginCounters(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginCounters(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgInfo1EndCounters(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount)
+int32_t CpProxyAvOpenhomeOrgInfo1EndCounters(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
@@ -723,15 +723,15 @@ void CpProxyAvOpenhomeOrgInfo1SyncTrack(THandle aHandle, char** aUri, char** aMe
     *aMetadata = buf_aMetadata.Extract();
 }
 
-void CpProxyAvOpenhomeOrgInfo1BeginTrack(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1BeginTrack(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginTrack(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgInfo1EndTrack(THandle aHandle, ZappHandleAsync aAsync, char** aUri, char** aMetadata)
+int32_t CpProxyAvOpenhomeOrgInfo1EndTrack(THandle aHandle, OhNetHandleAsync aAsync, char** aUri, char** aMetadata)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
@@ -763,15 +763,15 @@ void CpProxyAvOpenhomeOrgInfo1SyncDetails(THandle aHandle, uint32_t* aDuration, 
     *aCodecName = buf_aCodecName.Extract();
 }
 
-void CpProxyAvOpenhomeOrgInfo1BeginDetails(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1BeginDetails(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginDetails(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgInfo1EndDetails(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName)
+int32_t CpProxyAvOpenhomeOrgInfo1EndDetails(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
@@ -800,15 +800,15 @@ void CpProxyAvOpenhomeOrgInfo1SyncMetatext(THandle aHandle, char** aValue)
     *aValue = buf_aValue.Extract();
 }
 
-void CpProxyAvOpenhomeOrgInfo1BeginMetatext(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1BeginMetatext(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginMetatext(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgInfo1EndMetatext(THandle aHandle, ZappHandleAsync aAsync, char** aValue)
+int32_t CpProxyAvOpenhomeOrgInfo1EndMetatext(THandle aHandle, OhNetHandleAsync aAsync, char** aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
@@ -827,7 +827,7 @@ int32_t CpProxyAvOpenhomeOrgInfo1EndMetatext(THandle aHandle, ZappHandleAsync aA
     return err;
 }
 
-void CpProxyAvOpenhomeOrgInfo1SetPropertyTrackCountChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1SetPropertyTrackCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -835,7 +835,7 @@ void CpProxyAvOpenhomeOrgInfo1SetPropertyTrackCountChanged(THandle aHandle, Zapp
     proxyC->SetPropertyTrackCountChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgInfo1SetPropertyDetailsCountChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1SetPropertyDetailsCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -843,7 +843,7 @@ void CpProxyAvOpenhomeOrgInfo1SetPropertyDetailsCountChanged(THandle aHandle, Za
     proxyC->SetPropertyDetailsCountChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextCountChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -851,7 +851,7 @@ void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextCountChanged(THandle aHandle, Z
     proxyC->SetPropertyMetatextCountChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgInfo1SetPropertyUriChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1SetPropertyUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -859,7 +859,7 @@ void CpProxyAvOpenhomeOrgInfo1SetPropertyUriChanged(THandle aHandle, ZappCallbac
     proxyC->SetPropertyUriChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgInfo1SetPropertyMetadataChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1SetPropertyMetadataChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -867,7 +867,7 @@ void CpProxyAvOpenhomeOrgInfo1SetPropertyMetadataChanged(THandle aHandle, ZappCa
     proxyC->SetPropertyMetadataChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgInfo1SetPropertyDurationChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1SetPropertyDurationChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -875,7 +875,7 @@ void CpProxyAvOpenhomeOrgInfo1SetPropertyDurationChanged(THandle aHandle, ZappCa
     proxyC->SetPropertyDurationChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgInfo1SetPropertyBitRateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1SetPropertyBitRateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -883,7 +883,7 @@ void CpProxyAvOpenhomeOrgInfo1SetPropertyBitRateChanged(THandle aHandle, ZappCal
     proxyC->SetPropertyBitRateChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgInfo1SetPropertyBitDepthChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1SetPropertyBitDepthChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -891,7 +891,7 @@ void CpProxyAvOpenhomeOrgInfo1SetPropertyBitDepthChanged(THandle aHandle, ZappCa
     proxyC->SetPropertyBitDepthChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgInfo1SetPropertySampleRateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1SetPropertySampleRateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -899,7 +899,7 @@ void CpProxyAvOpenhomeOrgInfo1SetPropertySampleRateChanged(THandle aHandle, Zapp
     proxyC->SetPropertySampleRateChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgInfo1SetPropertyLosslessChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1SetPropertyLosslessChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -907,7 +907,7 @@ void CpProxyAvOpenhomeOrgInfo1SetPropertyLosslessChanged(THandle aHandle, ZappCa
     proxyC->SetPropertyLosslessChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgInfo1SetPropertyCodecNameChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1SetPropertyCodecNameChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -915,7 +915,7 @@ void CpProxyAvOpenhomeOrgInfo1SetPropertyCodecNameChanged(THandle aHandle, ZappC
     proxyC->SetPropertyCodecNameChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgInfo1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgInfo1C*>(aHandle);
     ASSERT(proxyC != NULL);

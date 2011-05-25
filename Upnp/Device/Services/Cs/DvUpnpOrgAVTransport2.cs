@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderUpnpOrgAVTransport2 : IDisposable
     {
@@ -128,7 +128,7 @@ namespace Zapp.Device.Providers
         /// SetAVTransportURI must be overridden if this is called.</remarks>
         protected void EnableActionSetAVTransportURI()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetAVTransportURI");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetAVTransportURI");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterString("CurrentURI", allowedValues));
@@ -144,7 +144,7 @@ namespace Zapp.Device.Providers
         /// SetNextAVTransportURI must be overridden if this is called.</remarks>
         protected void EnableActionSetNextAVTransportURI()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetNextAVTransportURI");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetNextAVTransportURI");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterString("NextURI", allowedValues));
@@ -160,7 +160,7 @@ namespace Zapp.Device.Providers
         /// GetMediaInfo must be overridden if this is called.</remarks>
         protected void EnableActionGetMediaInfo()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetMediaInfo");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetMediaInfo");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterUint("NrTracks", 0, 0));
@@ -183,7 +183,7 @@ namespace Zapp.Device.Providers
         /// GetMediaInfo_Ext must be overridden if this is called.</remarks>
         protected void EnableActionGetMediaInfo_Ext()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetMediaInfo_Ext");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetMediaInfo_Ext");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("NO_MEDIA");
@@ -211,7 +211,7 @@ namespace Zapp.Device.Providers
         /// GetTransportInfo must be overridden if this is called.</remarks>
         protected void EnableActionGetTransportInfo()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetTransportInfo");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetTransportInfo");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("STOPPED");
@@ -236,7 +236,7 @@ namespace Zapp.Device.Providers
         /// GetPositionInfo must be overridden if this is called.</remarks>
         protected void EnableActionGetPositionInfo()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetPositionInfo");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetPositionInfo");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterUint("Track", 0, 0, 1));
@@ -258,7 +258,7 @@ namespace Zapp.Device.Providers
         /// GetDeviceCapabilities must be overridden if this is called.</remarks>
         protected void EnableActionGetDeviceCapabilities()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetDeviceCapabilities");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetDeviceCapabilities");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterString("PlayMedia", allowedValues));
@@ -275,7 +275,7 @@ namespace Zapp.Device.Providers
         /// GetTransportSettings must be overridden if this is called.</remarks>
         protected void EnableActionGetTransportSettings()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetTransportSettings");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetTransportSettings");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("NORMAL");
@@ -293,7 +293,7 @@ namespace Zapp.Device.Providers
         /// Stop must be overridden if this is called.</remarks>
         protected void EnableActionStop()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Stop");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Stop");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             iDelegateStop = new ActionDelegate(DoStop);
             EnableAction(action, iDelegateStop, GCHandle.ToIntPtr(iGch));
@@ -306,7 +306,7 @@ namespace Zapp.Device.Providers
         /// Play must be overridden if this is called.</remarks>
         protected void EnableActionPlay()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Play");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Play");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("1");
@@ -323,7 +323,7 @@ namespace Zapp.Device.Providers
         /// Pause must be overridden if this is called.</remarks>
         protected void EnableActionPause()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Pause");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Pause");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             iDelegatePause = new ActionDelegate(DoPause);
             EnableAction(action, iDelegatePause, GCHandle.ToIntPtr(iGch));
@@ -336,7 +336,7 @@ namespace Zapp.Device.Providers
         /// Record must be overridden if this is called.</remarks>
         protected void EnableActionRecord()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Record");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Record");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             iDelegateRecord = new ActionDelegate(DoRecord);
             EnableAction(action, iDelegateRecord, GCHandle.ToIntPtr(iGch));
@@ -349,7 +349,7 @@ namespace Zapp.Device.Providers
         /// Seek must be overridden if this is called.</remarks>
         protected void EnableActionSeek()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Seek");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Seek");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("TRACK_NR");
@@ -367,7 +367,7 @@ namespace Zapp.Device.Providers
         /// Next must be overridden if this is called.</remarks>
         protected void EnableActionNext()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Next");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Next");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             iDelegateNext = new ActionDelegate(DoNext);
             EnableAction(action, iDelegateNext, GCHandle.ToIntPtr(iGch));
@@ -380,7 +380,7 @@ namespace Zapp.Device.Providers
         /// Previous must be overridden if this is called.</remarks>
         protected void EnableActionPrevious()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Previous");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Previous");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             iDelegatePrevious = new ActionDelegate(DoPrevious);
             EnableAction(action, iDelegatePrevious, GCHandle.ToIntPtr(iGch));
@@ -393,7 +393,7 @@ namespace Zapp.Device.Providers
         /// SetPlayMode must be overridden if this is called.</remarks>
         protected void EnableActionSetPlayMode()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetPlayMode");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetPlayMode");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("NORMAL");
@@ -410,7 +410,7 @@ namespace Zapp.Device.Providers
         /// SetRecordQualityMode must be overridden if this is called.</remarks>
         protected void EnableActionSetRecordQualityMode()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetRecordQualityMode");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetRecordQualityMode");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterString("NewRecordQualityMode", allowedValues));
@@ -425,7 +425,7 @@ namespace Zapp.Device.Providers
         /// GetCurrentTransportActions must be overridden if this is called.</remarks>
         protected void EnableActionGetCurrentTransportActions()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetCurrentTransportActions");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetCurrentTransportActions");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterString("Actions", allowedValues));
@@ -440,7 +440,7 @@ namespace Zapp.Device.Providers
         /// GetDRMState must be overridden if this is called.</remarks>
         protected void EnableActionGetDRMState()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetDRMState");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetDRMState");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterRelated("CurrentDRMState", iPropertyDRMState));
             iDelegateGetDRMState = new ActionDelegate(DoGetDRMState);
@@ -454,7 +454,7 @@ namespace Zapp.Device.Providers
         /// GetStateVariables must be overridden if this is called.</remarks>
         protected void EnableActionGetStateVariables()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetStateVariables");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetStateVariables");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterString("StateVariableList", allowedValues));
@@ -470,7 +470,7 @@ namespace Zapp.Device.Providers
         /// SetStateVariables must be overridden if this is called.</remarks>
         protected void EnableActionSetStateVariables()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetStateVariables");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetStateVariables");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterString("AVTransportUDN", allowedValues));

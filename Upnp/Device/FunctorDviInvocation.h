@@ -1,12 +1,13 @@
 #ifndef HEADER_IFACE_DVIINVOCATION
 #define HEADER_IFACE_DVIINVOCATION
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation;
-typedef void (*ZappFunctorDviInvocation)(void* aPtr, IDviInvocation* aInvocation, TUint aVersion);
+typedef void (*OhNetFunctorDviInvocation)(void* aPtr, IDviInvocation* aInvocation, TUint aVersion);
 
 class FunctorDviInvocation
 {
@@ -19,7 +20,7 @@ public:
     static const TUint kFudgeFactor = 2;
 
     union {
-        ZappFunctorDviInvocation iCallback;
+        OhNetFunctorDviInvocation iCallback;
         TByte iCallbackMember[kFudgeFactor * sizeof(MemberFunction)];
     };
     TAny* iObject;
@@ -32,7 +33,7 @@ protected:
         iObject = (TAny*)aObject;
         memcpy(iCallbackMember, aCallback, aBytes);
     }
-    FunctorDviInvocation(Thunk aT, const TAny* aObject, ZappFunctorDviInvocation aCallback)
+    FunctorDviInvocation(Thunk aT, const TAny* aObject, OhNetFunctorDviInvocation aCallback)
         : iThunk(aT)
     {
         iObject = (TAny*)aObject;
@@ -60,11 +61,11 @@ public:
 class FunctionTranslatorDviInvocation : public FunctorDviInvocation
 {
 public:
-    FunctionTranslatorDviInvocation(void* aPtr, ZappFunctorDviInvocation aCallback) :
+    FunctionTranslatorDviInvocation(void* aPtr, OhNetFunctorDviInvocation aCallback) :
         FunctorDviInvocation(Thunk,aPtr,aCallback) {}
     static void Thunk(const FunctorDviInvocation& aFb, IDviInvocation& aInvocation, TUint aVersion)
     {
-        ((ZappFunctorDviInvocation)aFb.iCallback)(aFb.iObject, &aInvocation, aVersion);
+        ((OhNetFunctorDviInvocation)aFb.iCallback)(aFb.iObject, &aInvocation, aVersion);
     }
 };
 
@@ -77,11 +78,12 @@ MakeFunctorDviInvocation(Object& aC, void(CallType::* const &aF)(IDviInvocation&
     }
 
 inline FunctionTranslatorDviInvocation
-MakeFunctorDviInvocation(void* aPtr, ZappFunctorDviInvocation aCallback)
+MakeFunctorDviInvocation(void* aPtr, OhNetFunctorDviInvocation aCallback)
     {
     return FunctionTranslatorDviInvocation(aPtr, aCallback);
     }
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_IFACE_DVIINVOCATION

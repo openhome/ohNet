@@ -1,7 +1,6 @@
 using System;
-using Zapp;
 
-namespace Zapp.Device
+namespace OpenHome.Net.Device
 {
     /// <summary>
     /// Thrown when an action with no registered delegate is invoked.  Will not be visible to external code

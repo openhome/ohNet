@@ -1,14 +1,15 @@
 #ifndef HEADER_DVI_SERVER
 #define HEADER_DVI_SERVER
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Network.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Thread.h>
 
 #include <vector>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class DviServer
 {
@@ -45,6 +46,7 @@ private:
     TInt iSubnetChangeListenerId;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVI_SERVER

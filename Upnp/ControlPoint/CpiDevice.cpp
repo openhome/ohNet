@@ -1,11 +1,11 @@
 #include <CpiDevice.h>
 #include <Thread.h>
 #include <Debug.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Stack.h>
 #include <CpiStack.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // CpiDevice
 
@@ -242,6 +242,7 @@ void CpiDeviceList::RefreshComplete()
 
 void CpiDeviceList::SetDeviceReady(CpiDevice& aDevice)
 {
+    aDevice.SetReady();
     CpiDeviceListUpdater::QueueAdded(*this, aDevice);
 }
 
@@ -282,7 +283,6 @@ void CpiDeviceList::NotifyAdded(CpiDevice& aDevice)
         iLock.Signal();
         return;
     }
-    aDevice.SetReady();
     iLock.Signal();
     iAdded(aDevice);
 }
@@ -298,11 +298,6 @@ void CpiDeviceList::DoRemove(const Brx& aUdn)
     LOG(kDevice, aUdn);
     LOG(kDevice, "\n");
     iLock.Wait();
-    if (!iActive) {
-        LOG(kDevice, "< CpiDeviceList::DoRemove, list not active\n");
-        iLock.Signal();
-        return;
-    }
     TBool callObserver;
     Brn udn(aUdn);
     Map::iterator it = iMap.find(udn);
@@ -314,7 +309,7 @@ void CpiDeviceList::DoRemove(const Brx& aUdn)
     }
     CpiDevice* device = it->second;
     // don't remove our ref to the device yet, re-use it for the observer
-    callObserver = device->IsReady();
+    callObserver = (iActive && device->IsReady());
     it->second = NULL;
     iMap.erase(it);
     iLock.Signal();
@@ -341,12 +336,20 @@ void CpiDeviceList::NotifyRefreshed()
             }
             else {
                 CpiDevice* device = it->second;
-                device->AddRef();
-                iLock.Signal();
-                DoRemove(device->Udn());
-                device->RemoveRef();
-                iLock.Wait();
-                it = iMap.begin();
+                // skip devices which aren't ready yet
+                // ...assume that they'll either become ready or will be removed via other routes in time
+                // Upnp lists don't cope with devices being removed in this state
+                if (!device->IsReady()) {
+                    it++;
+                }
+                else {    
+                    device->AddRef();
+                    iLock.Signal();
+                    DoRemove(device->Udn());
+                    device->RemoveRef();
+                    iLock.Wait();
+                    it = iMap.begin();
+                }    
             }
         }
     }

@@ -6,7 +6,7 @@
 
 #include <string>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // DvDeviceStd
 

@@ -1,13 +1,14 @@
 #ifndef HEADER_CPDEVICECPPUPNP
 #define HEADER_CPDEVICECPPUPNP
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Std/CpDevice.h>
 #include <Std/FunctorCpDevice.h>
 
 #include <string>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 /**
  * CpDeviceCpp::GetAttribute supports the following keys for devices created by
@@ -71,6 +72,7 @@ public:
                                 FunctorCpDeviceCpp aAdded, FunctorCpDeviceCpp aRemoved);
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_CPDEVICECPPUPNP

@@ -2,14 +2,15 @@
 #define HEADER_CP_DEVICE_SOCKET
 
 #include <CpiDevice.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <DviService.h>
 #include <DviSubscription.h>
 #include <Service.h>
 #include <CpiService.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class DviDevice;
 class CpiSubscription;
@@ -74,16 +75,16 @@ private: // IDviInvocation
     void InvocationWriteStringEnd(const TChar* aName);
     void InvocationWriteEnd();
 private:
-    Zapp::Argument* InputArgument(const TChar* aName);
-    Zapp::Argument* OutputArgument(const TChar* aName);
-    Zapp::Argument* Argument(const TChar* aName, const Invocation::VectorArguments& aVector, TUint& aIndex);
+    OpenHome::Net::Argument* InputArgument(const TChar* aName);
+    OpenHome::Net::Argument* OutputArgument(const TChar* aName);
+    OpenHome::Net::Argument* Argument(const TChar* aName, const Invocation::VectorArguments& aVector, TUint& aIndex);
     void GetNextIndex(TUint& aIndex, const Invocation::VectorArguments& aVector);
 private:
     Invocation& iInvocation;
     DviService& iService;
     TUint iReadIndex;
     TUint iWriteIndex;
-    Zapp::Argument* iWriteArg; // used for binary & string writing only
+    OpenHome::Net::Argument* iWriteArg; // used for binary & string writing only
 };
 
 class PropertyWriterDv : public IPropertyWriter, private INonCopyable
@@ -111,6 +112,7 @@ private: // IOutputProcessor
     void ProcessBinary(const Brx& aBuffer, Brh& aVal);
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_CP_DEVICE_SOCKET

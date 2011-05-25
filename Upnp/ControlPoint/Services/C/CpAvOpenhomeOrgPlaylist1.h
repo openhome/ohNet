@@ -6,7 +6,7 @@
 
 #include <OsTypes.h>
 #include <C/Async.h>
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 #include <C/CpDevice.h>
 
 #ifdef __cplusplus
@@ -59,7 +59,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncPlay(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginPlay(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginPlay(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -70,7 +70,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginPlay(THandle aHandle, ZappCallb
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndPlay(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndPlay(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -90,7 +90,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncPause(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginPause(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginPause(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -101,7 +101,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginPause(THandle aHandle, ZappCall
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndPause(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndPause(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -121,7 +121,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncStop(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginStop(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginStop(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -132,7 +132,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginStop(THandle aHandle, ZappCallb
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndStop(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndStop(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -152,7 +152,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncNext(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginNext(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginNext(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -163,7 +163,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginNext(THandle aHandle, ZappCallb
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndNext(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndNext(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -183,7 +183,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncPrevious(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginPrevious(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginPrevious(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -194,7 +194,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginPrevious(THandle aHandle, ZappC
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndPrevious(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndPrevious(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -216,7 +216,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncSetRepeat(THandle aHandle, uint3
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSetRepeat(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSetRepeat(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -227,7 +227,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSetRepeat(THandle aHandle, uint
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndSetRepeat(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndSetRepeat(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -248,7 +248,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncRepeat(THandle aHandle, uint32_t
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginRepeat(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginRepeat(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -260,7 +260,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginRepeat(THandle aHandle, ZappCal
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndRepeat(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndRepeat(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -282,7 +282,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncSetShuffle(THandle aHandle, uint
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSetShuffle(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSetShuffle(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -293,7 +293,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSetShuffle(THandle aHandle, uin
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndSetShuffle(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndSetShuffle(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -314,7 +314,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncShuffle(THandle aHandle, uint32_
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginShuffle(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginShuffle(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -326,7 +326,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginShuffle(THandle aHandle, ZappCa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndShuffle(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndShuffle(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -348,7 +348,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncSeekSecondAbsolute(THandle aHand
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSeekSecondAbsolute(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSeekSecondAbsolute(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -359,7 +359,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSeekSecondAbsolute(THandle aHan
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekSecondAbsolute(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekSecondAbsolute(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -381,7 +381,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncSeekSecondRelative(THandle aHand
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSeekSecondRelative(THandle aHandle, int32_t aValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSeekSecondRelative(THandle aHandle, int32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -392,7 +392,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSeekSecondRelative(THandle aHan
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekSecondRelative(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekSecondRelative(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -414,7 +414,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncSeekId(THandle aHandle, uint32_t
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSeekId(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSeekId(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -425,7 +425,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSeekId(THandle aHandle, uint32_
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekId(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekId(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -447,7 +447,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncSeekIndex(THandle aHandle, uint3
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSeekIndex(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSeekIndex(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -458,7 +458,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginSeekIndex(THandle aHandle, uint
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekIndex(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekIndex(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -479,7 +479,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncTransportState(THandle aHandle, 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginTransportState(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginTransportState(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -491,7 +491,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginTransportState(THandle aHandle,
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndTransportState(THandle aHandle, ZappHandleAsync aAsync, char** aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndTransportState(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -512,7 +512,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncId(THandle aHandle, uint32_t* aV
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginId(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginId(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -524,7 +524,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginId(THandle aHandle, ZappCallbac
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndId(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndId(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -548,7 +548,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncRead(THandle aHandle, uint32_t a
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginRead(THandle aHandle, uint32_t aId, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginRead(THandle aHandle, uint32_t aId, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -561,7 +561,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginRead(THandle aHandle, uint32_t 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndRead(THandle aHandle, ZappHandleAsync aAsync, char** aUri, char** aMetadata);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndRead(THandle aHandle, OhNetHandleAsync aAsync, char** aUri, char** aMetadata);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -584,7 +584,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncReadList(THandle aHandle, const 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginReadList(THandle aHandle, const char* aIdList, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginReadList(THandle aHandle, const char* aIdList, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -596,7 +596,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginReadList(THandle aHandle, const
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndReadList(THandle aHandle, ZappHandleAsync aAsync, char** aTrackList);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndReadList(THandle aHandle, OhNetHandleAsync aAsync, char** aTrackList);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -623,7 +623,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncInsert(THandle aHandle, uint32_t
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginInsert(THandle aHandle, uint32_t aAfterId, const char* aUri, const char* aMetadata, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginInsert(THandle aHandle, uint32_t aAfterId, const char* aUri, const char* aMetadata, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -635,7 +635,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginInsert(THandle aHandle, uint32_
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndInsert(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aNewId);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndInsert(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aNewId);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -657,7 +657,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncDeleteId(THandle aHandle, uint32
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginDeleteId(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginDeleteId(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -668,7 +668,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginDeleteId(THandle aHandle, uint3
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndDeleteId(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndDeleteId(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -688,7 +688,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncDeleteAll(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginDeleteAll(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginDeleteAll(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -699,7 +699,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginDeleteAll(THandle aHandle, Zapp
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndDeleteAll(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndDeleteAll(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -720,7 +720,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncTracksMax(THandle aHandle, uint3
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginTracksMax(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginTracksMax(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -732,7 +732,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginTracksMax(THandle aHandle, Zapp
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndTracksMax(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndTracksMax(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -755,7 +755,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncIdArray(THandle aHandle, uint32_
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginIdArray(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginIdArray(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -769,7 +769,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginIdArray(THandle aHandle, ZappCa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndIdArray(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aToken, char** aArray, uint32_t* aArrayLen);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndIdArray(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aToken, char** aArray, uint32_t* aArrayLen);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -792,7 +792,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncIdArrayChanged(THandle aHandle, 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginIdArrayChanged(THandle aHandle, uint32_t aToken, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginIdArrayChanged(THandle aHandle, uint32_t aToken, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -804,7 +804,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginIdArrayChanged(THandle aHandle,
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndIdArrayChanged(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndIdArrayChanged(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -825,7 +825,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SyncProtocolInfo(THandle aHandle, ch
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginProtocolInfo(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginProtocolInfo(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -837,7 +837,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1BeginProtocolInfo(THandle aHandle, Z
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndProtocolInfo(THandle aHandle, ZappHandleAsync aAsync, char** aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndProtocolInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
 /**
  * Set a callback to be run when the TransportState state variable changes.
  *
@@ -848,7 +848,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgPlaylist1EndProtocolInfo(THandle aHandle, 
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyTransportStateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyTransportStateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Repeat state variable changes.
  *
@@ -859,7 +859,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyTransportStateChanged(THa
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyRepeatChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyRepeatChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Shuffle state variable changes.
  *
@@ -870,7 +870,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyRepeatChanged(THandle aHa
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyShuffleChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyShuffleChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Id state variable changes.
  *
@@ -881,7 +881,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyShuffleChanged(THandle aH
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyIdChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyIdChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the IdArray state variable changes.
  *
@@ -892,7 +892,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyIdChanged(THandle aHandle
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyIdArrayChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyIdArrayChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the TracksMax state variable changes.
  *
@@ -903,7 +903,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyIdArrayChanged(THandle aH
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyTracksMaxChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyTracksMaxChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ProtocolInfo state variable changes.
  *
@@ -914,7 +914,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyTracksMaxChanged(THandle 
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyProtocolInfoChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the TransportState property.

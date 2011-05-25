@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyUpnpOrgAVTransport2C : public CpProxyC
 {
@@ -644,238 +644,238 @@ CpProxyUpnpOrgAVTransport2C::CpProxyUpnpOrgAVTransport2C(CpDeviceC aDevice)
     : CpProxyC("schemas-upnp-org", "AVTransport", 2, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
     iActionSetAVTransportURI = new Action("SetAVTransportURI");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetAVTransportURI->AddInputParameter(param);
-    param = new Zapp::ParameterString("CurrentURI");
+    param = new OpenHome::Net::ParameterString("CurrentURI");
     iActionSetAVTransportURI->AddInputParameter(param);
-    param = new Zapp::ParameterString("CurrentURIMetaData");
+    param = new OpenHome::Net::ParameterString("CurrentURIMetaData");
     iActionSetAVTransportURI->AddInputParameter(param);
 
     iActionSetNextAVTransportURI = new Action("SetNextAVTransportURI");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetNextAVTransportURI->AddInputParameter(param);
-    param = new Zapp::ParameterString("NextURI");
+    param = new OpenHome::Net::ParameterString("NextURI");
     iActionSetNextAVTransportURI->AddInputParameter(param);
-    param = new Zapp::ParameterString("NextURIMetaData");
+    param = new OpenHome::Net::ParameterString("NextURIMetaData");
     iActionSetNextAVTransportURI->AddInputParameter(param);
 
     iActionGetMediaInfo = new Action("GetMediaInfo");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetMediaInfo->AddInputParameter(param);
-    param = new Zapp::ParameterUint("NrTracks", 0, 0);
+    param = new OpenHome::Net::ParameterUint("NrTracks", 0, 0);
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("MediaDuration");
+    param = new OpenHome::Net::ParameterString("MediaDuration");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("CurrentURI");
+    param = new OpenHome::Net::ParameterString("CurrentURI");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("CurrentURIMetaData");
+    param = new OpenHome::Net::ParameterString("CurrentURIMetaData");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("NextURI");
+    param = new OpenHome::Net::ParameterString("NextURI");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("NextURIMetaData");
+    param = new OpenHome::Net::ParameterString("NextURIMetaData");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("PlayMedium");
+    param = new OpenHome::Net::ParameterString("PlayMedium");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("RecordMedium");
+    param = new OpenHome::Net::ParameterString("RecordMedium");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("WriteStatus");
+    param = new OpenHome::Net::ParameterString("WriteStatus");
     iActionGetMediaInfo->AddOutputParameter(param);
 
     iActionGetMediaInfo_Ext = new Action("GetMediaInfo_Ext");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetMediaInfo_Ext->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[3];
     allowedValues[index++] = (TChar*)"NO_MEDIA";
     allowedValues[index++] = (TChar*)"TRACK_AWARE";
     allowedValues[index++] = (TChar*)"TRACK_UNAWARE";
-    param = new Zapp::ParameterString("CurrentType", allowedValues, 3);
+    param = new OpenHome::Net::ParameterString("CurrentType", allowedValues, 3);
     iActionGetMediaInfo_Ext->AddOutputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterUint("NrTracks", 0, 0);
+    param = new OpenHome::Net::ParameterUint("NrTracks", 0, 0);
     iActionGetMediaInfo_Ext->AddOutputParameter(param);
-    param = new Zapp::ParameterString("MediaDuration");
+    param = new OpenHome::Net::ParameterString("MediaDuration");
     iActionGetMediaInfo_Ext->AddOutputParameter(param);
-    param = new Zapp::ParameterString("CurrentURI");
+    param = new OpenHome::Net::ParameterString("CurrentURI");
     iActionGetMediaInfo_Ext->AddOutputParameter(param);
-    param = new Zapp::ParameterString("CurrentURIMetaData");
+    param = new OpenHome::Net::ParameterString("CurrentURIMetaData");
     iActionGetMediaInfo_Ext->AddOutputParameter(param);
-    param = new Zapp::ParameterString("NextURI");
+    param = new OpenHome::Net::ParameterString("NextURI");
     iActionGetMediaInfo_Ext->AddOutputParameter(param);
-    param = new Zapp::ParameterString("NextURIMetaData");
+    param = new OpenHome::Net::ParameterString("NextURIMetaData");
     iActionGetMediaInfo_Ext->AddOutputParameter(param);
-    param = new Zapp::ParameterString("PlayMedium");
+    param = new OpenHome::Net::ParameterString("PlayMedium");
     iActionGetMediaInfo_Ext->AddOutputParameter(param);
-    param = new Zapp::ParameterString("RecordMedium");
+    param = new OpenHome::Net::ParameterString("RecordMedium");
     iActionGetMediaInfo_Ext->AddOutputParameter(param);
-    param = new Zapp::ParameterString("WriteStatus");
+    param = new OpenHome::Net::ParameterString("WriteStatus");
     iActionGetMediaInfo_Ext->AddOutputParameter(param);
 
     iActionGetTransportInfo = new Action("GetTransportInfo");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetTransportInfo->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[2];
     allowedValues[index++] = (TChar*)"STOPPED";
     allowedValues[index++] = (TChar*)"PLAYING";
-    param = new Zapp::ParameterString("CurrentTransportState", allowedValues, 2);
+    param = new OpenHome::Net::ParameterString("CurrentTransportState", allowedValues, 2);
     iActionGetTransportInfo->AddOutputParameter(param);
     delete[] allowedValues;
     index = 0;
     allowedValues = new TChar*[2];
     allowedValues[index++] = (TChar*)"OK";
     allowedValues[index++] = (TChar*)"ERROR_OCCURRED";
-    param = new Zapp::ParameterString("CurrentTransportStatus", allowedValues, 2);
+    param = new OpenHome::Net::ParameterString("CurrentTransportStatus", allowedValues, 2);
     iActionGetTransportInfo->AddOutputParameter(param);
     delete[] allowedValues;
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"1";
-    param = new Zapp::ParameterString("CurrentSpeed", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("CurrentSpeed", allowedValues, 1);
     iActionGetTransportInfo->AddOutputParameter(param);
     delete[] allowedValues;
 
     iActionGetPositionInfo = new Action("GetPositionInfo");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetPositionInfo->AddInputParameter(param);
-    param = new Zapp::ParameterUint("Track", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("Track", 0, 0, 1);
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("TrackDuration");
+    param = new OpenHome::Net::ParameterString("TrackDuration");
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("TrackMetaData");
+    param = new OpenHome::Net::ParameterString("TrackMetaData");
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("TrackURI");
+    param = new OpenHome::Net::ParameterString("TrackURI");
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("RelTime");
+    param = new OpenHome::Net::ParameterString("RelTime");
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("AbsTime");
+    param = new OpenHome::Net::ParameterString("AbsTime");
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterInt("RelCount");
+    param = new OpenHome::Net::ParameterInt("RelCount");
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterInt("AbsCount");
+    param = new OpenHome::Net::ParameterInt("AbsCount");
     iActionGetPositionInfo->AddOutputParameter(param);
 
     iActionGetDeviceCapabilities = new Action("GetDeviceCapabilities");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetDeviceCapabilities->AddInputParameter(param);
-    param = new Zapp::ParameterString("PlayMedia");
+    param = new OpenHome::Net::ParameterString("PlayMedia");
     iActionGetDeviceCapabilities->AddOutputParameter(param);
-    param = new Zapp::ParameterString("RecMedia");
+    param = new OpenHome::Net::ParameterString("RecMedia");
     iActionGetDeviceCapabilities->AddOutputParameter(param);
-    param = new Zapp::ParameterString("RecQualityModes");
+    param = new OpenHome::Net::ParameterString("RecQualityModes");
     iActionGetDeviceCapabilities->AddOutputParameter(param);
 
     iActionGetTransportSettings = new Action("GetTransportSettings");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetTransportSettings->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"NORMAL";
-    param = new Zapp::ParameterString("PlayMode", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("PlayMode", allowedValues, 1);
     iActionGetTransportSettings->AddOutputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterString("RecQualityMode");
+    param = new OpenHome::Net::ParameterString("RecQualityMode");
     iActionGetTransportSettings->AddOutputParameter(param);
 
     iActionStop = new Action("Stop");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionStop->AddInputParameter(param);
 
     iActionPlay = new Action("Play");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionPlay->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"1";
-    param = new Zapp::ParameterString("Speed", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Speed", allowedValues, 1);
     iActionPlay->AddInputParameter(param);
     delete[] allowedValues;
 
     iActionPause = new Action("Pause");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionPause->AddInputParameter(param);
 
     iActionRecord = new Action("Record");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionRecord->AddInputParameter(param);
 
     iActionSeek = new Action("Seek");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSeek->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"TRACK_NR";
-    param = new Zapp::ParameterString("Unit", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Unit", allowedValues, 1);
     iActionSeek->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterString("Target");
+    param = new OpenHome::Net::ParameterString("Target");
     iActionSeek->AddInputParameter(param);
 
     iActionNext = new Action("Next");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionNext->AddInputParameter(param);
 
     iActionPrevious = new Action("Previous");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionPrevious->AddInputParameter(param);
 
     iActionSetPlayMode = new Action("SetPlayMode");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetPlayMode->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"NORMAL";
-    param = new Zapp::ParameterString("NewPlayMode", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("NewPlayMode", allowedValues, 1);
     iActionSetPlayMode->AddInputParameter(param);
     delete[] allowedValues;
 
     iActionSetRecordQualityMode = new Action("SetRecordQualityMode");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetRecordQualityMode->AddInputParameter(param);
-    param = new Zapp::ParameterString("NewRecordQualityMode");
+    param = new OpenHome::Net::ParameterString("NewRecordQualityMode");
     iActionSetRecordQualityMode->AddInputParameter(param);
 
     iActionGetCurrentTransportActions = new Action("GetCurrentTransportActions");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetCurrentTransportActions->AddInputParameter(param);
-    param = new Zapp::ParameterString("Actions");
+    param = new OpenHome::Net::ParameterString("Actions");
     iActionGetCurrentTransportActions->AddOutputParameter(param);
 
     iActionGetDRMState = new Action("GetDRMState");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetDRMState->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"OK";
-    param = new Zapp::ParameterString("CurrentDRMState", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("CurrentDRMState", allowedValues, 1);
     iActionGetDRMState->AddOutputParameter(param);
     delete[] allowedValues;
 
     iActionGetStateVariables = new Action("GetStateVariables");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("StateVariableList");
+    param = new OpenHome::Net::ParameterString("StateVariableList");
     iActionGetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("StateVariableValuePairs");
+    param = new OpenHome::Net::ParameterString("StateVariableValuePairs");
     iActionGetStateVariables->AddOutputParameter(param);
 
     iActionSetStateVariables = new Action("SetStateVariables");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("AVTransportUDN");
+    param = new OpenHome::Net::ParameterString("AVTransportUDN");
     iActionSetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("ServiceType");
+    param = new OpenHome::Net::ParameterString("ServiceType");
     iActionSetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("ServiceId");
+    param = new OpenHome::Net::ParameterString("ServiceId");
     iActionSetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("StateVariableValuePairs");
+    param = new OpenHome::Net::ParameterString("StateVariableValuePairs");
     iActionSetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("StateVariableList");
+    param = new OpenHome::Net::ParameterString("StateVariableList");
     iActionSetStateVariables->AddOutputParameter(param);
 
     Functor functor;
@@ -1663,17 +1663,17 @@ void CpProxyUpnpOrgAVTransport2SyncSetAVTransportURI(THandle aHandle, uint32_t a
     proxyC->SyncSetAVTransportURI(aInstanceID, buf_aCurrentURI, buf_aCurrentURIMetaData);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginSetAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginSetAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aCurrentURI(aCurrentURI);
     Brh buf_aCurrentURIMetaData(aCurrentURIMetaData);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetAVTransportURI(aInstanceID, buf_aCurrentURI, buf_aCurrentURIMetaData, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndSetAVTransportURI(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgAVTransport2EndSetAVTransportURI(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -1698,17 +1698,17 @@ void CpProxyUpnpOrgAVTransport2SyncSetNextAVTransportURI(THandle aHandle, uint32
     proxyC->SyncSetNextAVTransportURI(aInstanceID, buf_aNextURI, buf_aNextURIMetaData);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginSetNextAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginSetNextAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aNextURI(aNextURI);
     Brh buf_aNextURIMetaData(aNextURIMetaData);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetNextAVTransportURI(aInstanceID, buf_aNextURI, buf_aNextURIMetaData, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndSetNextAVTransportURI(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgAVTransport2EndSetNextAVTransportURI(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -1747,15 +1747,15 @@ void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo(THandle aHandle, uint32_t aInsta
     *aWriteStatus = buf_aWriteStatus.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetMediaInfo(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetMediaInfo(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
+int32_t CpProxyUpnpOrgAVTransport2EndGetMediaInfo(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -1820,15 +1820,15 @@ void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo_Ext(THandle aHandle, uint32_t aI
     *aWriteStatus = buf_aWriteStatus.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo_Ext(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo_Ext(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetMediaInfo_Ext(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetMediaInfo_Ext(THandle aHandle, ZappHandleAsync aAsync, char** aCurrentType, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
+int32_t CpProxyUpnpOrgAVTransport2EndGetMediaInfo_Ext(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentType, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -1884,15 +1884,15 @@ void CpProxyUpnpOrgAVTransport2SyncGetTransportInfo(THandle aHandle, uint32_t aI
     *aCurrentSpeed = buf_aCurrentSpeed.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetTransportInfo(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginGetTransportInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetTransportInfo(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetTransportInfo(THandle aHandle, ZappHandleAsync aAsync, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed)
+int32_t CpProxyUpnpOrgAVTransport2EndGetTransportInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -1934,15 +1934,15 @@ void CpProxyUpnpOrgAVTransport2SyncGetPositionInfo(THandle aHandle, uint32_t aIn
     *aAbsTime = buf_aAbsTime.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetPositionInfo(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginGetPositionInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetPositionInfo(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetPositionInfo(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount)
+int32_t CpProxyUpnpOrgAVTransport2EndGetPositionInfo(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -1986,15 +1986,15 @@ void CpProxyUpnpOrgAVTransport2SyncGetDeviceCapabilities(THandle aHandle, uint32
     *aRecQualityModes = buf_aRecQualityModes.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetDeviceCapabilities(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginGetDeviceCapabilities(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetDeviceCapabilities(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetDeviceCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes)
+int32_t CpProxyUpnpOrgAVTransport2EndGetDeviceCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2030,15 +2030,15 @@ void CpProxyUpnpOrgAVTransport2SyncGetTransportSettings(THandle aHandle, uint32_
     *aRecQualityMode = buf_aRecQualityMode.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetTransportSettings(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginGetTransportSettings(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetTransportSettings(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetTransportSettings(THandle aHandle, ZappHandleAsync aAsync, char** aPlayMode, char** aRecQualityMode)
+int32_t CpProxyUpnpOrgAVTransport2EndGetTransportSettings(THandle aHandle, OhNetHandleAsync aAsync, char** aPlayMode, char** aRecQualityMode)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2067,15 +2067,15 @@ void CpProxyUpnpOrgAVTransport2SyncStop(THandle aHandle, uint32_t aInstanceID)
     proxyC->SyncStop(aInstanceID);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginStop(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginStop(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginStop(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndStop(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgAVTransport2EndStop(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2099,16 +2099,16 @@ void CpProxyUpnpOrgAVTransport2SyncPlay(THandle aHandle, uint32_t aInstanceID, c
     proxyC->SyncPlay(aInstanceID, buf_aSpeed);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginPlay(THandle aHandle, uint32_t aInstanceID, const char* aSpeed, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginPlay(THandle aHandle, uint32_t aInstanceID, const char* aSpeed, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSpeed(aSpeed);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginPlay(aInstanceID, buf_aSpeed, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndPlay(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgAVTransport2EndPlay(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2131,15 +2131,15 @@ void CpProxyUpnpOrgAVTransport2SyncPause(THandle aHandle, uint32_t aInstanceID)
     proxyC->SyncPause(aInstanceID);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginPause(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginPause(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginPause(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndPause(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgAVTransport2EndPause(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2162,15 +2162,15 @@ void CpProxyUpnpOrgAVTransport2SyncRecord(THandle aHandle, uint32_t aInstanceID)
     proxyC->SyncRecord(aInstanceID);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginRecord(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginRecord(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginRecord(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndRecord(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgAVTransport2EndRecord(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2195,17 +2195,17 @@ void CpProxyUpnpOrgAVTransport2SyncSeek(THandle aHandle, uint32_t aInstanceID, c
     proxyC->SyncSeek(aInstanceID, buf_aUnit, buf_aTarget);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginSeek(THandle aHandle, uint32_t aInstanceID, const char* aUnit, const char* aTarget, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginSeek(THandle aHandle, uint32_t aInstanceID, const char* aUnit, const char* aTarget, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aUnit(aUnit);
     Brh buf_aTarget(aTarget);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSeek(aInstanceID, buf_aUnit, buf_aTarget, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndSeek(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgAVTransport2EndSeek(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2228,15 +2228,15 @@ void CpProxyUpnpOrgAVTransport2SyncNext(THandle aHandle, uint32_t aInstanceID)
     proxyC->SyncNext(aInstanceID);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginNext(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginNext(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginNext(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndNext(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgAVTransport2EndNext(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2259,15 +2259,15 @@ void CpProxyUpnpOrgAVTransport2SyncPrevious(THandle aHandle, uint32_t aInstanceI
     proxyC->SyncPrevious(aInstanceID);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginPrevious(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginPrevious(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginPrevious(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndPrevious(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgAVTransport2EndPrevious(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2291,16 +2291,16 @@ void CpProxyUpnpOrgAVTransport2SyncSetPlayMode(THandle aHandle, uint32_t aInstan
     proxyC->SyncSetPlayMode(aInstanceID, buf_aNewPlayMode);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginSetPlayMode(THandle aHandle, uint32_t aInstanceID, const char* aNewPlayMode, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginSetPlayMode(THandle aHandle, uint32_t aInstanceID, const char* aNewPlayMode, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aNewPlayMode(aNewPlayMode);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetPlayMode(aInstanceID, buf_aNewPlayMode, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndSetPlayMode(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgAVTransport2EndSetPlayMode(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2324,16 +2324,16 @@ void CpProxyUpnpOrgAVTransport2SyncSetRecordQualityMode(THandle aHandle, uint32_
     proxyC->SyncSetRecordQualityMode(aInstanceID, buf_aNewRecordQualityMode);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginSetRecordQualityMode(THandle aHandle, uint32_t aInstanceID, const char* aNewRecordQualityMode, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginSetRecordQualityMode(THandle aHandle, uint32_t aInstanceID, const char* aNewRecordQualityMode, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aNewRecordQualityMode(aNewRecordQualityMode);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetRecordQualityMode(aInstanceID, buf_aNewRecordQualityMode, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndSetRecordQualityMode(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgAVTransport2EndSetRecordQualityMode(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2358,15 +2358,15 @@ void CpProxyUpnpOrgAVTransport2SyncGetCurrentTransportActions(THandle aHandle, u
     *aActions = buf_aActions.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetCurrentTransportActions(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginGetCurrentTransportActions(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetCurrentTransportActions(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetCurrentTransportActions(THandle aHandle, ZappHandleAsync aAsync, char** aActions)
+int32_t CpProxyUpnpOrgAVTransport2EndGetCurrentTransportActions(THandle aHandle, OhNetHandleAsync aAsync, char** aActions)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2394,15 +2394,15 @@ void CpProxyUpnpOrgAVTransport2SyncGetDRMState(THandle aHandle, uint32_t aInstan
     *aCurrentDRMState = buf_aCurrentDRMState.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetDRMState(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginGetDRMState(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetDRMState(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetDRMState(THandle aHandle, ZappHandleAsync aAsync, char** aCurrentDRMState)
+int32_t CpProxyUpnpOrgAVTransport2EndGetDRMState(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentDRMState)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2431,16 +2431,16 @@ void CpProxyUpnpOrgAVTransport2SyncGetStateVariables(THandle aHandle, uint32_t a
     *aStateVariableValuePairs = buf_aStateVariableValuePairs.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aStateVariableList(aStateVariableList);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetStateVariables(aInstanceID, buf_aStateVariableList, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetStateVariables(THandle aHandle, ZappHandleAsync aAsync, char** aStateVariableValuePairs)
+int32_t CpProxyUpnpOrgAVTransport2EndGetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableValuePairs)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2472,7 +2472,7 @@ void CpProxyUpnpOrgAVTransport2SyncSetStateVariables(THandle aHandle, uint32_t a
     *aStateVariableList = buf_aStateVariableList.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aAVTransportUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2BeginSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aAVTransportUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2480,11 +2480,11 @@ void CpProxyUpnpOrgAVTransport2BeginSetStateVariables(THandle aHandle, uint32_t 
     Brh buf_aServiceType(aServiceType);
     Brh buf_aServiceId(aServiceId);
     Brh buf_aStateVariableValuePairs(aStateVariableValuePairs);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetStateVariables(aInstanceID, buf_aAVTransportUDN, buf_aServiceType, buf_aServiceId, buf_aStateVariableValuePairs, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndSetStateVariables(THandle aHandle, ZappHandleAsync aAsync, char** aStateVariableList)
+int32_t CpProxyUpnpOrgAVTransport2EndSetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableList)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2503,7 +2503,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndSetStateVariables(THandle aHandle, ZappHand
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SetPropertyLastChangeChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2511,7 +2511,7 @@ void CpProxyUpnpOrgAVTransport2SetPropertyLastChangeChanged(THandle aHandle, Zap
     proxyC->SetPropertyLastChangeChanged(functor);
 }
 
-void CpProxyUpnpOrgAVTransport2SetPropertyDRMStateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgAVTransport2SetPropertyDRMStateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);

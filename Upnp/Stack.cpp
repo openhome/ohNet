@@ -1,4 +1,4 @@
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Stack.h>
 #include <Standard.h>
 #include <OsWrapper.h>
@@ -10,18 +10,18 @@
 
 #include <time.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // Strings declared in MimeTypes.h
 
-const char kZappMimeTypeCss[]  = "text/css";
-const char kZappMimeTypeHtml[] = "text/html";
-const char kZappMimeTypeJs[]   = "application/x-javascript";
-const char kZappMimeTypeXml[]  = "application/xml";
-const char kZappMimeTypeBmp[]  = "image/bmp";
-const char kZappMimeTypeGif[]  = "image/gif";
-const char kZappMimeTypeJpeg[] = "image/jpeg";
-const char kZappMimeTypePng[]  = "image/png";
+const char kOhNetMimeTypeCss[]  = "text/css";
+const char kOhNetMimeTypeHtml[] = "text/html";
+const char kOhNetMimeTypeJs[]   = "application/x-javascript";
+const char kOhNetMimeTypeXml[]  = "application/xml";
+const char kOhNetMimeTypeBmp[]  = "image/bmp";
+const char kOhNetMimeTypeGif[]  = "image/gif";
+const char kOhNetMimeTypeJpeg[] = "image/jpeg";
+const char kOhNetMimeTypePng[]  = "image/png";
 
 
 // Stack
@@ -32,20 +32,37 @@ Stack* gStack = NULL;
 static const TUint kVersionMajor = 1;
 static const TUint kVersionMinor = 0;
 
-Stack::Stack(InitialisationParams* aInitParams)
-    : iInitParams(aInitParams)
-    , iLock("GMUT")
+Stack::Stack()
+    : iInitParams(NULL)
+    , iTimerManager(NULL)
+    , iPublicLock("GMUT")
+    , iNetworkInterfaceList(NULL)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
-    , iMapLock("SOML")
+    , iPrivateLock("SOML")
+{
+    ASSERT(gStackInitCount == 0);
+    gStack = this;
+    gStackInitCount++;
+}
+
+Stack::Stack(InitialisationParams* aInitParams)
+    : iInitParams(aInitParams)
+    , iPublicLock("GMUT")
+    , iNetworkInterfaceList(NULL)
+    , iSequenceNumber(0)
+    , iCpStack(NULL)
+    , iDvStack(NULL)
+    , iPrivateLock("SOML")
 {
     SetAssertHandler(AssertHandlerDefault);
     ASSERT(gStackInitCount == 0);
     gStack = this;
     gStackInitCount++;
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
-    iNetworkInterfaceList = new Zapp::NetworkInterfaceList(iInitParams->DefaultSubnet());
+    iTimerManager = new OpenHome::Net::TimerManager();
+    iNetworkInterfaceList = new OpenHome::Net::NetworkInterfaceList(iInitParams->DefaultSubnet());
     Functor& subnetChangeListener = iInitParams->SubnetChangedListener();
     if (subnetChangeListener) {
         iNetworkInterfaceList->AddSubnetChangeListener(subnetChangeListener);
@@ -61,10 +78,12 @@ Stack::~Stack()
 {
     ASSERT(gStackInitCount == 1);
     gStackInitCount = 0;
-    iLock.Wait();
+    iPublicLock.Wait();
     ASSERT(iMulticastListeners.size() == 0);
-    iLock.Signal();
-    iTimerManager.Stop();
+    iPublicLock.Signal();
+    if (iTimerManager != NULL) {
+        iTimerManager->Stop();
+    }
     delete iCpStack;
     delete iDvStack;
     delete iNetworkInterfaceList;
@@ -89,14 +108,14 @@ void Stack::GetVersion(TUint& aMajor, TUint& aMinor)
 	aMinor = kVersionMinor;
 }
 
-Zapp::TimerManager& Stack::TimerManager()
+OpenHome::Net::TimerManager& Stack::TimerManager()
 {
-    return gStack->iTimerManager;
+    return *(gStack->iTimerManager);
 }
 
-Zapp::Mutex& Stack::Mutex()
+OpenHome::Net::Mutex& Stack::Mutex()
 {
-    return gStack->iLock;
+    return gStack->iPublicLock;
 }
 
 NetworkInterfaceList& Stack::NetworkInterfaceList()
@@ -106,7 +125,7 @@ NetworkInterfaceList& Stack::NetworkInterfaceList()
 
 SsdpListenerMulticast& Stack::MulticastListenerClaim(TIpAddress aInterface)
 {
-    AutoMutex a(gStack->iLock);
+    AutoMutex a(gStack->iPrivateLock);
     const TInt count = (TUint)gStack->iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
         Stack::MListener* listener = gStack->iMulticastListeners[i];
@@ -124,7 +143,7 @@ SsdpListenerMulticast& Stack::MulticastListenerClaim(TIpAddress aInterface)
 
 void Stack::MulticastListenerRelease(TIpAddress aInterface)
 {
-    gStack->iLock.Wait();
+    gStack->iPrivateLock.Wait();
     const TInt count = (TUint)gStack->iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
         Stack::MListener* listener = gStack->iMulticastListeners[i];
@@ -136,13 +155,13 @@ void Stack::MulticastListenerRelease(TIpAddress aInterface)
             }
         }
     }
-    gStack->iLock.Signal();
+    gStack->iPrivateLock.Signal();
 }
 
 TUint Stack::SequenceNumber()
 {
     TUint seq;
-    Zapp::Mutex& lock = Stack::Mutex();
+    OpenHome::Net::Mutex& lock = Stack::Mutex();
     lock.Wait();
     seq = gStack->iSequenceNumber++;
     lock.Signal();
@@ -177,7 +196,7 @@ void Stack::ListObjects()
 
 void Stack::DoAddObject(void* aPtr, const char* aClassName)
 {
-    iMapLock.Wait();
+    iPrivateLock.Wait();
     Brn key(aClassName);
     ObjectType* map = NULL;
     ObjectTypeMap::iterator it = iObjectMap.find(key);
@@ -192,12 +211,12 @@ void Stack::DoAddObject(void* aPtr, const char* aClassName)
         iObjectMap.insert(std::pair<Brn,ObjectType*>(key, o));
     }
     map->Map().insert(std::pair<void*,void*>(aPtr, aPtr));
-    iMapLock.Signal();
+    iPrivateLock.Signal();
 }
 
 void Stack::DoRemoveObject(void* aPtr, const char* aClassName)
 {
-    iMapLock.Wait();
+    iPrivateLock.Wait();
     Brn key(aClassName);
     ObjectTypeMap::iterator it = iObjectMap.find(key);
     if (it != iObjectMap.end()) {
@@ -211,12 +230,12 @@ void Stack::DoRemoveObject(void* aPtr, const char* aClassName)
             }
         }
     }
-    iMapLock.Signal();
+    iPrivateLock.Signal();
 }
 
 void Stack::DoListObjects()
 {
-    iMapLock.Wait();
+    iPrivateLock.Wait();
     ObjectTypeMap::iterator it = iObjectMap.begin();
     while (it != iObjectMap.end()) {
         Log::Print("  ");
@@ -231,7 +250,7 @@ void Stack::DoListObjects()
         }
         it++;
     }
-    iMapLock.Signal();
+    iPrivateLock.Signal();
 }
 
 void Stack::SetCpiStack(IStack* aStack)

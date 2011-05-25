@@ -3,7 +3,8 @@
 
 #include <C/DvDevice.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class DeviceBasicC
 {
@@ -16,6 +17,7 @@ private:
     THandle iTestBasic;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_TESTBASICDVC

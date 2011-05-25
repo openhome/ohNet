@@ -8,7 +8,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
 
-namespace Zapp.Xml.UpnpServiceXml
+namespace OpenHome.Net.Xml.UpnpServiceXml
 {
     public class Service
     {

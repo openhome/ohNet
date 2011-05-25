@@ -7,7 +7,7 @@
 #ifndef HEADER_DVI_STACK
 #define HEADER_DVI_STACK
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Stack.h>
 #include <DviServerUpnp.h>
 #include <DviDevice.h>
@@ -18,7 +18,8 @@
 
 #include <vector>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class DviStack : private IStack
 {
@@ -44,6 +45,7 @@ private:
     IMdnsProvider* iMdns;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVI_STACK

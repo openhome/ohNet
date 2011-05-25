@@ -6,7 +6,8 @@
 
 EXCEPTION(QueueEmpty);
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 // Derive a queueable class T from QueueEntry<T>
 //
@@ -129,6 +130,7 @@ protected:
     T& Entry(QueueSortedEntry& aEntry) { return ((T&)aEntry); }
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_QUEUE

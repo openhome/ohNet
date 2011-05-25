@@ -1,9 +1,9 @@
 #include <TestFramework.h>
 #include <OptionParser.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvDevice.h>
-#include <Core/DvZappOrgTestLights1.h>
-#include <Zapp.h>
+#include <Core/DvOpenhomeOrgTestLights1.h>
+#include <OhNet.h>
 #include <Ascii.h>
 #include <Maths.h>
 #include <Stack.h>
@@ -12,8 +12,8 @@
 #include <vector>
 #include <sys/stat.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 #define MAKE_COLOR(r,g,b,a) (TUint)(a<<24 | r<<16 | g<<8 | b)
 
@@ -48,7 +48,7 @@ Light::Light(const TChar* aRoom, const TChar* aName, TUint aPosX, TUint aPosY, T
 }
 
 
-class ProviderLights : public DvProviderZappOrgTestLights1
+class ProviderLights : public DvProviderOpenhomeOrgTestLights1
 {
 public:
     ProviderLights(DvDevice& aDevice, TUint aMode);
@@ -84,7 +84,7 @@ private:
 
 
 ProviderLights::ProviderLights(DvDevice& aDevice, TUint aMode)
-    : DvProviderZappOrgTestLights1(aDevice)
+    : DvProviderOpenhomeOrgTestLights1(aDevice)
 {
     EnableActionGetCount();
     EnableActionGetRoom();
@@ -237,12 +237,12 @@ DeviceLights::DeviceLights(TUint aMode, const Brx& aConfigDir)
 {
     RandomiseUdn(gDeviceName);
     iDevice = new DvDeviceStandard(gDeviceName, *this);
-    iDevice->SetAttribute("Upnp.Domain", "zapp.org");
+    iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "TestLights");
     iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", "__Zapp Lights");
+    iDevice->SetAttribute("Upnp.FriendlyName", "ohNet Lights");
     iDevice->SetAttribute("Upnp.Manufacturer", "None");
-    iDevice->SetAttribute("Upnp.ModelName", "Zapp Lights v1");
+    iDevice->SetAttribute("Upnp.ModelName", "ohNet Lights v1");
     iLights = new ProviderLights(*iDevice, aMode);
     iDevice->SetEnabled();
 }
@@ -291,16 +291,16 @@ void DeviceLights::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/,
             break;
         }
         if (filePath[i] == '.') {
-            static const char* mimeMappings[][2] = {{"html", kZappMimeTypeHtml}
-                                                   ,{"htm",  kZappMimeTypeHtml}
-                                                   ,{"jpg",  kZappMimeTypeJpeg}
-                                                   ,{"jpeg", kZappMimeTypeJpeg}
-                                                   ,{"gif",  kZappMimeTypeGif}
-                                                   ,{"png",  kZappMimeTypePng}
-                                                   ,{"bmp",  kZappMimeTypeBmp}
-                                                   ,{"xml",  kZappMimeTypeXml}
-                                                   ,{"js",   kZappMimeTypeJs}
-                                                   ,{"css",  kZappMimeTypeCss}
+            static const char* mimeMappings[][2] = {{"html", kOhNetMimeTypeHtml}
+                                                   ,{"htm",  kOhNetMimeTypeHtml}
+                                                   ,{"jpg",  kOhNetMimeTypeJpeg}
+                                                   ,{"jpeg", kOhNetMimeTypeJpeg}
+                                                   ,{"gif",  kOhNetMimeTypeGif}
+                                                   ,{"png",  kOhNetMimeTypePng}
+                                                   ,{"bmp",  kOhNetMimeTypeBmp}
+                                                   ,{"xml",  kOhNetMimeTypeXml}
+                                                   ,{"js",   kOhNetMimeTypeJs}
+                                                   ,{"css",  kOhNetMimeTypeCss}
                                                    ,{NULL ,  NULL}};
             const char* ext = (const char*)filePath.Split(i+1, filePath.Bytes()-i-1).Ptr();
             TUint index = 0;
@@ -329,7 +329,7 @@ void DeviceLights::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/,
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionUint mode("-m", "--mode", 1, "[1..3] select from list of hard-coded lighting systems");

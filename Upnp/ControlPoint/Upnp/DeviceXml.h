@@ -5,10 +5,11 @@
 #ifndef HEADER_DEVICE_XML
 #define HEADER_DEVICE_XML
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class DeviceXml
 {
@@ -35,6 +36,7 @@ private:
 	DeviceXml* iRoot;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DEVICE_XML

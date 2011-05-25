@@ -3,7 +3,7 @@
 #include <Core/DvDevice.h>
 #include <CpiDeviceDv.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 CpDeviceC CpDeviceDvCreate(DvDeviceC aDevice)
 {

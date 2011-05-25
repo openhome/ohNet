@@ -1,6 +1,6 @@
 #include <DviServerWebSocket.h>
 #include <Network.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Stream.h>
 #include <Http.h>
 #include <Printer.h>
@@ -13,7 +13,7 @@
 #include <Fifo.h>
 #include <Debug.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 #define WS_76_HANDSHAKE
 #undef  WS_DRAFT03_READ

@@ -1,10 +1,10 @@
 #include "DvUpnpOrgRenderingControl2.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <DviService.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 bool DvProviderUpnpOrgRenderingControl2Cpp::SetPropertyLastChange(const std::string& aValue)
 {
@@ -28,7 +28,7 @@ DvProviderUpnpOrgRenderingControl2Cpp::DvProviderUpnpOrgRenderingControl2Cpp(DvD
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionListPresets()
 {
-    Zapp::Action* action = new Zapp::Action("ListPresets");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ListPresets");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterString("CurrentPresetNameList"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoListPresets);
@@ -37,7 +37,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionListPresets()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSelectPreset()
 {
-    Zapp::Action* action = new Zapp::Action("SelectPreset");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SelectPreset");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -52,7 +52,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSelectPreset()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetBrightness()
 {
-    Zapp::Action* action = new Zapp::Action("GetBrightness");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetBrightness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentBrightness", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetBrightness);
@@ -61,7 +61,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetBrightness()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetBrightness()
 {
-    Zapp::Action* action = new Zapp::Action("SetBrightness");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetBrightness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredBrightness", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetBrightness);
@@ -70,7 +70,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetBrightness()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetContrast()
 {
-    Zapp::Action* action = new Zapp::Action("GetContrast");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetContrast");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentContrast", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetContrast);
@@ -79,7 +79,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetContrast()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetContrast()
 {
-    Zapp::Action* action = new Zapp::Action("SetContrast");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetContrast");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredContrast", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetContrast);
@@ -88,7 +88,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetContrast()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetSharpness()
 {
-    Zapp::Action* action = new Zapp::Action("GetSharpness");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetSharpness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentSharpness", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetSharpness);
@@ -97,7 +97,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetSharpness()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetSharpness()
 {
-    Zapp::Action* action = new Zapp::Action("SetSharpness");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetSharpness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredSharpness", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetSharpness);
@@ -106,7 +106,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetSharpness()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetRedVideoGain()
 {
-    Zapp::Action* action = new Zapp::Action("GetRedVideoGain");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRedVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentRedVideoGain", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoGain);
@@ -115,7 +115,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetRedVideoGain()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetRedVideoGain()
 {
-    Zapp::Action* action = new Zapp::Action("SetRedVideoGain");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetRedVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredRedVideoGain", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoGain);
@@ -124,7 +124,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetRedVideoGain()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetGreenVideoGain()
 {
-    Zapp::Action* action = new Zapp::Action("GetGreenVideoGain");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetGreenVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentGreenVideoGain", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoGain);
@@ -133,7 +133,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetGreenVideoGain()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetGreenVideoGain()
 {
-    Zapp::Action* action = new Zapp::Action("SetGreenVideoGain");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetGreenVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredGreenVideoGain", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoGain);
@@ -142,7 +142,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetGreenVideoGain()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetBlueVideoGain()
 {
-    Zapp::Action* action = new Zapp::Action("GetBlueVideoGain");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetBlueVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentBlueVideoGain", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoGain);
@@ -151,7 +151,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetBlueVideoGain()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetBlueVideoGain()
 {
-    Zapp::Action* action = new Zapp::Action("SetBlueVideoGain");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetBlueVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredBlueVideoGain", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoGain);
@@ -160,7 +160,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetBlueVideoGain()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetRedVideoBlackLevel()
 {
-    Zapp::Action* action = new Zapp::Action("GetRedVideoBlackLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetRedVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoBlackLevel);
@@ -169,7 +169,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetRedVideoBlackLevel()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetRedVideoBlackLevel()
 {
-    Zapp::Action* action = new Zapp::Action("SetRedVideoBlackLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetRedVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoBlackLevel);
@@ -178,7 +178,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetRedVideoBlackLevel()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetGreenVideoBlackLevel()
 {
-    Zapp::Action* action = new Zapp::Action("GetGreenVideoBlackLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetGreenVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoBlackLevel);
@@ -187,7 +187,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetGreenVideoBlackLevel(
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetGreenVideoBlackLevel()
 {
-    Zapp::Action* action = new Zapp::Action("SetGreenVideoBlackLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetGreenVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoBlackLevel);
@@ -196,7 +196,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetGreenVideoBlackLevel(
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetBlueVideoBlackLevel()
 {
-    Zapp::Action* action = new Zapp::Action("GetBlueVideoBlackLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetBlueVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoBlackLevel);
@@ -205,7 +205,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetBlueVideoBlackLevel()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetBlueVideoBlackLevel()
 {
-    Zapp::Action* action = new Zapp::Action("SetBlueVideoBlackLevel");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetBlueVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoBlackLevel);
@@ -214,7 +214,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetBlueVideoBlackLevel()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetColorTemperature()
 {
-    Zapp::Action* action = new Zapp::Action("GetColorTemperature");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetColorTemperature");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentColorTemperature", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetColorTemperature);
@@ -223,7 +223,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetColorTemperature()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetColorTemperature()
 {
-    Zapp::Action* action = new Zapp::Action("SetColorTemperature");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetColorTemperature");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredColorTemperature", 0, 0, 1));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetColorTemperature);
@@ -232,7 +232,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetColorTemperature()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetHorizontalKeystone()
 {
-    Zapp::Action* action = new Zapp::Action("GetHorizontalKeystone");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetHorizontalKeystone");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterInt("CurrentHorizontalKeystone"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetHorizontalKeystone);
@@ -241,7 +241,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetHorizontalKeystone()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetHorizontalKeystone()
 {
-    Zapp::Action* action = new Zapp::Action("SetHorizontalKeystone");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetHorizontalKeystone");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterInt("DesiredHorizontalKeystone"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetHorizontalKeystone);
@@ -250,7 +250,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetHorizontalKeystone()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVerticalKeystone()
 {
-    Zapp::Action* action = new Zapp::Action("GetVerticalKeystone");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetVerticalKeystone");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterInt("CurrentVerticalKeystone"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetVerticalKeystone);
@@ -259,7 +259,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVerticalKeystone()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVerticalKeystone()
 {
-    Zapp::Action* action = new Zapp::Action("SetVerticalKeystone");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetVerticalKeystone");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterInt("DesiredVerticalKeystone"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetVerticalKeystone);
@@ -268,7 +268,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVerticalKeystone()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetMute()
 {
-    Zapp::Action* action = new Zapp::Action("GetMute");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetMute");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -284,7 +284,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetMute()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetMute()
 {
-    Zapp::Action* action = new Zapp::Action("SetMute");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetMute");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -300,7 +300,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetMute()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolume()
 {
-    Zapp::Action* action = new Zapp::Action("GetVolume");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetVolume");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -316,7 +316,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolume()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVolume()
 {
-    Zapp::Action* action = new Zapp::Action("SetVolume");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetVolume");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -332,7 +332,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVolume()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDB()
 {
-    Zapp::Action* action = new Zapp::Action("GetVolumeDB");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetVolumeDB");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -348,7 +348,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDB()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVolumeDB()
 {
-    Zapp::Action* action = new Zapp::Action("SetVolumeDB");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetVolumeDB");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -364,7 +364,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVolumeDB()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDBRange()
 {
-    Zapp::Action* action = new Zapp::Action("GetVolumeDBRange");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetVolumeDBRange");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -381,7 +381,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDBRange()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetLoudness()
 {
-    Zapp::Action* action = new Zapp::Action("GetLoudness");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetLoudness");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -397,7 +397,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetLoudness()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetLoudness()
 {
-    Zapp::Action* action = new Zapp::Action("SetLoudness");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetLoudness");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -413,7 +413,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetLoudness()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetStateVariables()
 {
-    Zapp::Action* action = new Zapp::Action("GetStateVariables");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetStateVariables");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("StateVariableList"));
     action->AddOutputParameter(new ParameterString("StateVariableValuePairs"));
@@ -423,7 +423,7 @@ void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetStateVariables()
 
 void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetStateVariables()
 {
-    Zapp::Action* action = new Zapp::Action("SetStateVariables");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetStateVariables");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("RenderingControlUDN"));
     action->AddInputParameter(new ParameterString("ServiceType"));

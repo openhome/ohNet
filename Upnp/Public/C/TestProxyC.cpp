@@ -3,13 +3,13 @@
    ...but C versions of all APIs being tested are used
 */
 
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 #include <C/CpDevice.h>
 #include <C/CpDeviceUpnp.h>
 #include <C/CpUpnpOrgConnectionManager1.h>
 #include <C/CpProxy.h>
 #include <C/Async.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <TestFramework.h>
 #include <OsWrapper.h>
 #include <Thread.h>
@@ -19,8 +19,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 const TUint kDevicePollMs = 1000;
 static TUint gActionCount = 0;
@@ -38,7 +38,7 @@ public:
     TUint Count() const;
     void Added(CpDeviceC aDevice);
     void Removed(CpDeviceC aDevice);
-    void GetProtocolInfoComplete(ZappHandleAsync aAsync);
+    void GetProtocolInfoComplete(OhNetHandleAsync aAsync);
 private:
     void TimerExpired();
 private:
@@ -64,7 +64,7 @@ void removed(void* aPtr, CpDeviceC aDevice)
     reinterpret_cast<DeviceList*>(aPtr)->Removed(aDevice);
 }
 
-void getProtocolInfoComplete(void* aPtr, ZappHandleAsync aAsync)
+void getProtocolInfoComplete(void* aPtr, OhNetHandleAsync aAsync)
 {
     reinterpret_cast<DeviceList*>(aPtr)->GetProtocolInfoComplete(aAsync);
 }
@@ -202,7 +202,7 @@ void DeviceList::TimerExpired()
     iPollStop.Signal();
 }
 
-void DeviceList::GetProtocolInfoComplete(ZappHandleAsync aAsync)
+void DeviceList::GetProtocolInfoComplete(OhNetHandleAsync aAsync)
 {
     if (Os::TimeInMs() >= iStopTimeMs) {
         return;
@@ -234,17 +234,17 @@ void DeviceList::GetProtocolInfoComplete(ZappHandleAsync aAsync)
 }
 
 
-extern "C" void ZappTestRunner(ZappHandleInitParams aInitParams)
+extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
 {
-    ZappLibraryInitialise(aInitParams);
-    ZappLibraryStartCp();
+    OhNetLibraryInitialise(aInitParams);
+    OhNetLibraryStartCp();
 //    Debug::SetLevel(Debug::kService);
 
     DeviceList* deviceList = new DeviceList;
     HandleCpDeviceList dlh = CpDeviceListCreateUpnpServiceType("upnp.org", "ConnectionManager", 1,
                                                                added, deviceList, removed, deviceList);
     Blocker* blocker = new Blocker;
-    blocker->Wait(ZappInitParamsMsearchTimeSecs(aInitParams));
+    blocker->Wait(OhNetInitParamsMsearchTimeSecs(aInitParams));
     delete blocker;
     deviceList->Stop();
 
@@ -265,5 +265,5 @@ extern "C" void ZappTestRunner(ZappHandleInitParams aInitParams)
     CpDeviceListDestroy(dlh);
     delete deviceList;
 
-    ZappLibraryClose();
+    OhNetLibraryClose();
 }

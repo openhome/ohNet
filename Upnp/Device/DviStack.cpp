@@ -8,7 +8,7 @@
 #include <Bonjour.h>
 #include <MdnsProvider.h> // replace this to allow clients to set an alternative Bonjour implementation
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // DviStack
 
@@ -24,7 +24,7 @@ DviStack::DviStack()
     iSubscriptionManager = new DviSubscriptionManager;
     iDviServerWebSocket = new DviServerWebSocket;
     if (Stack::InitParams().DvIsBonjourEnabled()) {
-        iMdns = new Zapp::MdnsProvider(""); // replace this to allow clients to set an alternative Bonjour implementation
+        iMdns = new OpenHome::Net::MdnsProvider(""); // replace this to allow clients to set an alternative Bonjour implementation
     }
 }
 
@@ -39,7 +39,7 @@ DviStack::~DviStack()
 
 TUint DviStack::BootId()
 {
-    Zapp::Mutex& lock = Stack::Mutex();
+    OpenHome::Net::Mutex& lock = Stack::Mutex();
     lock.Wait();
     DviStack* self = DviStack::Self();
     TUint id = self->iBootId;
@@ -49,7 +49,7 @@ TUint DviStack::BootId()
 
 TUint DviStack::NextBootId()
 {
-    Zapp::Mutex& lock = Stack::Mutex();
+    OpenHome::Net::Mutex& lock = Stack::Mutex();
     lock.Wait();
     DviStack* self = DviStack::Self();
     TUint id = self->iNextBootId;
@@ -59,7 +59,7 @@ TUint DviStack::NextBootId()
 
 void DviStack::UpdateBootId()
 {
-    Zapp::Mutex& lock = Stack::Mutex();
+    OpenHome::Net::Mutex& lock = Stack::Mutex();
     lock.Wait();
     DviStack* self = DviStack::Self();
     self->iBootId = self->iNextBootId;

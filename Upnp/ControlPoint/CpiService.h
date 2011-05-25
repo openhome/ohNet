@@ -10,7 +10,7 @@
 #ifndef HEADER_CPISERVICE
 #define HEADER_CPISERVICE
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Service.h>
 #include <CpiDevice.h>
@@ -24,7 +24,8 @@
 #include <vector>
 #include <map>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class Invocation;
 class CpiSubscription;
@@ -38,7 +39,7 @@ class IEventProcessor;
  * of the service will also own a device reference and will ensure that the service
  * is destroyed before the device reference is released.
  */
-class DllExportClass CpiService : public Zapp::Service
+class DllExportClass CpiService : public OpenHome::Net::Service
 {
 public:
     DllExport CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion, CpiDevice& aDevice);
@@ -63,7 +64,7 @@ public:
      * may need to be copied/transferred.  Once Invoke() is called on the invocation
      * the callback is guaranteed to be called.
      */
-    DllExport Zapp::Invocation* Invocation(const Action& aAction, FunctorAsync& aFunctor);
+    DllExport OpenHome::Net::Invocation* Invocation(const Action& aAction, FunctorAsync& aFunctor);
 
     /**
      * Subscribe to updates on properties for this Service
@@ -142,12 +143,12 @@ public:
     virtual ~Argument();
     virtual void ProcessInput(IInputArgumentProcessor& aProcessor) = 0;
     virtual void ProcessOutput(IOutputProcessor& aProcessor, const Brx& aBuffer) = 0;
-    const Zapp::Parameter& Parameter() const;
+    const OpenHome::Net::Parameter& Parameter() const;
 protected:
-    Argument(const Zapp::Parameter& aParameter);
-    void ValidationFailed(const Zapp::Parameter& aParameter);
+    Argument(const OpenHome::Net::Parameter& aParameter);
+    void ValidationFailed(const OpenHome::Net::Parameter& aParameter);
 protected:
-    const Zapp::Parameter& iParameter;
+    const OpenHome::Net::Parameter& iParameter;
 };
 
 /**
@@ -156,8 +157,8 @@ protected:
 class DllExportClass ArgumentString : public Argument
 {
 public:
-    DllExport ArgumentString(const Zapp::Parameter& aParameter); // for output params
-    DllExport ArgumentString(const Zapp::Parameter& aParameter, const Brx& aValue); // for input params
+    DllExport ArgumentString(const OpenHome::Net::Parameter& aParameter); // for output params
+    DllExport ArgumentString(const OpenHome::Net::Parameter& aParameter, const Brx& aValue); // for input params
     DllExport ~ArgumentString();
     DllExport const Brx& Value() const;
     DllExport void TransferTo(Brh& aBrh);
@@ -173,8 +174,8 @@ private:
 class DllExportClass ArgumentInt : public Argument
 {
 public:
-    DllExport ArgumentInt(const Zapp::Parameter& aParameter);
-    DllExport ArgumentInt(const Zapp::Parameter& aParameter, TInt aValue);
+    DllExport ArgumentInt(const OpenHome::Net::Parameter& aParameter);
+    DllExport ArgumentInt(const OpenHome::Net::Parameter& aParameter, TInt aValue);
     DllExport ~ArgumentInt();
     DllExport TInt Value() const;
     void ProcessInput(IInputArgumentProcessor& aProcessor);
@@ -189,8 +190,8 @@ private:
 class DllExportClass ArgumentUint : public Argument
 {
 public:
-    DllExport ArgumentUint(const Zapp::Parameter& aParameter);
-    DllExport ArgumentUint(const Zapp::Parameter& aParameter, TUint aValue);
+    DllExport ArgumentUint(const OpenHome::Net::Parameter& aParameter);
+    DllExport ArgumentUint(const OpenHome::Net::Parameter& aParameter, TUint aValue);
     DllExport ~ArgumentUint();
     DllExport TUint Value() const;
     void ProcessInput(IInputArgumentProcessor& aProcessor);
@@ -205,8 +206,8 @@ private:
 class DllExportClass ArgumentBool : public Argument
 {
 public:
-    DllExport ArgumentBool(const Zapp::Parameter& aParameter);
-    DllExport ArgumentBool(const Zapp::Parameter& aParameter, TBool aValue);
+    DllExport ArgumentBool(const OpenHome::Net::Parameter& aParameter);
+    DllExport ArgumentBool(const OpenHome::Net::Parameter& aParameter, TBool aValue);
     DllExport ~ArgumentBool();
     DllExport TBool Value() const;
     void ProcessInput(IInputArgumentProcessor& aProcessor);
@@ -221,8 +222,8 @@ private:
 class DllExportClass ArgumentBinary : public Argument
 {
 public:
-    DllExport ArgumentBinary(const Zapp::Parameter& aParameter);
-    DllExport ArgumentBinary(const Zapp::Parameter& aParameter, const Brx& aValue);
+    DllExport ArgumentBinary(const OpenHome::Net::Parameter& aParameter);
+    DllExport ArgumentBinary(const OpenHome::Net::Parameter& aParameter, const Brx& aValue);
     DllExport ~ArgumentBinary();
     DllExport const Brx& Value() const;
     DllExport void TransferTo(Brh& aBrh);
@@ -293,7 +294,7 @@ public:
     /**
      * Intended for internal use only
      */
-    void Set(CpiService& aService, const Zapp::Action& aAction, CpiDevice& aDevice, FunctorAsync& aFunctor);
+    void Set(CpiService& aService, const OpenHome::Net::Action& aAction, CpiDevice& aDevice, FunctorAsync& aFunctor);
 
     /**
      * Add an input argument, passing ownership of aArgument
@@ -328,8 +329,8 @@ public:
      */
     void Interrupt(const Service& aService);
 
-    const Zapp::ServiceType& ServiceType() const;
-    DllExport const Zapp::Action& Action() const;
+    const OpenHome::Net::ServiceType& ServiceType() const;
+    DllExport const OpenHome::Net::Action& Action() const;
     CpiDevice& Device();
 
     /**
@@ -355,7 +356,7 @@ public:
     void SetInvoker(IInvocable& aInvocable);
     IInvocable& Invoker();
 private:
-    Invocation(Fifo<Zapp::Invocation*>& aFree);
+    Invocation(Fifo<OpenHome::Net::Invocation*>& aFree);
     Invocation& operator=(const Invocation& aInvocation);
     ~Invocation();
     void Clear();
@@ -363,13 +364,13 @@ private:
     virtual TUint Type() const;
 private:
     Mutex iLock;
-    Fifo<Zapp::Invocation*>& iFree;
+    Fifo<OpenHome::Net::Invocation*>& iFree;
     CpiService* iService;
-    const Zapp::Action* iAction;
+    const OpenHome::Net::Action* iAction;
     CpiDevice* iDevice;
     FunctorAsync iFunctor;
     TUint iSequenceNumber;
-    Zapp::Error iError;
+    OpenHome::Net::Error iError;
     TBool iCompleted;
     VectorArguments iInput;
     VectorArguments iOutput;
@@ -416,16 +417,16 @@ class InvocationManager : public Thread
 public:
     InvocationManager();
     ~InvocationManager();
-    static void Invoke(Zapp::Invocation* aInvocation);
+    static void Invoke(OpenHome::Net::Invocation* aInvocation);
     static void Interrupt(const Service& aService);
 private:
-    static Zapp::Invocation* Invocation();
+    static OpenHome::Net::Invocation* Invocation();
     static InvocationManager& Self();
     void Run();
 private:
     Mutex iLock;
-    Fifo<Zapp::Invocation*> iFreeInvocations;
-    Fifo<Zapp::Invocation*> iWaitingInvocations;
+    Fifo<OpenHome::Net::Invocation*> iFreeInvocations;
+    Fifo<OpenHome::Net::Invocation*> iWaitingInvocations;
     Fifo<Invoker*> iFreeInvokers;
     Invoker** iInvokers;
     TBool iActive;
@@ -433,6 +434,7 @@ private:
     friend class CpiService;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_CPISERVICE

@@ -5,13 +5,25 @@ import time
 import shutil
 import signal
 
-def build(aTarget):
-    buildCmd = 'make -s '
+def objPath():
+    plat = 'Posix'
     if os.name == 'nt':
-        buildCmd = 'nmake -s -f Zapp.mak '
+        plat = 'Windows'
+    variant = 'Debug'
+    if gReleaseBuild == 1:
+        variant = 'Release'
+    path = os.path.join('Build', 'Obj', plat, variant)
+    return path
+
+def build(aTarget):
+    buildCmd = 'make '
+    if os.name == 'nt':
+        buildCmd = 'nmake -s -f OhNet.mak '
     buildCmd += aTarget
     if os.environ.has_key('CS_PLATFORM'):
         buildCmd += ' csplatform=' + os.environ['CS_PLATFORM']
+    if gReleaseBuild == 1:
+        buildCmd += ' release=1'
     ret = os.system(buildCmd)
     if (0 != ret):
         print '\nBuild for ' + aTarget + ' failed, aborting'
@@ -21,13 +33,11 @@ def runBuilds():
     if gIncremental == 0:
         cleanCmd = ''
         if os.name == 'nt':
-            cleanCmd = 'nmake /s /f Zapp.mak clean'
+            cleanCmd = 'nmake /s /f OhNet.mak clean'
         else:
             cleanCmd = 'make clean'
         os.system(cleanCmd)
-    targets = ['Tests', 'Zapp', 'proxies', 'DvDeviceDlls', 'CpProxyDotNetAssemblies', 'DvDeviceDotNetAssemblies']
-    for target in targets:
-        build(target)
+    build('all')
     print '\nBuilds complete'
 
 def runTests():
@@ -80,6 +90,36 @@ def runTestsValgrind():
             print '\t' + fail
         sys.exit(-1)
 
+def runTestsHelgrind():
+    # clear any old output files
+    outputDir = 'hgout'
+    if os.path.exists(outputDir):
+        shutil.rmtree(outputDir)
+    os.mkdir(outputDir)
+    failed = []
+    testsToRun = [test for test in gAllTests if test.quick and test.native]
+    if gFullTests == 1:
+        testsToRun = [test for test in gAllTests if test.native]
+    os.system('export GLIBCXX_FORCE_NEW')
+    for test in testsToRun:
+        print '\nTest: ' + test.name
+        cmdLine = []
+        cmdLine.append('valgrind')
+        cmdLine.append('--tool=helgrind')
+        cmdLine.append('--xml=yes')
+        cmdLine.append('--xml-file=' + os.path.join(outputDir, test.name) + '.xml')
+        cmdLine.append(test.Path())
+        for arg in test.args:
+            cmdLine.append(arg)
+        ret = subprocess.call(cmdLine)
+        if ret != 0:
+            failed.append(test.name)
+    if len(failed) > 0:
+        print '\nERROR, the following tests failed:'
+        for fail in failed:
+            print '\t' + fail
+        sys.exit(-1)
+
 gStartTime = time.strftime('%H:%M:%S')
 gBuildsCompleteTime = ''
 gBuildOnly = 0
@@ -89,7 +129,9 @@ gNativeTestsOnly = 0
 gSilent = 0
 gTestsOnly = 0
 gValgrind = 0
+gHelgrind = 0
 gJsTests = 0
+gReleaseBuild = 0
 for arg in sys.argv[1:]:
     if arg == '-b' or arg == '--buildonly':
         gBuildOnly = 1
@@ -110,6 +152,13 @@ for arg in sys.argv[1:]:
         if os.name == 'nt':
             print 'ERROR - valgrind is only supported on linux'
             sys.exit(1)
+    elif arg == '-hg' or arg == '--helgrind':
+        gHelgrind = 1
+        if os.name == 'nt':
+            print 'ERROR - helgrind is only supported on linux'
+            sys.exit(1)
+    elif arg == '-r' or arg == '--release':
+        gReleaseBuild = 1
     else:
         print 'Unrecognised argument - ' + arg
         sys.exit(1)
@@ -124,16 +173,11 @@ class TestCase(object):
         self.quick = quick
         self.native = native
     def Path(self):
-        path = 'Build/Obj/'
-        if os.name == 'nt':
-            path += 'Windows/'
-        else:
-            path += 'Posix/'
-        path += self.name
+        path = objPath() + '/' + self.name
         if os.name == 'nt':
             path += '.exe'
         elif not self.native:
-            os.environ['LD_LIBRARY_PATH'] = 'Build/Obj/Posix'
+            os.environ['LD_LIBRARY_PATH'] = objPath()
             path += '.exe'
         else:
             path += '.elf'
@@ -144,7 +188,7 @@ gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestFifo', [], True)
              ,TestCase('TestQueue', [], True)
              ,TestCase('TestNetwork', [], True)
-             ,TestCase('TestTimer', [])
+             #,TestCase('TestTimer', [])
              ,TestCase('TestSsdpMListen', ['-d', '10'], True)
              ,TestCase('TestSsdpUListen', ['-t', 'av.openhome.org:service:Radio:1'], True)
              ,TestCase('TestDeviceList', ['-t', 'av.openhome.org:service:Radio:1', '-f'], True)
@@ -178,8 +222,8 @@ def JsTests():
     localAppData = os.environ.get('ProgramFiles')
     uiPath = os.path.join(os.getcwd(), 'Build\Include\Js\Tests')
     browser = os.path.join(localAppData, 'Safari\Safari.exe')
-    testbasic = subprocess.Popen(['Build\Obj\Windows\TestDvTestBasic.exe', '-l', '-c', uiPath])
-    devfinder = subprocess.Popen(['Build\Obj\Windows\TestDeviceFinder.exe', '-l', '-s', 'zapp.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    testbasic = subprocess.Popen([os.path.join(objPath(), 'TestDvTestBasic.exe'), '-l', '-c', uiPath])
+    devfinder = subprocess.Popen([os.path.join(objPath(), 'TestDeviceFinder.exe'), '-l', '-s', 'openhome.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     devfinder_out = devfinder.communicate()[1].rstrip()
     subprocess.call([browser, devfinder_out])
     testbasic.terminate()
@@ -190,7 +234,9 @@ gBuildsCompleteTime = time.strftime('%H:%M:%S')
 if gBuildOnly == 0:
     if gValgrind == 1:
         runTestsValgrind()
-    else:
+    if gHelgrind == 1:
+        runTestsHelgrind()
+    if gValgrind == 0 and gHelgrind == 0:
         runTests()
     if gJsTests == 1:
         JsTests()

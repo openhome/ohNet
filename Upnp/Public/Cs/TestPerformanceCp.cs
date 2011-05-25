@@ -1,11 +1,11 @@
 using System;
 using System.Threading;
 using System.Collections.Generic;
-using Zapp.Core;
-using Zapp.ControlPoint;
-using Zapp.ControlPoint.Proxies;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
+using OpenHome.Net.ControlPoint.Proxies;
 
-namespace Zapp.Device
+namespace OpenHome.Net.Device
 {
     class Program
     {
@@ -50,7 +50,7 @@ namespace Zapp.Device
                 var deviceListFactory = new CpUpnpDeviceListFactory(lib.StartCp());
                 CpDevice device = null;
                 Semaphore sem = new Semaphore(0, 1);
-                var deviceList = deviceListFactory.CreateListServiceType("zapp.org", "TestBasic", 1,
+                var deviceList = deviceListFactory.CreateListServiceType("openhome.org", "TestBasic", 1,
                         (aDeviceList, aDevice) =>
                         {
                             if (device != null)
@@ -105,7 +105,7 @@ namespace Zapp.Device
         private static void ActionThread(object aArgs)
         {
             ThreadArgs args = (ThreadArgs)aArgs;
-            using (CpProxyZappOrgTestBasic1 proxy = new CpProxyZappOrgTestBasic1(args.Device))
+            using (CpProxyOpenhomeOrgTestBasic1 proxy = new CpProxyOpenhomeOrgTestBasic1(args.Device))
             {
                 uint val;
                 do
@@ -120,7 +120,7 @@ namespace Zapp.Device
             Semaphore sem = new Semaphore(0, 1);
             do
             {
-                CpProxyZappOrgTestBasic1 proxy = new CpProxyZappOrgTestBasic1(args.Device);
+                CpProxyOpenhomeOrgTestBasic1 proxy = new CpProxyOpenhomeOrgTestBasic1(args.Device);
                 proxy.SetPropertyChanged(() => sem.Release());
                 proxy.Subscribe();
                 sem.WaitOne();

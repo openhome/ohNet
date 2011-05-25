@@ -1,10 +1,10 @@
 #include "DvUpnpOrgContentDirectory3.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 TBool DvProviderUpnpOrgContentDirectory3::SetPropertySystemUpdateID(TUint aValue)
 {
@@ -62,7 +62,7 @@ DvProviderUpnpOrgContentDirectory3::DvProviderUpnpOrgContentDirectory3(DvDevice&
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionGetSearchCapabilities()
 {
-    Zapp::Action* action = new Zapp::Action("GetSearchCapabilities");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetSearchCapabilities");
     action->AddOutputParameter(new ParameterString("SearchCaps"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3::DoGetSearchCapabilities);
     iService->AddAction(action, functor);
@@ -70,7 +70,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionGetSearchCapabilities()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionGetSortCapabilities()
 {
-    Zapp::Action* action = new Zapp::Action("GetSortCapabilities");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetSortCapabilities");
     action->AddOutputParameter(new ParameterString("SortCaps"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3::DoGetSortCapabilities);
     iService->AddAction(action, functor);
@@ -78,7 +78,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionGetSortCapabilities()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionGetSortExtensionCapabilities()
 {
-    Zapp::Action* action = new Zapp::Action("GetSortExtensionCapabilities");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetSortExtensionCapabilities");
     action->AddOutputParameter(new ParameterString("SortExtensionCaps"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3::DoGetSortExtensionCapabilities);
     iService->AddAction(action, functor);
@@ -86,7 +86,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionGetSortExtensionCapabilitie
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionGetFeatureList()
 {
-    Zapp::Action* action = new Zapp::Action("GetFeatureList");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetFeatureList");
     action->AddOutputParameter(new ParameterString("FeatureList"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3::DoGetFeatureList);
     iService->AddAction(action, functor);
@@ -94,7 +94,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionGetFeatureList()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionGetSystemUpdateID()
 {
-    Zapp::Action* action = new Zapp::Action("GetSystemUpdateID");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetSystemUpdateID");
     action->AddOutputParameter(new ParameterRelated("Id", *iPropertySystemUpdateID));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3::DoGetSystemUpdateID);
     iService->AddAction(action, functor);
@@ -102,7 +102,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionGetSystemUpdateID()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionGetServiceResetToken()
 {
-    Zapp::Action* action = new Zapp::Action("GetServiceResetToken");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetServiceResetToken");
     action->AddOutputParameter(new ParameterString("ResetToken"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3::DoGetServiceResetToken);
     iService->AddAction(action, functor);
@@ -110,7 +110,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionGetServiceResetToken()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionBrowse()
 {
-    Zapp::Action* action = new Zapp::Action("Browse");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Browse");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterString("ObjectID"));
@@ -134,7 +134,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionBrowse()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionSearch()
 {
-    Zapp::Action* action = new Zapp::Action("Search");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Search");
     action->AddInputParameter(new ParameterString("ContainerID"));
     action->AddInputParameter(new ParameterString("SearchCriteria"));
     action->AddInputParameter(new ParameterString("Filter"));
@@ -151,7 +151,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionSearch()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionCreateObject()
 {
-    Zapp::Action* action = new Zapp::Action("CreateObject");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("CreateObject");
     action->AddInputParameter(new ParameterString("ContainerID"));
     action->AddInputParameter(new ParameterString("Elements"));
     action->AddOutputParameter(new ParameterString("ObjectID"));
@@ -162,7 +162,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionCreateObject()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionDestroyObject()
 {
-    Zapp::Action* action = new Zapp::Action("DestroyObject");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("DestroyObject");
     action->AddInputParameter(new ParameterString("ObjectID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3::DoDestroyObject);
     iService->AddAction(action, functor);
@@ -170,7 +170,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionDestroyObject()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionUpdateObject()
 {
-    Zapp::Action* action = new Zapp::Action("UpdateObject");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("UpdateObject");
     action->AddInputParameter(new ParameterString("ObjectID"));
     action->AddInputParameter(new ParameterString("CurrentTagValue"));
     action->AddInputParameter(new ParameterString("NewTagValue"));
@@ -180,7 +180,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionUpdateObject()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionMoveObject()
 {
-    Zapp::Action* action = new Zapp::Action("MoveObject");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("MoveObject");
     action->AddInputParameter(new ParameterString("ObjectID"));
     action->AddInputParameter(new ParameterString("NewParentID"));
     action->AddOutputParameter(new ParameterString("NewObjectID"));
@@ -190,7 +190,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionMoveObject()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionImportResource()
 {
-    Zapp::Action* action = new Zapp::Action("ImportResource");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ImportResource");
     action->AddInputParameter(new ParameterString("SourceURI"));
     action->AddInputParameter(new ParameterString("DestinationURI"));
     action->AddOutputParameter(new ParameterUint("TransferID"));
@@ -200,7 +200,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionImportResource()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionExportResource()
 {
-    Zapp::Action* action = new Zapp::Action("ExportResource");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("ExportResource");
     action->AddInputParameter(new ParameterString("SourceURI"));
     action->AddInputParameter(new ParameterString("DestinationURI"));
     action->AddOutputParameter(new ParameterUint("TransferID"));
@@ -210,7 +210,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionExportResource()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionDeleteResource()
 {
-    Zapp::Action* action = new Zapp::Action("DeleteResource");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("DeleteResource");
     action->AddInputParameter(new ParameterString("ResourceURI"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3::DoDeleteResource);
     iService->AddAction(action, functor);
@@ -218,7 +218,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionDeleteResource()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionStopTransferResource()
 {
-    Zapp::Action* action = new Zapp::Action("StopTransferResource");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("StopTransferResource");
     action->AddInputParameter(new ParameterUint("TransferID"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3::DoStopTransferResource);
     iService->AddAction(action, functor);
@@ -226,7 +226,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionStopTransferResource()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionGetTransferProgress()
 {
-    Zapp::Action* action = new Zapp::Action("GetTransferProgress");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetTransferProgress");
     TChar** allowedValues;
     TUint index;
     action->AddInputParameter(new ParameterUint("TransferID"));
@@ -246,7 +246,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionGetTransferProgress()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionCreateReference()
 {
-    Zapp::Action* action = new Zapp::Action("CreateReference");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("CreateReference");
     action->AddInputParameter(new ParameterString("ContainerID"));
     action->AddInputParameter(new ParameterString("ObjectID"));
     action->AddOutputParameter(new ParameterString("NewID"));
@@ -256,7 +256,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionCreateReference()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionFreeFormQuery()
 {
-    Zapp::Action* action = new Zapp::Action("FreeFormQuery");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("FreeFormQuery");
     action->AddInputParameter(new ParameterString("ContainerID"));
     action->AddInputParameter(new ParameterUint("CDSView"));
     action->AddInputParameter(new ParameterString("QueryRequest"));
@@ -268,7 +268,7 @@ void DvProviderUpnpOrgContentDirectory3::EnableActionFreeFormQuery()
 
 void DvProviderUpnpOrgContentDirectory3::EnableActionGetFreeFormQueryCapabilities()
 {
-    Zapp::Action* action = new Zapp::Action("GetFreeFormQueryCapabilities");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetFreeFormQueryCapabilities");
     action->AddOutputParameter(new ParameterString("FFQCapabilities"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3::DoGetFreeFormQueryCapabilities);
     iService->AddAction(action, functor);

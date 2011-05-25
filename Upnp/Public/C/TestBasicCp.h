@@ -1,10 +1,11 @@
 #ifndef HEADER_TESTBASICCPC
 #define HEADER_TESTBASICCPC
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <C/CpDevice.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class TestBasicCpC
 {
@@ -14,6 +15,7 @@ public:
     static void TestSubscriptions(CpDeviceC aDevice);
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_TESTBASICCPC

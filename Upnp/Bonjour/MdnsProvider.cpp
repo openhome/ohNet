@@ -1,7 +1,7 @@
 #include <MdnsProvider.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 MdnsProvider::MdnsProvider(const TChar* aHost)
     : iPlatform(aHost)

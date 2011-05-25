@@ -2,17 +2,16 @@
 #define HEADER_OPTION_PARSER
 
 #include <Standard.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 
 #include <vector>
 
 EXCEPTION(OptionParserError);
 
-namespace Zapp
-{
-namespace TestFramework
-{
+namespace OpenHome {
+namespace Net {
+namespace TestFramework {
 
 typedef std::vector<TChar*> VectorPosArg;
 
@@ -105,8 +104,8 @@ private:
     TChar* iUsage;
 };
 
-
-}; // namespace TestFramework
-}; // namespace Zapp
+} // namespace TestFramework
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_OPTION_PARSER

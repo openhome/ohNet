@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderUpnpOrgConnectionManager2 : IDisposable
     {
@@ -145,7 +145,7 @@ namespace Zapp.Device.Providers
         /// GetProtocolInfo must be overridden if this is called.</remarks>
         protected void EnableActionGetProtocolInfo()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetProtocolInfo");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetProtocolInfo");
             action.AddOutputParameter(new ParameterRelated("Source", iPropertySourceProtocolInfo));
             action.AddOutputParameter(new ParameterRelated("Sink", iPropertySinkProtocolInfo));
             iDelegateGetProtocolInfo = new ActionDelegate(DoGetProtocolInfo);
@@ -159,7 +159,7 @@ namespace Zapp.Device.Providers
         /// PrepareForConnection must be overridden if this is called.</remarks>
         protected void EnableActionPrepareForConnection()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("PrepareForConnection");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("PrepareForConnection");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("RemoteProtocolInfo", allowedValues));
             action.AddInputParameter(new ParameterString("PeerConnectionManager", allowedValues));
@@ -182,7 +182,7 @@ namespace Zapp.Device.Providers
         /// ConnectionComplete must be overridden if this is called.</remarks>
         protected void EnableActionConnectionComplete()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("ConnectionComplete");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("ConnectionComplete");
             action.AddInputParameter(new ParameterInt("ConnectionID"));
             iDelegateConnectionComplete = new ActionDelegate(DoConnectionComplete);
             EnableAction(action, iDelegateConnectionComplete, GCHandle.ToIntPtr(iGch));
@@ -195,7 +195,7 @@ namespace Zapp.Device.Providers
         /// GetCurrentConnectionIDs must be overridden if this is called.</remarks>
         protected void EnableActionGetCurrentConnectionIDs()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetCurrentConnectionIDs");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetCurrentConnectionIDs");
             action.AddOutputParameter(new ParameterRelated("ConnectionIDs", iPropertyCurrentConnectionIDs));
             iDelegateGetCurrentConnectionIDs = new ActionDelegate(DoGetCurrentConnectionIDs);
             EnableAction(action, iDelegateGetCurrentConnectionIDs, GCHandle.ToIntPtr(iGch));
@@ -208,7 +208,7 @@ namespace Zapp.Device.Providers
         /// GetCurrentConnectionInfo must be overridden if this is called.</remarks>
         protected void EnableActionGetCurrentConnectionInfo()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetCurrentConnectionInfo");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetCurrentConnectionInfo");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterInt("ConnectionID"));
             action.AddOutputParameter(new ParameterInt("RcsID"));

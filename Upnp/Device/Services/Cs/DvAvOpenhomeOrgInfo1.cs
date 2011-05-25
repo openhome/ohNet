@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderAvOpenhomeOrgInfo1 : IDisposable
     {
@@ -459,7 +459,7 @@ namespace Zapp.Device.Providers
         /// Counters must be overridden if this is called.</remarks>
         protected void EnableActionCounters()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Counters");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Counters");
             action.AddOutputParameter(new ParameterRelated("TrackCount", iPropertyTrackCount));
             action.AddOutputParameter(new ParameterRelated("DetailsCount", iPropertyDetailsCount));
             action.AddOutputParameter(new ParameterRelated("MetatextCount", iPropertyMetatextCount));
@@ -474,7 +474,7 @@ namespace Zapp.Device.Providers
         /// Track must be overridden if this is called.</remarks>
         protected void EnableActionTrack()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Track");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Track");
             action.AddOutputParameter(new ParameterRelated("Uri", iPropertyUri));
             action.AddOutputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
             iDelegateTrack = new ActionDelegate(DoTrack);
@@ -488,7 +488,7 @@ namespace Zapp.Device.Providers
         /// Details must be overridden if this is called.</remarks>
         protected void EnableActionDetails()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Details");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Details");
             action.AddOutputParameter(new ParameterRelated("Duration", iPropertyDuration));
             action.AddOutputParameter(new ParameterRelated("BitRate", iPropertyBitRate));
             action.AddOutputParameter(new ParameterRelated("BitDepth", iPropertyBitDepth));
@@ -506,7 +506,7 @@ namespace Zapp.Device.Providers
         /// Metatext must be overridden if this is called.</remarks>
         protected void EnableActionMetatext()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Metatext");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Metatext");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyMetatext));
             iDelegateMetatext = new ActionDelegate(DoMetatext);
             EnableAction(action, iDelegateMetatext, GCHandle.ToIntPtr(iGch));

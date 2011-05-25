@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyAvOpenhomeOrgPlaylist1C : public CpProxyC
 {
@@ -692,7 +692,7 @@ CpProxyAvOpenhomeOrgPlaylist1C::CpProxyAvOpenhomeOrgPlaylist1C(CpDeviceC aDevice
     : CpProxyC("av-openhome-org", "Playlist", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
@@ -707,35 +707,35 @@ CpProxyAvOpenhomeOrgPlaylist1C::CpProxyAvOpenhomeOrgPlaylist1C(CpDeviceC aDevice
     iActionPrevious = new Action("Previous");
 
     iActionSetRepeat = new Action("SetRepeat");
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionSetRepeat->AddInputParameter(param);
 
     iActionRepeat = new Action("Repeat");
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionRepeat->AddOutputParameter(param);
 
     iActionSetShuffle = new Action("SetShuffle");
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionSetShuffle->AddInputParameter(param);
 
     iActionShuffle = new Action("Shuffle");
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionShuffle->AddOutputParameter(param);
 
     iActionSeekSecondAbsolute = new Action("SeekSecondAbsolute");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSeekSecondAbsolute->AddInputParameter(param);
 
     iActionSeekSecondRelative = new Action("SeekSecondRelative");
-    param = new Zapp::ParameterInt("Value");
+    param = new OpenHome::Net::ParameterInt("Value");
     iActionSeekSecondRelative->AddInputParameter(param);
 
     iActionSeekId = new Action("SeekId");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSeekId->AddInputParameter(param);
 
     iActionSeekIndex = new Action("SeekIndex");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSeekIndex->AddInputParameter(param);
 
     iActionTransportState = new Action("TransportState");
@@ -745,62 +745,62 @@ CpProxyAvOpenhomeOrgPlaylist1C::CpProxyAvOpenhomeOrgPlaylist1C(CpDeviceC aDevice
     allowedValues[index++] = (TChar*)"Paused";
     allowedValues[index++] = (TChar*)"Stopped";
     allowedValues[index++] = (TChar*)"Buffering";
-    param = new Zapp::ParameterString("Value", allowedValues, 4);
+    param = new OpenHome::Net::ParameterString("Value", allowedValues, 4);
     iActionTransportState->AddOutputParameter(param);
     delete[] allowedValues;
 
     iActionId = new Action("Id");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionId->AddOutputParameter(param);
 
     iActionRead = new Action("Read");
-    param = new Zapp::ParameterUint("Id");
+    param = new OpenHome::Net::ParameterUint("Id");
     iActionRead->AddInputParameter(param);
-    param = new Zapp::ParameterString("Uri");
+    param = new OpenHome::Net::ParameterString("Uri");
     iActionRead->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Metadata");
+    param = new OpenHome::Net::ParameterString("Metadata");
     iActionRead->AddOutputParameter(param);
 
     iActionReadList = new Action("ReadList");
-    param = new Zapp::ParameterString("IdList");
+    param = new OpenHome::Net::ParameterString("IdList");
     iActionReadList->AddInputParameter(param);
-    param = new Zapp::ParameterString("TrackList");
+    param = new OpenHome::Net::ParameterString("TrackList");
     iActionReadList->AddOutputParameter(param);
 
     iActionInsert = new Action("Insert");
-    param = new Zapp::ParameterUint("AfterId");
+    param = new OpenHome::Net::ParameterUint("AfterId");
     iActionInsert->AddInputParameter(param);
-    param = new Zapp::ParameterString("Uri");
+    param = new OpenHome::Net::ParameterString("Uri");
     iActionInsert->AddInputParameter(param);
-    param = new Zapp::ParameterString("Metadata");
+    param = new OpenHome::Net::ParameterString("Metadata");
     iActionInsert->AddInputParameter(param);
-    param = new Zapp::ParameterUint("NewId");
+    param = new OpenHome::Net::ParameterUint("NewId");
     iActionInsert->AddOutputParameter(param);
 
     iActionDeleteId = new Action("DeleteId");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionDeleteId->AddInputParameter(param);
 
     iActionDeleteAll = new Action("DeleteAll");
 
     iActionTracksMax = new Action("TracksMax");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionTracksMax->AddOutputParameter(param);
 
     iActionIdArray = new Action("IdArray");
-    param = new Zapp::ParameterUint("Token");
+    param = new OpenHome::Net::ParameterUint("Token");
     iActionIdArray->AddOutputParameter(param);
-    param = new Zapp::ParameterBinary("Array");
+    param = new OpenHome::Net::ParameterBinary("Array");
     iActionIdArray->AddOutputParameter(param);
 
     iActionIdArrayChanged = new Action("IdArrayChanged");
-    param = new Zapp::ParameterUint("Token");
+    param = new OpenHome::Net::ParameterUint("Token");
     iActionIdArrayChanged->AddInputParameter(param);
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionIdArrayChanged->AddOutputParameter(param);
 
     iActionProtocolInfo = new Action("ProtocolInfo");
-    param = new Zapp::ParameterString("Value");
+    param = new OpenHome::Net::ParameterString("Value");
     iActionProtocolInfo->AddOutputParameter(param);
 
     Functor functor;
@@ -1685,15 +1685,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncPlay(THandle aHandle)
     proxyC->SyncPlay();
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginPlay(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginPlay(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginPlay(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndPlay(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndPlay(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -1716,15 +1716,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncPause(THandle aHandle)
     proxyC->SyncPause();
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginPause(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginPause(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginPause(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndPause(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndPause(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -1747,15 +1747,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncStop(THandle aHandle)
     proxyC->SyncStop();
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginStop(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginStop(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginStop(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndStop(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndStop(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -1778,15 +1778,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncNext(THandle aHandle)
     proxyC->SyncNext();
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginNext(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginNext(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginNext(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndNext(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndNext(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -1809,15 +1809,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncPrevious(THandle aHandle)
     proxyC->SyncPrevious();
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginPrevious(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginPrevious(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginPrevious(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndPrevious(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndPrevious(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -1840,15 +1840,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncSetRepeat(THandle aHandle, uint32_t aValue
     proxyC->SyncSetRepeat((aValue==0? false : true));
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginSetRepeat(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginSetRepeat(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetRepeat((aValue==0? false : true), functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndSetRepeat(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndSetRepeat(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -1872,15 +1872,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncRepeat(THandle aHandle, uint32_t* aValue)
     proxyC->SyncRepeat(*(TBool*)aValue);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginRepeat(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginRepeat(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginRepeat(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndRepeat(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndRepeat(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -1904,15 +1904,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncSetShuffle(THandle aHandle, uint32_t aValu
     proxyC->SyncSetShuffle((aValue==0? false : true));
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginSetShuffle(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginSetShuffle(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetShuffle((aValue==0? false : true), functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndSetShuffle(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndSetShuffle(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -1936,15 +1936,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncShuffle(THandle aHandle, uint32_t* aValue)
     proxyC->SyncShuffle(*(TBool*)aValue);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginShuffle(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginShuffle(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginShuffle(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndShuffle(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndShuffle(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -1968,15 +1968,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncSeekSecondAbsolute(THandle aHandle, uint32
     proxyC->SyncSeekSecondAbsolute(aValue);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginSeekSecondAbsolute(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginSeekSecondAbsolute(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSeekSecondAbsolute(aValue, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekSecondAbsolute(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekSecondAbsolute(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -1999,15 +1999,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncSeekSecondRelative(THandle aHandle, int32_
     proxyC->SyncSeekSecondRelative(aValue);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginSeekSecondRelative(THandle aHandle, int32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginSeekSecondRelative(THandle aHandle, int32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSeekSecondRelative(aValue, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekSecondRelative(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekSecondRelative(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2030,15 +2030,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncSeekId(THandle aHandle, uint32_t aValue)
     proxyC->SyncSeekId(aValue);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginSeekId(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginSeekId(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSeekId(aValue, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekId(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekId(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2061,15 +2061,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncSeekIndex(THandle aHandle, uint32_t aValue
     proxyC->SyncSeekIndex(aValue);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginSeekIndex(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginSeekIndex(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSeekIndex(aValue, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekIndex(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndSeekIndex(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2094,15 +2094,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncTransportState(THandle aHandle, char** aVa
     *aValue = buf_aValue.Extract();
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginTransportState(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginTransportState(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginTransportState(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndTransportState(THandle aHandle, ZappHandleAsync aAsync, char** aValue)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndTransportState(THandle aHandle, OhNetHandleAsync aAsync, char** aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2128,15 +2128,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncId(THandle aHandle, uint32_t* aValue)
     proxyC->SyncId(*aValue);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginId(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginId(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginId(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndId(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndId(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2163,15 +2163,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncRead(THandle aHandle, uint32_t aId, char**
     *aMetadata = buf_aMetadata.Extract();
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginRead(THandle aHandle, uint32_t aId, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginRead(THandle aHandle, uint32_t aId, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginRead(aId, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndRead(THandle aHandle, ZappHandleAsync aAsync, char** aUri, char** aMetadata)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndRead(THandle aHandle, OhNetHandleAsync aAsync, char** aUri, char** aMetadata)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2203,16 +2203,16 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncReadList(THandle aHandle, const char* aIdL
     *aTrackList = buf_aTrackList.Extract();
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginReadList(THandle aHandle, const char* aIdList, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginReadList(THandle aHandle, const char* aIdList, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aIdList(aIdList);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginReadList(buf_aIdList, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndReadList(THandle aHandle, ZappHandleAsync aAsync, char** aTrackList)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndReadList(THandle aHandle, OhNetHandleAsync aAsync, char** aTrackList)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2240,17 +2240,17 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncInsert(THandle aHandle, uint32_t aAfterId,
     proxyC->SyncInsert(aAfterId, buf_aUri, buf_aMetadata, *aNewId);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginInsert(THandle aHandle, uint32_t aAfterId, const char* aUri, const char* aMetadata, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginInsert(THandle aHandle, uint32_t aAfterId, const char* aUri, const char* aMetadata, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aUri(aUri);
     Brh buf_aMetadata(aMetadata);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginInsert(aAfterId, buf_aUri, buf_aMetadata, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndInsert(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aNewId)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndInsert(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aNewId)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2273,15 +2273,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncDeleteId(THandle aHandle, uint32_t aValue)
     proxyC->SyncDeleteId(aValue);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginDeleteId(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginDeleteId(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginDeleteId(aValue, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndDeleteId(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndDeleteId(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2304,15 +2304,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncDeleteAll(THandle aHandle)
     proxyC->SyncDeleteAll();
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginDeleteAll(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginDeleteAll(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginDeleteAll(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndDeleteAll(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndDeleteAll(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2335,15 +2335,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncTracksMax(THandle aHandle, uint32_t* aValu
     proxyC->SyncTracksMax(*aValue);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginTracksMax(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginTracksMax(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginTracksMax(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndTracksMax(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndTracksMax(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2369,15 +2369,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncIdArray(THandle aHandle, uint32_t* aToken,
     *aArray = buf_aArray.Extract();
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginIdArray(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginIdArray(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginIdArray(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndIdArray(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aToken, char** aArray, uint32_t* aArrayLen)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndIdArray(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aToken, char** aArray, uint32_t* aArrayLen)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2406,15 +2406,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncIdArrayChanged(THandle aHandle, uint32_t a
     proxyC->SyncIdArrayChanged(aToken, *(TBool*)aValue);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginIdArrayChanged(THandle aHandle, uint32_t aToken, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginIdArrayChanged(THandle aHandle, uint32_t aToken, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginIdArrayChanged(aToken, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndIdArrayChanged(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndIdArrayChanged(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2440,15 +2440,15 @@ void CpProxyAvOpenhomeOrgPlaylist1SyncProtocolInfo(THandle aHandle, char** aValu
     *aValue = buf_aValue.Extract();
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1BeginProtocolInfo(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1BeginProtocolInfo(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginProtocolInfo(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgPlaylist1EndProtocolInfo(THandle aHandle, ZappHandleAsync aAsync, char** aValue)
+int32_t CpProxyAvOpenhomeOrgPlaylist1EndProtocolInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
@@ -2467,7 +2467,7 @@ int32_t CpProxyAvOpenhomeOrgPlaylist1EndProtocolInfo(THandle aHandle, ZappHandle
     return err;
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1SetPropertyTransportStateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1SetPropertyTransportStateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2475,7 +2475,7 @@ void CpProxyAvOpenhomeOrgPlaylist1SetPropertyTransportStateChanged(THandle aHand
     proxyC->SetPropertyTransportStateChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1SetPropertyRepeatChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1SetPropertyRepeatChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2483,7 +2483,7 @@ void CpProxyAvOpenhomeOrgPlaylist1SetPropertyRepeatChanged(THandle aHandle, Zapp
     proxyC->SetPropertyRepeatChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1SetPropertyShuffleChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1SetPropertyShuffleChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2491,7 +2491,7 @@ void CpProxyAvOpenhomeOrgPlaylist1SetPropertyShuffleChanged(THandle aHandle, Zap
     proxyC->SetPropertyShuffleChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1SetPropertyIdChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1SetPropertyIdChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2499,7 +2499,7 @@ void CpProxyAvOpenhomeOrgPlaylist1SetPropertyIdChanged(THandle aHandle, ZappCall
     proxyC->SetPropertyIdChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1SetPropertyIdArrayChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1SetPropertyIdArrayChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2507,7 +2507,7 @@ void CpProxyAvOpenhomeOrgPlaylist1SetPropertyIdArrayChanged(THandle aHandle, Zap
     proxyC->SetPropertyIdArrayChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1SetPropertyTracksMaxChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1SetPropertyTracksMaxChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2515,7 +2515,7 @@ void CpProxyAvOpenhomeOrgPlaylist1SetPropertyTracksMaxChanged(THandle aHandle, Z
     proxyC->SetPropertyTracksMaxChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgPlaylist1SetPropertyProtocolInfoChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyAvOpenhomeOrgPlaylist1SetPropertyProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgPlaylist1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylist1C*>(aHandle);
     ASSERT(proxyC != NULL);

@@ -1,12 +1,12 @@
 #include <DviServer.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Network.h>
 #include <Thread.h>
 #include <Stack.h>
 #include <NetworkInterfaceList.h>
-#include <Zapp.h>
+#include <OhNet.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // DviServer
 

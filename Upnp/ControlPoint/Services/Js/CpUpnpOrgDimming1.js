@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxySchemasUpnpOrgDimming1
-* @module Zapp
+* @module ohNet
 * @class Dimming
 */
 	
@@ -18,11 +18,11 @@ var CpProxySchemasUpnpOrgDimming1 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["LoadLevelStatus"] = new Zapp.ServiceProperty("LoadLevelStatus","int");
-	this.serviceProperties["StepDelta"] = new Zapp.ServiceProperty("StepDelta","int");
-	this.serviceProperties["RampRate"] = new Zapp.ServiceProperty("RampRate","int");
-	this.serviceProperties["IsRamping"] = new Zapp.ServiceProperty("IsRamping","bool");
-	this.serviceProperties["RampPaused"] = new Zapp.ServiceProperty("RampPaused","bool");
+	this.serviceProperties["LoadLevelStatus"] = new OhNet.ServiceProperty("LoadLevelStatus","int");
+	this.serviceProperties["StepDelta"] = new OhNet.ServiceProperty("StepDelta","int");
+	this.serviceProperties["RampRate"] = new OhNet.ServiceProperty("RampRate","int");
+	this.serviceProperties["IsRamping"] = new OhNet.ServiceProperty("IsRamping","bool");
+	this.serviceProperties["RampPaused"] = new OhNet.ServiceProperty("RampPaused","bool");
 }
 
 
@@ -33,7 +33,7 @@ var CpProxySchemasUpnpOrgDimming1 = function(udn){
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxySchemasUpnpOrgDimming1.prototype.subscribe = function (serviceAddedFunction) {
-    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
@@ -42,7 +42,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.subscribe = function (serviceAddedFuncti
 * @method Unsubscribe
 */
 CpProxySchemasUpnpOrgDimming1.prototype.unsubscribe = function () {
-    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+    OhNet.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
@@ -56,7 +56,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.unsubscribe = function () {
 CpProxySchemasUpnpOrgDimming1.prototype.LoadLevelStatus_Changed = function (stateChangedFunction) {
     this.serviceProperties.LoadLevelStatus.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -69,7 +69,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.LoadLevelStatus_Changed = function (stat
 CpProxySchemasUpnpOrgDimming1.prototype.StepDelta_Changed = function (stateChangedFunction) {
     this.serviceProperties.StepDelta.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -82,7 +82,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.StepDelta_Changed = function (stateChang
 CpProxySchemasUpnpOrgDimming1.prototype.RampRate_Changed = function (stateChangedFunction) {
     this.serviceProperties.RampRate.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readIntParameter(state)); 
 	});
 }
 	
@@ -95,7 +95,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.RampRate_Changed = function (stateChange
 CpProxySchemasUpnpOrgDimming1.prototype.IsRamping_Changed = function (stateChangedFunction) {
     this.serviceProperties.IsRamping.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readBoolParameter(state)); 
 	});
 }
 	
@@ -108,7 +108,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.IsRamping_Changed = function (stateChang
 CpProxySchemasUpnpOrgDimming1.prototype.RampPaused_Changed = function (stateChangedFunction) {
     this.serviceProperties.RampPaused.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readBoolParameter(state)); 
 	});
 }
 
@@ -121,7 +121,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.RampPaused_Changed = function (stateChan
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.SetLoadLevelTarget = function(newLoadlevelTarget, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetLoadLevelTarget", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetLoadLevelTarget", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("newLoadlevelTarget", newLoadlevelTarget);
     request.send(function(result){
 	
@@ -141,9 +141,9 @@ CpProxySchemasUpnpOrgDimming1.prototype.SetLoadLevelTarget = function(newLoadlev
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetLoadLevelTarget = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetLoadLevelTarget", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetLoadLevelTarget", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["GetLoadlevelTarget"] = Zapp.SoapRequest.readIntParameter(result["GetLoadlevelTarget"]);	
+		result["GetLoadlevelTarget"] = OhNet.SoapRequest.readIntParameter(result["GetLoadlevelTarget"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -161,9 +161,9 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetLoadLevelTarget = function(successFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetLoadLevelStatus = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetLoadLevelStatus", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetLoadLevelStatus", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["retLoadlevelStatus"] = Zapp.SoapRequest.readIntParameter(result["retLoadlevelStatus"]);	
+		result["retLoadlevelStatus"] = OhNet.SoapRequest.readIntParameter(result["retLoadlevelStatus"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -182,7 +182,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetLoadLevelStatus = function(successFun
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.SetOnEffectLevel = function(newOnEffectLevel, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetOnEffectLevel", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetOnEffectLevel", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("newOnEffectLevel", newOnEffectLevel);
     request.send(function(result){
 	
@@ -203,7 +203,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.SetOnEffectLevel = function(newOnEffectL
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.SetOnEffect = function(newOnEffect, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetOnEffect", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetOnEffect", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("newOnEffect", newOnEffect);
     request.send(function(result){
 	
@@ -223,10 +223,10 @@ CpProxySchemasUpnpOrgDimming1.prototype.SetOnEffect = function(newOnEffect, succ
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetOnEffectParameters = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetOnEffectParameters", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetOnEffectParameters", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["retOnEffect"] = Zapp.SoapRequest.readStringParameter(result["retOnEffect"]);	
-		result["retOnEffectLevel"] = Zapp.SoapRequest.readIntParameter(result["retOnEffectLevel"]);	
+		result["retOnEffect"] = OhNet.SoapRequest.readStringParameter(result["retOnEffect"]);	
+		result["retOnEffectLevel"] = OhNet.SoapRequest.readIntParameter(result["retOnEffectLevel"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -244,7 +244,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetOnEffectParameters = function(success
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.StepUp = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StepUp", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("StepUp", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -263,7 +263,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.StepUp = function(successFunction, error
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.StepDown = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StepDown", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("StepDown", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -282,7 +282,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.StepDown = function(successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.StartRampUp = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StartRampUp", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("StartRampUp", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -301,7 +301,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.StartRampUp = function(successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.StartRampDown = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StartRampDown", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("StartRampDown", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -320,7 +320,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.StartRampDown = function(successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.StopRamp = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StopRamp", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("StopRamp", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -341,7 +341,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.StopRamp = function(successFunction, err
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.StartRampToLevel = function(newLoadLevelTarget, newRampTime, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("StartRampToLevel", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("StartRampToLevel", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("newLoadLevelTarget", newLoadLevelTarget);
     request.writeIntParameter("newRampTime", newRampTime);
     request.send(function(result){
@@ -363,7 +363,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.StartRampToLevel = function(newLoadLevel
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.SetStepDelta = function(newStepDelta, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetStepDelta", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetStepDelta", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("newStepDelta", newStepDelta);
     request.send(function(result){
 	
@@ -383,9 +383,9 @@ CpProxySchemasUpnpOrgDimming1.prototype.SetStepDelta = function(newStepDelta, su
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetStepDelta = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetStepDelta", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetStepDelta", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["retStepDelta"] = Zapp.SoapRequest.readIntParameter(result["retStepDelta"]);	
+		result["retStepDelta"] = OhNet.SoapRequest.readIntParameter(result["retStepDelta"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -404,7 +404,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetStepDelta = function(successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.SetRampRate = function(newRampRate, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetRampRate", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetRampRate", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("newRampRate", newRampRate);
     request.send(function(result){
 	
@@ -424,9 +424,9 @@ CpProxySchemasUpnpOrgDimming1.prototype.SetRampRate = function(newRampRate, succ
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetRampRate = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRampRate", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetRampRate", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["retRampRate"] = Zapp.SoapRequest.readIntParameter(result["retRampRate"]);	
+		result["retRampRate"] = OhNet.SoapRequest.readIntParameter(result["retRampRate"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -444,7 +444,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetRampRate = function(successFunction, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.PauseRamp = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("PauseRamp", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("PauseRamp", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -463,7 +463,7 @@ CpProxySchemasUpnpOrgDimming1.prototype.PauseRamp = function(successFunction, er
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.ResumeRamp = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("ResumeRamp", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("ResumeRamp", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){
@@ -482,9 +482,9 @@ CpProxySchemasUpnpOrgDimming1.prototype.ResumeRamp = function(successFunction, e
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetIsRamping = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetIsRamping", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetIsRamping", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["retIsRamping"] = Zapp.SoapRequest.readBoolParameter(result["retIsRamping"]);	
+		result["retIsRamping"] = OhNet.SoapRequest.readBoolParameter(result["retIsRamping"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -502,9 +502,9 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetIsRamping = function(successFunction,
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetRampPaused = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRampPaused", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetRampPaused", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["retRampPaused"] = Zapp.SoapRequest.readBoolParameter(result["retRampPaused"]);	
+		result["retRampPaused"] = OhNet.SoapRequest.readBoolParameter(result["retRampPaused"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -522,9 +522,9 @@ CpProxySchemasUpnpOrgDimming1.prototype.GetRampPaused = function(successFunction
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgDimming1.prototype.GetRampTime = function(successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetRampTime", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetRampTime", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
-		result["retRampTime"] = Zapp.SoapRequest.readIntParameter(result["retRampTime"]);	
+		result["retRampTime"] = OhNet.SoapRequest.readIntParameter(result["retRampTime"]);	
 	
 		if (successFunction){
 			successFunction(result);

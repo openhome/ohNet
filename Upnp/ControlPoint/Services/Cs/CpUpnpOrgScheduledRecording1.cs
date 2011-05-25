@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgScheduledRecording1 : ICpProxy, IDisposable
     {
@@ -445,24 +445,24 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyUpnpOrgScheduledRecording1 : CpProxy, IDisposable, ICpProxyUpnpOrgScheduledRecording1
     {
-        private Zapp.Core.Action iActionGetSortCapabilities;
-        private Zapp.Core.Action iActionGetPropertyList;
-        private Zapp.Core.Action iActionGetAllowedValues;
-        private Zapp.Core.Action iActionGetStateUpdateID;
-        private Zapp.Core.Action iActionBrowseRecordSchedules;
-        private Zapp.Core.Action iActionBrowseRecordTasks;
-        private Zapp.Core.Action iActionCreateRecordSchedule;
-        private Zapp.Core.Action iActionDeleteRecordSchedule;
-        private Zapp.Core.Action iActionGetRecordSchedule;
-        private Zapp.Core.Action iActionEnableRecordSchedule;
-        private Zapp.Core.Action iActionDisableRecordSchedule;
-        private Zapp.Core.Action iActionDeleteRecordTask;
-        private Zapp.Core.Action iActionGetRecordTask;
-        private Zapp.Core.Action iActionEnableRecordTask;
-        private Zapp.Core.Action iActionDisableRecordTask;
-        private Zapp.Core.Action iActionResetRecordTask;
-        private Zapp.Core.Action iActionGetRecordScheduleConflicts;
-        private Zapp.Core.Action iActionGetRecordTaskConflicts;
+        private OpenHome.Net.Core.Action iActionGetSortCapabilities;
+        private OpenHome.Net.Core.Action iActionGetPropertyList;
+        private OpenHome.Net.Core.Action iActionGetAllowedValues;
+        private OpenHome.Net.Core.Action iActionGetStateUpdateID;
+        private OpenHome.Net.Core.Action iActionBrowseRecordSchedules;
+        private OpenHome.Net.Core.Action iActionBrowseRecordTasks;
+        private OpenHome.Net.Core.Action iActionCreateRecordSchedule;
+        private OpenHome.Net.Core.Action iActionDeleteRecordSchedule;
+        private OpenHome.Net.Core.Action iActionGetRecordSchedule;
+        private OpenHome.Net.Core.Action iActionEnableRecordSchedule;
+        private OpenHome.Net.Core.Action iActionDisableRecordSchedule;
+        private OpenHome.Net.Core.Action iActionDeleteRecordTask;
+        private OpenHome.Net.Core.Action iActionGetRecordTask;
+        private OpenHome.Net.Core.Action iActionEnableRecordTask;
+        private OpenHome.Net.Core.Action iActionDisableRecordTask;
+        private OpenHome.Net.Core.Action iActionResetRecordTask;
+        private OpenHome.Net.Core.Action iActionGetRecordScheduleConflicts;
+        private OpenHome.Net.Core.Action iActionGetRecordTaskConflicts;
         private PropertyString iLastChange;
         private System.Action iLastChangeChanged;
         private Mutex iPropertyLock;
@@ -475,16 +475,16 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyUpnpOrgScheduledRecording1(CpDevice aDevice)
             : base("schemas-upnp-org", "ScheduledRecording", 1, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             List<String> allowedValues = new List<String>();
 
-            iActionGetSortCapabilities = new Zapp.Core.Action("GetSortCapabilities");
+            iActionGetSortCapabilities = new OpenHome.Net.Core.Action("GetSortCapabilities");
             param = new ParameterString("SortCaps", allowedValues);
             iActionGetSortCapabilities.AddOutputParameter(param);
             param = new ParameterUint("SortLevelCap");
             iActionGetSortCapabilities.AddOutputParameter(param);
 
-            iActionGetPropertyList = new Zapp.Core.Action("GetPropertyList");
+            iActionGetPropertyList = new OpenHome.Net.Core.Action("GetPropertyList");
             allowedValues.Add("A_ARG_TYPE_RecordSchedule");
             allowedValues.Add("A_ARG_TYPE_RecordTask");
             allowedValues.Add("A_ARG_TYPE_RecordScheduleParts");
@@ -494,7 +494,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("PropertyList", allowedValues);
             iActionGetPropertyList.AddOutputParameter(param);
 
-            iActionGetAllowedValues = new Zapp.Core.Action("GetAllowedValues");
+            iActionGetAllowedValues = new OpenHome.Net.Core.Action("GetAllowedValues");
             allowedValues.Add("A_ARG_TYPE_RecordSchedule");
             allowedValues.Add("A_ARG_TYPE_RecordTask");
             allowedValues.Add("A_ARG_TYPE_RecordScheduleParts");
@@ -506,11 +506,11 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("PropertyInfo", allowedValues);
             iActionGetAllowedValues.AddOutputParameter(param);
 
-            iActionGetStateUpdateID = new Zapp.Core.Action("GetStateUpdateID");
+            iActionGetStateUpdateID = new OpenHome.Net.Core.Action("GetStateUpdateID");
             param = new ParameterUint("Id");
             iActionGetStateUpdateID.AddOutputParameter(param);
 
-            iActionBrowseRecordSchedules = new Zapp.Core.Action("BrowseRecordSchedules");
+            iActionBrowseRecordSchedules = new OpenHome.Net.Core.Action("BrowseRecordSchedules");
             param = new ParameterString("Filter", allowedValues);
             iActionBrowseRecordSchedules.AddInputParameter(param);
             param = new ParameterUint("StartingIndex");
@@ -528,7 +528,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("UpdateID");
             iActionBrowseRecordSchedules.AddOutputParameter(param);
 
-            iActionBrowseRecordTasks = new Zapp.Core.Action("BrowseRecordTasks");
+            iActionBrowseRecordTasks = new OpenHome.Net.Core.Action("BrowseRecordTasks");
             param = new ParameterString("RecordScheduleID", allowedValues);
             iActionBrowseRecordTasks.AddInputParameter(param);
             param = new ParameterString("Filter", allowedValues);
@@ -548,7 +548,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("UpdateID");
             iActionBrowseRecordTasks.AddOutputParameter(param);
 
-            iActionCreateRecordSchedule = new Zapp.Core.Action("CreateRecordSchedule");
+            iActionCreateRecordSchedule = new OpenHome.Net.Core.Action("CreateRecordSchedule");
             param = new ParameterString("Elements", allowedValues);
             iActionCreateRecordSchedule.AddInputParameter(param);
             param = new ParameterString("RecordScheduleID", allowedValues);
@@ -558,11 +558,11 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("UpdateID");
             iActionCreateRecordSchedule.AddOutputParameter(param);
 
-            iActionDeleteRecordSchedule = new Zapp.Core.Action("DeleteRecordSchedule");
+            iActionDeleteRecordSchedule = new OpenHome.Net.Core.Action("DeleteRecordSchedule");
             param = new ParameterString("RecordScheduleID", allowedValues);
             iActionDeleteRecordSchedule.AddInputParameter(param);
 
-            iActionGetRecordSchedule = new Zapp.Core.Action("GetRecordSchedule");
+            iActionGetRecordSchedule = new OpenHome.Net.Core.Action("GetRecordSchedule");
             param = new ParameterString("RecordScheduleID", allowedValues);
             iActionGetRecordSchedule.AddInputParameter(param);
             param = new ParameterString("Filter", allowedValues);
@@ -572,19 +572,19 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("UpdateID");
             iActionGetRecordSchedule.AddOutputParameter(param);
 
-            iActionEnableRecordSchedule = new Zapp.Core.Action("EnableRecordSchedule");
+            iActionEnableRecordSchedule = new OpenHome.Net.Core.Action("EnableRecordSchedule");
             param = new ParameterString("RecordScheduleID", allowedValues);
             iActionEnableRecordSchedule.AddInputParameter(param);
 
-            iActionDisableRecordSchedule = new Zapp.Core.Action("DisableRecordSchedule");
+            iActionDisableRecordSchedule = new OpenHome.Net.Core.Action("DisableRecordSchedule");
             param = new ParameterString("RecordScheduleID", allowedValues);
             iActionDisableRecordSchedule.AddInputParameter(param);
 
-            iActionDeleteRecordTask = new Zapp.Core.Action("DeleteRecordTask");
+            iActionDeleteRecordTask = new OpenHome.Net.Core.Action("DeleteRecordTask");
             param = new ParameterString("RecordTaskID", allowedValues);
             iActionDeleteRecordTask.AddInputParameter(param);
 
-            iActionGetRecordTask = new Zapp.Core.Action("GetRecordTask");
+            iActionGetRecordTask = new OpenHome.Net.Core.Action("GetRecordTask");
             param = new ParameterString("RecordTaskID", allowedValues);
             iActionGetRecordTask.AddInputParameter(param);
             param = new ParameterString("Filter", allowedValues);
@@ -594,19 +594,19 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("UpdateID");
             iActionGetRecordTask.AddOutputParameter(param);
 
-            iActionEnableRecordTask = new Zapp.Core.Action("EnableRecordTask");
+            iActionEnableRecordTask = new OpenHome.Net.Core.Action("EnableRecordTask");
             param = new ParameterString("RecordTaskID", allowedValues);
             iActionEnableRecordTask.AddInputParameter(param);
 
-            iActionDisableRecordTask = new Zapp.Core.Action("DisableRecordTask");
+            iActionDisableRecordTask = new OpenHome.Net.Core.Action("DisableRecordTask");
             param = new ParameterString("RecordTaskID", allowedValues);
             iActionDisableRecordTask.AddInputParameter(param);
 
-            iActionResetRecordTask = new Zapp.Core.Action("ResetRecordTask");
+            iActionResetRecordTask = new OpenHome.Net.Core.Action("ResetRecordTask");
             param = new ParameterString("RecordTaskID", allowedValues);
             iActionResetRecordTask.AddInputParameter(param);
 
-            iActionGetRecordScheduleConflicts = new Zapp.Core.Action("GetRecordScheduleConflicts");
+            iActionGetRecordScheduleConflicts = new OpenHome.Net.Core.Action("GetRecordScheduleConflicts");
             param = new ParameterString("RecordScheduleID", allowedValues);
             iActionGetRecordScheduleConflicts.AddInputParameter(param);
             param = new ParameterString("RecordScheduleConflictIDList", allowedValues);
@@ -614,7 +614,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("UpdateID");
             iActionGetRecordScheduleConflicts.AddOutputParameter(param);
 
-            iActionGetRecordTaskConflicts = new Zapp.Core.Action("GetRecordTaskConflicts");
+            iActionGetRecordTaskConflicts = new OpenHome.Net.Core.Action("GetRecordTaskConflicts");
             param = new ParameterString("RecordTaskID", allowedValues);
             iActionGetRecordTaskConflicts.AddInputParameter(param);
             param = new ParameterString("RecordTaskConflictIDList", allowedValues);

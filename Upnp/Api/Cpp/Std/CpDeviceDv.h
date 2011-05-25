@@ -3,7 +3,8 @@
 
 #include <Std/CpDevice.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class DvDeviceStd;
 class CpiDeviceDv;
@@ -32,6 +33,7 @@ private:
     ~CpDeviceDvCpp();
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_CPDEVICEDVCPP

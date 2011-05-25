@@ -33,7 +33,7 @@ typedef THandle DvProviderC;
 /**
  * Callback which runs when an action is invoked
  */
-typedef void (*ZappCallbackDvInvocation)(void* aPtr, DvInvocationC aInvocation, uint32_t aVersion);
+typedef void (*OhNetCallbackDvInvocation)(void* aPtr, DvInvocationC aInvocation, uint32_t aVersion);
 
 /**
  * Create a provider (of a service)
@@ -60,7 +60,7 @@ DllExport void DvProviderDestroy(DvProviderC aProvider);
  * @param[in] aCallback  Callback to run when the action is invoked
  * @param[in] aPtr       Pointer to pass to the above callback
  */
-DllExport void DvProviderAddAction(DvProviderC aProvider, ServiceAction aAction, ZappCallbackDvInvocation aCallback, void* aPtr);
+DllExport void DvProviderAddAction(DvProviderC aProvider, ServiceAction aAction, OhNetCallbackDvInvocation aCallback, void* aPtr);
 
 /**
  * Lock the provider's properties, blocking publication of updates.
@@ -201,7 +201,7 @@ DllExport int32_t DvProviderSetPropertyBinary(DvProviderC aProvider, ServiceProp
  * Must be called before the values of any input arguments are read.
  * Must be called for invocations with no input arguments.
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  *
  * @return  0 on success; non-zero on error
  */
@@ -210,7 +210,7 @@ DllExport int32_t DvInvocationReadStart(DvInvocationC aInvocation);
 /**
  * Read the value of an integer input argument for an invocation
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aName        Name of the parameter associated with this input argument
  * @param[out] aValue       Value of the input argument
  *
@@ -221,7 +221,7 @@ DllExport int32_t DvInvocationReadInt(DvInvocationC aInvocation, const char* aNa
 /**
  * Read the value of an unsigned integer input argument for an invocation
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aName        Name of the parameter associated with this input argument
  * @param[out] aValue       Value of the input argument
  *
@@ -232,7 +232,7 @@ DllExport int32_t DvInvocationReadUint(DvInvocationC aInvocation, const char* aN
 /**
  * Read the value of a boolean input argument for an invocation
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aName        Name of the parameter associated with this input argument
  * @param[out] aValue       Value of the input argument.  0 for false; non-zero for true
  *
@@ -243,9 +243,9 @@ DllExport int32_t DvInvocationReadBool(DvInvocationC aInvocation, const char* aN
 /**
  * Read the value of a string input argument for an invocation
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aName        Name of the parameter associated with this input argument
- * @param[out] aValue       Value of the input argument.  Ownership passes to caller.  Use ZappFree() to destroy.
+ * @param[out] aValue       Value of the input argument.  Ownership passes to caller.  Use OhNetFree() to destroy.
  *
  * @return  0 on success; non-zero on error
  */
@@ -254,9 +254,9 @@ DllExport int32_t DvInvocationReadString(DvInvocationC aInvocation, const char* 
 /**
  * Read the value of an integer input argument for an invocation
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aName        Name of the parameter associated with this input argument
- * @param[out] aValue       Value of the input argument.  Ownership passes to caller.  Use ZappFree() to destroy.
+ * @param[out] aValue       Value of the input argument.  Ownership passes to caller.  Use OhNetFree() to destroy.
  *
  * @return  0 on success; non-zero on error
  */
@@ -268,7 +268,7 @@ DllExport int32_t DvInvocationReadBinary(DvInvocationC aInvocation, const char* 
  * Must be called after the values of all input arguments are read.
  * Must be called for invocations with no input arguments.
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  *
  * @return  0 on success; non-zero on error
  */
@@ -280,7 +280,7 @@ DllExport int32_t DvInvocationReadEnd(DvInvocationC aInvocation);
  * Must be called if DvInvocationReadEnd() isn't reached.
  * May be called if DvInvocationWriteStart() or later have been called.
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aCode        Error code
  * @param[in]  aDescription Error description
  *
@@ -294,7 +294,7 @@ DllExport int32_t DvInvocationReportError(DvInvocationC aInvocation, uint32_t aC
  * Must be called before the values of any output arguments are written.
  * Must be called for invocations with no output arguments.
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  *
  * @return  0 on success; non-zero on error
  */
@@ -303,7 +303,7 @@ DllExport int32_t DvInvocationWriteStart(DvInvocationC aInvocation);
 /**
  * Set the value of an integer output argument for an invocation.
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aName        Name of the parameter associated with this output argument
  * @param[out] aValue       Value of the output argument
  *
@@ -314,7 +314,7 @@ DllExport int32_t DvInvocationWriteInt(DvInvocationC aInvocation, const char* aN
 /**
  * Set the value of an unsigned integer output argument for an invocation.
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aName        Name of the parameter associated with this output argument
  * @param[out] aValue       Value of the output argument
  *
@@ -325,7 +325,7 @@ DllExport int32_t DvInvocationWriteUint(DvInvocationC aInvocation, const char* a
 /**
  * Set the value of a boolean output argument for an invocation.
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aName        Name of the parameter associated with this output argument
  * @param[out] aValue       Value of the output argument.  0 for false; non-zero for true
  *
@@ -340,7 +340,7 @@ DllExport int32_t DvInvocationWriteBool(DvInvocationC aInvocation, const char* a
  * This allows for the possibility of large arguments being streamed rather than
  * requiring the memory to buffer them locally.
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aName        Name of the parameter associated with this output argument
  *
  * @return  0 on success; non-zero on error
@@ -352,7 +352,7 @@ DllExport int32_t DvInvocationWriteStringStart(DvInvocationC aInvocation, const 
  *
  * DvInvocationWriteStringStart must be called first.  This function can be called one or more times.
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aValue       String (or string fragment) to be output
  *
  * @return  0 on success; non-zero on error
@@ -365,7 +365,7 @@ DllExport int32_t DvInvocationWriteString(DvInvocationC aInvocation, const char*
  * Must be called once for every call to DvInvocationWriteStringStart (and any subsequent
  * calls to DvInvocationWriteString).
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aName        Name of the parameter associated with this output argument
  *
  * @return  0 on success; non-zero on error
@@ -379,7 +379,7 @@ DllExport int32_t DvInvocationWriteStringEnd(DvInvocationC aInvocation, const ch
  * This allows for the possibility of large arguments being streamed rather than
  * requiring the memory to buffer them locally.
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aName        Name of the parameter associated with this output argument
  *
  * @return  0 on success; non-zero on error
@@ -391,7 +391,7 @@ DllExport int32_t DvInvocationWriteBinaryStart(DvInvocationC aInvocation, const 
  *
  * DvInvocationWriteStringStart must be called first.  This function can be called one or more times.
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aValue       Data (or data fragment) to be output
  *
  * @return  0 on success; non-zero on error
@@ -404,7 +404,7 @@ DllExport int32_t DvInvocationWriteBinary(DvInvocationC aInvocation, const uint8
  * Must be called once for every call to DvInvocationWriteStringStart (and any subsequent
  * calls to DvInvocationWriteString).
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aName        Name of the parameter associated with this output argument
  *
  * @return  0 on success; non-zero on error
@@ -417,7 +417,7 @@ DllExport int32_t DvInvocationWriteBinaryEnd(DvInvocationC aInvocation, const ch
  * Must be called after the values of all output arguments are written.
  * Must be called for invocations with no output arguments.
  *
- * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  *
  * @return  0 on success; non-zero on error
  */

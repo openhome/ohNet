@@ -5,7 +5,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncGetProtocolInfoUpnpOrgConnectionManager2 : public SyncProxyAction
@@ -137,63 +137,63 @@ void SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2::CompleteRequest(IAsy
 CpProxyUpnpOrgConnectionManager2::CpProxyUpnpOrgConnectionManager2(CpDevice& aDevice)
     : CpProxy("schemas-upnp-org", "ConnectionManager", 2, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
     iActionGetProtocolInfo = new Action("GetProtocolInfo");
-    param = new Zapp::ParameterString("Source");
+    param = new OpenHome::Net::ParameterString("Source");
     iActionGetProtocolInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Sink");
+    param = new OpenHome::Net::ParameterString("Sink");
     iActionGetProtocolInfo->AddOutputParameter(param);
 
     iActionPrepareForConnection = new Action("PrepareForConnection");
-    param = new Zapp::ParameterString("RemoteProtocolInfo");
+    param = new OpenHome::Net::ParameterString("RemoteProtocolInfo");
     iActionPrepareForConnection->AddInputParameter(param);
-    param = new Zapp::ParameterString("PeerConnectionManager");
+    param = new OpenHome::Net::ParameterString("PeerConnectionManager");
     iActionPrepareForConnection->AddInputParameter(param);
-    param = new Zapp::ParameterInt("PeerConnectionID");
+    param = new OpenHome::Net::ParameterInt("PeerConnectionID");
     iActionPrepareForConnection->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[2];
     allowedValues[index++] = (TChar*)"Input";
     allowedValues[index++] = (TChar*)"Output";
-    param = new Zapp::ParameterString("Direction", allowedValues, 2);
+    param = new OpenHome::Net::ParameterString("Direction", allowedValues, 2);
     iActionPrepareForConnection->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterInt("ConnectionID");
+    param = new OpenHome::Net::ParameterInt("ConnectionID");
     iActionPrepareForConnection->AddOutputParameter(param);
-    param = new Zapp::ParameterInt("AVTransportID");
+    param = new OpenHome::Net::ParameterInt("AVTransportID");
     iActionPrepareForConnection->AddOutputParameter(param);
-    param = new Zapp::ParameterInt("RcsID");
+    param = new OpenHome::Net::ParameterInt("RcsID");
     iActionPrepareForConnection->AddOutputParameter(param);
 
     iActionConnectionComplete = new Action("ConnectionComplete");
-    param = new Zapp::ParameterInt("ConnectionID");
+    param = new OpenHome::Net::ParameterInt("ConnectionID");
     iActionConnectionComplete->AddInputParameter(param);
 
     iActionGetCurrentConnectionIDs = new Action("GetCurrentConnectionIDs");
-    param = new Zapp::ParameterString("ConnectionIDs");
+    param = new OpenHome::Net::ParameterString("ConnectionIDs");
     iActionGetCurrentConnectionIDs->AddOutputParameter(param);
 
     iActionGetCurrentConnectionInfo = new Action("GetCurrentConnectionInfo");
-    param = new Zapp::ParameterInt("ConnectionID");
+    param = new OpenHome::Net::ParameterInt("ConnectionID");
     iActionGetCurrentConnectionInfo->AddInputParameter(param);
-    param = new Zapp::ParameterInt("RcsID");
+    param = new OpenHome::Net::ParameterInt("RcsID");
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterInt("AVTransportID");
+    param = new OpenHome::Net::ParameterInt("AVTransportID");
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("ProtocolInfo");
+    param = new OpenHome::Net::ParameterString("ProtocolInfo");
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("PeerConnectionManager");
+    param = new OpenHome::Net::ParameterString("PeerConnectionManager");
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterInt("PeerConnectionID");
+    param = new OpenHome::Net::ParameterInt("PeerConnectionID");
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
     index = 0;
     allowedValues = new TChar*[2];
     allowedValues[index++] = (TChar*)"Input";
     allowedValues[index++] = (TChar*)"Output";
-    param = new Zapp::ParameterString("Direction", allowedValues, 2);
+    param = new OpenHome::Net::ParameterString("Direction", allowedValues, 2);
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
     delete[] allowedValues;
     index = 0;
@@ -203,7 +203,7 @@ CpProxyUpnpOrgConnectionManager2::CpProxyUpnpOrgConnectionManager2(CpDevice& aDe
     allowedValues[index++] = (TChar*)"InsufficientBandwidth";
     allowedValues[index++] = (TChar*)"UnreliableChannel";
     allowedValues[index++] = (TChar*)"Unknown";
-    param = new Zapp::ParameterString("Status", allowedValues, 5);
+    param = new OpenHome::Net::ParameterString("Status", allowedValues, 5);
     iActionGetCurrentConnectionInfo->AddOutputParameter(param);
     delete[] allowedValues;
 

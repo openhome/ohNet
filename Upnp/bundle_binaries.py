@@ -36,7 +36,7 @@ def main():
     templateDir = "T4/Templates"
     uisdkDir = "Public/Js/WebUIsdk"
 
-    bundle_fileprefix = "zapp-%s%s" % (targetname, "-dev" if options.dev else "")
+    bundle_fileprefix = "ohnet-%s%s" % (targetname, "-dev" if options.dev else "")
     bundle_filename = bundle_fileprefix + ".tar.gz"
     bundle_path = path.join(outputdir, bundle_filename)
 
@@ -45,8 +45,8 @@ def main():
     recursively_add_directory(tf, builddir, bundle_fileprefix + "/lib", exclude=exclude_non_binary)
     #tf.add(builddir, bundle_fileprefix + "/lib", exclude=exclude_non_binary)
     if options.dev:
-        recursively_add_directory(tf, includedir, bundle_fileprefix + "/include/zapp")
-        #tf.add(includedir, bundle_fileprefix + "/include/zapp")
+        recursively_add_directory(tf, includedir, bundle_fileprefix + "/include/ohnet")
+        #tf.add(includedir, bundle_fileprefix + "/include/ohnet")
         recursively_add_directory(tf, t4dir, bundle_fileprefix + "/lib/t4")
         recursively_add_directory(tf, templateDir, bundle_fileprefix + "/lib/t4")
         recursively_add_directory(tf, uisdkDir, bundle_fileprefix + "/lib/ui")

@@ -1,15 +1,15 @@
 #include "DvUpnpOrgSwitchPower1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
 #include <DvProvider.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class DvProviderUpnpOrgSwitchPower1C : public DvProvider
 {
@@ -56,7 +56,7 @@ void DvProviderUpnpOrgSwitchPower1C::EnableActionSetTarget(CallbackSwitchPower1S
 {
     iCallbackSetTarget = aCallback;
     iPtrSetTarget = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetTarget");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetTarget");
     action->AddInputParameter(new ParameterBool("newTargetValue"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgSwitchPower1C::DoSetTarget);
     iService->AddAction(action, functor);
@@ -66,7 +66,7 @@ void DvProviderUpnpOrgSwitchPower1C::EnableActionGetTarget(CallbackSwitchPower1G
 {
     iCallbackGetTarget = aCallback;
     iPtrGetTarget = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetTarget");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetTarget");
     action->AddOutputParameter(new ParameterBool("RetTargetValue"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgSwitchPower1C::DoGetTarget);
     iService->AddAction(action, functor);
@@ -76,7 +76,7 @@ void DvProviderUpnpOrgSwitchPower1C::EnableActionGetStatus(CallbackSwitchPower1G
 {
     iCallbackGetStatus = aCallback;
     iPtrGetStatus = aPtr;
-    Zapp::Action* action = new Zapp::Action("GetStatus");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetStatus");
     action->AddOutputParameter(new ParameterRelated("ResultStatus", *iPropertyStatus));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgSwitchPower1C::DoGetStatus);
     iService->AddAction(action, functor);

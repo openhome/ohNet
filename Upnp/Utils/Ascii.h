@@ -2,9 +2,10 @@
 #define HEADER_ASCII_ASCII
 
 #include <Standard.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Stream.h>
 #include <Buffer.h>
+#include <Exception.h>
 
 //     0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
 // 0  NUL SOH STX ETX EOT ENQ ACK BEL BS  HT  LF  VT  FF  CR  SO  SI
@@ -19,8 +20,8 @@
 
 EXCEPTION(AsciiError);
 
-namespace Zapp
-{
+namespace OpenHome {
+namespace Net {
 
 class Ascii
 {
@@ -173,7 +174,8 @@ protected:
     IWriter& iWriter;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_ASCII_ASCII
 

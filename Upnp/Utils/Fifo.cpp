@@ -1,7 +1,7 @@
 #include <Fifo.h>
 
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // FifoBase
 

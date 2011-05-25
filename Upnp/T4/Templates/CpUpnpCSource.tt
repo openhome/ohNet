@@ -1,7 +1,7 @@
 <#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -53,7 +53,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -63,7 +63,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class <#=className#>C : public CpProxyC
 {
@@ -160,7 +160,7 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
     allowedValues[index++] = (TChar*)"<#=val#>";
 <#              } #>
 <#          } #>
-    param = new Zapp::<#=paramClass[i.variable.type]#>("<#=i.name#>"<#=ParameterAllowedValues(i)#>);
+    param = new OpenHome::Net::<#=paramClass[i.variable.type]#>("<#=i.name#>"<#=ParameterAllowedValues(i)#>);
     iAction<#=a.name#>->AddInputParameter(param);
 <#          if (i.variable.values.Count > 0) #>
 <#          { #>
@@ -178,7 +178,7 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
     allowedValues[index++] = (TChar*)"<#=val#>";
 <#              } #>
 <#          } #>
-    param = new Zapp::<#=paramClass[o.variable.type]#>("<#=o.name#>"<#=ParameterAllowedValues(o)#>);
+    param = new OpenHome::Net::<#=paramClass[o.variable.type]#>("<#=o.name#>"<#=ParameterAllowedValues(o)#>);
     iAction<#=a.name#>->AddOutputParameter(param);
 <#          if (o.variable.values.Count > 0) #>
 <#          { #>
@@ -366,7 +366,7 @@ void <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
 <#  } #>
 }
 
-void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InTypesAndNamesTrailingComma(a)#>ZappCallbackAsync aCallback, void* aPtr)
+void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InTypesAndNamesTrailingComma(a)#>OhNetCallbackAsync aCallback, void* aPtr)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -382,11 +382,11 @@ void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InTypesAndNamesTrailingC
     buf_a<#=i.name#>.Set((const TByte*)a<#=i.name#>, a<#=i.name#>Len);
 <#      } #>
 <#  } #>
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->Begin<#=a.name#>(<#=InNamesTrailingComma(a)#>functor);
 }
 
-int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=PrefixedOutArgTypesAndNames("ZappHandleAsync aAsync", a)#>)
+int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=PrefixedOutArgTypesAndNames("OhNetHandleAsync aAsync", a)#>)
 {
     int32_t err = 0;
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
@@ -432,7 +432,7 @@ int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=PrefixedOutArgTypesAndN
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
-void <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -927,7 +927,7 @@ string DeclareConstructLocalVars(Document u)
     string result = "";
     if (u.methods.Count > 0)
     {
-        result += "Zapp::Parameter* param;";
+        result += "OpenHome::Net::Parameter* param;";
     }
 
     foreach (Method a in u.methods)

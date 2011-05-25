@@ -2,15 +2,15 @@
 
 #include <TestFramework.h>
 #include <OptionParser.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Discovery.h>
 #include <Thread.h>
 #include <Timer.h>
 #include <OsWrapper.h>
 #include "CpTopology3.h"
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class TestDevice : public ICpTopology2GroupHandler
 {
@@ -362,7 +362,7 @@ void TestTopology3Handler::RoomRemoved(CpTopology3Room& aRoom)
     Add(Brn("Removed"), aRoom.Name(), Brx::Empty());
 }
 
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::Initialise(aInitParams);
 

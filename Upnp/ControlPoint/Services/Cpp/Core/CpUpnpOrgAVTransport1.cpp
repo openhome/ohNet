@@ -5,7 +5,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncSetAVTransportURIUpnpOrgAVTransport1 : public SyncProxyAction
@@ -403,176 +403,176 @@ void SyncGetCurrentTransportActionsUpnpOrgAVTransport1::CompleteRequest(IAsync& 
 CpProxyUpnpOrgAVTransport1::CpProxyUpnpOrgAVTransport1(CpDevice& aDevice)
     : CpProxy("schemas-upnp-org", "AVTransport", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
     iActionSetAVTransportURI = new Action("SetAVTransportURI");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetAVTransportURI->AddInputParameter(param);
-    param = new Zapp::ParameterString("CurrentURI");
+    param = new OpenHome::Net::ParameterString("CurrentURI");
     iActionSetAVTransportURI->AddInputParameter(param);
-    param = new Zapp::ParameterString("CurrentURIMetaData");
+    param = new OpenHome::Net::ParameterString("CurrentURIMetaData");
     iActionSetAVTransportURI->AddInputParameter(param);
 
     iActionSetNextAVTransportURI = new Action("SetNextAVTransportURI");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetNextAVTransportURI->AddInputParameter(param);
-    param = new Zapp::ParameterString("NextURI");
+    param = new OpenHome::Net::ParameterString("NextURI");
     iActionSetNextAVTransportURI->AddInputParameter(param);
-    param = new Zapp::ParameterString("NextURIMetaData");
+    param = new OpenHome::Net::ParameterString("NextURIMetaData");
     iActionSetNextAVTransportURI->AddInputParameter(param);
 
     iActionGetMediaInfo = new Action("GetMediaInfo");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetMediaInfo->AddInputParameter(param);
-    param = new Zapp::ParameterUint("NrTracks", 0, 0);
+    param = new OpenHome::Net::ParameterUint("NrTracks", 0, 0);
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("MediaDuration");
+    param = new OpenHome::Net::ParameterString("MediaDuration");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("CurrentURI");
+    param = new OpenHome::Net::ParameterString("CurrentURI");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("CurrentURIMetaData");
+    param = new OpenHome::Net::ParameterString("CurrentURIMetaData");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("NextURI");
+    param = new OpenHome::Net::ParameterString("NextURI");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("NextURIMetaData");
+    param = new OpenHome::Net::ParameterString("NextURIMetaData");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("PlayMedium");
+    param = new OpenHome::Net::ParameterString("PlayMedium");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("RecordMedium");
+    param = new OpenHome::Net::ParameterString("RecordMedium");
     iActionGetMediaInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("WriteStatus");
+    param = new OpenHome::Net::ParameterString("WriteStatus");
     iActionGetMediaInfo->AddOutputParameter(param);
 
     iActionGetTransportInfo = new Action("GetTransportInfo");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetTransportInfo->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[2];
     allowedValues[index++] = (TChar*)"STOPPED";
     allowedValues[index++] = (TChar*)"PLAYING";
-    param = new Zapp::ParameterString("CurrentTransportState", allowedValues, 2);
+    param = new OpenHome::Net::ParameterString("CurrentTransportState", allowedValues, 2);
     iActionGetTransportInfo->AddOutputParameter(param);
     delete[] allowedValues;
     index = 0;
     allowedValues = new TChar*[2];
     allowedValues[index++] = (TChar*)"OK";
     allowedValues[index++] = (TChar*)"ERROR_OCCURRED";
-    param = new Zapp::ParameterString("CurrentTransportStatus", allowedValues, 2);
+    param = new OpenHome::Net::ParameterString("CurrentTransportStatus", allowedValues, 2);
     iActionGetTransportInfo->AddOutputParameter(param);
     delete[] allowedValues;
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"1";
-    param = new Zapp::ParameterString("CurrentSpeed", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("CurrentSpeed", allowedValues, 1);
     iActionGetTransportInfo->AddOutputParameter(param);
     delete[] allowedValues;
 
     iActionGetPositionInfo = new Action("GetPositionInfo");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetPositionInfo->AddInputParameter(param);
-    param = new Zapp::ParameterUint("Track", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("Track", 0, 0, 1);
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("TrackDuration");
+    param = new OpenHome::Net::ParameterString("TrackDuration");
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("TrackMetaData");
+    param = new OpenHome::Net::ParameterString("TrackMetaData");
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("TrackURI");
+    param = new OpenHome::Net::ParameterString("TrackURI");
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("RelTime");
+    param = new OpenHome::Net::ParameterString("RelTime");
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterString("AbsTime");
+    param = new OpenHome::Net::ParameterString("AbsTime");
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterInt("RelCount");
+    param = new OpenHome::Net::ParameterInt("RelCount");
     iActionGetPositionInfo->AddOutputParameter(param);
-    param = new Zapp::ParameterInt("AbsCount");
+    param = new OpenHome::Net::ParameterInt("AbsCount");
     iActionGetPositionInfo->AddOutputParameter(param);
 
     iActionGetDeviceCapabilities = new Action("GetDeviceCapabilities");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetDeviceCapabilities->AddInputParameter(param);
-    param = new Zapp::ParameterString("PlayMedia");
+    param = new OpenHome::Net::ParameterString("PlayMedia");
     iActionGetDeviceCapabilities->AddOutputParameter(param);
-    param = new Zapp::ParameterString("RecMedia");
+    param = new OpenHome::Net::ParameterString("RecMedia");
     iActionGetDeviceCapabilities->AddOutputParameter(param);
-    param = new Zapp::ParameterString("RecQualityModes");
+    param = new OpenHome::Net::ParameterString("RecQualityModes");
     iActionGetDeviceCapabilities->AddOutputParameter(param);
 
     iActionGetTransportSettings = new Action("GetTransportSettings");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetTransportSettings->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"NORMAL";
-    param = new Zapp::ParameterString("PlayMode", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("PlayMode", allowedValues, 1);
     iActionGetTransportSettings->AddOutputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterString("RecQualityMode");
+    param = new OpenHome::Net::ParameterString("RecQualityMode");
     iActionGetTransportSettings->AddOutputParameter(param);
 
     iActionStop = new Action("Stop");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionStop->AddInputParameter(param);
 
     iActionPlay = new Action("Play");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionPlay->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"1";
-    param = new Zapp::ParameterString("Speed", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Speed", allowedValues, 1);
     iActionPlay->AddInputParameter(param);
     delete[] allowedValues;
 
     iActionPause = new Action("Pause");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionPause->AddInputParameter(param);
 
     iActionRecord = new Action("Record");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionRecord->AddInputParameter(param);
 
     iActionSeek = new Action("Seek");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSeek->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"TRACK_NR";
-    param = new Zapp::ParameterString("Unit", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Unit", allowedValues, 1);
     iActionSeek->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterString("Target");
+    param = new OpenHome::Net::ParameterString("Target");
     iActionSeek->AddInputParameter(param);
 
     iActionNext = new Action("Next");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionNext->AddInputParameter(param);
 
     iActionPrevious = new Action("Previous");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionPrevious->AddInputParameter(param);
 
     iActionSetPlayMode = new Action("SetPlayMode");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetPlayMode->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"NORMAL";
-    param = new Zapp::ParameterString("NewPlayMode", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("NewPlayMode", allowedValues, 1);
     iActionSetPlayMode->AddInputParameter(param);
     delete[] allowedValues;
 
     iActionSetRecordQualityMode = new Action("SetRecordQualityMode");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetRecordQualityMode->AddInputParameter(param);
-    param = new Zapp::ParameterString("NewRecordQualityMode");
+    param = new OpenHome::Net::ParameterString("NewRecordQualityMode");
     iActionSetRecordQualityMode->AddInputParameter(param);
 
     iActionGetCurrentTransportActions = new Action("GetCurrentTransportActions");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetCurrentTransportActions->AddInputParameter(param);
-    param = new Zapp::ParameterString("Actions");
+    param = new OpenHome::Net::ParameterString("Actions");
     iActionGetCurrentTransportActions->AddOutputParameter(param);
 
     Functor functor;

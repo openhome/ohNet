@@ -1,7 +1,7 @@
 #ifndef HEADER_CPISUBSCRIPTION
 #define HEADER_CPISUBSCRIPTION
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <CpiService.h>
 #include <Timer.h>
@@ -15,7 +15,8 @@
 #include <map>
 #include <vector>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 /**
  * Owns a subscription (request for notification of changes in state variables)
@@ -84,7 +85,7 @@ public:
      */
     void SetSid(Brh& aSid);
 
-    const Zapp::ServiceType& ServiceType() const;
+    const OpenHome::Net::ServiceType& ServiceType() const;
 
     /**
      * Used by Subscriber threads to process a subscribe/renew/unsubscribe operation
@@ -106,7 +107,7 @@ private:
      * in a Subscriber thread)
      * Clients are not notified about any failure of the subscription
      */
-    CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const Zapp::ServiceType& aServiceType);
+    CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType);
     ~CpiSubscription();
     /**
      * Schedule a (subscribe, renew or unsubscribe operation) which will be processed
@@ -126,7 +127,7 @@ private:
     Mutex iLock;
     CpiDevice& iDevice;
     IEventProcessor* iEventProcessor;
-    Zapp::ServiceType iServiceType;
+    OpenHome::Net::ServiceType iServiceType;
     Brh iSid;
     Timer* iTimer;
     TUint iNextSequenceNumber;
@@ -170,7 +171,7 @@ public:
      * Destructor.  Blocks until all subscriptions have been deleted.
      */
     ~CpiSubscriptionManager();
-    static CpiSubscription* NewSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const Zapp::ServiceType& aServiceType);
+    static CpiSubscription* NewSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType);
     static void NotifyAddPending(CpiSubscription& aSubscription);
     static void NotifyAddAborted(CpiSubscription& aSubscription);
     
@@ -227,6 +228,7 @@ private:
     TUint iSubnetListenerId;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_CPISUBSCRIPTION

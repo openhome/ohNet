@@ -1,10 +1,10 @@
 #include <NetworkInterfaceList.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <OsWrapper.h>
 #include <Thread.h>
 #include <Stack.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 NetworkInterfaceList::NetworkInterfaceList(TIpAddress aDefaultSubnet)

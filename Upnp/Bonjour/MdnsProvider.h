@@ -2,10 +2,11 @@
 #define HEADER_MDNSPROVIDER
 
 #include <Bonjour.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <MdnsPlatform.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class MdnsProvider : public IMdnsProvider
 {
@@ -22,6 +23,7 @@ private:
     MdnsPlatform iPlatform;
 };
     
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_MDNSPROVIDER

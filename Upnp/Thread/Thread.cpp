@@ -2,8 +2,9 @@
 #include <Debug.h>
 #include <OsWrapper.h>
 #include <exception>
+#include <Stack.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 //
 // Semaphore
@@ -11,7 +12,7 @@ using namespace Zapp;
 
 Semaphore::Semaphore(const TChar* aName, TUint aCount)
 {
-    iHandle = Zapp::Os::SemaphoreCreate(aName, aCount);
+    iHandle = OpenHome::Net::Os::SemaphoreCreate(aName, aCount);
     if (iHandle == kHandleNull) {
         throw std::bad_alloc();
     }
@@ -19,12 +20,12 @@ Semaphore::Semaphore(const TChar* aName, TUint aCount)
 
 Semaphore::~Semaphore()
 {
-    Zapp::Os::SemaphoreDestroy(iHandle);
+    OpenHome::Net::Os::SemaphoreDestroy(iHandle);
 }
 
 void Semaphore::Wait()
 {
-    Zapp::Os::SemaphoreWait(iHandle);
+    OpenHome::Net::Os::SemaphoreWait(iHandle);
 }
 
 void Semaphore::Wait(TUint aTimeoutMs)
@@ -33,7 +34,7 @@ void Semaphore::Wait(TUint aTimeoutMs)
         return (Wait());
     }
     ASSERT(iHandle != kHandleNull);
-    if (!Zapp::Os::SemaphoreTimedWait(iHandle, aTimeoutMs)) {
+    if (!OpenHome::Net::Os::SemaphoreTimedWait(iHandle, aTimeoutMs)) {
         THROW(Timeout);
     }
 }
@@ -41,12 +42,12 @@ void Semaphore::Wait(TUint aTimeoutMs)
 TBool Semaphore::Clear()
 {
     ASSERT(iHandle != kHandleNull);
-    return Zapp::Os::SemaphoreClear(iHandle);
+    return OpenHome::Net::Os::SemaphoreClear(iHandle);
 }
 
 void Semaphore::Signal()
 {
-    Zapp::Os::SemaphoreSignal(iHandle);
+    OpenHome::Net::Os::SemaphoreSignal(iHandle);
 }
 
 //
@@ -55,25 +56,45 @@ void Semaphore::Signal()
 
 Mutex::Mutex(const TChar* aName)
 {
-    iHandle = Zapp::Os::MutexCreate(aName);
+    iHandle = OpenHome::Net::Os::MutexCreate(aName);
     if (iHandle == kHandleNull) {
         throw std::bad_alloc();
     }
+    (void)strncpy(iName, aName, 4);
+    iName[4] = 0;
 }
 
 Mutex::~Mutex()
 {
-    Zapp::Os::MutexDestroy(iHandle);
+    OpenHome::Net::Os::MutexDestroy(iHandle);
 }
 
 void Mutex::Wait()
 {
-    Zapp::Os::MutexLock(iHandle);
+    TInt err = OpenHome::Net::Os::MutexLock(iHandle);
+    if (err != 0) {
+        const char* msg;
+        if (err == -1) {
+            msg = "Recursive lock attempted on mutex";
+        }
+        else {
+            msg = "Lock attempted on uninitialised mutex";
+        }    
+        Brhz thBuf;
+        const char* thName = "unknown";
+        Thread* th = Thread::Current();
+        if (th != NULL) {
+            thBuf.Set(th->Name());
+            thName = (const char*)thBuf.Ptr();
+        }    
+        Log::Print("ERROR: %s %s from thread %s\n", msg, iName, thName);
+        ASSERT(err == 0);
+    }
 }
 
 void Mutex::Signal()
 {
-    Zapp::Os::MutexUnlock(iHandle);
+    OpenHome::Net::Os::MutexUnlock(iHandle);
 }
 
 //
@@ -137,7 +158,7 @@ void SemaphoreActive::ConsumeAll()
 // Thread
 //
 
-const TUint Zapp::Thread::kDefaultStackBytes = 16 * 1024;
+const TUint OpenHome::Net::Thread::kDefaultStackBytes = 16 * 1024;
 
 Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     : iHandle(kHandleNull)
@@ -161,7 +182,7 @@ Thread::~Thread()
     LOG(kThread, "> Thread::~Thread() called for thread: %p\n", this);
     Kill();
     Join();
-    Zapp::Os::ThreadDestroy(iHandle);
+    OpenHome::Net::Os::ThreadDestroy(iHandle);
     LOG(kThread, "< Thread::~Thread() called for thread: %p\n", this);
 }
 
@@ -169,7 +190,7 @@ void Thread::Start()
 {
     TChar name[kNameBytes+1] = {0};
     (void)memcpy(name, iName.Ptr(), iName.Bytes());
-    iHandle = Zapp::Os::ThreadCreate(name, iPriority, iStackBytes, &Thread::EntryPoint, this);
+    iHandle = OpenHome::Net::Os::ThreadCreate(name, iPriority, iStackBytes, &Thread::EntryPoint, this);
 }
 
 void Thread::EntryPoint(void* aArg)
@@ -222,20 +243,20 @@ void Thread::Sleep(TUint aMilliSecs)
 
 Thread* Thread::Current()
 { // static
-    return (Thread*)Zapp::Os::ThreadTls();
+    return (Thread*)OpenHome::Net::Os::ThreadTls();
 }
 
 TBool Thread::SupportsPriorities()
 { // static
-    return Zapp::Os::ThreadSupportsPriorities();
+    return OpenHome::Net::Os::ThreadSupportsPriorities();
 }
 
 void Thread::CheckForKill() const
 {
-    // iKill is read/written from multiple threads but doesn't need to be locked
-    // the only read is here and this function is polled.  If callers just miss
-    // the thread being killed, they'll get an exception next time round...
-    if (iKill) {
+    Stack::Mutex().Wait();
+    TBool kill = iKill;
+    Stack::Mutex().Signal();
+    if (kill) {
         THROW(ThreadKill);
     }
 }
@@ -243,7 +264,9 @@ void Thread::CheckForKill() const
 void Thread::Kill()
 {
     LOG(kThread, "Thread::Kill() called for thread: %p\n", this);
+    Stack::Mutex().Wait();
     iKill = true;
+    Stack::Mutex().Signal();
     Signal();
 }
 

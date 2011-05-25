@@ -1,14 +1,15 @@
 #ifndef HEADER_UPNPORGSWITCHPOWER1
 #define HEADER_UPNPORGSWITCHPOWER1
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
 #include <FunctorAsync.h>
 #include <CpProxy.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpDevice;
 class Action;
@@ -151,7 +152,8 @@ private:
     Functor iStatusChanged;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_UPNPORGSWITCHPOWER1
 

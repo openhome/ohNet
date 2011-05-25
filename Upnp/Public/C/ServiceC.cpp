@@ -1,11 +1,11 @@
 #include <C/Service.h>
-#include <ZappTypes.h>
-#include <C/Zapp.h>
+#include <OhNetTypes.h>
+#include <C/OhNet.h>
 #include <Service.h>
 #include <Buffer.h>
 #include <Functor.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 ServiceParameter ServiceParameterCreateInt(const char* aName, int32_t aMinValue, int32_t aMaxValue, int32_t aStep)
 {
@@ -34,16 +34,16 @@ ServiceParameter ServiceParameterCreateBinary(const char* aName)
 
 ServiceParameter ServiceParameterCreateRelated(const char* aName, ServiceProperty aProperty)
 {
-    Zapp::Property* prop = reinterpret_cast<Zapp::Property*>(aProperty);
+    OpenHome::Net::Property* prop = reinterpret_cast<OpenHome::Net::Property*>(aProperty);
     return (ServiceParameter)new ParameterRelated(aName, *prop);
 }
 
 void ServicePropertyDestroy(ServiceProperty aProperty)
 {
-    delete reinterpret_cast<Zapp::Property*>(aProperty);
+    delete reinterpret_cast<OpenHome::Net::Property*>(aProperty);
 }
 
-ServiceProperty ServicePropertyCreateIntCp(const char* aName, ZappCallback aCallback, void* aPtr)
+ServiceProperty ServicePropertyCreateIntCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
     return (ServiceProperty)new PropertyInt(aName, functor);
@@ -51,11 +51,11 @@ ServiceProperty ServicePropertyCreateIntCp(const char* aName, ZappCallback aCall
 
 ServiceProperty ServicePropertyCreateIntDv(ServiceParameter aParameter)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ServiceProperty)new PropertyInt(param);
 }
 
-ServiceProperty ServicePropertyCreateUintCp(const char* aName, ZappCallback aCallback, void* aPtr)
+ServiceProperty ServicePropertyCreateUintCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
     return (ServiceProperty)new PropertyUint(aName, functor);
@@ -63,11 +63,11 @@ ServiceProperty ServicePropertyCreateUintCp(const char* aName, ZappCallback aCal
 
 ServiceProperty ServicePropertyCreateUintDv(ServiceParameter aParameter)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ServiceProperty)new PropertyUint(param);
 }
 
-ServiceProperty ServicePropertyCreateBoolCp(const char* aName, ZappCallback aCallback, void* aPtr)
+ServiceProperty ServicePropertyCreateBoolCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
     return (ServiceProperty)new PropertyBool(aName, functor);
@@ -75,11 +75,11 @@ ServiceProperty ServicePropertyCreateBoolCp(const char* aName, ZappCallback aCal
 
 ServiceProperty ServicePropertyCreateBoolDv(ServiceParameter aParameter)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ServiceProperty)new PropertyBool(param);
 }
 
-ServiceProperty ServicePropertyCreateStringCp(const char* aName, ZappCallback aCallback, void* aPtr)
+ServiceProperty ServicePropertyCreateStringCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
     return (ServiceProperty)new PropertyString(aName, functor);
@@ -87,11 +87,11 @@ ServiceProperty ServicePropertyCreateStringCp(const char* aName, ZappCallback aC
 
 ServiceProperty ServicePropertyCreateStringDv(ServiceParameter aParameter)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ServiceProperty)new PropertyString(param);
 }
 
-ServiceProperty ServicePropertyCreateBinaryCp(const char* aName, ZappCallback aCallback, void* aPtr)
+ServiceProperty ServicePropertyCreateBinaryCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
     return (ServiceProperty)new PropertyBinary(aName, functor);
@@ -99,7 +99,7 @@ ServiceProperty ServicePropertyCreateBinaryCp(const char* aName, ZappCallback aC
 
 ServiceProperty ServicePropertyCreateBinaryDv(ServiceParameter aParameter)
 {
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ServiceProperty)new PropertyBinary(param);
 }
 
@@ -198,36 +198,36 @@ uint32_t ServicePropertySetValueBinary(ServiceProperty aProperty, uint8_t* aValu
 
 ServiceAction ServiceActionCreate(const char* aName)
 {
-    return (ServiceAction)new Zapp::Action(aName);
+    return (ServiceAction)new OpenHome::Net::Action(aName);
 }
 
 void ServiceActionDestroy(ServiceAction aAction)
 {
-    Zapp::Action* action = reinterpret_cast<Zapp::Action*>(aAction);
+    OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
     delete action;
 }
 
 void ServiceActionAddInputParameter(ServiceAction aAction, ServiceParameter aParameter)
 {
-    Zapp::Action* action = reinterpret_cast<Zapp::Action*>(aAction);
+    OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
     ASSERT(action != NULL);
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     ASSERT(param != NULL);
     action->AddInputParameter(param);
 }
 
 void ServiceActionAddOutputParameter(ServiceAction aAction, ServiceParameter aParameter)
 {
-    Zapp::Action* action = reinterpret_cast<Zapp::Action*>(aAction);
+    OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
     ASSERT(action != NULL);
-    Zapp::Parameter* param = reinterpret_cast<Zapp::Parameter*>(aParameter);
+    OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     ASSERT(param != NULL);
     action->AddOutputParameter(param);
 }
 
 const char* ServiceActionName(ServiceAction aAction)
 {
-    Zapp::Action* action = reinterpret_cast<Zapp::Action*>(aAction);
+    OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
     ASSERT(action != NULL);
     return (const char*)action->Name().Ptr();
 }

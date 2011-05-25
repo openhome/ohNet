@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderUpnpOrgRenderingControl2 : IDisposable
     {
@@ -107,7 +107,7 @@ namespace Zapp.Device.Providers
         /// ListPresets must be overridden if this is called.</remarks>
         protected void EnableActionListPresets()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("ListPresets");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("ListPresets");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterString("CurrentPresetNameList", allowedValues));
@@ -122,7 +122,7 @@ namespace Zapp.Device.Providers
         /// SelectPreset must be overridden if this is called.</remarks>
         protected void EnableActionSelectPreset()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SelectPreset");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SelectPreset");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("FactoryDefaults");
@@ -139,7 +139,7 @@ namespace Zapp.Device.Providers
         /// GetBrightness must be overridden if this is called.</remarks>
         protected void EnableActionGetBrightness()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetBrightness");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetBrightness");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterUint("CurrentBrightness", 0, 0, 1));
             iDelegateGetBrightness = new ActionDelegate(DoGetBrightness);
@@ -153,7 +153,7 @@ namespace Zapp.Device.Providers
         /// SetBrightness must be overridden if this is called.</remarks>
         protected void EnableActionSetBrightness()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetBrightness");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetBrightness");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterUint("DesiredBrightness", 0, 0, 1));
             iDelegateSetBrightness = new ActionDelegate(DoSetBrightness);
@@ -167,7 +167,7 @@ namespace Zapp.Device.Providers
         /// GetContrast must be overridden if this is called.</remarks>
         protected void EnableActionGetContrast()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetContrast");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetContrast");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterUint("CurrentContrast", 0, 0, 1));
             iDelegateGetContrast = new ActionDelegate(DoGetContrast);
@@ -181,7 +181,7 @@ namespace Zapp.Device.Providers
         /// SetContrast must be overridden if this is called.</remarks>
         protected void EnableActionSetContrast()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetContrast");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetContrast");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterUint("DesiredContrast", 0, 0, 1));
             iDelegateSetContrast = new ActionDelegate(DoSetContrast);
@@ -195,7 +195,7 @@ namespace Zapp.Device.Providers
         /// GetSharpness must be overridden if this is called.</remarks>
         protected void EnableActionGetSharpness()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetSharpness");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetSharpness");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterUint("CurrentSharpness", 0, 0, 1));
             iDelegateGetSharpness = new ActionDelegate(DoGetSharpness);
@@ -209,7 +209,7 @@ namespace Zapp.Device.Providers
         /// SetSharpness must be overridden if this is called.</remarks>
         protected void EnableActionSetSharpness()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetSharpness");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetSharpness");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterUint("DesiredSharpness", 0, 0, 1));
             iDelegateSetSharpness = new ActionDelegate(DoSetSharpness);
@@ -223,7 +223,7 @@ namespace Zapp.Device.Providers
         /// GetRedVideoGain must be overridden if this is called.</remarks>
         protected void EnableActionGetRedVideoGain()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetRedVideoGain");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetRedVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterUint("CurrentRedVideoGain", 0, 0, 1));
             iDelegateGetRedVideoGain = new ActionDelegate(DoGetRedVideoGain);
@@ -237,7 +237,7 @@ namespace Zapp.Device.Providers
         /// SetRedVideoGain must be overridden if this is called.</remarks>
         protected void EnableActionSetRedVideoGain()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetRedVideoGain");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetRedVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterUint("DesiredRedVideoGain", 0, 0, 1));
             iDelegateSetRedVideoGain = new ActionDelegate(DoSetRedVideoGain);
@@ -251,7 +251,7 @@ namespace Zapp.Device.Providers
         /// GetGreenVideoGain must be overridden if this is called.</remarks>
         protected void EnableActionGetGreenVideoGain()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetGreenVideoGain");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetGreenVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterUint("CurrentGreenVideoGain", 0, 0, 1));
             iDelegateGetGreenVideoGain = new ActionDelegate(DoGetGreenVideoGain);
@@ -265,7 +265,7 @@ namespace Zapp.Device.Providers
         /// SetGreenVideoGain must be overridden if this is called.</remarks>
         protected void EnableActionSetGreenVideoGain()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetGreenVideoGain");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetGreenVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterUint("DesiredGreenVideoGain", 0, 0, 1));
             iDelegateSetGreenVideoGain = new ActionDelegate(DoSetGreenVideoGain);
@@ -279,7 +279,7 @@ namespace Zapp.Device.Providers
         /// GetBlueVideoGain must be overridden if this is called.</remarks>
         protected void EnableActionGetBlueVideoGain()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetBlueVideoGain");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetBlueVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterUint("CurrentBlueVideoGain", 0, 0, 1));
             iDelegateGetBlueVideoGain = new ActionDelegate(DoGetBlueVideoGain);
@@ -293,7 +293,7 @@ namespace Zapp.Device.Providers
         /// SetBlueVideoGain must be overridden if this is called.</remarks>
         protected void EnableActionSetBlueVideoGain()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetBlueVideoGain");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetBlueVideoGain");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterUint("DesiredBlueVideoGain", 0, 0, 1));
             iDelegateSetBlueVideoGain = new ActionDelegate(DoSetBlueVideoGain);
@@ -307,7 +307,7 @@ namespace Zapp.Device.Providers
         /// GetRedVideoBlackLevel must be overridden if this is called.</remarks>
         protected void EnableActionGetRedVideoBlackLevel()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetRedVideoBlackLevel");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetRedVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1));
             iDelegateGetRedVideoBlackLevel = new ActionDelegate(DoGetRedVideoBlackLevel);
@@ -321,7 +321,7 @@ namespace Zapp.Device.Providers
         /// SetRedVideoBlackLevel must be overridden if this is called.</remarks>
         protected void EnableActionSetRedVideoBlackLevel()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetRedVideoBlackLevel");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetRedVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1));
             iDelegateSetRedVideoBlackLevel = new ActionDelegate(DoSetRedVideoBlackLevel);
@@ -335,7 +335,7 @@ namespace Zapp.Device.Providers
         /// GetGreenVideoBlackLevel must be overridden if this is called.</remarks>
         protected void EnableActionGetGreenVideoBlackLevel()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetGreenVideoBlackLevel");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetGreenVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1));
             iDelegateGetGreenVideoBlackLevel = new ActionDelegate(DoGetGreenVideoBlackLevel);
@@ -349,7 +349,7 @@ namespace Zapp.Device.Providers
         /// SetGreenVideoBlackLevel must be overridden if this is called.</remarks>
         protected void EnableActionSetGreenVideoBlackLevel()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetGreenVideoBlackLevel");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetGreenVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1));
             iDelegateSetGreenVideoBlackLevel = new ActionDelegate(DoSetGreenVideoBlackLevel);
@@ -363,7 +363,7 @@ namespace Zapp.Device.Providers
         /// GetBlueVideoBlackLevel must be overridden if this is called.</remarks>
         protected void EnableActionGetBlueVideoBlackLevel()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetBlueVideoBlackLevel");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetBlueVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1));
             iDelegateGetBlueVideoBlackLevel = new ActionDelegate(DoGetBlueVideoBlackLevel);
@@ -377,7 +377,7 @@ namespace Zapp.Device.Providers
         /// SetBlueVideoBlackLevel must be overridden if this is called.</remarks>
         protected void EnableActionSetBlueVideoBlackLevel()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetBlueVideoBlackLevel");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetBlueVideoBlackLevel");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1));
             iDelegateSetBlueVideoBlackLevel = new ActionDelegate(DoSetBlueVideoBlackLevel);
@@ -391,7 +391,7 @@ namespace Zapp.Device.Providers
         /// GetColorTemperature must be overridden if this is called.</remarks>
         protected void EnableActionGetColorTemperature()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetColorTemperature");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetColorTemperature");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterUint("CurrentColorTemperature", 0, 0, 1));
             iDelegateGetColorTemperature = new ActionDelegate(DoGetColorTemperature);
@@ -405,7 +405,7 @@ namespace Zapp.Device.Providers
         /// SetColorTemperature must be overridden if this is called.</remarks>
         protected void EnableActionSetColorTemperature()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetColorTemperature");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetColorTemperature");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterUint("DesiredColorTemperature", 0, 0, 1));
             iDelegateSetColorTemperature = new ActionDelegate(DoSetColorTemperature);
@@ -419,7 +419,7 @@ namespace Zapp.Device.Providers
         /// GetHorizontalKeystone must be overridden if this is called.</remarks>
         protected void EnableActionGetHorizontalKeystone()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetHorizontalKeystone");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetHorizontalKeystone");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterInt("CurrentHorizontalKeystone"));
             iDelegateGetHorizontalKeystone = new ActionDelegate(DoGetHorizontalKeystone);
@@ -433,7 +433,7 @@ namespace Zapp.Device.Providers
         /// SetHorizontalKeystone must be overridden if this is called.</remarks>
         protected void EnableActionSetHorizontalKeystone()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetHorizontalKeystone");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetHorizontalKeystone");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterInt("DesiredHorizontalKeystone"));
             iDelegateSetHorizontalKeystone = new ActionDelegate(DoSetHorizontalKeystone);
@@ -447,7 +447,7 @@ namespace Zapp.Device.Providers
         /// GetVerticalKeystone must be overridden if this is called.</remarks>
         protected void EnableActionGetVerticalKeystone()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetVerticalKeystone");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetVerticalKeystone");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterInt("CurrentVerticalKeystone"));
             iDelegateGetVerticalKeystone = new ActionDelegate(DoGetVerticalKeystone);
@@ -461,7 +461,7 @@ namespace Zapp.Device.Providers
         /// SetVerticalKeystone must be overridden if this is called.</remarks>
         protected void EnableActionSetVerticalKeystone()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetVerticalKeystone");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetVerticalKeystone");
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterInt("DesiredVerticalKeystone"));
             iDelegateSetVerticalKeystone = new ActionDelegate(DoSetVerticalKeystone);
@@ -475,7 +475,7 @@ namespace Zapp.Device.Providers
         /// GetMute must be overridden if this is called.</remarks>
         protected void EnableActionGetMute()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetMute");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetMute");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("Master");
@@ -493,7 +493,7 @@ namespace Zapp.Device.Providers
         /// SetMute must be overridden if this is called.</remarks>
         protected void EnableActionSetMute()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetMute");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetMute");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("Master");
@@ -511,7 +511,7 @@ namespace Zapp.Device.Providers
         /// GetVolume must be overridden if this is called.</remarks>
         protected void EnableActionGetVolume()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetVolume");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetVolume");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("Master");
@@ -529,7 +529,7 @@ namespace Zapp.Device.Providers
         /// SetVolume must be overridden if this is called.</remarks>
         protected void EnableActionSetVolume()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetVolume");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetVolume");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("Master");
@@ -547,7 +547,7 @@ namespace Zapp.Device.Providers
         /// GetVolumeDB must be overridden if this is called.</remarks>
         protected void EnableActionGetVolumeDB()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetVolumeDB");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetVolumeDB");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("Master");
@@ -565,7 +565,7 @@ namespace Zapp.Device.Providers
         /// SetVolumeDB must be overridden if this is called.</remarks>
         protected void EnableActionSetVolumeDB()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetVolumeDB");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetVolumeDB");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("Master");
@@ -583,7 +583,7 @@ namespace Zapp.Device.Providers
         /// GetVolumeDBRange must be overridden if this is called.</remarks>
         protected void EnableActionGetVolumeDBRange()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetVolumeDBRange");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetVolumeDBRange");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("Master");
@@ -602,7 +602,7 @@ namespace Zapp.Device.Providers
         /// GetLoudness must be overridden if this is called.</remarks>
         protected void EnableActionGetLoudness()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetLoudness");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetLoudness");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("Master");
@@ -620,7 +620,7 @@ namespace Zapp.Device.Providers
         /// SetLoudness must be overridden if this is called.</remarks>
         protected void EnableActionSetLoudness()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetLoudness");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetLoudness");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             allowedValues.Add("Master");
@@ -638,7 +638,7 @@ namespace Zapp.Device.Providers
         /// GetStateVariables must be overridden if this is called.</remarks>
         protected void EnableActionGetStateVariables()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetStateVariables");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetStateVariables");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterString("StateVariableList", allowedValues));
@@ -654,7 +654,7 @@ namespace Zapp.Device.Providers
         /// SetStateVariables must be overridden if this is called.</remarks>
         protected void EnableActionSetStateVariables()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetStateVariables");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetStateVariables");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddInputParameter(new ParameterString("RenderingControlUDN", allowedValues));

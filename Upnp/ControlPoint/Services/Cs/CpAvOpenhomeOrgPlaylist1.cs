@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyAvOpenhomeOrgPlaylist1 : ICpProxy, IDisposable
     {
@@ -504,30 +504,30 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyAvOpenhomeOrgPlaylist1 : CpProxy, IDisposable, ICpProxyAvOpenhomeOrgPlaylist1
     {
-        private Zapp.Core.Action iActionPlay;
-        private Zapp.Core.Action iActionPause;
-        private Zapp.Core.Action iActionStop;
-        private Zapp.Core.Action iActionNext;
-        private Zapp.Core.Action iActionPrevious;
-        private Zapp.Core.Action iActionSetRepeat;
-        private Zapp.Core.Action iActionRepeat;
-        private Zapp.Core.Action iActionSetShuffle;
-        private Zapp.Core.Action iActionShuffle;
-        private Zapp.Core.Action iActionSeekSecondAbsolute;
-        private Zapp.Core.Action iActionSeekSecondRelative;
-        private Zapp.Core.Action iActionSeekId;
-        private Zapp.Core.Action iActionSeekIndex;
-        private Zapp.Core.Action iActionTransportState;
-        private Zapp.Core.Action iActionId;
-        private Zapp.Core.Action iActionRead;
-        private Zapp.Core.Action iActionReadList;
-        private Zapp.Core.Action iActionInsert;
-        private Zapp.Core.Action iActionDeleteId;
-        private Zapp.Core.Action iActionDeleteAll;
-        private Zapp.Core.Action iActionTracksMax;
-        private Zapp.Core.Action iActionIdArray;
-        private Zapp.Core.Action iActionIdArrayChanged;
-        private Zapp.Core.Action iActionProtocolInfo;
+        private OpenHome.Net.Core.Action iActionPlay;
+        private OpenHome.Net.Core.Action iActionPause;
+        private OpenHome.Net.Core.Action iActionStop;
+        private OpenHome.Net.Core.Action iActionNext;
+        private OpenHome.Net.Core.Action iActionPrevious;
+        private OpenHome.Net.Core.Action iActionSetRepeat;
+        private OpenHome.Net.Core.Action iActionRepeat;
+        private OpenHome.Net.Core.Action iActionSetShuffle;
+        private OpenHome.Net.Core.Action iActionShuffle;
+        private OpenHome.Net.Core.Action iActionSeekSecondAbsolute;
+        private OpenHome.Net.Core.Action iActionSeekSecondRelative;
+        private OpenHome.Net.Core.Action iActionSeekId;
+        private OpenHome.Net.Core.Action iActionSeekIndex;
+        private OpenHome.Net.Core.Action iActionTransportState;
+        private OpenHome.Net.Core.Action iActionId;
+        private OpenHome.Net.Core.Action iActionRead;
+        private OpenHome.Net.Core.Action iActionReadList;
+        private OpenHome.Net.Core.Action iActionInsert;
+        private OpenHome.Net.Core.Action iActionDeleteId;
+        private OpenHome.Net.Core.Action iActionDeleteAll;
+        private OpenHome.Net.Core.Action iActionTracksMax;
+        private OpenHome.Net.Core.Action iActionIdArray;
+        private OpenHome.Net.Core.Action iActionIdArrayChanged;
+        private OpenHome.Net.Core.Action iActionProtocolInfo;
         private PropertyString iTransportState;
         private PropertyBool iRepeat;
         private PropertyBool iShuffle;
@@ -552,52 +552,52 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyAvOpenhomeOrgPlaylist1(CpDevice aDevice)
             : base("av-openhome-org", "Playlist", 1, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             List<String> allowedValues = new List<String>();
 
-            iActionPlay = new Zapp.Core.Action("Play");
+            iActionPlay = new OpenHome.Net.Core.Action("Play");
 
-            iActionPause = new Zapp.Core.Action("Pause");
+            iActionPause = new OpenHome.Net.Core.Action("Pause");
 
-            iActionStop = new Zapp.Core.Action("Stop");
+            iActionStop = new OpenHome.Net.Core.Action("Stop");
 
-            iActionNext = new Zapp.Core.Action("Next");
+            iActionNext = new OpenHome.Net.Core.Action("Next");
 
-            iActionPrevious = new Zapp.Core.Action("Previous");
+            iActionPrevious = new OpenHome.Net.Core.Action("Previous");
 
-            iActionSetRepeat = new Zapp.Core.Action("SetRepeat");
+            iActionSetRepeat = new OpenHome.Net.Core.Action("SetRepeat");
             param = new ParameterBool("Value");
             iActionSetRepeat.AddInputParameter(param);
 
-            iActionRepeat = new Zapp.Core.Action("Repeat");
+            iActionRepeat = new OpenHome.Net.Core.Action("Repeat");
             param = new ParameterBool("Value");
             iActionRepeat.AddOutputParameter(param);
 
-            iActionSetShuffle = new Zapp.Core.Action("SetShuffle");
+            iActionSetShuffle = new OpenHome.Net.Core.Action("SetShuffle");
             param = new ParameterBool("Value");
             iActionSetShuffle.AddInputParameter(param);
 
-            iActionShuffle = new Zapp.Core.Action("Shuffle");
+            iActionShuffle = new OpenHome.Net.Core.Action("Shuffle");
             param = new ParameterBool("Value");
             iActionShuffle.AddOutputParameter(param);
 
-            iActionSeekSecondAbsolute = new Zapp.Core.Action("SeekSecondAbsolute");
+            iActionSeekSecondAbsolute = new OpenHome.Net.Core.Action("SeekSecondAbsolute");
             param = new ParameterUint("Value");
             iActionSeekSecondAbsolute.AddInputParameter(param);
 
-            iActionSeekSecondRelative = new Zapp.Core.Action("SeekSecondRelative");
+            iActionSeekSecondRelative = new OpenHome.Net.Core.Action("SeekSecondRelative");
             param = new ParameterInt("Value");
             iActionSeekSecondRelative.AddInputParameter(param);
 
-            iActionSeekId = new Zapp.Core.Action("SeekId");
+            iActionSeekId = new OpenHome.Net.Core.Action("SeekId");
             param = new ParameterUint("Value");
             iActionSeekId.AddInputParameter(param);
 
-            iActionSeekIndex = new Zapp.Core.Action("SeekIndex");
+            iActionSeekIndex = new OpenHome.Net.Core.Action("SeekIndex");
             param = new ParameterUint("Value");
             iActionSeekIndex.AddInputParameter(param);
 
-            iActionTransportState = new Zapp.Core.Action("TransportState");
+            iActionTransportState = new OpenHome.Net.Core.Action("TransportState");
             allowedValues.Add("Playing");
             allowedValues.Add("Paused");
             allowedValues.Add("Stopped");
@@ -606,11 +606,11 @@ namespace Zapp.ControlPoint.Proxies
             iActionTransportState.AddOutputParameter(param);
             allowedValues.Clear();
 
-            iActionId = new Zapp.Core.Action("Id");
+            iActionId = new OpenHome.Net.Core.Action("Id");
             param = new ParameterUint("Value");
             iActionId.AddOutputParameter(param);
 
-            iActionRead = new Zapp.Core.Action("Read");
+            iActionRead = new OpenHome.Net.Core.Action("Read");
             param = new ParameterUint("Id");
             iActionRead.AddInputParameter(param);
             param = new ParameterString("Uri", allowedValues);
@@ -618,13 +618,13 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("Metadata", allowedValues);
             iActionRead.AddOutputParameter(param);
 
-            iActionReadList = new Zapp.Core.Action("ReadList");
+            iActionReadList = new OpenHome.Net.Core.Action("ReadList");
             param = new ParameterString("IdList", allowedValues);
             iActionReadList.AddInputParameter(param);
             param = new ParameterString("TrackList", allowedValues);
             iActionReadList.AddOutputParameter(param);
 
-            iActionInsert = new Zapp.Core.Action("Insert");
+            iActionInsert = new OpenHome.Net.Core.Action("Insert");
             param = new ParameterUint("AfterId");
             iActionInsert.AddInputParameter(param);
             param = new ParameterString("Uri", allowedValues);
@@ -634,29 +634,29 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("NewId");
             iActionInsert.AddOutputParameter(param);
 
-            iActionDeleteId = new Zapp.Core.Action("DeleteId");
+            iActionDeleteId = new OpenHome.Net.Core.Action("DeleteId");
             param = new ParameterUint("Value");
             iActionDeleteId.AddInputParameter(param);
 
-            iActionDeleteAll = new Zapp.Core.Action("DeleteAll");
+            iActionDeleteAll = new OpenHome.Net.Core.Action("DeleteAll");
 
-            iActionTracksMax = new Zapp.Core.Action("TracksMax");
+            iActionTracksMax = new OpenHome.Net.Core.Action("TracksMax");
             param = new ParameterUint("Value");
             iActionTracksMax.AddOutputParameter(param);
 
-            iActionIdArray = new Zapp.Core.Action("IdArray");
+            iActionIdArray = new OpenHome.Net.Core.Action("IdArray");
             param = new ParameterUint("Token");
             iActionIdArray.AddOutputParameter(param);
             param = new ParameterBinary("Array");
             iActionIdArray.AddOutputParameter(param);
 
-            iActionIdArrayChanged = new Zapp.Core.Action("IdArrayChanged");
+            iActionIdArrayChanged = new OpenHome.Net.Core.Action("IdArrayChanged");
             param = new ParameterUint("Token");
             iActionIdArrayChanged.AddInputParameter(param);
             param = new ParameterBool("Value");
             iActionIdArrayChanged.AddOutputParameter(param);
 
-            iActionProtocolInfo = new Zapp.Core.Action("ProtocolInfo");
+            iActionProtocolInfo = new OpenHome.Net.Core.Action("ProtocolInfo");
             param = new ParameterString("Value", allowedValues);
             iActionProtocolInfo.AddOutputParameter(param);
 

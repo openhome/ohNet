@@ -1,10 +1,10 @@
 #include "DvUpnpOrgSwitchPower1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <DviService.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 bool DvProviderUpnpOrgSwitchPower1Cpp::SetPropertyStatus(bool aValue)
 {
@@ -26,7 +26,7 @@ DvProviderUpnpOrgSwitchPower1Cpp::DvProviderUpnpOrgSwitchPower1Cpp(DvDeviceStd& 
 
 void DvProviderUpnpOrgSwitchPower1Cpp::EnableActionSetTarget()
 {
-    Zapp::Action* action = new Zapp::Action("SetTarget");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetTarget");
     action->AddInputParameter(new ParameterBool("newTargetValue"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgSwitchPower1Cpp::DoSetTarget);
     iService->AddAction(action, functor);
@@ -34,7 +34,7 @@ void DvProviderUpnpOrgSwitchPower1Cpp::EnableActionSetTarget()
 
 void DvProviderUpnpOrgSwitchPower1Cpp::EnableActionGetTarget()
 {
-    Zapp::Action* action = new Zapp::Action("GetTarget");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetTarget");
     action->AddOutputParameter(new ParameterBool("RetTargetValue"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgSwitchPower1Cpp::DoGetTarget);
     iService->AddAction(action, functor);
@@ -42,7 +42,7 @@ void DvProviderUpnpOrgSwitchPower1Cpp::EnableActionGetTarget()
 
 void DvProviderUpnpOrgSwitchPower1Cpp::EnableActionGetStatus()
 {
-    Zapp::Action* action = new Zapp::Action("GetStatus");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("GetStatus");
     action->AddOutputParameter(new ParameterRelated("ResultStatus", *iPropertyStatus));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgSwitchPower1Cpp::DoGetStatus);
     iService->AddAction(action, functor);

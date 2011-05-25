@@ -1,7 +1,7 @@
 #ifndef HEADER_DVISUBSCRIPTION
 #define HEADER_DVISUBSCRIPTION
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Network.h>
 #include <Service.h>
@@ -13,7 +13,8 @@
 #include <map>
 #include <list>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviSubscriptionUserData
 {
@@ -114,6 +115,7 @@ private:
     Map iMap;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVISUBSCRIPTION

@@ -5,15 +5,15 @@
 #include <Core/DvDevice.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class DvProviderWrapper : public DvProvider
 {
 public:
     DvProviderWrapper(DviDevice& aDevice, const TChar* aDomain, const TChar* aType, TUint aVersion) : DvProvider(aDevice, aDomain, aType, aVersion) {}
     ~DvProviderWrapper() {}
-    void AddAction(Zapp::Action* aAction, FunctorDviInvocation aInvocation) { iService->AddAction(aAction, aInvocation); }
-    void AddProperty(Zapp::Property* aProperty) { iService->AddProperty(aProperty); }
+    void AddAction(OpenHome::Net::Action* aAction, FunctorDviInvocation aInvocation) { iService->AddAction(aAction, aInvocation); }
+    void AddProperty(OpenHome::Net::Property* aProperty) { iService->AddProperty(aProperty); }
     bool SetPropertyInt(PropertyInt& aProperty, TInt aValue) { return DvProvider::SetPropertyInt(aProperty, aValue); }
     bool SetPropertyUint(PropertyUint& aProperty, TUint aValue) { return DvProvider::SetPropertyUint(aProperty, aValue); }
     bool SetPropertyBool(PropertyBool& aProperty, TBool aValue) { return DvProvider::SetPropertyBool(aProperty, aValue); }
@@ -40,11 +40,11 @@ void DvProviderDestroy(DvProviderC aProvider)
     delete reinterpret_cast<DvProviderWrapper*>(aProvider);
 }
 
-void DvProviderAddAction(DvProviderC aProvider, ServiceAction aAction, ZappCallbackDvInvocation aCallback, void* aPtr)
+void DvProviderAddAction(DvProviderC aProvider, ServiceAction aAction, OhNetCallbackDvInvocation aCallback, void* aPtr)
 {
-    ZappFunctorDviInvocation cb = reinterpret_cast<ZappFunctorDviInvocation>(aCallback);
+    OhNetFunctorDviInvocation cb = reinterpret_cast<OhNetFunctorDviInvocation>(aCallback);
     FunctorDviInvocation functor = MakeFunctorDviInvocation(aPtr, cb);
-    Zapp::Action* action = reinterpret_cast<Zapp::Action*>(aAction);
+    OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
     ProviderFromHandle(aProvider)->AddAction(action, functor);
 }
 
@@ -60,7 +60,7 @@ void DvProviderPropertiesUnlock(DvProviderC aProvider)
 
 void DvProviderAddProperty(DvProviderC aProvider, ServiceProperty aProperty)
 {
-    Zapp::Property* prop = reinterpret_cast<Zapp::Property*>(aProperty);
+    OpenHome::Net::Property* prop = reinterpret_cast<OpenHome::Net::Property*>(aProperty);
     ASSERT(prop != NULL);
     ProviderFromHandle(aProvider)->AddProperty(prop);
 }

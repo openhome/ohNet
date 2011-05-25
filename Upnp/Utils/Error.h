@@ -1,11 +1,12 @@
 #ifndef HEADER_ERROR
 #define HEADER_ERROR
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <FunctorAsync.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 /**
  * Utility class for storing error information.
@@ -65,6 +66,7 @@ private:
 };
 
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_ERROR

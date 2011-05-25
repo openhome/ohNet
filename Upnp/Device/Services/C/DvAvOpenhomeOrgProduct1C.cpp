@@ -1,15 +1,15 @@
 #include "DvAvOpenhomeOrgProduct1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
 #include <DvProvider.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class DvProviderAvOpenhomeOrgProduct1C : public DvProvider
 {
@@ -351,7 +351,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionManufacturer(CallbackProduct1
 {
     iCallbackManufacturer = aCallback;
     iPtrManufacturer = aPtr;
-    Zapp::Action* action = new Zapp::Action("Manufacturer");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Manufacturer");
     action->AddOutputParameter(new ParameterRelated("Name", *iPropertyManufacturerName));
     action->AddOutputParameter(new ParameterRelated("Info", *iPropertyManufacturerInfo));
     action->AddOutputParameter(new ParameterRelated("Url", *iPropertyManufacturerUrl));
@@ -364,7 +364,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionModel(CallbackProduct1Model a
 {
     iCallbackModel = aCallback;
     iPtrModel = aPtr;
-    Zapp::Action* action = new Zapp::Action("Model");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Model");
     action->AddOutputParameter(new ParameterRelated("Name", *iPropertyModelName));
     action->AddOutputParameter(new ParameterRelated("Info", *iPropertyModelInfo));
     action->AddOutputParameter(new ParameterRelated("Url", *iPropertyModelUrl));
@@ -377,7 +377,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionProduct(CallbackProduct1Produ
 {
     iCallbackProduct = aCallback;
     iPtrProduct = aPtr;
-    Zapp::Action* action = new Zapp::Action("Product");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Product");
     action->AddOutputParameter(new ParameterRelated("Room", *iPropertyProductRoom));
     action->AddOutputParameter(new ParameterRelated("Name", *iPropertyProductName));
     action->AddOutputParameter(new ParameterRelated("Info", *iPropertyProductInfo));
@@ -391,7 +391,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionStandby(CallbackProduct1Stand
 {
     iCallbackStandby = aCallback;
     iPtrStandby = aPtr;
-    Zapp::Action* action = new Zapp::Action("Standby");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Standby");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyStandby));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1C::DoStandby);
     iService->AddAction(action, functor);
@@ -401,7 +401,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionSetStandby(CallbackProduct1Se
 {
     iCallbackSetStandby = aCallback;
     iPtrSetStandby = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetStandby");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetStandby");
     action->AddInputParameter(new ParameterRelated("Value", *iPropertyStandby));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1C::DoSetStandby);
     iService->AddAction(action, functor);
@@ -411,7 +411,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionSourceCount(CallbackProduct1S
 {
     iCallbackSourceCount = aCallback;
     iPtrSourceCount = aPtr;
-    Zapp::Action* action = new Zapp::Action("SourceCount");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SourceCount");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertySourceCount));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1C::DoSourceCount);
     iService->AddAction(action, functor);
@@ -421,7 +421,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionSourceXml(CallbackProduct1Sou
 {
     iCallbackSourceXml = aCallback;
     iPtrSourceXml = aPtr;
-    Zapp::Action* action = new Zapp::Action("SourceXml");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SourceXml");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertySourceXml));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1C::DoSourceXml);
     iService->AddAction(action, functor);
@@ -431,7 +431,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionSourceIndex(CallbackProduct1S
 {
     iCallbackSourceIndex = aCallback;
     iPtrSourceIndex = aPtr;
-    Zapp::Action* action = new Zapp::Action("SourceIndex");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SourceIndex");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertySourceIndex));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1C::DoSourceIndex);
     iService->AddAction(action, functor);
@@ -441,7 +441,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionSetSourceIndex(CallbackProduc
 {
     iCallbackSetSourceIndex = aCallback;
     iPtrSetSourceIndex = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetSourceIndex");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetSourceIndex");
     action->AddInputParameter(new ParameterRelated("Value", *iPropertySourceIndex));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1C::DoSetSourceIndex);
     iService->AddAction(action, functor);
@@ -451,7 +451,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionSetSourceIndexByName(Callback
 {
     iCallbackSetSourceIndexByName = aCallback;
     iPtrSetSourceIndexByName = aPtr;
-    Zapp::Action* action = new Zapp::Action("SetSourceIndexByName");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SetSourceIndexByName");
     action->AddInputParameter(new ParameterString("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1C::DoSetSourceIndexByName);
     iService->AddAction(action, functor);
@@ -461,7 +461,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionSource(CallbackProduct1Source
 {
     iCallbackSource = aCallback;
     iPtrSource = aPtr;
-    Zapp::Action* action = new Zapp::Action("Source");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Source");
     action->AddInputParameter(new ParameterRelated("Index", *iPropertySourceIndex));
     action->AddOutputParameter(new ParameterString("SystemName"));
     action->AddOutputParameter(new ParameterString("Type"));
@@ -475,7 +475,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionAttributes(CallbackProduct1At
 {
     iCallbackAttributes = aCallback;
     iPtrAttributes = aPtr;
-    Zapp::Action* action = new Zapp::Action("Attributes");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Attributes");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyAttributes));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1C::DoAttributes);
     iService->AddAction(action, functor);
@@ -485,7 +485,7 @@ void DvProviderAvOpenhomeOrgProduct1C::EnableActionSourceXmlChangeCount(Callback
 {
     iCallbackSourceXmlChangeCount = aCallback;
     iPtrSourceXmlChangeCount = aPtr;
-    Zapp::Action* action = new Zapp::Action("SourceXmlChangeCount");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("SourceXmlChangeCount");
     action->AddOutputParameter(new ParameterUint("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgProduct1C::DoSourceXmlChangeCount);
     iService->AddAction(action, functor);
@@ -511,19 +511,19 @@ void DvProviderAvOpenhomeOrgProduct1C::DoManufacturer(IDviInvocation& aInvocatio
     InvocationResponseString respImageUri(aInvocation, "ImageUri");
     resp.Start();
     Brhz bufName((const TChar*)Name);
-    ZappFreeExternal(Name);
+    OhNetFreeExternal(Name);
     respName.Write(bufName);
     respName.WriteFlush();
     Brhz bufInfo((const TChar*)Info);
-    ZappFreeExternal(Info);
+    OhNetFreeExternal(Info);
     respInfo.Write(bufInfo);
     respInfo.WriteFlush();
     Brhz bufUrl((const TChar*)Url);
-    ZappFreeExternal(Url);
+    OhNetFreeExternal(Url);
     respUrl.Write(bufUrl);
     respUrl.WriteFlush();
     Brhz bufImageUri((const TChar*)ImageUri);
-    ZappFreeExternal(ImageUri);
+    OhNetFreeExternal(ImageUri);
     respImageUri.Write(bufImageUri);
     respImageUri.WriteFlush();
     resp.End();
@@ -549,19 +549,19 @@ void DvProviderAvOpenhomeOrgProduct1C::DoModel(IDviInvocation& aInvocation, TUin
     InvocationResponseString respImageUri(aInvocation, "ImageUri");
     resp.Start();
     Brhz bufName((const TChar*)Name);
-    ZappFreeExternal(Name);
+    OhNetFreeExternal(Name);
     respName.Write(bufName);
     respName.WriteFlush();
     Brhz bufInfo((const TChar*)Info);
-    ZappFreeExternal(Info);
+    OhNetFreeExternal(Info);
     respInfo.Write(bufInfo);
     respInfo.WriteFlush();
     Brhz bufUrl((const TChar*)Url);
-    ZappFreeExternal(Url);
+    OhNetFreeExternal(Url);
     respUrl.Write(bufUrl);
     respUrl.WriteFlush();
     Brhz bufImageUri((const TChar*)ImageUri);
-    ZappFreeExternal(ImageUri);
+    OhNetFreeExternal(ImageUri);
     respImageUri.Write(bufImageUri);
     respImageUri.WriteFlush();
     resp.End();
@@ -589,23 +589,23 @@ void DvProviderAvOpenhomeOrgProduct1C::DoProduct(IDviInvocation& aInvocation, TU
     InvocationResponseString respImageUri(aInvocation, "ImageUri");
     resp.Start();
     Brhz bufRoom((const TChar*)Room);
-    ZappFreeExternal(Room);
+    OhNetFreeExternal(Room);
     respRoom.Write(bufRoom);
     respRoom.WriteFlush();
     Brhz bufName((const TChar*)Name);
-    ZappFreeExternal(Name);
+    OhNetFreeExternal(Name);
     respName.Write(bufName);
     respName.WriteFlush();
     Brhz bufInfo((const TChar*)Info);
-    ZappFreeExternal(Info);
+    OhNetFreeExternal(Info);
     respInfo.Write(bufInfo);
     respInfo.WriteFlush();
     Brhz bufUrl((const TChar*)Url);
-    ZappFreeExternal(Url);
+    OhNetFreeExternal(Url);
     respUrl.Write(bufUrl);
     respUrl.WriteFlush();
     Brhz bufImageUri((const TChar*)ImageUri);
-    ZappFreeExternal(ImageUri);
+    OhNetFreeExternal(ImageUri);
     respImageUri.Write(bufImageUri);
     respImageUri.WriteFlush();
     resp.End();
@@ -674,7 +674,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSourceXml(IDviInvocation& aInvocation, 
     InvocationResponseString respValue(aInvocation, "Value");
     resp.Start();
     Brhz bufValue((const TChar*)Value);
-    ZappFreeExternal(Value);
+    OhNetFreeExternal(Value);
     respValue.Write(bufValue);
     respValue.WriteFlush();
     resp.End();
@@ -749,15 +749,15 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSource(IDviInvocation& aInvocation, TUi
     InvocationResponseBool respVisible(aInvocation, "Visible");
     resp.Start();
     Brhz bufSystemName((const TChar*)SystemName);
-    ZappFreeExternal(SystemName);
+    OhNetFreeExternal(SystemName);
     respSystemName.Write(bufSystemName);
     respSystemName.WriteFlush();
     Brhz bufType((const TChar*)Type);
-    ZappFreeExternal(Type);
+    OhNetFreeExternal(Type);
     respType.Write(bufType);
     respType.WriteFlush();
     Brhz bufName((const TChar*)Name);
-    ZappFreeExternal(Name);
+    OhNetFreeExternal(Name);
     respName.Write(bufName);
     respName.WriteFlush();
     respVisible.Write((Visible!=0));
@@ -778,7 +778,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoAttributes(IDviInvocation& aInvocation,
     InvocationResponseString respValue(aInvocation, "Value");
     resp.Start();
     Brhz bufValue((const TChar*)Value);
-    ZappFreeExternal(Value);
+    OhNetFreeExternal(Value);
     respValue.Write(bufValue);
     respValue.WriteFlush();
     resp.End();

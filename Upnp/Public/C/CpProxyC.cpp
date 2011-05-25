@@ -1,12 +1,12 @@
 #include <C/CpProxy.h>
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 #include <CpProxy.h>
 #include <C/CpProxyCPrivate.h>
 #include <CpiDevice.h>
 #include <C/CpDevice.h>
 #include <Printer.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 CpProxyC::CpProxyC(CpiDevice& aDevice)
 {
@@ -60,7 +60,7 @@ void CpProxyUnsubscribe(THandle aHandle)
     proxyC->Unsubscribe();
 }
 
-void CpProxySetPropertyChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxySetPropertyChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -68,7 +68,7 @@ void CpProxySetPropertyChanged(THandle aHandle, ZappCallback aCallback, void* aP
     proxyC->SetPropertyChanged(functor);
 }
 
-void CpProxySetPropertyInitialEvent(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxySetPropertyInitialEvent(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -94,7 +94,7 @@ void CpProxyAddProperty(THandle aHandle, ServiceProperty aProperty)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);
-    Zapp::Property* prop = reinterpret_cast<Zapp::Property*>(aProperty);
+    OpenHome::Net::Property* prop = reinterpret_cast<OpenHome::Net::Property*>(aProperty);
     ASSERT(prop != NULL);
     proxyC->AddProperty(prop);
 }

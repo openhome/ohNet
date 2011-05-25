@@ -1,7 +1,7 @@
 #ifndef HEADER_AVOPENHOMEORGPLAYLIST1CPP
 #define HEADER_AVOPENHOMEORGPLAYLIST1CPP
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Exception.h>
 #include <Functor.h>
 #include <FunctorAsync.h>
@@ -9,7 +9,8 @@
 
 #include <string>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpDeviceCpp;
 class Action;
@@ -849,7 +850,8 @@ private:
     Functor iProtocolInfoChanged;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_AVOPENHOMEORGPLAYLIST1CPP
 

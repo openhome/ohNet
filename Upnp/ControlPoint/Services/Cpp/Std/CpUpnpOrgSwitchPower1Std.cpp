@@ -8,7 +8,7 @@
 
 #include <string>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncSetTargetUpnpOrgSwitchPower1Cpp : public SyncProxyAction
@@ -78,18 +78,18 @@ void SyncGetStatusUpnpOrgSwitchPower1Cpp::CompleteRequest(IAsync& aAsync)
 CpProxyUpnpOrgSwitchPower1Cpp::CpProxyUpnpOrgSwitchPower1Cpp(CpDeviceCpp& aDevice)
     : CpProxy("schemas-upnp-org", "SwitchPower", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionSetTarget = new Action("SetTarget");
-    param = new Zapp::ParameterBool("newTargetValue");
+    param = new OpenHome::Net::ParameterBool("newTargetValue");
     iActionSetTarget->AddInputParameter(param);
 
     iActionGetTarget = new Action("GetTarget");
-    param = new Zapp::ParameterBool("RetTargetValue");
+    param = new OpenHome::Net::ParameterBool("RetTargetValue");
     iActionGetTarget->AddOutputParameter(param);
 
     iActionGetStatus = new Action("GetStatus");
-    param = new Zapp::ParameterBool("ResultStatus");
+    param = new OpenHome::Net::ParameterBool("ResultStatus");
     iActionGetStatus->AddOutputParameter(param);
 
     Functor functor;

@@ -1,19 +1,19 @@
-#include <ZappTypes.h>
-#include <Std/CpZappOrgTestBasic1.h>
+#include <OhNetTypes.h>
+#include <Std/CpOpenhomeOrgTestBasic1.h>
 #include <Std/CpDevice.h>
 #include <Std/TestBasicCp.h>
 #include <TestFramework.h>
 
 #include <string>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 
 void TestBasicCp::TestActions(CpDeviceCpp& aDevice)
 {
     Print("  Actions\n");
-    CpProxyZappOrgTestBasic1Cpp* proxy = new CpProxyZappOrgTestBasic1Cpp(aDevice);
+    CpProxyOpenhomeOrgTestBasic1Cpp* proxy = new CpProxyOpenhomeOrgTestBasic1Cpp(aDevice);
     TUint i;
 
     Print("    Unsigned integer arguments...\n");
@@ -76,7 +76,7 @@ void TestBasicCp::TestSubscriptions(CpDeviceCpp& aDevice)
 {
     Semaphore sem("TSEM", 0);
     Print("  Subscriptions\n");
-    CpProxyZappOrgTestBasic1Cpp* proxy = new CpProxyZappOrgTestBasic1Cpp(aDevice);
+    CpProxyOpenhomeOrgTestBasic1Cpp* proxy = new CpProxyOpenhomeOrgTestBasic1Cpp(aDevice);
     Functor functor = MakeFunctor(&sem, updatesComplete);
     proxy->SetPropertyChanged(functor);
     proxy->Subscribe();

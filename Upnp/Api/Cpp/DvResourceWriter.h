@@ -3,7 +3,8 @@
 
 #include <OsTypes.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 /**
  * Interface passed to implementors of DvDevice allowing them to serve UI files to Control Points
@@ -39,6 +40,7 @@ public:
     virtual void WriteResourceEnd() = 0;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVRESOURCEWRITER

@@ -7,7 +7,7 @@
 #ifndef HEADER_CPI_STACK
 #define HEADER_CPI_STACK
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Stack.h>
 #include <CpiService.h>
 #include <XmlFetcher.h>
@@ -16,26 +16,28 @@
 
 #include <vector>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpiStack : public IStack
 {
 public:
     CpiStack();
-    static Zapp::InvocationManager& InvocationManager();
-    static Zapp::XmlFetchManager& XmlFetchManager();
+    static OpenHome::Net::InvocationManager& InvocationManager();
+    static OpenHome::Net::XmlFetchManager& XmlFetchManager();
     static CpiSubscriptionManager& SubscriptionManager();
     static CpiDeviceListUpdater& DeviceListUpdater();
 private:
     ~CpiStack();
     static CpiStack* Self();
 private:
-    Zapp::InvocationManager* iInvocationManager;
-    Zapp::XmlFetchManager* iXmlFetchManager;
+    OpenHome::Net::InvocationManager* iInvocationManager;
+    OpenHome::Net::XmlFetchManager* iXmlFetchManager;
     CpiSubscriptionManager* iSubscriptionManager;
     CpiDeviceListUpdater* iDeviceListUpdater;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_CPI_STACK

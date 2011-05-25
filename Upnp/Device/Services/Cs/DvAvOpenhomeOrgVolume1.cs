@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderAvOpenhomeOrgVolume1 : IDisposable
     {
@@ -435,7 +435,7 @@ namespace Zapp.Device.Providers
         /// Characteristics must be overridden if this is called.</remarks>
         protected void EnableActionCharacteristics()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Characteristics");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Characteristics");
             action.AddOutputParameter(new ParameterRelated("VolumeMax", iPropertyVolumeMax));
             action.AddOutputParameter(new ParameterRelated("VolumeUnity", iPropertyVolumeUnity));
             action.AddOutputParameter(new ParameterRelated("VolumeSteps", iPropertyVolumeSteps));
@@ -453,7 +453,7 @@ namespace Zapp.Device.Providers
         /// SetVolume must be overridden if this is called.</remarks>
         protected void EnableActionSetVolume()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetVolume");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetVolume");
             action.AddInputParameter(new ParameterRelated("Value", iPropertyVolume));
             iDelegateSetVolume = new ActionDelegate(DoSetVolume);
             EnableAction(action, iDelegateSetVolume, GCHandle.ToIntPtr(iGch));
@@ -466,7 +466,7 @@ namespace Zapp.Device.Providers
         /// VolumeInc must be overridden if this is called.</remarks>
         protected void EnableActionVolumeInc()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("VolumeInc");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("VolumeInc");
             iDelegateVolumeInc = new ActionDelegate(DoVolumeInc);
             EnableAction(action, iDelegateVolumeInc, GCHandle.ToIntPtr(iGch));
         }
@@ -478,7 +478,7 @@ namespace Zapp.Device.Providers
         /// VolumeDec must be overridden if this is called.</remarks>
         protected void EnableActionVolumeDec()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("VolumeDec");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("VolumeDec");
             iDelegateVolumeDec = new ActionDelegate(DoVolumeDec);
             EnableAction(action, iDelegateVolumeDec, GCHandle.ToIntPtr(iGch));
         }
@@ -490,7 +490,7 @@ namespace Zapp.Device.Providers
         /// Volume must be overridden if this is called.</remarks>
         protected void EnableActionVolume()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Volume");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Volume");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyVolume));
             iDelegateVolume = new ActionDelegate(DoVolume);
             EnableAction(action, iDelegateVolume, GCHandle.ToIntPtr(iGch));
@@ -503,7 +503,7 @@ namespace Zapp.Device.Providers
         /// SetBalance must be overridden if this is called.</remarks>
         protected void EnableActionSetBalance()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetBalance");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetBalance");
             action.AddInputParameter(new ParameterRelated("Value", iPropertyBalance));
             iDelegateSetBalance = new ActionDelegate(DoSetBalance);
             EnableAction(action, iDelegateSetBalance, GCHandle.ToIntPtr(iGch));
@@ -516,7 +516,7 @@ namespace Zapp.Device.Providers
         /// BalanceInc must be overridden if this is called.</remarks>
         protected void EnableActionBalanceInc()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("BalanceInc");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("BalanceInc");
             iDelegateBalanceInc = new ActionDelegate(DoBalanceInc);
             EnableAction(action, iDelegateBalanceInc, GCHandle.ToIntPtr(iGch));
         }
@@ -528,7 +528,7 @@ namespace Zapp.Device.Providers
         /// BalanceDec must be overridden if this is called.</remarks>
         protected void EnableActionBalanceDec()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("BalanceDec");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("BalanceDec");
             iDelegateBalanceDec = new ActionDelegate(DoBalanceDec);
             EnableAction(action, iDelegateBalanceDec, GCHandle.ToIntPtr(iGch));
         }
@@ -540,7 +540,7 @@ namespace Zapp.Device.Providers
         /// Balance must be overridden if this is called.</remarks>
         protected void EnableActionBalance()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Balance");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Balance");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyBalance));
             iDelegateBalance = new ActionDelegate(DoBalance);
             EnableAction(action, iDelegateBalance, GCHandle.ToIntPtr(iGch));
@@ -553,7 +553,7 @@ namespace Zapp.Device.Providers
         /// SetFade must be overridden if this is called.</remarks>
         protected void EnableActionSetFade()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetFade");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetFade");
             action.AddInputParameter(new ParameterRelated("Value", iPropertyFade));
             iDelegateSetFade = new ActionDelegate(DoSetFade);
             EnableAction(action, iDelegateSetFade, GCHandle.ToIntPtr(iGch));
@@ -566,7 +566,7 @@ namespace Zapp.Device.Providers
         /// FadeInc must be overridden if this is called.</remarks>
         protected void EnableActionFadeInc()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("FadeInc");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("FadeInc");
             iDelegateFadeInc = new ActionDelegate(DoFadeInc);
             EnableAction(action, iDelegateFadeInc, GCHandle.ToIntPtr(iGch));
         }
@@ -578,7 +578,7 @@ namespace Zapp.Device.Providers
         /// FadeDec must be overridden if this is called.</remarks>
         protected void EnableActionFadeDec()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("FadeDec");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("FadeDec");
             iDelegateFadeDec = new ActionDelegate(DoFadeDec);
             EnableAction(action, iDelegateFadeDec, GCHandle.ToIntPtr(iGch));
         }
@@ -590,7 +590,7 @@ namespace Zapp.Device.Providers
         /// Fade must be overridden if this is called.</remarks>
         protected void EnableActionFade()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Fade");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Fade");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyFade));
             iDelegateFade = new ActionDelegate(DoFade);
             EnableAction(action, iDelegateFade, GCHandle.ToIntPtr(iGch));
@@ -603,7 +603,7 @@ namespace Zapp.Device.Providers
         /// SetMute must be overridden if this is called.</remarks>
         protected void EnableActionSetMute()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetMute");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetMute");
             action.AddInputParameter(new ParameterRelated("Value", iPropertyMute));
             iDelegateSetMute = new ActionDelegate(DoSetMute);
             EnableAction(action, iDelegateSetMute, GCHandle.ToIntPtr(iGch));
@@ -616,7 +616,7 @@ namespace Zapp.Device.Providers
         /// Mute must be overridden if this is called.</remarks>
         protected void EnableActionMute()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("Mute");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Mute");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyMute));
             iDelegateMute = new ActionDelegate(DoMute);
             EnableAction(action, iDelegateMute, GCHandle.ToIntPtr(iGch));
@@ -629,7 +629,7 @@ namespace Zapp.Device.Providers
         /// VolumeLimit must be overridden if this is called.</remarks>
         protected void EnableActionVolumeLimit()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("VolumeLimit");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("VolumeLimit");
             action.AddOutputParameter(new ParameterRelated("Value", iPropertyVolumeLimit));
             iDelegateVolumeLimit = new ActionDelegate(DoVolumeLimit);
             EnableAction(action, iDelegateVolumeLimit, GCHandle.ToIntPtr(iGch));

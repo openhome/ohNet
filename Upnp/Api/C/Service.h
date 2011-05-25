@@ -2,7 +2,7 @@
 #define HEADER_SERVICEC
 
 #include <OsTypes.h>
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -158,7 +158,7 @@ DllExport void ServicePropertyDestroy(ServiceProperty aProperty);
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateIntCp(const char* aName, ZappCallback aCallback, void* aPtr);
+DllExport ServiceProperty ServicePropertyCreateIntCp(const char* aName, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Create an integer property suitable for use by a client of the device stack
@@ -180,7 +180,7 @@ DllExport ServiceProperty ServicePropertyCreateIntDv(ServiceParameter aParameter
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateUintCp(const char* aName, ZappCallback aCallback, void* aPtr);
+DllExport ServiceProperty ServicePropertyCreateUintCp(const char* aName, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Create an unsigned integer property suitable for use by a client of the device stack
@@ -202,7 +202,7 @@ DllExport ServiceProperty ServicePropertyCreateUintDv(ServiceParameter aParamete
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateBoolCp(const char* aName, ZappCallback aCallback, void* aPtr);
+DllExport ServiceProperty ServicePropertyCreateBoolCp(const char* aName, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Create a boolean property suitable for use by a client of the device stack
@@ -224,7 +224,7 @@ DllExport ServiceProperty ServicePropertyCreateBoolDv(ServiceParameter aParamete
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateStringCp(const char* aName, ZappCallback aCallback, void* aPtr);
+DllExport ServiceProperty ServicePropertyCreateStringCp(const char* aName, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Create a string property suitable for use by a client of the device stack
@@ -246,7 +246,7 @@ DllExport ServiceProperty ServicePropertyCreateStringDv(ServiceParameter aParame
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateBinaryCp(const char* aName, ZappCallback aCallback, void* aPtr);
+DllExport ServiceProperty ServicePropertyCreateBinaryCp(const char* aName, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Create a binary property suitable for use by a client of the device stack
@@ -290,7 +290,7 @@ DllExport uint32_t ServicePropertyValueBool(ServiceProperty aProperty);
  * @param[in] aProperty  Returned by ServicePropertyCreateString[Cp|Dv]
  *
  * @return   Copy of the current value of the property.  Ownership is passed to the caller.
- *           Use ZappFree to later free it
+ *           Use OhNetFree to later free it
  */
 DllExport const char* ServicePropertyValueString(ServiceProperty aProperty);
 
@@ -299,7 +299,7 @@ DllExport const char* ServicePropertyValueString(ServiceProperty aProperty);
  *
  * @param[in]  aProperty  Returned by ServicePropertyCreateBinary[Cp|Dv]
  * @param[out] aData      Copy of the current value of the property.  Ownership is passed to the caller.
- *                        Use ZappFree to later free it
+ *                        Use OhNetFree to later free it
  * @param[out] aLen       Number of bytes of data returned
  */
 DllExport void ServicePropertyGetValueBinary(ServiceProperty aProperty, const uint8_t** aData, uint32_t* aLen);

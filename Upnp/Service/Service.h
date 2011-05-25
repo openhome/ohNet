@@ -7,7 +7,7 @@
 #ifndef HEADER_SERVICE
 #define HEADER_SERVICE
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -18,7 +18,8 @@
 
 EXCEPTION(ParameterValidationError);
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 /**
  * Parameter.  Each action has 0..n of these
@@ -145,11 +146,11 @@ class Property;
 class ParameterRelated : public Parameter
 {
 public:
-    DllExport ParameterRelated(const TChar* aName, const Zapp::Property& aRelated);
+    DllExport ParameterRelated(const TChar* aName, const OpenHome::Net::Property& aRelated);
     DllExport ~ParameterRelated();
-    const Zapp::Property& Related() const;
+    const OpenHome::Net::Property& Related() const;
 private:
-    const Zapp::Property& iRelated;
+    const OpenHome::Net::Property& iRelated;
 };
 
 /**
@@ -189,18 +190,18 @@ class Property
 {
 public:
     virtual ~Property();
-    const Zapp::Parameter& Parameter() const;
+    const OpenHome::Net::Parameter& Parameter() const;
     TUint SequenceNumber() const;
     TBool ReportChanged();
     virtual void Process(IOutputProcessor& aProcessor, const Brx& aBuffer) = 0;
     virtual void Write(IPropertyWriter& aWriter) = 0;
 protected:
-    Property(Zapp::Parameter* aParameter, Functor& aFunctor);
-    Property(Zapp::Parameter* aParameter);
+    Property(OpenHome::Net::Parameter* aParameter, Functor& aFunctor);
+    Property(OpenHome::Net::Parameter* aParameter);
 private:
-    void Construct(Zapp::Parameter* aParameter);
+    void Construct(OpenHome::Net::Parameter* aParameter);
 protected:
-    Zapp::Parameter* iParameter;
+    OpenHome::Net::Parameter* iParameter;
     Functor iFunctor;
 	TBool iChanged;
 	TUint iSequenceNumber;
@@ -213,7 +214,7 @@ class PropertyString : public Property
 {
 public:
     DllExport PropertyString(const TChar* aName, Functor& aFunctor);
-    DllExport PropertyString(Zapp::Parameter* aParameter);
+    DllExport PropertyString(OpenHome::Net::Parameter* aParameter);
     DllExport ~PropertyString();
     DllExport const Brx& Value() const; // !!!! threadsafe?
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
@@ -230,7 +231,7 @@ class PropertyInt : public Property
 {
 public:
     DllExport PropertyInt(const TChar* aName, Functor& aFunctor);
-    DllExport PropertyInt(Zapp::Parameter* aParameter);
+    DllExport PropertyInt(OpenHome::Net::Parameter* aParameter);
     DllExport ~PropertyInt();
     DllExport TInt Value() const;
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
@@ -247,7 +248,7 @@ class PropertyUint : public Property
 {
 public:
     DllExport PropertyUint(const TChar* aName, Functor& aFunctor);
-    DllExport PropertyUint(Zapp::Parameter* aParameter);
+    DllExport PropertyUint(OpenHome::Net::Parameter* aParameter);
     DllExport ~PropertyUint();
     DllExport TUint Value() const;
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
@@ -264,7 +265,7 @@ class PropertyBool : public Property
 {
 public:
     DllExport PropertyBool(const TChar* aName, Functor& aFunctor);
-    DllExport PropertyBool(Zapp::Parameter* aParameter);
+    DllExport PropertyBool(OpenHome::Net::Parameter* aParameter);
     DllExport ~PropertyBool();
     DllExport TBool Value() const; // !!!! threadsafe?
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
@@ -281,7 +282,7 @@ class PropertyBinary : public Property
 {
 public:
     DllExport PropertyBinary(const TChar* aName, Functor& aFunctor);
-    DllExport PropertyBinary(Zapp::Parameter* aParameter);
+    DllExport PropertyBinary(OpenHome::Net::Parameter* aParameter);
     DllExport ~PropertyBinary();
     DllExport const Brx& Value() const;
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
@@ -374,14 +375,15 @@ public:
     /**
      * Return a reference to the service's name
      */
-    const Zapp::ServiceType& ServiceType() const;
+    const OpenHome::Net::ServiceType& ServiceType() const;
 protected:
     Service(const TChar* aDomain, const TChar* aName, TUint aVersion);
     ~Service() {}
 protected:
-    Zapp::ServiceType iServiceType;
+    OpenHome::Net::ServiceType iServiceType;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_SERVICE

@@ -1,15 +1,15 @@
 #include "DvAvOpenhomeOrgTime1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
 #include <DvProvider.h>
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class DvProviderAvOpenhomeOrgTime1C : public DvProvider
 {
@@ -78,7 +78,7 @@ void DvProviderAvOpenhomeOrgTime1C::EnableActionTime(CallbackTime1Time aCallback
 {
     iCallbackTime = aCallback;
     iPtrTime = aPtr;
-    Zapp::Action* action = new Zapp::Action("Time");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Time");
     action->AddOutputParameter(new ParameterRelated("TrackCount", *iPropertyTrackCount));
     action->AddOutputParameter(new ParameterRelated("Duration", *iPropertyDuration));
     action->AddOutputParameter(new ParameterRelated("Seconds", *iPropertySeconds));

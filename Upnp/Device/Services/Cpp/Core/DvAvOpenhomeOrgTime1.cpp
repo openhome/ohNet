@@ -1,10 +1,10 @@
 #include "DvAvOpenhomeOrgTime1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 TBool DvProviderAvOpenhomeOrgTime1::SetPropertyTrackCount(TUint aValue)
 {
@@ -50,7 +50,7 @@ DvProviderAvOpenhomeOrgTime1::DvProviderAvOpenhomeOrgTime1(DvDevice& aDevice)
 
 void DvProviderAvOpenhomeOrgTime1::EnableActionTime()
 {
-    Zapp::Action* action = new Zapp::Action("Time");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Time");
     action->AddOutputParameter(new ParameterRelated("TrackCount", *iPropertyTrackCount));
     action->AddOutputParameter(new ParameterRelated("Duration", *iPropertyDuration));
     action->AddOutputParameter(new ParameterRelated("Seconds", *iPropertySeconds));

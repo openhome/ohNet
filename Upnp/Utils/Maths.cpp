@@ -49,7 +49,7 @@
 #include <Arch.h>
 #include <stdlib.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 static const TUint kMersennePoint = 397;
 static const TUint kMaxRandomIndex = 624;
@@ -63,7 +63,7 @@ TUint Twiddle(TUint u, TUint v)
     return (((u & 0x80000000UL) | (v & 0x7FFFFFFFUL)) >> 1) ^ ((v & 1UL) ? 0x9908B0DFUL : 0x0UL);
 }
 
-void Zapp::SetRandomSeed(const Brx& aSeed)
+void OpenHome::Net::SetRandomSeed(const Brx& aSeed)
 {
     ASSERT(aSeed.Bytes() >= 4);
     
@@ -83,7 +83,7 @@ void Zapp::SetRandomSeed(const Brx& aSeed)
     SetRandomSeed(seed);
 }
 
-void Zapp::SetRandomSeed(TUint aSeed)
+void OpenHome::Net::SetRandomSeed(TUint aSeed)
 {
     srand(aSeed);
     gRandomState[0] = aSeed;
@@ -97,7 +97,7 @@ void Zapp::SetRandomSeed(TUint aSeed)
     gRandomSeedSet = true;
 }
 
-TUint Zapp::Random(TUint aMaxValue, TUint aMinValue)
+TUint OpenHome::Net::Random(TUint aMaxValue, TUint aMinValue)
 {
     ASSERT(aMaxValue > aMinValue);
 

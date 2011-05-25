@@ -1,5 +1,5 @@
 #include <DviSubscription.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <DviService.h>
 #include <Service.h>
@@ -12,7 +12,7 @@
 #include <vector>
 #include <stdlib.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // AutoPropertiesLock
 

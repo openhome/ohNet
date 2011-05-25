@@ -1,7 +1,7 @@
 <#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -45,9 +45,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface I<#=className#> : IDisposable
     {
@@ -140,7 +140,7 @@ namespace Zapp.Device.Providers
         /// <#=a.name#> must be overridden if this is called.</remarks>
         protected void EnableAction<#=a.name#>()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("<#=a.name#>");<#=DeclareAllowedValuesForMethod(a)#>
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("<#=a.name#>");<#=DeclareAllowedValuesForMethod(a)#>
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
 <#          if (RelatedVariableIsEvented(i, u)) #>

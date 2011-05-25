@@ -1,7 +1,7 @@
 <#@ assembly name="UpnpServiceMake.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
 	Document u = new Document(TemplateArgument("xml"));
@@ -20,7 +20,7 @@ objects_devices = \
 <#  } #>
 
 # Devices have well controlled dependencies so we can document a more limited set of headers
-headers_device = $(inc_build)/Cpp/ZappTypes.h \
+headers_device = $(inc_build)/Cpp/OhNetTypes.h \
                  $(inc_build)/DviService.h \
                  $(inc_build)/Cpp/Functor.h \
                  $(inc_build)/Service.h \
@@ -38,7 +38,7 @@ device_dotnet_assemblies_with_path = \
         $(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
 <#  } #>
 
-devices : upnp_core $(objects_devices)
+devices : ohNetCore $(objects_devices)
 	$(ar)ZappDevices.$(libext) $(objects_devices)
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
@@ -71,10 +71,10 @@ DvDeviceDotNetAssemblies: $(device_dotnet_assemblies_with_path)
 
 <# foreach (Service s in u.iServices) #>
 <# { #>
-$(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll: $(objdir)Zapp.net.dll $(deviceCs)Dv<#=FilePrefixTypeAndVersion(s)#>.cs
+$(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll: $(objdir)ohNet.net.dll $(deviceCs)Dv<#=FilePrefixTypeAndVersion(s)#>.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
-		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)Dv<#=FilePrefixTypeAndVersion(s)#>.cs
 <# } #>
 

@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyAvOpenhomeOrgVolume1 : ICpProxy, IDisposable
     {
@@ -366,22 +366,22 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyAvOpenhomeOrgVolume1 : CpProxy, IDisposable, ICpProxyAvOpenhomeOrgVolume1
     {
-        private Zapp.Core.Action iActionCharacteristics;
-        private Zapp.Core.Action iActionSetVolume;
-        private Zapp.Core.Action iActionVolumeInc;
-        private Zapp.Core.Action iActionVolumeDec;
-        private Zapp.Core.Action iActionVolume;
-        private Zapp.Core.Action iActionSetBalance;
-        private Zapp.Core.Action iActionBalanceInc;
-        private Zapp.Core.Action iActionBalanceDec;
-        private Zapp.Core.Action iActionBalance;
-        private Zapp.Core.Action iActionSetFade;
-        private Zapp.Core.Action iActionFadeInc;
-        private Zapp.Core.Action iActionFadeDec;
-        private Zapp.Core.Action iActionFade;
-        private Zapp.Core.Action iActionSetMute;
-        private Zapp.Core.Action iActionMute;
-        private Zapp.Core.Action iActionVolumeLimit;
+        private OpenHome.Net.Core.Action iActionCharacteristics;
+        private OpenHome.Net.Core.Action iActionSetVolume;
+        private OpenHome.Net.Core.Action iActionVolumeInc;
+        private OpenHome.Net.Core.Action iActionVolumeDec;
+        private OpenHome.Net.Core.Action iActionVolume;
+        private OpenHome.Net.Core.Action iActionSetBalance;
+        private OpenHome.Net.Core.Action iActionBalanceInc;
+        private OpenHome.Net.Core.Action iActionBalanceDec;
+        private OpenHome.Net.Core.Action iActionBalance;
+        private OpenHome.Net.Core.Action iActionSetFade;
+        private OpenHome.Net.Core.Action iActionFadeInc;
+        private OpenHome.Net.Core.Action iActionFadeDec;
+        private OpenHome.Net.Core.Action iActionFade;
+        private OpenHome.Net.Core.Action iActionSetMute;
+        private OpenHome.Net.Core.Action iActionMute;
+        private OpenHome.Net.Core.Action iActionVolumeLimit;
         private PropertyUint iVolume;
         private PropertyBool iMute;
         private PropertyInt iBalance;
@@ -414,10 +414,10 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyAvOpenhomeOrgVolume1(CpDevice aDevice)
             : base("av-openhome-org", "Volume", 1, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             
 
-            iActionCharacteristics = new Zapp.Core.Action("Characteristics");
+            iActionCharacteristics = new OpenHome.Net.Core.Action("Characteristics");
             param = new ParameterUint("VolumeMax");
             iActionCharacteristics.AddOutputParameter(param);
             param = new ParameterUint("VolumeUnity");
@@ -431,51 +431,51 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("FadeMax");
             iActionCharacteristics.AddOutputParameter(param);
 
-            iActionSetVolume = new Zapp.Core.Action("SetVolume");
+            iActionSetVolume = new OpenHome.Net.Core.Action("SetVolume");
             param = new ParameterUint("Value");
             iActionSetVolume.AddInputParameter(param);
 
-            iActionVolumeInc = new Zapp.Core.Action("VolumeInc");
+            iActionVolumeInc = new OpenHome.Net.Core.Action("VolumeInc");
 
-            iActionVolumeDec = new Zapp.Core.Action("VolumeDec");
+            iActionVolumeDec = new OpenHome.Net.Core.Action("VolumeDec");
 
-            iActionVolume = new Zapp.Core.Action("Volume");
+            iActionVolume = new OpenHome.Net.Core.Action("Volume");
             param = new ParameterUint("Value");
             iActionVolume.AddOutputParameter(param);
 
-            iActionSetBalance = new Zapp.Core.Action("SetBalance");
+            iActionSetBalance = new OpenHome.Net.Core.Action("SetBalance");
             param = new ParameterInt("Value");
             iActionSetBalance.AddInputParameter(param);
 
-            iActionBalanceInc = new Zapp.Core.Action("BalanceInc");
+            iActionBalanceInc = new OpenHome.Net.Core.Action("BalanceInc");
 
-            iActionBalanceDec = new Zapp.Core.Action("BalanceDec");
+            iActionBalanceDec = new OpenHome.Net.Core.Action("BalanceDec");
 
-            iActionBalance = new Zapp.Core.Action("Balance");
+            iActionBalance = new OpenHome.Net.Core.Action("Balance");
             param = new ParameterInt("Value");
             iActionBalance.AddOutputParameter(param);
 
-            iActionSetFade = new Zapp.Core.Action("SetFade");
+            iActionSetFade = new OpenHome.Net.Core.Action("SetFade");
             param = new ParameterInt("Value");
             iActionSetFade.AddInputParameter(param);
 
-            iActionFadeInc = new Zapp.Core.Action("FadeInc");
+            iActionFadeInc = new OpenHome.Net.Core.Action("FadeInc");
 
-            iActionFadeDec = new Zapp.Core.Action("FadeDec");
+            iActionFadeDec = new OpenHome.Net.Core.Action("FadeDec");
 
-            iActionFade = new Zapp.Core.Action("Fade");
+            iActionFade = new OpenHome.Net.Core.Action("Fade");
             param = new ParameterInt("Value");
             iActionFade.AddOutputParameter(param);
 
-            iActionSetMute = new Zapp.Core.Action("SetMute");
+            iActionSetMute = new OpenHome.Net.Core.Action("SetMute");
             param = new ParameterBool("Value");
             iActionSetMute.AddInputParameter(param);
 
-            iActionMute = new Zapp.Core.Action("Mute");
+            iActionMute = new OpenHome.Net.Core.Action("Mute");
             param = new ParameterBool("Value");
             iActionMute.AddOutputParameter(param);
 
-            iActionVolumeLimit = new Zapp.Core.Action("VolumeLimit");
+            iActionVolumeLimit = new OpenHome.Net.Core.Action("VolumeLimit");
             param = new ParameterUint("Value");
             iActionVolumeLimit.AddOutputParameter(param);
 

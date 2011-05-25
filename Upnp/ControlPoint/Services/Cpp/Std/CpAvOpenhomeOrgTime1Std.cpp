@@ -8,7 +8,7 @@
 
 #include <string>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncTimeAvOpenhomeOrgTime1Cpp : public SyncProxyAction
@@ -40,14 +40,14 @@ void SyncTimeAvOpenhomeOrgTime1Cpp::CompleteRequest(IAsync& aAsync)
 CpProxyAvOpenhomeOrgTime1Cpp::CpProxyAvOpenhomeOrgTime1Cpp(CpDeviceCpp& aDevice)
     : CpProxy("av-openhome-org", "Time", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
 
     iActionTime = new Action("Time");
-    param = new Zapp::ParameterUint("TrackCount");
+    param = new OpenHome::Net::ParameterUint("TrackCount");
     iActionTime->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Duration");
+    param = new OpenHome::Net::ParameterUint("Duration");
     iActionTime->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("Seconds");
+    param = new OpenHome::Net::ParameterUint("Seconds");
     iActionTime->AddOutputParameter(param);
 
     Functor functor;

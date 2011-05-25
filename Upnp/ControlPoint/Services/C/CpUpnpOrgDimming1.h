@@ -6,7 +6,7 @@
 
 #include <OsTypes.h>
 #include <C/Async.h>
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 #include <C/CpDevice.h>
 
 #ifdef __cplusplus
@@ -61,7 +61,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncSetLoadLevelTarget(THandle aHandle, uin
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginSetLoadLevelTarget(THandle aHandle, uint32_t anewLoadlevelTarget, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginSetLoadLevelTarget(THandle aHandle, uint32_t anewLoadlevelTarget, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -72,7 +72,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginSetLoadLevelTarget(THandle aHandle, ui
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -93,7 +93,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncGetLoadLevelTarget(THandle aHandle, uin
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginGetLoadLevelTarget(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginGetLoadLevelTarget(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -105,7 +105,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginGetLoadLevelTarget(THandle aHandle, Za
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aGetLoadlevelTarget);
+DllExport int32_t CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aGetLoadlevelTarget);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -126,7 +126,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncGetLoadLevelStatus(THandle aHandle, uin
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginGetLoadLevelStatus(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginGetLoadLevelStatus(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -138,7 +138,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginGetLoadLevelStatus(THandle aHandle, Za
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aretLoadlevelStatus);
+DllExport int32_t CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretLoadlevelStatus);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -160,7 +160,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncSetOnEffectLevel(THandle aHandle, uint3
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginSetOnEffectLevel(THandle aHandle, uint32_t anewOnEffectLevel, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginSetOnEffectLevel(THandle aHandle, uint32_t anewOnEffectLevel, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -171,7 +171,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginSetOnEffectLevel(THandle aHandle, uint
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndSetOnEffectLevel(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgDimming1EndSetOnEffectLevel(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -193,7 +193,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncSetOnEffect(THandle aHandle, const char
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginSetOnEffect(THandle aHandle, const char* anewOnEffect, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginSetOnEffect(THandle aHandle, const char* anewOnEffect, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -204,7 +204,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginSetOnEffect(THandle aHandle, const cha
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndSetOnEffect(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgDimming1EndSetOnEffect(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -226,7 +226,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(THandle aHandle, 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginGetOnEffectParameters(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginGetOnEffectParameters(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -239,7 +239,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginGetOnEffectParameters(THandle aHandle,
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndGetOnEffectParameters(THandle aHandle, ZappHandleAsync aAsync, char** aretOnEffect, uint32_t* aretOnEffectLevel);
+DllExport int32_t CpProxyUpnpOrgDimming1EndGetOnEffectParameters(THandle aHandle, OhNetHandleAsync aAsync, char** aretOnEffect, uint32_t* aretOnEffectLevel);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -259,7 +259,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncStepUp(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginStepUp(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginStepUp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -270,7 +270,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginStepUp(THandle aHandle, ZappCallbackAs
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndStepUp(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgDimming1EndStepUp(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -290,7 +290,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncStepDown(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginStepDown(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginStepDown(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -301,7 +301,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginStepDown(THandle aHandle, ZappCallback
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndStepDown(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgDimming1EndStepDown(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -321,7 +321,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncStartRampUp(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginStartRampUp(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginStartRampUp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -332,7 +332,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginStartRampUp(THandle aHandle, ZappCallb
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndStartRampUp(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgDimming1EndStartRampUp(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -352,7 +352,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncStartRampDown(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginStartRampDown(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginStartRampDown(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -363,7 +363,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginStartRampDown(THandle aHandle, ZappCal
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndStartRampDown(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgDimming1EndStartRampDown(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -383,7 +383,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncStopRamp(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginStopRamp(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginStopRamp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -394,7 +394,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginStopRamp(THandle aHandle, ZappCallback
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndStopRamp(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgDimming1EndStopRamp(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -418,7 +418,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncStartRampToLevel(THandle aHandle, uint3
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginStartRampToLevel(THandle aHandle, uint32_t anewLoadLevelTarget, uint32_t anewRampTime, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginStartRampToLevel(THandle aHandle, uint32_t anewLoadLevelTarget, uint32_t anewRampTime, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -429,7 +429,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginStartRampToLevel(THandle aHandle, uint
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndStartRampToLevel(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgDimming1EndStartRampToLevel(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -451,7 +451,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncSetStepDelta(THandle aHandle, uint32_t 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginSetStepDelta(THandle aHandle, uint32_t anewStepDelta, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginSetStepDelta(THandle aHandle, uint32_t anewStepDelta, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -462,7 +462,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginSetStepDelta(THandle aHandle, uint32_t
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndSetStepDelta(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgDimming1EndSetStepDelta(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -483,7 +483,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncGetStepDelta(THandle aHandle, uint32_t*
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginGetStepDelta(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginGetStepDelta(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -495,7 +495,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginGetStepDelta(THandle aHandle, ZappCall
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndGetStepDelta(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aretStepDelta);
+DllExport int32_t CpProxyUpnpOrgDimming1EndGetStepDelta(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretStepDelta);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -517,7 +517,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncSetRampRate(THandle aHandle, uint32_t a
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginSetRampRate(THandle aHandle, uint32_t anewRampRate, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginSetRampRate(THandle aHandle, uint32_t anewRampRate, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -528,7 +528,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginSetRampRate(THandle aHandle, uint32_t 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndSetRampRate(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgDimming1EndSetRampRate(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -549,7 +549,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncGetRampRate(THandle aHandle, uint32_t* 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginGetRampRate(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginGetRampRate(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -561,7 +561,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginGetRampRate(THandle aHandle, ZappCallb
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndGetRampRate(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aretRampRate);
+DllExport int32_t CpProxyUpnpOrgDimming1EndGetRampRate(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretRampRate);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -581,7 +581,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncPauseRamp(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginPauseRamp(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginPauseRamp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -592,7 +592,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginPauseRamp(THandle aHandle, ZappCallbac
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndPauseRamp(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgDimming1EndPauseRamp(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -612,7 +612,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncResumeRamp(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginResumeRamp(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginResumeRamp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -623,7 +623,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginResumeRamp(THandle aHandle, ZappCallba
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndResumeRamp(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgDimming1EndResumeRamp(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -644,7 +644,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncGetIsRamping(THandle aHandle, uint32_t*
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginGetIsRamping(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginGetIsRamping(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -656,7 +656,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginGetIsRamping(THandle aHandle, ZappCall
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndGetIsRamping(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aretIsRamping);
+DllExport int32_t CpProxyUpnpOrgDimming1EndGetIsRamping(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretIsRamping);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -677,7 +677,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncGetRampPaused(THandle aHandle, uint32_t
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginGetRampPaused(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginGetRampPaused(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -689,7 +689,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginGetRampPaused(THandle aHandle, ZappCal
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndGetRampPaused(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aretRampPaused);
+DllExport int32_t CpProxyUpnpOrgDimming1EndGetRampPaused(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretRampPaused);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -710,7 +710,7 @@ DllExport void CpProxyUpnpOrgDimming1SyncGetRampTime(THandle aHandle, uint32_t* 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1BeginGetRampTime(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1BeginGetRampTime(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -722,7 +722,7 @@ DllExport void CpProxyUpnpOrgDimming1BeginGetRampTime(THandle aHandle, ZappCallb
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgDimming1EndGetRampTime(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aretRampTime);
+DllExport int32_t CpProxyUpnpOrgDimming1EndGetRampTime(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretRampTime);
 /**
  * Set a callback to be run when the LoadLevelStatus state variable changes.
  *
@@ -733,7 +733,7 @@ DllExport int32_t CpProxyUpnpOrgDimming1EndGetRampTime(THandle aHandle, ZappHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1SetPropertyLoadLevelStatusChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1SetPropertyLoadLevelStatusChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the StepDelta state variable changes.
  *
@@ -744,7 +744,7 @@ DllExport void CpProxyUpnpOrgDimming1SetPropertyLoadLevelStatusChanged(THandle a
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1SetPropertyStepDeltaChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1SetPropertyStepDeltaChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the RampRate state variable changes.
  *
@@ -755,7 +755,7 @@ DllExport void CpProxyUpnpOrgDimming1SetPropertyStepDeltaChanged(THandle aHandle
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1SetPropertyRampRateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1SetPropertyRampRateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the IsRamping state variable changes.
  *
@@ -766,7 +766,7 @@ DllExport void CpProxyUpnpOrgDimming1SetPropertyRampRateChanged(THandle aHandle,
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1SetPropertyIsRampingChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1SetPropertyIsRampingChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the RampPaused state variable changes.
  *
@@ -777,7 +777,7 @@ DllExport void CpProxyUpnpOrgDimming1SetPropertyIsRampingChanged(THandle aHandle
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgDimming1SetPropertyRampPausedChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgDimming1SetPropertyRampPausedChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the LoadLevelStatus property.

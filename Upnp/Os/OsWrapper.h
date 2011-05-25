@@ -5,14 +5,15 @@
 #define HEADER_LINN_OS_CPP
 
 #include <Os.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Standard.h>
 #include <Network.h>
-#include <Zapp.h>
+#include <OhNet.h>
 
 #include <vector>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class Os
 {
@@ -32,7 +33,7 @@ public:
     inline static void SemaphoreSignal(THandle aSem);
     inline static THandle MutexCreate(const TChar* aName);
     inline static void MutexDestroy(THandle aMutex);
-    inline static void MutexLock(THandle aMutex);
+    inline static TInt MutexLock(THandle aMutex);
     inline static void MutexUnlock(THandle aMutex);
     inline static THandle ThreadCreate(const TChar* aName, TUint aPriority, TUint aStackBytes,
                                        ThreadEntryPoint aEntryPoint, void* aArg);
@@ -66,5 +67,6 @@ public:
 
 #include <OsWrapper.inl>
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 #endif // HEADER_LINN_OS_C

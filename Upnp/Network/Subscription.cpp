@@ -1,9 +1,9 @@
 #include <Subscription.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Http.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // HeaderSid
 

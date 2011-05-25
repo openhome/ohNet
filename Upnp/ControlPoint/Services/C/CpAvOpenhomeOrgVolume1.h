@@ -6,7 +6,7 @@
 
 #include <OsTypes.h>
 #include <C/Async.h>
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 #include <C/CpDevice.h>
 
 #ifdef __cplusplus
@@ -65,7 +65,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncCharacteristics(THandle aHandle, u
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginCharacteristics(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginCharacteristics(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -82,7 +82,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginCharacteristics(THandle aHandle, 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndCharacteristics(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aVolumeMax, uint32_t* aVolumeUnity, uint32_t* aVolumeSteps, uint32_t* aVolumeMilliDbPerStep, uint32_t* aBalanceMax, uint32_t* aFadeMax);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndCharacteristics(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aVolumeMax, uint32_t* aVolumeUnity, uint32_t* aVolumeSteps, uint32_t* aVolumeMilliDbPerStep, uint32_t* aBalanceMax, uint32_t* aFadeMax);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -104,7 +104,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncSetVolume(THandle aHandle, uint32_
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginSetVolume(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginSetVolume(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -115,7 +115,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginSetVolume(THandle aHandle, uint32
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndSetVolume(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndSetVolume(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -135,7 +135,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncVolumeInc(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginVolumeInc(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginVolumeInc(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -146,7 +146,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginVolumeInc(THandle aHandle, ZappCa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndVolumeInc(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndVolumeInc(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -166,7 +166,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncVolumeDec(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginVolumeDec(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginVolumeDec(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -177,7 +177,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginVolumeDec(THandle aHandle, ZappCa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndVolumeDec(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndVolumeDec(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -198,7 +198,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncVolume(THandle aHandle, uint32_t* 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginVolume(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginVolume(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -210,7 +210,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginVolume(THandle aHandle, ZappCallb
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndVolume(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndVolume(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -232,7 +232,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncSetBalance(THandle aHandle, int32_
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginSetBalance(THandle aHandle, int32_t aValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginSetBalance(THandle aHandle, int32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -243,7 +243,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginSetBalance(THandle aHandle, int32
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndSetBalance(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndSetBalance(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -263,7 +263,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncBalanceInc(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginBalanceInc(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginBalanceInc(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -274,7 +274,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginBalanceInc(THandle aHandle, ZappC
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndBalanceInc(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndBalanceInc(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -294,7 +294,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncBalanceDec(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginBalanceDec(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginBalanceDec(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -305,7 +305,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginBalanceDec(THandle aHandle, ZappC
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndBalanceDec(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndBalanceDec(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -326,7 +326,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncBalance(THandle aHandle, int32_t* 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginBalance(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginBalance(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -338,7 +338,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginBalance(THandle aHandle, ZappCall
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndBalance(THandle aHandle, ZappHandleAsync aAsync, int32_t* aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndBalance(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -360,7 +360,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncSetFade(THandle aHandle, int32_t a
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginSetFade(THandle aHandle, int32_t aValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginSetFade(THandle aHandle, int32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -371,7 +371,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginSetFade(THandle aHandle, int32_t 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndSetFade(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndSetFade(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -391,7 +391,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncFadeInc(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginFadeInc(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginFadeInc(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -402,7 +402,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginFadeInc(THandle aHandle, ZappCall
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndFadeInc(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndFadeInc(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -422,7 +422,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncFadeDec(THandle aHandle);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginFadeDec(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginFadeDec(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -433,7 +433,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginFadeDec(THandle aHandle, ZappCall
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndFadeDec(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndFadeDec(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -454,7 +454,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncFade(THandle aHandle, int32_t* aVa
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginFade(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginFade(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -466,7 +466,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginFade(THandle aHandle, ZappCallbac
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndFade(THandle aHandle, ZappHandleAsync aAsync, int32_t* aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndFade(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -488,7 +488,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncSetMute(THandle aHandle, uint32_t 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginSetMute(THandle aHandle, uint32_t aValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginSetMute(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -499,7 +499,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginSetMute(THandle aHandle, uint32_t
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndSetMute(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndSetMute(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -520,7 +520,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncMute(THandle aHandle, uint32_t* aV
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginMute(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginMute(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -532,7 +532,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginMute(THandle aHandle, ZappCallbac
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndMute(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndMute(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -553,7 +553,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SyncVolumeLimit(THandle aHandle, uint3
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1BeginVolumeLimit(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1BeginVolumeLimit(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -565,7 +565,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1BeginVolumeLimit(THandle aHandle, Zapp
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndVolumeLimit(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndVolumeLimit(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 /**
  * Set a callback to be run when the Volume state variable changes.
  *
@@ -576,7 +576,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgVolume1EndVolumeLimit(THandle aHandle, Zap
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Mute state variable changes.
  *
@@ -587,7 +587,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeChanged(THandle aHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyMuteChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyMuteChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Balance state variable changes.
  *
@@ -598,7 +598,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyMuteChanged(THandle aHandle
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyBalanceChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyBalanceChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Fade state variable changes.
  *
@@ -609,7 +609,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyBalanceChanged(THandle aHan
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyFadeChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyFadeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the VolumeLimit state variable changes.
  *
@@ -620,7 +620,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyFadeChanged(THandle aHandle
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeLimitChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeLimitChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the VolumeMax state variable changes.
  *
@@ -631,7 +631,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeLimitChanged(THandle 
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeMaxChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeMaxChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the VolumeUnity state variable changes.
  *
@@ -642,7 +642,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeMaxChanged(THandle aH
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeUnityChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeUnityChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the VolumeSteps state variable changes.
  *
@@ -653,7 +653,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeUnityChanged(THandle 
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeStepsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeStepsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the VolumeMilliDbPerStep state variable changes.
  *
@@ -664,7 +664,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeStepsChanged(THandle 
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeMilliDbPerStepChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeMilliDbPerStepChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the BalanceMax state variable changes.
  *
@@ -675,7 +675,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyVolumeMilliDbPerStepChanged
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyBalanceMaxChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyBalanceMaxChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the FadeMax state variable changes.
  *
@@ -686,7 +686,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyBalanceMaxChanged(THandle a
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyFadeMaxChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyFadeMaxChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the Volume property.

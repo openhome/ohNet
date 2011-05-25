@@ -3,7 +3,8 @@
 
 #include <Core/DvDevice.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class DviDeviceC : protected IResourceManager
 {
@@ -21,7 +22,7 @@ private:
     static void WriteResourceEnd(void* aPtr);
 protected:
     DvDevice* iDevice;
-	ZappCallbackResourceManager iResourceManager;
+	OhNetCallbackResourceManager iResourceManager;
 	void* iCallbackArg;
 	IResourceWriter* iResourceWriter;
 };
@@ -30,7 +31,7 @@ class DviDeviceStandardC : public DviDeviceC
 {
 public:
 	DviDeviceStandardC(const char* aUdn);
-	DviDeviceStandardC(const char* aUdn, ZappCallbackResourceManager aResourceManager, void* aPtr);
+	DviDeviceStandardC(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr);
 };
 
 inline DvDevice* DviDeviceC::DeviceFromHandle(DvDeviceC aHandle)
@@ -38,6 +39,7 @@ inline DvDevice* DviDeviceC::DeviceFromHandle(DvDeviceC aHandle)
 	return reinterpret_cast<DviDeviceC*>(aHandle)->Device();
 }
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DviDeviceC

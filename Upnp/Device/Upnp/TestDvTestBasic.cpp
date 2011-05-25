@@ -1,20 +1,20 @@
 #include <TestFramework.h>
 #include <OptionParser.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvDevice.h>
-#include <Core/DvZappOrgTestBasic1.h>
-#include <Core/CpZappOrgTestBasic1.h>
-#include <Zapp.h>
+#include <Core/DvOpenhomeOrgTestBasic1.h>
+#include <Core/CpOpenhomeOrgTestBasic1.h>
+#include <OhNet.h>
 #include <MimeTypes.h>
 
 #include <stdlib.h>
 #include <vector>
 #include <sys/stat.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
-class ProviderTestBasic : public DvProviderZappOrgTestBasic1
+class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
 {
 public:
     ProviderTestBasic(DvDevice& aDevice);
@@ -54,7 +54,7 @@ private:
 
 
 ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
-    : DvProviderZappOrgTestBasic1(aDevice)
+    : DvProviderOpenhomeOrgTestBasic1(aDevice)
 {
     SetPropertyVarUint(0);
     SetPropertyVarInt(0);
@@ -238,13 +238,13 @@ void ProviderTestBasic::Shutdown(IInvocationResponse& aResponse, TUint /*aVersio
 DeviceBasic::DeviceBasic(const Brx& aConfigDir)
     : iConfigDir(aConfigDir)
 {
-    iDevice = new DvDeviceStandard(Brn("device-ZappTestBasic"), *this);
-    iDevice->SetAttribute("Upnp.Domain", "zapp.org");
+    iDevice = new DvDeviceStandard(Brn("device-ohNetTestBasic"), *this);
+    iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", "_ZappTestDevice");
+    iDevice->SetAttribute("Upnp.FriendlyName", "_ohNetTestDevice");
     iDevice->SetAttribute("Upnp.Manufacturer", "None");
-    iDevice->SetAttribute("Upnp.ModelName", "Zapp test device");
+    iDevice->SetAttribute("Upnp.ModelName", "ohNet test device");
     iTestBasic = new ProviderTestBasic(*iDevice);
     iDevice->SetEnabled();
 }
@@ -294,7 +294,7 @@ void DeviceBasic::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, 
         if (filePath[i] == '.') {
             const char* ext = (const char*)filePath.Split(i+1, filePath.Bytes()-i-1).Ptr();
             if (strcmp(ext, "html") == 0 || strcmp(ext, "htm") == 0) {
-                mime = kZappMimeTypeHtml;
+                mime = kOhNetMimeTypeHtml;
             }
             break;
         }
@@ -312,7 +312,7 @@ void DeviceBasic::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, 
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     Brn emptyString("");

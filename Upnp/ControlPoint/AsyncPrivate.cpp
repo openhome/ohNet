@@ -1,10 +1,10 @@
 #include <AsyncPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Thread.h>
 #include <CpProxy.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 FunctorAsync& SyncProxyAction::Functor()
 {

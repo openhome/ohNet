@@ -1,7 +1,7 @@
 #include <TestFramework.h>
 #include <OptionParser.h>
-#include <ZappTypes.h>
-#include <Zapp.h>
+#include <OhNetTypes.h>
+#include <OhNet.h>
 #include <Debug.h>
 #include <DviDevice.h>
 #include <DviService.h>
@@ -13,8 +13,8 @@
 #include <stdlib.h>
 #include <vector>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 static Bwh gNameDevice1("device1");
 static Bwh gNameDevice1_1("device1_1");
@@ -170,7 +170,7 @@ void CpDevices::Removed(CpDevice& /*aDevice*/)
 
 
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");

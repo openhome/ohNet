@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgConnectionManager2 : ICpProxy, IDisposable
     {
@@ -173,11 +173,11 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyUpnpOrgConnectionManager2 : CpProxy, IDisposable, ICpProxyUpnpOrgConnectionManager2
     {
-        private Zapp.Core.Action iActionGetProtocolInfo;
-        private Zapp.Core.Action iActionPrepareForConnection;
-        private Zapp.Core.Action iActionConnectionComplete;
-        private Zapp.Core.Action iActionGetCurrentConnectionIDs;
-        private Zapp.Core.Action iActionGetCurrentConnectionInfo;
+        private OpenHome.Net.Core.Action iActionGetProtocolInfo;
+        private OpenHome.Net.Core.Action iActionPrepareForConnection;
+        private OpenHome.Net.Core.Action iActionConnectionComplete;
+        private OpenHome.Net.Core.Action iActionGetCurrentConnectionIDs;
+        private OpenHome.Net.Core.Action iActionGetCurrentConnectionInfo;
         private PropertyString iSourceProtocolInfo;
         private PropertyString iSinkProtocolInfo;
         private PropertyString iCurrentConnectionIDs;
@@ -194,16 +194,16 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyUpnpOrgConnectionManager2(CpDevice aDevice)
             : base("schemas-upnp-org", "ConnectionManager", 2, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             List<String> allowedValues = new List<String>();
 
-            iActionGetProtocolInfo = new Zapp.Core.Action("GetProtocolInfo");
+            iActionGetProtocolInfo = new OpenHome.Net.Core.Action("GetProtocolInfo");
             param = new ParameterString("Source", allowedValues);
             iActionGetProtocolInfo.AddOutputParameter(param);
             param = new ParameterString("Sink", allowedValues);
             iActionGetProtocolInfo.AddOutputParameter(param);
 
-            iActionPrepareForConnection = new Zapp.Core.Action("PrepareForConnection");
+            iActionPrepareForConnection = new OpenHome.Net.Core.Action("PrepareForConnection");
             param = new ParameterString("RemoteProtocolInfo", allowedValues);
             iActionPrepareForConnection.AddInputParameter(param);
             param = new ParameterString("PeerConnectionManager", allowedValues);
@@ -222,15 +222,15 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterInt("RcsID");
             iActionPrepareForConnection.AddOutputParameter(param);
 
-            iActionConnectionComplete = new Zapp.Core.Action("ConnectionComplete");
+            iActionConnectionComplete = new OpenHome.Net.Core.Action("ConnectionComplete");
             param = new ParameterInt("ConnectionID");
             iActionConnectionComplete.AddInputParameter(param);
 
-            iActionGetCurrentConnectionIDs = new Zapp.Core.Action("GetCurrentConnectionIDs");
+            iActionGetCurrentConnectionIDs = new OpenHome.Net.Core.Action("GetCurrentConnectionIDs");
             param = new ParameterString("ConnectionIDs", allowedValues);
             iActionGetCurrentConnectionIDs.AddOutputParameter(param);
 
-            iActionGetCurrentConnectionInfo = new Zapp.Core.Action("GetCurrentConnectionInfo");
+            iActionGetCurrentConnectionInfo = new OpenHome.Net.Core.Action("GetCurrentConnectionInfo");
             param = new ParameterInt("ConnectionID");
             iActionGetCurrentConnectionInfo.AddInputParameter(param);
             param = new ParameterInt("RcsID");

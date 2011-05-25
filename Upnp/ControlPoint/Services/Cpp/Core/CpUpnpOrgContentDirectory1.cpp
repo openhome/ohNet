@@ -5,7 +5,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncGetSearchCapabilitiesUpnpOrgContentDirectory1 : public SyncProxyAction
@@ -329,115 +329,115 @@ void SyncCreateReferenceUpnpOrgContentDirectory1::CompleteRequest(IAsync& aAsync
 CpProxyUpnpOrgContentDirectory1::CpProxyUpnpOrgContentDirectory1(CpDevice& aDevice)
     : CpProxy("schemas-upnp-org", "ContentDirectory", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
     iActionGetSearchCapabilities = new Action("GetSearchCapabilities");
-    param = new Zapp::ParameterString("SearchCaps");
+    param = new OpenHome::Net::ParameterString("SearchCaps");
     iActionGetSearchCapabilities->AddOutputParameter(param);
 
     iActionGetSortCapabilities = new Action("GetSortCapabilities");
-    param = new Zapp::ParameterString("SortCaps");
+    param = new OpenHome::Net::ParameterString("SortCaps");
     iActionGetSortCapabilities->AddOutputParameter(param);
 
     iActionGetSystemUpdateID = new Action("GetSystemUpdateID");
-    param = new Zapp::ParameterUint("Id");
+    param = new OpenHome::Net::ParameterUint("Id");
     iActionGetSystemUpdateID->AddOutputParameter(param);
 
     iActionBrowse = new Action("Browse");
-    param = new Zapp::ParameterString("ObjectID");
+    param = new OpenHome::Net::ParameterString("ObjectID");
     iActionBrowse->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[2];
     allowedValues[index++] = (TChar*)"BrowseMetadata";
     allowedValues[index++] = (TChar*)"BrowseDirectChildren";
-    param = new Zapp::ParameterString("BrowseFlag", allowedValues, 2);
+    param = new OpenHome::Net::ParameterString("BrowseFlag", allowedValues, 2);
     iActionBrowse->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionBrowse->AddInputParameter(param);
-    param = new Zapp::ParameterUint("StartingIndex");
+    param = new OpenHome::Net::ParameterUint("StartingIndex");
     iActionBrowse->AddInputParameter(param);
-    param = new Zapp::ParameterUint("RequestedCount");
+    param = new OpenHome::Net::ParameterUint("RequestedCount");
     iActionBrowse->AddInputParameter(param);
-    param = new Zapp::ParameterString("SortCriteria");
+    param = new OpenHome::Net::ParameterString("SortCriteria");
     iActionBrowse->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionBrowse->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("NumberReturned");
+    param = new OpenHome::Net::ParameterUint("NumberReturned");
     iActionBrowse->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("TotalMatches");
+    param = new OpenHome::Net::ParameterUint("TotalMatches");
     iActionBrowse->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionBrowse->AddOutputParameter(param);
 
     iActionSearch = new Action("Search");
-    param = new Zapp::ParameterString("ContainerID");
+    param = new OpenHome::Net::ParameterString("ContainerID");
     iActionSearch->AddInputParameter(param);
-    param = new Zapp::ParameterString("SearchCriteria");
+    param = new OpenHome::Net::ParameterString("SearchCriteria");
     iActionSearch->AddInputParameter(param);
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionSearch->AddInputParameter(param);
-    param = new Zapp::ParameterUint("StartingIndex");
+    param = new OpenHome::Net::ParameterUint("StartingIndex");
     iActionSearch->AddInputParameter(param);
-    param = new Zapp::ParameterUint("RequestedCount");
+    param = new OpenHome::Net::ParameterUint("RequestedCount");
     iActionSearch->AddInputParameter(param);
-    param = new Zapp::ParameterString("SortCriteria");
+    param = new OpenHome::Net::ParameterString("SortCriteria");
     iActionSearch->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionSearch->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("NumberReturned");
+    param = new OpenHome::Net::ParameterUint("NumberReturned");
     iActionSearch->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("TotalMatches");
+    param = new OpenHome::Net::ParameterUint("TotalMatches");
     iActionSearch->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionSearch->AddOutputParameter(param);
 
     iActionCreateObject = new Action("CreateObject");
-    param = new Zapp::ParameterString("ContainerID");
+    param = new OpenHome::Net::ParameterString("ContainerID");
     iActionCreateObject->AddInputParameter(param);
-    param = new Zapp::ParameterString("Elements");
+    param = new OpenHome::Net::ParameterString("Elements");
     iActionCreateObject->AddInputParameter(param);
-    param = new Zapp::ParameterString("ObjectID");
+    param = new OpenHome::Net::ParameterString("ObjectID");
     iActionCreateObject->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionCreateObject->AddOutputParameter(param);
 
     iActionDestroyObject = new Action("DestroyObject");
-    param = new Zapp::ParameterString("ObjectID");
+    param = new OpenHome::Net::ParameterString("ObjectID");
     iActionDestroyObject->AddInputParameter(param);
 
     iActionUpdateObject = new Action("UpdateObject");
-    param = new Zapp::ParameterString("ObjectID");
+    param = new OpenHome::Net::ParameterString("ObjectID");
     iActionUpdateObject->AddInputParameter(param);
-    param = new Zapp::ParameterString("CurrentTagValue");
+    param = new OpenHome::Net::ParameterString("CurrentTagValue");
     iActionUpdateObject->AddInputParameter(param);
-    param = new Zapp::ParameterString("NewTagValue");
+    param = new OpenHome::Net::ParameterString("NewTagValue");
     iActionUpdateObject->AddInputParameter(param);
 
     iActionImportResource = new Action("ImportResource");
-    param = new Zapp::ParameterString("SourceURI");
+    param = new OpenHome::Net::ParameterString("SourceURI");
     iActionImportResource->AddInputParameter(param);
-    param = new Zapp::ParameterString("DestinationURI");
+    param = new OpenHome::Net::ParameterString("DestinationURI");
     iActionImportResource->AddInputParameter(param);
-    param = new Zapp::ParameterUint("TransferID");
+    param = new OpenHome::Net::ParameterUint("TransferID");
     iActionImportResource->AddOutputParameter(param);
 
     iActionExportResource = new Action("ExportResource");
-    param = new Zapp::ParameterString("SourceURI");
+    param = new OpenHome::Net::ParameterString("SourceURI");
     iActionExportResource->AddInputParameter(param);
-    param = new Zapp::ParameterString("DestinationURI");
+    param = new OpenHome::Net::ParameterString("DestinationURI");
     iActionExportResource->AddInputParameter(param);
-    param = new Zapp::ParameterUint("TransferID");
+    param = new OpenHome::Net::ParameterUint("TransferID");
     iActionExportResource->AddOutputParameter(param);
 
     iActionStopTransferResource = new Action("StopTransferResource");
-    param = new Zapp::ParameterUint("TransferID");
+    param = new OpenHome::Net::ParameterUint("TransferID");
     iActionStopTransferResource->AddInputParameter(param);
 
     iActionGetTransferProgress = new Action("GetTransferProgress");
-    param = new Zapp::ParameterUint("TransferID");
+    param = new OpenHome::Net::ParameterUint("TransferID");
     iActionGetTransferProgress->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[4];
@@ -445,24 +445,24 @@ CpProxyUpnpOrgContentDirectory1::CpProxyUpnpOrgContentDirectory1(CpDevice& aDevi
     allowedValues[index++] = (TChar*)"ERROR";
     allowedValues[index++] = (TChar*)"IN_PROGRESS";
     allowedValues[index++] = (TChar*)"STOPPED";
-    param = new Zapp::ParameterString("TransferStatus", allowedValues, 4);
+    param = new OpenHome::Net::ParameterString("TransferStatus", allowedValues, 4);
     iActionGetTransferProgress->AddOutputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterString("TransferLength");
+    param = new OpenHome::Net::ParameterString("TransferLength");
     iActionGetTransferProgress->AddOutputParameter(param);
-    param = new Zapp::ParameterString("TransferTotal");
+    param = new OpenHome::Net::ParameterString("TransferTotal");
     iActionGetTransferProgress->AddOutputParameter(param);
 
     iActionDeleteResource = new Action("DeleteResource");
-    param = new Zapp::ParameterString("ResourceURI");
+    param = new OpenHome::Net::ParameterString("ResourceURI");
     iActionDeleteResource->AddInputParameter(param);
 
     iActionCreateReference = new Action("CreateReference");
-    param = new Zapp::ParameterString("ContainerID");
+    param = new OpenHome::Net::ParameterString("ContainerID");
     iActionCreateReference->AddInputParameter(param);
-    param = new Zapp::ParameterString("ObjectID");
+    param = new OpenHome::Net::ParameterString("ObjectID");
     iActionCreateReference->AddInputParameter(param);
-    param = new Zapp::ParameterString("NewID");
+    param = new OpenHome::Net::ParameterString("NewID");
     iActionCreateReference->AddOutputParameter(param);
 
     Functor functor;

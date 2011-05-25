@@ -2,8 +2,8 @@
 #include <Thread.h>
 #include <OsWrapper.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 const TUint32 kSleepMs = 25; // short sleep used as a lazy way of avoiding too many dependencies on thread priorities
 
@@ -591,7 +591,7 @@ void SuitePerformance::Test()
     for(i = 0; i<kNumThreads; i++) {
         threads[i]->Signal();
     }
-    Zapp::Thread::Sleep(50);
+    OpenHome::Net::Thread::Sleep(50);
 }
 
 
@@ -685,7 +685,7 @@ void MainTestThread::Run()
     // (which run on servers with variable loads)
     //runner.Add(new SuitePerformance());
     runner.Add(new SuiteThreadKill());
-    if (Zapp::Thread::SupportsPriorities())
+    if (OpenHome::Net::Thread::SupportsPriorities())
     {
         runner.Add(new SuitePriority());
         runner.Add(new SuiteTimeslice());
@@ -695,14 +695,15 @@ void MainTestThread::Run()
     Thread::Current()->Signal();
 }
 
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::InitialiseMinimal(aInitParams);
 
     // many tests rely on Thread::Current() so run all tests in a thread we create
-    MainTestThread th;
-    th.Start();
-    th.Wait();
+    Thread* th = new MainTestThread();
+    th->Start();
+    th->Wait();
+    delete th;
 
     delete aInitParams;
     UpnpLibrary::Close();

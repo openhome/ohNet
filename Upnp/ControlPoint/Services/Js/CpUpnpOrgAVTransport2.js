@@ -2,7 +2,7 @@
 
 /**
 * Service Proxy for CpProxySchemasUpnpOrgAVTransport2
-* @module Zapp
+* @module ohNet
 * @class AVTransport
 */
 	
@@ -18,8 +18,8 @@ var CpProxySchemasUpnpOrgAVTransport2 = function(udn){
 	
 	// Collection of service properties
 	this.serviceProperties = {};
-	this.serviceProperties["LastChange"] = new Zapp.ServiceProperty("LastChange","string");
-	this.serviceProperties["DRMState"] = new Zapp.ServiceProperty("DRMState","string");
+	this.serviceProperties["LastChange"] = new OhNet.ServiceProperty("LastChange","string");
+	this.serviceProperties["DRMState"] = new OhNet.ServiceProperty("DRMState","string");
 }
 
 ServiceAVTransport.kDRMStateOk = "OK";
@@ -31,7 +31,7 @@ ServiceAVTransport.kDRMStateOk = "OK";
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.subscribe = function (serviceAddedFunction) {
-    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
@@ -40,7 +40,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.subscribe = function (serviceAddedFu
 * @method Unsubscribe
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.unsubscribe = function () {
-    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+    OhNet.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
@@ -54,7 +54,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.unsubscribe = function () {
 CpProxySchemasUpnpOrgAVTransport2.prototype.LastChange_Changed = function (stateChangedFunction) {
     this.serviceProperties.LastChange.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 	
@@ -67,7 +67,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.LastChange_Changed = function (state
 CpProxySchemasUpnpOrgAVTransport2.prototype.DRMState_Changed = function (stateChangedFunction) {
     this.serviceProperties.DRMState.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.readStringParameter(state)); 
 	});
 }
 
@@ -82,7 +82,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.DRMState_Changed = function (stateCh
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.SetAVTransportURI = function(InstanceID, CurrentURI, CurrentURIMetaData, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetAVTransportURI", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetAVTransportURI", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("CurrentURI", CurrentURI);
     request.writeStringParameter("CurrentURIMetaData", CurrentURIMetaData);
@@ -107,7 +107,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.SetAVTransportURI = function(Instanc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.SetNextAVTransportURI = function(InstanceID, NextURI, NextURIMetaData, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetNextAVTransportURI", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetNextAVTransportURI", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("NextURI", NextURI);
     request.writeStringParameter("NextURIMetaData", NextURIMetaData);
@@ -130,18 +130,18 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.SetNextAVTransportURI = function(Ins
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetMediaInfo = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetMediaInfo", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetMediaInfo", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["NrTracks"] = Zapp.SoapRequest.readIntParameter(result["NrTracks"]);	
-		result["MediaDuration"] = Zapp.SoapRequest.readStringParameter(result["MediaDuration"]);	
-		result["CurrentURI"] = Zapp.SoapRequest.readStringParameter(result["CurrentURI"]);	
-		result["CurrentURIMetaData"] = Zapp.SoapRequest.readStringParameter(result["CurrentURIMetaData"]);	
-		result["NextURI"] = Zapp.SoapRequest.readStringParameter(result["NextURI"]);	
-		result["NextURIMetaData"] = Zapp.SoapRequest.readStringParameter(result["NextURIMetaData"]);	
-		result["PlayMedium"] = Zapp.SoapRequest.readStringParameter(result["PlayMedium"]);	
-		result["RecordMedium"] = Zapp.SoapRequest.readStringParameter(result["RecordMedium"]);	
-		result["WriteStatus"] = Zapp.SoapRequest.readStringParameter(result["WriteStatus"]);	
+		result["NrTracks"] = OhNet.SoapRequest.readIntParameter(result["NrTracks"]);	
+		result["MediaDuration"] = OhNet.SoapRequest.readStringParameter(result["MediaDuration"]);	
+		result["CurrentURI"] = OhNet.SoapRequest.readStringParameter(result["CurrentURI"]);	
+		result["CurrentURIMetaData"] = OhNet.SoapRequest.readStringParameter(result["CurrentURIMetaData"]);	
+		result["NextURI"] = OhNet.SoapRequest.readStringParameter(result["NextURI"]);	
+		result["NextURIMetaData"] = OhNet.SoapRequest.readStringParameter(result["NextURIMetaData"]);	
+		result["PlayMedium"] = OhNet.SoapRequest.readStringParameter(result["PlayMedium"]);	
+		result["RecordMedium"] = OhNet.SoapRequest.readStringParameter(result["RecordMedium"]);	
+		result["WriteStatus"] = OhNet.SoapRequest.readStringParameter(result["WriteStatus"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -160,19 +160,19 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetMediaInfo = function(InstanceID, 
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetMediaInfo_Ext = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetMediaInfo_Ext", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetMediaInfo_Ext", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentType"] = Zapp.SoapRequest.readStringParameter(result["CurrentType"]);	
-		result["NrTracks"] = Zapp.SoapRequest.readIntParameter(result["NrTracks"]);	
-		result["MediaDuration"] = Zapp.SoapRequest.readStringParameter(result["MediaDuration"]);	
-		result["CurrentURI"] = Zapp.SoapRequest.readStringParameter(result["CurrentURI"]);	
-		result["CurrentURIMetaData"] = Zapp.SoapRequest.readStringParameter(result["CurrentURIMetaData"]);	
-		result["NextURI"] = Zapp.SoapRequest.readStringParameter(result["NextURI"]);	
-		result["NextURIMetaData"] = Zapp.SoapRequest.readStringParameter(result["NextURIMetaData"]);	
-		result["PlayMedium"] = Zapp.SoapRequest.readStringParameter(result["PlayMedium"]);	
-		result["RecordMedium"] = Zapp.SoapRequest.readStringParameter(result["RecordMedium"]);	
-		result["WriteStatus"] = Zapp.SoapRequest.readStringParameter(result["WriteStatus"]);	
+		result["CurrentType"] = OhNet.SoapRequest.readStringParameter(result["CurrentType"]);	
+		result["NrTracks"] = OhNet.SoapRequest.readIntParameter(result["NrTracks"]);	
+		result["MediaDuration"] = OhNet.SoapRequest.readStringParameter(result["MediaDuration"]);	
+		result["CurrentURI"] = OhNet.SoapRequest.readStringParameter(result["CurrentURI"]);	
+		result["CurrentURIMetaData"] = OhNet.SoapRequest.readStringParameter(result["CurrentURIMetaData"]);	
+		result["NextURI"] = OhNet.SoapRequest.readStringParameter(result["NextURI"]);	
+		result["NextURIMetaData"] = OhNet.SoapRequest.readStringParameter(result["NextURIMetaData"]);	
+		result["PlayMedium"] = OhNet.SoapRequest.readStringParameter(result["PlayMedium"]);	
+		result["RecordMedium"] = OhNet.SoapRequest.readStringParameter(result["RecordMedium"]);	
+		result["WriteStatus"] = OhNet.SoapRequest.readStringParameter(result["WriteStatus"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -191,12 +191,12 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetMediaInfo_Ext = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetTransportInfo = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetTransportInfo", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetTransportInfo", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentTransportState"] = Zapp.SoapRequest.readStringParameter(result["CurrentTransportState"]);	
-		result["CurrentTransportStatus"] = Zapp.SoapRequest.readStringParameter(result["CurrentTransportStatus"]);	
-		result["CurrentSpeed"] = Zapp.SoapRequest.readStringParameter(result["CurrentSpeed"]);	
+		result["CurrentTransportState"] = OhNet.SoapRequest.readStringParameter(result["CurrentTransportState"]);	
+		result["CurrentTransportStatus"] = OhNet.SoapRequest.readStringParameter(result["CurrentTransportStatus"]);	
+		result["CurrentSpeed"] = OhNet.SoapRequest.readStringParameter(result["CurrentSpeed"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -215,17 +215,17 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetTransportInfo = function(Instance
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetPositionInfo = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetPositionInfo", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetPositionInfo", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["Track"] = Zapp.SoapRequest.readIntParameter(result["Track"]);	
-		result["TrackDuration"] = Zapp.SoapRequest.readStringParameter(result["TrackDuration"]);	
-		result["TrackMetaData"] = Zapp.SoapRequest.readStringParameter(result["TrackMetaData"]);	
-		result["TrackURI"] = Zapp.SoapRequest.readStringParameter(result["TrackURI"]);	
-		result["RelTime"] = Zapp.SoapRequest.readStringParameter(result["RelTime"]);	
-		result["AbsTime"] = Zapp.SoapRequest.readStringParameter(result["AbsTime"]);	
-		result["RelCount"] = Zapp.SoapRequest.readIntParameter(result["RelCount"]);	
-		result["AbsCount"] = Zapp.SoapRequest.readIntParameter(result["AbsCount"]);	
+		result["Track"] = OhNet.SoapRequest.readIntParameter(result["Track"]);	
+		result["TrackDuration"] = OhNet.SoapRequest.readStringParameter(result["TrackDuration"]);	
+		result["TrackMetaData"] = OhNet.SoapRequest.readStringParameter(result["TrackMetaData"]);	
+		result["TrackURI"] = OhNet.SoapRequest.readStringParameter(result["TrackURI"]);	
+		result["RelTime"] = OhNet.SoapRequest.readStringParameter(result["RelTime"]);	
+		result["AbsTime"] = OhNet.SoapRequest.readStringParameter(result["AbsTime"]);	
+		result["RelCount"] = OhNet.SoapRequest.readIntParameter(result["RelCount"]);	
+		result["AbsCount"] = OhNet.SoapRequest.readIntParameter(result["AbsCount"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -244,12 +244,12 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetPositionInfo = function(InstanceI
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetDeviceCapabilities = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetDeviceCapabilities", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetDeviceCapabilities", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["PlayMedia"] = Zapp.SoapRequest.readStringParameter(result["PlayMedia"]);	
-		result["RecMedia"] = Zapp.SoapRequest.readStringParameter(result["RecMedia"]);	
-		result["RecQualityModes"] = Zapp.SoapRequest.readStringParameter(result["RecQualityModes"]);	
+		result["PlayMedia"] = OhNet.SoapRequest.readStringParameter(result["PlayMedia"]);	
+		result["RecMedia"] = OhNet.SoapRequest.readStringParameter(result["RecMedia"]);	
+		result["RecQualityModes"] = OhNet.SoapRequest.readStringParameter(result["RecQualityModes"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -268,11 +268,11 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetDeviceCapabilities = function(Ins
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetTransportSettings = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetTransportSettings", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetTransportSettings", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["PlayMode"] = Zapp.SoapRequest.readStringParameter(result["PlayMode"]);	
-		result["RecQualityMode"] = Zapp.SoapRequest.readStringParameter(result["RecQualityMode"]);	
+		result["PlayMode"] = OhNet.SoapRequest.readStringParameter(result["PlayMode"]);	
+		result["RecQualityMode"] = OhNet.SoapRequest.readStringParameter(result["RecQualityMode"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -291,7 +291,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetTransportSettings = function(Inst
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Stop = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Stop", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Stop", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -313,7 +313,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Stop = function(InstanceID, successF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Play = function(InstanceID, Speed, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Play", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Play", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Speed", Speed);
     request.send(function(result){
@@ -335,7 +335,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Play = function(InstanceID, Speed, s
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Pause = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Pause", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Pause", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -356,7 +356,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Pause = function(InstanceID, success
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Record = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Record", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Record", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -379,7 +379,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Record = function(InstanceID, succes
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Seek = function(InstanceID, Unit, Target, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Seek", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Seek", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("Unit", Unit);
     request.writeStringParameter("Target", Target);
@@ -402,7 +402,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Seek = function(InstanceID, Unit, Ta
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Next = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Next", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Next", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -423,7 +423,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Next = function(InstanceID, successF
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.Previous = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("Previous", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("Previous", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
 	
@@ -445,7 +445,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.Previous = function(InstanceID, succ
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.SetPlayMode = function(InstanceID, NewPlayMode, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetPlayMode", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetPlayMode", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("NewPlayMode", NewPlayMode);
     request.send(function(result){
@@ -468,7 +468,7 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.SetPlayMode = function(InstanceID, N
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.SetRecordQualityMode = function(InstanceID, NewRecordQualityMode, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetRecordQualityMode", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetRecordQualityMode", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("NewRecordQualityMode", NewRecordQualityMode);
     request.send(function(result){
@@ -490,10 +490,10 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.SetRecordQualityMode = function(Inst
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetCurrentTransportActions = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetCurrentTransportActions", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetCurrentTransportActions", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["Actions"] = Zapp.SoapRequest.readStringParameter(result["Actions"]);	
+		result["Actions"] = OhNet.SoapRequest.readStringParameter(result["Actions"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -512,10 +512,10 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetCurrentTransportActions = functio
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetDRMState = function(InstanceID, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetDRMState", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetDRMState", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.send(function(result){
-		result["CurrentDRMState"] = Zapp.SoapRequest.readStringParameter(result["CurrentDRMState"]);	
+		result["CurrentDRMState"] = OhNet.SoapRequest.readStringParameter(result["CurrentDRMState"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -535,11 +535,11 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetDRMState = function(InstanceID, s
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.GetStateVariables = function(InstanceID, StateVariableList, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("GetStateVariables", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("GetStateVariables", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("StateVariableList", StateVariableList);
     request.send(function(result){
-		result["StateVariableValuePairs"] = Zapp.SoapRequest.readStringParameter(result["StateVariableValuePairs"]);	
+		result["StateVariableValuePairs"] = OhNet.SoapRequest.readStringParameter(result["StateVariableValuePairs"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -562,14 +562,14 @@ CpProxySchemasUpnpOrgAVTransport2.prototype.GetStateVariables = function(Instanc
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 CpProxySchemasUpnpOrgAVTransport2.prototype.SetStateVariables = function(InstanceID, AVTransportUDN, ServiceType, ServiceId, StateVariableValuePairs, successFunction, errorFunction){	
-	var request = new Zapp.SoapRequest("SetStateVariables", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("SetStateVariables", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("InstanceID", InstanceID);
     request.writeStringParameter("AVTransportUDN", AVTransportUDN);
     request.writeStringParameter("ServiceType", ServiceType);
     request.writeStringParameter("ServiceId", ServiceId);
     request.writeStringParameter("StateVariableValuePairs", StateVariableValuePairs);
     request.send(function(result){
-		result["StateVariableList"] = Zapp.SoapRequest.readStringParameter(result["StateVariableList"]);	
+		result["StateVariableList"] = OhNet.SoapRequest.readStringParameter(result["StateVariableList"]);	
 	
 		if (successFunction){
 			successFunction(result);

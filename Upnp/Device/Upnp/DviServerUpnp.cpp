@@ -13,14 +13,14 @@
 #include <XmlParser.h>
 #include <Converter.h>
 #include <Stream.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Debug.h>
 #include <Stack.h>
 #include <Error.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
-//static const Brn kServerDescription("UPnP/1.1, Zapp UPnP Stack/3.0");
+//static const Brn kServerDescription("UPnP/1.1, ohNet UPnP Stack/3.0");
 static const Brn kUpnpHeaderExt("Ext");
 static const Brn kUpnpHeaderCallback("Callback");
 static const Brn kUpnpHeaderNt("Nt");
@@ -148,7 +148,7 @@ void HeaderCallback::Process(const Brx& aValue)
     Brn address = parser.Next(':');
     Brn port = parser.Next('/');
     try {
-        iEndpoint = Zapp::Endpoint(Ascii::Uint(port), address);
+        iEndpoint = OpenHome::Net::Endpoint(Ascii::Uint(port), address);
     }
     catch (AsciiError) {
         THROW(HttpError);
@@ -622,7 +622,7 @@ void DviSessionUpnp::WriteServerHeader(IWriterHttpHeader& aWriter)
 	stream.WriteUint(major);
 	stream.Write('.');
 	stream.WriteUint(minor);
-	stream.Write(Brn(" UPnP/1.1 Zapp/"));
+	stream.Write(Brn(" UPnP/1.1 ohNet/"));
 	Stack::GetVersion(major, minor);
 	stream.WriteUint(major);
 	stream.Write('.');

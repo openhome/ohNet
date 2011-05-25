@@ -1,6 +1,6 @@
 objdir = Build/Obj/Posix
 incdir = Build/Include
-ohnetdir = ../Upnp/Build/Obj/Posix
+ohnetdir = ../Upnp/Build/Obj/Posix/Debug
 toolsDir = ../Upnp/Build/Posix/Tools
 templatesDir = ../Upnp/T4/Templates
 
@@ -40,18 +40,18 @@ all: $(objdir)/WavSender.exe
 $(objdir)/WavSender.exe :
 	mkdir -p $(objdir)
 	$(compiler)/DvAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgSender1.cpp
-	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Library/Ohm.cpp
-	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) Library/OhmSender.cpp
+	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Ohm.cpp
+	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) OhmSender.cpp
 	$(compiler)/WavSender.$(objext) -c $(cflags) $(includes) WavSender/WavSender.cpp
-	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext) $(ohnetdir)/TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext) $(ohnetdir)/$(libprefix)TestFramework.$(libext)
 
 $(objdir)/WavReceiver.exe :
 	mkdir -p $(objdir)
 	$(compiler)/DvAvOpenhomeOrgProduct1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgProduct1.cpp
 	$(compiler)/DvAvOpenhomeOrgReceiver1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgReceiver1.cpp
-	$(compiler)/Product.$(objext) -c $(cflags) $(includes) Library/Product.cpp
+	$(compiler)/Product.$(objext) -c $(cflags) $(includes) Product.cpp
 	$(compiler)/Receiver.$(objext) -c $(cflags) $(includes) WavReceiver/Receiver.cpp
-	$(link) $(linkoutput)$(objdir)/WavReceiver.$(exeext) $(objdir)/WavReceiver.$(objext) $(objdir)/Product.$(objext) $(objdir)/DvAvOpenhomeOrgProduct1.$(objext) $(objdir)/DvAvOpenhomeOrgReceiver1.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext) $(ohnetdir)/TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)/WavReceiver.$(exeext) $(objdir)/WavReceiver.$(objext) $(objdir)/Product.$(objext) $(objdir)/DvAvOpenhomeOrgProduct1.$(objext) $(objdir)/DvAvOpenhomeOrgReceiver1.$(objext) $(ohnetdir)/$(libprefix)upnp_core.$(libext) $(ohnetdir)/$(libprefix)TestFramework.$(libext)
 
 t4 = $(toolsDir)/TextTransform.exe
 

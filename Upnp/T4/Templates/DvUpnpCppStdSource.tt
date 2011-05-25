@@ -1,7 +1,7 @@
 <#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -42,12 +42,12 @@
     Document u = new Document(TemplateArgument("xml"));
 #>
 #include "Dv<#=fileName#>.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <DviService.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
@@ -106,7 +106,7 @@ void <#=className#>::GetProperty<#=s.name#>(<#=outArgType[s.type]#> aValue)
 
 void <#=className#>::EnableAction<#=a.name#>()
 {
-    Zapp::Action* action = new Zapp::Action("<#=a.name#>");<#=DeclareAllowedValuesForMethod(a)#>
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("<#=a.name#>");<#=DeclareAllowedValuesForMethod(a)#>
 <#  foreach (Argument i in a.inargs) #>
 <#  { #>
 <#      if (RelatedVariableIsEvented(i, u)) #>

@@ -1,12 +1,13 @@
 #ifndef HEADER_DVUPNPORGRENDERINGCONTROL1
 #define HEADER_DVUPNPORGRENDERINGCONTROL1
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
 #include <DvProvider.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation;
 class PropertyInt;
@@ -572,7 +573,8 @@ private:
     PropertyString* iPropertyLastChange;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVUPNPORGRENDERINGCONTROL1
 

@@ -1,7 +1,7 @@
 #include <Parser.h>
 #include <Ascii.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // Class Parser
 

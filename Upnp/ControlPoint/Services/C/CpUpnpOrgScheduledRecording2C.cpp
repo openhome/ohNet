@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyUpnpOrgScheduledRecording2C : public CpProxyC
 {
@@ -534,14 +534,14 @@ CpProxyUpnpOrgScheduledRecording2C::CpProxyUpnpOrgScheduledRecording2C(CpDeviceC
     : CpProxyC("schemas-upnp-org", "ScheduledRecording", 2, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
     iActionGetSortCapabilities = new Action("GetSortCapabilities");
-    param = new Zapp::ParameterString("SortCaps");
+    param = new OpenHome::Net::ParameterString("SortCaps");
     iActionGetSortCapabilities->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("SortLevelCap");
+    param = new OpenHome::Net::ParameterUint("SortLevelCap");
     iActionGetSortCapabilities->AddOutputParameter(param);
 
     iActionGetPropertyList = new Action("GetPropertyList");
@@ -550,10 +550,10 @@ CpProxyUpnpOrgScheduledRecording2C::CpProxyUpnpOrgScheduledRecording2C(CpDeviceC
     allowedValues[index++] = (TChar*)"A_ARG_TYPE_RecordSchedule";
     allowedValues[index++] = (TChar*)"A_ARG_TYPE_RecordTask";
     allowedValues[index++] = (TChar*)"A_ARG_TYPE_RecordScheduleParts";
-    param = new Zapp::ParameterString("DataTypeID", allowedValues, 3);
+    param = new OpenHome::Net::ParameterString("DataTypeID", allowedValues, 3);
     iActionGetPropertyList->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterString("PropertyList");
+    param = new OpenHome::Net::ParameterString("PropertyList");
     iActionGetPropertyList->AddOutputParameter(param);
 
     iActionGetAllowedValues = new Action("GetAllowedValues");
@@ -562,128 +562,128 @@ CpProxyUpnpOrgScheduledRecording2C::CpProxyUpnpOrgScheduledRecording2C(CpDeviceC
     allowedValues[index++] = (TChar*)"A_ARG_TYPE_RecordSchedule";
     allowedValues[index++] = (TChar*)"A_ARG_TYPE_RecordTask";
     allowedValues[index++] = (TChar*)"A_ARG_TYPE_RecordScheduleParts";
-    param = new Zapp::ParameterString("DataTypeID", allowedValues, 3);
+    param = new OpenHome::Net::ParameterString("DataTypeID", allowedValues, 3);
     iActionGetAllowedValues->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionGetAllowedValues->AddInputParameter(param);
-    param = new Zapp::ParameterString("PropertyInfo");
+    param = new OpenHome::Net::ParameterString("PropertyInfo");
     iActionGetAllowedValues->AddOutputParameter(param);
 
     iActionGetStateUpdateID = new Action("GetStateUpdateID");
-    param = new Zapp::ParameterUint("Id");
+    param = new OpenHome::Net::ParameterUint("Id");
     iActionGetStateUpdateID->AddOutputParameter(param);
 
     iActionBrowseRecordSchedules = new Action("BrowseRecordSchedules");
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionBrowseRecordSchedules->AddInputParameter(param);
-    param = new Zapp::ParameterUint("StartingIndex");
+    param = new OpenHome::Net::ParameterUint("StartingIndex");
     iActionBrowseRecordSchedules->AddInputParameter(param);
-    param = new Zapp::ParameterUint("RequestedCount");
+    param = new OpenHome::Net::ParameterUint("RequestedCount");
     iActionBrowseRecordSchedules->AddInputParameter(param);
-    param = new Zapp::ParameterString("SortCriteria");
+    param = new OpenHome::Net::ParameterString("SortCriteria");
     iActionBrowseRecordSchedules->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionBrowseRecordSchedules->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("NumberReturned");
+    param = new OpenHome::Net::ParameterUint("NumberReturned");
     iActionBrowseRecordSchedules->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("TotalMatches");
+    param = new OpenHome::Net::ParameterUint("TotalMatches");
     iActionBrowseRecordSchedules->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionBrowseRecordSchedules->AddOutputParameter(param);
 
     iActionBrowseRecordTasks = new Action("BrowseRecordTasks");
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionBrowseRecordTasks->AddInputParameter(param);
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionBrowseRecordTasks->AddInputParameter(param);
-    param = new Zapp::ParameterUint("StartingIndex");
+    param = new OpenHome::Net::ParameterUint("StartingIndex");
     iActionBrowseRecordTasks->AddInputParameter(param);
-    param = new Zapp::ParameterUint("RequestedCount");
+    param = new OpenHome::Net::ParameterUint("RequestedCount");
     iActionBrowseRecordTasks->AddInputParameter(param);
-    param = new Zapp::ParameterString("SortCriteria");
+    param = new OpenHome::Net::ParameterString("SortCriteria");
     iActionBrowseRecordTasks->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionBrowseRecordTasks->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("NumberReturned");
+    param = new OpenHome::Net::ParameterUint("NumberReturned");
     iActionBrowseRecordTasks->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("TotalMatches");
+    param = new OpenHome::Net::ParameterUint("TotalMatches");
     iActionBrowseRecordTasks->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionBrowseRecordTasks->AddOutputParameter(param);
 
     iActionCreateRecordSchedule = new Action("CreateRecordSchedule");
-    param = new Zapp::ParameterString("Elements");
+    param = new OpenHome::Net::ParameterString("Elements");
     iActionCreateRecordSchedule->AddInputParameter(param);
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionCreateRecordSchedule->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionCreateRecordSchedule->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionCreateRecordSchedule->AddOutputParameter(param);
 
     iActionDeleteRecordSchedule = new Action("DeleteRecordSchedule");
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionDeleteRecordSchedule->AddInputParameter(param);
 
     iActionGetRecordSchedule = new Action("GetRecordSchedule");
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionGetRecordSchedule->AddInputParameter(param);
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionGetRecordSchedule->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionGetRecordSchedule->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionGetRecordSchedule->AddOutputParameter(param);
 
     iActionEnableRecordSchedule = new Action("EnableRecordSchedule");
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionEnableRecordSchedule->AddInputParameter(param);
 
     iActionDisableRecordSchedule = new Action("DisableRecordSchedule");
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionDisableRecordSchedule->AddInputParameter(param);
 
     iActionDeleteRecordTask = new Action("DeleteRecordTask");
-    param = new Zapp::ParameterString("RecordTaskID");
+    param = new OpenHome::Net::ParameterString("RecordTaskID");
     iActionDeleteRecordTask->AddInputParameter(param);
 
     iActionGetRecordTask = new Action("GetRecordTask");
-    param = new Zapp::ParameterString("RecordTaskID");
+    param = new OpenHome::Net::ParameterString("RecordTaskID");
     iActionGetRecordTask->AddInputParameter(param);
-    param = new Zapp::ParameterString("Filter");
+    param = new OpenHome::Net::ParameterString("Filter");
     iActionGetRecordTask->AddInputParameter(param);
-    param = new Zapp::ParameterString("Result");
+    param = new OpenHome::Net::ParameterString("Result");
     iActionGetRecordTask->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionGetRecordTask->AddOutputParameter(param);
 
     iActionEnableRecordTask = new Action("EnableRecordTask");
-    param = new Zapp::ParameterString("RecordTaskID");
+    param = new OpenHome::Net::ParameterString("RecordTaskID");
     iActionEnableRecordTask->AddInputParameter(param);
 
     iActionDisableRecordTask = new Action("DisableRecordTask");
-    param = new Zapp::ParameterString("RecordTaskID");
+    param = new OpenHome::Net::ParameterString("RecordTaskID");
     iActionDisableRecordTask->AddInputParameter(param);
 
     iActionResetRecordTask = new Action("ResetRecordTask");
-    param = new Zapp::ParameterString("RecordTaskID");
+    param = new OpenHome::Net::ParameterString("RecordTaskID");
     iActionResetRecordTask->AddInputParameter(param);
 
     iActionGetRecordScheduleConflicts = new Action("GetRecordScheduleConflicts");
-    param = new Zapp::ParameterString("RecordScheduleID");
+    param = new OpenHome::Net::ParameterString("RecordScheduleID");
     iActionGetRecordScheduleConflicts->AddInputParameter(param);
-    param = new Zapp::ParameterString("RecordScheduleConflictIDList");
+    param = new OpenHome::Net::ParameterString("RecordScheduleConflictIDList");
     iActionGetRecordScheduleConflicts->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionGetRecordScheduleConflicts->AddOutputParameter(param);
 
     iActionGetRecordTaskConflicts = new Action("GetRecordTaskConflicts");
-    param = new Zapp::ParameterString("RecordTaskID");
+    param = new OpenHome::Net::ParameterString("RecordTaskID");
     iActionGetRecordTaskConflicts->AddInputParameter(param);
-    param = new Zapp::ParameterString("RecordTaskConflictIDList");
+    param = new OpenHome::Net::ParameterString("RecordTaskConflictIDList");
     iActionGetRecordTaskConflicts->AddOutputParameter(param);
-    param = new Zapp::ParameterUint("UpdateID");
+    param = new OpenHome::Net::ParameterUint("UpdateID");
     iActionGetRecordTaskConflicts->AddOutputParameter(param);
 
     Functor functor;
@@ -1327,15 +1327,15 @@ void CpProxyUpnpOrgScheduledRecording2SyncGetSortCapabilities(THandle aHandle, c
     *aSortCaps = buf_aSortCaps.Extract();
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginGetSortCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginGetSortCapabilities(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetSortCapabilities(functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndGetSortCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aSortCaps, uint32_t* aSortLevelCap)
+int32_t CpProxyUpnpOrgScheduledRecording2EndGetSortCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aSortCaps, uint32_t* aSortLevelCap)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1364,16 +1364,16 @@ void CpProxyUpnpOrgScheduledRecording2SyncGetPropertyList(THandle aHandle, const
     *aPropertyList = buf_aPropertyList.Extract();
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginGetPropertyList(THandle aHandle, const char* aDataTypeID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginGetPropertyList(THandle aHandle, const char* aDataTypeID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aDataTypeID(aDataTypeID);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetPropertyList(buf_aDataTypeID, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndGetPropertyList(THandle aHandle, ZappHandleAsync aAsync, char** aPropertyList)
+int32_t CpProxyUpnpOrgScheduledRecording2EndGetPropertyList(THandle aHandle, OhNetHandleAsync aAsync, char** aPropertyList)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1403,17 +1403,17 @@ void CpProxyUpnpOrgScheduledRecording2SyncGetAllowedValues(THandle aHandle, cons
     *aPropertyInfo = buf_aPropertyInfo.Extract();
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginGetAllowedValues(THandle aHandle, const char* aDataTypeID, const char* aFilter, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginGetAllowedValues(THandle aHandle, const char* aDataTypeID, const char* aFilter, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aDataTypeID(aDataTypeID);
     Brh buf_aFilter(aFilter);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetAllowedValues(buf_aDataTypeID, buf_aFilter, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndGetAllowedValues(THandle aHandle, ZappHandleAsync aAsync, char** aPropertyInfo)
+int32_t CpProxyUpnpOrgScheduledRecording2EndGetAllowedValues(THandle aHandle, OhNetHandleAsync aAsync, char** aPropertyInfo)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1439,15 +1439,15 @@ void CpProxyUpnpOrgScheduledRecording2SyncGetStateUpdateID(THandle aHandle, uint
     proxyC->SyncGetStateUpdateID(*aId);
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginGetStateUpdateID(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginGetStateUpdateID(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetStateUpdateID(functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndGetStateUpdateID(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aId)
+int32_t CpProxyUpnpOrgScheduledRecording2EndGetStateUpdateID(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aId)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1474,17 +1474,17 @@ void CpProxyUpnpOrgScheduledRecording2SyncBrowseRecordSchedules(THandle aHandle,
     *aResult = buf_aResult.Extract();
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginBrowseRecordSchedules(THandle aHandle, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginBrowseRecordSchedules(THandle aHandle, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aFilter(aFilter);
     Brh buf_aSortCriteria(aSortCriteria);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginBrowseRecordSchedules(buf_aFilter, aStartingIndex, aRequestedCount, buf_aSortCriteria, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndBrowseRecordSchedules(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
+int32_t CpProxyUpnpOrgScheduledRecording2EndBrowseRecordSchedules(THandle aHandle, OhNetHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1515,18 +1515,18 @@ void CpProxyUpnpOrgScheduledRecording2SyncBrowseRecordTasks(THandle aHandle, con
     *aResult = buf_aResult.Extract();
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginBrowseRecordTasks(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginBrowseRecordTasks(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordScheduleID(aRecordScheduleID);
     Brh buf_aFilter(aFilter);
     Brh buf_aSortCriteria(aSortCriteria);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginBrowseRecordTasks(buf_aRecordScheduleID, buf_aFilter, aStartingIndex, aRequestedCount, buf_aSortCriteria, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndBrowseRecordTasks(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
+int32_t CpProxyUpnpOrgScheduledRecording2EndBrowseRecordTasks(THandle aHandle, OhNetHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1557,16 +1557,16 @@ void CpProxyUpnpOrgScheduledRecording2SyncCreateRecordSchedule(THandle aHandle, 
     *aResult = buf_aResult.Extract();
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginCreateRecordSchedule(THandle aHandle, const char* aElements, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginCreateRecordSchedule(THandle aHandle, const char* aElements, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aElements(aElements);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginCreateRecordSchedule(buf_aElements, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndCreateRecordSchedule(THandle aHandle, ZappHandleAsync aAsync, char** aRecordScheduleID, char** aResult, uint32_t* aUpdateID)
+int32_t CpProxyUpnpOrgScheduledRecording2EndCreateRecordSchedule(THandle aHandle, OhNetHandleAsync aAsync, char** aRecordScheduleID, char** aResult, uint32_t* aUpdateID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1596,16 +1596,16 @@ void CpProxyUpnpOrgScheduledRecording2SyncDeleteRecordSchedule(THandle aHandle, 
     proxyC->SyncDeleteRecordSchedule(buf_aRecordScheduleID);
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginDeleteRecordSchedule(THandle aHandle, const char* aRecordScheduleID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginDeleteRecordSchedule(THandle aHandle, const char* aRecordScheduleID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordScheduleID(aRecordScheduleID);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginDeleteRecordSchedule(buf_aRecordScheduleID, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndDeleteRecordSchedule(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgScheduledRecording2EndDeleteRecordSchedule(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1632,17 +1632,17 @@ void CpProxyUpnpOrgScheduledRecording2SyncGetRecordSchedule(THandle aHandle, con
     *aResult = buf_aResult.Extract();
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginGetRecordSchedule(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginGetRecordSchedule(THandle aHandle, const char* aRecordScheduleID, const char* aFilter, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordScheduleID(aRecordScheduleID);
     Brh buf_aFilter(aFilter);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetRecordSchedule(buf_aRecordScheduleID, buf_aFilter, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordSchedule(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aUpdateID)
+int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordSchedule(THandle aHandle, OhNetHandleAsync aAsync, char** aResult, uint32_t* aUpdateID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1669,16 +1669,16 @@ void CpProxyUpnpOrgScheduledRecording2SyncEnableRecordSchedule(THandle aHandle, 
     proxyC->SyncEnableRecordSchedule(buf_aRecordScheduleID);
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginEnableRecordSchedule(THandle aHandle, const char* aRecordScheduleID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginEnableRecordSchedule(THandle aHandle, const char* aRecordScheduleID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordScheduleID(aRecordScheduleID);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginEnableRecordSchedule(buf_aRecordScheduleID, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndEnableRecordSchedule(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgScheduledRecording2EndEnableRecordSchedule(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1702,16 +1702,16 @@ void CpProxyUpnpOrgScheduledRecording2SyncDisableRecordSchedule(THandle aHandle,
     proxyC->SyncDisableRecordSchedule(buf_aRecordScheduleID);
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginDisableRecordSchedule(THandle aHandle, const char* aRecordScheduleID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginDisableRecordSchedule(THandle aHandle, const char* aRecordScheduleID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordScheduleID(aRecordScheduleID);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginDisableRecordSchedule(buf_aRecordScheduleID, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndDisableRecordSchedule(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgScheduledRecording2EndDisableRecordSchedule(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1735,16 +1735,16 @@ void CpProxyUpnpOrgScheduledRecording2SyncDeleteRecordTask(THandle aHandle, cons
     proxyC->SyncDeleteRecordTask(buf_aRecordTaskID);
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginDeleteRecordTask(THandle aHandle, const char* aRecordTaskID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginDeleteRecordTask(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordTaskID(aRecordTaskID);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginDeleteRecordTask(buf_aRecordTaskID, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndDeleteRecordTask(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgScheduledRecording2EndDeleteRecordTask(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1771,17 +1771,17 @@ void CpProxyUpnpOrgScheduledRecording2SyncGetRecordTask(THandle aHandle, const c
     *aResult = buf_aResult.Extract();
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginGetRecordTask(THandle aHandle, const char* aRecordTaskID, const char* aFilter, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginGetRecordTask(THandle aHandle, const char* aRecordTaskID, const char* aFilter, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordTaskID(aRecordTaskID);
     Brh buf_aFilter(aFilter);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetRecordTask(buf_aRecordTaskID, buf_aFilter, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordTask(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aUpdateID)
+int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordTask(THandle aHandle, OhNetHandleAsync aAsync, char** aResult, uint32_t* aUpdateID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1808,16 +1808,16 @@ void CpProxyUpnpOrgScheduledRecording2SyncEnableRecordTask(THandle aHandle, cons
     proxyC->SyncEnableRecordTask(buf_aRecordTaskID);
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginEnableRecordTask(THandle aHandle, const char* aRecordTaskID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginEnableRecordTask(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordTaskID(aRecordTaskID);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginEnableRecordTask(buf_aRecordTaskID, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndEnableRecordTask(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgScheduledRecording2EndEnableRecordTask(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1841,16 +1841,16 @@ void CpProxyUpnpOrgScheduledRecording2SyncDisableRecordTask(THandle aHandle, con
     proxyC->SyncDisableRecordTask(buf_aRecordTaskID);
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginDisableRecordTask(THandle aHandle, const char* aRecordTaskID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginDisableRecordTask(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordTaskID(aRecordTaskID);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginDisableRecordTask(buf_aRecordTaskID, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndDisableRecordTask(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgScheduledRecording2EndDisableRecordTask(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1874,16 +1874,16 @@ void CpProxyUpnpOrgScheduledRecording2SyncResetRecordTask(THandle aHandle, const
     proxyC->SyncResetRecordTask(buf_aRecordTaskID);
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginResetRecordTask(THandle aHandle, const char* aRecordTaskID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginResetRecordTask(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordTaskID(aRecordTaskID);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginResetRecordTask(buf_aRecordTaskID, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndResetRecordTask(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgScheduledRecording2EndResetRecordTask(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1909,16 +1909,16 @@ void CpProxyUpnpOrgScheduledRecording2SyncGetRecordScheduleConflicts(THandle aHa
     *aRecordScheduleConflictIDList = buf_aRecordScheduleConflictIDList.Extract();
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginGetRecordScheduleConflicts(THandle aHandle, const char* aRecordScheduleID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginGetRecordScheduleConflicts(THandle aHandle, const char* aRecordScheduleID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordScheduleID(aRecordScheduleID);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetRecordScheduleConflicts(buf_aRecordScheduleID, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordScheduleConflicts(THandle aHandle, ZappHandleAsync aAsync, char** aRecordScheduleConflictIDList, uint32_t* aUpdateID)
+int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordScheduleConflicts(THandle aHandle, OhNetHandleAsync aAsync, char** aRecordScheduleConflictIDList, uint32_t* aUpdateID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1947,16 +1947,16 @@ void CpProxyUpnpOrgScheduledRecording2SyncGetRecordTaskConflicts(THandle aHandle
     *aRecordTaskConflictIDList = buf_aRecordTaskConflictIDList.Extract();
 }
 
-void CpProxyUpnpOrgScheduledRecording2BeginGetRecordTaskConflicts(THandle aHandle, const char* aRecordTaskID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2BeginGetRecordTaskConflicts(THandle aHandle, const char* aRecordTaskID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRecordTaskID(aRecordTaskID);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetRecordTaskConflicts(buf_aRecordTaskID, functor);
 }
 
-int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordTaskConflicts(THandle aHandle, ZappHandleAsync aAsync, char** aRecordTaskConflictIDList, uint32_t* aUpdateID)
+int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordTaskConflicts(THandle aHandle, OhNetHandleAsync aAsync, char** aRecordTaskConflictIDList, uint32_t* aUpdateID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
@@ -1975,7 +1975,7 @@ int32_t CpProxyUpnpOrgScheduledRecording2EndGetRecordTaskConflicts(THandle aHand
     return err;
 }
 
-void CpProxyUpnpOrgScheduledRecording2SetPropertyLastChangeChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgScheduledRecording2SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgScheduledRecording2C* proxyC = reinterpret_cast<CpProxyUpnpOrgScheduledRecording2C*>(aHandle);
     ASSERT(proxyC != NULL);

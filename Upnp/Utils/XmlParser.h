@@ -2,12 +2,13 @@
 #define HEADER_XML_PARSER
 
 #include <Buffer.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Exception.h>
 
 EXCEPTION(XmlError);
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 /**
  * Very basic XML parser
@@ -40,6 +41,7 @@ private:
     static void NextTag(const Brx& aDocument, Brn& aName, Brn& aAttributes, Brn& aNamespace, TUint& aIndex, Brn& aRemaining, ETagType& aType);
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_XML_PARSER

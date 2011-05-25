@@ -1,10 +1,10 @@
 #include <XmlParser.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Ascii.h>
 #include <Parser.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 Brn XmlParserBasic::Find(const TChar* aTag, const Brx& aDocument)
 {

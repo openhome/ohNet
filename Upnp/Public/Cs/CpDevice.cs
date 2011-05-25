@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Zapp.ControlPoint
+namespace OpenHome.Net.ControlPoint
 {
     /// <summary>
     /// Protocol-independent device
@@ -12,16 +12,16 @@ namespace Zapp.ControlPoint
     /// All references to class instances must have been removed before Core.Library.Close() is called.</remarks>
     public class CpDevice
     {
-        [DllImport ("ZappUpnp", CharSet = CharSet.Ansi)]
+        [DllImport ("ohNet", CharSet = CharSet.Ansi)]
         static extern IntPtr CpDeviceCUdn(IntPtr aDevice);
-        [DllImport ("ZappUpnp")]
+        [DllImport ("ohNet")]
         static extern void CpDeviceCAddRef(IntPtr aDevice);
-        [DllImport ("ZappUpnp")]
+        [DllImport ("ohNet")]
         static extern void CpDeviceCRemoveRef(IntPtr aDevice);
-        [DllImport ("ZappUpnp", CharSet = CharSet.Ansi)]
+        [DllImport ("ohNet", CharSet = CharSet.Ansi)]
         static extern unsafe int CpDeviceCGetAttribute(IntPtr aDevice, char* aKey, char** aValue);
-        [DllImport ("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
+        [DllImport ("ohNet")]
+        static extern unsafe void OhNetFree(void* aPtr);
 
         private IntPtr iHandle;
 
@@ -82,7 +82,7 @@ namespace Zapp.ControlPoint
             if (ret != 0)
             {
                 aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-                ZappFree(value);
+                OhNetFree(value);
                 return true;
             }
             aValue = null;
@@ -119,9 +119,9 @@ namespace Zapp.ControlPoint
     /// Dispose() must be called before Core.Library.Close().</remarks>
     public class CpDeviceList : ICpDeviceList, IDisposable
     {
-        [DllImport ("ZappUpnp")]
+        [DllImport ("ohNet")]
         static extern void CpDeviceListDestroy(IntPtr aListHandle);
-        [DllImport ("ZappUpnp")]
+        [DllImport ("ohNet")]
         static extern void CpDeviceListRefresh(IntPtr aListHandle);
 
         protected IntPtr iHandle;

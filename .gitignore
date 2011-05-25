@@ -8,6 +8,7 @@ _ReSharper.*
 /Upnp/*.sbr
 /Upnp/Build/
 /Upnp/vgout/
+/Upnp/hgout/
 /Upnp/xout/
 /build/
 /install/

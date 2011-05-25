@@ -1,7 +1,7 @@
 #ifndef HEADER_DVIDEVICE
 #define HEADER_DVIDEVICE
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Thread.h>
 #include <DviService.h>
@@ -11,7 +11,8 @@
 #include <vector>
 #include <map>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDvProtocol : public IResourceManager
 {
@@ -65,8 +66,8 @@ private:
     void SetParent(DviDevice* aParent);
     void SetDisabled(Functor aCompleted, bool aLocked);
     void ProtocolDisabled();
-    TBool HasService(const Zapp::ServiceType& aServiceType) const;
-    TBool ChildHasService(const Zapp::ServiceType& aServiceType) const;
+    TBool HasService(const OpenHome::Net::ServiceType& aServiceType) const;
+    TBool ChildHasService(const OpenHome::Net::ServiceType& aServiceType) const;
     void ConfigChanged();
     TUint SubscriptionId();
 private:
@@ -144,6 +145,7 @@ private:
     Map iMap;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVIDEVICE

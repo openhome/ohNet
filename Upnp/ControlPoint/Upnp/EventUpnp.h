@@ -7,7 +7,8 @@
 #include <ProtocolUpnp.h>
 #include <Subscription.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class Subscription;
 
@@ -18,7 +19,7 @@ public:
     ~EventSessionUpnp();
 private:
     void Error(const HttpStatus& aStatus);
-    void LogError(const TChar* aErr);
+    void LogError(CpiSubscription* aSubscription, const TChar* aErr);
     virtual void Run();
     void ProcessNotification(IEventProcessor& aEventProcessor, const Brx& aEntity);
 private:
@@ -47,6 +48,7 @@ private:
     SocketTcpServer iTcpServer;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_EVENT_UPNP

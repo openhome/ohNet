@@ -2,7 +2,7 @@
 #include <Core/DvDevice.h>
 #include <C/DviDeviceC.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // DviDeviceC
 
@@ -67,7 +67,7 @@ DviDeviceStandardC::DviDeviceStandardC(const char* aUdn)
 	iDevice = new DvDeviceStandard(udn);
 }
 
-DviDeviceStandardC::DviDeviceStandardC(const char* aUdn, ZappCallbackResourceManager aResourceManager, void* aPtr)
+DviDeviceStandardC::DviDeviceStandardC(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr)
 {
 	Brn udn(aUdn);
 	iDevice = new DvDeviceStandard(udn, *this);
@@ -105,7 +105,7 @@ void DvDeviceSetEnabled(DvDeviceC aDevice)
 	DviDeviceC::DeviceFromHandle(aDevice)->SetEnabled();
 }
 
-void DvDeviceSetDisabled(DvDeviceC aDevice, ZappCallback aCompleted, void* aPtr)
+void DvDeviceSetDisabled(DvDeviceC aDevice, OhNetCallback aCompleted, void* aPtr)
 {
 	Functor completed = MakeFunctor(aPtr, aCompleted);
 	DviDeviceC::DeviceFromHandle(aDevice)->SetDisabled(completed);
@@ -132,7 +132,7 @@ DvDeviceC DvDeviceStandardCreateNoResources(const char* aUdn)
 	return (DvDeviceC)wrapper;
 }
 
-DvDeviceC DvDeviceStandardCreate(const char* aUdn, ZappCallbackResourceManager aResourceManager, void* aPtr)
+DvDeviceC DvDeviceStandardCreate(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr)
 {
 	DviDeviceStandardC* wrapper = new DviDeviceStandardC(aUdn, aResourceManager, aPtr);
 	return (DvDeviceC)wrapper;

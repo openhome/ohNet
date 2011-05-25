@@ -1,4 +1,4 @@
-﻿<#@ template language="C#v3.5" debug="true" hostSpecific="true" #>
+<#@ template language="C#v3.5" debug="true" hostSpecific="true" #>
 <#@ output extension=".js" #>
 <#@ Assembly Name="System.Core.dll" #>
 <#@ Assembly Name="System.Windows.Forms.dll" #>
@@ -9,7 +9,7 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections" #>
 <#@ import namespace="System.Collections.Generic" #> 
-<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 
 <#
 // Initialise parameters
@@ -84,7 +84,7 @@
 #>
 /**
 * Service Proxy for <#=className#>
-* @module Zapp
+* @module ohNet
 * @class <#=type#>
 */
 	
@@ -102,7 +102,7 @@ var <#=className#> = function(udn){
 	this.serviceProperties = {};
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
-	this.serviceProperties["<#=s.prettyname#>"] = new Zapp.ServiceProperty("<#=s.prettyname#>","<#=svtype[s.type].ToLower()#>");
+	this.serviceProperties["<#=s.prettyname#>"] = new OhNet.ServiceProperty("<#=s.prettyname#>","<#=svtype[s.type].ToLower()#>");
 <#  } #>
 }
 
@@ -121,7 +121,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 <#=className#>.prototype.subscribe = function (serviceAddedFunction) {
-    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+    OhNet.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
@@ -130,7 +130,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 * @method Unsubscribe
 */
 <#=className#>.prototype.unsubscribe = function () {
-    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+    OhNet.SubscriptionManager.removeService(this.subscriptionId);
 }
 
 
@@ -146,7 +146,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 <#=className#>.prototype.<#=s.prettyname#>_Changed = function (stateChangedFunction) {
     this.serviceProperties.<#=s.prettyname#>.addListener(function (state) 
 	{ 
-		stateChangedFunction(Zapp.SoapRequest.read<#=svtype[s.type]#>Parameter(state)); 
+		stateChangedFunction(OhNet.SoapRequest.read<#=svtype[s.type]#>Parameter(state)); 
 	});
 }
 <#  } #>
@@ -165,7 +165,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
 <#=className#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){	
-	var request = new Zapp.SoapRequest("<#=a.name#>", this.url, this.domain, this.type, this.version);		
+	var request = new OhNet.SoapRequest("<#=a.name#>", this.url, this.domain, this.type, this.version);		
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
     request.write<#=svtype[i.variable.type]#>Parameter("<#=i.name#>", <#=i.name#>);
@@ -173,7 +173,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
     request.send(function(result){
 <#          foreach (Argument o in a.outargs) #>
 <#          { #>
-		result["<#=o.name#>"] = Zapp.SoapRequest.read<#=svtype[o.variable.type]#>Parameter(result["<#=o.name#>"]);	
+		result["<#=o.name#>"] = OhNet.SoapRequest.read<#=svtype[o.variable.type]#>Parameter(result["<#=o.name#>"]);	
 <#          } #>	
 		if (successFunction){
 			successFunction(result);

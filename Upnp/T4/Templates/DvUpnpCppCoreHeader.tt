@@ -1,7 +1,7 @@
 <#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -44,12 +44,13 @@
 #ifndef HEADER_DV<#=fileName.ToUpper()#>
 #define HEADER_DV<#=fileName.ToUpper()#>
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
 #include <DvProvider.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation;
 class PropertyInt;
@@ -120,7 +121,8 @@ private:
 <#  } #>
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DV<#=fileName.ToUpper()#>
 

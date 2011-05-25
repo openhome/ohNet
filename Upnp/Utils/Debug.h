@@ -10,70 +10,70 @@ EXCEPTION(AssertionFailed);
 class AutoLog
 {
 public:
-    AutoLog(Zapp::TUint aLevel, const Zapp::TChar* aString);
+    AutoLog(OpenHome::Net::TUint aLevel, const OpenHome::Net::TChar* aString);
     ~AutoLog();
 private:
-    Zapp::TUint  iLevel;
-    const Zapp::TChar* iString;
+    OpenHome::Net::TUint  iLevel;
+    const OpenHome::Net::TChar* iString;
 };
 
 #ifdef DEFINE_TRACE
     #define LOG(x,...) \
-        {if(Zapp::Debug::TestLevel(Zapp::Debug::x)) \
+        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x)) \
          { \
-            Zapp::Log::Print(__VA_ARGS__); \
+            OpenHome::Net::Log::Print(__VA_ARGS__); \
          } \
         }
     #define LOG2(x,y,...) \
-        {if(Zapp::Debug::TestLevel(Zapp::Debug::x|Zapp::Debug::y)) \
+        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x|OpenHome::Net::Debug::y)) \
          { \
-            Zapp::Log::Print(__VA_ARGS__); \
+            OpenHome::Net::Log::Print(__VA_ARGS__); \
          } \
         }
     #define LOG2F(x,y,...) \
-        {if(Zapp::Debug::TestLevel(Zapp::Debug::x|Zapp::Debug::y)) \
+        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x|OpenHome::Net::Debug::y)) \
          { \
-            Zapp::Log::Print("%s:%d: ",__FILE__,__LINE__); \
-            Zapp::Log::Print(__VA_ARGS__); \
+            OpenHome::Net::Log::Print("%s:%d: ",__FILE__,__LINE__); \
+            OpenHome::Net::Log::Print(__VA_ARGS__); \
          } \
         }
     #define LOG2T(x,y,...) \
-        {if(Zapp::Debug::TestLevel(Zapp::Debug::x|Zapp::Debug::y)) \
+        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x|OpenHome::Net::Debug::y)) \
          { \
-            Zapp::Log::Print("Thread: %p: ",(Zapp::Thread*)(Zapp::Thread::Current())); \
-            Zapp::Log::Print(__VA_ARGS__); \
+            OpenHome::Net::Log::Print("Thread: %p: ",(OpenHome::Net::Thread*)(OpenHome::Net::Thread::Current())); \
+            OpenHome::Net::Log::Print(__VA_ARGS__); \
          } \
         }
     #define LOGF(x,...) \
-        {if(Zapp::Debug::TestLevel(Zapp::Debug::x)) \
+        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x)) \
          { \
-            Zapp::Log::Print("%s:%d: ",__FILE__,__LINE__); \
-            Zapp::Log::Print(__VA_ARGS__); \
+            OpenHome::Net::Log::Print("%s:%d: ",__FILE__,__LINE__); \
+            OpenHome::Net::Log::Print(__VA_ARGS__); \
          } \
         }
     #define LOGT(x,...) \
-        {if(Zapp::Debug::TestLevel(Zapp::Debug::x)) \
+        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x)) \
          { \
-            const Brx& name = Zapp::Thread::Current()->Name(); \
-            Zapp::Log::Print("T:%c%c%c%c:",name[0],name[1],name[2],name[3]); \
-            Zapp::Log::Print(__VA_ARGS__); \
+            const Brx& name = OpenHome::Net::Thread::Current()->Name(); \
+            OpenHome::Net::Log::Print("T:%c%c%c%c:",name[0],name[1],name[2],name[3]); \
+            OpenHome::Net::Log::Print(__VA_ARGS__); \
          } \
         }
     #define LOG_HEX(x,aBrx) \
-        {if(Zapp::Debug::TestLevel(Zapp::Debug::x)) \
+        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x)) \
          { \
-            Zapp::Log::PrintHex(aBrx); \
+            OpenHome::Net::Log::PrintHex(aBrx); \
          } \
         }
     #define LOGF_HEX(x,aBrx) \
-        {if(Zapp::Debug::TestLevel(Zapp::Debug::x)) \
+        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x)) \
          { \
-            Zapp::Log::Print("%s:%d: ",__FILE__,__LINE__); \
-            Zapp::Log::PrintHex(aBrx); \
+            OpenHome::Net::Log::Print("%s:%d: ",__FILE__,__LINE__); \
+            OpenHome::Net::Log::PrintHex(aBrx); \
          } \
         }
     #define LOGFUNC(x) \
-        AutoLog localAutolog(Zapp::Debug::x , __PRETTY_FUNCTION__)
+        AutoLog localAutolog(OpenHome::Net::Debug::x , __PRETTY_FUNCTION__)
 #else //DEFINE_TRACE
     #define LOG(x,...)
     #define LOGF(x,...)
@@ -86,7 +86,8 @@ private:
     #define LOGFUNC(x)
 #endif //DEFINE_TRACE
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class Brx;
 
@@ -127,6 +128,7 @@ private:
     static const TUint kMaxDebugPrintBytes = 256;
 };
 
-} //namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif //HEADER_DEBUG

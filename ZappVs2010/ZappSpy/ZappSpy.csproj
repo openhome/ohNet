@@ -94,8 +94,8 @@
     <PreBuildEvent>call "$(DevEnvDir)..\..\VC\vcvarsall.bat"
 cd "$(SolutionDir)..\Upnp"
 nmake.exe -s -f Zapp.mak Zapp.net.dll
-copy /B Build\Obj\Windows\ZappUpnp.dll $(TargetDir)
-copy /B Build\Obj\Windows\Zapp.net.dll $(TargetDir)</PreBuildEvent>
+copy /B Build\Obj\Windows\Debug\ZappUpnp.dll $(TargetDir)
+copy /B Build\Obj\Windows\Debug\Zapp.net.dll $(TargetDir)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

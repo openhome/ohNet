@@ -5,7 +5,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 
 class SyncPlayAvOpenhomeOrgRadio1 : public SyncProxyAction
@@ -353,7 +353,7 @@ void SyncProtocolInfoAvOpenhomeOrgRadio1::CompleteRequest(IAsync& aAsync)
 CpProxyAvOpenhomeOrgRadio1::CpProxyAvOpenhomeOrgRadio1(CpDevice& aDevice)
     : CpProxy("av-openhome-org", "Radio", 1, aDevice.Device())
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
@@ -364,23 +364,23 @@ CpProxyAvOpenhomeOrgRadio1::CpProxyAvOpenhomeOrgRadio1(CpDevice& aDevice)
     iActionStop = new Action("Stop");
 
     iActionSeekSecondAbsolute = new Action("SeekSecondAbsolute");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSeekSecondAbsolute->AddInputParameter(param);
 
     iActionSeekSecondRelative = new Action("SeekSecondRelative");
-    param = new Zapp::ParameterInt("Value");
+    param = new OpenHome::Net::ParameterInt("Value");
     iActionSeekSecondRelative->AddInputParameter(param);
 
     iActionChannel = new Action("Channel");
-    param = new Zapp::ParameterString("Uri");
+    param = new OpenHome::Net::ParameterString("Uri");
     iActionChannel->AddOutputParameter(param);
-    param = new Zapp::ParameterString("Metadata");
+    param = new OpenHome::Net::ParameterString("Metadata");
     iActionChannel->AddOutputParameter(param);
 
     iActionSetChannel = new Action("SetChannel");
-    param = new Zapp::ParameterString("Uri");
+    param = new OpenHome::Net::ParameterString("Uri");
     iActionSetChannel->AddInputParameter(param);
-    param = new Zapp::ParameterString("Metadata");
+    param = new OpenHome::Net::ParameterString("Metadata");
     iActionSetChannel->AddInputParameter(param);
 
     iActionTransportState = new Action("TransportState");
@@ -390,50 +390,50 @@ CpProxyAvOpenhomeOrgRadio1::CpProxyAvOpenhomeOrgRadio1(CpDevice& aDevice)
     allowedValues[index++] = (TChar*)"Playing";
     allowedValues[index++] = (TChar*)"Paused";
     allowedValues[index++] = (TChar*)"Buffering";
-    param = new Zapp::ParameterString("Value", allowedValues, 4);
+    param = new OpenHome::Net::ParameterString("Value", allowedValues, 4);
     iActionTransportState->AddOutputParameter(param);
     delete[] allowedValues;
 
     iActionId = new Action("Id");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionId->AddOutputParameter(param);
 
     iActionSetId = new Action("SetId");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionSetId->AddInputParameter(param);
-    param = new Zapp::ParameterString("Uri");
+    param = new OpenHome::Net::ParameterString("Uri");
     iActionSetId->AddInputParameter(param);
 
     iActionRead = new Action("Read");
-    param = new Zapp::ParameterUint("Id");
+    param = new OpenHome::Net::ParameterUint("Id");
     iActionRead->AddInputParameter(param);
-    param = new Zapp::ParameterString("Metadata");
+    param = new OpenHome::Net::ParameterString("Metadata");
     iActionRead->AddOutputParameter(param);
 
     iActionReadList = new Action("ReadList");
-    param = new Zapp::ParameterString("IdList");
+    param = new OpenHome::Net::ParameterString("IdList");
     iActionReadList->AddInputParameter(param);
-    param = new Zapp::ParameterString("ChannelList");
+    param = new OpenHome::Net::ParameterString("ChannelList");
     iActionReadList->AddOutputParameter(param);
 
     iActionIdArray = new Action("IdArray");
-    param = new Zapp::ParameterUint("Token");
+    param = new OpenHome::Net::ParameterUint("Token");
     iActionIdArray->AddOutputParameter(param);
-    param = new Zapp::ParameterBinary("Array");
+    param = new OpenHome::Net::ParameterBinary("Array");
     iActionIdArray->AddOutputParameter(param);
 
     iActionIdArrayChanged = new Action("IdArrayChanged");
-    param = new Zapp::ParameterUint("Token");
+    param = new OpenHome::Net::ParameterUint("Token");
     iActionIdArrayChanged->AddInputParameter(param);
-    param = new Zapp::ParameterBool("Value");
+    param = new OpenHome::Net::ParameterBool("Value");
     iActionIdArrayChanged->AddOutputParameter(param);
 
     iActionChannelsMax = new Action("ChannelsMax");
-    param = new Zapp::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("Value");
     iActionChannelsMax->AddOutputParameter(param);
 
     iActionProtocolInfo = new Action("ProtocolInfo");
-    param = new Zapp::ParameterString("Value");
+    param = new OpenHome::Net::ParameterString("Value");
     iActionProtocolInfo->AddOutputParameter(param);
 
     Functor functor;

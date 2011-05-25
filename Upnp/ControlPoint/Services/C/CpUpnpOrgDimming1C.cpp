@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyUpnpOrgDimming1C : public CpProxyC
 {
@@ -599,24 +599,24 @@ CpProxyUpnpOrgDimming1C::CpProxyUpnpOrgDimming1C(CpDeviceC aDevice)
     : CpProxyC("schemas-upnp-org", "Dimming", 1, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
     iActionSetLoadLevelTarget = new Action("SetLoadLevelTarget");
-    param = new Zapp::ParameterUint("newLoadlevelTarget", 0, 100);
+    param = new OpenHome::Net::ParameterUint("newLoadlevelTarget", 0, 100);
     iActionSetLoadLevelTarget->AddInputParameter(param);
 
     iActionGetLoadLevelTarget = new Action("GetLoadLevelTarget");
-    param = new Zapp::ParameterUint("GetLoadlevelTarget", 0, 100);
+    param = new OpenHome::Net::ParameterUint("GetLoadlevelTarget", 0, 100);
     iActionGetLoadLevelTarget->AddOutputParameter(param);
 
     iActionGetLoadLevelStatus = new Action("GetLoadLevelStatus");
-    param = new Zapp::ParameterUint("retLoadlevelStatus", 0, 100);
+    param = new OpenHome::Net::ParameterUint("retLoadlevelStatus", 0, 100);
     iActionGetLoadLevelStatus->AddOutputParameter(param);
 
     iActionSetOnEffectLevel = new Action("SetOnEffectLevel");
-    param = new Zapp::ParameterUint("newOnEffectLevel", 0, 100);
+    param = new OpenHome::Net::ParameterUint("newOnEffectLevel", 0, 100);
     iActionSetOnEffectLevel->AddInputParameter(param);
 
     iActionSetOnEffect = new Action("SetOnEffect");
@@ -625,7 +625,7 @@ CpProxyUpnpOrgDimming1C::CpProxyUpnpOrgDimming1C(CpDeviceC aDevice)
     allowedValues[index++] = (TChar*)"OnEffectLevel";
     allowedValues[index++] = (TChar*)"LastSetting";
     allowedValues[index++] = (TChar*)"Default";
-    param = new Zapp::ParameterString("newOnEffect", allowedValues, 3);
+    param = new OpenHome::Net::ParameterString("newOnEffect", allowedValues, 3);
     iActionSetOnEffect->AddInputParameter(param);
     delete[] allowedValues;
 
@@ -635,10 +635,10 @@ CpProxyUpnpOrgDimming1C::CpProxyUpnpOrgDimming1C(CpDeviceC aDevice)
     allowedValues[index++] = (TChar*)"OnEffectLevel";
     allowedValues[index++] = (TChar*)"LastSetting";
     allowedValues[index++] = (TChar*)"Default";
-    param = new Zapp::ParameterString("retOnEffect", allowedValues, 3);
+    param = new OpenHome::Net::ParameterString("retOnEffect", allowedValues, 3);
     iActionGetOnEffectParameters->AddOutputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterUint("retOnEffectLevel", 0, 100);
+    param = new OpenHome::Net::ParameterUint("retOnEffectLevel", 0, 100);
     iActionGetOnEffectParameters->AddOutputParameter(param);
 
     iActionStepUp = new Action("StepUp");
@@ -652,25 +652,25 @@ CpProxyUpnpOrgDimming1C::CpProxyUpnpOrgDimming1C(CpDeviceC aDevice)
     iActionStopRamp = new Action("StopRamp");
 
     iActionStartRampToLevel = new Action("StartRampToLevel");
-    param = new Zapp::ParameterUint("newLoadLevelTarget", 0, 100);
+    param = new OpenHome::Net::ParameterUint("newLoadLevelTarget", 0, 100);
     iActionStartRampToLevel->AddInputParameter(param);
-    param = new Zapp::ParameterUint("newRampTime");
+    param = new OpenHome::Net::ParameterUint("newRampTime");
     iActionStartRampToLevel->AddInputParameter(param);
 
     iActionSetStepDelta = new Action("SetStepDelta");
-    param = new Zapp::ParameterUint("newStepDelta", 1, 100);
+    param = new OpenHome::Net::ParameterUint("newStepDelta", 1, 100);
     iActionSetStepDelta->AddInputParameter(param);
 
     iActionGetStepDelta = new Action("GetStepDelta");
-    param = new Zapp::ParameterUint("retStepDelta", 1, 100);
+    param = new OpenHome::Net::ParameterUint("retStepDelta", 1, 100);
     iActionGetStepDelta->AddOutputParameter(param);
 
     iActionSetRampRate = new Action("SetRampRate");
-    param = new Zapp::ParameterUint("newRampRate", 0, 100);
+    param = new OpenHome::Net::ParameterUint("newRampRate", 0, 100);
     iActionSetRampRate->AddInputParameter(param);
 
     iActionGetRampRate = new Action("GetRampRate");
-    param = new Zapp::ParameterUint("retRampRate", 0, 100);
+    param = new OpenHome::Net::ParameterUint("retRampRate", 0, 100);
     iActionGetRampRate->AddOutputParameter(param);
 
     iActionPauseRamp = new Action("PauseRamp");
@@ -678,15 +678,15 @@ CpProxyUpnpOrgDimming1C::CpProxyUpnpOrgDimming1C(CpDeviceC aDevice)
     iActionResumeRamp = new Action("ResumeRamp");
 
     iActionGetIsRamping = new Action("GetIsRamping");
-    param = new Zapp::ParameterBool("retIsRamping");
+    param = new OpenHome::Net::ParameterBool("retIsRamping");
     iActionGetIsRamping->AddOutputParameter(param);
 
     iActionGetRampPaused = new Action("GetRampPaused");
-    param = new Zapp::ParameterBool("retRampPaused");
+    param = new OpenHome::Net::ParameterBool("retRampPaused");
     iActionGetRampPaused->AddOutputParameter(param);
 
     iActionGetRampTime = new Action("GetRampTime");
-    param = new Zapp::ParameterUint("retRampTime");
+    param = new OpenHome::Net::ParameterUint("retRampTime");
     iActionGetRampTime->AddOutputParameter(param);
 
     Functor functor;
@@ -1417,15 +1417,15 @@ void CpProxyUpnpOrgDimming1SyncSetLoadLevelTarget(THandle aHandle, uint32_t anew
     proxyC->SyncSetLoadLevelTarget(anewLoadlevelTarget);
 }
 
-void CpProxyUpnpOrgDimming1BeginSetLoadLevelTarget(THandle aHandle, uint32_t anewLoadlevelTarget, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginSetLoadLevelTarget(THandle aHandle, uint32_t anewLoadlevelTarget, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetLoadLevelTarget(anewLoadlevelTarget, functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1448,15 +1448,15 @@ void CpProxyUpnpOrgDimming1SyncGetLoadLevelTarget(THandle aHandle, uint32_t* aGe
     proxyC->SyncGetLoadLevelTarget(*aGetLoadlevelTarget);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetLoadLevelTarget(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginGetLoadLevelTarget(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetLoadLevelTarget(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aGetLoadlevelTarget)
+int32_t CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aGetLoadlevelTarget)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1479,15 +1479,15 @@ void CpProxyUpnpOrgDimming1SyncGetLoadLevelStatus(THandle aHandle, uint32_t* are
     proxyC->SyncGetLoadLevelStatus(*aretLoadlevelStatus);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetLoadLevelStatus(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginGetLoadLevelStatus(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetLoadLevelStatus(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aretLoadlevelStatus)
+int32_t CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretLoadlevelStatus)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1510,15 +1510,15 @@ void CpProxyUpnpOrgDimming1SyncSetOnEffectLevel(THandle aHandle, uint32_t anewOn
     proxyC->SyncSetOnEffectLevel(anewOnEffectLevel);
 }
 
-void CpProxyUpnpOrgDimming1BeginSetOnEffectLevel(THandle aHandle, uint32_t anewOnEffectLevel, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginSetOnEffectLevel(THandle aHandle, uint32_t anewOnEffectLevel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetOnEffectLevel(anewOnEffectLevel, functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndSetOnEffectLevel(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgDimming1EndSetOnEffectLevel(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1542,16 +1542,16 @@ void CpProxyUpnpOrgDimming1SyncSetOnEffect(THandle aHandle, const char* anewOnEf
     proxyC->SyncSetOnEffect(buf_anewOnEffect);
 }
 
-void CpProxyUpnpOrgDimming1BeginSetOnEffect(THandle aHandle, const char* anewOnEffect, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginSetOnEffect(THandle aHandle, const char* anewOnEffect, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_anewOnEffect(anewOnEffect);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetOnEffect(buf_anewOnEffect, functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndSetOnEffect(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgDimming1EndSetOnEffect(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1576,15 +1576,15 @@ void CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(THandle aHandle, char** are
     *aretOnEffect = buf_aretOnEffect.Extract();
 }
 
-void CpProxyUpnpOrgDimming1BeginGetOnEffectParameters(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginGetOnEffectParameters(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetOnEffectParameters(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetOnEffectParameters(THandle aHandle, ZappHandleAsync aAsync, char** aretOnEffect, uint32_t* aretOnEffectLevel)
+int32_t CpProxyUpnpOrgDimming1EndGetOnEffectParameters(THandle aHandle, OhNetHandleAsync aAsync, char** aretOnEffect, uint32_t* aretOnEffectLevel)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1610,15 +1610,15 @@ void CpProxyUpnpOrgDimming1SyncStepUp(THandle aHandle)
     proxyC->SyncStepUp();
 }
 
-void CpProxyUpnpOrgDimming1BeginStepUp(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginStepUp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginStepUp(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndStepUp(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgDimming1EndStepUp(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1641,15 +1641,15 @@ void CpProxyUpnpOrgDimming1SyncStepDown(THandle aHandle)
     proxyC->SyncStepDown();
 }
 
-void CpProxyUpnpOrgDimming1BeginStepDown(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginStepDown(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginStepDown(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndStepDown(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgDimming1EndStepDown(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1672,15 +1672,15 @@ void CpProxyUpnpOrgDimming1SyncStartRampUp(THandle aHandle)
     proxyC->SyncStartRampUp();
 }
 
-void CpProxyUpnpOrgDimming1BeginStartRampUp(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginStartRampUp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginStartRampUp(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndStartRampUp(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgDimming1EndStartRampUp(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1703,15 +1703,15 @@ void CpProxyUpnpOrgDimming1SyncStartRampDown(THandle aHandle)
     proxyC->SyncStartRampDown();
 }
 
-void CpProxyUpnpOrgDimming1BeginStartRampDown(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginStartRampDown(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginStartRampDown(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndStartRampDown(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgDimming1EndStartRampDown(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1734,15 +1734,15 @@ void CpProxyUpnpOrgDimming1SyncStopRamp(THandle aHandle)
     proxyC->SyncStopRamp();
 }
 
-void CpProxyUpnpOrgDimming1BeginStopRamp(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginStopRamp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginStopRamp(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndStopRamp(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgDimming1EndStopRamp(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1765,15 +1765,15 @@ void CpProxyUpnpOrgDimming1SyncStartRampToLevel(THandle aHandle, uint32_t anewLo
     proxyC->SyncStartRampToLevel(anewLoadLevelTarget, anewRampTime);
 }
 
-void CpProxyUpnpOrgDimming1BeginStartRampToLevel(THandle aHandle, uint32_t anewLoadLevelTarget, uint32_t anewRampTime, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginStartRampToLevel(THandle aHandle, uint32_t anewLoadLevelTarget, uint32_t anewRampTime, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginStartRampToLevel(anewLoadLevelTarget, anewRampTime, functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndStartRampToLevel(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgDimming1EndStartRampToLevel(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1796,15 +1796,15 @@ void CpProxyUpnpOrgDimming1SyncSetStepDelta(THandle aHandle, uint32_t anewStepDe
     proxyC->SyncSetStepDelta(anewStepDelta);
 }
 
-void CpProxyUpnpOrgDimming1BeginSetStepDelta(THandle aHandle, uint32_t anewStepDelta, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginSetStepDelta(THandle aHandle, uint32_t anewStepDelta, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetStepDelta(anewStepDelta, functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndSetStepDelta(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgDimming1EndSetStepDelta(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1827,15 +1827,15 @@ void CpProxyUpnpOrgDimming1SyncGetStepDelta(THandle aHandle, uint32_t* aretStepD
     proxyC->SyncGetStepDelta(*aretStepDelta);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetStepDelta(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginGetStepDelta(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetStepDelta(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetStepDelta(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aretStepDelta)
+int32_t CpProxyUpnpOrgDimming1EndGetStepDelta(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretStepDelta)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1858,15 +1858,15 @@ void CpProxyUpnpOrgDimming1SyncSetRampRate(THandle aHandle, uint32_t anewRampRat
     proxyC->SyncSetRampRate(anewRampRate);
 }
 
-void CpProxyUpnpOrgDimming1BeginSetRampRate(THandle aHandle, uint32_t anewRampRate, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginSetRampRate(THandle aHandle, uint32_t anewRampRate, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetRampRate(anewRampRate, functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndSetRampRate(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgDimming1EndSetRampRate(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1889,15 +1889,15 @@ void CpProxyUpnpOrgDimming1SyncGetRampRate(THandle aHandle, uint32_t* aretRampRa
     proxyC->SyncGetRampRate(*aretRampRate);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetRampRate(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginGetRampRate(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetRampRate(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetRampRate(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aretRampRate)
+int32_t CpProxyUpnpOrgDimming1EndGetRampRate(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretRampRate)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1920,15 +1920,15 @@ void CpProxyUpnpOrgDimming1SyncPauseRamp(THandle aHandle)
     proxyC->SyncPauseRamp();
 }
 
-void CpProxyUpnpOrgDimming1BeginPauseRamp(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginPauseRamp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginPauseRamp(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndPauseRamp(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgDimming1EndPauseRamp(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1951,15 +1951,15 @@ void CpProxyUpnpOrgDimming1SyncResumeRamp(THandle aHandle)
     proxyC->SyncResumeRamp();
 }
 
-void CpProxyUpnpOrgDimming1BeginResumeRamp(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginResumeRamp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginResumeRamp(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndResumeRamp(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgDimming1EndResumeRamp(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1983,15 +1983,15 @@ void CpProxyUpnpOrgDimming1SyncGetIsRamping(THandle aHandle, uint32_t* aretIsRam
     proxyC->SyncGetIsRamping(*(TBool*)aretIsRamping);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetIsRamping(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginGetIsRamping(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetIsRamping(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetIsRamping(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aretIsRamping)
+int32_t CpProxyUpnpOrgDimming1EndGetIsRamping(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretIsRamping)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -2016,15 +2016,15 @@ void CpProxyUpnpOrgDimming1SyncGetRampPaused(THandle aHandle, uint32_t* aretRamp
     proxyC->SyncGetRampPaused(*(TBool*)aretRampPaused);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetRampPaused(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginGetRampPaused(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetRampPaused(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetRampPaused(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aretRampPaused)
+int32_t CpProxyUpnpOrgDimming1EndGetRampPaused(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretRampPaused)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -2048,15 +2048,15 @@ void CpProxyUpnpOrgDimming1SyncGetRampTime(THandle aHandle, uint32_t* aretRampTi
     proxyC->SyncGetRampTime(*aretRampTime);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetRampTime(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1BeginGetRampTime(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetRampTime(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetRampTime(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aretRampTime)
+int32_t CpProxyUpnpOrgDimming1EndGetRampTime(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretRampTime)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -2072,7 +2072,7 @@ int32_t CpProxyUpnpOrgDimming1EndGetRampTime(THandle aHandle, ZappHandleAsync aA
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SetPropertyLoadLevelStatusChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1SetPropertyLoadLevelStatusChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2080,7 +2080,7 @@ void CpProxyUpnpOrgDimming1SetPropertyLoadLevelStatusChanged(THandle aHandle, Za
     proxyC->SetPropertyLoadLevelStatusChanged(functor);
 }
 
-void CpProxyUpnpOrgDimming1SetPropertyStepDeltaChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1SetPropertyStepDeltaChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2088,7 +2088,7 @@ void CpProxyUpnpOrgDimming1SetPropertyStepDeltaChanged(THandle aHandle, ZappCall
     proxyC->SetPropertyStepDeltaChanged(functor);
 }
 
-void CpProxyUpnpOrgDimming1SetPropertyRampRateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1SetPropertyRampRateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2096,7 +2096,7 @@ void CpProxyUpnpOrgDimming1SetPropertyRampRateChanged(THandle aHandle, ZappCallb
     proxyC->SetPropertyRampRateChanged(functor);
 }
 
-void CpProxyUpnpOrgDimming1SetPropertyIsRampingChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1SetPropertyIsRampingChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2104,7 +2104,7 @@ void CpProxyUpnpOrgDimming1SetPropertyIsRampingChanged(THandle aHandle, ZappCall
     proxyC->SetPropertyIsRampingChanged(functor);
 }
 
-void CpProxyUpnpOrgDimming1SetPropertyRampPausedChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgDimming1SetPropertyRampPausedChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);

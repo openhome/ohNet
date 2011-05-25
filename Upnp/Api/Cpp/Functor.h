@@ -13,14 +13,14 @@
 #ifndef HEADER_FUNCTOR
 #define HEADER_FUNCTOR
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <stddef.h>
 #include <string.h>
 
-namespace Zapp
-{
+namespace OpenHome {
+namespace Net {
 
-typedef void (*ZappFunctor)(void* aPtr);
+typedef void (*OhNetFunctor)(void* aPtr);
 
 /**
  * Generic callback
@@ -40,7 +40,7 @@ public:
     static const TUint kFudgeFactor = 2;
 
     union {
-        ZappFunctor iCallback;
+        OhNetFunctor iCallback;
         TByte iCallbackMember[kFudgeFactor * sizeof(MemberFunction)];
     };
     TAny* iObject;
@@ -53,7 +53,7 @@ protected:
         iObject = (TAny*)aObject;
         memcpy(iCallbackMember, aCallback, aBytes);
     }
-    Functor(Thunk aT, const TAny* aObject, ZappFunctor aCallback)
+    Functor(Thunk aT, const TAny* aObject, OhNetFunctor aCallback)
         : iThunk(aT)
     {
         iObject = (TAny*)aObject;
@@ -81,11 +81,11 @@ public:
 class MemberTranslatorC : public Functor
 {
 public:
-    MemberTranslatorC(void* aPtr, ZappFunctor aCallback) :
+    MemberTranslatorC(void* aPtr, OhNetFunctor aCallback) :
         Functor(Thunk,aPtr,aCallback) {}
     static void Thunk(const Functor& aFb)
     {
-        ((ZappFunctor)aFb.iCallback)(aFb.iObject);
+        ((OhNetFunctor)aFb.iCallback)(aFb.iObject);
     }
 };
 
@@ -100,7 +100,7 @@ public:
  * @return  a Functor object
  */
 inline MemberTranslatorC
-MakeFunctor(void* aPtr, ZappFunctor aCallback)
+MakeFunctor(void* aPtr, OhNetFunctor aCallback)
     {
     return MemberTranslatorC(aPtr, aCallback);
     }
@@ -141,6 +141,7 @@ MakeFunctor(const Object& aC, TRT(CallType::* const &aF)() const)
     return MemberTranslator<const Object,MemFunc>(aC,aF);
     }
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_FUNCTOR

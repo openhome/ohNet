@@ -1,10 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp.Core;
+using OpenHome.Net.Core;
 using System.Collections.Generic;
 
-namespace Zapp.Device
+namespace OpenHome.Net.Device
 {
     /// <summary>
     /// Base class for a service provider.
@@ -13,34 +13,34 @@ namespace Zapp.Device
     /// offer 0..n actions and 0..n properties.</remarks>
     public class DvProvider
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe IntPtr DvProviderCreate(IntPtr aDevice, IntPtr aDomain, IntPtr aType, uint aVersion);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void DvProviderDestroy(IntPtr aProvider);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void DvProviderAddAction(IntPtr aProvider, IntPtr aAction, ActionDelegate aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void DvProviderPropertiesLock(IntPtr aHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void DvProviderPropertiesUnlock(IntPtr aHandle);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void DvProviderAddProperty(IntPtr aProvider, IntPtr aProperty);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvProviderSetPropertyInt(IntPtr aProvider, IntPtr aProperty, int aValue, uint* aChanged);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvProviderSetPropertyUint(IntPtr aProvider, IntPtr aProperty, uint aValue, uint* aChanged);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvProviderSetPropertyBool(IntPtr aProvider, IntPtr aProperty, uint aValue, uint* aChanged);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvProviderSetPropertyString(IntPtr aProvider, IntPtr aProperty, IntPtr aValue, uint* aChanged);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvProviderSetPropertyBinary(IntPtr aProvider, IntPtr aProperty, byte* aData, uint aLen, uint* aChanged);
 
         protected delegate int ActionDelegate(IntPtr aPtr, IntPtr aInvocation, uint aVersion);
 
         protected IntPtr iHandle;
-        private List<Zapp.Core.Action> iActions;
-        private List<Zapp.Core.Property> iProperties;
+        private List<OpenHome.Net.Core.Action> iActions;
+        private List<OpenHome.Net.Core.Property> iProperties;
 
         /// <summary>
         /// Lock the provider's properties, blocking publication of updates.
@@ -80,8 +80,8 @@ namespace Zapp.Device
             iHandle = DvProviderCreate(aDevice.Handle(), domain, type, aVersion);
             Marshal.FreeHGlobal(type);
             Marshal.FreeHGlobal(domain);
-            iActions = new List<Zapp.Core.Action>();
-            iProperties = new List<Zapp.Core.Property>();
+            iActions = new List<OpenHome.Net.Core.Action>();
+            iProperties = new List<OpenHome.Net.Core.Property>();
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Zapp.Device
         /// <param name="aAction">Action being registered as availabke</param>
         /// <param name="aDelegate">Delegate to call when the action is invoked</param>
         /// <param name="aPtr">Data to pass to the delegate</param>
-        protected void EnableAction(Zapp.Core.Action aAction, ActionDelegate aDelegate, IntPtr aPtr)
+        protected void EnableAction(OpenHome.Net.Core.Action aAction, ActionDelegate aDelegate, IntPtr aPtr)
         {
             iActions.Add(aAction);
             DvProviderAddAction(iHandle, aAction.Handle(), aDelegate, aPtr);
@@ -102,7 +102,7 @@ namespace Zapp.Device
         /// <remarks>Any later updates to the value of the property will be automatically published to
         /// any subscribers</remarks>
         /// <param name="aProperty">Property being added</param>
-        protected void AddProperty(Zapp.Core.Property aProperty)
+        protected void AddProperty(OpenHome.Net.Core.Property aProperty)
         {
             iProperties.Add(aProperty);
             DvProviderAddProperty(iHandle, aProperty.Handle());
@@ -243,46 +243,46 @@ namespace Zapp.Device
     /// <remarks>Only intended for use by auto-generated providers</remarks>
     public class DvInvocation
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern int DvInvocationReadStart(IntPtr aInvocation);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationReadInt(IntPtr aInvocation, IntPtr aName, int* aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationReadUint(IntPtr aInvocation, IntPtr aName, uint* aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationReadBool(IntPtr aInvocation, IntPtr aName, uint* aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationReadString(IntPtr aInvocation, IntPtr aName, IntPtr* aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationReadBinary(IntPtr aInvocation, IntPtr aName, IntPtr* aData, uint* aLen);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern int DvInvocationReadEnd(IntPtr aInvocation);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationReportError(IntPtr aInvocation, uint aCode, IntPtr aDescription);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern int DvInvocationWriteStart(IntPtr aInvocation);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationWriteInt(IntPtr aInvocation, IntPtr aName, int aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationWriteUint(IntPtr aInvocation, IntPtr aName, uint aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationWriteBool(IntPtr aInvocation, IntPtr aName, uint aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationWriteStringStart(IntPtr aInvocation, IntPtr aName);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationWriteString(IntPtr aInvocation, IntPtr aValue);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationWriteStringEnd(IntPtr aInvocation, IntPtr aName);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationWriteBinaryStart(IntPtr aInvocation, IntPtr aName);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationWriteBinary(IntPtr aInvocation, byte* aData, uint aLen);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern unsafe int DvInvocationWriteBinaryEnd(IntPtr aInvocation, IntPtr aName);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern int DvInvocationWriteEnd(IntPtr aInvocation);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern unsafe void OhNetFree(IntPtr aPtr);
 
         protected IntPtr iHandle;
         
@@ -361,7 +361,7 @@ namespace Zapp.Device
             {
                 str = Marshal.PtrToStringAnsi((IntPtr)cStr);
             }
-            ZappFree((IntPtr)cStr);
+            OhNetFree((IntPtr)cStr);
             CheckError(err);
             return str;
         }
@@ -383,7 +383,7 @@ namespace Zapp.Device
             {
                 Marshal.Copy(data, bin, 0, (int)len);
             }
-            ZappFree((IntPtr)data);
+            OhNetFree((IntPtr)data);
             CheckError(err);
             return bin;
         }

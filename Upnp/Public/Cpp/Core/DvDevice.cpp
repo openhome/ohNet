@@ -1,9 +1,9 @@
 #include <Core/DvDevice.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <DviDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // DvDevice
 

@@ -1,7 +1,7 @@
 #ifndef HEADER_DVISERVICE
 #define HEADER_DVISERVICE
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Standard.h>
 #include <Buffer.h>
 #include <Thread.h>
@@ -16,7 +16,8 @@
 
 EXCEPTION(InvocationError);
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation
 {
@@ -53,12 +54,12 @@ public:
 class DvAction
 {
 public:
-    DvAction(Zapp::Action* aAction, FunctorDviInvocation aFunctor);
-    Zapp::Action* Action();
-    const Zapp::Action* Action() const;
+    DvAction(OpenHome::Net::Action* aAction, FunctorDviInvocation aFunctor);
+    OpenHome::Net::Action* Action();
+    const OpenHome::Net::Action* Action() const;
     FunctorDviInvocation Functor() const;
 private:
-    Zapp::Action* iAction;
+    OpenHome::Net::Action* iAction;
     FunctorDviInvocation iFunctor;
 };
 
@@ -168,6 +169,7 @@ private:
 	TBool iFirst;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVISERVICE

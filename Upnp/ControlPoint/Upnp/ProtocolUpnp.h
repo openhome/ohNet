@@ -6,7 +6,7 @@
 #define HEADER_PROTOCOL_UPNP
 
 #include <Standard.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <CpiService.h>
 #include <Network.h>
@@ -14,7 +14,8 @@
 #include <Ascii.h>
 #include <Stream.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpiSubscription;
 
@@ -120,6 +121,7 @@ private:
 };
 
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_PROTOCOL_UPNP

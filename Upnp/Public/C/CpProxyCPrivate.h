@@ -5,7 +5,8 @@
 #include <CpiDevice.h>
 #include <Core/CpDevice.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class CpiService;
     
@@ -33,6 +34,7 @@ protected:
     CpDevice* iDevice;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_PROXY_C_PRIVATE

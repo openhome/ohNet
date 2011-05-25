@@ -3,8 +3,8 @@
    ...but C versions of all APIs being tested are used
 */
 
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <TestFramework.h>
 #include <C/CpDevice.h>
 #include <C/CpDeviceDv.h>
@@ -12,17 +12,17 @@
 #include <C/TestBasicDv.h>
 #include <C/TestBasicCp.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 
-extern "C" void ZappTestRunner(ZappHandleInitParams aInitParams)
+extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
 {
-    ZappInitParamsSetMsearchTime(aInitParams, 1);
-    ZappInitParamsSetUseLoopbackNetworkInterface(aInitParams);
-    ZappLibraryInitialise(aInitParams);
+    OhNetInitParamsSetMsearchTime(aInitParams, 1);
+    OhNetInitParamsSetUseLoopbackNetworkInterface(aInitParams);
+    OhNetLibraryInitialise(aInitParams);
     Print("TestCpDeviceDvC - starting\n");
-    ZappLibraryStartCombined();
+    OhNetLibraryStartCombined();
 
     DeviceBasicC* device = new DeviceBasicC;
     CpDeviceC cph = CpDeviceDvCreate(device->Device());
@@ -32,5 +32,5 @@ extern "C" void ZappTestRunner(ZappHandleInitParams aInitParams)
     delete device;
 
     Print("TestCpDeviceDvC - completed\n");
-    ZappLibraryClose();
+    OhNetLibraryClose();
 }

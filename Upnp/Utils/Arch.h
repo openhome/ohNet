@@ -1,11 +1,11 @@
 #ifndef HEADER_LINN_ARCH
 #define HEADER_LINN_ARCH
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <OsWrapper.h>
 
-namespace Zapp
-{
+namespace OpenHome {
+namespace Net {
 
 class Arch
 {
@@ -31,7 +31,8 @@ public:
 #endif //DEFINE_LITTLE_ENDIAN
 };
 
-}  // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif  // HEADER_LINN_ARCH
 

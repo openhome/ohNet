@@ -1,13 +1,14 @@
 #ifndef HEADER_TOPOLOGY1
 #define HEADER_TOPOLOGY1
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Fifo.h>
 #include <Thread.h>
 #include <Core/CpDeviceUpnp.h>
 #include <Core/FunctorCpDevice.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class ICpTopology1Handler
 {
@@ -56,6 +57,7 @@ private:
 	ThreadFunctor* iThread;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_TOPOLOGY1

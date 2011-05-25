@@ -6,7 +6,7 @@
 
 #include <OsTypes.h>
 #include <C/Async.h>
-#include <C/Zapp.h>
+#include <C/OhNet.h>
 #include <C/CpDevice.h>
 
 #ifdef __cplusplus
@@ -60,7 +60,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncGetSearchCapabilities(THandle 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginGetSearchCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginGetSearchCapabilities(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -72,7 +72,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginGetSearchCapabilities(THandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetSearchCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aSearchCaps);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetSearchCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aSearchCaps);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -93,7 +93,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncGetSortCapabilities(THandle aH
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginGetSortCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginGetSortCapabilities(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -105,7 +105,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginGetSortCapabilities(THandle a
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetSortCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aSortCaps);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetSortCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aSortCaps);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -126,7 +126,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncGetSortExtensionCapabilities(T
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginGetSortExtensionCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginGetSortExtensionCapabilities(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -138,7 +138,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginGetSortExtensionCapabilities(
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetSortExtensionCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aSortExtensionCaps);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetSortExtensionCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aSortExtensionCaps);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -159,7 +159,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncGetFeatureList(THandle aHandle
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginGetFeatureList(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginGetFeatureList(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -171,7 +171,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginGetFeatureList(THandle aHandl
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetFeatureList(THandle aHandle, ZappHandleAsync aAsync, char** aFeatureList);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetFeatureList(THandle aHandle, OhNetHandleAsync aAsync, char** aFeatureList);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -192,7 +192,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncGetSystemUpdateID(THandle aHan
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginGetSystemUpdateID(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginGetSystemUpdateID(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -204,7 +204,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginGetSystemUpdateID(THandle aHa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetSystemUpdateID(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aId);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetSystemUpdateID(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aId);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -225,7 +225,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncGetServiceResetToken(THandle a
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginGetServiceResetToken(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginGetServiceResetToken(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -237,7 +237,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginGetServiceResetToken(THandle 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetServiceResetToken(THandle aHandle, ZappHandleAsync aAsync, char** aResetToken);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetServiceResetToken(THandle aHandle, OhNetHandleAsync aAsync, char** aResetToken);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -273,7 +273,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncBrowse(THandle aHandle, const 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginBrowse(THandle aHandle, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginBrowse(THandle aHandle, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -288,7 +288,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginBrowse(THandle aHandle, const
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndBrowse(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndBrowse(THandle aHandle, OhNetHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -324,7 +324,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncSearch(THandle aHandle, const 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginSearch(THandle aHandle, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginSearch(THandle aHandle, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -339,7 +339,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginSearch(THandle aHandle, const
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndSearch(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndSearch(THandle aHandle, OhNetHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -365,7 +365,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncCreateObject(THandle aHandle, 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginCreateObject(THandle aHandle, const char* aContainerID, const char* aElements, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginCreateObject(THandle aHandle, const char* aContainerID, const char* aElements, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -378,7 +378,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginCreateObject(THandle aHandle,
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndCreateObject(THandle aHandle, ZappHandleAsync aAsync, char** aObjectID, char** aResult);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndCreateObject(THandle aHandle, OhNetHandleAsync aAsync, char** aObjectID, char** aResult);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -400,7 +400,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncDestroyObject(THandle aHandle,
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginDestroyObject(THandle aHandle, const char* aObjectID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginDestroyObject(THandle aHandle, const char* aObjectID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -411,7 +411,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginDestroyObject(THandle aHandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndDestroyObject(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndDestroyObject(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -437,7 +437,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncUpdateObject(THandle aHandle, 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginUpdateObject(THandle aHandle, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginUpdateObject(THandle aHandle, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -448,7 +448,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginUpdateObject(THandle aHandle,
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndUpdateObject(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndUpdateObject(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -473,7 +473,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncMoveObject(THandle aHandle, co
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginMoveObject(THandle aHandle, const char* aObjectID, const char* aNewParentID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginMoveObject(THandle aHandle, const char* aObjectID, const char* aNewParentID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -485,7 +485,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginMoveObject(THandle aHandle, c
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndMoveObject(THandle aHandle, ZappHandleAsync aAsync, char** aNewObjectID);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndMoveObject(THandle aHandle, OhNetHandleAsync aAsync, char** aNewObjectID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -510,7 +510,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncImportResource(THandle aHandle
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginImportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginImportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -522,7 +522,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginImportResource(THandle aHandl
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndImportResource(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aTransferID);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndImportResource(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTransferID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -547,7 +547,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncExportResource(THandle aHandle
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginExportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginExportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -559,7 +559,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginExportResource(THandle aHandl
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndExportResource(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aTransferID);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndExportResource(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTransferID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -581,7 +581,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncDeleteResource(THandle aHandle
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginDeleteResource(THandle aHandle, const char* aResourceURI, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginDeleteResource(THandle aHandle, const char* aResourceURI, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -592,7 +592,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginDeleteResource(THandle aHandl
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndDeleteResource(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndDeleteResource(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -614,7 +614,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncStopTransferResource(THandle a
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginStopTransferResource(THandle aHandle, uint32_t aTransferID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginStopTransferResource(THandle aHandle, uint32_t aTransferID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -625,7 +625,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginStopTransferResource(THandle 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndStopTransferResource(THandle aHandle, ZappHandleAsync aAsync);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndStopTransferResource(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -650,7 +650,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncGetTransferProgress(THandle aH
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginGetTransferProgress(THandle aHandle, uint32_t aTransferID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginGetTransferProgress(THandle aHandle, uint32_t aTransferID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -664,7 +664,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginGetTransferProgress(THandle a
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetTransferProgress(THandle aHandle, ZappHandleAsync aAsync, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetTransferProgress(THandle aHandle, OhNetHandleAsync aAsync, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -689,7 +689,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncCreateReference(THandle aHandl
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginCreateReference(THandle aHandle, const char* aContainerID, const char* aObjectID, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginCreateReference(THandle aHandle, const char* aContainerID, const char* aObjectID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -701,7 +701,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginCreateReference(THandle aHand
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndCreateReference(THandle aHandle, ZappHandleAsync aAsync, char** aNewID);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndCreateReference(THandle aHandle, OhNetHandleAsync aAsync, char** aNewID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -729,7 +729,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncFreeFormQuery(THandle aHandle,
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginFreeFormQuery(THandle aHandle, const char* aContainerID, uint32_t aCDSView, const char* aQueryRequest, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginFreeFormQuery(THandle aHandle, const char* aContainerID, uint32_t aCDSView, const char* aQueryRequest, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -742,7 +742,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginFreeFormQuery(THandle aHandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndFreeFormQuery(THandle aHandle, ZappHandleAsync aAsync, char** aQueryResult, uint32_t* aUpdateID);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndFreeFormQuery(THandle aHandle, OhNetHandleAsync aAsync, char** aQueryResult, uint32_t* aUpdateID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -763,7 +763,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SyncGetFreeFormQueryCapabilities(T
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3BeginGetFreeFormQueryCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3BeginGetFreeFormQueryCapabilities(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -775,7 +775,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3BeginGetFreeFormQueryCapabilities(
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetFreeFormQueryCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aFFQCapabilities);
+DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetFreeFormQueryCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aFFQCapabilities);
 /**
  * Set a callback to be run when the SystemUpdateID state variable changes.
  *
@@ -786,7 +786,7 @@ DllExport int32_t CpProxyUpnpOrgContentDirectory3EndGetFreeFormQueryCapabilities
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3SetPropertySystemUpdateIDChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3SetPropertySystemUpdateIDChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ContainerUpdateIDs state variable changes.
  *
@@ -797,7 +797,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SetPropertySystemUpdateIDChanged(T
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3SetPropertyContainerUpdateIDsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3SetPropertyContainerUpdateIDsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the LastChange state variable changes.
  *
@@ -808,7 +808,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SetPropertyContainerUpdateIDsChang
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3SetPropertyLastChangeChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the TransferIDs state variable changes.
  *
@@ -819,7 +819,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SetPropertyLastChangeChanged(THand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgContentDirectory3SetPropertyTransferIDsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
+DllExport void CpProxyUpnpOrgContentDirectory3SetPropertyTransferIDsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the SystemUpdateID property.

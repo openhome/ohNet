@@ -1,10 +1,10 @@
 #include "DvAvOpenhomeOrgInfo1.h"
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <DviService.h>
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 bool DvProviderAvOpenhomeOrgInfo1Cpp::SetPropertyTrackCount(uint32_t aValue)
 {
@@ -166,7 +166,7 @@ DvProviderAvOpenhomeOrgInfo1Cpp::DvProviderAvOpenhomeOrgInfo1Cpp(DvDeviceStd& aD
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnableActionCounters()
 {
-    Zapp::Action* action = new Zapp::Action("Counters");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Counters");
     action->AddOutputParameter(new ParameterRelated("TrackCount", *iPropertyTrackCount));
     action->AddOutputParameter(new ParameterRelated("DetailsCount", *iPropertyDetailsCount));
     action->AddOutputParameter(new ParameterRelated("MetatextCount", *iPropertyMetatextCount));
@@ -176,7 +176,7 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::EnableActionCounters()
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnableActionTrack()
 {
-    Zapp::Action* action = new Zapp::Action("Track");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Track");
     action->AddOutputParameter(new ParameterRelated("Uri", *iPropertyUri));
     action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgInfo1Cpp::DoTrack);
@@ -185,7 +185,7 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::EnableActionTrack()
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnableActionDetails()
 {
-    Zapp::Action* action = new Zapp::Action("Details");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Details");
     action->AddOutputParameter(new ParameterRelated("Duration", *iPropertyDuration));
     action->AddOutputParameter(new ParameterRelated("BitRate", *iPropertyBitRate));
     action->AddOutputParameter(new ParameterRelated("BitDepth", *iPropertyBitDepth));
@@ -198,7 +198,7 @@ void DvProviderAvOpenhomeOrgInfo1Cpp::EnableActionDetails()
 
 void DvProviderAvOpenhomeOrgInfo1Cpp::EnableActionMetatext()
 {
-    Zapp::Action* action = new Zapp::Action("Metatext");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("Metatext");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyMetatext));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgInfo1Cpp::DoMetatext);
     iService->AddAction(action, functor);

@@ -3,7 +3,7 @@
 // ... then checks how many times GetProtocolInfo can be run on each device in a second
 
 #include <TestFramework.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Discovery.h>
 #include <Thread.h>
 #include <Timer.h>
@@ -17,8 +17,8 @@
 #include <string>
 #include <vector>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 const TUint kDevicePollMs = 1000;
 static TUint gActionCount = 0;
@@ -183,7 +183,7 @@ void DeviceList::Removed(CpDeviceCpp& aDevice)
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     FunctorAsync dummy;
     /* Set an empty handler for errors to avoid test output being swamped by expected

@@ -3,18 +3,16 @@
 
 #include <Standard.h>
 #include <stdio.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
-#include <Zapp.h>
+#include <OhNet.h>
 #include <Debug.h>
 #include <Thread.h>
 #include <Timer.h>
 
-namespace Zapp
-{
-
-namespace TestFramework
-{
+namespace OpenHome {
+namespace Net {
+namespace TestFramework {
 
 void Fail(const TChar* aFile, TUint aLine, const TChar* aExp, const TChar* aMsg);
 void Succeed(const TChar* aFile, TUint aLine);
@@ -37,24 +35,24 @@ TInt Print(const TChar* aFormat, va_list aArgs);
 
 #define TEST(aExp) do { \
 const TChar* file = __FILE__; \
-aExp ? Zapp::TestFramework::Succeed(file, __LINE__) \
-    : Zapp::TestFramework::Fail(file, __LINE__, #aExp, 0); \
+aExp ? OpenHome::Net::TestFramework::Succeed(file, __LINE__) \
+    : OpenHome::Net::TestFramework::Fail(file, __LINE__, #aExp, 0); \
 } while(0)
 
 #define TEST_QUIETLY(aExp) do { \
 const TChar* file = __FILE__; \
-aExp ? Zapp::TestFramework::SucceedQuietly(file, __LINE__) \
-    : Zapp::TestFramework::Fail(file, __LINE__, #aExp, 0); \
+aExp ? OpenHome::Net::TestFramework::SucceedQuietly(file, __LINE__) \
+    : OpenHome::Net::TestFramework::Fail(file, __LINE__, #aExp, 0); \
 } while(0)
 
 #define TEST_THROWS(aExp, aExcept) do { \
 const TChar* file = __FILE__; \
 try { \
     aExp; \
-    Zapp::TestFramework::Fail(file, __LINE__, #aExp, "Exception " #aExcept " expected but not thrown."); \
+    OpenHome::Net::TestFramework::Fail(file, __LINE__, #aExp, "Exception " #aExcept " expected but not thrown."); \
 } \
 catch( aExcept& ) { \
-    Zapp::TestFramework::Succeed(file, __LINE__); \
+    OpenHome::Net::TestFramework::Succeed(file, __LINE__); \
 } \
 } while(0)
 
@@ -62,10 +60,10 @@ catch( aExcept& ) { \
 const TChar* file = __FILE__; \
 try { \
     aExp; \
-    Zapp::TestFramework::Fail(file, __LINE__, #aExp, "Exception " #aExcept " expected but not thrown."); \
+    OpenHome::Net::TestFramework::Fail(file, __LINE__, #aExp, "Exception " #aExcept " expected but not thrown."); \
 } \
 catch( aExcept& e ) { \
-    Zapp::TestFramework::SucceedQuietly(file, __LINE__); \
+    OpenHome::Net::TestFramework::SucceedQuietly(file, __LINE__); \
 } \
 } while(0)
 
@@ -114,8 +112,8 @@ private:
     Timer* iTimer;
 };
 
-}; //namespace TestFramework
-
-}; //namespace Zapp
+} // namespace TestFramework
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_TEST

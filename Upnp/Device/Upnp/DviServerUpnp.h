@@ -1,7 +1,7 @@
 #ifndef HEADER_DVI_SERVER_UPNP
 #define HEADER_DVI_SERVER_UPNP
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Network.h>
 #include <Http.h>
 #include <Buffer.h>
@@ -15,7 +15,8 @@
 
 #include <vector>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IRedirector
 {
@@ -43,14 +44,14 @@ private:
 class HeaderCallback : public HttpHeader
 {
 public:
-    const Zapp::Endpoint& Endpoint() const;
+    const OpenHome::Net::Endpoint& Endpoint() const;
     const Brx& Uri() const;
     void Log();
 private:
     TBool Recognise(const Brx& aHeader);
     void Process(const Brx& aValue);
 private:
-    Zapp::Endpoint iEndpoint;
+    OpenHome::Net::Endpoint iEndpoint;
     Bwh iUri;
 };
 
@@ -175,6 +176,7 @@ private:
     Brh iRedirectUriRedirectedTo;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVI_SERVER_UPNP

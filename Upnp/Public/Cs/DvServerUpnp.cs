@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Zapp.Device
+namespace OpenHome.Net.Device
 {
     /// <summary>
     /// UPnP device server.
@@ -15,11 +15,11 @@ namespace Zapp.Device
     /// calls to a proxy.</remarks>
     public class DvServerUpnp : IDisposable
     {
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern IntPtr DvServerUpnpCreate();
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void DvServerUpnpDestroy(IntPtr aServer);
-        [DllImport("ZappUpnp")]
+        [DllImport("ohNet")]
         static extern void DvServerUpnpAddDevice(IntPtr aServer, IntPtr aDevice);
 
         private IntPtr iHandle;

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 const char* CpDeviceCUdn(CpDeviceC aDevice)
 {

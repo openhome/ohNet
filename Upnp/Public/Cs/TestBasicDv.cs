@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
-using Zapp.Device;
-using Zapp.Device.Providers;
+using OpenHome.Net.Device;
+using OpenHome.Net.Device.Providers;
 
-namespace Zapp
+namespace OpenHome.Net
 {
-    class ProviderTestBasic : DvProviderZappOrgTestBasic1
+    class ProviderTestBasic : DvProviderOpenhomeOrgTestBasic1
     {
         public ProviderTestBasic(DvDevice aDevice)
             : base(aDevice)
@@ -128,7 +128,7 @@ namespace Zapp
     {
         public static string gDeviceName = "device";
         private DvDeviceStandard iDevice;
-        private DvProviderZappOrgTestBasic1 iTestBasic;
+        private DvProviderOpenhomeOrgTestBasic1 iTestBasic;
 
         private static void RandomiseUdn(out string aUdn)
         {
@@ -142,12 +142,12 @@ namespace Zapp
         {
             RandomiseUdn(out gDeviceName);
             iDevice = new DvDeviceStandard(gDeviceName);
-            iDevice.SetAttribute("Upnp.Domain", "zapp.org");
+            iDevice.SetAttribute("Upnp.Domain", "openhome.org");
             iDevice.SetAttribute("Upnp.Type", "Test");
             iDevice.SetAttribute("Upnp.Version", "1");
-            iDevice.SetAttribute("Upnp.FriendlyName", "ZappTestDevice");
+            iDevice.SetAttribute("Upnp.FriendlyName", "ohNetTestDevice");
             iDevice.SetAttribute("Upnp.Manufacturer", "None");
-            iDevice.SetAttribute("Upnp.ModelName", "Zapp test device");
+            iDevice.SetAttribute("Upnp.ModelName", "ohNet test device");
             iTestBasic = new ProviderTestBasic(iDevice);
             iDevice.SetEnabled();
         }

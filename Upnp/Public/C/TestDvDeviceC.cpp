@@ -3,14 +3,14 @@
    ...but C versions of all APIs being tested are used
 */
 
-#include <C/Zapp.h>
-#include <ZappTypes.h>
+#include <C/OhNet.h>
+#include <OhNetTypes.h>
 #include <TestFramework.h>
 #include <DviDevice.h>
 #include <C/DvProvider.h>
-#include <C/DvZappOrgTestBasic1.h>
+#include <C/DvOpenhomeOrgTestBasic1.h>
 #include <C/CpProxy.h>
-#include <C/CpZappOrgTestBasic1.h>
+#include <C/CpOpenhomeOrgTestBasic1.h>
 #include <C/CpDevice.h>
 #include <C/CpDeviceUpnp.h>
 #include <Ascii.h>
@@ -23,8 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class DeviceList
 {
@@ -109,19 +109,19 @@ void DeviceList::Removed(CpDeviceC aDevice)
 }
 
 
-extern "C" void ZappTestRunner(ZappHandleInitParams aInitParams)
+extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
 {
-    ZappInitParamsSetMsearchTime(aInitParams, 1);
-    ZappInitParamsSetUseLoopbackNetworkInterface(aInitParams);
-    ZappLibraryInitialise(aInitParams);
+    OhNetInitParamsSetMsearchTime(aInitParams, 1);
+    OhNetInitParamsSetUseLoopbackNetworkInterface(aInitParams);
+    OhNetLibraryInitialise(aInitParams);
     Print("TestDvDeviceC - starting\n");
-    ZappLibraryStartCombined();
+    OhNetLibraryStartCombined();
 //    Debug::SetLevel(Debug::kService);
 
     Semaphore* sem = new Semaphore("SEM1", 0);
     DeviceBasicC* device = new DeviceBasicC;
     DeviceList* deviceList = new DeviceList(*sem);;
-    HandleCpDeviceList dlh = CpDeviceListCreateUpnpServiceType("zapp.org", "TestBasic", 1,
+    HandleCpDeviceList dlh = CpDeviceListCreateUpnpServiceType("openhome.org", "TestBasic", 1,
                                                                added, deviceList, removed, deviceList);
     sem->Wait(30*1000); // allow up to 30 seconds to fine our one device
     delete sem;
@@ -134,5 +134,5 @@ extern "C" void ZappTestRunner(ZappHandleInitParams aInitParams)
     delete device;
 
     Print("TestDvDeviceC - completed\n");
-    ZappLibraryClose();
+    OhNetLibraryClose();
 }

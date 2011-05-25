@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface ICpProxyAvOpenhomeOrgInfo1 : ICpProxy, IDisposable
     {
@@ -169,10 +169,10 @@ namespace Zapp.ControlPoint.Proxies
     /// </summary>
     public class CpProxyAvOpenhomeOrgInfo1 : CpProxy, IDisposable, ICpProxyAvOpenhomeOrgInfo1
     {
-        private Zapp.Core.Action iActionCounters;
-        private Zapp.Core.Action iActionTrack;
-        private Zapp.Core.Action iActionDetails;
-        private Zapp.Core.Action iActionMetatext;
+        private OpenHome.Net.Core.Action iActionCounters;
+        private OpenHome.Net.Core.Action iActionTrack;
+        private OpenHome.Net.Core.Action iActionDetails;
+        private OpenHome.Net.Core.Action iActionMetatext;
         private PropertyUint iTrackCount;
         private PropertyUint iDetailsCount;
         private PropertyUint iMetatextCount;
@@ -207,10 +207,10 @@ namespace Zapp.ControlPoint.Proxies
         public CpProxyAvOpenhomeOrgInfo1(CpDevice aDevice)
             : base("av-openhome-org", "Info", 1, aDevice)
         {
-            Zapp.Core.Parameter param;
+            OpenHome.Net.Core.Parameter param;
             List<String> allowedValues = new List<String>();
 
-            iActionCounters = new Zapp.Core.Action("Counters");
+            iActionCounters = new OpenHome.Net.Core.Action("Counters");
             param = new ParameterUint("TrackCount");
             iActionCounters.AddOutputParameter(param);
             param = new ParameterUint("DetailsCount");
@@ -218,13 +218,13 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterUint("MetatextCount");
             iActionCounters.AddOutputParameter(param);
 
-            iActionTrack = new Zapp.Core.Action("Track");
+            iActionTrack = new OpenHome.Net.Core.Action("Track");
             param = new ParameterString("Uri", allowedValues);
             iActionTrack.AddOutputParameter(param);
             param = new ParameterString("Metadata", allowedValues);
             iActionTrack.AddOutputParameter(param);
 
-            iActionDetails = new Zapp.Core.Action("Details");
+            iActionDetails = new OpenHome.Net.Core.Action("Details");
             param = new ParameterUint("Duration");
             iActionDetails.AddOutputParameter(param);
             param = new ParameterUint("BitRate");
@@ -238,7 +238,7 @@ namespace Zapp.ControlPoint.Proxies
             param = new ParameterString("CodecName", allowedValues);
             iActionDetails.AddOutputParameter(param);
 
-            iActionMetatext = new Zapp.Core.Action("Metatext");
+            iActionMetatext = new OpenHome.Net.Core.Action("Metatext");
             param = new ParameterString("Value", allowedValues);
             iActionMetatext.AddOutputParameter(param);
 

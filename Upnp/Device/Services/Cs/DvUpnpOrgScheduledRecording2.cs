@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderUpnpOrgScheduledRecording2 : IDisposable
     {
@@ -88,7 +88,7 @@ namespace Zapp.Device.Providers
         /// GetSortCapabilities must be overridden if this is called.</remarks>
         protected void EnableActionGetSortCapabilities()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetSortCapabilities");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetSortCapabilities");
             List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterString("SortCaps", allowedValues));
             action.AddOutputParameter(new ParameterUint("SortLevelCap"));
@@ -103,7 +103,7 @@ namespace Zapp.Device.Providers
         /// GetPropertyList must be overridden if this is called.</remarks>
         protected void EnableActionGetPropertyList()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetPropertyList");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetPropertyList");
             List<String> allowedValues = new List<String>();
             allowedValues.Add("A_ARG_TYPE_RecordSchedule");
             allowedValues.Add("A_ARG_TYPE_RecordTask");
@@ -122,7 +122,7 @@ namespace Zapp.Device.Providers
         /// GetAllowedValues must be overridden if this is called.</remarks>
         protected void EnableActionGetAllowedValues()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetAllowedValues");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetAllowedValues");
             List<String> allowedValues = new List<String>();
             allowedValues.Add("A_ARG_TYPE_RecordSchedule");
             allowedValues.Add("A_ARG_TYPE_RecordTask");
@@ -142,7 +142,7 @@ namespace Zapp.Device.Providers
         /// GetStateUpdateID must be overridden if this is called.</remarks>
         protected void EnableActionGetStateUpdateID()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetStateUpdateID");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetStateUpdateID");
             action.AddOutputParameter(new ParameterUint("Id"));
             iDelegateGetStateUpdateID = new ActionDelegate(DoGetStateUpdateID);
             EnableAction(action, iDelegateGetStateUpdateID, GCHandle.ToIntPtr(iGch));
@@ -155,7 +155,7 @@ namespace Zapp.Device.Providers
         /// BrowseRecordSchedules must be overridden if this is called.</remarks>
         protected void EnableActionBrowseRecordSchedules()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("BrowseRecordSchedules");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("BrowseRecordSchedules");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("Filter", allowedValues));
             action.AddInputParameter(new ParameterUint("StartingIndex"));
@@ -176,7 +176,7 @@ namespace Zapp.Device.Providers
         /// BrowseRecordTasks must be overridden if this is called.</remarks>
         protected void EnableActionBrowseRecordTasks()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("BrowseRecordTasks");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("BrowseRecordTasks");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("RecordScheduleID", allowedValues));
             action.AddInputParameter(new ParameterString("Filter", allowedValues));
@@ -198,7 +198,7 @@ namespace Zapp.Device.Providers
         /// CreateRecordSchedule must be overridden if this is called.</remarks>
         protected void EnableActionCreateRecordSchedule()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("CreateRecordSchedule");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("CreateRecordSchedule");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("Elements", allowedValues));
             action.AddOutputParameter(new ParameterString("RecordScheduleID", allowedValues));
@@ -215,7 +215,7 @@ namespace Zapp.Device.Providers
         /// DeleteRecordSchedule must be overridden if this is called.</remarks>
         protected void EnableActionDeleteRecordSchedule()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("DeleteRecordSchedule");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("DeleteRecordSchedule");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("RecordScheduleID", allowedValues));
             iDelegateDeleteRecordSchedule = new ActionDelegate(DoDeleteRecordSchedule);
@@ -229,7 +229,7 @@ namespace Zapp.Device.Providers
         /// GetRecordSchedule must be overridden if this is called.</remarks>
         protected void EnableActionGetRecordSchedule()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetRecordSchedule");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetRecordSchedule");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("RecordScheduleID", allowedValues));
             action.AddInputParameter(new ParameterString("Filter", allowedValues));
@@ -246,7 +246,7 @@ namespace Zapp.Device.Providers
         /// EnableRecordSchedule must be overridden if this is called.</remarks>
         protected void EnableActionEnableRecordSchedule()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("EnableRecordSchedule");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("EnableRecordSchedule");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("RecordScheduleID", allowedValues));
             iDelegateEnableRecordSchedule = new ActionDelegate(DoEnableRecordSchedule);
@@ -260,7 +260,7 @@ namespace Zapp.Device.Providers
         /// DisableRecordSchedule must be overridden if this is called.</remarks>
         protected void EnableActionDisableRecordSchedule()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("DisableRecordSchedule");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("DisableRecordSchedule");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("RecordScheduleID", allowedValues));
             iDelegateDisableRecordSchedule = new ActionDelegate(DoDisableRecordSchedule);
@@ -274,7 +274,7 @@ namespace Zapp.Device.Providers
         /// DeleteRecordTask must be overridden if this is called.</remarks>
         protected void EnableActionDeleteRecordTask()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("DeleteRecordTask");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("DeleteRecordTask");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("RecordTaskID", allowedValues));
             iDelegateDeleteRecordTask = new ActionDelegate(DoDeleteRecordTask);
@@ -288,7 +288,7 @@ namespace Zapp.Device.Providers
         /// GetRecordTask must be overridden if this is called.</remarks>
         protected void EnableActionGetRecordTask()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetRecordTask");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetRecordTask");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("RecordTaskID", allowedValues));
             action.AddInputParameter(new ParameterString("Filter", allowedValues));
@@ -305,7 +305,7 @@ namespace Zapp.Device.Providers
         /// EnableRecordTask must be overridden if this is called.</remarks>
         protected void EnableActionEnableRecordTask()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("EnableRecordTask");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("EnableRecordTask");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("RecordTaskID", allowedValues));
             iDelegateEnableRecordTask = new ActionDelegate(DoEnableRecordTask);
@@ -319,7 +319,7 @@ namespace Zapp.Device.Providers
         /// DisableRecordTask must be overridden if this is called.</remarks>
         protected void EnableActionDisableRecordTask()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("DisableRecordTask");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("DisableRecordTask");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("RecordTaskID", allowedValues));
             iDelegateDisableRecordTask = new ActionDelegate(DoDisableRecordTask);
@@ -333,7 +333,7 @@ namespace Zapp.Device.Providers
         /// ResetRecordTask must be overridden if this is called.</remarks>
         protected void EnableActionResetRecordTask()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("ResetRecordTask");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("ResetRecordTask");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("RecordTaskID", allowedValues));
             iDelegateResetRecordTask = new ActionDelegate(DoResetRecordTask);
@@ -347,7 +347,7 @@ namespace Zapp.Device.Providers
         /// GetRecordScheduleConflicts must be overridden if this is called.</remarks>
         protected void EnableActionGetRecordScheduleConflicts()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetRecordScheduleConflicts");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetRecordScheduleConflicts");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("RecordScheduleID", allowedValues));
             action.AddOutputParameter(new ParameterString("RecordScheduleConflictIDList", allowedValues));
@@ -363,7 +363,7 @@ namespace Zapp.Device.Providers
         /// GetRecordTaskConflicts must be overridden if this is called.</remarks>
         protected void EnableActionGetRecordTaskConflicts()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetRecordTaskConflicts");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetRecordTaskConflicts");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("RecordTaskID", allowedValues));
             action.AddOutputParameter(new ParameterString("RecordTaskConflictIDList", allowedValues));

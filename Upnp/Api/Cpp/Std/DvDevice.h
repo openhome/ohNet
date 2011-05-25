@@ -8,7 +8,8 @@
 
 #include <string>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 /**
  * Interface used by devices to publish data (typically files).
@@ -152,6 +153,7 @@ private:
     IResourceManagerStd* iResourceManager;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVDEVICE_STD

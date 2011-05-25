@@ -1,7 +1,7 @@
 <#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -53,10 +53,10 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Zapp.Core;
-using Zapp.ControlPoint;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
 
-namespace Zapp.ControlPoint.Proxies
+namespace OpenHome.Net.ControlPoint.Proxies
 {
     public interface I<#=className#> : ICpProxy, IDisposable
     {
@@ -108,7 +108,7 @@ namespace Zapp.ControlPoint.Proxies
     {
 <#  foreach (Method a in u.methods) #>
 <#  { #>
-        private Zapp.Core.Action iAction<#=a.name#>;
+        private OpenHome.Net.Core.Action iAction<#=a.name#>;
 <#  } #>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
@@ -137,7 +137,7 @@ namespace Zapp.ControlPoint.Proxies
 <#      foreach (Method a in u.methods) #>
 <#      { #>
 
-            iAction<#=a.name#> = new Zapp.Core.Action("<#=a.name#>");
+            iAction<#=a.name#> = new OpenHome.Net.Core.Action("<#=a.name#>");
 <#          foreach (Argument i in a.inargs) #>
 <#          { #>
 <#              if (i.variable.values.Count > 0) #>
@@ -545,7 +545,7 @@ string DeclareCtorLocalVars(Document u)
 
     string parameterDeclaration =
         hasParameters ?
-        "Zapp.Core.Parameter param;" :
+        "OpenHome.Net.Core.Parameter param;" :
         "";
     string allowedValuesDeclaration = 
         hasAllowedValues ?

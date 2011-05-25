@@ -6,15 +6,15 @@
 #include <CpiDevice.h>
 #include <Printer.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // CpiStack
 
 CpiStack::CpiStack()
 {
     Stack::SetCpiStack(this);
-    iInvocationManager = new Zapp::InvocationManager;
-    iXmlFetchManager = new Zapp::XmlFetchManager;
+    iInvocationManager = new OpenHome::Net::InvocationManager;
+    iXmlFetchManager = new OpenHome::Net::XmlFetchManager;
     iSubscriptionManager = new CpiSubscriptionManager;
     iDeviceListUpdater = new CpiDeviceListUpdater;
 }
@@ -33,7 +33,7 @@ InvocationManager& CpiStack::InvocationManager()
     return *(self->iInvocationManager);
 }
 
-Zapp::XmlFetchManager& CpiStack::XmlFetchManager()
+OpenHome::Net::XmlFetchManager& CpiStack::XmlFetchManager()
 {
     CpiStack* self = CpiStack::Self();
     return *(self->iXmlFetchManager);

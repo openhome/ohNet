@@ -1,22 +1,22 @@
 #include <TestFramework.h>
 #include <OptionParser.h>
-#include <ZappTypes.h>
-#include <Zapp.h>
+#include <OhNetTypes.h>
+#include <OhNet.h>
 #include <Functor.h>
 #include <Timer.h>
 #include <OsWrapper.h>
 #include <Std/CpDevice.h>
 #include <Std/CpDeviceUpnp.h>
 #include <Std/FunctorCpDevice.h>
-#include <Std/CpZappOrgTestBasic1.h>
+#include <Std/CpOpenhomeOrgTestBasic1.h>
 #include <CpProxy.h>
 
 #include <stdlib.h>
 #include <vector>
 #include <sys/stat.h>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
 class PerformanceTests
 {
@@ -65,7 +65,7 @@ PerformanceTests::~PerformanceTests()
 
 void PerformanceTests::RunTests()
 {
-    std::string domain("zapp.org");
+    std::string domain("openhome.org");
     std::string service("TestBasic");
     iDeviceList = new CpDeviceListCppUpnpServiceType(domain, service, 1, 
                                                      MakeFunctorCpDeviceCpp(*this, &PerformanceTests::Added),
@@ -106,7 +106,7 @@ void PerformanceTests::TestSubscriptions()
     Functor subscribed = MakeFunctor(*this, &PerformanceTests::Subscribed);
     iTestStopTime = Os::TimeInMs() + (iTimeoutSecs * 1000);
     do {
-        CpProxyZappOrgTestBasic1Cpp* proxy = new CpProxyZappOrgTestBasic1Cpp(*iDevice);
+        CpProxyOpenhomeOrgTestBasic1Cpp* proxy = new CpProxyOpenhomeOrgTestBasic1Cpp(*iDevice);
         proxy->SetPropertyInitialEvent(subscribed);
         (void)iSem.Clear();
         proxy->Subscribe();
@@ -151,7 +151,7 @@ void PerformanceTests::Removed(CpDeviceCpp& /*aDevice*/)
 
 void PerformanceTests::ActionThread()
 {
-    CpProxyZappOrgTestBasic1Cpp* proxy = new CpProxyZappOrgTestBasic1Cpp(*iDevice);
+    CpProxyOpenhomeOrgTestBasic1Cpp* proxy = new CpProxyOpenhomeOrgTestBasic1Cpp(*iDevice);
     uint32_t val;
     do {
         proxy->SyncGetUint(val);
@@ -165,7 +165,7 @@ void PerformanceTests::Subscribed()
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     Brn emptyString("");

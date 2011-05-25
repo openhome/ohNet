@@ -3,7 +3,7 @@
 #include <DviDevice.h>
 #include <DviServerUpnp.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 DvServerUpnp::DvServerUpnp()
 {

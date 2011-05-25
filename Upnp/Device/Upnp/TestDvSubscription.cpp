@@ -1,10 +1,10 @@
 #include <TestFramework.h>
 #include <OptionParser.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Core/DvDevice.h>
-#include <Core/DvZappOrgTestBasic1.h>
-#include <Core/CpZappOrgTestBasic1.h>
-#include <Zapp.h>
+#include <Core/DvOpenhomeOrgTestBasic1.h>
+#include <Core/CpOpenhomeOrgTestBasic1.h>
+#include <OhNet.h>
 #include <Core/CpDevice.h>
 #include <Core/CpDeviceUpnp.h>
 #include <Ascii.h>
@@ -13,10 +13,10 @@
 
 #include <vector>
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome::Net;
+using namespace OpenHome::Net::TestFramework;
 
-class ProviderTestBasic : public DvProviderZappOrgTestBasic1
+class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
 {
 public:
     ProviderTestBasic(DvDevice& aDevice);
@@ -46,7 +46,7 @@ private:
 
 
 ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
-    : DvProviderZappOrgTestBasic1(aDevice)
+    : DvProviderOpenhomeOrgTestBasic1(aDevice)
 {
     SetPropertyVarUint(0);
     SetPropertyVarInt(0);
@@ -180,12 +180,12 @@ DeviceBasic::DeviceBasic()
 {
     RandomiseUdn(gDeviceName);
     iDevice = new DvDeviceStandard(gDeviceName);
-    iDevice->SetAttribute("Upnp.Domain", "zapp.org");
+    iDevice->SetAttribute("Upnp.Domain", "openhome.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", "ZappTestDevice");
+    iDevice->SetAttribute("Upnp.FriendlyName", "ohNetTestDevice");
     iDevice->SetAttribute("Upnp.Manufacturer", "None");
-    iDevice->SetAttribute("Upnp.ModelName", "Zapp test device");
+    iDevice->SetAttribute("Upnp.ModelName", "ohNet test device");
     iTestBasic = new ProviderTestBasic(*iDevice);
     iDevice->SetEnabled();
 }
@@ -236,7 +236,7 @@ CpDevices::~CpDevices()
 void CpDevices::Test()
 {
     ASSERT(iList.size() == 1);
-    CpProxyZappOrgTestBasic1* proxy = new CpProxyZappOrgTestBasic1(*(iList[0]));
+    CpProxyOpenhomeOrgTestBasic1* proxy = new CpProxyOpenhomeOrgTestBasic1(*(iList[0]));
     Functor functor = MakeFunctor(*this, &CpDevices::UpdatesComplete);
     proxy->SetPropertyChanged(functor);
     proxy->Subscribe();
@@ -355,7 +355,7 @@ void CpDevices::UpdatesComplete()
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");
@@ -378,7 +378,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     CpDevices* deviceList = new CpDevices(*sem);
     FunctorCpDevice added = MakeFunctorCpDevice(*deviceList, &CpDevices::Added);
     FunctorCpDevice removed = MakeFunctorCpDevice(*deviceList, &CpDevices::Removed);
-    Brn domainName("zapp.org");
+    Brn domainName("openhome.org");
     Brn serviceType("TestBasic");
     TUint ver = 1;
     CpDeviceListUpnpServiceType* list =

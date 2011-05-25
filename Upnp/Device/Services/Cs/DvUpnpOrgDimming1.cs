@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Generic;
-using Zapp.Core;
+using OpenHome.Net.Core;
 
-namespace Zapp.Device.Providers
+namespace OpenHome.Net.Device.Providers
 {
     public interface IDvProviderUpnpOrgDimming1 : IDisposable
     {
@@ -230,7 +230,7 @@ namespace Zapp.Device.Providers
         /// SetLoadLevelTarget must be overridden if this is called.</remarks>
         protected void EnableActionSetLoadLevelTarget()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetLoadLevelTarget");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetLoadLevelTarget");
             action.AddInputParameter(new ParameterUint("newLoadlevelTarget", 0, 100));
             iDelegateSetLoadLevelTarget = new ActionDelegate(DoSetLoadLevelTarget);
             EnableAction(action, iDelegateSetLoadLevelTarget, GCHandle.ToIntPtr(iGch));
@@ -243,7 +243,7 @@ namespace Zapp.Device.Providers
         /// GetLoadLevelTarget must be overridden if this is called.</remarks>
         protected void EnableActionGetLoadLevelTarget()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetLoadLevelTarget");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetLoadLevelTarget");
             action.AddOutputParameter(new ParameterUint("GetLoadlevelTarget", 0, 100));
             iDelegateGetLoadLevelTarget = new ActionDelegate(DoGetLoadLevelTarget);
             EnableAction(action, iDelegateGetLoadLevelTarget, GCHandle.ToIntPtr(iGch));
@@ -256,7 +256,7 @@ namespace Zapp.Device.Providers
         /// GetLoadLevelStatus must be overridden if this is called.</remarks>
         protected void EnableActionGetLoadLevelStatus()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetLoadLevelStatus");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetLoadLevelStatus");
             action.AddOutputParameter(new ParameterRelated("retLoadlevelStatus", iPropertyLoadLevelStatus));
             iDelegateGetLoadLevelStatus = new ActionDelegate(DoGetLoadLevelStatus);
             EnableAction(action, iDelegateGetLoadLevelStatus, GCHandle.ToIntPtr(iGch));
@@ -269,7 +269,7 @@ namespace Zapp.Device.Providers
         /// SetOnEffectLevel must be overridden if this is called.</remarks>
         protected void EnableActionSetOnEffectLevel()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetOnEffectLevel");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetOnEffectLevel");
             action.AddInputParameter(new ParameterUint("newOnEffectLevel", 0, 100));
             iDelegateSetOnEffectLevel = new ActionDelegate(DoSetOnEffectLevel);
             EnableAction(action, iDelegateSetOnEffectLevel, GCHandle.ToIntPtr(iGch));
@@ -282,7 +282,7 @@ namespace Zapp.Device.Providers
         /// SetOnEffect must be overridden if this is called.</remarks>
         protected void EnableActionSetOnEffect()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetOnEffect");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetOnEffect");
             List<String> allowedValues = new List<String>();
             allowedValues.Add("OnEffectLevel");
             allowedValues.Add("LastSetting");
@@ -300,7 +300,7 @@ namespace Zapp.Device.Providers
         /// GetOnEffectParameters must be overridden if this is called.</remarks>
         protected void EnableActionGetOnEffectParameters()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetOnEffectParameters");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetOnEffectParameters");
             List<String> allowedValues = new List<String>();
             allowedValues.Add("OnEffectLevel");
             allowedValues.Add("LastSetting");
@@ -319,7 +319,7 @@ namespace Zapp.Device.Providers
         /// StepUp must be overridden if this is called.</remarks>
         protected void EnableActionStepUp()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("StepUp");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("StepUp");
             iDelegateStepUp = new ActionDelegate(DoStepUp);
             EnableAction(action, iDelegateStepUp, GCHandle.ToIntPtr(iGch));
         }
@@ -331,7 +331,7 @@ namespace Zapp.Device.Providers
         /// StepDown must be overridden if this is called.</remarks>
         protected void EnableActionStepDown()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("StepDown");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("StepDown");
             iDelegateStepDown = new ActionDelegate(DoStepDown);
             EnableAction(action, iDelegateStepDown, GCHandle.ToIntPtr(iGch));
         }
@@ -343,7 +343,7 @@ namespace Zapp.Device.Providers
         /// StartRampUp must be overridden if this is called.</remarks>
         protected void EnableActionStartRampUp()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("StartRampUp");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("StartRampUp");
             iDelegateStartRampUp = new ActionDelegate(DoStartRampUp);
             EnableAction(action, iDelegateStartRampUp, GCHandle.ToIntPtr(iGch));
         }
@@ -355,7 +355,7 @@ namespace Zapp.Device.Providers
         /// StartRampDown must be overridden if this is called.</remarks>
         protected void EnableActionStartRampDown()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("StartRampDown");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("StartRampDown");
             iDelegateStartRampDown = new ActionDelegate(DoStartRampDown);
             EnableAction(action, iDelegateStartRampDown, GCHandle.ToIntPtr(iGch));
         }
@@ -367,7 +367,7 @@ namespace Zapp.Device.Providers
         /// StopRamp must be overridden if this is called.</remarks>
         protected void EnableActionStopRamp()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("StopRamp");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("StopRamp");
             iDelegateStopRamp = new ActionDelegate(DoStopRamp);
             EnableAction(action, iDelegateStopRamp, GCHandle.ToIntPtr(iGch));
         }
@@ -379,7 +379,7 @@ namespace Zapp.Device.Providers
         /// StartRampToLevel must be overridden if this is called.</remarks>
         protected void EnableActionStartRampToLevel()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("StartRampToLevel");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("StartRampToLevel");
             action.AddInputParameter(new ParameterUint("newLoadLevelTarget", 0, 100));
             action.AddInputParameter(new ParameterUint("newRampTime"));
             iDelegateStartRampToLevel = new ActionDelegate(DoStartRampToLevel);
@@ -393,7 +393,7 @@ namespace Zapp.Device.Providers
         /// SetStepDelta must be overridden if this is called.</remarks>
         protected void EnableActionSetStepDelta()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetStepDelta");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetStepDelta");
             action.AddInputParameter(new ParameterRelated("newStepDelta", iPropertyStepDelta));
             iDelegateSetStepDelta = new ActionDelegate(DoSetStepDelta);
             EnableAction(action, iDelegateSetStepDelta, GCHandle.ToIntPtr(iGch));
@@ -406,7 +406,7 @@ namespace Zapp.Device.Providers
         /// GetStepDelta must be overridden if this is called.</remarks>
         protected void EnableActionGetStepDelta()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetStepDelta");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetStepDelta");
             action.AddOutputParameter(new ParameterRelated("retStepDelta", iPropertyStepDelta));
             iDelegateGetStepDelta = new ActionDelegate(DoGetStepDelta);
             EnableAction(action, iDelegateGetStepDelta, GCHandle.ToIntPtr(iGch));
@@ -419,7 +419,7 @@ namespace Zapp.Device.Providers
         /// SetRampRate must be overridden if this is called.</remarks>
         protected void EnableActionSetRampRate()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("SetRampRate");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("SetRampRate");
             action.AddInputParameter(new ParameterRelated("newRampRate", iPropertyRampRate));
             iDelegateSetRampRate = new ActionDelegate(DoSetRampRate);
             EnableAction(action, iDelegateSetRampRate, GCHandle.ToIntPtr(iGch));
@@ -432,7 +432,7 @@ namespace Zapp.Device.Providers
         /// GetRampRate must be overridden if this is called.</remarks>
         protected void EnableActionGetRampRate()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetRampRate");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetRampRate");
             action.AddOutputParameter(new ParameterRelated("retRampRate", iPropertyRampRate));
             iDelegateGetRampRate = new ActionDelegate(DoGetRampRate);
             EnableAction(action, iDelegateGetRampRate, GCHandle.ToIntPtr(iGch));
@@ -445,7 +445,7 @@ namespace Zapp.Device.Providers
         /// PauseRamp must be overridden if this is called.</remarks>
         protected void EnableActionPauseRamp()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("PauseRamp");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("PauseRamp");
             iDelegatePauseRamp = new ActionDelegate(DoPauseRamp);
             EnableAction(action, iDelegatePauseRamp, GCHandle.ToIntPtr(iGch));
         }
@@ -457,7 +457,7 @@ namespace Zapp.Device.Providers
         /// ResumeRamp must be overridden if this is called.</remarks>
         protected void EnableActionResumeRamp()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("ResumeRamp");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("ResumeRamp");
             iDelegateResumeRamp = new ActionDelegate(DoResumeRamp);
             EnableAction(action, iDelegateResumeRamp, GCHandle.ToIntPtr(iGch));
         }
@@ -469,7 +469,7 @@ namespace Zapp.Device.Providers
         /// GetIsRamping must be overridden if this is called.</remarks>
         protected void EnableActionGetIsRamping()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetIsRamping");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetIsRamping");
             action.AddOutputParameter(new ParameterRelated("retIsRamping", iPropertyIsRamping));
             iDelegateGetIsRamping = new ActionDelegate(DoGetIsRamping);
             EnableAction(action, iDelegateGetIsRamping, GCHandle.ToIntPtr(iGch));
@@ -482,7 +482,7 @@ namespace Zapp.Device.Providers
         /// GetRampPaused must be overridden if this is called.</remarks>
         protected void EnableActionGetRampPaused()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetRampPaused");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetRampPaused");
             action.AddOutputParameter(new ParameterRelated("retRampPaused", iPropertyRampPaused));
             iDelegateGetRampPaused = new ActionDelegate(DoGetRampPaused);
             EnableAction(action, iDelegateGetRampPaused, GCHandle.ToIntPtr(iGch));
@@ -495,7 +495,7 @@ namespace Zapp.Device.Providers
         /// GetRampTime must be overridden if this is called.</remarks>
         protected void EnableActionGetRampTime()
         {
-            Zapp.Core.Action action = new Zapp.Core.Action("GetRampTime");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("GetRampTime");
             action.AddOutputParameter(new ParameterUint("retRampTime"));
             iDelegateGetRampTime = new ActionDelegate(DoGetRampTime);
             EnableAction(action, iDelegateGetRampTime, GCHandle.ToIntPtr(iGch));

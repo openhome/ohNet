@@ -5,7 +5,7 @@
 #include <Ascii.h>
 #include <XmlParser.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 // CpTopology3Source
 
@@ -1275,5 +1275,4 @@ void CpTopology3::RoomMuteChanged(CpTopology3Room& aRoom)
 
 	iHandler.RoomMuteChanged(aRoom);
 }
-
 

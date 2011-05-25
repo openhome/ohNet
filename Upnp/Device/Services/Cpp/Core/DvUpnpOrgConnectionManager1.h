@@ -1,12 +1,13 @@
 #ifndef HEADER_DVUPNPORGCONNECTIONMANAGER1
 #define HEADER_DVUPNPORGCONNECTIONMANAGER1
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
 #include <DvProvider.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 class IDviInvocation;
 class PropertyInt;
@@ -144,7 +145,8 @@ private:
     PropertyString* iPropertyCurrentConnectionIDs;
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVUPNPORGCONNECTIONMANAGER1
 

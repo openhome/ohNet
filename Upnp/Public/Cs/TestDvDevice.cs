@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
-using Zapp.Core;
-using Zapp.ControlPoint;
-using Zapp.Device;
+using OpenHome.Net.Core;
+using OpenHome.Net.ControlPoint;
+using OpenHome.Net.Device;
 
-namespace Zapp.Device
+namespace OpenHome.Net.Device
 {
     class Program
     {
@@ -38,7 +38,7 @@ namespace Zapp.Device
             iDeviceList = new List<CpDevice>();
             CpDeviceList.ChangeHandler added = new CpDeviceList.ChangeHandler(DeviceAdded);
             CpDeviceList.ChangeHandler removed = new CpDeviceList.ChangeHandler(DeviceRemoved);
-            CpDeviceListUpnpServiceType list = new CpDeviceListUpnpServiceType("zapp.org", "TestBasic", 1, added, removed);
+            CpDeviceListUpnpServiceType list = new CpDeviceListUpnpServiceType("openhome.org", "TestBasic", 1, added, removed);
             Semaphore sem = new Semaphore(0, 1);
             sem.WaitOne(1000);
             Debug.Assert(iDeviceList.Count == 1);

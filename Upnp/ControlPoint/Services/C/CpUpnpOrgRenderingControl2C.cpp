@@ -2,7 +2,7 @@
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Exception.h>
 #include <Functor.h>
@@ -12,7 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 class CpProxyUpnpOrgRenderingControl2C : public CpProxyC
 {
@@ -1003,300 +1003,300 @@ CpProxyUpnpOrgRenderingControl2C::CpProxyUpnpOrgRenderingControl2C(CpDeviceC aDe
     : CpProxyC("schemas-upnp-org", "RenderingControl", 2, *reinterpret_cast<CpiDevice*>(aDevice))
     , iLock("MPCS")
 {
-    Zapp::Parameter* param;
+    OpenHome::Net::Parameter* param;
     TChar** allowedValues;
     TUint index;
 
     iActionListPresets = new Action("ListPresets");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionListPresets->AddInputParameter(param);
-    param = new Zapp::ParameterString("CurrentPresetNameList");
+    param = new OpenHome::Net::ParameterString("CurrentPresetNameList");
     iActionListPresets->AddOutputParameter(param);
 
     iActionSelectPreset = new Action("SelectPreset");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSelectPreset->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"FactoryDefaults";
-    param = new Zapp::ParameterString("PresetName", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("PresetName", allowedValues, 1);
     iActionSelectPreset->AddInputParameter(param);
     delete[] allowedValues;
 
     iActionGetBrightness = new Action("GetBrightness");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetBrightness->AddInputParameter(param);
-    param = new Zapp::ParameterUint("CurrentBrightness", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentBrightness", 0, 0, 1);
     iActionGetBrightness->AddOutputParameter(param);
 
     iActionSetBrightness = new Action("SetBrightness");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetBrightness->AddInputParameter(param);
-    param = new Zapp::ParameterUint("DesiredBrightness", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredBrightness", 0, 0, 1);
     iActionSetBrightness->AddInputParameter(param);
 
     iActionGetContrast = new Action("GetContrast");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetContrast->AddInputParameter(param);
-    param = new Zapp::ParameterUint("CurrentContrast", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentContrast", 0, 0, 1);
     iActionGetContrast->AddOutputParameter(param);
 
     iActionSetContrast = new Action("SetContrast");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetContrast->AddInputParameter(param);
-    param = new Zapp::ParameterUint("DesiredContrast", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredContrast", 0, 0, 1);
     iActionSetContrast->AddInputParameter(param);
 
     iActionGetSharpness = new Action("GetSharpness");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetSharpness->AddInputParameter(param);
-    param = new Zapp::ParameterUint("CurrentSharpness", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentSharpness", 0, 0, 1);
     iActionGetSharpness->AddOutputParameter(param);
 
     iActionSetSharpness = new Action("SetSharpness");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetSharpness->AddInputParameter(param);
-    param = new Zapp::ParameterUint("DesiredSharpness", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredSharpness", 0, 0, 1);
     iActionSetSharpness->AddInputParameter(param);
 
     iActionGetRedVideoGain = new Action("GetRedVideoGain");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetRedVideoGain->AddInputParameter(param);
-    param = new Zapp::ParameterUint("CurrentRedVideoGain", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentRedVideoGain", 0, 0, 1);
     iActionGetRedVideoGain->AddOutputParameter(param);
 
     iActionSetRedVideoGain = new Action("SetRedVideoGain");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetRedVideoGain->AddInputParameter(param);
-    param = new Zapp::ParameterUint("DesiredRedVideoGain", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredRedVideoGain", 0, 0, 1);
     iActionSetRedVideoGain->AddInputParameter(param);
 
     iActionGetGreenVideoGain = new Action("GetGreenVideoGain");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetGreenVideoGain->AddInputParameter(param);
-    param = new Zapp::ParameterUint("CurrentGreenVideoGain", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentGreenVideoGain", 0, 0, 1);
     iActionGetGreenVideoGain->AddOutputParameter(param);
 
     iActionSetGreenVideoGain = new Action("SetGreenVideoGain");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetGreenVideoGain->AddInputParameter(param);
-    param = new Zapp::ParameterUint("DesiredGreenVideoGain", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredGreenVideoGain", 0, 0, 1);
     iActionSetGreenVideoGain->AddInputParameter(param);
 
     iActionGetBlueVideoGain = new Action("GetBlueVideoGain");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetBlueVideoGain->AddInputParameter(param);
-    param = new Zapp::ParameterUint("CurrentBlueVideoGain", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentBlueVideoGain", 0, 0, 1);
     iActionGetBlueVideoGain->AddOutputParameter(param);
 
     iActionSetBlueVideoGain = new Action("SetBlueVideoGain");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetBlueVideoGain->AddInputParameter(param);
-    param = new Zapp::ParameterUint("DesiredBlueVideoGain", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredBlueVideoGain", 0, 0, 1);
     iActionSetBlueVideoGain->AddInputParameter(param);
 
     iActionGetRedVideoBlackLevel = new Action("GetRedVideoBlackLevel");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetRedVideoBlackLevel->AddInputParameter(param);
-    param = new Zapp::ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1);
     iActionGetRedVideoBlackLevel->AddOutputParameter(param);
 
     iActionSetRedVideoBlackLevel = new Action("SetRedVideoBlackLevel");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetRedVideoBlackLevel->AddInputParameter(param);
-    param = new Zapp::ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1);
     iActionSetRedVideoBlackLevel->AddInputParameter(param);
 
     iActionGetGreenVideoBlackLevel = new Action("GetGreenVideoBlackLevel");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetGreenVideoBlackLevel->AddInputParameter(param);
-    param = new Zapp::ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1);
     iActionGetGreenVideoBlackLevel->AddOutputParameter(param);
 
     iActionSetGreenVideoBlackLevel = new Action("SetGreenVideoBlackLevel");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetGreenVideoBlackLevel->AddInputParameter(param);
-    param = new Zapp::ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1);
     iActionSetGreenVideoBlackLevel->AddInputParameter(param);
 
     iActionGetBlueVideoBlackLevel = new Action("GetBlueVideoBlackLevel");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetBlueVideoBlackLevel->AddInputParameter(param);
-    param = new Zapp::ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1);
     iActionGetBlueVideoBlackLevel->AddOutputParameter(param);
 
     iActionSetBlueVideoBlackLevel = new Action("SetBlueVideoBlackLevel");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetBlueVideoBlackLevel->AddInputParameter(param);
-    param = new Zapp::ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1);
     iActionSetBlueVideoBlackLevel->AddInputParameter(param);
 
     iActionGetColorTemperature = new Action("GetColorTemperature");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetColorTemperature->AddInputParameter(param);
-    param = new Zapp::ParameterUint("CurrentColorTemperature", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentColorTemperature", 0, 0, 1);
     iActionGetColorTemperature->AddOutputParameter(param);
 
     iActionSetColorTemperature = new Action("SetColorTemperature");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetColorTemperature->AddInputParameter(param);
-    param = new Zapp::ParameterUint("DesiredColorTemperature", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredColorTemperature", 0, 0, 1);
     iActionSetColorTemperature->AddInputParameter(param);
 
     iActionGetHorizontalKeystone = new Action("GetHorizontalKeystone");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetHorizontalKeystone->AddInputParameter(param);
-    param = new Zapp::ParameterInt("CurrentHorizontalKeystone");
+    param = new OpenHome::Net::ParameterInt("CurrentHorizontalKeystone");
     iActionGetHorizontalKeystone->AddOutputParameter(param);
 
     iActionSetHorizontalKeystone = new Action("SetHorizontalKeystone");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetHorizontalKeystone->AddInputParameter(param);
-    param = new Zapp::ParameterInt("DesiredHorizontalKeystone");
+    param = new OpenHome::Net::ParameterInt("DesiredHorizontalKeystone");
     iActionSetHorizontalKeystone->AddInputParameter(param);
 
     iActionGetVerticalKeystone = new Action("GetVerticalKeystone");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetVerticalKeystone->AddInputParameter(param);
-    param = new Zapp::ParameterInt("CurrentVerticalKeystone");
+    param = new OpenHome::Net::ParameterInt("CurrentVerticalKeystone");
     iActionGetVerticalKeystone->AddOutputParameter(param);
 
     iActionSetVerticalKeystone = new Action("SetVerticalKeystone");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetVerticalKeystone->AddInputParameter(param);
-    param = new Zapp::ParameterInt("DesiredVerticalKeystone");
+    param = new OpenHome::Net::ParameterInt("DesiredVerticalKeystone");
     iActionSetVerticalKeystone->AddInputParameter(param);
 
     iActionGetMute = new Action("GetMute");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetMute->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"Master";
-    param = new Zapp::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
     iActionGetMute->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterBool("CurrentMute");
+    param = new OpenHome::Net::ParameterBool("CurrentMute");
     iActionGetMute->AddOutputParameter(param);
 
     iActionSetMute = new Action("SetMute");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetMute->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"Master";
-    param = new Zapp::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
     iActionSetMute->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterBool("DesiredMute");
+    param = new OpenHome::Net::ParameterBool("DesiredMute");
     iActionSetMute->AddInputParameter(param);
 
     iActionGetVolume = new Action("GetVolume");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetVolume->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"Master";
-    param = new Zapp::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
     iActionGetVolume->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterUint("CurrentVolume", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("CurrentVolume", 0, 0, 1);
     iActionGetVolume->AddOutputParameter(param);
 
     iActionSetVolume = new Action("SetVolume");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetVolume->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"Master";
-    param = new Zapp::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
     iActionSetVolume->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterUint("DesiredVolume", 0, 0, 1);
+    param = new OpenHome::Net::ParameterUint("DesiredVolume", 0, 0, 1);
     iActionSetVolume->AddInputParameter(param);
 
     iActionGetVolumeDB = new Action("GetVolumeDB");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetVolumeDB->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"Master";
-    param = new Zapp::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
     iActionGetVolumeDB->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterInt("CurrentVolume");
+    param = new OpenHome::Net::ParameterInt("CurrentVolume");
     iActionGetVolumeDB->AddOutputParameter(param);
 
     iActionSetVolumeDB = new Action("SetVolumeDB");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetVolumeDB->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"Master";
-    param = new Zapp::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
     iActionSetVolumeDB->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterInt("DesiredVolume");
+    param = new OpenHome::Net::ParameterInt("DesiredVolume");
     iActionSetVolumeDB->AddInputParameter(param);
 
     iActionGetVolumeDBRange = new Action("GetVolumeDBRange");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetVolumeDBRange->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"Master";
-    param = new Zapp::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
     iActionGetVolumeDBRange->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterInt("MinValue");
+    param = new OpenHome::Net::ParameterInt("MinValue");
     iActionGetVolumeDBRange->AddOutputParameter(param);
-    param = new Zapp::ParameterInt("MaxValue");
+    param = new OpenHome::Net::ParameterInt("MaxValue");
     iActionGetVolumeDBRange->AddOutputParameter(param);
 
     iActionGetLoudness = new Action("GetLoudness");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetLoudness->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"Master";
-    param = new Zapp::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
     iActionGetLoudness->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterBool("CurrentLoudness");
+    param = new OpenHome::Net::ParameterBool("CurrentLoudness");
     iActionGetLoudness->AddOutputParameter(param);
 
     iActionSetLoudness = new Action("SetLoudness");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetLoudness->AddInputParameter(param);
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"Master";
-    param = new Zapp::ParameterString("Channel", allowedValues, 1);
+    param = new OpenHome::Net::ParameterString("Channel", allowedValues, 1);
     iActionSetLoudness->AddInputParameter(param);
     delete[] allowedValues;
-    param = new Zapp::ParameterBool("DesiredLoudness");
+    param = new OpenHome::Net::ParameterBool("DesiredLoudness");
     iActionSetLoudness->AddInputParameter(param);
 
     iActionGetStateVariables = new Action("GetStateVariables");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionGetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("StateVariableList");
+    param = new OpenHome::Net::ParameterString("StateVariableList");
     iActionGetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("StateVariableValuePairs");
+    param = new OpenHome::Net::ParameterString("StateVariableValuePairs");
     iActionGetStateVariables->AddOutputParameter(param);
 
     iActionSetStateVariables = new Action("SetStateVariables");
-    param = new Zapp::ParameterUint("InstanceID");
+    param = new OpenHome::Net::ParameterUint("InstanceID");
     iActionSetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("RenderingControlUDN");
+    param = new OpenHome::Net::ParameterString("RenderingControlUDN");
     iActionSetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("ServiceType");
+    param = new OpenHome::Net::ParameterString("ServiceType");
     iActionSetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("ServiceId");
+    param = new OpenHome::Net::ParameterString("ServiceId");
     iActionSetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("StateVariableValuePairs");
+    param = new OpenHome::Net::ParameterString("StateVariableValuePairs");
     iActionSetStateVariables->AddInputParameter(param);
-    param = new Zapp::ParameterString("StateVariableList");
+    param = new OpenHome::Net::ParameterString("StateVariableList");
     iActionSetStateVariables->AddOutputParameter(param);
 
     Functor functor;
@@ -2520,15 +2520,15 @@ void CpProxyUpnpOrgRenderingControl2SyncListPresets(THandle aHandle, uint32_t aI
     *aCurrentPresetNameList = buf_aCurrentPresetNameList.Extract();
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginListPresets(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginListPresets(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginListPresets(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndListPresets(THandle aHandle, ZappHandleAsync aAsync, char** aCurrentPresetNameList)
+int32_t CpProxyUpnpOrgRenderingControl2EndListPresets(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentPresetNameList)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2555,16 +2555,16 @@ void CpProxyUpnpOrgRenderingControl2SyncSelectPreset(THandle aHandle, uint32_t a
     proxyC->SyncSelectPreset(aInstanceID, buf_aPresetName);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aPresetName(aPresetName);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSelectPreset(aInstanceID, buf_aPresetName, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSelectPreset(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSelectPreset(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2587,15 +2587,15 @@ void CpProxyUpnpOrgRenderingControl2SyncGetBrightness(THandle aHandle, uint32_t 
     proxyC->SyncGetBrightness(aInstanceID, *aCurrentBrightness);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetBrightness(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetBrightness(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetBrightness(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetBrightness(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentBrightness)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetBrightness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBrightness)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2618,15 +2618,15 @@ void CpProxyUpnpOrgRenderingControl2SyncSetBrightness(THandle aHandle, uint32_t 
     proxyC->SyncSetBrightness(aInstanceID, aDesiredBrightness);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetBrightness(aInstanceID, aDesiredBrightness, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetBrightness(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetBrightness(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2649,15 +2649,15 @@ void CpProxyUpnpOrgRenderingControl2SyncGetContrast(THandle aHandle, uint32_t aI
     proxyC->SyncGetContrast(aInstanceID, *aCurrentContrast);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetContrast(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetContrast(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetContrast(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetContrast(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentContrast)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetContrast(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentContrast)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2680,15 +2680,15 @@ void CpProxyUpnpOrgRenderingControl2SyncSetContrast(THandle aHandle, uint32_t aI
     proxyC->SyncSetContrast(aInstanceID, aDesiredContrast);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetContrast(aInstanceID, aDesiredContrast, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetContrast(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetContrast(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2711,15 +2711,15 @@ void CpProxyUpnpOrgRenderingControl2SyncGetSharpness(THandle aHandle, uint32_t a
     proxyC->SyncGetSharpness(aInstanceID, *aCurrentSharpness);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetSharpness(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetSharpness(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetSharpness(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetSharpness(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentSharpness)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetSharpness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentSharpness)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2742,15 +2742,15 @@ void CpProxyUpnpOrgRenderingControl2SyncSetSharpness(THandle aHandle, uint32_t a
     proxyC->SyncSetSharpness(aInstanceID, aDesiredSharpness);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetSharpness(aInstanceID, aDesiredSharpness, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetSharpness(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetSharpness(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2773,15 +2773,15 @@ void CpProxyUpnpOrgRenderingControl2SyncGetRedVideoGain(THandle aHandle, uint32_
     proxyC->SyncGetRedVideoGain(aInstanceID, *aCurrentRedVideoGain);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetRedVideoGain(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetRedVideoGain(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentRedVideoGain)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetRedVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentRedVideoGain)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2804,15 +2804,15 @@ void CpProxyUpnpOrgRenderingControl2SyncSetRedVideoGain(THandle aHandle, uint32_
     proxyC->SyncSetRedVideoGain(aInstanceID, aDesiredRedVideoGain);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetRedVideoGain(aInstanceID, aDesiredRedVideoGain, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetRedVideoGain(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetRedVideoGain(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2835,15 +2835,15 @@ void CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoGain(THandle aHandle, uint3
     proxyC->SyncGetGreenVideoGain(aInstanceID, *aCurrentGreenVideoGain);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetGreenVideoGain(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetGreenVideoGain(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentGreenVideoGain)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetGreenVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentGreenVideoGain)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2866,15 +2866,15 @@ void CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoGain(THandle aHandle, uint3
     proxyC->SyncSetGreenVideoGain(aInstanceID, aDesiredGreenVideoGain);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetGreenVideoGain(aInstanceID, aDesiredGreenVideoGain, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetGreenVideoGain(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetGreenVideoGain(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2897,15 +2897,15 @@ void CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoGain(THandle aHandle, uint32
     proxyC->SyncGetBlueVideoGain(aInstanceID, *aCurrentBlueVideoGain);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetBlueVideoGain(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetBlueVideoGain(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentBlueVideoGain)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetBlueVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBlueVideoGain)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2928,15 +2928,15 @@ void CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoGain(THandle aHandle, uint32
     proxyC->SyncSetBlueVideoGain(aInstanceID, aDesiredBlueVideoGain);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetBlueVideoGain(aInstanceID, aDesiredBlueVideoGain, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetBlueVideoGain(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetBlueVideoGain(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2959,15 +2959,15 @@ void CpProxyUpnpOrgRenderingControl2SyncGetRedVideoBlackLevel(THandle aHandle, u
     proxyC->SyncGetRedVideoBlackLevel(aInstanceID, *aCurrentRedVideoBlackLevel);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetRedVideoBlackLevel(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetRedVideoBlackLevel(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentRedVideoBlackLevel)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetRedVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentRedVideoBlackLevel)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -2990,15 +2990,15 @@ void CpProxyUpnpOrgRenderingControl2SyncSetRedVideoBlackLevel(THandle aHandle, u
     proxyC->SyncSetRedVideoBlackLevel(aInstanceID, aDesiredRedVideoBlackLevel);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetRedVideoBlackLevel(aInstanceID, aDesiredRedVideoBlackLevel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetRedVideoBlackLevel(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetRedVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3021,15 +3021,15 @@ void CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoBlackLevel(THandle aHandle,
     proxyC->SyncGetGreenVideoBlackLevel(aInstanceID, *aCurrentGreenVideoBlackLevel);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetGreenVideoBlackLevel(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetGreenVideoBlackLevel(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentGreenVideoBlackLevel)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetGreenVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentGreenVideoBlackLevel)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3052,15 +3052,15 @@ void CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoBlackLevel(THandle aHandle,
     proxyC->SyncSetGreenVideoBlackLevel(aInstanceID, aDesiredGreenVideoBlackLevel);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetGreenVideoBlackLevel(aInstanceID, aDesiredGreenVideoBlackLevel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetGreenVideoBlackLevel(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetGreenVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3083,15 +3083,15 @@ void CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoBlackLevel(THandle aHandle, 
     proxyC->SyncGetBlueVideoBlackLevel(aInstanceID, *aCurrentBlueVideoBlackLevel);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetBlueVideoBlackLevel(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetBlueVideoBlackLevel(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentBlueVideoBlackLevel)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetBlueVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBlueVideoBlackLevel)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3114,15 +3114,15 @@ void CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoBlackLevel(THandle aHandle, 
     proxyC->SyncSetBlueVideoBlackLevel(aInstanceID, aDesiredBlueVideoBlackLevel);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetBlueVideoBlackLevel(aInstanceID, aDesiredBlueVideoBlackLevel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetBlueVideoBlackLevel(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetBlueVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3145,15 +3145,15 @@ void CpProxyUpnpOrgRenderingControl2SyncGetColorTemperature(THandle aHandle, uin
     proxyC->SyncGetColorTemperature(aInstanceID, *aCurrentColorTemperature);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetColorTemperature(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetColorTemperature(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetColorTemperature(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetColorTemperature(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentColorTemperature)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetColorTemperature(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentColorTemperature)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3176,15 +3176,15 @@ void CpProxyUpnpOrgRenderingControl2SyncSetColorTemperature(THandle aHandle, uin
     proxyC->SyncSetColorTemperature(aInstanceID, aDesiredColorTemperature);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetColorTemperature(aInstanceID, aDesiredColorTemperature, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetColorTemperature(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetColorTemperature(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3207,15 +3207,15 @@ void CpProxyUpnpOrgRenderingControl2SyncGetHorizontalKeystone(THandle aHandle, u
     proxyC->SyncGetHorizontalKeystone(aInstanceID, *aCurrentHorizontalKeystone);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetHorizontalKeystone(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetHorizontalKeystone(THandle aHandle, ZappHandleAsync aAsync, int32_t* aCurrentHorizontalKeystone)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetHorizontalKeystone(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentHorizontalKeystone)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3238,15 +3238,15 @@ void CpProxyUpnpOrgRenderingControl2SyncSetHorizontalKeystone(THandle aHandle, u
     proxyC->SyncSetHorizontalKeystone(aInstanceID, aDesiredHorizontalKeystone);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetHorizontalKeystone(aInstanceID, aDesiredHorizontalKeystone, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetHorizontalKeystone(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetHorizontalKeystone(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3269,15 +3269,15 @@ void CpProxyUpnpOrgRenderingControl2SyncGetVerticalKeystone(THandle aHandle, uin
     proxyC->SyncGetVerticalKeystone(aInstanceID, *aCurrentVerticalKeystone);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetVerticalKeystone(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetVerticalKeystone(THandle aHandle, ZappHandleAsync aAsync, int32_t* aCurrentVerticalKeystone)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetVerticalKeystone(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentVerticalKeystone)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3300,15 +3300,15 @@ void CpProxyUpnpOrgRenderingControl2SyncSetVerticalKeystone(THandle aHandle, uin
     proxyC->SyncSetVerticalKeystone(aInstanceID, aDesiredVerticalKeystone);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetVerticalKeystone(aInstanceID, aDesiredVerticalKeystone, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetVerticalKeystone(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetVerticalKeystone(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3333,16 +3333,16 @@ void CpProxyUpnpOrgRenderingControl2SyncGetMute(THandle aHandle, uint32_t aInsta
     proxyC->SyncGetMute(aInstanceID, buf_aChannel, *(TBool*)aCurrentMute);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetMute(aInstanceID, buf_aChannel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetMute(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentMute)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetMute(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentMute)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3367,16 +3367,16 @@ void CpProxyUpnpOrgRenderingControl2SyncSetMute(THandle aHandle, uint32_t aInsta
     proxyC->SyncSetMute(aInstanceID, buf_aChannel, (aDesiredMute==0? false : true));
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetMute(aInstanceID, buf_aChannel, (aDesiredMute==0? false : true), functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetMute(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetMute(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3400,16 +3400,16 @@ void CpProxyUpnpOrgRenderingControl2SyncGetVolume(THandle aHandle, uint32_t aIns
     proxyC->SyncGetVolume(aInstanceID, buf_aChannel, *aCurrentVolume);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetVolume(aInstanceID, buf_aChannel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetVolume(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentVolume)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetVolume(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentVolume)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3433,16 +3433,16 @@ void CpProxyUpnpOrgRenderingControl2SyncSetVolume(THandle aHandle, uint32_t aIns
     proxyC->SyncSetVolume(aInstanceID, buf_aChannel, aDesiredVolume);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetVolume(aInstanceID, buf_aChannel, aDesiredVolume, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetVolume(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetVolume(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3466,16 +3466,16 @@ void CpProxyUpnpOrgRenderingControl2SyncGetVolumeDB(THandle aHandle, uint32_t aI
     proxyC->SyncGetVolumeDB(aInstanceID, buf_aChannel, *aCurrentVolume);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetVolumeDB(aInstanceID, buf_aChannel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetVolumeDB(THandle aHandle, ZappHandleAsync aAsync, int32_t* aCurrentVolume)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetVolumeDB(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentVolume)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3499,16 +3499,16 @@ void CpProxyUpnpOrgRenderingControl2SyncSetVolumeDB(THandle aHandle, uint32_t aI
     proxyC->SyncSetVolumeDB(aInstanceID, buf_aChannel, aDesiredVolume);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetVolumeDB(aInstanceID, buf_aChannel, aDesiredVolume, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetVolumeDB(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetVolumeDB(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3532,16 +3532,16 @@ void CpProxyUpnpOrgRenderingControl2SyncGetVolumeDBRange(THandle aHandle, uint32
     proxyC->SyncGetVolumeDBRange(aInstanceID, buf_aChannel, *aMinValue, *aMaxValue);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetVolumeDBRange(aInstanceID, buf_aChannel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetVolumeDBRange(THandle aHandle, ZappHandleAsync aAsync, int32_t* aMinValue, int32_t* aMaxValue)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetVolumeDBRange(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aMinValue, int32_t* aMaxValue)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3566,16 +3566,16 @@ void CpProxyUpnpOrgRenderingControl2SyncGetLoudness(THandle aHandle, uint32_t aI
     proxyC->SyncGetLoudness(aInstanceID, buf_aChannel, *(TBool*)aCurrentLoudness);
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetLoudness(aInstanceID, buf_aChannel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetLoudness(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentLoudness)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetLoudness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentLoudness)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3600,16 +3600,16 @@ void CpProxyUpnpOrgRenderingControl2SyncSetLoudness(THandle aHandle, uint32_t aI
     proxyC->SyncSetLoudness(aInstanceID, buf_aChannel, (aDesiredLoudness==0? false : true));
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetLoudness(aInstanceID, buf_aChannel, (aDesiredLoudness==0? false : true), functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetLoudness(THandle aHandle, ZappHandleAsync aAsync)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetLoudness(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3635,16 +3635,16 @@ void CpProxyUpnpOrgRenderingControl2SyncGetStateVariables(THandle aHandle, uint3
     *aStateVariableValuePairs = buf_aStateVariableValuePairs.Extract();
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aStateVariableList(aStateVariableList);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginGetStateVariables(aInstanceID, buf_aStateVariableList, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndGetStateVariables(THandle aHandle, ZappHandleAsync aAsync, char** aStateVariableValuePairs)
+int32_t CpProxyUpnpOrgRenderingControl2EndGetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableValuePairs)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3676,7 +3676,7 @@ void CpProxyUpnpOrgRenderingControl2SyncSetStateVariables(THandle aHandle, uint3
     *aStateVariableList = buf_aStateVariableList.Extract();
 }
 
-void CpProxyUpnpOrgRenderingControl2BeginSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aRenderingControlUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2BeginSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aRenderingControlUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3684,11 +3684,11 @@ void CpProxyUpnpOrgRenderingControl2BeginSetStateVariables(THandle aHandle, uint
     Brh buf_aServiceType(aServiceType);
     Brh buf_aServiceId(aServiceId);
     Brh buf_aStateVariableValuePairs(aStateVariableValuePairs);
-    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
     proxyC->BeginSetStateVariables(aInstanceID, buf_aRenderingControlUDN, buf_aServiceType, buf_aServiceId, buf_aStateVariableValuePairs, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl2EndSetStateVariables(THandle aHandle, ZappHandleAsync aAsync, char** aStateVariableList)
+int32_t CpProxyUpnpOrgRenderingControl2EndSetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableList)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
@@ -3707,7 +3707,7 @@ int32_t CpProxyUpnpOrgRenderingControl2EndSetStateVariables(THandle aHandle, Zap
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl2SetPropertyLastChangeChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+void CpProxyUpnpOrgRenderingControl2SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl2C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl2C*>(aHandle);
     ASSERT(proxyC != NULL);

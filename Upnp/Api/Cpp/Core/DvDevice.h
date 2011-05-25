@@ -1,12 +1,13 @@
 #ifndef HEADER_DVDEVICE
 #define HEADER_DVDEVICE
 
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <Functor.h>
 #include <DvResourceWriter.h>
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 /**
  * Interface used by devices to publish data (typically files).
@@ -143,6 +144,7 @@ public:
     DvDeviceStandard(const Brx& aUdn, IResourceManager& aResourceManager);
 };
 
-} // namespace Zapp
+} // namespace Net
+} // namespace OpenHome
 
 #endif // HEADER_DVDEVICE

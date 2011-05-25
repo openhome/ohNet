@@ -1,37 +1,37 @@
 #include <C/CpDeviceUpnp.h>
-#include <ZappTypes.h>
+#include <OhNetTypes.h>
 #include <Buffer.h>
 #include <CpiDeviceUpnp.h>
 #include <FunctorCpiDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
-HandleCpDeviceList CpDeviceListCreateUpnpAll(ZappCallbackDevice aAdded, void* aPtrAdded,
-                                             ZappCallbackDevice aRemoved, void* aPtrRemoved)
+HandleCpDeviceList CpDeviceListCreateUpnpAll(OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                             OhNetCallbackDevice aRemoved, void* aPtrRemoved)
 {
-    FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (ZappFunctorDevice)aAdded);
-    FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (ZappFunctorDevice)aRemoved);
+    FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (OhNetFunctorDevice)aAdded);
+    FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (OhNetFunctorDevice)aRemoved);
     CpiDeviceList* list = new CpiDeviceListUpnpAll(added, removed);
     list->Start();
     return (THandle)list;
 }
 
-HandleCpDeviceList CpDeviceListCreateUpnpRoot(ZappCallbackDevice aAdded, void* aPtrAdded,
-                                              ZappCallbackDevice aRemoved, void* aPtrRemoved)
+HandleCpDeviceList CpDeviceListCreateUpnpRoot(OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                              OhNetCallbackDevice aRemoved, void* aPtrRemoved)
 {
-    FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (ZappFunctorDevice)aAdded);
-    FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (ZappFunctorDevice)aRemoved);
+    FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (OhNetFunctorDevice)aAdded);
+    FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (OhNetFunctorDevice)aRemoved);
     CpiDeviceList* list = new CpiDeviceListUpnpRoot(added, removed);
     list->Start();
     return (THandle)list;
 }
 
 HandleCpDeviceList CpDeviceListCreateUpnpUuid(const char* aUuid,
-                                              ZappCallbackDevice aAdded, void* aPtrAdded,
-                                              ZappCallbackDevice aRemoved, void* aPtrRemoved)
+                                              OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                              OhNetCallbackDevice aRemoved, void* aPtrRemoved)
 {
-    FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (ZappFunctorDevice)aAdded);
-    FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (ZappFunctorDevice)aRemoved);
+    FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (OhNetFunctorDevice)aAdded);
+    FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (OhNetFunctorDevice)aRemoved);
     const Brn uuid(aUuid);
     CpiDeviceList* list = new CpiDeviceListUpnpUuid(uuid, added, removed);
     list->Start();
@@ -39,11 +39,11 @@ HandleCpDeviceList CpDeviceListCreateUpnpUuid(const char* aUuid,
 }
 
 HandleCpDeviceList CpDeviceListCreateUpnpDeviceType(const char* aDomainName, const char* aDeviceType, uint32_t aVersion,
-                                                    ZappCallbackDevice aAdded, void* aPtrAdded,
-                                                    ZappCallbackDevice aRemoved, void* aPtrRemoved)
+                                                    OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                                    OhNetCallbackDevice aRemoved, void* aPtrRemoved)
 {
-    FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (ZappFunctorDevice)aAdded);
-    FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (ZappFunctorDevice)aRemoved);
+    FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (OhNetFunctorDevice)aAdded);
+    FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (OhNetFunctorDevice)aRemoved);
     const Brn domain(aDomainName);
     const Brn type(aDeviceType);
     CpiDeviceList* list = new CpiDeviceListUpnpDeviceType(domain, type, aVersion, added, removed);
@@ -52,11 +52,11 @@ HandleCpDeviceList CpDeviceListCreateUpnpDeviceType(const char* aDomainName, con
 }
 
 HandleCpDeviceList CpDeviceListCreateUpnpServiceType(const char* aDomainName, const char* aServiceType, uint32_t aVersion,
-                                                     ZappCallbackDevice aAdded, void* aPtrAdded,
-                                                     ZappCallbackDevice aRemoved, void* aPtrRemoved)
+                                                     OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                                     OhNetCallbackDevice aRemoved, void* aPtrRemoved)
 {
-    FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (ZappFunctorDevice)aAdded);
-    FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (ZappFunctorDevice)aRemoved);
+    FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (OhNetFunctorDevice)aAdded);
+    FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (OhNetFunctorDevice)aRemoved);
     const Brn domain(aDomainName);
     const Brn type(aServiceType);
     CpiDeviceList* list = new CpiDeviceListUpnpServiceType(domain, type, aVersion, added, removed);

@@ -1,29 +1,29 @@
 ﻿/**
-* The Zapp object is the single global object used by Zapp Services to
+* The OhNet object is the single global object used by OhNet Services to
 * facilitate actions and subscriptions. 
-* @module Zapp
-* @title Zapp
+* @module OhNet
+* @title OhNet
 */
 
-if (typeof Zapp == "undefined" || !Zapp) {
+if (typeof OhNet == "undefined" || !OhNet) {
     /**
-    * The Zapp global namespace object.  If Zapp is already defined, the
-    * existing Zapp object will not be overwritten so that defined
+    * The OhNet global namespace object.  If OhNet is already defined, the
+    * existing OhNet object will not be overwritten so that defined
     * namespaces are preserved.
-    * @class Zapp
+    * @class OhNet
     * @static
     */
-    var Zapp = {};
+    var OhNet = {};
 }
 
 /**
-* Manages the subscriptions to the Zapp Services.
+* Manages the subscriptions to the OhNet Services.
 * Subscribed services are notified of property state changes.
-* @namespace Zapp
+* @namespace OhNet
 * @class SubscriptionManager
 * @static
 */
-Zapp.SubscriptionManager = (function () {
+OhNet.SubscriptionManager = (function () {
 
     // Constants 
     var VERSION = "1.0";
@@ -33,7 +33,7 @@ Zapp.SubscriptionManager = (function () {
 
 
     // Private Variables
-    var services = []; // Collection of Zapp services
+    var services = []; // Collection of OhNet services
     var websocket = null; // HTML 5 web socket object to handle property state events
     var subscriptionCounter = -1; // A unique identifier for each subscription (zero-based).
     var subscriptionTimeoutSec = -1; // The suggested timeout in seconds for each subscription.
@@ -75,7 +75,7 @@ Zapp.SubscriptionManager = (function () {
     * Generates the subscribe message to register the service's subscription
     * @method subscribeMessage
     * @param {Object} service The service interested in subscribing
-    * @return {String} The subscribe message to be sent to the Zapp service 
+    * @return {String} The subscribe message to be sent to the OhNet service 
     */
     var subscribeMessage = function (service) {
 
@@ -100,7 +100,7 @@ Zapp.SubscriptionManager = (function () {
     * Generates the Unsubscribe message to unregister the service's subscription
     * @method unsubscribeMessage
     * @param {Int} subscriptionId The subscription id of the service interested in unsubscribing
-    * @return {String} The unsubscribe message to be sent to the Zapp service 
+    * @return {String} The unsubscribe message to be sent to the OhNet service 
     */
     var unsubscribeMessage = function (subscriptionId) {
 
@@ -122,7 +122,7 @@ Zapp.SubscriptionManager = (function () {
     * Generates the Renew message to renew the service's subscription
     * @method renewMessage
     * @param {Int} subscriptionId The subscription id of the service interested in renewing the subscription
-    * @return {String} The renew message to be sent to the Zapp service 
+    * @return {String} The renew message to be sent to the OhNet service 
     */
     var renewMessage = function (subscriptionId) {
 
@@ -143,7 +143,7 @@ Zapp.SubscriptionManager = (function () {
 
     /**
     * Starts the timer to renew subscriptions.  
-    * The actual subscription timeout is returned by the Zapp Service. 
+    * The actual subscription timeout is returned by the OhNet Service. 
     * subscriptionTimeoutSec is the suggested timeout sent to the server.
     * @method setSubscriptionTimeout
     * @param {Int} subscriptionId The subscription id of the service
@@ -236,7 +236,7 @@ Zapp.SubscriptionManager = (function () {
     };
 
     /**
-    * Parses the XML message recieved from the Zapp Service
+    * Parses the XML message recieved from the OhNet Service
     * @method receiveMessage
     * @param {String} message The XML message
     */
@@ -263,7 +263,7 @@ Zapp.SubscriptionManager = (function () {
             }
         }
         else {
-            alert("Zapp.SubscriptionManager: Cannot parse subscription message as browser does not support it.");
+            alert("OhNet.SubscriptionManager: Cannot parse subscription message as browser does not support it.");
             if (DEBUG) {
                 console.log("receiveMessage/window.DOMParser: NULL");
             }
@@ -441,7 +441,7 @@ Zapp.SubscriptionManager = (function () {
         webSocketPort = port;
         if (debugMode) {
             DEBUG = debugMode;
-            console.log("*** Zapp.SubscriptionManager v" + VERSION + " ***");
+            console.log("*** OhNet.SubscriptionManager v" + VERSION + " ***");
         }
 
         subscriptionTimeoutSec = subscriptionTimeoutSeconds ? subscriptionTimeoutSeconds : DEFAULT_SUBSCRIPTION_TIMEOUT_SEC;
@@ -466,7 +466,7 @@ Zapp.SubscriptionManager = (function () {
                 if (DEBUG) {
                     console.log("start/websocketSupported: NULL");
                 }
-                alert("Zapp.SubscriptionManager: No websocket port defined.");
+                alert("OhNet.SubscriptionManager: No websocket port defined.");
                 running = false;
             }
         }
@@ -474,7 +474,7 @@ Zapp.SubscriptionManager = (function () {
             if (DEBUG) {
                 console.log("start/websocketSupported: NULL");
             }
-            alert("Zapp.SubscriptionManager: Cannot start Subscription Manager as browser does not support web sockets.");
+            alert("OhNet.SubscriptionManager: Cannot start Subscription Manager as browser does not support web sockets.");
             running = false;
         }
 
@@ -534,7 +534,7 @@ Zapp.SubscriptionManager = (function () {
             if (DEBUG) {
                 console.log("addService/running: false");
             }
-            alert("Subscription Manager is not running.  Please ensure 'Zapp.SubscriptionManager.start();' has been called prior to subscribing.");
+            alert("Subscription Manager is not running.  Please ensure 'OhNet.SubscriptionManager.start();' has been called prior to subscribing.");
         }
     };
 
@@ -583,10 +583,10 @@ Zapp.SubscriptionManager = (function () {
 
 /**
 * A Service Property that can be monitored of state changes
-* @namespace Zapp
+* @namespace OhNet
 * @class ServiceProperty
 */
-Zapp.ServiceProperty = function (name, type) {
+OhNet.ServiceProperty = function (name, type) {
     this.name = name; // The name of the property
     this.type = type;
     this.value = null; // The value of the property
@@ -598,7 +598,7 @@ Zapp.ServiceProperty = function (name, type) {
 * @method setValue
 * @param {String | Int | Boolean} value The new value for the property
 */
-Zapp.ServiceProperty.prototype.setValue = function (value) {
+OhNet.ServiceProperty.prototype.setValue = function (value) {
 
     if (this.value != value) {
 
@@ -606,22 +606,22 @@ Zapp.ServiceProperty.prototype.setValue = function (value) {
 
             case "int":
                 {
-                    this.value = Zapp.SoapRequest.readIntParameter(value);
+                    this.value = OhNet.SoapRequest.readIntParameter(value);
                     break;
                 }
             case "string":
                 {
-                    this.value = Zapp.SoapRequest.readStringParameter(value);
+                    this.value = OhNet.SoapRequest.readStringParameter(value);
                     break;
                 }
             case "bool":
                 {
-                    this.value = Zapp.SoapRequest.readBoolParameter(value);
+                    this.value = OhNet.SoapRequest.readBoolParameter(value);
                     break;
                 }
             case "binary":
                 {
-                    this.value = Zapp.SoapRequest.readBinaryParameter(value);
+                    this.value = OhNet.SoapRequest.readBinaryParameter(value);
                     break;
                 }
             default:
@@ -646,7 +646,7 @@ Zapp.ServiceProperty.prototype.setValue = function (value) {
 * @method addListener
 * @param {Function} listener The event handler function to execute when the property value changes
 */
-Zapp.ServiceProperty.prototype.addListener = function (listener) {
+OhNet.ServiceProperty.prototype.addListener = function (listener) {
     this.listeners[this.listeners.length] = listener;
 }
 
@@ -655,11 +655,11 @@ Zapp.ServiceProperty.prototype.addListener = function (listener) {
 
 /**
 * A wrapper for sending and receiving soap messages via jQuery ajax
-* @namespace Zapp
+* @namespace OhNet
 * @class SoapRequest
 */
 
-Zapp.SoapRequest = function (action, url, domain, type, version) {
+OhNet.SoapRequest = function (action, url, domain, type, version) {
     this.action = action; // The action to invoke
     this.url = url; // The soap web service url
     this.type = type;
@@ -673,7 +673,7 @@ Zapp.SoapRequest = function (action, url, domain, type, version) {
 * Builds the start of the soap message
 * @method writeEnvelopeStart
 */
-Zapp.SoapRequest.prototype.writeEnvelopeStart = function () {
+OhNet.SoapRequest.prototype.writeEnvelopeStart = function () {
     var envelopeStart = '<?xml version="1.0"?>' +
         '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">' +
         '<s:Body s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><u:';
@@ -694,7 +694,7 @@ Zapp.SoapRequest.prototype.writeEnvelopeStart = function () {
 * Builds the end of the soap message
 * @method writeEnvelopeEnd
 */
-Zapp.SoapRequest.prototype.writeEnvelopeEnd = function () {
+OhNet.SoapRequest.prototype.writeEnvelopeEnd = function () {
     this.envelope += "</u:";
     this.envelope += this.action;
     this.envelope += "></s:Body></s:Envelope>";
@@ -705,7 +705,7 @@ Zapp.SoapRequest.prototype.writeEnvelopeEnd = function () {
 * Builds the action of the soap message
 * @method getSoapAction
 */
-Zapp.SoapRequest.prototype.getSoapAction = function () {
+OhNet.SoapRequest.prototype.getSoapAction = function () {
     var soapAction = 'urn:';
     soapAction += this.domain;
     soapAction += ':service:';
@@ -724,7 +724,7 @@ Zapp.SoapRequest.prototype.getSoapAction = function () {
 * @param {Function} successFunction The function to execute once the ajax request returns
 * @param {Function} errorFunction The function to execute if an error occurs in the ajax request
 */
-Zapp.SoapRequest.prototype.send = function (successFunction, errorFunction) {
+OhNet.SoapRequest.prototype.send = function (successFunction, errorFunction) {
     var _this = this;
     this.writeEnvelopeEnd();
     return this.createAjaxRequest(
@@ -768,7 +768,7 @@ Zapp.SoapRequest.prototype.send = function (successFunction, errorFunction) {
 * @param {Function} successFunction The function to execute once the ajax request returns
 * @param {Function} errorFunction The function to execute if an error occurs in the ajax request
 */
-Zapp.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorFunction) {
+OhNet.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorFunction) {
     var _this = this;
     x$(document).xhr(_this.url,
     {
@@ -813,7 +813,7 @@ Zapp.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorF
 * @param {String} textStatus The error type
 * @param {Object} errorThrown The exception object if applicable
 */
-Zapp.SoapRequest.prototype.defaultErrorFunction = function (XMLHttpRequest, textStatus, errorThrown) {
+OhNet.SoapRequest.prototype.defaultErrorFunction = function (XMLHttpRequest, textStatus, errorThrown) {
     console.log("defaultErrorFunction/XMLHttpRequest: " + XMLHttpRequest);
     console.log("defaultErrorFunction/textStatus: " + textStatus);
     console.log("defaultErrorFunction/errorThrown: " + errorThrown);
@@ -826,7 +826,7 @@ Zapp.SoapRequest.prototype.defaultErrorFunction = function (XMLHttpRequest, text
 * @param {Object} transport The XMLHttpRequest object
 * @return {String} A readable error message
 */
-Zapp.SoapRequest.prototype.getTransportErrorMessage = function (transport) {
+OhNet.SoapRequest.prototype.getTransportErrorMessage = function (transport) {
     var errorString = "Error:";
     try {
         errorString += "\nstatus: " + transport.statusText;
@@ -856,7 +856,7 @@ Zapp.SoapRequest.prototype.getTransportErrorMessage = function (transport) {
 * @static
 * @return {Int} The integer value
 */
-Zapp.SoapRequest.readIntParameter = function (value) {
+OhNet.SoapRequest.readIntParameter = function (value) {
     return value * 1;
 }
 
@@ -867,7 +867,7 @@ Zapp.SoapRequest.readIntParameter = function (value) {
 * @static
 * @return {Boolean} The boolean value
 */
-Zapp.SoapRequest.readBoolParameter = function (value) {
+OhNet.SoapRequest.readBoolParameter = function (value) {
     return (value == "1" || value == "true" || value == "yes") ? true : false;
 }
 
@@ -878,7 +878,7 @@ Zapp.SoapRequest.readBoolParameter = function (value) {
 * @static
 * @return {String} The string value
 */
-Zapp.SoapRequest.readStringParameter = function (value) {
+OhNet.SoapRequest.readStringParameter = function (value) {
     return value;
 }
 
@@ -889,7 +889,7 @@ Zapp.SoapRequest.readStringParameter = function (value) {
 * @static
 * @return {String} The binary value converted from base64
 */
-Zapp.SoapRequest.readBinaryParameter = function (value) {
+OhNet.SoapRequest.readBinaryParameter = function (value) {
     return atob(value);
 }
 
@@ -899,7 +899,7 @@ Zapp.SoapRequest.readBinaryParameter = function (value) {
 * @param {String} tagName The xml tag name to be inserted into the SOAP envelope
 * @param {String} value The xml tag value to be inserted into the SOAP envelope
 */
-Zapp.SoapRequest.prototype.writeIntParameter = function (tagName, value) {
+OhNet.SoapRequest.prototype.writeIntParameter = function (tagName, value) {
     this.writeParameter(tagName, "" + (value ? value : "0"));
 }
 
@@ -909,7 +909,7 @@ Zapp.SoapRequest.prototype.writeIntParameter = function (tagName, value) {
 * @param {String} tagName The xml tag name to be inserted into the SOAP envelope
 * @param {String} value The xml tag value to be inserted into the SOAP envelope
 */
-Zapp.SoapRequest.prototype.writeBoolParameter = function (tagName, value) {
+OhNet.SoapRequest.prototype.writeBoolParameter = function (tagName, value) {
     this.writeParameter(tagName, value ? "1" : "0");
 }
 
@@ -919,7 +919,7 @@ Zapp.SoapRequest.prototype.writeBoolParameter = function (tagName, value) {
 * @param {String} tagName The xml tag name to be inserted into the SOAP envelope
 * @param {String} value The xml tag value to be inserted into the SOAP envelope
 */
-Zapp.SoapRequest.prototype.writeStringParameter = function (tagName, value) {
+OhNet.SoapRequest.prototype.writeStringParameter = function (tagName, value) {
     this.writeParameter(tagName, (value ? value : ""));
 }
 
@@ -929,7 +929,7 @@ Zapp.SoapRequest.prototype.writeStringParameter = function (tagName, value) {
 * @param {String} tagName The xml tag name to be inserted into the SOAP envelope
 * @param {String} value The xml tag value to be inserted into the SOAP envelope
 */
-Zapp.SoapRequest.prototype.writeBinaryParameter = function (tagName, value) {
+OhNet.SoapRequest.prototype.writeBinaryParameter = function (tagName, value) {
     this.writeParameter(tagName, (value ? btoa(value) : ""));
 }
 
@@ -940,7 +940,7 @@ Zapp.SoapRequest.prototype.writeBinaryParameter = function (tagName, value) {
 * @param {String} tagName The xml tag name to be inserted into the SOAP envelope
 * @param {String} value The xml tag value to be inserted into the SOAP envelope
 */
-Zapp.SoapRequest.prototype.writeParameter = function (tagName, value) {
+OhNet.SoapRequest.prototype.writeParameter = function (tagName, value) {
     this.envelope += "<" + tagName + ">" + value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</" + tagName + ">";
 }
 

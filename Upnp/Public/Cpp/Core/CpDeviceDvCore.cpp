@@ -2,7 +2,7 @@
 #include <CpiDeviceDv.h>
 #include <DviDevice.h>
 
-using namespace Zapp;
+using namespace OpenHome::Net;
 
 CpDeviceDv* CpDeviceDv::New(DvDevice& aDevice)
 {
