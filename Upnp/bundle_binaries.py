@@ -36,6 +36,28 @@ def main():
     templateDir = "T4/Templates"
     uisdkDir = "Public/Js/WebUIsdk"
 
+    # we have Debug and Release dirs.  Choose the one with the later version of ohNet.net.dll
+    # (the only useful file whose name doesn't change between Windows and Posix)
+    debug_exists = release_exists = 0
+    debug_dll = os.path.join(builddir, 'Debug', 'ohNet.net.dll')
+    release_dll = os.path.join(builddir, 'Release', 'ohNet.net.dll')
+    if os.path.exists(debug_dll):
+        debug_exists = 1
+    if os.path.exists(release_dll):
+        release_exists = 1
+    if not (debug_exists or release_exists):
+        print 'ERROR: ohNet.net.dll does not exist for either Debug or Release'
+        sys.exit(1)
+    if debug_exists and release_exists:
+        if os.path.getmtime(debug_dll) > os.path.getmtime(release_dll):
+            release_exists = false
+        else:
+            debug_exists = false
+    if debug_exists:
+        builddir = os.path.join(builddir, 'Debug')
+    else:
+        builddir = os.path.join(builddir, 'Release')
+
     bundle_fileprefix = "ohNet-%s%s" % (targetname, "-dev" if options.dev else "")
     bundle_filename = bundle_fileprefix + ".tar.gz"
     bundle_path = path.join(outputdir, bundle_filename)
