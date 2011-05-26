@@ -7,8 +7,8 @@
 #include <string>
 #include <map>
 
-using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome;
+using namespace OpenHome::TestFramework;
 
 class SuiteConstruction : public Suite
 {
@@ -711,9 +711,9 @@ void SuiteBufferCmp::Test()
     }
 }
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    UpnpLibrary::InitialiseMinimal(aInitParams);
+    Net::UpnpLibrary::InitialiseMinimal(aInitParams);
 
     Runner runner("Binary Buffer Testing");
     runner.Add(new SuiteConstruction());
@@ -729,5 +729,5 @@ void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/
     runner.Run();
 
     delete aInitParams;
-    UpnpLibrary::Close();
+    Net::UpnpLibrary::Close();
 }

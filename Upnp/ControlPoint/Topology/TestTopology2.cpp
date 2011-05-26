@@ -10,8 +10,9 @@
 #include <OsWrapper.h>
 #include "CpTopology2.h"
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 class TopologyLogger : public ICpTopology2Handler
 {
@@ -134,7 +135,7 @@ void TopologyLogger::PrintGroupInfo(const char* aPrologue, const CpTopology2Grou
 }
 
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
 

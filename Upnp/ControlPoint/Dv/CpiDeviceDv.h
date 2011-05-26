@@ -27,7 +27,7 @@ private:
 private: // ICpiProtocol
     void InvokeAction(Invocation& aInvocation);
     TBool GetAttribute(const char* aKey, Brh& aValue) const;
-    TUint Subscribe(CpiSubscription& aSubscription, const Uri& aSubscriber);
+    TUint Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri& aSubscriber);
     TUint Renew(CpiSubscription& aSubscription);
     void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid);
 private: // ICpiDeviceObserver

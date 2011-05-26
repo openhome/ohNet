@@ -6,6 +6,7 @@
 #include <NetworkInterfaceList.h>
 #include <OhNet.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // DviServer

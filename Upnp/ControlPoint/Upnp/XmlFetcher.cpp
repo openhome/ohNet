@@ -8,11 +8,12 @@
 
 #include <stdlib.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // XmlFetch
 
-void XmlFetch::Set(OpenHome::Net::Uri* aUri, FunctorAsync& aFunctor)
+void XmlFetch::Set(OpenHome::Uri* aUri, FunctorAsync& aFunctor)
 {
     iUri = aUri;
     iFunctor = aFunctor;
@@ -24,7 +25,7 @@ XmlFetch::~XmlFetch()
     delete iUri;
 }
 
-const OpenHome::Net::Uri& XmlFetch::Uri() const
+const OpenHome::Uri& XmlFetch::Uri() const
 {
     return *iUri;
 }
@@ -67,7 +68,7 @@ void XmlFetch::Fetch()
     LOG(kXmlFetch, iUri->AbsoluteUri());
     LOG(kXmlFetch, "\n");
     
-    SocketTcpClient socket;
+    OpenHome::SocketTcpClient socket;
     socket.Open();
     AutoSocket a(socket);
     iLock.Wait();

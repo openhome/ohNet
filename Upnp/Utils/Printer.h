@@ -7,7 +7,6 @@
 #include <stdio.h>
 
 namespace OpenHome {
-namespace Net {
 
 const TUint kMaxPrintBytes = 1024;
     
@@ -27,7 +26,6 @@ private:
     static TInt DoPrint(FunctorMsg& aOutput, const TByte* aMessage);
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_PRINTER

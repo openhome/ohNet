@@ -5,7 +5,6 @@
 #include <OsWrapper.h>
 
 namespace OpenHome {
-namespace Net {
 
 class Arch
 {
@@ -31,7 +30,6 @@ public:
 #endif //DEFINE_LITTLE_ENDIAN
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif  // HEADER_LINN_ARCH

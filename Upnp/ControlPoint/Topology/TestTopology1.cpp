@@ -10,8 +10,9 @@
 #include <OsWrapper.h>
 #include "CpTopology1.h"
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 class TopologyLogger : public ICpTopology1Handler
 {
@@ -64,7 +65,7 @@ void TopologyLogger::PrintDeviceInfo(const char* aPrologue, const CpDevice& aDev
 }
 
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionUint mx("-mx", "--mx", 1, "[1..5] number of second to spread response over");

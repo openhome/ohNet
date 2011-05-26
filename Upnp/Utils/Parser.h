@@ -6,7 +6,6 @@
 #include <Buffer.h>
 
 namespace OpenHome {
-namespace Net {
 
 class Parser
 {
@@ -32,7 +31,6 @@ private:
     TUint iIndex;
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_ASCII_PARSER

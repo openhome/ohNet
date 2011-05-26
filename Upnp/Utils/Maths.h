@@ -6,14 +6,12 @@
 #include <Buffer.h>
 
 namespace OpenHome {
-namespace Net {
 
 void SetRandomSeed(TUint aSeed);
 void SetRandomSeed(const Brx& aSeed);
 
 TUint Random(TUint aMaxValue, TUint aMinValue = 0);
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_MATHS

@@ -47,6 +47,7 @@
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 <#  foreach (Variable s in u.evented) #>
 <#  { #>

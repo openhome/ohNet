@@ -12,6 +12,7 @@
 #include <AsyncPrivate.h>
 #include <Core/CpDevice.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 class CpProxyUpnpOrgSwitchPower1C : public CpProxyC

@@ -13,8 +13,9 @@
 
 #include <string>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 class DeviceListLogger
 {
@@ -56,7 +57,7 @@ void DeviceListLogger::PrintDeviceInfo(const char* aPrologue, const CpDeviceCpp&
 }
 
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionUint mx("-mx", "--mx", 1, "[1..5] number of second to spread response over");

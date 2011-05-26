@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 const char* CpDeviceCUdn(CpDeviceC aDevice)

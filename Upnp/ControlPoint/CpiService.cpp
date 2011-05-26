@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // CpiService

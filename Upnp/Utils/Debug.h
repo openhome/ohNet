@@ -10,70 +10,70 @@ EXCEPTION(AssertionFailed);
 class AutoLog
 {
 public:
-    AutoLog(OpenHome::Net::TUint aLevel, const OpenHome::Net::TChar* aString);
+    AutoLog(OpenHome::TUint aLevel, const OpenHome::TChar* aString);
     ~AutoLog();
 private:
-    OpenHome::Net::TUint  iLevel;
-    const OpenHome::Net::TChar* iString;
+    OpenHome::TUint  iLevel;
+    const OpenHome::TChar* iString;
 };
 
 #ifdef DEFINE_TRACE
     #define LOG(x,...) \
-        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x)) \
+        {if(OpenHome::Debug::TestLevel(OpenHome::Debug::x)) \
          { \
-            OpenHome::Net::Log::Print(__VA_ARGS__); \
+            OpenHome::Log::Print(__VA_ARGS__); \
          } \
         }
     #define LOG2(x,y,...) \
-        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x|OpenHome::Net::Debug::y)) \
+        {if(OpenHome::Debug::TestLevel(OpenHome::Debug::x|OpenHome::Debug::y)) \
          { \
-            OpenHome::Net::Log::Print(__VA_ARGS__); \
+            OpenHome::Log::Print(__VA_ARGS__); \
          } \
         }
     #define LOG2F(x,y,...) \
-        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x|OpenHome::Net::Debug::y)) \
+        {if(OpenHome::Debug::TestLevel(OpenHome::Debug::x|OpenHome::Debug::y)) \
          { \
-            OpenHome::Net::Log::Print("%s:%d: ",__FILE__,__LINE__); \
-            OpenHome::Net::Log::Print(__VA_ARGS__); \
+            OpenHome::Log::Print("%s:%d: ",__FILE__,__LINE__); \
+            OpenHome::Log::Print(__VA_ARGS__); \
          } \
         }
     #define LOG2T(x,y,...) \
-        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x|OpenHome::Net::Debug::y)) \
+        {if(OpenHome::Debug::TestLevel(OpenHome::Debug::x|OpenHome::Debug::y)) \
          { \
-            OpenHome::Net::Log::Print("Thread: %p: ",(OpenHome::Net::Thread*)(OpenHome::Net::Thread::Current())); \
-            OpenHome::Net::Log::Print(__VA_ARGS__); \
+            OpenHome::Log::Print("Thread: %p: ",(OpenHome::Thread*)(OpenHome::Thread::Current())); \
+            OpenHome::Log::Print(__VA_ARGS__); \
          } \
         }
     #define LOGF(x,...) \
-        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x)) \
+        {if(OpenHome::Debug::TestLevel(OpenHome::Debug::x)) \
          { \
-            OpenHome::Net::Log::Print("%s:%d: ",__FILE__,__LINE__); \
-            OpenHome::Net::Log::Print(__VA_ARGS__); \
+            OpenHome::Log::Print("%s:%d: ",__FILE__,__LINE__); \
+            OpenHome::Log::Print(__VA_ARGS__); \
          } \
         }
     #define LOGT(x,...) \
-        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x)) \
+        {if(OpenHome::Debug::TestLevel(OpenHome::Debug::x)) \
          { \
-            const Brx& name = OpenHome::Net::Thread::Current()->Name(); \
-            OpenHome::Net::Log::Print("T:%c%c%c%c:",name[0],name[1],name[2],name[3]); \
-            OpenHome::Net::Log::Print(__VA_ARGS__); \
+            const Brx& name = OpenHome::Thread::Current()->Name(); \
+            OpenHome::Log::Print("T:%c%c%c%c:",name[0],name[1],name[2],name[3]); \
+            OpenHome::Log::Print(__VA_ARGS__); \
          } \
         }
     #define LOG_HEX(x,aBrx) \
-        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x)) \
+        {if(OpenHome::Debug::TestLevel(OpenHome::Debug::x)) \
          { \
-            OpenHome::Net::Log::PrintHex(aBrx); \
+            OpenHome::Log::PrintHex(aBrx); \
          } \
         }
     #define LOGF_HEX(x,aBrx) \
-        {if(OpenHome::Net::Debug::TestLevel(OpenHome::Net::Debug::x)) \
+        {if(OpenHome::Debug::TestLevel(OpenHome::Debug::x)) \
          { \
-            OpenHome::Net::Log::Print("%s:%d: ",__FILE__,__LINE__); \
-            OpenHome::Net::Log::PrintHex(aBrx); \
+            OpenHome::Log::Print("%s:%d: ",__FILE__,__LINE__); \
+            OpenHome::Log::PrintHex(aBrx); \
          } \
         }
     #define LOGFUNC(x) \
-        AutoLog localAutolog(OpenHome::Net::Debug::x , __PRETTY_FUNCTION__)
+        AutoLog localAutolog(OpenHome::Debug::x , __PRETTY_FUNCTION__)
 #else //DEFINE_TRACE
     #define LOG(x,...)
     #define LOGF(x,...)
@@ -87,7 +87,6 @@ private:
 #endif //DEFINE_TRACE
 
 namespace OpenHome {
-namespace Net {
 
 class Brx;
 
@@ -128,7 +127,6 @@ private:
     static const TUint kMaxDebugPrintBytes = 256;
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif //HEADER_DEBUG

@@ -13,6 +13,7 @@
 #include <Fifo.h>
 #include <Debug.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 #define WS_76_HANDSHAKE

@@ -5,6 +5,7 @@
 #include <NetworkInterfaceList.h>
 #include <Debug.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // NetworkInterface
@@ -391,7 +392,7 @@ void InitialisationParams::FatalErrorHandlerDefault(const char* aMsg)
 static void BaseInit(InitialisationParams* aInitParams)
 {
     Log::RegisterOutput(aInitParams->LogOutput());
-    if (0 != OpenHome::Net::Os::Create()) {
+    if (0 != OpenHome::Os::Create()) {
         throw std::bad_alloc();
     }
 }
@@ -412,7 +413,7 @@ void UpnpLibrary::InitialiseMinimal(InitialisationParams* aInitParams)
 void UpnpLibrary::Close()
 {
     Stack::Destroy();
-    OpenHome::Net::Os::Destroy();
+    OpenHome::Os::Destroy();
 }
 
 std::vector<NetworkInterface*>* UpnpLibrary::SubnetList()

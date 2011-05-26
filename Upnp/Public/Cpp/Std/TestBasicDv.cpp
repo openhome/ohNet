@@ -8,6 +8,7 @@
 
 #include <string>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 class OpenHome::Net::ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1Cpp

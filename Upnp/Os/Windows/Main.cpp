@@ -8,8 +8,9 @@ extern "C" {
 #include <OhNet.h>
 #include <TestFramework.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace TestFramework;
+using namespace OpenHome::TestFramework;
 
 class Logger
 {
@@ -33,6 +34,6 @@ int __cdecl main(int argc, char* argv[])
     Logger logger;
     FunctorMsg functor = MakeFunctorMsg(logger, &Logger::Log);
     initParams->SetLogOutput(functor);
-    OpenHome::Net::TestFramework::Runner::Main(argc, argv, initParams);
+    Runner::Main(argc, argv, initParams);
     return 0;
 }

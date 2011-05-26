@@ -4,7 +4,7 @@
 #include <Thread.h>
 #include <Stack.h>
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 
 NetworkInterfaceList::NetworkInterfaceList(TIpAddress aDefaultSubnet)
@@ -12,9 +12,9 @@ NetworkInterfaceList::NetworkInterfaceList(TIpAddress aDefaultSubnet)
     , iListenerLock("MNIO")
     , iNextListenerId(1)
 {
-    Stack::AddObject(this, "NetworkInterfaceList");
+    Net::Stack::AddObject(this, "NetworkInterfaceList");
     iDefaultSubnet = aDefaultSubnet;
-    iNetworkInterfaces = Os::NetworkListInterfaces(Stack::InitParams().UseLoopbackNetworkInterface());
+    iNetworkInterfaces = Os::NetworkListInterfaces(Net::Stack::InitParams().UseLoopbackNetworkInterface());
     iSubnets = CreateSubnetList();
     UpdateCurrentInterface();
     Os::NetworkSetInterfaceChangedObserver(&InterfaceListChanged, this);
@@ -24,7 +24,7 @@ NetworkInterfaceList::~NetworkInterfaceList()
 {
     ClearInterfaces(iNetworkInterfaces);
     ClearInterfaces(iSubnets);
-    Stack::RemoveObject(this, "NetworkInterfaceList");
+    Net::Stack::RemoveObject(this, "NetworkInterfaceList");
 }
 
 NetworkInterface* NetworkInterfaceList::CurrentInterface() const
@@ -170,7 +170,7 @@ void NetworkInterfaceList::UpdateCurrentInterface()
 void NetworkInterfaceList::HandleInterfaceListChanged()
 {
     iListLock.Wait();
-    std::vector<NetworkInterface*>* list = Os::NetworkListInterfaces(Stack::InitParams().UseLoopbackNetworkInterface());
+    std::vector<NetworkInterface*>* list = Os::NetworkListInterfaces(Net::Stack::InitParams().UseLoopbackNetworkInterface());
     TIpAddress oldAddress = (iCurrent==NULL? 0 : iCurrent->Address());
     ClearInterfaces(iNetworkInterfaces);
     iNetworkInterfaces = list;

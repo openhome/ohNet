@@ -3,7 +3,7 @@
 #include <Stack.h>
 #include <Debug.h>
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 // Time
 
@@ -65,7 +65,7 @@ void Timer::FireAt(TUint aTime)
 
 void Timer::Cancel()
 {
-    TimerManager& mgr = Stack::TimerManager();
+    TimerManager& mgr = Net::Stack::TimerManager();
     mgr.CallbackLock();
     DoCancel();
     mgr.CallbackUnlock();
@@ -80,7 +80,7 @@ void Timer::DoCancel()
 
 Timer::~Timer()
 {
-    TimerManager& mgr = Stack::TimerManager();
+    TimerManager& mgr = Net::Stack::TimerManager();
     TBool lock = (Thread::Current() != mgr.Thread());
     if (lock) {
         mgr.CallbackLock();
@@ -225,7 +225,7 @@ void TimerManager::Fire()
     CallbackUnlock();
 }
 
-OpenHome::Net::Thread* TimerManager::Thread() const
+OpenHome::Thread* TimerManager::Thread() const
 {
     return iThreadHandle;
 }

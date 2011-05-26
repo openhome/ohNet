@@ -5,6 +5,7 @@
 #include <Buffer.h>
 #include <Functor.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 ServiceParameter ServiceParameterCreateInt(const char* aName, int32_t aMinValue, int32_t aMaxValue, int32_t aStep)

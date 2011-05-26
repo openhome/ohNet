@@ -11,8 +11,9 @@
 #include <vector>
 #include <sys/stat.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
 {
@@ -312,7 +313,7 @@ void DeviceBasic::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, 
 }
 
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     Brn emptyString("");

@@ -1,6 +1,6 @@
 #include <Queue.h>
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 // QueueBase
 

@@ -37,13 +37,13 @@ public:
     static void Destroy();
     static TBool IsInitialised();
 	static void GetVersion(TUint& aMajor, TUint& aMinor);
-    static OpenHome::Net::TimerManager& TimerManager();
+    static OpenHome::TimerManager& TimerManager();
     /**
      * Intended for /very/ short operations only
      */
-    static OpenHome::Net::Mutex& Mutex();
+    static OpenHome::Mutex& Mutex();
 
-    static OpenHome::Net::NetworkInterfaceList& NetworkInterfaceList();
+    static OpenHome::NetworkInterfaceList& NetworkInterfaceList();
     static SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
     static void MulticastListenerRelease(TIpAddress aInterface);
     static TUint SequenceNumber();
@@ -88,9 +88,9 @@ private:
     };
 private:
     InitialisationParams* iInitParams;
-    OpenHome::Net::TimerManager* iTimerManager;
-    OpenHome::Net::Mutex iPublicLock;
-    OpenHome::Net::NetworkInterfaceList* iNetworkInterfaceList;
+    OpenHome::TimerManager* iTimerManager;
+    OpenHome::Mutex iPublicLock;
+    OpenHome::NetworkInterfaceList* iNetworkInterfaceList;
     typedef std::vector<MListener*> MulticastListeners;
     MulticastListeners iMulticastListeners;
     TUint iSequenceNumber;
@@ -98,7 +98,7 @@ private:
     IStack* iDvStack;
     typedef std::map<Brn,ObjectType*,BufferCmp> ObjectTypeMap;
     ObjectTypeMap iObjectMap;
-    OpenHome::Net::Mutex iPrivateLock;
+    OpenHome::Mutex iPrivateLock;
 };
 
 } // namespace Net

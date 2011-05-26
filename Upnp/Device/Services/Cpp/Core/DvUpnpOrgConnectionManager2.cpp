@@ -4,6 +4,7 @@
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 TBool DvProviderUpnpOrgConnectionManager2::SetPropertySourceProtocolInfo(const Brx& aValue)

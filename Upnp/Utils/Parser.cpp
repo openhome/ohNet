@@ -1,7 +1,7 @@
 #include <Parser.h>
 #include <Ascii.h>
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 // Class Parser
 

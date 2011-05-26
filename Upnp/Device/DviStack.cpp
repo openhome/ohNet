@@ -8,6 +8,7 @@
 #include <Bonjour.h>
 #include <MdnsProvider.h> // replace this to allow clients to set an alternative Bonjour implementation
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // DviStack
@@ -39,7 +40,7 @@ DviStack::~DviStack()
 
 TUint DviStack::BootId()
 {
-    OpenHome::Net::Mutex& lock = Stack::Mutex();
+    OpenHome::Mutex& lock = Stack::Mutex();
     lock.Wait();
     DviStack* self = DviStack::Self();
     TUint id = self->iBootId;
@@ -49,7 +50,7 @@ TUint DviStack::BootId()
 
 TUint DviStack::NextBootId()
 {
-    OpenHome::Net::Mutex& lock = Stack::Mutex();
+    OpenHome::Mutex& lock = Stack::Mutex();
     lock.Wait();
     DviStack* self = DviStack::Self();
     TUint id = self->iNextBootId;
@@ -59,7 +60,7 @@ TUint DviStack::NextBootId()
 
 void DviStack::UpdateBootId()
 {
-    OpenHome::Net::Mutex& lock = Stack::Mutex();
+    OpenHome::Mutex& lock = Stack::Mutex();
     lock.Wait();
     DviStack* self = DviStack::Self();
     self->iBootId = self->iNextBootId;

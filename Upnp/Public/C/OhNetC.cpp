@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 int32_t OhNetLibraryInitialise(OhNetHandleInitParams aInitParams)

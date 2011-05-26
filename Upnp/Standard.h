@@ -5,7 +5,6 @@
 #include <Exception.h>
 
 namespace OpenHome {
-namespace Net {
 
 #define ASSERT(x)                             \
     if(!(x)) {                                \
@@ -23,7 +22,6 @@ private:
     void operator=(const INonCopyable &);
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_STANDARD

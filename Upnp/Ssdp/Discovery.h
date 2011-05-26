@@ -78,7 +78,7 @@ class SsdpListenerMulticast : public SsdpListener
     {
     public:
         TInt Id() const { return iId; }
-        OpenHome::Net::Mutex& Mutex() { return iLock; }
+        OpenHome::Mutex& Mutex() { return iLock; }
         void Lock() { iLock.Wait(); }
         void Unlock() { iLock.Signal(); }
         void Disable() { iDead = true; }
@@ -88,7 +88,7 @@ class SsdpListenerMulticast : public SsdpListener
     private:
         TBool iDead;
         TInt iId;
-        OpenHome::Net::Mutex iLock;
+        OpenHome::Mutex iLock;
     };
     class NotifyHandler : public Handler
     {
@@ -128,7 +128,7 @@ private:
 private:
     VectorNotifyHandler iNotifyHandlers;
     VectorMsearchHandler iMsearchHandlers;
-    Mutex iLock;
+    OpenHome::Mutex iLock;
     TInt iNextHandlerId;
     TIpAddress iInterface;
     SsdpSocketReader iSocket;

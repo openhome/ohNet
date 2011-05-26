@@ -49,7 +49,7 @@
 #include <Arch.h>
 #include <stdlib.h>
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 static const TUint kMersennePoint = 397;
 static const TUint kMaxRandomIndex = 624;
@@ -63,7 +63,7 @@ TUint Twiddle(TUint u, TUint v)
     return (((u & 0x80000000UL) | (v & 0x7FFFFFFFUL)) >> 1) ^ ((v & 1UL) ? 0x9908B0DFUL : 0x0UL);
 }
 
-void OpenHome::Net::SetRandomSeed(const Brx& aSeed)
+void OpenHome::SetRandomSeed(const Brx& aSeed)
 {
     ASSERT(aSeed.Bytes() >= 4);
     
@@ -83,7 +83,7 @@ void OpenHome::Net::SetRandomSeed(const Brx& aSeed)
     SetRandomSeed(seed);
 }
 
-void OpenHome::Net::SetRandomSeed(TUint aSeed)
+void OpenHome::SetRandomSeed(TUint aSeed)
 {
     srand(aSeed);
     gRandomState[0] = aSeed;
@@ -97,7 +97,7 @@ void OpenHome::Net::SetRandomSeed(TUint aSeed)
     gRandomSeedSet = true;
 }
 
-TUint OpenHome::Net::Random(TUint aMaxValue, TUint aMinValue)
+TUint OpenHome::Random(TUint aMaxValue, TUint aMinValue)
 {
     ASSERT(aMaxValue > aMinValue);
 

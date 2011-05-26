@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 // Sxx
 

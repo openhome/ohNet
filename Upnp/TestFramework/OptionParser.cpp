@@ -5,8 +5,8 @@
 
 #include <string.h>
 
-using namespace OpenHome::Net;
-using namespace TestFramework;
+using namespace OpenHome;
+using namespace OpenHome::TestFramework;
 
 
 // Option

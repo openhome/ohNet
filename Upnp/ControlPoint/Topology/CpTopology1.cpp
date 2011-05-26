@@ -2,6 +2,7 @@
 
 #include <Debug.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // CpTopology1Job

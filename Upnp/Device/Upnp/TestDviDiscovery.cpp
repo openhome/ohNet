@@ -11,8 +11,9 @@
 #include <stdlib.h>
 #include <vector>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 class CpListenerBasic : public ISsdpNotifyHandler
 {
@@ -699,7 +700,7 @@ void SuiteMsearch::TestMsearchServiceType()
 }
 
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");

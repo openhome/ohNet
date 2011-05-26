@@ -5,6 +5,7 @@
 #include <Core/DvDevice.h>
 #include <FunctorDviInvocation.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 class DvProviderWrapper : public DvProvider

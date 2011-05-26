@@ -10,6 +10,7 @@
 #include <Printer.h>
 #include <Stack.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // CpiDeviceDv
@@ -67,7 +68,7 @@ TBool CpiDeviceDv::GetAttribute(const char* aKey, Brh& aValue) const
     return false;
 }
 
-TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const Uri& /*aSubscriber*/)
+TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri& /*aSubscriber*/)
 {
     iSubscriptionCp = &aSubscription;
     Brh sid;

@@ -11,8 +11,9 @@
 
 #include <vector>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 class ProviderTestBasic : public DvProviderOpenhomeOrgTestBasic1
 {
@@ -410,7 +411,7 @@ static void TestSubscription(CpDevice& aDevice)
     delete proxy; // automatically unsubscribes
 }
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartCombined();

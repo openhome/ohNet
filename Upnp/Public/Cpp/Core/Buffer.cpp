@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 const TUint kMinBwdMaxBytes = 4;
 

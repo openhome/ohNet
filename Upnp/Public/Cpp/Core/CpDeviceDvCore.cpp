@@ -2,6 +2,7 @@
 #include <CpiDeviceDv.h>
 #include <DviDevice.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 CpDeviceDv* CpDeviceDv::New(DvDevice& aDevice)

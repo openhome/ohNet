@@ -6,6 +6,7 @@
 
 #include <string>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // DvDeviceStd

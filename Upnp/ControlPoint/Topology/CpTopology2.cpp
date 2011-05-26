@@ -5,6 +5,7 @@
 #include <Ascii.h>
 #include <XmlParser.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // CpTopology2Source

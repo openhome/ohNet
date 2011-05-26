@@ -8,8 +8,8 @@
 #include <Arch.h>
 #include <Stack.h>
 
-using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome;
+using namespace OpenHome::TestFramework;
 
 // SuiteTcpClient
 
@@ -51,9 +51,9 @@ public:
                 catch (ReaderError&) {}
                 break;
             }
-            Stack::Mutex().Wait();
+            Net::Stack::Mutex().Wait();
             iTestDone = true;
-            Stack::Mutex().Signal();
+            Net::Stack::Mutex().Signal();
             iControllerSem.Signal();
         }
         LOG(kNetwork, "<TestServerSession::Run\n");
@@ -78,9 +78,9 @@ public:
 
     TBool TestDone()
     {
-        Stack::Mutex().Wait();
+        Net::Stack::Mutex().Wait();
         TBool done = iTestDone;
-        Stack::Mutex().Signal();
+        Net::Stack::Mutex().Signal();
         return done;
     }
     const Brx& Buffer() { return iBuffer; }
@@ -714,7 +714,7 @@ void MainTestThread::Run()
     Signal();
 }
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionUint adapter("-i", "--interface", 0, "index of network adapter to use");
@@ -723,7 +723,7 @@ void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Init
         return;
     }
 
-    UpnpLibrary::InitialiseMinimal(aInitParams);
+    Net::UpnpLibrary::InitialiseMinimal(aInitParams);
 
     std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(true);
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
@@ -742,5 +742,5 @@ void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Init
     delete th;
 
     delete aInitParams;
-    UpnpLibrary::Close();
+    Net::UpnpLibrary::Close();
 }

@@ -11,8 +11,9 @@
 #include <Core/FunctorCpDevice.h>
 #include <XmlParser.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 class DeviceListLogger
 {
@@ -45,7 +46,7 @@ void DeviceListLogger::Removed(CpDevice& /*aDevice*/)
 }
 
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionString service("-s", "--service", Brn(""), "Search for a service of the form [domain]:service:[type]:[ver]");

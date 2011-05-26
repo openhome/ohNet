@@ -108,7 +108,7 @@ private:
     void Renew();
 private:
     CpiDevice& iDevice;
-    Mutex iLock;
+    OpenHome::Mutex iLock;
     TUint iPendingInvocations;
     Semaphore iShutdownSignal;
     TBool iInterrupt;
@@ -363,7 +363,7 @@ private:
     static void OutputArgument(IAsyncOutput& aConsole, const TChar* aKey, const Argument& aArgument);
     virtual TUint Type() const;
 private:
-    Mutex iLock;
+    OpenHome::Mutex iLock;
     Fifo<OpenHome::Net::Invocation*>& iFree;
     CpiService* iService;
     const OpenHome::Net::Action* iAction;
@@ -406,7 +406,7 @@ private:
 private:
     Fifo<Invoker*>& iFree;
     Invocation* iInvocation;
-    Mutex iLock;
+    OpenHome::Mutex iLock;
 };
 
 /**
@@ -424,7 +424,7 @@ private:
     static InvocationManager& Self();
     void Run();
 private:
-    Mutex iLock;
+    OpenHome::Mutex iLock;
     Fifo<OpenHome::Net::Invocation*> iFreeInvocations;
     Fifo<OpenHome::Net::Invocation*> iWaitingInvocations;
     Fifo<Invoker*> iFreeInvokers;

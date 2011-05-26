@@ -31,8 +31,9 @@ int mygetch(void)
 	return ch;
 }
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 using namespace Openhome::Av;
 

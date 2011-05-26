@@ -1,6 +1,7 @@
 #include <Std/CpDevice.h>
 #include <CpiDevice.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // CpDevice

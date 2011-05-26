@@ -1,6 +1,6 @@
 #include <Ascii.h>
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 const Brn kAsciiNewline("\r\n");
 const Brn kAsciiHexPrefix("0x");
@@ -658,17 +658,16 @@ void WriterAscii::WriteFlush()
 
 // Static functions
 
-void OpenHome::Net::Ascii::StreamWriteUint(IWriter& aStream, TUint aValue)
+void OpenHome::Ascii::StreamWriteUint(IWriter& aStream, TUint aValue)
 {
     Bws<Ascii::kMaxUintStringBytes> value;
     Ascii::AppendDec(value, aValue);
     aStream.Write(value);
 }
 
-void OpenHome::Net::Ascii::StreamWriteInt(IWriter& aStream, TInt aValue)
+void OpenHome::Ascii::StreamWriteInt(IWriter& aStream, TInt aValue)
 {
     Bws<Ascii::kMaxIntStringBytes> value;
     Ascii::AppendDec(value, aValue);
     aStream.Write(value);
 }
-

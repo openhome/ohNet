@@ -7,6 +7,7 @@
 
 #include "Product.h"
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 using namespace Openhome::Av;

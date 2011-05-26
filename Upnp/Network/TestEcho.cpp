@@ -6,8 +6,8 @@
 #include <Stream.h>
 #include <OsWrapper.h>
 
-using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome;
+using namespace OpenHome::TestFramework;
 
 class EchoSession : public SocketTcpSession
 {
@@ -49,9 +49,9 @@ private:
 };
 
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    UpnpLibrary::Initialise(aInitParams);
+    Net::UpnpLibrary::Initialise(aInitParams);
 //    Debug::SetLevel(Debug::kNetwork);
 
     std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
@@ -68,6 +68,6 @@ void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/
     sem.Wait();
     delete ifs;
 
-    UpnpLibrary::Close();
+    Net::UpnpLibrary::Close();
 }
 

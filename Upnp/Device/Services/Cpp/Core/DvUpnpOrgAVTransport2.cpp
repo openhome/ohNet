@@ -4,6 +4,7 @@
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 TBool DvProviderUpnpOrgAVTransport2::SetPropertyLastChange(const Brx& aValue)

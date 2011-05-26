@@ -1,7 +1,6 @@
 #include <Fifo.h>
 
-
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 // FifoBase
 
@@ -210,4 +209,3 @@ TUint FifoLiteBase::Read()
     iSlotsUsed--;
     return index;
 }
-

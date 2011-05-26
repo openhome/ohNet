@@ -7,14 +7,14 @@
 #include <OsWrapper.h>
 #include <Arch.h>
 
-using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome;
+using namespace OpenHome::TestFramework;
 
 // SuiteTcpClient
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::InitialisationParams* aInitParams)
 {
-    OptionParser parser;
+    OptionParser parser;    
 
     OptionUint adapter("-i", "--interface", 0, "index of network adapter to use");
     parser.AddOption(&adapter);
@@ -32,7 +32,7 @@ void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Init
         return;
     }
 
-    UpnpLibrary::InitialiseMinimal(aInitParams);
+    Net::UpnpLibrary::InitialiseMinimal(aInitParams);
 
     std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
@@ -84,5 +84,5 @@ void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Init
         }
     } 
 
-    UpnpLibrary::Close();
+    Net::UpnpLibrary::Close();
 }

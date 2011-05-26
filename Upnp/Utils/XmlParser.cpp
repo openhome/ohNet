@@ -4,6 +4,7 @@
 #include <Ascii.h>
 #include <Parser.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 Brn XmlParserBasic::Find(const TChar* aTag, const Brx& aDocument)

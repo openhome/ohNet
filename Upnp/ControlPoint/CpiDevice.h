@@ -42,7 +42,7 @@ class ICpiProtocol : public IInvocable
 {
 public:
     virtual TBool GetAttribute(const char* aKey, Brh& aValue) const = 0;
-    virtual TUint Subscribe(CpiSubscription& aSubscription, const Uri& aSubscriber) = 0;
+    virtual TUint Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri& aSubscriber) = 0;
     virtual TUint Renew(CpiSubscription& aSubscription) = 0;
     virtual void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid) = 0;
 };
@@ -130,7 +130,7 @@ private:
     virtual ~CpiDevice();
 private:
     Brhz iUdn;
-    Mutex iLock;
+    OpenHome::Mutex iLock;
     ICpiProtocol& iProtocol;
     ICpiDeviceObserver& iObserver;
     void* iOwnerData;
@@ -247,7 +247,7 @@ protected:
     TBool iRefreshing;
     Map iMap;
     Map iRefreshMap;
-    mutable Mutex iLock;
+    mutable OpenHome::Mutex iLock;
 private:
     FunctorCpiDevice iAdded;
     FunctorCpiDevice iRemoved;
@@ -304,7 +304,7 @@ private:
     static void Queue(UpdateBase* aUpdate);
     void Run();
 private:
-    Mutex iLock;
+    OpenHome::Mutex iLock;
     std::list<UpdateBase*> iList;
 };
 

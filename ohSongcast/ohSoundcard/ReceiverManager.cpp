@@ -5,6 +5,7 @@
 #include <Arch.h>
 #include <Debug.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 #ifdef _WIN32

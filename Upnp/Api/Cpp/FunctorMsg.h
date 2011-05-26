@@ -6,7 +6,6 @@
 #include <string.h>
 
 namespace OpenHome {
-namespace Net {
 
 typedef void (*OhNetFunctorMsg)(void* aPtr, const char* aMsg);
 
@@ -112,7 +111,6 @@ MakeFunctorMsgC(void* aPtr, OhNetFunctorMsg aCallback)
     return FunctionTranslatorMsg(aPtr, aCallback);
     }
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_IFACE_MSG

@@ -4,6 +4,7 @@
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 bool DvProviderUpnpOrgContentDirectory3Cpp::SetPropertySystemUpdateID(uint32_t aValue)

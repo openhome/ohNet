@@ -17,8 +17,9 @@
 #include <string>
 #include <vector>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 const TUint kDevicePollMs = 1000;
 static TUint gActionCount = 0;
@@ -183,7 +184,7 @@ void DeviceList::Removed(CpDeviceCpp& aDevice)
 }
 
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     FunctorAsync dummy;
     /* Set an empty handler for errors to avoid test output being swamped by expected

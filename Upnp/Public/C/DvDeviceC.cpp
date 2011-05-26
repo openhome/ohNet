@@ -2,6 +2,7 @@
 #include <Core/DvDevice.h>
 #include <C/DviDeviceC.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // DviDeviceC

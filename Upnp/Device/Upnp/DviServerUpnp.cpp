@@ -18,6 +18,7 @@
 #include <Stack.h>
 #include <Error.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 //static const Brn kServerDescription("UPnP/1.1, ohNet UPnP Stack/3.0");
@@ -148,7 +149,7 @@ void HeaderCallback::Process(const Brx& aValue)
     Brn address = parser.Next(':');
     Brn port = parser.Next('/');
     try {
-        iEndpoint = OpenHome::Net::Endpoint(Ascii::Uint(port), address);
+        iEndpoint = OpenHome::Endpoint(Ascii::Uint(port), address);
     }
     catch (AsciiError) {
         THROW(HttpError);

@@ -9,8 +9,9 @@
 #include <OsWrapper.h>
 #include "CpTopology3.h"
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 class TestDevice : public ICpTopology2GroupHandler
 {
@@ -362,7 +363,7 @@ void TestTopology3Handler::RoomRemoved(CpTopology3Room& aRoom)
     Add(Brn("Removed"), aRoom.Name(), Brx::Empty());
 }
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::Initialise(aInitParams);
 

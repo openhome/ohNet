@@ -4,6 +4,7 @@
 #include <Thread.h>
 #include <CpProxy.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 FunctorAsync& SyncProxyAction::Functor()

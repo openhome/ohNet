@@ -12,8 +12,9 @@
 #include <C/TestBasicDv.h>
 #include <C/TestBasicCp.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 
 extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)

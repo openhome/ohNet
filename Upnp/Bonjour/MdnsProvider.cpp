@@ -1,6 +1,7 @@
 #include <MdnsProvider.h>
 #include <OhNetTypes.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 MdnsProvider::MdnsProvider(const TChar* aHost)

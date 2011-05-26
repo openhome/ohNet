@@ -13,7 +13,6 @@ EXCEPTION(NetworkError);
 EXCEPTION(NetworkTimeout);
 
 namespace OpenHome {
-namespace Net {
 
 enum ESocketType
 {
@@ -260,8 +259,6 @@ private:
     TBool iOpen;
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_NETWORK
-
