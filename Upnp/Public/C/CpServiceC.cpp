@@ -8,6 +8,7 @@
 #include <FunctorAsync.h>
 #include <Printer.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 CpService CpServiceCreate(const char* aDomain, const char* aName, uint32_t aVersion, CpDeviceC aDevice)

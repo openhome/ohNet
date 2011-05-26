@@ -18,15 +18,15 @@
 EXCEPTION(XmlFetchError);
 
 namespace OpenHome {
+class SocketTcpClient;
 namespace Net {
 
-class SocketTcpClient;
 class XmlFetch : public Async
 {
 public:
-    void Set(OpenHome::Net::Uri* aUri, FunctorAsync& aFunctor);
+    void Set(OpenHome::Uri* aUri, FunctorAsync& aFunctor);
     ~XmlFetch();
-    const OpenHome::Net::Uri& Uri() const;
+    const OpenHome::Uri& Uri() const;
     void SignalCompleted();
     void SetError(Error::ELevel aLevel, TUint aCode, const Brx& aDescription);
     static Bwh& Xml(IAsync& aAsync);
@@ -42,14 +42,14 @@ private:
     virtual TUint Type() const;
 private:
     static const TUint kRwBufferLength = 1024;
-    OpenHome::Net::Uri* iUri;
+    OpenHome::Uri* iUri;
     FunctorAsync iFunctor;
     TUint iSequenceNumber;
     Bwh iXml;
     OpenHome::Net::Error iError;
-    mutable Mutex iLock;
+    mutable OpenHome::Mutex iLock;
     TBool iInterrupted;
-    SocketTcpClient* iSocket;
+    OpenHome::SocketTcpClient* iSocket;
 
     friend class XmlFetchManager;
 };
@@ -79,7 +79,7 @@ private:
     static XmlFetchManager& Self();
     void Run();
 private:
-    Mutex iLock;
+    OpenHome::Mutex iLock;
     std::list<XmlFetch*> iList;
     Fifo<XmlFetcher*> iFree;
     XmlFetcher** iFetchers;

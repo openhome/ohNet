@@ -3,7 +3,7 @@
 #include <Buffer.h>
 #include <Stream.h>
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 void Converter::ToXmlEscaped(IWriter& aWriter, TByte aValue)
 {

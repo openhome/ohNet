@@ -2,6 +2,7 @@
 #include <OhNetTypes.h>
 #include <Buffer.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 BonjourWebPage::BonjourWebPage(IMdnsProvider& aMdns)

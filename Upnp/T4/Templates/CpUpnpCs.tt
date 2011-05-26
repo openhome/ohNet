@@ -521,8 +521,6 @@ string DeclareCtorLocalVars(Document u)
     bool hasParameters = false;
     bool hasAllowedValues = false;
 
-    string result = "";
-
     foreach (Method a in u.methods)
     {
         foreach (Argument i in a.inargs)

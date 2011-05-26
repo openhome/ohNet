@@ -2,12 +2,13 @@
 #include <CpiService.h>
 #include <Thread.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 void CpProxy::Subscribe()
 {
     if (iInitialEventLock == NULL) {
-        iInitialEventLock = new Mutex("PRX4");
+        iInitialEventLock = new OpenHome::Mutex("PRX4");
     }
     iLock->Wait();
     iCpSubscriptionStatus = eSubscribing;
@@ -28,9 +29,9 @@ CpProxy::CpProxy(const TChar* aDomain, const TChar* aName, TUint aVersion, CpiDe
 {
     iService = new CpiService(aDomain, aName, aVersion, aDevice);
     iCpSubscriptionStatus = eNotSubscribed;
-    iLock = new Mutex("PRX1");
-    iPropertyReadLock = new Mutex("PRX2");
-    iPropertyWriteLock = new Mutex("PRX3");
+    iLock = new OpenHome::Mutex("PRX1");
+    iPropertyReadLock = new OpenHome::Mutex("PRX2");
+    iPropertyWriteLock = new OpenHome::Mutex("PRX3");
     iInitialEventDelivered = false;
     iInitialEventLock = NULL;
 }

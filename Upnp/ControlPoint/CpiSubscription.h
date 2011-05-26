@@ -124,7 +124,7 @@ private: // IEventProcessor
     void EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor);
     void EventUpdateEnd();
 private:
-    Mutex iLock;
+    OpenHome::Mutex iLock;
     CpiDevice& iDevice;
     IEventProcessor* iEventProcessor;
     OpenHome::Net::ServiceType iServiceType;
@@ -211,7 +211,7 @@ private:
     void HandleInterfaceChange(TBool aNewSubnet);
     void Run();
 private:
-    Mutex iLock;
+    OpenHome::Mutex iLock;
     std::list<CpiSubscription*> iList;
     Fifo<Subscriber*> iFree;
     Subscriber** iSubscribers;

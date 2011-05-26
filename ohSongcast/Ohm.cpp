@@ -1,5 +1,6 @@
 #include "Ohm.h"
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // OhmSocket

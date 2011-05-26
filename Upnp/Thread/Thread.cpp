@@ -4,7 +4,7 @@
 #include <exception>
 #include <Stack.h>
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 //
 // Semaphore
@@ -12,7 +12,7 @@ using namespace OpenHome::Net;
 
 Semaphore::Semaphore(const TChar* aName, TUint aCount)
 {
-    iHandle = OpenHome::Net::Os::SemaphoreCreate(aName, aCount);
+    iHandle = OpenHome::Os::SemaphoreCreate(aName, aCount);
     if (iHandle == kHandleNull) {
         throw std::bad_alloc();
     }
@@ -20,12 +20,12 @@ Semaphore::Semaphore(const TChar* aName, TUint aCount)
 
 Semaphore::~Semaphore()
 {
-    OpenHome::Net::Os::SemaphoreDestroy(iHandle);
+    OpenHome::Os::SemaphoreDestroy(iHandle);
 }
 
 void Semaphore::Wait()
 {
-    OpenHome::Net::Os::SemaphoreWait(iHandle);
+    OpenHome::Os::SemaphoreWait(iHandle);
 }
 
 void Semaphore::Wait(TUint aTimeoutMs)
@@ -34,7 +34,7 @@ void Semaphore::Wait(TUint aTimeoutMs)
         return (Wait());
     }
     ASSERT(iHandle != kHandleNull);
-    if (!OpenHome::Net::Os::SemaphoreTimedWait(iHandle, aTimeoutMs)) {
+    if (!OpenHome::Os::SemaphoreTimedWait(iHandle, aTimeoutMs)) {
         THROW(Timeout);
     }
 }
@@ -42,12 +42,12 @@ void Semaphore::Wait(TUint aTimeoutMs)
 TBool Semaphore::Clear()
 {
     ASSERT(iHandle != kHandleNull);
-    return OpenHome::Net::Os::SemaphoreClear(iHandle);
+    return OpenHome::Os::SemaphoreClear(iHandle);
 }
 
 void Semaphore::Signal()
 {
-    OpenHome::Net::Os::SemaphoreSignal(iHandle);
+    OpenHome::Os::SemaphoreSignal(iHandle);
 }
 
 //
@@ -56,7 +56,7 @@ void Semaphore::Signal()
 
 Mutex::Mutex(const TChar* aName)
 {
-    iHandle = OpenHome::Net::Os::MutexCreate(aName);
+    iHandle = OpenHome::Os::MutexCreate(aName);
     if (iHandle == kHandleNull) {
         throw std::bad_alloc();
     }
@@ -66,12 +66,12 @@ Mutex::Mutex(const TChar* aName)
 
 Mutex::~Mutex()
 {
-    OpenHome::Net::Os::MutexDestroy(iHandle);
+    OpenHome::Os::MutexDestroy(iHandle);
 }
 
 void Mutex::Wait()
 {
-    TInt err = OpenHome::Net::Os::MutexLock(iHandle);
+    TInt err = OpenHome::Os::MutexLock(iHandle);
     if (err != 0) {
         const char* msg;
         if (err == -1) {
@@ -94,7 +94,7 @@ void Mutex::Wait()
 
 void Mutex::Signal()
 {
-    OpenHome::Net::Os::MutexUnlock(iHandle);
+    OpenHome::Os::MutexUnlock(iHandle);
 }
 
 //
@@ -158,7 +158,7 @@ void SemaphoreActive::ConsumeAll()
 // Thread
 //
 
-const TUint OpenHome::Net::Thread::kDefaultStackBytes = 16 * 1024;
+const TUint OpenHome::Thread::kDefaultStackBytes = 16 * 1024;
 
 Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     : iHandle(kHandleNull)
@@ -182,7 +182,7 @@ Thread::~Thread()
     LOG(kThread, "> Thread::~Thread() called for thread: %p\n", this);
     Kill();
     Join();
-    OpenHome::Net::Os::ThreadDestroy(iHandle);
+    OpenHome::Os::ThreadDestroy(iHandle);
     LOG(kThread, "< Thread::~Thread() called for thread: %p\n", this);
 }
 
@@ -190,7 +190,7 @@ void Thread::Start()
 {
     TChar name[kNameBytes+1] = {0};
     (void)memcpy(name, iName.Ptr(), iName.Bytes());
-    iHandle = OpenHome::Net::Os::ThreadCreate(name, iPriority, iStackBytes, &Thread::EntryPoint, this);
+    iHandle = OpenHome::Os::ThreadCreate(name, iPriority, iStackBytes, &Thread::EntryPoint, this);
 }
 
 void Thread::EntryPoint(void* aArg)
@@ -243,19 +243,19 @@ void Thread::Sleep(TUint aMilliSecs)
 
 Thread* Thread::Current()
 { // static
-    return (Thread*)OpenHome::Net::Os::ThreadTls();
+    return (Thread*)OpenHome::Os::ThreadTls();
 }
 
 TBool Thread::SupportsPriorities()
 { // static
-    return OpenHome::Net::Os::ThreadSupportsPriorities();
+    return OpenHome::Os::ThreadSupportsPriorities();
 }
 
 void Thread::CheckForKill() const
 {
-    Stack::Mutex().Wait();
+    Net::Stack::Mutex().Wait();
     TBool kill = iKill;
-    Stack::Mutex().Signal();
+    Net::Stack::Mutex().Signal();
     if (kill) {
         THROW(ThreadKill);
     }
@@ -264,9 +264,9 @@ void Thread::CheckForKill() const
 void Thread::Kill()
 {
     LOG(kThread, "Thread::Kill() called for thread: %p\n", this);
-    Stack::Mutex().Wait();
+    Net::Stack::Mutex().Wait();
     iKill = true;
-    Stack::Mutex().Signal();
+    Net::Stack::Mutex().Signal();
     Signal();
 }
 

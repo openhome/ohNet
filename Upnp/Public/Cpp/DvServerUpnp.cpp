@@ -3,6 +3,7 @@
 #include <DviDevice.h>
 #include <DviServerUpnp.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 DvServerUpnp::DvServerUpnp()

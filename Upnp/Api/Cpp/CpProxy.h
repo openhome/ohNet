@@ -11,11 +11,11 @@
 EXCEPTION(ProxyError);
 
 namespace OpenHome {
+class Mutex;
 namespace Net {
 
 class CpiDevice;
 class CpiService;
-class Mutex;
 class IOutputProcessor;
 class IInvocable;
 class Property;

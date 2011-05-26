@@ -17,8 +17,9 @@
 #include <Timer.h>
 #include <Stack.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 class SsdpNotifyLogger : public ISsdpNotifyHandler
 {
@@ -243,7 +244,7 @@ void SuiteListen::TimerExpired()
 }
 
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionUint duration("-d", "--duration", 30, "Number of seconds to listen for.  Defaults to 30");

@@ -9,7 +9,6 @@ EXCEPTION(ReaderError);
 EXCEPTION(WriterError);
 
 namespace OpenHome {
-namespace Net {
 
 class IReader
 {
@@ -217,7 +216,6 @@ private:
     IWriter& iWriter;
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_STREAM

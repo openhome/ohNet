@@ -59,6 +59,7 @@
 
 #include <string>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 <#  foreach (Method a in u.methods) #>
 <#  { #>

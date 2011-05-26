@@ -2,8 +2,8 @@
 #include <Fifo.h>
 #include <Thread.h>
 
-using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome;
+using namespace OpenHome::TestFramework;
 
 class I
 {
@@ -362,9 +362,9 @@ void SuiteFifoLiteBasic::Test()
     TEST(q2.SlotsUsed() == 0);
 }
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    UpnpLibrary::InitialiseMinimal(aInitParams);
+    Net::UpnpLibrary::InitialiseMinimal(aInitParams);
 
     Debug::SetLevel(Debug::kNone);
 
@@ -375,5 +375,5 @@ void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/
     runner.Run();
 
     delete aInitParams;
-    UpnpLibrary::Close();
+    Net::UpnpLibrary::Close();
 }

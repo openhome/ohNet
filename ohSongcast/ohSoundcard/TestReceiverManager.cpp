@@ -13,7 +13,8 @@
 
 #include "ReceiverManager.h"
 
-namespace Zapp {
+namespace OpenHome {
+namespace Net {
 
 	class ReceiverManagerLogger
 	{
@@ -26,10 +27,11 @@ namespace Zapp {
 		ReceiverManager* iReceiverManager;
 	};
 
-}
+} // namespace Net
+} // namespace OpenHome
 
-using namespace Zapp;
-using namespace Zapp::TestFramework;
+using namespace OpenHome;
+using namespace OpenHome::TestFramework;
 
 ReceiverManagerLogger::ReceiverManagerLogger(const Brx& aReceiverName)
 {

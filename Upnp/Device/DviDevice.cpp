@@ -7,6 +7,7 @@
 #include <DviDeviceUpnp.h> // for DviDeviceUpnp ctor only
 #include <DviStack.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // DviDevice

@@ -6,6 +6,7 @@
 #include <Stack.h>
 #include <Thread.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // OpenHome::Net::Parameter

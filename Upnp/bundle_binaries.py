@@ -36,7 +36,7 @@ def main():
     templateDir = "T4/Templates"
     uisdkDir = "Public/Js/WebUIsdk"
 
-    bundle_fileprefix = "ohnet-%s%s" % (targetname, "-dev" if options.dev else "")
+    bundle_fileprefix = "ohNet-%s%s" % (targetname, "-dev" if options.dev else "")
     bundle_filename = bundle_fileprefix + ".tar.gz"
     bundle_path = path.join(outputdir, bundle_filename)
 

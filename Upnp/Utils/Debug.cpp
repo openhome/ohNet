@@ -3,7 +3,7 @@
 #include <Buffer.h>
 #include <Debug.h>
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 TUint Debug::iLevel = Debug::kNone;
 TBool Debug::iBreak = false;
@@ -42,13 +42,12 @@ AutoLog::AutoLog(TUint aLevel, const TChar* aString)
     : iLevel(aLevel)
     , iString(aString)
 {
-    if( OpenHome::Net::Debug::TestLevel(iLevel) )
-        OpenHome::Net::Log::Print(">%s\n", iString);
+    if( OpenHome::Debug::TestLevel(iLevel) )
+        OpenHome::Log::Print(">%s\n", iString);
 }
 
 AutoLog::~AutoLog()
 {
-    if( OpenHome::Net::Debug::TestLevel(iLevel) )
-        OpenHome::Net::Log::Print("<%s\n", iString);
+    if( OpenHome::Debug::TestLevel(iLevel) )
+        OpenHome::Log::Print("<%s\n", iString);
 }
-

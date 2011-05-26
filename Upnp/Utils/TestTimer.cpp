@@ -2,8 +2,8 @@
 #include <Timer.h>
 #include <Maths.h>
 
-using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome;
+using namespace OpenHome::TestFramework;
 
 #ifdef _WIN32
 # pragma warning(disable:4355) // use of 'this' in ctor lists safe in this case
@@ -257,9 +257,9 @@ void SuiteModerator::Test()
     TEST(iCallbacks == 1);
 }
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    UpnpLibrary::Initialise(aInitParams);
+    Net::UpnpLibrary::Initialise(aInitParams);
 
     //Debug::SetLevel(Debug::kTimer);
     Runner runner("Timer testing\n");
@@ -268,5 +268,5 @@ void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/
     runner.Add(new SuiteModerator());
     runner.Run();
 
-    UpnpLibrary::Close();
+    Net::UpnpLibrary::Close();
 }

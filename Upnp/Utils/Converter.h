@@ -6,7 +6,6 @@
 #include <Stream.h>
 
 namespace OpenHome {
-namespace Net {
 
 /**
  * Utilities for converting to/from base64 and (un)escaping XML
@@ -29,7 +28,6 @@ public:
     static void FromXmlEscaped(Bwx& aValue);
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_CONVERTER

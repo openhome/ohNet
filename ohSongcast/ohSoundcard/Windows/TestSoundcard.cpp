@@ -21,8 +21,9 @@ int mygetch()
     return (_getch());
 }
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 int __cdecl main(int aArgc, char* aArgv[])
 {

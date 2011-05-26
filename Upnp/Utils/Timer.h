@@ -8,7 +8,6 @@
 #include <Functor.h>
 
 namespace OpenHome {
-namespace Net {
 
 class Time
 {
@@ -55,7 +54,7 @@ public:
 private:
     void Run();
     void Fire();
-    OpenHome::Net::Thread* Thread() const;
+    OpenHome::Thread* Thread() const;
     virtual void HeadChanged(QueueSortedEntry& aEntry);
     virtual TInt Compare(QueueSortedEntry& aEntry1, QueueSortedEntry& aEntry2);
 private:
@@ -69,7 +68,7 @@ private:
     TBool iStop;
     Semaphore iStopped;
     Mutex iCallbackMutex;
-    OpenHome::Net::Thread* iThreadHandle;
+    OpenHome::Thread* iThreadHandle;
 };
 
 class Moderator
@@ -87,7 +86,6 @@ private:
     TUint iModerationMs;
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_TIMER

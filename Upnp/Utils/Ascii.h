@@ -21,7 +21,6 @@
 EXCEPTION(AsciiError);
 
 namespace OpenHome {
-namespace Net {
 
 class Ascii
 {
@@ -174,8 +173,6 @@ protected:
     IWriter& iWriter;
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_ASCII_ASCII
-

@@ -15,8 +15,9 @@
 #include <UpnpOrgConnectionManager1.h>
 #include <LinnCoUkPlaylist1.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 class DeviceListLogger
 {
@@ -230,10 +231,10 @@ void PropertyLogger::LogShuffle()
 }
 
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    UpnpLibrary::Initialise(aInitParams);
-    UpnpLibrary::StartCp();
+    Net::UpnpLibrary::Initialise(aInitParams);
+    Net::UpnpLibrary::StartCp();
     Debug::SetLevel(Debug::kNone);
 
     Blocker* blocker = new Blocker;
@@ -279,5 +280,5 @@ void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/
     delete propertyLogger;
 
     delete blocker;
-    UpnpLibrary::Close();
+    Net::UpnpLibrary::Close();
 }

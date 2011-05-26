@@ -16,6 +16,7 @@
 #include <Parser.h>
 #include <MimeTypes.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // DviDeviceUpnp

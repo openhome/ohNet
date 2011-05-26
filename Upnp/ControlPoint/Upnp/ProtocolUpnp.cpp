@@ -8,6 +8,7 @@
 #include <CpiSubscription.h>
 #include <Subscription.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // InvocationUpnp

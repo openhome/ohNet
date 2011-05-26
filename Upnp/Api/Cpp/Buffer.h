@@ -9,7 +9,6 @@ EXCEPTION(BufferFull);
 EXCEPTION(BufferOverflow);
 
 namespace OpenHome {
-namespace Net {
 
 class Brn;
 
@@ -194,7 +193,6 @@ public:
 
 #include <Buffer.inl>
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif

@@ -9,6 +9,7 @@
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 class DvProviderUpnpOrgRenderingControl1C : public DvProvider

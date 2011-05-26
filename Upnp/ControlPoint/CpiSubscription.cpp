@@ -18,6 +18,7 @@
 #include <vector>
 #include <stdlib.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // Subscription

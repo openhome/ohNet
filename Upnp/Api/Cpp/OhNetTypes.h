@@ -4,7 +4,6 @@
 #include <OsTypes.h>
 
 namespace OpenHome {
-namespace Net {
 
 typedef char TChar;
 typedef bool TBool;
@@ -26,7 +25,6 @@ typedef uint32_t TUint;
 typedef int32_t TInt;
 typedef int32_t TStatus;
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif //HEADER_TYPES

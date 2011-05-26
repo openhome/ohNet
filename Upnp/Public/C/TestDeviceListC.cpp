@@ -13,8 +13,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 static void printDeviceInfo(const char* aPrologue, CpDeviceC aDevice)
 {
@@ -45,7 +46,7 @@ static void removed(void* aPtr, CpDeviceC aDevice)
 }
 
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionUint mx("-mx", "--mx", 1, "[1..5] number of second to spread response over");

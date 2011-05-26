@@ -18,7 +18,6 @@
 #include <string.h>
 
 namespace OpenHome {
-namespace Net {
 
 typedef void (*OhNetFunctor)(void* aPtr);
 
@@ -141,7 +140,6 @@ MakeFunctor(const Object& aC, TRT(CallType::* const &aF)() const)
     return MemberTranslator<const Object,MemFunc>(aC,aF);
     }
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_FUNCTOR

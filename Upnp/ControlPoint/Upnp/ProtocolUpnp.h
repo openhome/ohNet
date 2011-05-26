@@ -35,7 +35,7 @@ private:
 private:
     static const TUint kMaxReadBytes = 4096;
     Invocation& iInvocation;
-    SocketTcpClient iSocket;
+    OpenHome::SocketTcpClient iSocket;
     Srs<kMaxReadBytes> iReadBuffer;
     ReaderHttpResponse iReaderResponse;
 };
@@ -85,7 +85,7 @@ private:
     static void WriteHeaderTimeout(WriterHttpRequest& aWriterRequest, TUint aSeconds);
 private:
     CpiSubscription& iSubscription;
-    SocketTcpClient iSocket;
+    OpenHome::SocketTcpClient iSocket;
 };
 
 class OutputProcessorUpnp : public IOutputProcessor

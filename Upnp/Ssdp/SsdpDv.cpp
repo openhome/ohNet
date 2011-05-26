@@ -9,6 +9,7 @@
 #include <Stream.h>
 #include <DviStack.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // Ssdp (fragments)

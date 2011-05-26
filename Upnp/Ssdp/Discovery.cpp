@@ -3,6 +3,7 @@
 #include <Debug.h>
 #include <Stack.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // SsdpSocketReader

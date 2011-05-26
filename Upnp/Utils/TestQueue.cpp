@@ -1,8 +1,8 @@
 #include <TestFramework.h>
 #include <Queue.h>
 
-using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome;
+using namespace OpenHome::TestFramework;
 
 class ByteEntry : public QueueSortedEntry
 {
@@ -322,14 +322,14 @@ void SuiteQueueRemove::Test()
     TEST(queue.IsEmpty());
 }
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    UpnpLibrary::Initialise(aInitParams);
+    Net::UpnpLibrary::Initialise(aInitParams);
 
     Runner runner("Queue testing\n");
     runner.Add(new SuiteQueueBasic());
     runner.Add(new SuiteQueueRemove());
     runner.Run();
 
-    UpnpLibrary::Close();
+    Net::UpnpLibrary::Close();
 }

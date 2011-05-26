@@ -4,6 +4,7 @@
 #include <Standard.h>
 #include <Ascii.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 const Brn Error::kDescriptionUnknown("Unknown");

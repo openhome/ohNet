@@ -14,7 +14,6 @@
 #include <vector>
 
 namespace OpenHome {
-namespace Net {
 
 /**
  * Represents a single network interface
@@ -79,6 +78,8 @@ private:
     TIpAddress iNetMask;
     Brhz iName;
 };
+
+namespace Net {
 
 class DefaultAsyncHandler;
 class DefaultLogger;

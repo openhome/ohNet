@@ -10,8 +10,8 @@
 
 #include <stdlib.h>
 
-using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome;
+using namespace OpenHome::TestFramework;
 
 TUint gFail;
 TUint gPass;
@@ -32,7 +32,7 @@ void TestConsole::Log(const char* aMsg)
 
 // AssertHandler
 
-void OpenHome::Net::TestFramework::AssertHandlerTest(const TChar* aFile, TUint aLine)
+void OpenHome::TestFramework::AssertHandlerTest(const TChar* aFile, TUint aLine)
 {
     THROW_WITH_FILE_LINE(AssertionFailed, aFile, aLine);
 }
@@ -89,7 +89,7 @@ void Runner::Run()
         Print("Suite %d: %s\n", i,suite->Description());
         try {
             suite->Test();
-        } catch(OpenHome::Net::Exception& e) {
+        } catch(OpenHome::Exception& e) {
             Print("\nFAILURE: Suite: %d caused an unhandled exception: %s.  Exception thrown at:  File: %s.  Line: %d\n",i,e.Message(),e.File(),e.Line());
             Print("Last successful test: %s:%d\n", gLastSuccessfulFile, gLastSuccessfulLine);
             gFail++;
@@ -115,7 +115,7 @@ void Runner::Run()
     }
 }
 
-void OpenHome::Net::TestFramework::Fail(const TChar* aFile, TUint aLine,
+void OpenHome::TestFramework::Fail(const TChar* aFile, TUint aLine,
     const TChar* /*aExp*/, const TChar* aMsg)
 {
     gFail++;
@@ -126,13 +126,13 @@ void OpenHome::Net::TestFramework::Fail(const TChar* aFile, TUint aLine,
     Print("\n");
 }
 
-void OpenHome::Net::TestFramework::Succeed(const TChar* aFile, TUint aLine)
+void OpenHome::TestFramework::Succeed(const TChar* aFile, TUint aLine)
 {
     SucceedQuietly( aFile, aLine );
     Print(".");
 }
 
-void OpenHome::Net::TestFramework::SucceedQuietly(const TChar* aFile, TUint aLine)
+void OpenHome::TestFramework::SucceedQuietly(const TChar* aFile, TUint aLine)
 {
     gPass++;
     gLastSuccessfulFile = aFile;
@@ -142,18 +142,18 @@ void OpenHome::Net::TestFramework::SucceedQuietly(const TChar* aFile, TUint aLin
 
 
 
-TUint OpenHome::Net::TestFramework::TimeStart()
+TUint OpenHome::TestFramework::TimeStart()
 {
-    return OpenHome::Net::Os::TimeInMs();
+    return OpenHome::Os::TimeInMs();
 }
 
-TUint OpenHome::Net::TestFramework::TimeStop(TUint aStartTime)
+TUint OpenHome::TestFramework::TimeStop(TUint aStartTime)
 {
-    TUint time = OpenHome::Net::Os::TimeInMs();
+    TUint time = OpenHome::Os::TimeInMs();
     return time - aStartTime;
 }
 
-TInt OpenHome::Net::TestFramework::Print(const TChar* aFormat, ...)
+TInt OpenHome::TestFramework::Print(const TChar* aFormat, ...)
 {
     TestConsole console;
     FunctorMsg functor = MakeFunctorMsg(console, &TestConsole::Log);
@@ -164,21 +164,21 @@ TInt OpenHome::Net::TestFramework::Print(const TChar* aFormat, ...)
     return n;
 }
 
-TInt OpenHome::Net::TestFramework::Print(const TChar* aFormat, va_list aArgs)
+TInt OpenHome::TestFramework::Print(const TChar* aFormat, va_list aArgs)
 {
     TestConsole console;
     FunctorMsg functor = MakeFunctorMsg(console, &TestConsole::Log);
     return Log::Print(functor, aFormat, aArgs);
 }
 
-TInt OpenHome::Net::TestFramework::Print(const Brx& aB)
+TInt OpenHome::TestFramework::Print(const Brx& aB)
 {
     TestConsole console;
     FunctorMsg functor = MakeFunctorMsg(console, &TestConsole::Log);
     return Log::Print(functor, aB);
 }
 
-TInt OpenHome::Net::TestFramework::PrintHex(const Brx& aB)
+TInt OpenHome::TestFramework::PrintHex(const Brx& aB)
 {
     TestConsole console;
     FunctorMsg functor = MakeFunctorMsg(console, &TestConsole::Log);

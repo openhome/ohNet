@@ -50,6 +50,7 @@ namespace Net {
 } // namespace Net
 } // namespace OpenHome
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // ProviderSender

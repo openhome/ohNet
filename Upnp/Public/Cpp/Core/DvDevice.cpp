@@ -3,6 +3,7 @@
 #include <Buffer.h>
 #include <DviDevice.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // DvDevice

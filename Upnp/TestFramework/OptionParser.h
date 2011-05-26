@@ -10,7 +10,6 @@
 EXCEPTION(OptionParserError);
 
 namespace OpenHome {
-namespace Net {
 namespace TestFramework {
 
 typedef std::vector<TChar*> VectorPosArg;
@@ -105,7 +104,6 @@ private:
 };
 
 } // namespace TestFramework
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_OPTION_PARSER

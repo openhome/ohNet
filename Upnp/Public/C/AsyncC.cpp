@@ -2,6 +2,7 @@
 #include <FunctorAsync.h>
 #include <OhNetTypes.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 

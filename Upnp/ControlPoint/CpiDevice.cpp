@@ -5,6 +5,7 @@
 #include <Stack.h>
 #include <CpiStack.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // CpiDevice

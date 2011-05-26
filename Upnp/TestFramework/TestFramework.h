@@ -11,7 +11,6 @@
 #include <Timer.h>
 
 namespace OpenHome {
-namespace Net {
 namespace TestFramework {
 
 void Fail(const TChar* aFile, TUint aLine, const TChar* aExp, const TChar* aMsg);
@@ -35,24 +34,24 @@ TInt Print(const TChar* aFormat, va_list aArgs);
 
 #define TEST(aExp) do { \
 const TChar* file = __FILE__; \
-aExp ? OpenHome::Net::TestFramework::Succeed(file, __LINE__) \
-    : OpenHome::Net::TestFramework::Fail(file, __LINE__, #aExp, 0); \
+aExp ? OpenHome::TestFramework::Succeed(file, __LINE__) \
+    : OpenHome::TestFramework::Fail(file, __LINE__, #aExp, 0); \
 } while(0)
 
 #define TEST_QUIETLY(aExp) do { \
 const TChar* file = __FILE__; \
-aExp ? OpenHome::Net::TestFramework::SucceedQuietly(file, __LINE__) \
-    : OpenHome::Net::TestFramework::Fail(file, __LINE__, #aExp, 0); \
+aExp ? OpenHome::TestFramework::SucceedQuietly(file, __LINE__) \
+    : OpenHome::TestFramework::Fail(file, __LINE__, #aExp, 0); \
 } while(0)
 
 #define TEST_THROWS(aExp, aExcept) do { \
 const TChar* file = __FILE__; \
 try { \
     aExp; \
-    OpenHome::Net::TestFramework::Fail(file, __LINE__, #aExp, "Exception " #aExcept " expected but not thrown."); \
+    OpenHome::TestFramework::Fail(file, __LINE__, #aExp, "Exception " #aExcept " expected but not thrown."); \
 } \
 catch( aExcept& ) { \
-    OpenHome::Net::TestFramework::Succeed(file, __LINE__); \
+    OpenHome::TestFramework::Succeed(file, __LINE__); \
 } \
 } while(0)
 
@@ -60,10 +59,10 @@ catch( aExcept& ) { \
 const TChar* file = __FILE__; \
 try { \
     aExp; \
-    OpenHome::Net::TestFramework::Fail(file, __LINE__, #aExp, "Exception " #aExcept " expected but not thrown."); \
+    OpenHome::TestFramework::Fail(file, __LINE__, #aExp, "Exception " #aExcept " expected but not thrown."); \
 } \
 catch( aExcept& e ) { \
-    OpenHome::Net::TestFramework::SucceedQuietly(file, __LINE__); \
+    OpenHome::TestFramework::SucceedQuietly(file, __LINE__); \
 } \
 } while(0)
 
@@ -84,7 +83,7 @@ private:
 class Runner // Test
 {
 public:
-    static void Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams);
+    static void Main(TInt aArgc, TChar* aArgv[], OpenHome::Net::InitialisationParams* aInitParams);
     Runner(const TChar* aDescription);
     void Add(Suite* aSuite);
     void Run();
@@ -113,7 +112,6 @@ private:
 };
 
 } // namespace TestFramework
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_TEST

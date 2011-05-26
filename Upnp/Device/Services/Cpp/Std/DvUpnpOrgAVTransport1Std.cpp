@@ -4,6 +4,7 @@
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 bool DvProviderUpnpOrgAVTransport1Cpp::SetPropertyLastChange(const std::string& aValue)

@@ -6,6 +6,7 @@
 #include <C/CpDevice.h>
 #include <Printer.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 CpProxyC::CpProxyC(CpiDevice& aDevice)

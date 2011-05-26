@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 static FunctorMsg gLogger;
 

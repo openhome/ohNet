@@ -12,8 +12,9 @@
 #include <vector>
 #include <sys/stat.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 #define MAKE_COLOR(r,g,b,a) (TUint)(a<<24 | r<<16 | g<<8 | b)
 
@@ -329,7 +330,7 @@ void DeviceLights::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/,
 }
 
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
     OptionParser parser;
     OptionUint mode("-m", "--mode", 1, "[1..3] select from list of hard-coded lighting systems");

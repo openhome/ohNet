@@ -3,6 +3,7 @@
 #include <Buffer.h>
 #include <Http.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // HeaderSid

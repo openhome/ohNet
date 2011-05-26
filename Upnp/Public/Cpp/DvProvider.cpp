@@ -5,6 +5,7 @@
 #include <Printer.h>
 #include <Stack.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 void DvProvider::PropertiesLock()

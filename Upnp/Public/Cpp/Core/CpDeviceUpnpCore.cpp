@@ -5,6 +5,7 @@
 #include <Core/FunctorCpDevice.h>
 #include <FunctorCpiDevice.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 

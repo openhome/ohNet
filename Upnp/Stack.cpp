@@ -10,6 +10,7 @@
 
 #include <time.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 // Strings declared in MimeTypes.h
@@ -61,8 +62,8 @@ Stack::Stack(InitialisationParams* aInitParams)
     gStack = this;
     gStackInitCount++;
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
-    iTimerManager = new OpenHome::Net::TimerManager();
-    iNetworkInterfaceList = new OpenHome::Net::NetworkInterfaceList(iInitParams->DefaultSubnet());
+    iTimerManager = new OpenHome::TimerManager();
+    iNetworkInterfaceList = new OpenHome::NetworkInterfaceList(iInitParams->DefaultSubnet());
     Functor& subnetChangeListener = iInitParams->SubnetChangedListener();
     if (subnetChangeListener) {
         iNetworkInterfaceList->AddSubnetChangeListener(subnetChangeListener);
@@ -108,12 +109,12 @@ void Stack::GetVersion(TUint& aMajor, TUint& aMinor)
 	aMinor = kVersionMinor;
 }
 
-OpenHome::Net::TimerManager& Stack::TimerManager()
+OpenHome::TimerManager& Stack::TimerManager()
 {
     return *(gStack->iTimerManager);
 }
 
-OpenHome::Net::Mutex& Stack::Mutex()
+OpenHome::Mutex& Stack::Mutex()
 {
     return gStack->iPublicLock;
 }
@@ -161,7 +162,7 @@ void Stack::MulticastListenerRelease(TIpAddress aInterface)
 TUint Stack::SequenceNumber()
 {
     TUint seq;
-    OpenHome::Net::Mutex& lock = Stack::Mutex();
+    OpenHome::Mutex& lock = Stack::Mutex();
     lock.Wait();
     seq = gStack->iSequenceNumber++;
     lock.Signal();

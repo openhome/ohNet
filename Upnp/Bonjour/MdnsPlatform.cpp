@@ -16,6 +16,7 @@
 
 #include <mDNSEmbeddedAPI.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 static const mDNSInterfaceID kInterfaceId = (mDNSInterfaceID)2;

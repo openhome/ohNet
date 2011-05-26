@@ -11,26 +11,26 @@
 # define snprintf _snprintf
 #endif
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 AssertHandler gAssertHandler = 0;
 
-AssertHandler OpenHome::Net::SetAssertHandler(AssertHandler aHandler)
+AssertHandler OpenHome::SetAssertHandler(AssertHandler aHandler)
 {
     AssertHandler temp = gAssertHandler;
     gAssertHandler = aHandler;
     return temp;
 }
 
-void OpenHome::Net::CallAssertHandler(const TChar* aFile, TUint aLine)
+void OpenHome::CallAssertHandler(const TChar* aFile, TUint aLine)
 {
     gAssertHandler(aFile, aLine);
 }
 
 static void CallFatalErrorHandler(const char* aMsg)
 {
-    if (Stack::IsInitialised()) {
-        FunctorMsg& handler = Stack::InitParams().FatalErrorHandler();
+    if (Net::Stack::IsInitialised()) {
+        FunctorMsg& handler = Net::Stack::InitParams().FatalErrorHandler();
         handler(aMsg);
     }
     else {
@@ -38,7 +38,7 @@ static void CallFatalErrorHandler(const char* aMsg)
     }
 }
 
-void OpenHome::Net::AssertHandlerDefault(const TChar* aFile, TUint aLine)
+void OpenHome::AssertHandlerDefault(const TChar* aFile, TUint aLine)
 {
     char buf[1024];
     (void)snprintf(buf, sizeof(buf), "Assertion failed.  %s:%d\n", aFile, aLine);
@@ -46,14 +46,14 @@ void OpenHome::Net::AssertHandlerDefault(const TChar* aFile, TUint aLine)
     Os::Quit();
 }
 
-void OpenHome::Net::UnhandledExceptionHandler(const TChar* aExceptionMessage, const TChar* aFile, TUint aLine)
+void OpenHome::UnhandledExceptionHandler(const TChar* aExceptionMessage, const TChar* aFile, TUint aLine)
 {
     char buf[1024];
     (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%d\n", aExceptionMessage, aFile, aLine);
     CallFatalErrorHandler(buf);
 }
 
-void OpenHome::Net::UnhandledExceptionHandler(Exception& aException)
+void OpenHome::UnhandledExceptionHandler(Exception& aException)
 {
     char buf[1024];
     (void)snprintf(buf, sizeof(buf), "Unhandled exception %s at %s:%d\n",
@@ -61,7 +61,7 @@ void OpenHome::Net::UnhandledExceptionHandler(Exception& aException)
     CallFatalErrorHandler(buf);
 }
 
-void OpenHome::Net::UnhandledExceptionHandler(std::exception& aException)
+void OpenHome::UnhandledExceptionHandler(std::exception& aException)
 {
     char buf[1024];
     (void)snprintf(buf, sizeof(buf), "Unhandled exception %s\n", aException.what());

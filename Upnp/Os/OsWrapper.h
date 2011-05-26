@@ -1,8 +1,8 @@
 // C++ wrapper to the C interfaces to the OS porting layer
 // UPnP library code should call this rather than the C APIs
 
-#ifndef HEADER_LINN_OS_CPP
-#define HEADER_LINN_OS_CPP
+#ifndef HEADER_OS_WRAPPER
+#define HEADER_OS_WRAPPER
 
 #include <Os.h>
 #include <OhNetTypes.h>
@@ -13,7 +13,6 @@
 #include <vector>
 
 namespace OpenHome {
-namespace Net {
 
 class Os
 {
@@ -67,6 +66,6 @@ public:
 
 #include <OsWrapper.inl>
 
-} // namespace Net
 } // namespace OpenHome
-#endif // HEADER_LINN_OS_C
+
+#endif // HEADER_OS_WRAPPER

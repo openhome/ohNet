@@ -6,8 +6,9 @@
 
 #include <string>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 
 void TestBasicCp::TestActions(CpDeviceCpp& aDevice)

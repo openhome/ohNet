@@ -7,6 +7,7 @@
 
 #include "CpTopology3.h"
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 class CpTopologyRoom : public IRoom

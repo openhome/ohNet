@@ -4,6 +4,7 @@
 #include <Service.h>
 #include <FunctorDviInvocation.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 bool DvProviderUpnpOrgContentDirectory1Cpp::SetPropertyTransferIDs(const std::string& aValue)

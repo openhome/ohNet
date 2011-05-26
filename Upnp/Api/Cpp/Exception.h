@@ -15,30 +15,27 @@
 #ifdef DEFINE_TRACE
 # define EXCEPTION(aClass) \
 namespace OpenHome { \
-namespace Net { \
-class aClass : public OpenHome::Net::Exception \
+class aClass : public OpenHome::Exception \
 { \
 public: \
     aClass(const TChar* aFile, TUint aLine) \
-        : OpenHome::Net::Exception(#aClass, aFile, aLine){} \
+        : OpenHome::Exception(#aClass, aFile, aLine){} \
 }; \
-} }
+}
 
 #else // DEFINE_TRACE
 # define EXCEPTION(aClass) \
 namespace OpenHome { \
-namespace Net { \
-class aClass : public OpenHome::Net::Exception \
+class aClass : public OpenHome::Exception \
 { \
 public: \
-    aClass() : OpenHome::Net::Exception(#aClass) {} \
+    aClass() : OpenHome::Exception(#aClass) {} \
 }; \
-} }
+}
 
 #endif // DEFINE_TRACE
 
 namespace OpenHome {
-namespace Net {
 
 /**
  * @internal
@@ -77,7 +74,6 @@ void UnhandledExceptionHandler(Exception& aException);
 
 /* @@} */
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif //HEADER_EXCEPTION

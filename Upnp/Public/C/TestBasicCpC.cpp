@@ -9,8 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 
 void TestBasicCpC::TestActions(CpDeviceC aDevice)

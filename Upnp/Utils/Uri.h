@@ -8,7 +8,6 @@
 EXCEPTION(UriError);
 
 namespace OpenHome {
-namespace Net {
 
 class Uri
 {
@@ -61,7 +60,6 @@ private:
     Brn iFragment;
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif  // HEADER_LINN_ASCII_URI

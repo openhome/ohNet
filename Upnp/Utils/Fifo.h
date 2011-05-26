@@ -8,7 +8,6 @@
 EXCEPTION(FifoReadError);
 
 namespace OpenHome {
-namespace Net {
 
 // Fifo provides fully thread-aware first in first out buffering
 //
@@ -196,7 +195,6 @@ private:
     T* iBuf;
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif //HEADER_FIFO

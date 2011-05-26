@@ -4,6 +4,7 @@
 #include <CpiDeviceUpnp.h>
 #include <FunctorCpiDevice.h>
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
 
 HandleCpDeviceList CpDeviceListCreateUpnpAll(OhNetCallbackDevice aAdded, void* aPtrAdded,

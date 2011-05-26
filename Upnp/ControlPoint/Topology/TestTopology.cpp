@@ -9,8 +9,9 @@
 #include <OsWrapper.h>
 #include "CpTopology3.h"
 
+using namespace OpenHome;
 using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome::TestFramework;
 
 class TestDevice : public ICpTopology2GroupHandler
 {
@@ -286,7 +287,7 @@ void TestTopology3Handler::RoomVolumeControlChanged(CpTopology3Room& aRoom)
     Add(Brn("Volume Control"), aRoom.Name(), aRoom.HasVolumeControl() ? Brn("Yes") : Brn("No"));
 }
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::Initialise(aInitParams);
 

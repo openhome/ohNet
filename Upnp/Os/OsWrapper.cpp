@@ -5,7 +5,7 @@
 #include <Network.h>
 #include <Debug.h>
 
-using namespace OpenHome::Net;
+using namespace OpenHome;
 
 Brn Os::GetPlatformNameAndVersion(TUint& aMajor, TUint& aMinor)
 {
@@ -40,7 +40,7 @@ TInt Os::NetworkPort(THandle aHandle, TUint& aPort)
     return ret;
 }
 
-TUint32 OpenHome::Net::Os::NetworkGetHostByName(const Brx& aAddress)
+TUint32 OpenHome::Os::NetworkGetHostByName(const Brx& aAddress)
 {
     TUint32 addr;
     const TInt len = aAddress.Bytes();
@@ -55,7 +55,7 @@ TUint32 OpenHome::Net::Os::NetworkGetHostByName(const Brx& aAddress)
     return addr;
 }
 
-void OpenHome::Net::Os::NetworkConnect(THandle aHandle, const Endpoint& aEndpoint, TUint aTimeoutMs)
+void OpenHome::Os::NetworkConnect(THandle aHandle, const Endpoint& aEndpoint, TUint aTimeoutMs)
 {
     int32_t err = OsNetworkConnect(aHandle, aEndpoint.Address(), aEndpoint.Port(), aTimeoutMs);
     if (err != 0) {
@@ -64,7 +64,7 @@ void OpenHome::Net::Os::NetworkConnect(THandle aHandle, const Endpoint& aEndpoin
     }
 }
 
-TInt OpenHome::Net::Os::NetworkReceiveFrom(THandle aHandle, Bwx& aBuffer, Endpoint& aEndpoint)
+TInt OpenHome::Os::NetworkReceiveFrom(THandle aHandle, Bwx& aBuffer, Endpoint& aEndpoint)
 {
     TIpAddress address;
     TUint16 port;
@@ -76,7 +76,7 @@ TInt OpenHome::Net::Os::NetworkReceiveFrom(THandle aHandle, Bwx& aBuffer, Endpoi
     return ret;
 }
 
-void OpenHome::Net::Os::NetworkSocketSetSendBufBytes(THandle aHandle, TUint aBytes)
+void OpenHome::Os::NetworkSocketSetSendBufBytes(THandle aHandle, TUint aBytes)
 {
     int32_t err = OsNetworkSocketSetSendBufBytes(aHandle, aBytes);
     if(err != 0) {
@@ -85,7 +85,7 @@ void OpenHome::Net::Os::NetworkSocketSetSendBufBytes(THandle aHandle, TUint aByt
     }
 }
 
-void OpenHome::Net::Os::NetworkSocketSetRecvBufBytes(THandle aHandle, TUint aBytes)
+void OpenHome::Os::NetworkSocketSetRecvBufBytes(THandle aHandle, TUint aBytes)
 {
     int32_t err = OsNetworkSocketSetRecvBufBytes(aHandle, aBytes);
     if(err != 0) {
@@ -94,7 +94,7 @@ void OpenHome::Net::Os::NetworkSocketSetRecvBufBytes(THandle aHandle, TUint aByt
     }
 }
 
-void OpenHome::Net::Os::NetworkSocketSetReceiveTimeout(THandle aHandle, TUint aMilliSeconds)
+void OpenHome::Os::NetworkSocketSetReceiveTimeout(THandle aHandle, TUint aMilliSeconds)
 {
     int32_t err = OsNetworkSocketSetReceiveTimeout(aHandle, aMilliSeconds);
     if(err != 0) {
@@ -103,7 +103,7 @@ void OpenHome::Net::Os::NetworkSocketSetReceiveTimeout(THandle aHandle, TUint aM
     }
 }
 
-void OpenHome::Net::Os::NetworkTcpSetNoDelay(THandle aHandle)
+void OpenHome::Os::NetworkTcpSetNoDelay(THandle aHandle)
 {
     int32_t err = OsNetworkTcpSetNoDelay(aHandle);
     if(err != 0) {
@@ -112,7 +112,7 @@ void OpenHome::Net::Os::NetworkTcpSetNoDelay(THandle aHandle)
     }
 }
 
-void OpenHome::Net::Os::NetworkSocketSetReuseAddress(THandle aHandle)
+void OpenHome::Os::NetworkSocketSetReuseAddress(THandle aHandle)
 {
     int32_t err = OsNetworkSocketSetReuseAddress(aHandle);
     if(err != 0) {
@@ -121,7 +121,7 @@ void OpenHome::Net::Os::NetworkSocketSetReuseAddress(THandle aHandle)
     }
 }
 
-void OpenHome::Net::Os::NetworkSocketSetMulticastTtl(THandle aHandle, TUint8 aTtl)
+void OpenHome::Os::NetworkSocketSetMulticastTtl(THandle aHandle, TUint8 aTtl)
 {
     int32_t err = OsNetworkSocketSetMulticastTtl(aHandle, aTtl);
     if(err != 0) {
@@ -130,7 +130,7 @@ void OpenHome::Net::Os::NetworkSocketSetMulticastTtl(THandle aHandle, TUint8 aTt
     }
 }
 
-void OpenHome::Net::Os::NetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress)
+void OpenHome::Os::NetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress)
 {
     int32_t err = OsNetworkSocketMulticastAddMembership(aHandle, aInterface, aAddress);
     if(err != 0) {
@@ -139,7 +139,7 @@ void OpenHome::Net::Os::NetworkSocketMulticastAddMembership(THandle aHandle, TIp
     }
 }
 
-void OpenHome::Net::Os::NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress)
+void OpenHome::Os::NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress)
 {
     int32_t err = OsNetworkSocketMulticastDropMembership(aHandle, aInterface, aAddress);
     if(err != 0) {
@@ -148,7 +148,7 @@ void OpenHome::Net::Os::NetworkSocketMulticastDropMembership(THandle aHandle, TI
     }
 }
 
-std::vector<NetworkInterface*>* OpenHome::Net::Os::NetworkListInterfaces(TBool aUseLoopback)
+std::vector<NetworkInterface*>* OpenHome::Os::NetworkListInterfaces(TBool aUseLoopback)
 {
     OsNetworkInterface* cIfs = NULL;
     int32_t err = OsNetworkListInterfaces(&cIfs, (aUseLoopback? 1 : 0));

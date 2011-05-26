@@ -10,7 +10,6 @@
 #include <map>
 
 namespace OpenHome {
-namespace Net {
 
 class NetworkInterfaceList
 {
@@ -53,7 +52,6 @@ private:
     TUint iNextListenerId;
 };
 
-} // namespace Net
 } // namespace OpenHome
 
 #endif // HEADER_NETWORKINTERFACELIST

@@ -2,8 +2,8 @@
 #include <Thread.h>
 #include <OsWrapper.h>
 
-using namespace OpenHome::Net;
-using namespace OpenHome::Net::TestFramework;
+using namespace OpenHome;
+using namespace OpenHome::TestFramework;
 
 const TUint32 kSleepMs = 25; // short sleep used as a lazy way of avoiding too many dependencies on thread priorities
 
@@ -591,7 +591,7 @@ void SuitePerformance::Test()
     for(i = 0; i<kNumThreads; i++) {
         threads[i]->Signal();
     }
-    OpenHome::Net::Thread::Sleep(50);
+    OpenHome::Thread::Sleep(50);
 }
 
 
@@ -685,7 +685,7 @@ void MainTestThread::Run()
     // (which run on servers with variable loads)
     //runner.Add(new SuitePerformance());
     runner.Add(new SuiteThreadKill());
-    if (OpenHome::Net::Thread::SupportsPriorities())
+    if (OpenHome::Thread::SupportsPriorities())
     {
         runner.Add(new SuitePriority());
         runner.Add(new SuiteTimeslice());
@@ -695,9 +695,9 @@ void MainTestThread::Run()
     Thread::Current()->Signal();
 }
 
-void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    UpnpLibrary::InitialiseMinimal(aInitParams);
+    Net::UpnpLibrary::InitialiseMinimal(aInitParams);
 
     // many tests rely on Thread::Current() so run all tests in a thread we create
     Thread* th = new MainTestThread();
@@ -706,5 +706,5 @@ void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/
     delete th;
 
     delete aInitParams;
-    UpnpLibrary::Close();
+    Net::UpnpLibrary::Close();
 }
