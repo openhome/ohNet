@@ -17,16 +17,6 @@ class TestDevice : public ICpTopology2GroupHandler
 public:
     virtual void SetSourceIndex(TUint aIndex);
     virtual void SetStandby(TBool aValue);
-    virtual void SetVolume(TUint aValue);
-    virtual void VolumeInc();
-    virtual void VolumeDec();
-    virtual void SetBalance(TInt aValue);
-    virtual void BalanceInc();
-    virtual void BalanceDec();
-    virtual void SetFade(TInt aValue);
-    virtual void FadeInc();
-    virtual void FadeDec();
-    virtual void SetMute(TBool aValue);
 };
 
 void TestDevice::SetSourceIndex(TUint /* aIndex */)
@@ -34,46 +24,6 @@ void TestDevice::SetSourceIndex(TUint /* aIndex */)
 }
 
 void TestDevice::SetStandby(TBool /* aValue */)
-{
-}
-
-void TestDevice::SetVolume(TUint /* aValue */)
-{
-}
-
-void TestDevice::VolumeInc()
-{
-}
-
-void TestDevice::VolumeDec()
-{
-}
-
-void TestDevice::SetBalance(TInt /* aValue */)
-{
-}
-
-void TestDevice::BalanceInc()
-{
-}
-
-void TestDevice::BalanceDec()
-{
-}
-
-void TestDevice::SetFade(TInt /* aValue */)
-{
-}
-
-void TestDevice::FadeInc()
-{
-}
-
-void TestDevice::FadeDec()
-{
-}
-
-void TestDevice::SetMute(TBool /* aValue */)
 {
 }
 
@@ -194,11 +144,7 @@ private:
     virtual void RoomRemoved(CpTopology3Room& aRoom);
 	virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
 	virtual void RoomSourceChanged(CpTopology3Room& aRoom);
-    virtual void RoomVolumeLimitChanged(CpTopology3Room& aRoom);
-	virtual void RoomVolumeChanged(CpTopology3Room& aRoom);
-    virtual void RoomBalanceChanged(CpTopology3Room& aRoom);
-    virtual void RoomFadeChanged(CpTopology3Room& aRoom);
-	virtual void RoomMuteChanged(CpTopology3Room& aRoom);
+	virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom);
 	
     void Add(const Brx& aType, const Brx& aValue, const Brx& aInfo);
     TBool Check(const Brx& aType, const Brx& aValue, const Brx& aInfo);
@@ -293,16 +239,6 @@ void TestTopology3Handler::RoomAdded(CpTopology3Room& aRoom)
     }
 }
 
-void TestTopology3Handler::RoomStandbyChanged(CpTopology3Room& aRoom)
-{
-    Add(Brn("Standby"), aRoom.Name(), aRoom.Standby() ? Brn("Y") : Brn("N"));
-}
-
-void TestTopology3Handler::RoomSourceChanged(CpTopology3Room& aRoom)
-{
-    Add(Brn("Source"), aRoom.Name(), aRoom.CurrentSourceName());
-}
-
 void TestTopology3Handler::RoomChanged(CpTopology3Room& aRoom)
 {
     Bws<10> count;
@@ -316,50 +252,38 @@ void TestTopology3Handler::RoomChanged(CpTopology3Room& aRoom)
     }
 }
 
-void TestTopology3Handler::RoomVolumeLimitChanged(CpTopology3Room& aRoom)
-{
-    Bws<10> limit;
-    
-    Ascii::AppendDec(limit, aRoom.VolumeLimit());
-    
-    Add(Brn("VolumeLimit"), aRoom.Name(), limit);
-}
-
-void TestTopology3Handler::RoomVolumeChanged(CpTopology3Room& aRoom)
-{
-    Bws<10> volume;
-    
-    Ascii::AppendDec(volume, aRoom.Volume());
-    
-    Add(Brn("Volume"), aRoom.Name(), volume);
-}
-
-void TestTopology3Handler::RoomBalanceChanged(CpTopology3Room& aRoom)
-{
-    Bws<10> balance;
-    
-    Ascii::AppendDec(balance, aRoom.Balance());
-    
-    Add(Brn("Balance"), aRoom.Name(), balance);
-}
-
-void TestTopology3Handler::RoomFadeChanged(CpTopology3Room& aRoom)
-{
-    Bws<10> fade;
-    
-    Ascii::AppendDec(fade, aRoom.Fade());
-    
-    Add(Brn("Fade"), aRoom.Name(), fade);
-}
-
-void TestTopology3Handler::RoomMuteChanged(CpTopology3Room& aRoom)
-{
-    Add(Brn("Mute"), aRoom.Name(), aRoom.Mute() ? Brn("Y") : Brn("N"));
-}
-
 void TestTopology3Handler::RoomRemoved(CpTopology3Room& aRoom)
 {
     Add(Brn("Removed"), aRoom.Name(), Brx::Empty());
+}
+
+void TestTopology3Handler::RoomStandbyChanged(CpTopology3Room& aRoom)
+{
+	Bws<10> standby;
+
+	switch(aRoom.Standby()) {
+	case CpTopology3Room::eOff:
+		standby.Replace(Brn("Off"));
+		break;
+	case CpTopology3Room::eMixed:
+		standby.Replace(Brn("Mixed"));
+		break;
+	case CpTopology3Room::eOn:
+		standby.Replace(Brn("On"));
+		break;
+	}
+
+    Add(Brn("Standby"), aRoom.Name(), standby);
+}
+
+void TestTopology3Handler::RoomSourceChanged(CpTopology3Room& aRoom)
+{
+    Add(Brn("Source"), aRoom.Name(), aRoom.CurrentSourceName());
+}
+
+void TestTopology3Handler::RoomVolumeControlChanged(CpTopology3Room& aRoom)
+{
+    Add(Brn("Volume Control"), aRoom.Name(), aRoom.HasVolumeControl() ? Brn("Yes") : Brn("No"));
 }
 
 void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
@@ -381,7 +305,7 @@ void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/
     
     CpDevice* cpdevice = 0;
     
-    CpTopology2Group* group1 = new CpTopology2Group(*cpdevice, device, false, Brn("Kitchen"), Brn("Majik DS-I"), 0);
+    CpTopology2Group* group1 = new CpTopology2Group(*cpdevice, device, false, Brn("Kitchen"), Brn("Majik DS-I"), 0, false);
     
     group1->AddSource(Brn("Playlist"), Brn("Playlist"), true);
     group1->AddSource(Brn("Radio"), Brn("Radio"), true);
@@ -425,7 +349,7 @@ void OpenHome::Net::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/
     Print("Test 2\n");
     Print("Add 1, add 2\n");
 
-    CpTopology2Group* group2 = new CpTopology2Group(*cpdevice, device, false, Brn("Kitchen"), Brn("Phono"), 0);
+    CpTopology2Group* group2 = new CpTopology2Group(*cpdevice, device, false, Brn("Kitchen"), Brn("Phono"), 0, true);
     
     group2->AddSource(Brn("Playlist"), Brn("Playlist"), true);
     group2->AddSource(Brn("Radio"), Brn("Radio"), true);

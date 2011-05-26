@@ -22,11 +22,6 @@ public:
     virtual void GroupStandbyChanged(CpTopology2Group& aGroup);
     virtual void GroupSourceIndexChanged(CpTopology2Group& aGroup);
     virtual void GroupSourceListChanged(CpTopology2Group& aGroup);
-    virtual void GroupVolumeLimitChanged(CpTopology2Group& aGroup);
-    virtual void GroupVolumeChanged(CpTopology2Group& aGroup);
-    virtual void GroupBalanceChanged(CpTopology2Group& aGroup);
-    virtual void GroupFadeChanged(CpTopology2Group& aGroup);
-    virtual void GroupMuteChanged(CpTopology2Group& aGroup);
     virtual void GroupRemoved(CpTopology2Group& aDevice);
 
 private:
@@ -65,37 +60,6 @@ void TopologyLogger::GroupSourceListChanged(CpTopology2Group& aGroup)
     PrintGroupInfo("Source List Changed ", aGroup);
     Print("\n");
     PrintSourceInfo(aGroup);
-}
-
-void TopologyLogger::GroupVolumeLimitChanged(CpTopology2Group& aGroup)
-{
-    PrintGroupInfo("Vol Limit Changed   ", aGroup);
-    Print("%u\n", aGroup.VolumeLimit());
-}
-
-void TopologyLogger::GroupVolumeChanged(CpTopology2Group& aGroup)
-{
-    PrintGroupInfo("Volume Changed      ", aGroup);
-    Print("%u\n", aGroup.Volume());
-}
-
-void TopologyLogger::GroupBalanceChanged(CpTopology2Group& aGroup)
-{
-    PrintGroupInfo("Balance Changed     ", aGroup);
-    Print("%d\n", aGroup.Balance());
-}
-
-void TopologyLogger::GroupFadeChanged(CpTopology2Group& aGroup)
-{
-    PrintGroupInfo("Fade Changed        ", aGroup);
-    Print("%d\n", aGroup.Fade());
-}
-
-void TopologyLogger::GroupMuteChanged(CpTopology2Group& aGroup)
-{
-    PrintGroupInfo("Mute Changed        ", aGroup);
-    Print(aGroup.Mute() ? "true" : "false");
-    Print("\n");
 }
 
 void TopologyLogger::GroupRemoved(CpTopology2Group& aGroup)

@@ -22,11 +22,7 @@ public:
     virtual void RoomRemoved(CpTopology3Room& aRoom);
 	virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
 	virtual void RoomSourceChanged(CpTopology3Room& aRoom);
-    virtual void RoomVolumeLimitChanged(CpTopology3Room& aRoom);
-	virtual void RoomVolumeChanged(CpTopology3Room& aRoom);
-    virtual void RoomBalanceChanged(CpTopology3Room& aRoom);
-    virtual void RoomFadeChanged(CpTopology3Room& aRoom);
-	virtual void RoomMuteChanged(CpTopology3Room& aRoom);
+	virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom);
 private:
     void PrintRoomInfo(const char* aPrologue, const CpTopology3Room& aRoom);
     void PrintSourceInfo(const CpTopology3Room& aRoom);
@@ -61,46 +57,31 @@ void TopologyLogger::RoomRemoved(CpTopology3Room& aRoom)
 void TopologyLogger::RoomStandbyChanged(CpTopology3Room& aRoom)
 {
     PrintRoomInfo("Standby Changed     ", aRoom);
-    Print(aRoom.Standby() ? "true" : "false");
+	switch (aRoom.Standby()) {
+	case CpTopology3Room::eOn:
+		Print("On");
+		break;
+	case CpTopology3Room::eMixed:
+		Print("Mixed");
+		break;
+	case CpTopology3Room::eOff:
+		Print("Off");
+		break;
+	}
     Print("\n");
 }
 
 void TopologyLogger::RoomSourceChanged(CpTopology3Room& aRoom)
 {
-    PrintRoomInfo("Source Changed", aRoom);
+    PrintRoomInfo("Source Changed      ", aRoom);
     Print(aRoom.CurrentSourceName());
     Print("\n");
 }
 
-void TopologyLogger::RoomVolumeLimitChanged(CpTopology3Room& aRoom)
+void TopologyLogger::RoomVolumeControlChanged(CpTopology3Room& aRoom)
 {
-    PrintRoomInfo("Vol Limit Changed   ", aRoom);
-    Print("%u\n", aRoom.VolumeLimit());
-}
-
-void TopologyLogger::RoomVolumeChanged(CpTopology3Room& aRoom)
-{
-    PrintRoomInfo("Volume Changed      ", aRoom);
-    Print("%u\n", aRoom.Volume());
-}
-
-void TopologyLogger::RoomBalanceChanged(CpTopology3Room& aRoom)
-{
-    PrintRoomInfo("Balance Changed     ", aRoom);
-    Print("%u\n", aRoom.Balance());
-}
-
-void TopologyLogger::RoomFadeChanged(CpTopology3Room& aRoom)
-{
-    PrintRoomInfo("Fade Changed        ", aRoom);
-    Print("%u\n", aRoom.Fade());
-}
-
-void TopologyLogger::RoomMuteChanged(CpTopology3Room& aRoom)
-{
-    PrintRoomInfo("Mute Changed        ", aRoom);
-    Print(aRoom.Mute() ? "true" : "false");
-    Print("\n");
+    PrintRoomInfo("Vol Control Changed ", aRoom);
+	aRoom.HasVolumeControl() ? printf("Yes\n") : printf("No\n");
 }
 
 void TopologyLogger::PrintSourceInfo(const CpTopology3Room& aRoom)

@@ -24,11 +24,7 @@ public:
     virtual void RoomRemoved(CpTopology3Room& aRoom) = 0;
 	virtual void RoomStandbyChanged(CpTopology3Room& aRoom) = 0;
 	virtual void RoomSourceChanged(CpTopology3Room& aRoom) = 0;
-    virtual void RoomVolumeLimitChanged(CpTopology3Room& aRoom) = 0;
-	virtual void RoomVolumeChanged(CpTopology3Room& aRoom) = 0;
-    virtual void RoomBalanceChanged(CpTopology3Room& aRoom) = 0;
-    virtual void RoomFadeChanged(CpTopology3Room& aRoom) = 0;
-	virtual void RoomMuteChanged(CpTopology3Room& aRoom) = 0;
+	virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom) = 0;
 	~ICpTopology3Handler() {}
 };
 
@@ -45,30 +41,23 @@ public:
 	CpTopology3Room& Room() const;
 	const Brx& Name() const;
 	TUint SourceCount() const;
-    const Brx& SourceName(TUint aIndex) const;
-    const Brx& SourceType(TUint aIndex) const;
-    const Brx& SourceGroup(TUint aIndex) const;
-    CpDevice& SourceDevice(TUint aIndex) const;
 
 	TBool HasParent() const;
 	CpTopology3Group& Parent() const;
 	TUint ParentSourceIndex() const;
 
-	TBool Root() const;
-	void SetRoot(TBool aValue);
-	TUint EvaluateSourceCount();
+	TBool IsRoot() const;
+	void SetIsRoot(TBool aValue);
+	TUint EvaluateSources(std::vector<CpTopology3Source*>& aVector);
+	TBool IsDescendentOf(CpTopology3Group& aGroup) const;
 	TBool IsCurrentDescendentOf(CpTopology3Group& aGroup) const;
+	CpTopology3Group& Root();
 	CpTopology3Group& CurrentDescendent();
 	CpTopology3Source& Source(TUint aIndex) const;
 
 	void GroupStandbyChanged();
 	void GroupSourceIndexChanged();
 	void GroupSourceListChanged();
-    void GroupVolumeLimitChanged();
-	void GroupVolumeChanged();
-    void GroupBalanceChanged();
-    void GroupFadeChanged();
-	void GroupMuteChanged();
 	void GroupRemoved();
 
 	void ClearParent();
@@ -85,7 +74,7 @@ private:
 	CpTopology3Room& iRoom;
 	CpTopology3Group* iParent;
 	TUint iParentSourceIndex;
-	TBool iRoot;
+	TBool iIsRoot;
     std::vector<CpTopology3Source*> iSourceList;
     TUint iSourceCount;
 };
@@ -93,12 +82,16 @@ private:
 class CpTopology3Source : private INonCopyable
 {
 public:
-	CpTopology3Source(CpTopology2Group& aGroup, TUint aIndex);
+	CpTopology3Source(CpTopology3Group& aGroup, TUint aIndex);
 
 	const Brx& Name() const;
     const Brx& Type() const;
     const Brx& Group() const;
     CpDevice& Device() const;
+
+	void Select();
+
+	CpTopology3Group& Owner() const;
 
 	TUint ChildCount() const;
 	CpTopology3Group& Child(TUint aIndex) const;
@@ -107,17 +100,13 @@ public:
 	void RemoveChild(CpTopology3Group& aGroup);
 	void ClearChildren();
 
-    TUint EvaluateSourceCount();
+    TUint EvaluateSources(std::vector<CpTopology3Source*>& aVector);
     TUint SourceCount() const;
-    const Brx& SourceName(TUint aIndex) const;
-    const Brx& SourceType(TUint aIndex) const;
-    const Brx& SourceGroup(TUint aIndex) const;
-    CpDevice& SourceDevice(TUint aIndex) const;
 
 	~CpTopology3Source();
 	
 private:
-    CpTopology2Group& iGroup;
+    CpTopology3Group& iGroup;
     TUint iIndex;
     std::vector<CpTopology3Group*> iChildList;
     TUint iSourceCount;
@@ -130,13 +119,20 @@ class CpTopology3Room : private INonCopyable
 	static const TUint kMaxNameBytes = 20;
 
 public:
-    CpTopology3Room(const Brx& aName, ICpTopology3Handler& aHandler);
+	enum EStandby {
+		eOn,
+		eMixed,
+		eOff
+	};
 
-	// functions accessible within ICpTopology3Handler callbacks
+public:
+    CpTopology3Room(const Brx& aName, ICpTopology3Handler& aHandler);
+    ~CpTopology3Room();
+
+	// functions which must be called from ICpTopology3Handler callback thread
 
     void AddRef();
     void RemoveRef();
-    TBool Standby() const;
     const Brx& Name() const;
     TUint SourceCount() const;
     const Brx& SourceName(TUint aIndex) const;
@@ -148,49 +144,28 @@ public:
     const Brx& CurrentSourceGroup() const;
     CpDevice& CurrentSourceDevice() const;
     TBool HasVolumeControl() const;
-    TUint VolumeMax() const;
-    TUint VolumeUnity() const;
-    TUint VolumeSteps() const;
-    TUint VolumeMilliDbPerStep() const;
-    TUint FadeMax() const;
-    TUint BalanceMax() const;
-    TUint VolumeLimit() const;
-    TUint Volume() const;
-    TInt Balance() const;
-    TInt Fade() const;
-    TBool Mute() const;
+	CpDevice& VolumeDevice() const;
+	EStandby Standby() const;
     void SetUserData(void* aValue);
     void* UserData() const;
 
-	// functions always accessible
+	// functions which must not be called from ICpTopology3Handler callback thread
+
     void SetStandby(TBool aValue);
     void SetSourceIndex(TUint aIndex);
-    void SetVolume(TUint aValue);
-    void VolumeInc();
-    void VolumeDec();
-    void SetBalance(TInt aValue);
-    void BalanceInc();
-    void BalanceDec();
-    void SetFade(TInt aValue);
-    void FadeInc();
-    void FadeDec();
-    void SetMute(TBool aValue);
+
+	// private calls from CpTopology3Group
 
 	void GroupAdded(CpTopology3Group& aGroup);
 	void GroupStandbyChanged(CpTopology3Group& aGroup);
 	void GroupSourceIndexChanged(CpTopology3Group& aGroup);
 	void GroupSourceListChanged(CpTopology3Group& aGroup);
-    void GroupVolumeLimitChanged(CpTopology3Group& aGroup);
-	void GroupVolumeChanged(CpTopology3Group& aGroup);
-    void GroupBalanceChanged(CpTopology3Group& aGroup);
-    void GroupFadeChanged(CpTopology3Group& aGroup);
-	void GroupMuteChanged(CpTopology3Group& aGroup);
 	void GroupRemoved(CpTopology3Group& aGroup);
 
-    ~CpTopology3Room();
-
 private:
-	TUint EvaluateSourceCount();
+	void UpdateCurrentGroup(CpTopology3Group& aGroup);
+	TUint EvaluateSources();
+	void EvaluateStandby();
 	void ReportGroups();
 
 private:
@@ -203,8 +178,10 @@ private:
     TBool iActive;
 	mutable Mutex iMutex;
     TUint iSourceCount;
+	TUint iStandbyCount;
+	EStandby iStandby;
     TUint iRefCount;
-    TBool iHasVolumeControl;
+	CpDevice* iVolumeDevice;
     void* iUserData;
 };
 
@@ -223,11 +200,6 @@ private:
 	virtual void GroupStandbyChanged(CpTopology2Group& aGroup);
 	virtual void GroupSourceIndexChanged(CpTopology2Group& aGroup);
 	virtual void GroupSourceListChanged(CpTopology2Group& aGroup);
-    virtual void GroupVolumeLimitChanged(CpTopology2Group& aGroup);
-	virtual void GroupVolumeChanged(CpTopology2Group& aGroup);
-    virtual void GroupBalanceChanged(CpTopology2Group& aGroup);
-    virtual void GroupFadeChanged(CpTopology2Group& aGroup);
-	virtual void GroupMuteChanged(CpTopology2Group& aGroup);
 	virtual void GroupRemoved(CpTopology2Group& aGroup);
 
 	// ICpTopology3Handler
@@ -236,11 +208,7 @@ private:
     virtual void RoomRemoved(CpTopology3Room& aRoom);
 	virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
 	virtual void RoomSourceChanged(CpTopology3Room& aRoom);
-    virtual void RoomVolumeLimitChanged(CpTopology3Room& aRoom);
-	virtual void RoomVolumeChanged(CpTopology3Room& aRoom);
-    virtual void RoomBalanceChanged(CpTopology3Room& aRoom);
-    virtual void RoomFadeChanged(CpTopology3Room& aRoom);
-	virtual void RoomMuteChanged(CpTopology3Room& aRoom);
+	virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom);
 
 private:
 	ICpTopology3Handler& iHandler;

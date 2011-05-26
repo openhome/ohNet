@@ -23,11 +23,6 @@ public:
 	virtual void GroupStandbyChanged(CpTopology2Group& aGroup) = 0;
 	virtual void GroupSourceIndexChanged(CpTopology2Group& aGroup) = 0;
 	virtual void GroupSourceListChanged(CpTopology2Group& aGroup) = 0;
-    virtual void GroupVolumeLimitChanged(CpTopology2Group& aGroup) = 0;
-	virtual void GroupVolumeChanged(CpTopology2Group& aGroup) = 0;
-    virtual void GroupBalanceChanged(CpTopology2Group& aGroup) = 0;
-    virtual void GroupFadeChanged(CpTopology2Group& aGroup) = 0;
-	virtual void GroupMuteChanged(CpTopology2Group& aGroup) = 0;
 	virtual void GroupRemoved(CpTopology2Group& aDevice) = 0;
 	~ICpTopology2Handler() {}
 };
@@ -37,16 +32,6 @@ class ICpTopology2GroupHandler
 public:
     virtual void SetSourceIndex(TUint aIndex) = 0;
     virtual void SetStandby(TBool aValue) = 0;
-    virtual void SetVolume(TUint aValue) = 0;
-    virtual void VolumeInc() = 0;
-    virtual void VolumeDec() = 0;
-    virtual void SetBalance(TInt aValue) = 0;
-    virtual void BalanceInc() = 0;
-    virtual void BalanceDec() = 0;
-    virtual void SetFade(TInt aValue) = 0;
-    virtual void FadeInc() = 0;
-    virtual void FadeDec() = 0;
-    virtual void SetMute(TBool aValue) = 0;
 	~ICpTopology2GroupHandler() {}
 };
 
@@ -87,50 +72,23 @@ public:
     const Brx& Room() const;
     const Brx& Name() const;
     TUint SourceCount() const;
+    TUint SourceIndex() const;
+    void SetSourceIndex(TUint aIndex);
     const Brx& SourceName(TUint aIndex) const;
     const Brx& SourceType(TUint aIndex) const;
     TBool SourceVisible(TUint aIndex) const;
-    TUint SourceIndex() const;
-    void SetSourceIndex(TUint aIndex);
     TBool HasVolumeControl() const;
-    TUint VolumeMax() const;
-    TUint VolumeUnity() const;
-    TUint VolumeSteps() const;
-    TUint VolumeMilliDbPerStep() const;
-    TUint FadeMax() const;
-    TUint BalanceMax() const;
-    TUint VolumeLimit() const;
-    TUint Volume() const;
-    void SetVolume(TUint aValue);
-    void VolumeInc();
-    void VolumeDec();
-    TInt Balance() const;
-    void SetBalance(TInt aValue);
-    void BalanceInc();
-    void BalanceDec();
-    TInt Fade() const;
-    void SetFade(TInt aValue);
-    void FadeInc();
-    void FadeDec();
-    TBool Mute() const;
-    void SetMute(TBool aValue);
     void SetUserData(void* aValue);
 	void* UserData() const;
 	
 public: // for test purposes
-    CpTopology2Group(CpDevice& aDevice, ICpTopology2GroupHandler& aHandler, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex, TUint aVolumeMax, TUint aVolumeUnity, TUint aVolumeSteps, TUint aVolumeMilliDbPerStep, TUint aBalanceMax, TUint aFadeMax, TUint aVolumelimit, TUint aVolume, TInt aBalance, TUint aFade, TBool aMute);
-    CpTopology2Group(CpDevice& aDevice, ICpTopology2GroupHandler& aHandler, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex);
+    CpTopology2Group(CpDevice& aDevice, ICpTopology2GroupHandler& aHandler, TBool aStandby, const Brx& aRoom, const Brx& aName, TUint aSourceIndex, TBool aHasVolumeControl);
     void AddSource(const Brx& aName, const Brx& aType, TBool aVisible);
     void UpdateRoom(const Brx& aValue);
     void UpdateName(const Brx& aValue);
     void UpdateSourceIndex(TUint aValue);
     void UpdateStandby(TBool aValue);
     void UpdateSource(TUint aIndex, const Brx& aName, const Brx& aType, TBool aVisible);
-    void UpdateVolumeLimit(TUint aValue);
-    void UpdateVolume(TUint aValue);
-    void UpdateBalance(TInt aValue);
-    void UpdateFade(TInt aValue);
-    void UpdateMute(TBool aValue);
     ~CpTopology2Group();
 
 private:
@@ -141,17 +99,6 @@ private:
 	Bws<kMaxNameBytes> iName;
 	TUint iSourceIndex;
 	TBool iHasVolumeControl;
-	TUint iVolumeMax;
-	TUint iVolumeUnity;
-	TUint iVolumeSteps;
-	TUint iVolumeMilliDbPerStep;
-	TUint iBalanceMax;
-	TUint iFadeMax;
-	TUint iVolumeLimit; 
-	TUint iVolume;
-	TInt iBalance;
-	TInt iFade;
-	TBool iMute;
 	void* iUserData;
     TUint iRefCount;
     std::vector<CpTopology2Source*> iSourceList;
@@ -184,16 +131,6 @@ private:
 	// ICpTopology2GroupHandler
     virtual void SetSourceIndex(TUint aIndex) = 0;
     virtual void SetStandby(TBool aValue) = 0;
-    virtual void SetVolume(TUint aValue) = 0;
-    virtual void VolumeInc() = 0;
-    virtual void VolumeDec() = 0;
-    virtual void SetBalance(TInt aValue) = 0;
-    virtual void BalanceInc() = 0;
-    virtual void BalanceDec() = 0;
-    virtual void SetFade(TInt aValue) = 0;
-    virtual void FadeInc() = 0;
-    virtual void FadeDec() = 0;
-    virtual void SetMute(TBool aValue) = 0;
 
 protected:
 	CpDevice& iDevice;
@@ -209,29 +146,9 @@ private:
 	// ICpTopology2GroupHandler
     virtual void SetSourceIndex(TUint aIndex);
     virtual void SetStandby(TBool aValue);
-    virtual void SetVolume(TUint aValue);
-    virtual void VolumeInc();
-    virtual void VolumeDec();
-    virtual void SetBalance(TInt aValue);
-    virtual void BalanceInc();
-    virtual void BalanceDec();
-    virtual void SetFade(TInt aValue);
-    virtual void FadeInc();
-    virtual void FadeDec();
-    virtual void SetMute(TBool aValue);
 
 	void CallbackSetSourceIndex(IAsync& aAsync);		
 	void CallbackSetStandby(IAsync& aAsync);		
-	void CallbackSetVolume(IAsync& aAsync);		
-    void CallbackVolumeInc(IAsync& aAsync);     
-    void CallbackVolumeDec(IAsync& aAsync);     
-    void CallbackSetBalance(IAsync& aAsync);
-    void CallbackBalanceInc(IAsync& aAsync);     
-    void CallbackBalanceDec(IAsync& aAsync);     
-    void CallbackSetFade(IAsync& aAsync);
-    void CallbackFadeInc(IAsync& aAsync);     
-    void CallbackFadeDec(IAsync& aAsync);     
-	void CallbackSetMute(IAsync& aAsync);		
 
 	void ProcessSourceXml(const Brx& aXml, TBool aInitial);
 	void EventProductInitialEvent();
@@ -240,68 +157,14 @@ private:
 	void EventProductStandbyChanged();	
 	void EventProductSourceIndexChanged();	
 	void EventProductSourceXmlChanged();	
-	void EventPreampInitialEvent();
-    void EventPreampVolumeLimitChanged();    
-	void EventPreampVolumeChanged();	
-    void EventPreampBalanceChanged();    
-    void EventPreampFadeChanged();    
-	void EventPreampMuteChanged();	
 
 private:
 	ICpTopology2Handler& iHandler;
 	CpProxyAvOpenhomeOrgProduct1* iServiceProduct;
-	CpProxyAvOpenhomeOrgVolume1* iServiceVolume;
 	CpTopology2Group* iGroup;
 	FunctorAsync iFunctorSetSourceIndex;
 	FunctorAsync iFunctorSetStandby;
-	FunctorAsync iFunctorSetVolume;
-    FunctorAsync iFunctorVolumeInc;
-    FunctorAsync iFunctorVolumeDec;
-    FunctorAsync iFunctorSetBalance;
-    FunctorAsync iFunctorBalanceInc;
-    FunctorAsync iFunctorBalanceDec;
-    FunctorAsync iFunctorSetFade;
-    FunctorAsync iFunctorFadeInc;
-    FunctorAsync iFunctorFadeDec;
-	FunctorAsync iFunctorSetMute;
 };
-
-/*
-class CpTopology2MediaRenderer : public CpTopology2Device 
-{
-public:
-	CpTopology2MediaRenderer(CpDevice& aDevice, ICpTopology2Handler& aHandler);
-	virtual ~CpTopology2MediaRenderer();
-
-private:
-	// ICpTopology2GroupHandler
-    virtual void SetSourceIndex(TUint aIndex);
-    virtual void SetStandby(TBool aValue);
-    virtual void SetVolume(TUint aValue);
-    virtual void SetMute(TBool aValue);
-
-	void CallbackSetVolume(IAsync& aAsync);		
-	void CallbackSetMute(IAsync& aAsync);		
-
-	void EventRenderingControlPropertyChanged();
-
-	void ParseFriendlyName(const Brx& aFriendlyName, Brn& aRoom, Brn& aName);
-	TBool ParseFriendlyNameBracketed(const Brx& aFriendlyName, Brn& aRoom, Brn& aName, TChar aOpen, TChar aClose);
-	
-	void ProcessLastChange();
-	
-private:
-	ICpTopology2Handler& iHandler;
-	CpProxyUpnpOrgRenderingControl1* iServiceRenderingControl;
-	CpTopology2Group* iGroup;
-	TUint iVolume;
-	TBool iMute;
-	TBool iHasVolume;
-	TBool iHasTransport;
-	FunctorAsync iFunctorSetVolume;
-	FunctorAsync iFunctorSetMute;
-};
-*/
 
 class CpTopology2 : public ICpTopology1Handler, public ICpTopology2Handler
 {
@@ -326,11 +189,6 @@ private:
 	virtual void GroupStandbyChanged(CpTopology2Group& aGroup);
 	virtual void GroupSourceIndexChanged(CpTopology2Group& aGroup);
 	virtual void GroupSourceListChanged(CpTopology2Group& aGroup);
-    virtual void GroupVolumeLimitChanged(CpTopology2Group& aGroup);
-	virtual void GroupVolumeChanged(CpTopology2Group& aGroup);
-    virtual void GroupBalanceChanged(CpTopology2Group& aGroup);
-    virtual void GroupFadeChanged(CpTopology2Group& aGroup);
-	virtual void GroupMuteChanged(CpTopology2Group& aGroup);
 	virtual void GroupRemoved(CpTopology2Group& aDevice);
 
 	void Run();

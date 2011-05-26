@@ -15,7 +15,7 @@ public:
     CpTopologyRoom(CpTopology3Room& aRoom);
     virtual void AddRef();
     virtual void RemoveRef();
-    virtual TBool Standby() const;
+    virtual IRoom::EStandby Standby() const;
     virtual void SetStandby(TBool aValue);
     virtual const Brx& Name() const;
     virtual TUint SourceCount() const;
@@ -29,28 +29,8 @@ public:
     virtual CpDevice& CurrentSourceDevice() const;
     virtual void SetSourceIndex(TUint aIndex);
     virtual TBool HasVolumeControl() const;
-    virtual TUint VolumeMax() const;
-    virtual TUint VolumeUnity() const;
-    virtual TUint VolumeSteps() const;
-    virtual TUint VolumeMilliDbPerStep() const;
-    virtual TUint FadeMax() const;
-    virtual TUint BalanceMax() const;
-    virtual TUint VolumeLimit() const;
-    virtual TUint Volume() const;
-    virtual void SetVolume(TUint aValue);
-    virtual void VolumeInc();
-    virtual void VolumeDec();
-    virtual TInt Balance() const;
-    virtual void SetBalance(TInt aValue);
-    virtual void BalanceInc();
-    virtual void BalanceDec();
-    virtual TInt Fade() const;
-    virtual void SetFade(TInt aValue);
-    virtual void FadeInc();
-    virtual void FadeDec();
-    virtual TBool Mute() const;
-    virtual void SetMute(TBool aValue);
-    virtual void SetUserData(void* aValue);
+	virtual CpDevice& VolumeDevice() const;
+	virtual void SetUserData(void* aValue);
     virtual void* UserData() const;
     
 private:
@@ -73,9 +53,9 @@ void CpTopologyRoom::RemoveRef()
 }
 
 
-TBool CpTopologyRoom::Standby() const
+IRoom::EStandby CpTopologyRoom::Standby() const
 {
-    return (iRoom.Standby());
+    return ((IRoom::EStandby)iRoom.Standby());
 }
 
 
@@ -150,124 +130,10 @@ TBool CpTopologyRoom::HasVolumeControl() const
     return (iRoom.HasVolumeControl());
 }
 
-TUint CpTopologyRoom::VolumeMax() const
+CpDevice& CpTopologyRoom::VolumeDevice() const
 {
-    return (iRoom.VolumeMax());
+    return (iRoom.VolumeDevice());
 }
-
-TUint CpTopologyRoom::VolumeUnity() const
-{
-    return (iRoom.VolumeUnity());
-}
-
-TUint CpTopologyRoom::VolumeSteps() const
-{
-    return (iRoom.VolumeSteps());
-}
-
-TUint CpTopologyRoom::VolumeMilliDbPerStep() const
-{
-    return (iRoom.VolumeMilliDbPerStep());
-}
-
-TUint CpTopologyRoom::FadeMax() const
-{
-    return (iRoom.FadeMax());
-}
-
-TUint CpTopologyRoom::BalanceMax() const
-{
-    return (iRoom.BalanceMax());
-}
-
-TUint CpTopologyRoom::VolumeLimit() const
-{
-    return (iRoom.VolumeLimit());
-}
-
-TUint CpTopologyRoom::Volume() const
-{
-    return (iRoom.Volume());
-}
-
-
-void CpTopologyRoom::SetVolume(TUint aValue)
-{
-    iRoom.SetVolume(aValue);
-}
-
-
-void CpTopologyRoom::VolumeInc()
-{
-    iRoom.VolumeInc();
-}
-
-
-void CpTopologyRoom::VolumeDec()
-{
-    iRoom.VolumeDec();
-}
-
-
-TInt CpTopologyRoom::Balance() const
-{
-    return (iRoom.Balance());
-}
-
-
-void CpTopologyRoom::SetBalance(TInt aValue)
-{
-    iRoom.SetBalance(aValue);
-}
-
-
-void CpTopologyRoom::BalanceInc()
-{
-    iRoom.BalanceInc();
-}
-
-
-void CpTopologyRoom::BalanceDec()
-{
-    iRoom.BalanceDec();
-}
-
-
-TInt CpTopologyRoom::Fade() const
-{
-    return (iRoom.Fade());
-}
-
-
-void CpTopologyRoom::SetFade(TInt aValue)
-{
-    iRoom.SetFade(aValue);
-}
-
-
-void CpTopologyRoom::FadeInc()
-{
-    iRoom.FadeInc();
-}
-
-
-void CpTopologyRoom::FadeDec()
-{
-    iRoom.FadeDec();
-}
-
-
-TBool CpTopologyRoom::Mute() const
-{
-    return (iRoom.Mute());
-}
-
-
-void CpTopologyRoom::SetMute(TBool aValue)
-{
-    iRoom.SetMute(aValue);
-}
-
 
 void CpTopologyRoom::SetUserData(void* aValue)
 {
@@ -297,11 +163,7 @@ private:
     virtual void RoomRemoved(CpTopology3Room& aRoom);
     virtual void RoomStandbyChanged(CpTopology3Room& aRoom);
     virtual void RoomSourceChanged(CpTopology3Room& aRoom);
-    virtual void RoomVolumeLimitChanged(CpTopology3Room& aRoom);
-    virtual void RoomVolumeChanged(CpTopology3Room& aRoom);
-    virtual void RoomBalanceChanged(CpTopology3Room& aRoom);
-    virtual void RoomFadeChanged(CpTopology3Room& aRoom);
-    virtual void RoomMuteChanged(CpTopology3Room& aRoom);
+    virtual void RoomVolumeControlChanged(CpTopology3Room& aRoom);
 
 private:
     IHouseHandler& iHandler;
@@ -358,29 +220,9 @@ void CpTopology::RoomSourceChanged(CpTopology3Room& aRoom)
     iHandler.RoomSourceChanged(*(CpTopologyRoom*)aRoom.UserData());
 }
 
-void CpTopology::RoomVolumeLimitChanged(CpTopology3Room& aRoom)
+void CpTopology::RoomVolumeControlChanged(CpTopology3Room& aRoom)
 {
-    iHandler.RoomVolumeLimitChanged(*(CpTopologyRoom*)aRoom.UserData());
-}
-
-void CpTopology::RoomVolumeChanged(CpTopology3Room& aRoom)
-{
-    iHandler.RoomVolumeChanged(*(CpTopologyRoom*)aRoom.UserData());
-}
-
-void CpTopology::RoomBalanceChanged(CpTopology3Room& aRoom)
-{
-    iHandler.RoomBalanceChanged(*(CpTopologyRoom*)aRoom.UserData());
-}
-
-void CpTopology::RoomFadeChanged(CpTopology3Room& aRoom)
-{
-    iHandler.RoomFadeChanged(*(CpTopologyRoom*)aRoom.UserData());
-}
-
-void CpTopology::RoomMuteChanged(CpTopology3Room& aRoom)
-{
-    iHandler.RoomMuteChanged(*(CpTopologyRoom*)aRoom.UserData());
+    iHandler.RoomVolumeControlChanged(*(CpTopologyRoom*)aRoom.UserData());
 }
 
 // House
