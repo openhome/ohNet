@@ -137,6 +137,7 @@ public:
     TBool CheckRoomAdded(const TestRoom& aRoom);
     TBool CheckRoomChanged(const TestRoom& aRoom);
     TBool CheckRoomRemoved(const TestRoom& aRoom);
+    TBool CheckRoomSourceChanged(const TestRoom& aRoom, const Brx& aName);
     TBool CheckComplete();
     
 private:
@@ -200,6 +201,11 @@ TBool TestTopology3Handler::CheckRoomChanged(const TestRoom& aRoom)
 TBool TestTopology3Handler::CheckRoomRemoved(const TestRoom& aRoom)
 {
     return (Check(Brn("Removed"), aRoom.Name(), Brx::Empty()));
+}
+
+TBool TestTopology3Handler::CheckRoomSourceChanged(const TestRoom& aRoom, const Brx& aName)
+{
+    return (Check(Brn("Change"), aRoom.Name(), aName));
 }
 
 TBool TestTopology3Handler::CheckComplete()
@@ -279,7 +285,7 @@ void TestTopology3Handler::RoomStandbyChanged(CpTopology3Room& aRoom)
 
 void TestTopology3Handler::RoomSourceChanged(CpTopology3Room& aRoom)
 {
-    Add(Brn("Source"), aRoom.Name(), aRoom.CurrentSourceName());
+    Add(Brn("Change"), aRoom.Name(), aRoom.CurrentSourceName());
 }
 
 void TestTopology3Handler::RoomVolumeControlChanged(CpTopology3Room& aRoom)
@@ -439,12 +445,14 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     Print("Remove 1\n");
 
     handler2->GroupRemoved(*group1);
+	handler3.CheckRoomSourceChanged(*room2, Brn("Playlist"));
     handler3.CheckRoomChanged(*room2);
 
     Print("Test 6\n");
     Print("Add 1\n");
 
     handler2->GroupAdded(*group1);
+	handler3.CheckRoomSourceChanged(*room1and2, Brn("Playlist"));
     handler3.CheckRoomChanged(*room1and2);
 
     Print("Test 7\n");
@@ -452,6 +460,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
 
     handler2->GroupRemoved(*group1);
     handler2->GroupRemoved(*group2);
+	handler3.CheckRoomSourceChanged(*room2, Brn("Playlist"));
     handler3.CheckRoomChanged(*room2);
     handler3.CheckRoomRemoved(*room1);
 
