@@ -50,9 +50,9 @@ def main():
         sys.exit(1)
     if debug_exists and release_exists:
         if os.path.getmtime(debug_dll) > os.path.getmtime(release_dll):
-            release_exists = false
+            release_exists = 0
         else:
-            debug_exists = false
+            debug_exists = 0
     if debug_exists:
         builddir = os.path.join(builddir, 'Debug')
     else:
