@@ -28,6 +28,6 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
     cpDevice->RemoveRef();
     delete device;
 
-    Print("TestCpDeviceDv - completed\n");
+    Print("TestCpDeviceDvStd - completed\n");
     UpnpLibrary::Close();
 }
