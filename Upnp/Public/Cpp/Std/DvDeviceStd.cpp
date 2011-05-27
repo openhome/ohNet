@@ -3,8 +3,25 @@
 #include <DviDevice.h>
 #include <Core/DvDevice.h>
 #include <Buffer.h>
+#include <Printer.h>
 
 #include <string>
+
+namespace OpenHome {
+namespace Net {
+
+class DvResourceManagerStd : public IResourceManager, private INonCopyable
+{
+public:
+    DvResourceManagerStd(IResourceManagerStd& aResourceManager);
+private:
+    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
+private:
+    IResourceManagerStd& iResourceManager;
+};
+
+} // namespace Net
+} // namespace OpenHome
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -74,6 +91,19 @@ void DvDeviceStd::SetXmlExtension(const TChar* aXml)
 }
 
 
+
+DvResourceManagerStd::DvResourceManagerStd(IResourceManagerStd& aResourceManager)
+    : iResourceManager(aResourceManager)
+{
+}
+
+void DvResourceManagerStd::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter)
+{
+    std::string uriTail((const char*)aUriTail.Ptr(), aUriTail.Bytes());
+    iResourceManager.WriteResource(uriTail, aInterface, aResourceWriter);
+}
+
+
 // DvDeviceStdStandard
 
 DvDeviceStdStandard::DvDeviceStdStandard(const std::string& aUdn)
@@ -86,15 +116,13 @@ DvDeviceStdStandard::DvDeviceStdStandard(const std::string& aUdn)
 
 DvDeviceStdStandard::DvDeviceStdStandard(const std::string& aUdn, IResourceManagerStd& aResourceManager)
 {
-    iResourceManager = &aResourceManager;
+    iResourceManager = new DvResourceManagerStd(aResourceManager);
     Brn buf((const TByte*)aUdn.c_str(), (TUint)aUdn.length());
-    iDevice = new DviDeviceStandard(buf, *this);
+    iDevice = new DviDeviceStandard(buf, *iResourceManager);
     SetUdn(aUdn);
 }
-    
-void DvDeviceStdStandard::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter)
+
+DvDeviceStdStandard::~DvDeviceStdStandard()
 {
-    std::string uriTail((const char*)aUriTail.Ptr(), aUriTail.Bytes());
-    ASSERT(iResourceManager != NULL);
-    iResourceManager->WriteResource(uriTail, aInterface, aResourceWriter);
-}    
+    delete iResourceManager;
+}

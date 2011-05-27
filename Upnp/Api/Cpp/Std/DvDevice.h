@@ -119,6 +119,8 @@ private:
     std::string iUdn;
 };
 
+class DvResourceManagerStd;
+
 /**
  * Device
  *
@@ -127,7 +129,7 @@ private:
  * DvDevice to their c'tor
  * @ingroup Device
  */
-class DvDeviceStdStandard : public DvDeviceStd, private IResourceManager
+class DvDeviceStdStandard : public DvDeviceStd
 {
 public:
     /**
@@ -147,10 +149,10 @@ public:
      * @param[in] aResourceManager  Allows the owner of a device to serve UI files
      */
     DvDeviceStdStandard(const std::string& aUdn, IResourceManagerStd& aResourceManager);
+
+    ~DvDeviceStdStandard();
 private:
-    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
-private:
-    IResourceManagerStd* iResourceManager;
+    DvResourceManagerStd* iResourceManager;
 };
 
 } // namespace Net
