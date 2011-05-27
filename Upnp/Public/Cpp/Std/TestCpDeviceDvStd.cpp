@@ -16,6 +16,7 @@ using namespace OpenHome::TestFramework;
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
+    aInitParams->SetUseLoopbackNetworkInterface();
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartCombined();
 
