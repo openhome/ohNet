@@ -138,17 +138,22 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.PtrZ();
 }
 
-DeviceBasicC::DeviceBasicC()
+DeviceBasicC::DeviceBasicC(EProtocol aProtocol)
 {
     Bwh udn("device");
     RandomiseUdn(udn);
-    iDevice = DvDeviceStandardCreateNoResources((const char*)udn.Ptr());
-    DvDeviceSetAttribute(iDevice, "Upnp.Domain", "openhome.org");
-    DvDeviceSetAttribute(iDevice, "Upnp.Type", "Test");
-    DvDeviceSetAttribute(iDevice, "Upnp.Version", "1");
-    DvDeviceSetAttribute(iDevice, "Upnp.FriendlyName", "ohNetTestDevice");
-    DvDeviceSetAttribute(iDevice, "Upnp.Manufacturer", "None");
-    DvDeviceSetAttribute(iDevice, "Upnp.ModelName", "ohNet test device");
+    if (aProtocol == eProtocolNone) {
+        iDevice = DvDeviceCreate((const char*)udn.Ptr());
+    }
+    else { // eProtocolUpnp
+        iDevice = DvDeviceStandardCreateNoResources((const char*)udn.Ptr());
+        DvDeviceSetAttribute(iDevice, "Upnp.Domain", "openhome.org");
+        DvDeviceSetAttribute(iDevice, "Upnp.Type", "Test");
+        DvDeviceSetAttribute(iDevice, "Upnp.Version", "1");
+        DvDeviceSetAttribute(iDevice, "Upnp.FriendlyName", "ohNetTestDevice");
+        DvDeviceSetAttribute(iDevice, "Upnp.Manufacturer", "None");
+        DvDeviceSetAttribute(iDevice, "Upnp.ModelName", "ohNet test device");
+    }
     iTestBasic = DvProviderOpenhomeOrgTestBasic1Create(iDevice);
 
     uint32_t ignore;

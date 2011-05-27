@@ -4,17 +4,22 @@
 namespace OpenHome {
 namespace Net {
 
-class DvDeviceStdStandard;
+class DvDeviceStd;
 class ProviderTestBasic;
     
 class DeviceBasic
 {
 public:
-    DeviceBasic();
+    enum EProtocol {
+        eProtocolNone
+       ,eProtocolUpnp
+    };
+public:
+    DeviceBasic(EProtocol aProtocol);
     ~DeviceBasic();
-    DvDeviceStdStandard& Device();
+    DvDeviceStd& Device();
 private:
-    DvDeviceStdStandard* iDevice;
+    DvDeviceStd* iDevice;
     ProviderTestBasic* iTestBasic;
 };
 

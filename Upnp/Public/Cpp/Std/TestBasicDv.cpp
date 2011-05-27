@@ -167,16 +167,21 @@ static void RandomiseUdn(std::string& aUdn)
     aUdn.assign((const char*)udn.Ptr(), udn.Bytes());
 }
 
-DeviceBasic::DeviceBasic()
+DeviceBasic::DeviceBasic(EProtocol aProtocol)
 {
     RandomiseUdn(gDeviceName);
-    iDevice = new DvDeviceStdStandard(gDeviceName);
-    iDevice->SetAttribute("Upnp.Domain", "openhome.org");
-    iDevice->SetAttribute("Upnp.Type", "Test");
-    iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", "ohNetTestDevice");
-    iDevice->SetAttribute("Upnp.Manufacturer", "None");
-    iDevice->SetAttribute("Upnp.ModelName", "ohNet test device");
+    if (aProtocol == DeviceBasic::eProtocolNone) {
+        iDevice = new DvDeviceStd(gDeviceName);
+    }
+    else { // eProtocolUpnp
+        iDevice = new DvDeviceStdStandard(gDeviceName);
+        iDevice->SetAttribute("Upnp.Domain", "openhome.org");
+        iDevice->SetAttribute("Upnp.Type", "Test");
+        iDevice->SetAttribute("Upnp.Version", "1");
+        iDevice->SetAttribute("Upnp.FriendlyName", "ohNetTestDevice");
+        iDevice->SetAttribute("Upnp.Manufacturer", "None");
+        iDevice->SetAttribute("Upnp.ModelName", "ohNet test device");
+    }
     iTestBasic = new ProviderTestBasic(*iDevice);
     iDevice->SetEnabled();
 }
@@ -187,7 +192,7 @@ DeviceBasic::~DeviceBasic()
     delete iDevice;
 }
 
-DvDeviceStdStandard& DeviceBasic::Device()
+DvDeviceStd& DeviceBasic::Device()
 {
     return *iDevice;
 }

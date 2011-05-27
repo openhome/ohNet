@@ -97,7 +97,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     Print("TestDvDeviceStd - starting\n");
 
     Semaphore* sem = new Semaphore("SEM1", 0);
-    DeviceBasic* device = new DeviceBasic;
+    DeviceBasic* device = new DeviceBasic(DeviceBasic::eProtocolUpnp);
     CpDevices* deviceList = new CpDevices(device->Device().Udn(), *sem);
     FunctorCpDeviceCpp added = MakeFunctorCpDeviceCpp(*deviceList, &CpDevices::Added);
     FunctorCpDeviceCpp removed = MakeFunctorCpDeviceCpp(*deviceList, &CpDevices::Removed);

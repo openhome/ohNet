@@ -25,7 +25,7 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
     Print("TestCpDeviceDvC - starting\n");
     OhNetLibraryStartCombined();
 
-    DeviceBasicC* device = new DeviceBasicC;
+    DeviceBasicC* device = new DeviceBasicC(DeviceBasicC::eProtocolNone);
     CpDeviceC cph = CpDeviceDvCreate(device->Device());
     TestBasicCpC::TestActions(cph);
     TestBasicCpC::TestSubscriptions(cph);

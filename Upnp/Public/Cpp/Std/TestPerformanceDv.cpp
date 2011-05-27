@@ -29,7 +29,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     UpnpLibrary::StartDv();
 
     Print("TestPerformanceDv - starting ('q' to quit)\n");
-    DeviceBasic* device = new DeviceBasic();
+    DeviceBasic* device = new DeviceBasic(DeviceBasic::eProtocolUpnp);
     while (getchar() != 'q');
     delete device;
     Print("TestPerformanceDv - exiting\n");

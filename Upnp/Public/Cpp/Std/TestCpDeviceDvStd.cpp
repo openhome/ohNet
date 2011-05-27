@@ -22,7 +22,7 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
 
     Print("TestCpDeviceDvStd - starting\n");
 
-    DeviceBasic* device = new DeviceBasic;
+    DeviceBasic* device = new DeviceBasic(DeviceBasic::eProtocolNone);
     CpDeviceDvCpp* cpDevice = CpDeviceDvCpp::New(device->Device());
     TestBasicCp::TestActions(*cpDevice);
     TestBasicCp::TestSubscriptions(*cpDevice);

@@ -120,7 +120,7 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
 //    Debug::SetLevel(Debug::kService);
 
     Semaphore* sem = new Semaphore("SEM1", 0);
-    DeviceBasicC* device = new DeviceBasicC;
+    DeviceBasicC* device = new DeviceBasicC(DeviceBasicC::eProtocolUpnp);
     DeviceList* deviceList = new DeviceList(*sem);;
     HandleCpDeviceList dlh = CpDeviceListCreateUpnpServiceType("openhome.org", "TestBasic", 1,
                                                                added, deviceList, removed, deviceList);

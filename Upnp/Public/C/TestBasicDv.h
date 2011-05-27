@@ -9,7 +9,12 @@ namespace Net {
 class DeviceBasicC
 {
 public:
-    DeviceBasicC();
+    enum EProtocol {
+        eProtocolNone
+       ,eProtocolUpnp
+    };
+public:
+    DeviceBasicC(EProtocol aProtocol);
     ~DeviceBasicC();
     DvDeviceC Device();
 private:
