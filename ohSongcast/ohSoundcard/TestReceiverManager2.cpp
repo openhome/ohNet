@@ -70,7 +70,7 @@ void ReceiverManager2Logger::ReceiverAdded(ReceiverManager2Receiver& aReceiver)
 
 void ReceiverManager2Logger::ReceiverChanged(ReceiverManager2Receiver& aReceiver)
 {
-    Print("Changed   ");
+    Print("Changed ");
     Print(aReceiver.Room());
     Print("(");
     Print(aReceiver.Group());
@@ -80,7 +80,8 @@ void ReceiverManager2Logger::ReceiverChanged(ReceiverManager2Receiver& aReceiver
 	}
 	else {
 		Print(" Not Selected ");
-	}	Bws<10000> state;
+	}
+	Bws<10000> state;
 	aReceiver.TransportState(state);
 	Print(state);
     Print(" ");
