@@ -223,20 +223,20 @@ TBool DviDevice::IsRoot() const
     return (root == this);
 }
 
-void DviDevice::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter)
+void DviDevice::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
     Parser parser(aUriTail);
     Brn dir = parser.Next('/');
     if (dir == kResourceDir) {
         if (iResourceManager != NULL) {
-            iResourceManager->WriteResource(parser.Remaining(), aInterface, aResourceWriter);
+            iResourceManager->WriteResource(parser.Remaining(), aInterface, aLanguageList, aResourceWriter);
         }
     }
     else {
         for (TUint i=0; i<(TUint)iProtocols.size(); i++) {
             IDvProtocol* protocol = iProtocols[i];
             if (protocol->ProtocolName() == dir) {
-                protocol->WriteResource(parser.Remaining(), aInterface, aResourceWriter);
+                protocol->WriteResource(parser.Remaining(), aInterface, aLanguageList, aResourceWriter);
                 break;
             }
         }
@@ -538,7 +538,7 @@ DviDevice* DviDeviceMap::Find(const Brx& aUdn)
     return device;
 }
 
-void DviDeviceMap::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter)
+void DviDeviceMap::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
     AutoMutex a(iLock);
     Parser parser(aUriTail);
@@ -547,7 +547,7 @@ void DviDeviceMap::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IRe
     if (dir.Bytes() > 0) {
         Map::iterator it = iMap.find(dir);
         if (it != iMap.end()) {
-            it->second->WriteResource(parser.Remaining(), aInterface, aResourceWriter);
+            it->second->WriteResource(parser.Remaining(), aInterface, aLanguageList, aResourceWriter);
         }
     }
 }

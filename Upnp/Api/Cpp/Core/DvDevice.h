@@ -6,6 +6,8 @@
 #include <Functor.h>
 #include <DvResourceWriter.h>
 
+#include <vector>
+
 namespace OpenHome {
 namespace Net {
 
@@ -17,7 +19,7 @@ class IResourceManager
 {
 public:
     virtual ~IResourceManager() {}
-    virtual void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter) = 0;
+    virtual void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter) = 0;
 };
 
 class DviDevice;

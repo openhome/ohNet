@@ -33,12 +33,12 @@ DvDevice* DviDeviceC::Device()
 	return iDevice;
 }
 
-void DviDeviceC::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter)
+void DviDeviceC::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
 	ASSERT(iResourceManager != NULL);
 	iResourceWriter = &aResourceWriter;
 	Brhz uriTail(aUriTail);
-	iResourceManager(iCallbackArg, uriTail.CString(), aInterface, this, WriteResourceBegin, WriteResource, WriteResourceEnd);
+	iResourceManager(iCallbackArg, uriTail.CString(), aInterface, &aLanguageList, this, WriteResourceBegin, WriteResource, WriteResourceEnd);
 }
 
 void DviDeviceC::WriteResourceBegin(void* aPtr, uint32_t aTotalBytes, const char* aMimeType)
@@ -137,4 +137,19 @@ DvDeviceC DvDeviceStandardCreate(const char* aUdn, OhNetCallbackResourceManager 
 {
 	DviDeviceStandardC* wrapper = new DviDeviceStandardC(aUdn, aResourceManager, aPtr);
 	return (DvDeviceC)wrapper;
+}
+
+uint32_t DvResourceWriterLanguageCount(THandle aLanguageList)
+{
+    std::vector<char*>* list = reinterpret_cast<std::vector<char*>*>(aLanguageList);
+    ASSERT(list != NULL);
+    return (uint32_t)list->size();
+}
+
+const char* DvResourceWriterLanguage(THandle aLanguageList, uint32_t aIndex)
+{
+    std::vector<char*>* list = reinterpret_cast<std::vector<char*>*>(aLanguageList);
+    ASSERT(list != NULL);
+    ASSERT(aIndex < (uint32_t)list->size());
+    return (*list)[aIndex];
 }

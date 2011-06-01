@@ -15,7 +15,7 @@ class DvResourceManagerStd : public IResourceManager, private INonCopyable
 public:
     DvResourceManagerStd(IResourceManagerStd& aResourceManager);
 private:
-    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
+    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
 private:
     IResourceManagerStd& iResourceManager;
 };
@@ -97,10 +97,10 @@ DvResourceManagerStd::DvResourceManagerStd(IResourceManagerStd& aResourceManager
 {
 }
 
-void DvResourceManagerStd::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter)
+void DvResourceManagerStd::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
     std::string uriTail((const char*)aUriTail.Ptr(), aUriTail.Bytes());
-    iResourceManager.WriteResource(uriTail, aInterface, aResourceWriter);
+    iResourceManager.WriteResource(uriTail, aInterface, aLanguageList, aResourceWriter);
 }
 
 

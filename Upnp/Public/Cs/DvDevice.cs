@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Collections.Generic;
 
 namespace OpenHome.Net.Device
 {
@@ -38,7 +39,7 @@ namespace OpenHome.Net.Device
     /// </summary>
     public interface IResourceManager
     {
-        void WriteResource(string aUriTail, uint aIpAddress, IResourceWriter aWriter);
+        void WriteResource(string aUriTail, uint aIpAddress, List<string> aLanguageList, IResourceWriter aWriter);
     }
 
     /// <summary>
@@ -63,9 +64,9 @@ namespace OpenHome.Net.Device
             iWriteEnd = aWriteEnd;
         }
 
-        public void Write(IResourceManager aManager, string aUriTail, uint aInterface)
+        public void Write(IResourceManager aManager, string aUriTail, uint aInterface, List<string> aLanguageList)
         {
-            aManager.WriteResource(aUriTail, aInterface, this);
+            aManager.WriteResource(aUriTail, aInterface, aLanguageList, this);
         }                              
         
         public unsafe void WriteResourceBegin(int aTotalBytes, string aMimeType)
@@ -360,11 +361,15 @@ namespace OpenHome.Net.Device
         static extern unsafe IntPtr DvDeviceStandardCreateNoResources(char* aUdn);
         [DllImport("ohNet")]
         static extern unsafe IntPtr DvDeviceStandardCreate(char* aUdn, CallbackResourceManager aResourceManager, IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern unsafe uint DvResourceWriterLanguageCount(IntPtr aHandle);
+        [DllImport("ohNet")]
+        static extern unsafe IntPtr DvResourceWriterLanguage(IntPtr aHandle, uint aIndex);
 
         public unsafe delegate void CallbackWriteResourceBegin(IntPtr aPtr, int aTotalBytes, char* aMimeType);
         public delegate void CallbackWriteResource(IntPtr aPtr, byte[] aData, int aBytes);
         public delegate void CallbackWriteResourceEnd(IntPtr aPtr);
-        private unsafe delegate void CallbackResourceManager(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aWriterData,
+        private unsafe delegate void CallbackResourceManager(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aLanguageList, IntPtr aWriterData,
                                                              CallbackWriteResourceBegin aWriteBegin,
                                                              CallbackWriteResource aWriteResource,
                                                              CallbackWriteResourceEnd aWriteEnd);
@@ -401,7 +406,7 @@ namespace OpenHome.Net.Device
             Marshal.FreeHGlobal((IntPtr)udn);
         }
 
-        private static unsafe void WriteResource(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aWriterData,
+        private static unsafe void WriteResource(IntPtr aUserData, char* aUriTail, uint aInterface, IntPtr aLanguageList, IntPtr aWriterData,
                                                  CallbackWriteResourceBegin aWriteBegin,
                                                  CallbackWriteResource aWriteResource,
                                                  CallbackWriteResourceEnd aWriteEnd)
@@ -409,8 +414,14 @@ namespace OpenHome.Net.Device
             GCHandle gch = GCHandle.FromIntPtr(aUserData);
             DvDeviceStandard self = (DvDeviceStandard)gch.Target;
             string uriTail = Marshal.PtrToStringAnsi((IntPtr)aUriTail);
+            List<string> languageList = new List<string>();
+            uint count = DvResourceWriterLanguageCount(aLanguageList);
+            for (uint i = 0; i < count; i++)
+            {
+                languageList.Add(Marshal.PtrToStringAnsi(DvResourceWriterLanguage(aLanguageList, i)));
+            }
             ResourceWriter writer = new ResourceWriter(aWriterData, aWriteBegin, aWriteResource, aWriteEnd);
-            writer.Write(self.iResourceManager, uriTail, aInterface);
+            writer.Write(self.iResourceManager, uriTail, aInterface, languageList);
         }
     }
 }

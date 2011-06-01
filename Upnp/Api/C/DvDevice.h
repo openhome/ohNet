@@ -66,6 +66,8 @@ typedef void (*OhNetCallbackWriteResourceEnd)(void* aWriterData);
  * @param[in] aUserData       'aPtr' passed to DvDeviceCreate
  * @param[in] aUriTail        File being requested
  * @param[in] aInterface      Network interface the file request was made on
+ * @param[in] aLanguageList   Handle to a prioritised list of the languages accepted in the resources to
+ *                            be written.  This should be passed to DvResourceWriterLanguage*.
  * @param[in] aWriterData     Opaque pointer to be passed to all 3 OhNetCallbackWriteResource* callbacks
  * @param[in] aWriteBegin     Callback to run at the start of serving the file.
  *                            Should not be run if the file cannot be supplied.
@@ -76,7 +78,7 @@ typedef void (*OhNetCallbackWriteResourceEnd)(void* aWriterData);
  * @param[in] aWriteEnd       Callback to be run at the end of serving a file.
  *                            Must be called if aWriteBegin is called.
  */
-typedef void (*OhNetCallbackResourceManager)(void* aUserData, const char* aUriTail, TIpAddress aInterface, void* aWriterData,
+typedef void (*OhNetCallbackResourceManager)(void* aUserData, const char* aUriTail, TIpAddress aInterface, THandle aLanguageList, void* aWriterData,
 	                                        OhNetCallbackWriteResourceBegin aWriteBegin,
                                             OhNetCallbackWriteResource aWriteResource,
                                             OhNetCallbackWriteResourceEnd aWriteEnd);
@@ -200,6 +202,27 @@ DllExport DvDeviceC DvDeviceStandardCreateNoResources(const char* aUdn);
  * @return  Handle to the new device
  */
 DllExport DvDeviceC DvDeviceStandardCreate(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr);
+
+/**
+ * Query the number of languages accepted by the resource writer.
+ *
+ * @param[in] aLanguageList  Handle passed to OhNetCallbackResourceManager.
+ *
+ * @return  Number of accepted languages
+ */
+DllExport uint32_t DvResourceWriterLanguageCount(THandle aLanguageList);
+
+/**
+ * Query a language accepted by the resource writer.
+ *
+ * @param[in] aLanguageList  Handle passed to OhNetCallbackResourceManager.
+ * @param[in] aIndex         Zero-based index into the list of accepted languages.
+ *                           Valid values are [0..DvResourceWriterLanguageCount-1].
+ *                           The list is in priority order so index #0 is preferred over #1 etc.
+ *
+ * @return  ISO 639 style language code (e.g. "en-gb" or "en")
+ */
+DllExport const char* DvResourceWriterLanguage(THandle aLanguageList, uint32_t aIndex);
 
 /* @} */
 
