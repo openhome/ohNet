@@ -224,7 +224,7 @@ TInt DviDeviceUpnp::FindListenerForInterface(TIpAddress aInterface)
     return -1;
 }
 
-void DviDeviceUpnp::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter)
+void DviDeviceUpnp::WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter)
 {
     AutoMutex a(iLock);
     if (aUriTail == kDeviceXmlName) {
@@ -261,7 +261,7 @@ void DviDeviceUpnp::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IR
         if (buf == DviDevice::kResourceDir) {
             IResourceManager* resMgr = iDevice.ResourceManager();
             if (resMgr != NULL) {
-                resMgr->WriteResource(rem, aInterface, aResourceWriter);
+                resMgr->WriteResource(rem, aInterface, aLanguageList, aResourceWriter);
             }
         }
         else if (rem == kServiceXmlName) {
@@ -1020,13 +1020,14 @@ void DviDeviceUpnpXmlWriter::Write(TIpAddress aInterface)
     const TUint deviceCount = iDeviceUpnp.iDevice.DeviceCount();
     if (deviceCount > 0) {
         iWriter.Write("<deviceList>");
+        std::vector<char*> emptyLanguageList;
         for (TUint i=0; i<deviceCount; i++) {
             TUint len = iDeviceUpnp.kProtocolName.Bytes() + 1 + iDeviceUpnp.kDeviceXmlName.Bytes();
             Bwh uri(len);
             uri.Append(iDeviceUpnp.kProtocolName);
             uri.Append('/');
             uri.Append(iDeviceUpnp.kDeviceXmlName);
-            iDeviceUpnp.iDevice.Device(i).WriteResource(uri, aInterface, *this);
+            iDeviceUpnp.iDevice.Device(i).WriteResource(uri, aInterface, emptyLanguageList, *this);
         }
         iWriter.Write("</deviceList>");
     }

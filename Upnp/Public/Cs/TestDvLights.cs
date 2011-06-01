@@ -214,7 +214,7 @@ namespace OpenHome.Net
             iDevice.Dispose();
         }
 
-        public void WriteResource(string aUriTail, uint aIpAddress, Device.IResourceWriter aWriter)
+        public void WriteResource(string aUriTail, uint aIpAddress, List<string> aLanguageList, Device.IResourceWriter aWriter)
         {
             string path = iConfigDir;
             if (aUriTail.Length == 0)

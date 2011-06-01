@@ -46,7 +46,7 @@ public:
     DeviceBasic(const Brx& aConfigDir);
     ~DeviceBasic();
 private:
-    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
+    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
 private:
     DvDeviceStandard* iDevice;
     ProviderTestBasic* iTestBasic;
@@ -256,7 +256,7 @@ DeviceBasic::~DeviceBasic()
     delete iDevice;
 }
 
-void DeviceBasic::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, IResourceWriter& aResourceWriter)
+void DeviceBasic::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
 {
     const Brn kIndexFile("index.html");
     Bwh filePath(iConfigDir);

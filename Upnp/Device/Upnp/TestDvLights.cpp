@@ -76,7 +76,7 @@ public:
     DeviceLights(TUint aMode, const Brx& aConfigDir);
     ~DeviceLights();
 private:
-    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
+    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
 private:
     DvDeviceStandard* iDevice;
     ProviderLights* iLights;
@@ -254,7 +254,7 @@ DeviceLights::~DeviceLights()
     delete iDevice;
 }
 
-void DeviceLights::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, IResourceWriter& aResourceWriter)
+void DeviceLights::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/, std::vector<char*>& /*aLanguageList*/, IResourceWriter& aResourceWriter)
 {
     const Brn kIndexFile("index.html");
     Bwh filePath(iConfigDir);

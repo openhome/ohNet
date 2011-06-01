@@ -55,6 +55,33 @@ private:
     Bwh iUri;
 };
 
+class HeaderAcceptLanguage : public HttpHeader
+{
+public:
+    ~HeaderAcceptLanguage();
+    const Brx& LanguageString() const;
+    std::vector<char*>& LanguageList();
+private:
+    TBool Recognise(const Brx& aHeader);
+    void Process(const Brx& aValue);
+private:
+    struct PrioritisedLanguage
+    {
+        char* iLanguage;
+        TUint iPriority;
+    };
+private:
+    void ClearLanguageList();
+    TUint ParseQualityValue(const Brx& aBuf);
+    void AddPrioritisedLanguage(std::vector<PrioritisedLanguage>& aList, PrioritisedLanguage& aLanguage);
+private:
+    static const TUint kMaxQuality = 1000;
+    static const TUint kMinQuality = 0;
+    static const TUint kMaxQualityChars = 5; // HTTP spec says quality scores have max 3 dec places
+    Brh iLanguages;
+    std::vector<char*> iLanguageList;
+};
+
 class SubscriptionDataUpnp : public IDviSubscriptionUserData
 {
 public:
@@ -152,6 +179,7 @@ private:
     HeaderTimeout iHeaderTimeout;
     HeaderNt iHeaderNt;
     HeaderCallback iHeaderCallback;
+    HeaderAcceptLanguage iHeaderAcceptLanguage;
     const HttpStatus* iErrorStatus;
     TBool iResponseStarted;
     TBool iResponseEnded;

@@ -19,7 +19,7 @@ class IResourceManagerStd
 {
 public:
     virtual ~IResourceManagerStd() {}
-    virtual void WriteResource(const std::string& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter) = 0;
+    virtual void WriteResource(const std::string& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter) = 0;
 };
 
 class DviDevice;

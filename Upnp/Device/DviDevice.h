@@ -51,7 +51,7 @@ public:
     DviDevice& Device(TUint aIndex) const;
     TBool IsRoot() const;
     DviDevice* Root() const;
-    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
+    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
     void GetUriBase(Bwh& aUriBase, TIpAddress aInterface, TUint aPort, IDvProtocol& aProtocol);
     TUint ConfigId();
     void CreateSid(Brh& aSid);
@@ -138,7 +138,7 @@ public:
     static void Add(DviDevice& aDevice);
     static void Remove(DviDevice& aDevice);
     static DviDevice* Find(const Brx& aUdn);
-    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
+    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
 private:
     typedef std::map<Brn,DviDevice*,BufferCmp> Map;
     Mutex iLock;

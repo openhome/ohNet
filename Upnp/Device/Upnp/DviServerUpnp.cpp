@@ -18,6 +18,8 @@
 #include <Stack.h>
 #include <Error.h>
 
+#include <stdlib.h>
+
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
@@ -161,6 +163,110 @@ void HeaderCallback::Process(const Brx& aValue)
 }
 
 
+// HeaderAcceptLanguage
+
+HeaderAcceptLanguage::~HeaderAcceptLanguage()
+{
+    ClearLanguageList();
+}
+
+const Brx& HeaderAcceptLanguage::LanguageString() const
+{
+    return iLanguages;
+}
+
+std::vector<char*>& HeaderAcceptLanguage::LanguageList()
+{
+    return iLanguageList;
+}
+
+TBool HeaderAcceptLanguage::Recognise(const Brx& aHeader)
+{
+	return Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderAcceptLanguage);
+}
+
+void HeaderAcceptLanguage::Process(const Brx& aValue)
+{
+    SetReceived();
+    ClearLanguageList();
+    iLanguages.Set(aValue);
+
+    std::vector<PrioritisedLanguage> prioritisedList;
+    Parser parser(iLanguages);
+    while (parser.Remaining().Bytes() > 0) {
+        Brn langBuf = parser.Next(',');
+        Parser parser2(langBuf);
+        Brn lang = parser2.Next(';');
+        parser2.Set(parser2.Remaining());
+        Brn qualityBuf = parser2.Next('=');
+        if (qualityBuf.Bytes() > 0) {
+            qualityBuf.Set(parser2.Remaining());
+        }
+        TUint quality = ParseQualityValue(qualityBuf);
+        PrioritisedLanguage prioritisedLang;
+        prioritisedLang.iLanguage = (char*)malloc(lang.Bytes()+1);
+        (void)memcpy(prioritisedLang.iLanguage, lang.Ptr(), lang.Bytes());
+        prioritisedLang.iLanguage[lang.Bytes()] = '\0';
+        prioritisedLang.iPriority = quality;
+        AddPrioritisedLanguage(prioritisedList, prioritisedLang);
+    }
+
+    for (TUint i=0; i<(TUint)prioritisedList.size(); i++) {
+        iLanguageList.push_back(prioritisedList[i].iLanguage);
+    }
+}
+
+void HeaderAcceptLanguage::ClearLanguageList()
+{
+    for (TUint i=0; i<(TUint)iLanguageList.size(); i++) {
+        free(iLanguageList[i]);
+    }
+    iLanguageList.clear();
+}
+
+TUint HeaderAcceptLanguage::ParseQualityValue(const Brx& aBuf)
+{
+    if (aBuf.Bytes() == 0) {
+        return kMaxQuality;
+    }
+    if (aBuf[0] == '1') {
+        return kMaxQuality;
+    }
+    else if (aBuf[0] != '0') {
+        // invalid value, ignore it
+        return kMinQuality;
+    }
+    if (aBuf.Bytes() < 3 || aBuf[1] != '.' || aBuf.Bytes() > kMaxQualityChars) {
+        // invalid value, ignore it
+        return kMinQuality;
+    }
+
+    TUint quality = kMinQuality;
+    TUint i;
+    for (i=2; i<aBuf.Bytes(); i++) {
+        if (!Ascii::IsDigit(aBuf[i])) {
+            return 0;
+        }
+        quality = (quality * 10) + aBuf[i] - '0';
+    }
+    for (; i<kMaxQualityChars; i++) {
+        quality *= 10;
+    }
+    return quality;
+}
+
+void HeaderAcceptLanguage::AddPrioritisedLanguage(std::vector<PrioritisedLanguage>& aList, PrioritisedLanguage& aLanguage)
+{
+    for (TUint i=0; i<(TUint)aList.size(); i++) {
+        if (aLanguage.iPriority > aList[i].iPriority) {
+            aList.insert(aList.begin()+i, aLanguage);
+            return;
+        }
+    }
+    aList.push_back(aLanguage);
+}
+
+
 // SubscriptionDataUpnp
 
 SubscriptionDataUpnp::SubscriptionDataUpnp(const Endpoint& aSubscriber, const Brx& aSubscriberPath)
@@ -287,6 +393,7 @@ DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort, IRedirector& 
     iReaderRequest->AddHeader(iHeaderTimeout);
     iReaderRequest->AddHeader(iHeaderNt);
     iReaderRequest->AddHeader(iHeaderCallback);
+    iReaderRequest->AddHeader(iHeaderAcceptLanguage);
 }
 
 DviSessionUpnp::~DviSessionUpnp()
@@ -387,7 +494,7 @@ void DviSessionUpnp::Get()
 
     Brn redirectTo;
     if (!iRedirector.RedirectUri(iReaderRequest->Uri(), redirectTo)) {
-        DviStack::DeviceMap().WriteResource(iReaderRequest->Uri(), iInterface, *this);
+        DviStack::DeviceMap().WriteResource(iReaderRequest->Uri(), iInterface, iHeaderAcceptLanguage.LanguageList(), *this);
     }
     else {
         iResponseStarted = true;
