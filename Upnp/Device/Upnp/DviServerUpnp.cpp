@@ -18,6 +18,8 @@
 #include <Stack.h>
 #include <Error.h>
 
+#include <stdlib.h>
+
 using namespace OpenHome;
 using namespace OpenHome::Net;
 

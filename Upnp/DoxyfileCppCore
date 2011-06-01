@@ -590,7 +590,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = Api Api/Cpp Api/Cpp/Core
+INPUT                  = Api Api/Cpp Api/Cpp/Core ControlPoint/Services/Cpp/Core Device/Services/Cpp/Core
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
