@@ -61,6 +61,12 @@ objects_proxies = \
                   $(objdir)CpAvOpenhomeOrgRadio1.$(objext) \
                   $(objdir)CpAvOpenhomeOrgRadio1C.$(objext) \
                   $(objdir)CpAvOpenhomeOrgRadio1Std.$(objext) \
+                  $(objdir)CpAvOpenhomeOrgReceiver1.$(objext) \
+                  $(objdir)CpAvOpenhomeOrgReceiver1C.$(objext) \
+                  $(objdir)CpAvOpenhomeOrgReceiver1Std.$(objext) \
+                  $(objdir)CpAvOpenhomeOrgSender1.$(objext) \
+                  $(objdir)CpAvOpenhomeOrgSender1C.$(objext) \
+                  $(objdir)CpAvOpenhomeOrgSender1Std.$(objext) \
                   $(objdir)CpOpenhomeOrgTestBasic1.$(objext) \
                   $(objdir)CpOpenhomeOrgTestBasic1C.$(objext) \
                   $(objdir)CpOpenhomeOrgTestBasic1Std.$(objext) \
@@ -104,6 +110,8 @@ proxy_dotnet_assemblies = \
         CpAvOpenhomeOrgVolume1.net.dll \
         CpAvOpenhomeOrgProduct1.net.dll \
         CpAvOpenhomeOrgRadio1.net.dll \
+        CpAvOpenhomeOrgReceiver1.net.dll \
+        CpAvOpenhomeOrgSender1.net.dll \
         CpOpenhomeOrgTestBasic1.net.dll \
         CpOpenhomeOrgTestLights1.net.dll \
         CpOpenhomeOrgTestDimmableLight1.net.dll \
@@ -128,6 +136,8 @@ proxy_dotnet_assemblies_with_path = \
         $(objdir)CpAvOpenhomeOrgVolume1.net.dll \
         $(objdir)CpAvOpenhomeOrgProduct1.net.dll \
         $(objdir)CpAvOpenhomeOrgRadio1.net.dll \
+        $(objdir)CpAvOpenhomeOrgReceiver1.net.dll \
+        $(objdir)CpAvOpenhomeOrgSender1.net.dll \
         $(objdir)CpOpenhomeOrgTestBasic1.net.dll \
         $(objdir)CpOpenhomeOrgTestLights1.net.dll \
         $(objdir)CpOpenhomeOrgTestDimmableLight1.net.dll \
@@ -249,6 +259,18 @@ $(objdir)CpAvOpenhomeOrgRadio1C.$(objext) : $(proxyC)CpAvOpenhomeOrgRadio1C.cpp 
 	$(compiler)CpAvOpenhomeOrgRadio1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgRadio1C.cpp
 $(objdir)CpAvOpenhomeOrgRadio1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgRadio1Std.cpp $(headers_proxy) ControlPoint/Services/Cpp/Std/CpAvOpenhomeOrgRadio1.h
 	$(compiler)CpAvOpenhomeOrgRadio1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgRadio1Std.cpp
+$(objdir)CpAvOpenhomeOrgReceiver1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgReceiver1.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/CpAvOpenhomeOrgReceiver1.h
+	$(compiler)CpAvOpenhomeOrgReceiver1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgReceiver1.cpp
+$(objdir)CpAvOpenhomeOrgReceiver1C.$(objext) : $(proxyC)CpAvOpenhomeOrgReceiver1C.cpp $(headers_proxy) ControlPoint/Services/C/CpAvOpenhomeOrgReceiver1.h
+	$(compiler)CpAvOpenhomeOrgReceiver1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgReceiver1C.cpp
+$(objdir)CpAvOpenhomeOrgReceiver1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgReceiver1Std.cpp $(headers_proxy) ControlPoint/Services/Cpp/Std/CpAvOpenhomeOrgReceiver1.h
+	$(compiler)CpAvOpenhomeOrgReceiver1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgReceiver1Std.cpp
+$(objdir)CpAvOpenhomeOrgSender1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgSender1.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/CpAvOpenhomeOrgSender1.h
+	$(compiler)CpAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgSender1.cpp
+$(objdir)CpAvOpenhomeOrgSender1C.$(objext) : $(proxyC)CpAvOpenhomeOrgSender1C.cpp $(headers_proxy) ControlPoint/Services/C/CpAvOpenhomeOrgSender1.h
+	$(compiler)CpAvOpenhomeOrgSender1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgSender1C.cpp
+$(objdir)CpAvOpenhomeOrgSender1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgSender1Std.cpp $(headers_proxy) ControlPoint/Services/Cpp/Std/CpAvOpenhomeOrgSender1.h
+	$(compiler)CpAvOpenhomeOrgSender1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgSender1Std.cpp
 $(objdir)CpOpenhomeOrgTestBasic1.$(objext) : $(proxyCppCore)CpOpenhomeOrgTestBasic1.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/CpOpenhomeOrgTestBasic1.h
 	$(compiler)CpOpenhomeOrgTestBasic1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpOpenhomeOrgTestBasic1.cpp
 $(objdir)CpOpenhomeOrgTestBasic1C.$(objext) : $(proxyC)CpOpenhomeOrgTestBasic1C.cpp $(headers_proxy) ControlPoint/Services/C/CpOpenhomeOrgTestBasic1.h
@@ -288,6 +310,8 @@ proxy_dlls = \
              CpAvOpenhomeOrgVolume1Dll \
              CpAvOpenhomeOrgProduct1Dll \
              CpAvOpenhomeOrgRadio1Dll \
+             CpAvOpenhomeOrgReceiver1Dll \
+             CpAvOpenhomeOrgSender1Dll \
              CpOpenhomeOrgTestBasic1Dll \
              CpOpenhomeOrgTestLights1Dll \
              CpOpenhomeOrgTestDimmableLight1Dll \
@@ -351,6 +375,12 @@ $(objdir)$(dllprefix)CpAvOpenhomeOrgProduct1.$(dllext) : ZappUpnpDll $(objdir)Cp
 CpAvOpenhomeOrgRadio1Dll: $(objdir)$(dllprefix)CpAvOpenhomeOrgRadio1.$(dllext)
 $(objdir)$(dllprefix)CpAvOpenhomeOrgRadio1.$(dllext) : ZappUpnpDll $(objdir)CpAvOpenhomeOrgRadio1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpAvOpenhomeOrgRadio1.$(dllext) $(objdir)CpAvOpenhomeOrgRadio1.$(objext)
+CpAvOpenhomeOrgReceiver1Dll: $(objdir)$(dllprefix)CpAvOpenhomeOrgReceiver1.$(dllext)
+$(objdir)$(dllprefix)CpAvOpenhomeOrgReceiver1.$(dllext) : ZappUpnpDll $(objdir)CpAvOpenhomeOrgReceiver1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpAvOpenhomeOrgReceiver1.$(dllext) $(objdir)CpAvOpenhomeOrgReceiver1.$(objext)
+CpAvOpenhomeOrgSender1Dll: $(objdir)$(dllprefix)CpAvOpenhomeOrgSender1.$(dllext)
+$(objdir)$(dllprefix)CpAvOpenhomeOrgSender1.$(dllext) : ZappUpnpDll $(objdir)CpAvOpenhomeOrgSender1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpAvOpenhomeOrgSender1.$(dllext) $(objdir)CpAvOpenhomeOrgSender1.$(objext)
 CpOpenhomeOrgTestBasic1Dll: $(objdir)$(dllprefix)CpOpenhomeOrgTestBasic1.$(dllext)
 $(objdir)$(dllprefix)CpOpenhomeOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)CpOpenhomeOrgTestBasic1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpOpenhomeOrgTestBasic1.$(dllext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext)
@@ -460,6 +490,16 @@ $(objdir)CpAvOpenhomeOrgRadio1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpe
 		/out:$(objdir)CpAvOpenhomeOrgRadio1.net.dll \
 		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpAvOpenhomeOrgRadio1.cs
+$(objdir)CpAvOpenhomeOrgReceiver1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgReceiver1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpAvOpenhomeOrgReceiver1.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
+		$(proxyCs)CpAvOpenhomeOrgReceiver1.cs
+$(objdir)CpAvOpenhomeOrgSender1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgSender1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpAvOpenhomeOrgSender1.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
+		$(proxyCs)CpAvOpenhomeOrgSender1.cs
 $(objdir)CpOpenhomeOrgTestBasic1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOpenhomeOrgTestBasic1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \

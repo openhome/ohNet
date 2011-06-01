@@ -134,6 +134,20 @@
   </service>
   <service>
     <publisher>OpenHome</publisher>
+    <dcpdir></dcpdir>
+    <domain>av.openhome.org</domain>
+    <type>Receiver</type>
+    <version>1</version>
+  </service>
+  <service>
+    <publisher>OpenHome</publisher>
+    <dcpdir></dcpdir>
+    <domain>av.openhome.org</domain>
+    <type>Sender</type>
+    <version>1</version>
+  </service>
+  <service>
+    <publisher>OpenHome</publisher>
     <dcpdir>Test</dcpdir>
     <domain>openhome.org</domain>
     <type>TestBasic</type>

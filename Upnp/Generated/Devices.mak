@@ -61,6 +61,12 @@ objects_devices = \
                   $(objdir)DvAvOpenhomeOrgRadio1.$(objext) \
                   $(objdir)DvAvOpenhomeOrgRadio1Std.$(objext) \
                   $(objdir)DvAvOpenhomeOrgRadio1C.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgReceiver1.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgReceiver1Std.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgReceiver1C.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgSender1.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgSender1Std.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgSender1C.$(objext) \
                   $(objdir)DvOpenhomeOrgTestBasic1.$(objext) \
                   $(objdir)DvOpenhomeOrgTestBasic1Std.$(objext) \
                   $(objdir)DvOpenhomeOrgTestBasic1C.$(objext) \
@@ -98,6 +104,8 @@ device_dotnet_assemblies = \
         DvAvOpenhomeOrgVolume1.net.dll \
         DvAvOpenhomeOrgProduct1.net.dll \
         DvAvOpenhomeOrgRadio1.net.dll \
+        DvAvOpenhomeOrgReceiver1.net.dll \
+        DvAvOpenhomeOrgSender1.net.dll \
         DvOpenhomeOrgTestBasic1.net.dll \
         DvOpenhomeOrgTestLights1.net.dll \
         DvOpenhomeOrgTestDimmableLight1.net.dll \
@@ -122,6 +130,8 @@ device_dotnet_assemblies_with_path = \
         $(objdir)DvAvOpenhomeOrgVolume1.net.dll \
         $(objdir)DvAvOpenhomeOrgProduct1.net.dll \
         $(objdir)DvAvOpenhomeOrgRadio1.net.dll \
+        $(objdir)DvAvOpenhomeOrgReceiver1.net.dll \
+        $(objdir)DvAvOpenhomeOrgSender1.net.dll \
         $(objdir)DvOpenhomeOrgTestBasic1.net.dll \
         $(objdir)DvOpenhomeOrgTestLights1.net.dll \
         $(objdir)DvOpenhomeOrgTestDimmableLight1.net.dll \
@@ -242,6 +252,18 @@ $(objdir)DvAvOpenhomeOrgRadio1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgRadi
 	$(compiler)DvAvOpenhomeOrgRadio1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgRadio1Std.cpp
 $(objdir)DvAvOpenhomeOrgRadio1C.$(objext) : $(deviceC)DvAvOpenhomeOrgRadio1C.cpp $(headers_device) Device/Services/C/DvAvOpenhomeOrgRadio1.h
 	$(compiler)DvAvOpenhomeOrgRadio1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgRadio1C.cpp
+$(objdir)DvAvOpenhomeOrgReceiver1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgReceiver1.cpp $(headers_device) Device/Services/Cpp/Core/DvAvOpenhomeOrgReceiver1.h
+	$(compiler)DvAvOpenhomeOrgReceiver1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgReceiver1.cpp
+$(objdir)DvAvOpenhomeOrgReceiver1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgReceiver1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvAvOpenhomeOrgReceiver1.h
+	$(compiler)DvAvOpenhomeOrgReceiver1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgReceiver1Std.cpp
+$(objdir)DvAvOpenhomeOrgReceiver1C.$(objext) : $(deviceC)DvAvOpenhomeOrgReceiver1C.cpp $(headers_device) Device/Services/C/DvAvOpenhomeOrgReceiver1.h
+	$(compiler)DvAvOpenhomeOrgReceiver1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgReceiver1C.cpp
+$(objdir)DvAvOpenhomeOrgSender1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgSender1.cpp $(headers_device) Device/Services/Cpp/Core/DvAvOpenhomeOrgSender1.h
+	$(compiler)DvAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgSender1.cpp
+$(objdir)DvAvOpenhomeOrgSender1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgSender1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvAvOpenhomeOrgSender1.h
+	$(compiler)DvAvOpenhomeOrgSender1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgSender1Std.cpp
+$(objdir)DvAvOpenhomeOrgSender1C.$(objext) : $(deviceC)DvAvOpenhomeOrgSender1C.cpp $(headers_device) Device/Services/C/DvAvOpenhomeOrgSender1.h
+	$(compiler)DvAvOpenhomeOrgSender1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgSender1C.cpp
 $(objdir)DvOpenhomeOrgTestBasic1.$(objext) : $(deviceCppCore)DvOpenhomeOrgTestBasic1.cpp $(headers_device) Device/Services/Cpp/Core/DvOpenhomeOrgTestBasic1.h
 	$(compiler)DvOpenhomeOrgTestBasic1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvOpenhomeOrgTestBasic1.cpp
 $(objdir)DvOpenhomeOrgTestBasic1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgTestBasic1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvOpenhomeOrgTestBasic1.h
@@ -281,6 +303,8 @@ device_dlls = \
              DvAvOpenhomeOrgVolume1Dll \
              DvAvOpenhomeOrgProduct1Dll \
              DvAvOpenhomeOrgRadio1Dll \
+             DvAvOpenhomeOrgReceiver1Dll \
+             DvAvOpenhomeOrgSender1Dll \
              DvOpenhomeOrgTestBasic1Dll \
              DvOpenhomeOrgTestLights1Dll \
              DvOpenhomeOrgTestDimmableLight1Dll \
@@ -343,6 +367,12 @@ $(objdir)$(dllprefix)DvAvOpenhomeOrgProduct1.$(dllext) : ZappUpnpDll $(objdir)Dv
 DvAvOpenhomeOrgRadio1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgRadio1.$(dllext) 
 $(objdir)$(dllprefix)DvAvOpenhomeOrgRadio1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgRadio1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgRadio1.$(dllext) $(objdir)DvAvOpenhomeOrgRadio1.$(objext)
+DvAvOpenhomeOrgReceiver1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgReceiver1.$(dllext) 
+$(objdir)$(dllprefix)DvAvOpenhomeOrgReceiver1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgReceiver1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgReceiver1.$(dllext) $(objdir)DvAvOpenhomeOrgReceiver1.$(objext)
+DvAvOpenhomeOrgSender1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgSender1.$(dllext) 
+$(objdir)$(dllprefix)DvAvOpenhomeOrgSender1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgSender1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgSender1.$(dllext) $(objdir)DvAvOpenhomeOrgSender1.$(objext)
 DvOpenhomeOrgTestBasic1Dll: $(objdir)$(dllprefix)DvOpenhomeOrgTestBasic1.$(dllext) 
 $(objdir)$(dllprefix)DvOpenhomeOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)DvOpenhomeOrgTestBasic1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvOpenhomeOrgTestBasic1.$(dllext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext)
@@ -453,6 +483,16 @@ $(objdir)DvAvOpenhomeOrgRadio1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvOp
 		/out:$(objdir)DvAvOpenhomeOrgRadio1.net.dll \
 		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvAvOpenhomeOrgRadio1.cs
+$(objdir)DvAvOpenhomeOrgReceiver1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvOpenhomeOrgReceiver1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvAvOpenhomeOrgReceiver1.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
+		$(deviceCs)DvAvOpenhomeOrgReceiver1.cs
+$(objdir)DvAvOpenhomeOrgSender1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvOpenhomeOrgSender1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvAvOpenhomeOrgSender1.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
+		$(deviceCs)DvAvOpenhomeOrgSender1.cs
 $(objdir)DvOpenhomeOrgTestBasic1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvOpenhomeOrgTestBasic1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \

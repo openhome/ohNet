@@ -628,7 +628,6 @@ void CpTopology3Room::GroupStandbyChanged(CpTopology3Group& aGroup)
 
 void CpTopology3Room::EvaluateStandby()
 {
-	printf("begin\n");
 	EStandby standby = eOff;
 
 	if (iStandbyCount > 0) {
@@ -642,7 +641,6 @@ void CpTopology3Room::EvaluateStandby()
 		iStandby = standby;
 		iHandler.RoomStandbyChanged(*this);
 	}
-	printf("end\n");
 }
 
 

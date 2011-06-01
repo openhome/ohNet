@@ -33,26 +33,39 @@ public:
 	virtual CpDevice& VolumeDevice() const;
 	virtual void SetUserData(void* aValue);
     virtual void* UserData() const;
-    
+    ~CpTopologyRoom();
+
 private:
     CpTopology3Room& iRoom;
+	TUint iRefCount;
     void* iUserData;
 };
 
 CpTopologyRoom::CpTopologyRoom(CpTopology3Room& aRoom)
     : iRoom(aRoom)
+	, iRefCount(1)
+	, iUserData(0)
 {
+	iRoom.AddRef();
 }
 
 void CpTopologyRoom::AddRef()
 {
+	iRefCount++;
 }
-
 
 void CpTopologyRoom::RemoveRef()
 {
+	if (--iRefCount == 0) {
+		delete (this);
+	}
 }
 
+
+CpTopologyRoom::~CpTopologyRoom()
+{
+	iRoom.RemoveRef();
+}
 
 IRoom::EStandby CpTopologyRoom::Standby() const
 {
@@ -207,8 +220,9 @@ void CpTopology::RoomChanged(CpTopology3Room& aRoom)
 
 void CpTopology::RoomRemoved(CpTopology3Room& aRoom)
 {
-    iHandler.RoomRemoved(*(CpTopologyRoom*)aRoom.UserData());
-    delete ((CpTopologyRoom*)aRoom.UserData());
+    CpTopologyRoom* room = (CpTopologyRoom*)aRoom.UserData();
+    iHandler.RoomRemoved(*room);
+	room->RemoveRef();
 }
 
 void CpTopology::RoomStandbyChanged(CpTopology3Room& aRoom)
