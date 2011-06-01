@@ -151,6 +151,7 @@ private:
 	void CallbackSetStandby(IAsync& aAsync);		
 
 	void ProcessSourceXml(const Brx& aXml, TBool aInitial);
+
 	void EventProductInitialEvent();
 	void EventProductRoomChanged();	
 	void EventProductNameChanged();	

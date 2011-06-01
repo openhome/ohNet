@@ -52,10 +52,12 @@ CpTopology2Group::CpTopology2Group(CpDevice& aDevice, ICpTopology2GroupHandler& 
     , iUserData(0)
     , iRefCount(1)
 {
+	iDevice.AddRef();
 }
 
 CpTopology2Group::~CpTopology2Group()
 {
+	iDevice.RemoveRef();
 }
 
 void CpTopology2Group::AddSource(const Brx& aName, const Brx& aType, TBool aVisible)
