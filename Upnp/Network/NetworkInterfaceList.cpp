@@ -187,7 +187,7 @@ void NetworkInterfaceList::HandleInterfaceListChanged()
     }
     else {
         for (TUint i=0; i<iSubnets->size(); i++) {
-            if ((*iSubnets)[i]->Subnet() != (*subnets)[i]->Subnet()) {
+            if ((*iSubnets)[i]->Address() != (*subnets)[i]->Address()) {
                 subnetsChanged = true;
                 break;
             }
