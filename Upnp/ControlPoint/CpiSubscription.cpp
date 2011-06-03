@@ -132,6 +132,7 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
     , iPendingOperation(eNone)
     , iRefCount(1)
     , iInterruptHandler(NULL)
+    , iSubscribeCompleted("SUBS", 0)
 {
     iTimer = new Timer(MakeFunctor(*this, &CpiSubscription::Renew));
     iDevice.AddRef();
@@ -187,30 +188,32 @@ void CpiSubscription::DoSubscribe()
     CpiSubscriptionManager::NotifyAddPending(*this);
     TUint renewSecs;
     try {
+        (void)iSubscribeCompleted.Clear();
         renewSecs = iDevice.Subscribe(*this, subscriber);
     }
     catch (HttpError&) {
-        CpiSubscriptionManager::NotifyAddAborted(*this);
+        NotifyAddAborted();
         THROW(HttpError);
     }
     catch (NetworkError&) {
-        CpiSubscriptionManager::NotifyAddAborted(*this);
+        NotifyAddAborted();
         THROW(NetworkError);
     }
     catch (NetworkTimeout&) {
-        CpiSubscriptionManager::NotifyAddAborted(*this);
+        NotifyAddAborted();
         THROW(NetworkTimeout);
     }
     catch (WriterError&) {
-        CpiSubscriptionManager::NotifyAddAborted(*this);
+        NotifyAddAborted();
         THROW(WriterError);
     }
     catch (ReaderError&) {
-        CpiSubscriptionManager::NotifyAddAborted(*this);
+        NotifyAddAborted();
         THROW(ReaderError);
     }
 
     CpiSubscriptionManager::Add(*this);
+    iSubscribeCompleted.Signal();
 
     LOG(kEvent, "Subscription for ");
     LOG(kEvent, iServiceType.FullName());
@@ -264,6 +267,7 @@ void CpiSubscription::DoUnsubscribe()
     LOG(kEvent, iSid);
     LOG(kEvent, "\n");
 
+    iSubscribeCompleted.Wait();
     iTimer->Cancel();
     CpiSubscriptionManager::Remove(*this);
     Brh sid;
@@ -280,6 +284,12 @@ void CpiSubscription::DoUnsubscribe()
         LOG(kEvent, sid);
         LOG(kEvent, "\n");
     }
+}
+
+void CpiSubscription::NotifyAddAborted()
+{
+    CpiSubscriptionManager::NotifyAddAborted(*this);
+    iSubscribeCompleted.Signal();
 }
 
 void CpiSubscription::EventUpdateStart()

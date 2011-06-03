@@ -119,6 +119,7 @@ private:
     void Renew();
     void DoRenew();
     void DoUnsubscribe();
+    void NotifyAddAborted();
 private: // IEventProcessor
     void EventUpdateStart();
     void EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor);
@@ -134,6 +135,7 @@ private:
     EOperation iPendingOperation;
     TUint iRefCount;
     IInterruptHandler* iInterruptHandler;
+    Semaphore iSubscribeCompleted;
 
     friend class CpiSubscriptionManager;
 };
