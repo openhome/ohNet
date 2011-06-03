@@ -144,7 +144,7 @@ proxy_dotnet_assemblies_with_path = \
 
 
 proxies : ohNetCore $(objects_proxies)
-	$(ar)ZappProxies.$(libext) $(objects_proxies)
+	$(ar)$(libprefix)ohNetProxies.$(libext) $(objects_proxies)
 $(objdir)CpUpnpOrgAVTransport1.$(objext) : $(proxyCppCore)CpUpnpOrgAVTransport1.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/CpUpnpOrgAVTransport1.h
 	$(compiler)CpUpnpOrgAVTransport1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpUpnpOrgAVTransport1.cpp
 $(objdir)CpUpnpOrgAVTransport1C.$(objext) : $(proxyC)CpUpnpOrgAVTransport1C.cpp $(headers_proxy) ControlPoint/Services/C/CpUpnpOrgAVTransport1.h

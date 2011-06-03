@@ -39,7 +39,7 @@ device_dotnet_assemblies_with_path = \
 <#  } #>
 
 devices : ohNetCore $(objects_devices)
-	$(ar)ZappDevices.$(libext) $(objects_devices)
+	$(ar)$(libprefix)ohNetDevices.$(libext) $(objects_devices)
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
 $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_device) Device/Services/Cpp/Core/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h

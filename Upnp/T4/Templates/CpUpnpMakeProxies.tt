@@ -46,7 +46,7 @@ proxy_dotnet_assemblies_with_path = \
 
 
 proxies : ohNetCore $(objects_proxies)
-	$(ar)ZappProxies.$(libext) $(objects_proxies)
+	$(ar)$(libprefix)ohNetProxies.$(libext) $(objects_proxies)
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
 $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h

@@ -137,7 +137,7 @@ device_dotnet_assemblies_with_path = \
         $(objdir)DvOpenhomeOrgTestDimmableLight1.net.dll \
 
 devices : ohNetCore $(objects_devices)
-	$(ar)ZappDevices.$(libext) $(objects_devices)
+	$(ar)$(libprefix)ohNetDevices.$(libext) $(objects_devices)
 $(objdir)DvUpnpOrgAVTransport1.$(objext) : $(deviceCppCore)DvUpnpOrgAVTransport1.cpp $(headers_device) Device/Services/Cpp/Core/DvUpnpOrgAVTransport1.h
 	$(compiler)DvUpnpOrgAVTransport1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvUpnpOrgAVTransport1.cpp
 $(objdir)DvUpnpOrgAVTransport1Std.$(objext) : $(deviceCppStd)DvUpnpOrgAVTransport1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvUpnpOrgAVTransport1.h
