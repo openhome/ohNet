@@ -56,8 +56,8 @@ public:
 	void SenderMetadata(Bwx& aValue) const;
 
 	void SetSender(const Brx& aUri, const Brx& aMetadata);
-	void Stop();
 	void Play();
+	void Stop();
 
 	void AddRef();
     void RemoveRef();

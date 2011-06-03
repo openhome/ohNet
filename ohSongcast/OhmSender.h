@@ -79,6 +79,7 @@ class OhmSender
     static const TUint kMaxZoneFrameBytes = 1 * 1024;
     static const TUint kTimerZoneUriDelayMs = 100;
     static const TUint kTimerPresetInfoDelayMs = 100;
+	static const TUint kMaxSenderUriBytes = 100; 
 
 public:
 	static const TUint kMaxNameBytes = 32;
@@ -92,6 +93,8 @@ public:
 
 	const Brx& Image() const;
 	const Brx& MimeType() const;
+	const Brx& SenderUri() const;
+	const Brx& SenderMetadata() const; // might change after SetName() and SetMulticast()
 
 	void SetName(const Brx& aValue);
 	void SetChannel(TUint aValue);
@@ -176,7 +179,8 @@ private:
     ThreadFunctor* iThreadUnicast;
     ThreadFunctor* iThreadZone;
     Bws<Ohm::kMaxUriBytes> iUri;
-    Bws<kMaxMetadataBytes> iMetadata;
+    Bws<kMaxSenderUriBytes> iSenderUri;
+    Bws<kMaxMetadataBytes> iSenderMetadata;
     TUint iSlaveCount;
     Endpoint iSlaveList[kMaxSlaveCount];
     TUint iSlaveExpiry[kMaxSlaveCount];

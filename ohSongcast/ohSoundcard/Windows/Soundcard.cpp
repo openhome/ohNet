@@ -96,8 +96,6 @@ OhmSenderDriverWindows::OhmSenderDriverWindows()
 
 void OhmSenderDriverWindows::SetEnabled(TBool aValue)
 {
-	printf("ENABLED %d\n", aValue);
-
     KSPROPERTY prop;
 				
 	prop.Set = SNEAKY_GUID;
@@ -108,16 +106,11 @@ void OhmSenderDriverWindows::SetEnabled(TBool aValue)
 
 	DWORD value = aValue ? 1 : 0;
 
-    if (!DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &value, sizeof(value), &bytes, 0)) {
-		TUint error = GetLastError();
-		printf("FAILURE %d\n", error);
-	}
+    DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &value, sizeof(value), &bytes, 0);
 }
 
 void OhmSenderDriverWindows::SetActive(TBool  aValue)
 {
-	printf("ACTIVE %d\n", aValue);
-
     KSPROPERTY prop;
 				
 	prop.Set = SNEAKY_GUID;
@@ -128,16 +121,11 @@ void OhmSenderDriverWindows::SetActive(TBool  aValue)
 
 	DWORD value = aValue ? 1 : 0;
 
-    if (!DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &value, sizeof(value), &bytes, 0)) {
-		TUint error = GetLastError();
-		printf("FAILURE %d\n", error);
-	}
+    DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &value, sizeof(value), &bytes, 0);
 }
 
 void OhmSenderDriverWindows::SetEndpoint(const Endpoint& aEndpoint)
 {
-	printf("ENDPOINT %x:%d\n", aEndpoint.Address(), aEndpoint.Port());
-
 	KSPROPERTY prop;
 				
 	prop.Set = SNEAKY_GUID;
@@ -153,17 +141,12 @@ void OhmSenderDriverWindows::SetEndpoint(const Endpoint& aEndpoint)
 
     DWORD bytes;
 
-    if (!DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &buffer, sizeof(buffer), &bytes, 0)) {
-		TUint error = GetLastError();
-		printf("FAILURE %d\n", error);
-	}
+    DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &buffer, sizeof(buffer), &bytes, 0);
 }
 
 
 void OhmSenderDriverWindows::SetTtl(TUint aValue)
 {
-	printf("TTL %d\n", aValue);
-
     KSPROPERTY prop;
 				
 	prop.Set = SNEAKY_GUID;
@@ -172,10 +155,7 @@ void OhmSenderDriverWindows::SetTtl(TUint aValue)
 
     DWORD bytes;
 
-    if (!DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &aValue, sizeof(aValue), &bytes, 0)) {
-		TUint error = GetLastError();
-		printf("FAILURE %d\n", error);
-	}
+    DeviceIoControl(iHandle, IOCTL_KS_PROPERTY, &prop, sizeof(KSPROPERTY), &aValue, sizeof(aValue), &bytes, 0);
 }
 
 void OhmSenderDriverWindows::SetTrackPosition(TUint64 /*aSamplesTotal*/, TUint64 /*aSampleStart*/)
@@ -184,24 +164,19 @@ void OhmSenderDriverWindows::SetTrackPosition(TUint64 /*aSamplesTotal*/, TUint64
 
 // C interface
 
-THandle SoundcardCreate(const char* aName, uint32_t aChannel, uint32_t aInterface, uint32_t aTtl, uint32_t aMulticast, uint32_t aEnabled, uint32_t aPreset)
+THandle SoundcardCreate(uint32_t aSubnet, uint32_t aChannel, uint32_t aTtl, uint32_t aMulticast, uint32_t aEnabled, uint32_t aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr)
 {
-	return (Soundcard::Create(aName, aChannel, aInterface, aTtl, (aMulticast == 0) ? false : true, (aEnabled == 0) ? false : true, aPreset));
+	return (Soundcard::Create(aSubnet, aChannel, aTtl, (aMulticast == 0) ? false : true, (aEnabled == 0) ? false : true, aPreset, aReceiverCallback, aReceiverPtr));
 }
 
-void SoundcardSetName(THandle aSoundcard, const char* aValue)
+void SoundcardSetSubnet(THandle aSoundcard, uint32_t aValue)
 {
-	((Soundcard*)aSoundcard)->SetName(aValue);
+	((Soundcard*)aSoundcard)->SetSubnet(aValue);
 }
 
 void SoundcardSetChannel(THandle aSoundcard, uint32_t aValue)
 {
 	((Soundcard*)aSoundcard)->SetChannel(aValue);
-}
-
-void SoundcardSetInterface(THandle aSoundcard, uint32_t aValue)
-{
-	((Soundcard*)aSoundcard)->SetInterface(aValue);
 }
 
 void SoundcardSetTtl(THandle aSoundcard, uint32_t aValue)
@@ -219,6 +194,11 @@ void SoundcardSetEnabled(THandle aSoundcard, uint32_t aValue)
 	((Soundcard*)aSoundcard)->SetEnabled((aValue == 0) ? false : true);
 }
 
+void SoundcardSetPreset(THandle aSoundcard, uint32_t aValue)
+{
+	((Soundcard*)aSoundcard)->SetPreset(aValue);
+}
+
 void SoundcardSetTrack(THandle aSoundcard, const char* aUri, const char* aMetadata, uint64_t aSamplesTotal, uint64_t aSampleStart)
 {
 	((Soundcard*)aSoundcard)->SetTrack(aUri, aMetadata, aSamplesTotal, aSampleStart);
@@ -234,13 +214,112 @@ void SoundcardDestroy(THandle aSoundcard)
 	delete ((Soundcard*)aSoundcard);
 }
 
+const char* ReceiverRoom(THandle aReceiver)
+{
+	return (((Receiver*)aReceiver)->Room());
+}
+
+const char* ReceiverGroup(THandle aReceiver)
+{
+	return (((Receiver*)aReceiver)->Group());
+}
+
+const char* ReceiverName(THandle aReceiver)
+{
+	return (((Receiver*)aReceiver)->Name());
+}
+
+EReceiverStatus ReceiverStatus(THandle aReceiver)
+{
+	return (((Receiver*)aReceiver)->Status());
+}
+
+void ReceiverPlay(THandle aReceiver)
+{
+	((Receiver*)aReceiver)->Play();
+}
+
+void ReceiverStop(THandle aReceiver)
+{
+	((Receiver*)aReceiver)->Stop();
+}
+
+void ReceiverAddRef(THandle aReceiver)
+{
+	((Receiver*)aReceiver)->AddRef();
+}
+
+void ReceiverRemoveRef(THandle aReceiver)
+{
+	((Receiver*)aReceiver)->RemoveRef();
+}
+
+// Receiver
+
+Receiver::Receiver(ReceiverManager3Receiver& aReceiver)
+	: iReceiver(aReceiver)
+	, iRoom(iReceiver.Room())
+	, iGroup(iReceiver.Group())
+	, iName(iReceiver.Name())
+	, iRefCount(1)
+{
+	iReceiver.AddRef();
+}
+
+const TChar* Receiver::Room() const
+{
+	return (iRoom.CString());
+}
+
+const TChar* Receiver::Group() const
+{
+	return (iGroup.CString());
+}
+
+const TChar* Receiver::Name() const
+{
+	return (iName.CString());
+}
+
+EReceiverStatus Receiver::Status() const
+{
+	return (EReceiverStatus)iReceiver.Status();
+}
+
+
+void Receiver::Play()
+{
+	iReceiver.Play();
+}
+
+void Receiver::Stop()
+{
+	iReceiver.Stop();
+}
+
+void Receiver::AddRef()
+{
+	iRefCount++;
+}
+
+void Receiver::RemoveRef()
+{
+	if (--iRefCount == 0) {
+		delete (this);
+	}
+}
+
+Receiver::~Receiver()
+{
+	iReceiver.RemoveRef();
+}
 
 // Soundcard
 
-Soundcard* Soundcard::Create(const TChar* aName, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset)
+Soundcard* Soundcard::Create(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr)
 {
 	try {
-		Soundcard* soundcard = new Soundcard(aName, aChannel, aInterface, aTtl, aMulticast, aEnabled, aPreset);
+		Soundcard* soundcard = new Soundcard(aSubnet, aChannel, aTtl, aMulticast, aEnabled, aPreset, aReceiverCallback, aReceiverPtr);
 		return (soundcard);
 	}
 	catch (SoundcardError) {
@@ -248,13 +327,27 @@ Soundcard* Soundcard::Create(const TChar* aName, TUint aChannel, TIpAddress aInt
 	return (0);
 }
 
-Soundcard::Soundcard(const TChar* /*aName*/, TUint aChannel, TIpAddress aInterface, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset)
+Soundcard::Soundcard(TIpAddress /* aSubnet */, TUint aChannel, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr)
+	: iReceiverCallback(aReceiverCallback)
+	, iReceiverPtr(aReceiverPtr)
 {
 	InitialisationParams* initParams = InitialisationParams::Create();
 
-    UpnpLibrary::Initialise(initParams);
+	UpnpLibrary::Initialise(initParams);
+
+	std::vector<NetworkInterface*>* list = UpnpLibrary::SubnetList();
+
+	ASSERT(list->size() > 0);
+
+	NetworkInterface* iface = *list->begin();
+
+	delete (list);
+
+	UpnpLibrary::SetCurrentSubnet(*iface);
+
+	printf("Using %x\n", iface->Address());
     
-    UpnpLibrary::StartDv();
+    UpnpLibrary::StartCombined();
 
 	Bws<kMaxUdnBytes> computer;
 	Bws<kMaxUdnBytes> udn;
@@ -291,24 +384,21 @@ Soundcard::Soundcard(const TChar* /*aName*/, TUint aChannel, TIpAddress aInterfa
     
 	Brn icon(icon_png, icon_png_len);
 
-	iSender = new OhmSender(*iDevice, *iDriver, computer, aChannel, aInterface, aTtl, aMulticast, aEnabled, icon, Brn("image/png"), aPreset);
+	iSender = new OhmSender(*iDevice, *iDriver, computer, aChannel, iface->Address(), aTtl, aMulticast, aEnabled, icon, Brn("image/png"), aPreset);
 	
     iDevice->SetEnabled();
+
+	iReceiverManager = new ReceiverManager3(*this, iSender->SenderUri(), iSender->SenderMetadata());
 }
 
-void Soundcard::SetName(const TChar* aValue)
+void Soundcard::SetSubnet(TIpAddress /* aValue */)
 {
-	iSender->SetName(Brn(aValue));
+	// TOOD
 }
 
 void Soundcard::SetChannel(TUint aValue)
 {
 	iSender->SetChannel(aValue);
-}
-
-void Soundcard::SetInterface(TIpAddress aValue)
-{
-	iSender->SetInterface(aValue);
 }
 
 void Soundcard::SetTtl(TUint aValue)
@@ -319,11 +409,17 @@ void Soundcard::SetTtl(TUint aValue)
 void Soundcard::SetMulticast(TBool aValue)
 {
 	iSender->SetMulticast(aValue);
+	iReceiverManager->SetMetadata(iSender->SenderMetadata());
 }
 
 void Soundcard::SetEnabled(TBool aValue)
 {
 	iSender->SetEnabled(aValue);
+}
+
+void Soundcard::SetPreset(TUint aValue)
+{
+	iSender->SetPreset(aValue);
 }
 
 void Soundcard::SetTrack(const TChar* aUri, const TChar* aMetadata, TUint64 aSamplesTotal, TUint64 aSampleStart)
@@ -335,11 +431,36 @@ void Soundcard::SetMetatext(const TChar* aValue)
 {
 	iSender->SetMetatext(Brn(aValue));
 }
-    
+   
 Soundcard::~Soundcard()
 {
     delete (iSender);
 	delete (iDriver);
 	delete (iDevice);
 }
+
+// IReceiverManager3Handler
+
+void Soundcard::ReceiverAdded(ReceiverManager3Receiver& aReceiver)
+{
+	Receiver* receiver = new Receiver(aReceiver);
+	aReceiver.SetUserData(receiver);
+	(*iReceiverCallback)(iReceiverPtr, eAdded, (THandle)receiver);
+}
+
+void Soundcard::ReceiverChanged(ReceiverManager3Receiver& aReceiver)
+{
+	Receiver* receiver = (Receiver*)(aReceiver.UserData());
+	ASSERT(receiver);
+	(*iReceiverCallback)(iReceiverPtr, eChanged, (THandle)receiver);
+}
+
+void Soundcard::ReceiverRemoved(ReceiverManager3Receiver& aReceiver)
+{
+	Receiver* receiver = (Receiver*)(aReceiver.UserData());
+	ASSERT(receiver);
+	(*iReceiverCallback)(iReceiverPtr, eRemoved, (THandle)receiver);
+	receiver->RemoveRef();
+}
+
 

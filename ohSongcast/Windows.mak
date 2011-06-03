@@ -40,32 +40,30 @@ objects_topology = $(ohnetdir)/CpTopology.$(objext) \
 			       $(ohnetdir)/CpAvOpenhomeOrgProduct1.$(objext) \
 			       $(ohnetdir)/CpAvOpenhomeOrgVolume1.$(objext)
 
-all: $(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(objdir)/TestSoundcard.$(exeext) $(objdir)/TestReceiverManager1.$(exeext) $(objdir)/TestReceiverManager2.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/WavSender.$(exeext) $(objdir)/ZoneWatcher.$(exeext)
+all: $(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcardCs.$(exeext) $(objdir)/TestReceiverManager1.$(exeext) $(objdir)/TestReceiverManager2.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/WavSender.$(exeext) $(objdir)/ZoneWatcher.$(exeext)
 
 $(objdir)/$(dllprefix)ohSoundcard.$(dllext) : Services/DvAvOpenhomeOrgSender1.cpp Ohm.cpp OhmSender.cpp ohSoundcard/Windows/Soundcard.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
-	$(compiler)/DvAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgSender1.cpp
 	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Ohm.cpp
 	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) OhmSender.cpp
+	$(compiler)/ReceiverManager1.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager1.cpp 
+	$(compiler)/ReceiverManager2.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager2.cpp 
+	$(compiler)/ReceiverManager3.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager3.cpp 
 	$(compiler)/Soundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/Soundcard.cpp
-	$(link_dll) $(linkoutput)$(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(ohnetdir)/ohNetCore.lib $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib
+	$(link_dll) $(linkoutput)$(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(ohnetdir)/ohNetCore.lib $(objects_topology) $(ohnetdir)/DvAvOpenhomeOrgSender1.$(objext) $(ohnetdir)/CpAvOpenhomeOrgReceiver1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/ReceiverManager1.$(objext) $(objdir)/ReceiverManager2.$(objext) $(objdir)/ReceiverManager3.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib
 
-$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) 
+$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) ohSoundcard\Windows\Soundcard.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) \
 		ohSoundcard\Windows\Soundcard.cs
 
-#$(objdir)/TestSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) ohSoundcard/Windows/TestSoundcard.cs
-#	$(csharp) /unsafe /t:exe /debug+ \
-#		/out:$(objdir)TestSoundcard.exe \
-#		/reference:System.dll \
-#		/reference:System.Net.dll \
-#		/reference:$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext)  \
-#		ohSoundcard\Windows\TestSoundcard.cs
-
-$(objdir)/TestSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) ohSoundcard/Windows/TestSoundcard.cpp
-	$(compiler)/TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/TestSoundcard.cpp
-	$(link) $(linkoutput)$(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcard.$(objext) $(ohnetdir)/ohNetCore.lib $(ohnetdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib $(ohnetdir)/$(libprefix)TestFramework.$(libext) 
+$(objdir)/TestSoundcardCs.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) ohSoundcard/Windows/TestSoundcardCs.cs
+	$(csharp) /unsafe /t:exe /debug+ \
+		/out:$(objdir)TestSoundcardCs.exe \
+		/reference:System.dll \
+		/reference:System.Net.dll \
+		/reference:$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext)  \
+		ohSoundcard\Windows\TestSoundcardCs.cs
 
 $(objdir)/TestReceiverManager1.$(exeext) : ohSoundcard/ReceiverManager1.cpp ohSoundcard/TestReceiverManager1.cpp 
 	$(compiler)/ReceiverManager1.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager1.cpp 
@@ -85,6 +83,10 @@ $(objdir)/TestReceiverManager3.$(exeext) : ohSoundcard/ReceiverManager3.cpp ohSo
     $(compiler)/TestReceiverManager3.$(objext) -c $(cflags) $(includes) ohSoundcard/TestReceiverManager3.cpp 
     $(link) $(linkoutput)$(objdir)/TestReceiverManager3.$(exeext) $(objdir)/ReceiverManager3.$(objext) $(objdir)/ReceiverManager2.$(objext) $(objdir)/ReceiverManager1.$(objext) $(objdir)/TestReceiverManager3.$(objext) $(objects_topology) $(ohnetdir)/ohNetCore.lib $(ohnetdir)/CpAvOpenhomeOrgReceiver1.$(objext) $(ohnetdir)/TestFramework.$(libext)  
  	
+$(objdir)/TestSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) ohSoundcard/Windows/TestSoundcard.cpp
+	$(compiler)/TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/TestSoundcard.cpp
+	$(link) $(linkoutput)$(objdir)/TestSoundcard.$(exeext) $(objdir)/$(libprefix)ohSoundcard.$(libext) $(objdir)/TestSoundcard.$(objext) 
+
 $(objdir)/ZoneWatcher.$(exeext) : ZoneWatcher/ZoneWatcher.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
 	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Ohm.cpp
