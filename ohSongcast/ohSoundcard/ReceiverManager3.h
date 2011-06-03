@@ -71,15 +71,17 @@ private:
 
 class ReceiverManager3 : public IReceiverManager2Handler
 {
+	friend class ReceiverManager3Receiver;
+
 public:
 	static const TUint kMaxTransportStateBytes = 20;
 	static const TUint kMaxUriBytes = 100;
+	static const TUint kMaxMetadataBytes = 4000;
 
 public:
-	ReceiverManager3(IReceiverManager3Handler& aHandler, const Brx& aUri);
-	void SetUri(const Brx& aUri);
+	ReceiverManager3(IReceiverManager3Handler& aHandler, const Brx& aUri, const Brx& aMetadata);
+	void SetMetadata(const Brx& aMetadata);
     void Refresh();
-	ReceiverManager3Receiver::EStatus Status(ReceiverManager2Receiver& aReceiver);
     ~ReceiverManager3();
 
 private:
@@ -88,9 +90,14 @@ private:
 	virtual void ReceiverChanged(ReceiverManager2Receiver& aReceiver);
 	virtual void ReceiverRemoved(ReceiverManager2Receiver& aReceiver);
 
+	ReceiverManager3Receiver::EStatus Status(ReceiverManager2Receiver& aReceiver);
+	void Play(ReceiverManager2Receiver& aReceiver);
+	void Stop(ReceiverManager2Receiver& aReceiver);
+
 private:
 	IReceiverManager3Handler& iHandler;
 	Bws<kMaxUriBytes> iUri;
+	Bws<kMaxMetadataBytes> iMetadata;
 	ReceiverManager2* iReceiverManager;
 };
 

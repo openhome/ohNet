@@ -25,37 +25,31 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 
-int __cdecl main(int aArgc, char* aArgv[])
+void logger(void* /* aPtr */, EReceiverCallbackType aType, THandle aReceiver)
+{
+	const char* room = ReceiverRoom(aReceiver);
+	const char* group = ReceiverGroup(aReceiver);
+	const char* name = ReceiverName(aReceiver);
+	EReceiverStatus status = ReceiverStatus(aReceiver);
+
+	switch (aType) {
+	case eAdded:
+		printf("Added   %s %s %s %d\n", room, group, name, status);
+		break;
+	case eChanged:
+		printf("Changed %s %s %s %d\n", room, group, name, status);
+		break;
+	case eRemoved:
+		printf("Removed %s %s %s %d\n", room, group, name, status);
+		break;
+	}
+}
+
+int __cdecl main(int /* aArgc */, char* /* aArgv[] */)
 {
 	//Debug::SetLevel(Debug::kMedia);
 	
-    OptionParser parser;
-    
-    OptionString optionName("-n", "--name", Brn("TestSoundcard"), "[name] name of the soundcard");
-    parser.AddOption(&optionName);
-    
-    OptionUint optionChannel("-c", "--channel", 0, "[0..65535] multicast channel");
-    parser.AddOption(&optionChannel);
-
-    OptionUint optionAdapter("-a", "--adapter", 0, "[adapter] index of network adapter to use");
-    parser.AddOption(&optionAdapter);
-
-    OptionUint optionTtl("-t", "--ttl", 1, "[ttl] ttl");
-    parser.AddOption(&optionTtl);
-
-    OptionBool optionMulticast("-m", "--multicast", "[multicast] use multicast instead of unicast");
-    parser.AddOption(&optionMulticast);
-
-    OptionBool optionDisabled("-d", "--disabled", "[disabled] start up disabled");
-    parser.AddOption(&optionDisabled);
-
-    OptionUint optionPreset("-p", "--preset", 0, "[0..99] preset number");
-    parser.AddOption(&optionPreset);
-
-    if (!parser.Parse(aArgc, aArgv)) {
-        return (1);
-    }
-
+	/*
     std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
     
 	ASSERT(ifs->size() > 0 && optionAdapter.Value() < ifs->size());
@@ -69,22 +63,22 @@ int __cdecl main(int aArgc, char* aArgv[])
 	delete ifs;
     
     printf("Using network interface %d.%d.%d.%d\n", iface&0xff, (iface>>8)&0xff, (iface>>16)&0xff, (iface>>24)&0xff);
+	*/
 
-    const TChar* name(optionName.CString());
-    TUint channel = optionChannel.Value();
-    TUint ttl = optionTtl.Value();
-    TBool multicast = optionMulticast.Value();
-    TBool disabled = optionDisabled.Value();
-    TUint preset = optionPreset.Value();
+	TIpAddress subnet = 0;
+    TUint channel = 0;
+    TUint ttl = 4;
+    TBool multicast = false;
+    TBool disabled = false;
+    TUint preset = 99;
 
-    Soundcard* soundcard = Soundcard::Create(name, channel, iface, ttl, multicast, !disabled, preset);
+	THandle soundcard = SoundcardCreate(subnet, channel, ttl, multicast, !disabled, preset, logger, 0);
 
 	if (soundcard == 0) {
 		printf("Soundcard error\n");
 		return(1);
 	}
 
-	printf("name = %s\n", name);
 	printf("preset = %d\n", preset);
 
     if (multicast) {
@@ -113,12 +107,12 @@ int __cdecl main(int aArgc, char* aArgv[])
         if (key == 'm') {
             if (multicast) {
                 multicast = false;
-                soundcard->SetMulticast(false);
+                SoundcardSetMulticast(soundcard, false);
                 printf("unicast\n");
             }
             else {
                 multicast = true;
-                soundcard->SetMulticast(true);
+                SoundcardSetMulticast(soundcard, true);
                 printf("multicast\n");
             }
         }
@@ -126,18 +120,18 @@ int __cdecl main(int aArgc, char* aArgv[])
         if (key == 'e') {
             if (disabled) {
                 disabled = false;
-                soundcard->SetEnabled(true);
+                SoundcardSetEnabled(soundcard, true);
                 printf("enabled\n");
             }
             else {
                 disabled = true;
-                soundcard->SetEnabled(false);
+                SoundcardSetEnabled(soundcard, false);
                 printf("disabled\n");
             }
         }
     }
-       
-    delete (soundcard);
+    
+	SoundcardDestroy(soundcard);
 
 	printf("\n");
 	

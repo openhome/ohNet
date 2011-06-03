@@ -57,6 +57,16 @@ ReceiverManager3Receiver::EStatus ReceiverManager3Receiver::Status() const
 	return (iStatus);
 }
 
+void ReceiverManager3Receiver::Play()
+{
+	iManager.Play(iReceiver);
+}
+
+void ReceiverManager3Receiver::Stop()
+{
+	iManager.Stop(iReceiver);
+}
+
 void ReceiverManager3Receiver::SetUserData(void* aValue)
 {
 	iUserData = aValue;
@@ -102,9 +112,10 @@ ReceiverManager3Receiver::~ReceiverManager3Receiver()
 
 // ReceiverManager
 
-ReceiverManager3::ReceiverManager3(IReceiverManager3Handler& aHandler, const Brx& aUri)
+ReceiverManager3::ReceiverManager3(IReceiverManager3Handler& aHandler, const Brx& aUri, const Brx& aMetadata)
 	: iHandler(aHandler)
 	, iUri(aUri)
+	, iMetadata(aMetadata)
 {
 	iReceiverManager = new ReceiverManager2(*this);
 }
@@ -114,11 +125,9 @@ void ReceiverManager3::Refresh()
 	iReceiverManager->Refresh();
 }
 
-void ReceiverManager3::SetUri(const Brx& aUri)
+void ReceiverManager3::SetMetadata(const Brx& aMetadata)
 {
-	iUri.Replace(aUri);
-
-	// refresh all receivers
+	iMetadata.Replace(aMetadata);
 }
 
 ReceiverManager3Receiver::EStatus ReceiverManager3::Status(ReceiverManager2Receiver& aReceiver)
@@ -142,6 +151,17 @@ ReceiverManager3Receiver::EStatus ReceiverManager3::Status(ReceiverManager2Recei
 	}
 
 	return (ReceiverManager3Receiver::eConnected);
+}
+
+void ReceiverManager3::Play(ReceiverManager2Receiver& aReceiver)
+{
+	aReceiver.SetSender(iUri, iMetadata);
+	aReceiver.Play();
+}
+
+void ReceiverManager3::Stop(ReceiverManager2Receiver& aReceiver)
+{
+	aReceiver.Stop();
 }
 
 ReceiverManager3::~ReceiverManager3()

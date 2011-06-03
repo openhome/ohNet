@@ -39,7 +39,7 @@ using namespace OpenHome::TestFramework;
 
 ReceiverManager3Logger::ReceiverManager3Logger(const Brx& aValue)
 {
-	iReceiverManager = new ReceiverManager3(*this, aValue);
+	iReceiverManager = new ReceiverManager3(*this, aValue, Brx::Empty());
 }
 
 ReceiverManager3Logger::~ReceiverManager3Logger()

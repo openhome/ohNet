@@ -369,6 +369,16 @@ const Brx& OhmSender::MimeType() const
 	return (iMimeType);
 }
 
+const Brx& OhmSender::SenderUri() const
+{
+	return (iSenderUri);
+}
+
+const Brx& OhmSender::SenderMetadata() const
+{
+	return (iSenderMetadata);
+}
+
 
 void OhmSender::SetName(const Brx& aValue)
 {
@@ -985,39 +995,41 @@ void OhmSender::UpdateUri()
 
 void OhmSender::UpdateMetadata()
 {
-    iMetadata.Replace("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
-    iMetadata.Append("<item id=\"0\" restricted=\"True\">");
-    iMetadata.Append("<dc:title>");
-    iMetadata.Append(iName);
-    iMetadata.Append("</dc:title>");
+    iSenderMetadata.Replace("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
+    iSenderMetadata.Append("<item id=\"0\" restricted=\"True\">");
+    iSenderMetadata.Append("<dc:title>");
+    iSenderMetadata.Append(iName);
+    iSenderMetadata.Append("</dc:title>");
     
     if (iMulticast) {
-	    iMetadata.Append("<res protocolInfo=\"ohz:*:*:m\">");
+	    iSenderMetadata.Append("<res protocolInfo=\"ohz:*:*:m\">");
 	}
 	else {
-	    iMetadata.Append("<res protocolInfo=\"ohz:*:*:u\">");
+	    iSenderMetadata.Append("<res protocolInfo=\"ohz:*:*:u\">");
 	}
 
-    iMetadata.Append("ohz://239.255.255.250:51972/");
-    iMetadata.Append(iDevice.Udn());
-    iMetadata.Append("</res>");
+	iSenderUri.Replace("ohz://239.255.255.250:51972/");
+    iSenderUri.Append(iDevice.Udn());
+
+	iSenderMetadata.Append(iSenderUri);
+    iSenderMetadata.Append("</res>");
     
-	iMetadata.Append("<upnp:albumArtURI>");
-	iMetadata.Append("http://");
+	iSenderMetadata.Append("<upnp:albumArtURI>");
+	iSenderMetadata.Append("http://");
 
-	Endpoint(iServer->Port(), iInterface).AppendEndpoint(iMetadata);
+	Endpoint(iServer->Port(), iInterface).AppendEndpoint(iSenderMetadata);
 
-	iMetadata.Append("/icon");
-	iMetadata.Append("</upnp:albumArtURI>");
+	iSenderMetadata.Append("/icon");
+	iSenderMetadata.Append("</upnp:albumArtURI>");
 		
-	iMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");
-    iMetadata.Append("</item>");
-    iMetadata.Append("</DIDL-Lite>");
+	iSenderMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");
+    iSenderMetadata.Append("</item>");
+    iSenderMetadata.Append("</DIDL-Lite>");
 
 	if (!iClientControllingTrackMetadata) {
 		iMutexActive.Wait();
 	
-		iTrackMetadata.Replace(iMetadata);
+		iTrackMetadata.Replace(iSenderMetadata);
 		
 		iSequenceTrack++;
 		iSequenceMetatext = 0;
@@ -1029,7 +1041,7 @@ void OhmSender::UpdateMetadata()
 		iMutexActive.Signal();
 	}
 
-	iProvider->SetMetadata(iMetadata);
+	iProvider->SetMetadata(iSenderMetadata);
 }
 
 void OhmSender::Send()
@@ -1298,7 +1310,7 @@ void OhmSender::SendPresetInfo()
 {
     try
     {
-    	OhzHeaderPresetInfo headerPresetInfo(iPreset, iMetadata);
+    	OhzHeaderPresetInfo headerPresetInfo(iPreset, iSenderMetadata);
         OhzHeader header(OhzHeader::kMsgTypePresetInfo, headerPresetInfo.MsgBytes());
 
         WriterBuffer writer(iTxZone);
@@ -1306,7 +1318,7 @@ void OhmSender::SendPresetInfo()
         writer.Flush();
         header.Externalise(writer);
         headerPresetInfo.Externalise(writer);
-        writer.Write(iMetadata);
+        writer.Write(iSenderMetadata);
 
         iSocketOhz.Send(iTxZone);
 

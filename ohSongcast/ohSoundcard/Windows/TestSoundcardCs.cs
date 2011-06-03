@@ -1,15 +1,22 @@
 using System;
 using System.Net;
 
-using ohSoundcard;
+using OpenHome.Soundcard;
 
-    class Program
+    class Program : IReceiverHandler
     {
         public static void Main(string[] args)
         {
+            Program program = new Program();
+
+            program.Run();
+        }
+
+        public void Run()
+        {
             bool enabled = true;
 
-            Soundcard soundcard = new Soundcard("TestSoundcard", 1, IPAddress.Any, 1, false, enabled);
+            Soundcard soundcard = new Soundcard(IPAddress.Any, 1, 1, false, enabled, 99, this);
 
             while (true)
             {
@@ -40,5 +47,20 @@ using ohSoundcard;
             }
 
             soundcard.Dispose();
+        }
+
+        public void ReceiverAdded(IReceiver aReceiver)
+        {
+            Console.WriteLine("Added   {0}:{1}:{2}:{3}", aReceiver.Room, aReceiver.Group, aReceiver.Name, aReceiver.Status);
+        }
+
+        public void ReceiverChanged(IReceiver aReceiver)
+        {
+            Console.WriteLine("Changed {0}:{1}:{2}:{3}", aReceiver.Room, aReceiver.Group, aReceiver.Name, aReceiver.Status);
+        }
+
+        public void ReceiverRemoved(IReceiver aReceiver)
+        {
+            Console.WriteLine("Removed {0}:{1}:{2}:{3}", aReceiver.Room, aReceiver.Group, aReceiver.Name, aReceiver.Status);
         }
     }
