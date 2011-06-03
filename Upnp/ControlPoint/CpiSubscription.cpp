@@ -269,21 +269,18 @@ void CpiSubscription::DoUnsubscribe()
 
     iSubscribeCompleted.Wait();
     iTimer->Cancel();
+    if (iSid.Bytes() == 0) {
+        LOG(kEvent, "Skipped unsubscribing since sid is empty (we're not subscribed)\n");
+    }
     CpiSubscriptionManager::Remove(*this);
     Brh sid;
     Stack::Mutex().Wait();
     iSid.TransferTo(sid);
     Stack::Mutex().Signal();
-    if (sid.Bytes() == 0) {
-        LOG(kEvent, "Skipped unsubscribing since sid is empty (we're not subscribed)\n");
-    }
-    else
-    {
-        iDevice.Unsubscribe(*this, sid);
-        LOG(kEvent, "Unsubscribed sid ");
-        LOG(kEvent, sid);
-        LOG(kEvent, "\n");
-    }
+    iDevice.Unsubscribe(*this, sid);
+    LOG(kEvent, "Unsubscribed sid ");
+    LOG(kEvent, sid);
+    LOG(kEvent, "\n");
 }
 
 void CpiSubscription::NotifyAddAborted()
