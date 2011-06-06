@@ -144,9 +144,10 @@ def getArguments(module,nightly,arch,valgrind,os):
             args += ' --native'
         if os == 'Windows' and arch == 'x86':
             args += ' --js'
+        if os == 'Windows' or nightly == '1':
+            args += ' --release'
         if nightly == '1':
             args += ' --full'
-            args += ' --release'
             if os == 'Linux' and arch == 'x86':
                 args += ' --valgrind'
 
