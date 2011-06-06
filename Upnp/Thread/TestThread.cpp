@@ -5,7 +5,7 @@
 using namespace OpenHome;
 using namespace OpenHome::TestFramework;
 
-const TUint32 kSleepMs = 25; // short sleep used as a lazy way of avoiding too many dependencies on thread priorities
+const TUint32 kSleepMs = 50; // short sleep used as a lazy way of avoiding too many dependencies on thread priorities
 
 class TestPipe
 {
