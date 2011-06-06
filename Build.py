@@ -269,6 +269,12 @@ def GenDocs(module, os, nightly, arch, tool):
         if ret != 0:
             print ret
             sys.exit(10)
+
+        ret = rsync('hudson-rsync','openhome.org','Upnp/Build/Docs/','~/nightly/docs','')
+
+        if ret != 0:
+            print ret
+            sys.exit(10)
         
 def ArmTests(module, arch, nightly):
 
