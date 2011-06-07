@@ -89,6 +89,7 @@ DllExport void DvProviderPropertiesUnlock(DvProviderC aProvider);
  * Add a property (passing ownership) to a provider
  *
  * @param[in] aProvider   Handle to a provider
+ * @param[in] aProperty   Returned by ServicePropertyCreate[type]Dv.  Ownership passes to aProvider.
  */
 DllExport void DvProviderAddProperty(DvProviderC aProvider, ServiceProperty aProperty);
 
@@ -256,7 +257,8 @@ DllExport int32_t DvInvocationReadString(DvInvocationC aInvocation, const char* 
  *
  * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
  * @param[in]  aName        Name of the parameter associated with this input argument
- * @param[out] aValue       Value of the input argument.  Ownership passes to caller.  Use OhNetFree() to destroy.
+ * @param[out] aData        Value of the input argument.  Ownership passes to caller.  Use OhNetFree() to destroy.
+ * @param[out] aLen         Length (in bytes) of aData
  *
  * @return  0 on success; non-zero on error
  */
@@ -392,7 +394,8 @@ DllExport int32_t DvInvocationWriteBinaryStart(DvInvocationC aInvocation, const 
  * DvInvocationWriteStringStart must be called first.  This function can be called one or more times.
  *
  * @param[in]  aInvocation  Invocation handle.  Passed to OhNetCallbackDvInvocation
- * @param[in]  aValue       Data (or data fragment) to be output
+ * @param[in]  aData        Data (or data fragment) to be output
+ * @param[in]  aLen         Length (in bytes) of aData
  *
  * @return  0 on success; non-zero on error
  */

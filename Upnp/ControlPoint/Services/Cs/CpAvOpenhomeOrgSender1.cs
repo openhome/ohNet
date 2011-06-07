@@ -554,7 +554,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aPresentationUrl">Will be set to the value of the property</param>
+        /// <returns>Value of the PresentationUrl property</returns>
         public String PropertyPresentationUrl()
         {
             PropertyReadLock();
@@ -569,7 +569,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aMetadata">Will be set to the value of the property</param>
+        /// <returns>Value of the Metadata property</returns>
         public String PropertyMetadata()
         {
             PropertyReadLock();
@@ -584,7 +584,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aAudio">Will be set to the value of the property</param>
+        /// <returns>Value of the Audio property</returns>
         public bool PropertyAudio()
         {
             PropertyReadLock();
@@ -599,7 +599,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aStatus">Will be set to the value of the property</param>
+        /// <returns>Value of the Status property</returns>
         public String PropertyStatus()
         {
             PropertyReadLock();
@@ -614,7 +614,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aAttributes">Will be set to the value of the property</param>
+        /// <returns>Value of the Attributes property</returns>
         public String PropertyAttributes()
         {
             PropertyReadLock();

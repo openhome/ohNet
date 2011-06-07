@@ -716,6 +716,7 @@ DllExport void CpProxyUpnpOrgScheduledRecording1SetPropertyLastChangeChanged(THa
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgScheduledRecording1Create
  * @param[out] aLastChange
  */
 DllExport void CpProxyUpnpOrgScheduledRecording1PropertyLastChange(THandle aHandle, char** aLastChange);

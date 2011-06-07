@@ -1935,7 +1935,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aTransportState">Will be set to the value of the property</param>
+        /// <returns>Value of the TransportState property</returns>
         public String PropertyTransportState()
         {
             PropertyReadLock();
@@ -1950,7 +1950,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aRepeat">Will be set to the value of the property</param>
+        /// <returns>Value of the Repeat property</returns>
         public bool PropertyRepeat()
         {
             PropertyReadLock();
@@ -1965,7 +1965,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aShuffle">Will be set to the value of the property</param>
+        /// <returns>Value of the Shuffle property</returns>
         public bool PropertyShuffle()
         {
             PropertyReadLock();
@@ -1980,7 +1980,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aId">Will be set to the value of the property</param>
+        /// <returns>Value of the Id property</returns>
         public uint PropertyId()
         {
             PropertyReadLock();
@@ -1995,7 +1995,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aIdArray">Will be set to the value of the property</param>
+        /// <returns>Value of the IdArray property</returns>
         public byte[] PropertyIdArray()
         {
             PropertyReadLock();
@@ -2010,7 +2010,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aTracksMax">Will be set to the value of the property</param>
+        /// <returns>Value of the TracksMax property</returns>
         public uint PropertyTracksMax()
         {
             PropertyReadLock();
@@ -2025,7 +2025,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aProtocolInfo">Will be set to the value of the property</param>
+        /// <returns>Value of the ProtocolInfo property</returns>
         public String PropertyProtocolInfo()
         {
             PropertyReadLock();

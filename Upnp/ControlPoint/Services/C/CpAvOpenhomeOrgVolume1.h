@@ -694,6 +694,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1SetPropertyFadeMaxChanged(THandle aHan
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aVolume
  */
 DllExport void CpProxyAvOpenhomeOrgVolume1PropertyVolume(THandle aHandle, uint32_t* aVolume);
@@ -703,6 +704,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1PropertyVolume(THandle aHandle, uint32
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aMute
  */
 DllExport void CpProxyAvOpenhomeOrgVolume1PropertyMute(THandle aHandle, uint32_t* aMute);
@@ -712,6 +714,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1PropertyMute(THandle aHandle, uint32_t
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aBalance
  */
 DllExport void CpProxyAvOpenhomeOrgVolume1PropertyBalance(THandle aHandle, int32_t* aBalance);
@@ -721,6 +724,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1PropertyBalance(THandle aHandle, int32
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aFade
  */
 DllExport void CpProxyAvOpenhomeOrgVolume1PropertyFade(THandle aHandle, int32_t* aFade);
@@ -730,6 +734,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1PropertyFade(THandle aHandle, int32_t*
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aVolumeLimit
  */
 DllExport void CpProxyAvOpenhomeOrgVolume1PropertyVolumeLimit(THandle aHandle, uint32_t* aVolumeLimit);
@@ -739,6 +744,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1PropertyVolumeLimit(THandle aHandle, u
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aVolumeMax
  */
 DllExport void CpProxyAvOpenhomeOrgVolume1PropertyVolumeMax(THandle aHandle, uint32_t* aVolumeMax);
@@ -748,6 +754,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1PropertyVolumeMax(THandle aHandle, uin
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aVolumeUnity
  */
 DllExport void CpProxyAvOpenhomeOrgVolume1PropertyVolumeUnity(THandle aHandle, uint32_t* aVolumeUnity);
@@ -757,6 +764,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1PropertyVolumeUnity(THandle aHandle, u
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aVolumeSteps
  */
 DllExport void CpProxyAvOpenhomeOrgVolume1PropertyVolumeSteps(THandle aHandle, uint32_t* aVolumeSteps);
@@ -766,6 +774,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1PropertyVolumeSteps(THandle aHandle, u
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aVolumeMilliDbPerStep
  */
 DllExport void CpProxyAvOpenhomeOrgVolume1PropertyVolumeMilliDbPerStep(THandle aHandle, uint32_t* aVolumeMilliDbPerStep);
@@ -775,6 +784,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1PropertyVolumeMilliDbPerStep(THandle a
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aBalanceMax
  */
 DllExport void CpProxyAvOpenhomeOrgVolume1PropertyBalanceMax(THandle aHandle, uint32_t* aBalanceMax);
@@ -784,6 +794,7 @@ DllExport void CpProxyAvOpenhomeOrgVolume1PropertyBalanceMax(THandle aHandle, ui
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgVolume1Create
  * @param[out] aFadeMax
  */
 DllExport void CpProxyAvOpenhomeOrgVolume1PropertyFadeMax(THandle aHandle, uint32_t* aFadeMax);

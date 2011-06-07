@@ -248,7 +248,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::EnableActionProtocolInfo()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoPlay(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoPlay(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -257,7 +257,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoPlay(IDviInvocation& aInvocation, TUint
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoPause(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoPause(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -266,7 +266,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoPause(IDviInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoStop(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoStop(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -275,7 +275,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoStop(IDviInvocation& aInvocation, TUint
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoSeekSecondAbsolute(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoSeekSecondAbsolute(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t Value = aInvocation.InvocationReadUint("Value");
@@ -285,7 +285,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoSeekSecondAbsolute(IDviInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoSeekSecondRelative(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoSeekSecondRelative(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     int32_t Value = aInvocation.InvocationReadInt("Value");
@@ -295,7 +295,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoSeekSecondRelative(IDviInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoChannel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoChannel(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -314,7 +314,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoChannel(IDviInvocation& aInvocation, TU
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoSetChannel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoSetChannel(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_Uri;
@@ -329,7 +329,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoSetChannel(IDviInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoTransportState(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoTransportState(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -343,7 +343,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoTransportState(IDviInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoId(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoId(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -355,7 +355,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoId(IDviInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoSetId(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoSetId(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t Value = aInvocation.InvocationReadUint("Value");
@@ -368,7 +368,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoSetId(IDviInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoRead(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoRead(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t Id = aInvocation.InvocationReadUint("Id");
@@ -383,7 +383,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoRead(IDviInvocation& aInvocation, TUint
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoReadList(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoReadList(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_IdList;
@@ -400,7 +400,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoReadList(IDviInvocation& aInvocation, T
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoIdArray(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoIdArray(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -417,7 +417,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoIdArray(IDviInvocation& aInvocation, TU
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoIdArrayChanged(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoIdArrayChanged(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t Token = aInvocation.InvocationReadUint("Token");
@@ -430,7 +430,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoIdArrayChanged(IDviInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoChannelsMax(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoChannelsMax(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -442,7 +442,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoChannelsMax(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgRadio1Cpp::DoProtocolInfo(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgRadio1Cpp::DoProtocolInfo(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

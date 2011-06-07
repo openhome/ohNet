@@ -827,6 +827,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3SetPropertyTransferIDsChanged(THan
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgContentDirectory3Create
  * @param[out] aSystemUpdateID
  */
 DllExport void CpProxyUpnpOrgContentDirectory3PropertySystemUpdateID(THandle aHandle, uint32_t* aSystemUpdateID);
@@ -836,6 +837,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3PropertySystemUpdateID(THandle aHa
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgContentDirectory3Create
  * @param[out] aContainerUpdateIDs
  */
 DllExport void CpProxyUpnpOrgContentDirectory3PropertyContainerUpdateIDs(THandle aHandle, char** aContainerUpdateIDs);
@@ -845,6 +847,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3PropertyContainerUpdateIDs(THandle
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgContentDirectory3Create
  * @param[out] aLastChange
  */
 DllExport void CpProxyUpnpOrgContentDirectory3PropertyLastChange(THandle aHandle, char** aLastChange);
@@ -854,6 +857,7 @@ DllExport void CpProxyUpnpOrgContentDirectory3PropertyLastChange(THandle aHandle
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgContentDirectory3Create
  * @param[out] aTransferIDs
  */
 DllExport void CpProxyUpnpOrgContentDirectory3PropertyTransferIDs(THandle aHandle, char** aTransferIDs);

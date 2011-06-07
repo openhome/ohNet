@@ -582,7 +582,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aUri">Will be set to the value of the property</param>
+        /// <returns>Value of the Uri property</returns>
         public String PropertyUri()
         {
             PropertyReadLock();
@@ -597,7 +597,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aMetadata">Will be set to the value of the property</param>
+        /// <returns>Value of the Metadata property</returns>
         public String PropertyMetadata()
         {
             PropertyReadLock();
@@ -612,7 +612,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aTransportState">Will be set to the value of the property</param>
+        /// <returns>Value of the TransportState property</returns>
         public String PropertyTransportState()
         {
             PropertyReadLock();
@@ -627,7 +627,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aProtocolInfo">Will be set to the value of the property</param>
+        /// <returns>Value of the ProtocolInfo property</returns>
         public String PropertyProtocolInfo()
         {
             PropertyReadLock();

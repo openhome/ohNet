@@ -327,6 +327,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextChanged(THandle aHand
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aTrackCount
  */
 DllExport void CpProxyAvOpenhomeOrgInfo1PropertyTrackCount(THandle aHandle, uint32_t* aTrackCount);
@@ -336,6 +337,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyTrackCount(THandle aHandle, uint
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aDetailsCount
  */
 DllExport void CpProxyAvOpenhomeOrgInfo1PropertyDetailsCount(THandle aHandle, uint32_t* aDetailsCount);
@@ -345,6 +347,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyDetailsCount(THandle aHandle, ui
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aMetatextCount
  */
 DllExport void CpProxyAvOpenhomeOrgInfo1PropertyMetatextCount(THandle aHandle, uint32_t* aMetatextCount);
@@ -354,6 +357,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyMetatextCount(THandle aHandle, u
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aUri
  */
 DllExport void CpProxyAvOpenhomeOrgInfo1PropertyUri(THandle aHandle, char** aUri);
@@ -363,6 +367,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyUri(THandle aHandle, char** aUri
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aMetadata
  */
 DllExport void CpProxyAvOpenhomeOrgInfo1PropertyMetadata(THandle aHandle, char** aMetadata);
@@ -372,6 +377,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyMetadata(THandle aHandle, char**
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aDuration
  */
 DllExport void CpProxyAvOpenhomeOrgInfo1PropertyDuration(THandle aHandle, uint32_t* aDuration);
@@ -381,6 +387,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyDuration(THandle aHandle, uint32
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aBitRate
  */
 DllExport void CpProxyAvOpenhomeOrgInfo1PropertyBitRate(THandle aHandle, uint32_t* aBitRate);
@@ -390,6 +397,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyBitRate(THandle aHandle, uint32_
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aBitDepth
  */
 DllExport void CpProxyAvOpenhomeOrgInfo1PropertyBitDepth(THandle aHandle, uint32_t* aBitDepth);
@@ -399,6 +407,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyBitDepth(THandle aHandle, uint32
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aSampleRate
  */
 DllExport void CpProxyAvOpenhomeOrgInfo1PropertySampleRate(THandle aHandle, uint32_t* aSampleRate);
@@ -408,6 +417,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertySampleRate(THandle aHandle, uint
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aLossless
  */
 DllExport void CpProxyAvOpenhomeOrgInfo1PropertyLossless(THandle aHandle, uint32_t* aLossless);
@@ -417,6 +427,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyLossless(THandle aHandle, uint32
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aCodecName
  */
 DllExport void CpProxyAvOpenhomeOrgInfo1PropertyCodecName(THandle aHandle, char** aCodecName);
@@ -426,6 +437,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyCodecName(THandle aHandle, char*
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aMetatext
  */
 DllExport void CpProxyAvOpenhomeOrgInfo1PropertyMetatext(THandle aHandle, char** aMetatext);

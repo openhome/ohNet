@@ -222,7 +222,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aTrackCount">Will be set to the value of the property</param>
+        /// <returns>Value of the TrackCount property</returns>
         public uint PropertyTrackCount()
         {
             PropertyReadLock();
@@ -237,7 +237,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aDuration">Will be set to the value of the property</param>
+        /// <returns>Value of the Duration property</returns>
         public uint PropertyDuration()
         {
             PropertyReadLock();
@@ -252,7 +252,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aSeconds">Will be set to the value of the property</param>
+        /// <returns>Value of the Seconds property</returns>
         public uint PropertySeconds()
         {
             PropertyReadLock();

@@ -273,6 +273,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDsCh
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[out] aSourceProtocolInfo
  */
 DllExport void CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInfo(THandle aHandle, char** aSourceProtocolInfo);
@@ -282,6 +283,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInfo(THandl
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[out] aSinkProtocolInfo
  */
 DllExport void CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(THandle aHandle, char** aSinkProtocolInfo);
@@ -291,6 +293,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(THandle 
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[out] aCurrentConnectionIDs
  */
 DllExport void CpProxyUpnpOrgConnectionManager1PropertyCurrentConnectionIDs(THandle aHandle, char** aCurrentConnectionIDs);

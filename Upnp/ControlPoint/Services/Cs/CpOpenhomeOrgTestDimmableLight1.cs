@@ -208,7 +208,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aA_ARG_Level">Will be set to the value of the property</param>
+        /// <returns>Value of the A_ARG_Level property</returns>
         public uint PropertyA_ARG_Level()
         {
             PropertyReadLock();

@@ -124,6 +124,7 @@ DllExport void CpProxyOpenhomeOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestDimmableLight1Create
  * @param[out] aA_ARG_Level
  */
 DllExport void CpProxyOpenhomeOrgTestDimmableLight1PropertyA_ARG_Level(THandle aHandle, uint32_t* aA_ARG_Level);

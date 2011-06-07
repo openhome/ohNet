@@ -702,6 +702,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyAttributesChanged(THandle 
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aManufacturerName
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerName(THandle aHandle, char** aManufacturerName);
@@ -711,6 +712,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerName(THandle aHan
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aManufacturerInfo
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerInfo(THandle aHandle, char** aManufacturerInfo);
@@ -720,6 +722,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerInfo(THandle aHan
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aManufacturerUrl
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerUrl(THandle aHandle, char** aManufacturerUrl);
@@ -729,6 +732,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerUrl(THandle aHand
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aManufacturerImageUri
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerImageUri(THandle aHandle, char** aManufacturerImageUri);
@@ -738,6 +742,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerImageUri(THandle 
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aModelName
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelName(THandle aHandle, char** aModelName);
@@ -747,6 +752,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelName(THandle aHandle, ch
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aModelInfo
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelInfo(THandle aHandle, char** aModelInfo);
@@ -756,6 +762,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelInfo(THandle aHandle, ch
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aModelUrl
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelUrl(THandle aHandle, char** aModelUrl);
@@ -765,6 +772,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelUrl(THandle aHandle, cha
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aModelImageUri
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelImageUri(THandle aHandle, char** aModelImageUri);
@@ -774,6 +782,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelImageUri(THandle aHandle
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductRoom
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductRoom(THandle aHandle, char** aProductRoom);
@@ -783,6 +792,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductRoom(THandle aHandle, 
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductName
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductName(THandle aHandle, char** aProductName);
@@ -792,6 +802,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductName(THandle aHandle, 
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductInfo
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductInfo(THandle aHandle, char** aProductInfo);
@@ -801,6 +812,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductInfo(THandle aHandle, 
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductUrl
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductUrl(THandle aHandle, char** aProductUrl);
@@ -810,6 +822,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductUrl(THandle aHandle, c
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductImageUri
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductImageUri(THandle aHandle, char** aProductImageUri);
@@ -819,6 +832,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductImageUri(THandle aHand
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aStandby
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyStandby(THandle aHandle, uint32_t* aStandby);
@@ -828,6 +842,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyStandby(THandle aHandle, uint
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aSourceIndex
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertySourceIndex(THandle aHandle, uint32_t* aSourceIndex);
@@ -837,6 +852,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertySourceIndex(THandle aHandle, 
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aSourceCount
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertySourceCount(THandle aHandle, uint32_t* aSourceCount);
@@ -846,6 +862,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertySourceCount(THandle aHandle, 
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aSourceXml
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertySourceXml(THandle aHandle, char** aSourceXml);
@@ -855,6 +872,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertySourceXml(THandle aHandle, ch
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aAttributes
  */
 DllExport void CpProxyAvOpenhomeOrgProduct1PropertyAttributes(THandle aHandle, char** aAttributes);

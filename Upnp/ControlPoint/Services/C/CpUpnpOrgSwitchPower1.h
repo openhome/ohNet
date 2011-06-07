@@ -157,6 +157,7 @@ DllExport void CpProxyUpnpOrgSwitchPower1SetPropertyStatusChanged(THandle aHandl
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgSwitchPower1Create
  * @param[out] aStatus
  */
 DllExport void CpProxyUpnpOrgSwitchPower1PropertyStatus(THandle aHandle, uint32_t* aStatus);

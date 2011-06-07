@@ -41,7 +41,7 @@ void DvProviderOpenhomeOrgTestDimmableLight1Cpp::EnableActionSetLevel()
     iService->AddAction(action, functor);
 }
 
-void DvProviderOpenhomeOrgTestDimmableLight1Cpp::DoGetLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestDimmableLight1Cpp::DoGetLevel(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -53,7 +53,7 @@ void DvProviderOpenhomeOrgTestDimmableLight1Cpp::DoGetLevel(IDviInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestDimmableLight1Cpp::DoSetLevel(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderOpenhomeOrgTestDimmableLight1Cpp::DoSetLevel(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t Level = aInvocation.InvocationReadUint("Level");

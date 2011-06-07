@@ -768,7 +768,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aTrackCount">Will be set to the value of the property</param>
+        /// <returns>Value of the TrackCount property</returns>
         public uint PropertyTrackCount()
         {
             PropertyReadLock();
@@ -783,7 +783,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aDetailsCount">Will be set to the value of the property</param>
+        /// <returns>Value of the DetailsCount property</returns>
         public uint PropertyDetailsCount()
         {
             PropertyReadLock();
@@ -798,7 +798,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aMetatextCount">Will be set to the value of the property</param>
+        /// <returns>Value of the MetatextCount property</returns>
         public uint PropertyMetatextCount()
         {
             PropertyReadLock();
@@ -813,7 +813,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aUri">Will be set to the value of the property</param>
+        /// <returns>Value of the Uri property</returns>
         public String PropertyUri()
         {
             PropertyReadLock();
@@ -828,7 +828,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aMetadata">Will be set to the value of the property</param>
+        /// <returns>Value of the Metadata property</returns>
         public String PropertyMetadata()
         {
             PropertyReadLock();
@@ -843,7 +843,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aDuration">Will be set to the value of the property</param>
+        /// <returns>Value of the Duration property</returns>
         public uint PropertyDuration()
         {
             PropertyReadLock();
@@ -858,7 +858,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aBitRate">Will be set to the value of the property</param>
+        /// <returns>Value of the BitRate property</returns>
         public uint PropertyBitRate()
         {
             PropertyReadLock();
@@ -873,7 +873,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aBitDepth">Will be set to the value of the property</param>
+        /// <returns>Value of the BitDepth property</returns>
         public uint PropertyBitDepth()
         {
             PropertyReadLock();
@@ -888,7 +888,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aSampleRate">Will be set to the value of the property</param>
+        /// <returns>Value of the SampleRate property</returns>
         public uint PropertySampleRate()
         {
             PropertyReadLock();
@@ -903,7 +903,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aLossless">Will be set to the value of the property</param>
+        /// <returns>Value of the Lossless property</returns>
         public bool PropertyLossless()
         {
             PropertyReadLock();
@@ -918,7 +918,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aCodecName">Will be set to the value of the property</param>
+        /// <returns>Value of the CodecName property</returns>
         public String PropertyCodecName()
         {
             PropertyReadLock();
@@ -933,7 +933,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aMetatext">Will be set to the value of the property</param>
+        /// <returns>Value of the Metatext property</returns>
         public String PropertyMetatext()
         {
             PropertyReadLock();

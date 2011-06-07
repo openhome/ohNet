@@ -868,6 +868,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SetPropertyDRMStateChanged(THandle aHan
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport2Create
  * @param[out] aLastChange
  */
 DllExport void CpProxyUpnpOrgAVTransport2PropertyLastChange(THandle aHandle, char** aLastChange);
@@ -877,6 +878,7 @@ DllExport void CpProxyUpnpOrgAVTransport2PropertyLastChange(THandle aHandle, cha
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport2Create
  * @param[out] aDRMState
  */
 DllExport void CpProxyUpnpOrgAVTransport2PropertyDRMState(THandle aHandle, char** aDRMState);

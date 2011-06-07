@@ -178,6 +178,7 @@ DllExport void <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, OhNe
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by <#=className#>Create
  * @param[out] a<#=s.name#>
 <#      if (s.type == "bin.base64") #>
 <#      { #>

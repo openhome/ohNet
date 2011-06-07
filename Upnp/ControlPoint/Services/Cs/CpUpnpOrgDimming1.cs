@@ -1613,7 +1613,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aLoadLevelStatus">Will be set to the value of the property</param>
+        /// <returns>Value of the LoadLevelStatus property</returns>
         public uint PropertyLoadLevelStatus()
         {
             PropertyReadLock();
@@ -1628,7 +1628,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aStepDelta">Will be set to the value of the property</param>
+        /// <returns>Value of the StepDelta property</returns>
         public uint PropertyStepDelta()
         {
             PropertyReadLock();
@@ -1643,7 +1643,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aRampRate">Will be set to the value of the property</param>
+        /// <returns>Value of the RampRate property</returns>
         public uint PropertyRampRate()
         {
             PropertyReadLock();
@@ -1658,7 +1658,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aIsRamping">Will be set to the value of the property</param>
+        /// <returns>Value of the IsRamping property</returns>
         public bool PropertyIsRamping()
         {
             PropertyReadLock();
@@ -1673,7 +1673,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aRampPaused">Will be set to the value of the property</param>
+        /// <returns>Value of the RampPaused property</returns>
         public bool PropertyRampPaused()
         {
             PropertyReadLock();
