@@ -270,7 +270,7 @@ def GenDocs(module, os, nightly, arch, tool):
             print ret
             sys.exit(10)
 
-        ret = rsync('hudson-rsync','openhome.org','Upnp/Build/Docs/','~/nightly/docs','')
+        ret = rsync('hudson-rsync','openhome.org','Upnp/Build/Docs/','~/build/nightly/docs','')
 
         if ret != 0:
             print ret
