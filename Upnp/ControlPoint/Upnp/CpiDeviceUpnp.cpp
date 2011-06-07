@@ -365,6 +365,10 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
         iXmlFetchSem.Wait();
         xmlWaitCount--;
     }
+    iXmlFetchLock.Wait();
+    // XmlFetchCompleted will signal iXmlFetchSem.
+    // Ensure it gets to exit before we complete the dtor and delete iXmlFetchLock which it holds
+    iXmlFetchLock.Signal();
     delete iRefreshTimer;
 }
 
