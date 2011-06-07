@@ -574,7 +574,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="anewLoadlevelTarget"></param>
+        /// <param name="aNewLoadlevelTarget"></param>
         public void SyncSetLoadLevelTarget(uint aNewLoadlevelTarget)
         {
             SyncSetLoadLevelTargetUpnpOrgDimming1 sync = new SyncSetLoadLevelTargetUpnpOrgDimming1(this);
@@ -589,7 +589,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>Returns immediately and will run the client-specified callback when the action
         /// later completes.  Any output arguments can then be retrieved by calling
         /// EndSetLoadLevelTarget().</remarks>
-        /// <param name="anewLoadlevelTarget"></param>
+        /// <param name="aNewLoadlevelTarget"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
         public void BeginSetLoadLevelTarget(uint aNewLoadlevelTarget, CallbackAsyncComplete aCallback)
@@ -665,7 +665,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="aretLoadlevelStatus"></param>
+        /// <param name="aRetLoadlevelStatus"></param>
         public void SyncGetLoadLevelStatus(out uint aRetLoadlevelStatus)
         {
             SyncGetLoadLevelStatusUpnpOrgDimming1 sync = new SyncGetLoadLevelStatusUpnpOrgDimming1(this);
@@ -696,7 +696,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        /// <param name="aretLoadlevelStatus"></param>
+        /// <param name="aRetLoadlevelStatus"></param>
         public void EndGetLoadLevelStatus(IntPtr aAsyncHandle, out uint aRetLoadlevelStatus)
         {
             if (Invocation.Error(aAsyncHandle))
@@ -712,7 +712,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="anewOnEffectLevel"></param>
+        /// <param name="aNewOnEffectLevel"></param>
         public void SyncSetOnEffectLevel(uint aNewOnEffectLevel)
         {
             SyncSetOnEffectLevelUpnpOrgDimming1 sync = new SyncSetOnEffectLevelUpnpOrgDimming1(this);
@@ -727,7 +727,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>Returns immediately and will run the client-specified callback when the action
         /// later completes.  Any output arguments can then be retrieved by calling
         /// EndSetOnEffectLevel().</remarks>
-        /// <param name="anewOnEffectLevel"></param>
+        /// <param name="aNewOnEffectLevel"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
         public void BeginSetOnEffectLevel(uint aNewOnEffectLevel, CallbackAsyncComplete aCallback)
@@ -756,7 +756,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="anewOnEffect"></param>
+        /// <param name="aNewOnEffect"></param>
         public void SyncSetOnEffect(String aNewOnEffect)
         {
             SyncSetOnEffectUpnpOrgDimming1 sync = new SyncSetOnEffectUpnpOrgDimming1(this);
@@ -771,7 +771,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>Returns immediately and will run the client-specified callback when the action
         /// later completes.  Any output arguments can then be retrieved by calling
         /// EndSetOnEffect().</remarks>
-        /// <param name="anewOnEffect"></param>
+        /// <param name="aNewOnEffect"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
         public void BeginSetOnEffect(String aNewOnEffect, CallbackAsyncComplete aCallback)
@@ -800,8 +800,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="aretOnEffect"></param>
-        /// <param name="aretOnEffectLevel"></param>
+        /// <param name="aRetOnEffect"></param>
+        /// <param name="aRetOnEffectLevel"></param>
         public void SyncGetOnEffectParameters(out String aRetOnEffect, out uint aRetOnEffectLevel)
         {
             SyncGetOnEffectParametersUpnpOrgDimming1 sync = new SyncGetOnEffectParametersUpnpOrgDimming1(this);
@@ -834,8 +834,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        /// <param name="aretOnEffect"></param>
-        /// <param name="aretOnEffectLevel"></param>
+        /// <param name="aRetOnEffect"></param>
+        /// <param name="aRetOnEffectLevel"></param>
         public void EndGetOnEffectParameters(IntPtr aAsyncHandle, out String aRetOnEffect, out uint aRetOnEffectLevel)
         {
             if (Invocation.Error(aAsyncHandle))
@@ -1052,8 +1052,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="anewLoadLevelTarget"></param>
-        /// <param name="anewRampTime"></param>
+        /// <param name="aNewLoadLevelTarget"></param>
+        /// <param name="aNewRampTime"></param>
         public void SyncStartRampToLevel(uint aNewLoadLevelTarget, uint aNewRampTime)
         {
             SyncStartRampToLevelUpnpOrgDimming1 sync = new SyncStartRampToLevelUpnpOrgDimming1(this);
@@ -1068,8 +1068,8 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>Returns immediately and will run the client-specified callback when the action
         /// later completes.  Any output arguments can then be retrieved by calling
         /// EndStartRampToLevel().</remarks>
-        /// <param name="anewLoadLevelTarget"></param>
-        /// <param name="anewRampTime"></param>
+        /// <param name="aNewLoadLevelTarget"></param>
+        /// <param name="aNewRampTime"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
         public void BeginStartRampToLevel(uint aNewLoadLevelTarget, uint aNewRampTime, CallbackAsyncComplete aCallback)
@@ -1099,7 +1099,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="anewStepDelta"></param>
+        /// <param name="aNewStepDelta"></param>
         public void SyncSetStepDelta(uint aNewStepDelta)
         {
             SyncSetStepDeltaUpnpOrgDimming1 sync = new SyncSetStepDeltaUpnpOrgDimming1(this);
@@ -1114,7 +1114,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>Returns immediately and will run the client-specified callback when the action
         /// later completes.  Any output arguments can then be retrieved by calling
         /// EndSetStepDelta().</remarks>
-        /// <param name="anewStepDelta"></param>
+        /// <param name="aNewStepDelta"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
         public void BeginSetStepDelta(uint aNewStepDelta, CallbackAsyncComplete aCallback)
@@ -1143,7 +1143,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="aretStepDelta"></param>
+        /// <param name="aRetStepDelta"></param>
         public void SyncGetStepDelta(out uint aRetStepDelta)
         {
             SyncGetStepDeltaUpnpOrgDimming1 sync = new SyncGetStepDeltaUpnpOrgDimming1(this);
@@ -1174,7 +1174,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        /// <param name="aretStepDelta"></param>
+        /// <param name="aRetStepDelta"></param>
         public void EndGetStepDelta(IntPtr aAsyncHandle, out uint aRetStepDelta)
         {
             if (Invocation.Error(aAsyncHandle))
@@ -1190,7 +1190,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="anewRampRate"></param>
+        /// <param name="aNewRampRate"></param>
         public void SyncSetRampRate(uint aNewRampRate)
         {
             SyncSetRampRateUpnpOrgDimming1 sync = new SyncSetRampRateUpnpOrgDimming1(this);
@@ -1205,7 +1205,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>Returns immediately and will run the client-specified callback when the action
         /// later completes.  Any output arguments can then be retrieved by calling
         /// EndSetRampRate().</remarks>
-        /// <param name="anewRampRate"></param>
+        /// <param name="aNewRampRate"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
         public void BeginSetRampRate(uint aNewRampRate, CallbackAsyncComplete aCallback)
@@ -1234,7 +1234,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="aretRampRate"></param>
+        /// <param name="aRetRampRate"></param>
         public void SyncGetRampRate(out uint aRetRampRate)
         {
             SyncGetRampRateUpnpOrgDimming1 sync = new SyncGetRampRateUpnpOrgDimming1(this);
@@ -1265,7 +1265,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        /// <param name="aretRampRate"></param>
+        /// <param name="aRetRampRate"></param>
         public void EndGetRampRate(IntPtr aAsyncHandle, out uint aRetRampRate)
         {
             if (Invocation.Error(aAsyncHandle))
@@ -1361,7 +1361,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="aretIsRamping"></param>
+        /// <param name="aRetIsRamping"></param>
         public void SyncGetIsRamping(out bool aRetIsRamping)
         {
             SyncGetIsRampingUpnpOrgDimming1 sync = new SyncGetIsRampingUpnpOrgDimming1(this);
@@ -1392,7 +1392,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        /// <param name="aretIsRamping"></param>
+        /// <param name="aRetIsRamping"></param>
         public void EndGetIsRamping(IntPtr aAsyncHandle, out bool aRetIsRamping)
         {
             if (Invocation.Error(aAsyncHandle))
@@ -1408,7 +1408,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="aretRampPaused"></param>
+        /// <param name="aRetRampPaused"></param>
         public void SyncGetRampPaused(out bool aRetRampPaused)
         {
             SyncGetRampPausedUpnpOrgDimming1 sync = new SyncGetRampPausedUpnpOrgDimming1(this);
@@ -1439,7 +1439,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        /// <param name="aretRampPaused"></param>
+        /// <param name="aRetRampPaused"></param>
         public void EndGetRampPaused(IntPtr aAsyncHandle, out bool aRetRampPaused)
         {
             if (Invocation.Error(aAsyncHandle))
@@ -1455,7 +1455,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="aretRampTime"></param>
+        /// <param name="aRetRampTime"></param>
         public void SyncGetRampTime(out uint aRetRampTime)
         {
             SyncGetRampTimeUpnpOrgDimming1 sync = new SyncGetRampTimeUpnpOrgDimming1(this);
@@ -1486,7 +1486,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        /// <param name="aretRampTime"></param>
+        /// <param name="aRetRampTime"></param>
         public void EndGetRampTime(IntPtr aAsyncHandle, out uint aRetRampTime)
         {
             if (Invocation.Error(aAsyncHandle))

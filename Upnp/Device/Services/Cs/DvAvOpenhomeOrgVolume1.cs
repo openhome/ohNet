@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Volume property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Volume property.</param>
         uint PropertyVolume();
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Mute property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Mute property.</param>
         bool PropertyMute();
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Balance property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Balance property.</param>
         int PropertyBalance();
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Fade property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Fade property.</param>
         int PropertyFade();
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VolumeLimit property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the VolumeLimit property.</param>
         uint PropertyVolumeLimit();
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VolumeMax property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the VolumeMax property.</param>
         uint PropertyVolumeMax();
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VolumeUnity property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the VolumeUnity property.</param>
         uint PropertyVolumeUnity();
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VolumeSteps property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the VolumeSteps property.</param>
         uint PropertyVolumeSteps();
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VolumeMilliDbPerStep property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the VolumeMilliDbPerStep property.</param>
         uint PropertyVolumeMilliDbPerStep();
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the BalanceMax property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the BalanceMax property.</param>
         uint PropertyBalanceMax();
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the FadeMax property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the FadeMax property.</param>
         uint PropertyFadeMax();
         
     }
@@ -232,7 +232,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Volume property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Volume property.</returns>
         public uint PropertyVolume()
         {
             return iPropertyVolume.Value();
@@ -251,7 +251,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Mute property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Mute property.</returns>
         public bool PropertyMute()
         {
             return iPropertyMute.Value();
@@ -270,7 +270,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Balance property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Balance property.</returns>
         public int PropertyBalance()
         {
             return iPropertyBalance.Value();
@@ -289,7 +289,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Fade property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Fade property.</returns>
         public int PropertyFade()
         {
             return iPropertyFade.Value();
@@ -308,7 +308,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VolumeLimit property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the VolumeLimit property.</returns>
         public uint PropertyVolumeLimit()
         {
             return iPropertyVolumeLimit.Value();
@@ -327,7 +327,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VolumeMax property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the VolumeMax property.</returns>
         public uint PropertyVolumeMax()
         {
             return iPropertyVolumeMax.Value();
@@ -346,7 +346,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VolumeUnity property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the VolumeUnity property.</returns>
         public uint PropertyVolumeUnity()
         {
             return iPropertyVolumeUnity.Value();
@@ -365,7 +365,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VolumeSteps property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the VolumeSteps property.</returns>
         public uint PropertyVolumeSteps()
         {
             return iPropertyVolumeSteps.Value();
@@ -384,7 +384,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VolumeMilliDbPerStep property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the VolumeMilliDbPerStep property.</returns>
         public uint PropertyVolumeMilliDbPerStep()
         {
             return iPropertyVolumeMilliDbPerStep.Value();
@@ -403,7 +403,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the BalanceMax property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the BalanceMax property.</returns>
         public uint PropertyBalanceMax()
         {
             return iPropertyBalanceMax.Value();
@@ -422,7 +422,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the FadeMax property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the FadeMax property.</returns>
         public uint PropertyFadeMax()
         {
             return iPropertyFadeMax.Value();

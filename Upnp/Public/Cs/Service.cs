@@ -248,7 +248,8 @@ namespace OpenHome.Net.Core
         /// <summary>
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
-        /// <param name="aParameter">Parameter defining the name and any value bounds for the property</param>
+        /// <param name="aParameter">Parameter defining the name and any value bounds for the property.</param>
+        /// <param name="aOwnsNativeProperty">Whether the managed property owns the underlying native property.</param>
         public PropertyInt(ParameterInt aParameter, bool aOwnsNativeProperty = false)
             : base(aOwnsNativeProperty)
         {
@@ -307,7 +308,8 @@ namespace OpenHome.Net.Core
         /// <summary>
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
-        /// <param name="aParameter">Parameter defining the name and any value bounds for the property</param>
+        /// <param name="aParameter">Parameter defining the name and any value bounds for the property.</param>
+        /// <param name="aOwnsNativeProperty">Whether the managed property owns the underlying native property.</param>
         public PropertyUint(ParameterUint aParameter, bool aOwnsNativeProperty = false)
             : base(aOwnsNativeProperty)
         {
@@ -366,7 +368,8 @@ namespace OpenHome.Net.Core
         /// <summary>
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
-        /// <param name="aParameter">Parameter defining the name for the property</param>
+        /// <param name="aParameter">Parameter defining the name for the property.</param>
+        /// <param name="aOwnsNativeProperty">Whether the managed property owns the underlying native property.</param>
         public PropertyBool(ParameterBool aParameter, bool aOwnsNativeProperty = false)
             : base(aOwnsNativeProperty)
         {
@@ -429,7 +432,8 @@ namespace OpenHome.Net.Core
         /// <summary>
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
-        /// <param name="aParameter">Parameter defining the name and any set of allowed values for the property</param>
+        /// <param name="aParameter">Parameter defining the name and any set of allowed values for the property.</param>
+        /// <param name="aOwnsNativeProperty">Whether the managed property owns the underlying native property.</param>
         public PropertyString(ParameterString aParameter, bool aOwnsNativeProperty = false)
             : base(aOwnsNativeProperty)
         {
@@ -495,7 +499,8 @@ namespace OpenHome.Net.Core
         /// <summary>
         /// Constructor suitable for use by clients of the device stack
         /// </summary>
-        /// <param name="aParameter">Parameter defining the name for the property</param>
+        /// <param name="aParameter">Parameter defining the name for the property.</param>
+        /// <param name="aOwnsNativeProperty">Whether the managed property owns the underlying native property.</param>
         public PropertyBinary(ParameterBinary aParameter, bool aOwnsNativeProperty = false)
             : base(aOwnsNativeProperty)
         {
@@ -520,7 +525,7 @@ namespace OpenHome.Net.Core
         /// <summary>
         /// Set the value of the property
         /// </summary>
-        /// <param name="aValue">New value for the property</param>
+        /// <param name="aData">New value for the property</param>
         /// <returns>True if the property's value was changed; false otherwise</returns>
         public unsafe bool SetValue(byte[] aData)
         {

@@ -244,7 +244,7 @@ namespace OpenHome.Net.ControlPoint
         /// <remarks>Intended to be write only (its value is written on construction and not be later read)</remarks>
         /// <param name="aParameter">Defines the name for the argument.
         /// Must have been previously added to the action using Action.AddInputParameter</param>
-        /// <param name="aValue">Value for the argument</param>
+        /// <param name="aData">Value for the argument</param>
         public unsafe ArgumentBinary(ParameterBinary aParameter, byte[] aData)
         {
             fixed (byte* pData = aData)

@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Uri property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Uri property.</param>
         string PropertyUri();
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Metadata property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Metadata property.</param>
         string PropertyMetadata();
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the TransportState property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the TransportState property.</param>
         string PropertyTransportState();
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProtocolInfo property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ProtocolInfo property.</param>
         string PropertyProtocolInfo();
         
     }
@@ -116,7 +116,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Uri property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Uri property.</returns>
         public string PropertyUri()
         {
             return iPropertyUri.Value();
@@ -135,7 +135,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Metadata property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Metadata property.</returns>
         public string PropertyMetadata()
         {
             return iPropertyMetadata.Value();
@@ -154,7 +154,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the TransportState property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the TransportState property.</returns>
         public string PropertyTransportState()
         {
             return iPropertyTransportState.Value();
@@ -173,7 +173,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProtocolInfo property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ProtocolInfo property.</returns>
         public string PropertyProtocolInfo()
         {
             return iPropertyProtocolInfo.Value();

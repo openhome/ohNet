@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the TrackCount property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the TrackCount property.</param>
         uint PropertyTrackCount();
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Duration property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Duration property.</param>
         uint PropertyDuration();
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Seconds property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Seconds property.</param>
         uint PropertySeconds();
         
     }
@@ -89,7 +89,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the TrackCount property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the TrackCount property.</returns>
         public uint PropertyTrackCount()
         {
             return iPropertyTrackCount.Value();
@@ -108,7 +108,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Duration property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Duration property.</returns>
         public uint PropertyDuration()
         {
             return iPropertyDuration.Value();
@@ -127,7 +127,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Seconds property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Seconds property.</returns>
         public uint PropertySeconds()
         {
             return iPropertySeconds.Value();

@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the LoadLevelStatus property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the LoadLevelStatus property.</param>
         uint PropertyLoadLevelStatus();
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the StepDelta property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the StepDelta property.</param>
         uint PropertyStepDelta();
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the RampRate property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the RampRate property.</param>
         uint PropertyRampRate();
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the IsRamping property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the IsRamping property.</param>
         bool PropertyIsRamping();
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the RampPaused property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the RampPaused property.</param>
         bool PropertyRampPaused();
         
     }
@@ -141,7 +141,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the LoadLevelStatus property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the LoadLevelStatus property.</returns>
         public uint PropertyLoadLevelStatus()
         {
             return iPropertyLoadLevelStatus.Value();
@@ -160,7 +160,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the StepDelta property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the StepDelta property.</returns>
         public uint PropertyStepDelta()
         {
             return iPropertyStepDelta.Value();
@@ -179,7 +179,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the RampRate property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the RampRate property.</returns>
         public uint PropertyRampRate()
         {
             return iPropertyRampRate.Value();
@@ -198,7 +198,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the IsRamping property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the IsRamping property.</returns>
         public bool PropertyIsRamping()
         {
             return iPropertyIsRamping.Value();
@@ -217,7 +217,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the RampPaused property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the RampPaused property.</returns>
         public bool PropertyRampPaused()
         {
             return iPropertyRampPaused.Value();

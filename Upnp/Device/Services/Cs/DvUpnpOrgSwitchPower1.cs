@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Status property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Status property.</param>
         bool PropertyStatus();
         
     }
@@ -59,7 +59,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Status property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Status property.</returns>
         public bool PropertyStatus()
         {
             return iPropertyStatus.Value();

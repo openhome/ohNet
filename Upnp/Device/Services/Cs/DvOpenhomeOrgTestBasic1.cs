@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VarUint property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the VarUint property.</param>
         uint PropertyVarUint();
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VarInt property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the VarInt property.</param>
         int PropertyVarInt();
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VarBool property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the VarBool property.</param>
         bool PropertyVarBool();
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VarStr property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the VarStr property.</param>
         string PropertyVarStr();
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VarBin property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the VarBin property.</param>
         byte[] PropertyVarBin();
         
     }
@@ -140,7 +140,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VarUint property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the VarUint property.</returns>
         public uint PropertyVarUint()
         {
             return iPropertyVarUint.Value();
@@ -159,7 +159,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VarInt property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the VarInt property.</returns>
         public int PropertyVarInt()
         {
             return iPropertyVarInt.Value();
@@ -178,7 +178,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VarBool property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the VarBool property.</returns>
         public bool PropertyVarBool()
         {
             return iPropertyVarBool.Value();
@@ -197,7 +197,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VarStr property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the VarStr property.</returns>
         public string PropertyVarStr()
         {
             return iPropertyVarStr.Value();
@@ -216,7 +216,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the VarBin property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the VarBin property.</returns>
         public byte[] PropertyVarBin()
         {
             return iPropertyVarBin.Value();
