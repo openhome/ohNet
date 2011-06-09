@@ -69,8 +69,10 @@ DllExport int32_t OhNetLibraryInitialiseMinimal(OhNetHandleInitParams aInitParam
  * Start the library as a UPnP control point stack
  *
  * Must be called after OhNetLibraryInitialise but before any function from other headers
+ *
+ * @param aSubnet      Subnet address of the network adapter to use.
  */
-DllExport void OhNetLibraryStartCp();
+DllExport void OhNetLibraryStartCp(TIpAddress aSubnet);
 
 /**
  * Start the library as a UPnP device stack
@@ -83,8 +85,11 @@ DllExport void OhNetLibraryStartDv();
  * Start the library as both UPnP control point and device stacks
  *
  * Must be called after OhNetLibraryInitialise but before any function from other headers
+ *
+ * @param aSubnet      Subnet address of the network adapter for the control point stack to use.
+ *                     (The device stack operates on all adapters.)
  */
-DllExport void OhNetLibraryStartCombined();
+DllExport void OhNetLibraryStartCombined(TIpAddress aSubnet);
 
 /**
  * Close the UPnP library.
@@ -530,6 +535,14 @@ DllExport TIpAddress OhNetNetworkInterfaceSubnet(OhNetHandleNetworkInterface aNi
 DllExport const char* OhNetNetworkInterfaceName(OhNetHandleNetworkInterface aNif);
 
 /**
+ * Get the full name of the network adapter.
+ *
+ * @return  String in the form a.b.c.d (name).
+ *          The caller is responsible for freeing this by calling OhNetFree().
+ */
+DllExport char* OhNetNetworkInterfaceFullName(OhNetHandleNetworkInterface aNif);
+
+/**
  * Create a list of all available subnets
  *
  * @return  Handle to list of subnets.  Ownership transfers to caller.
@@ -574,12 +587,12 @@ DllExport void OhNetSubnetListDestroy(OhNetHandleNetworkInterfaceList aList);
 DllExport void OhNetSetCurrentSubnet(OhNetHandleNetworkInterface aSubnet);
 
 /**
- * Clear any subnet previously specified using OhNetSetCurrentSubnet() or
- * OhNetInitParamsSetDefaultSubnet().  OS-specified defaults will be used instead.
+ * Query which network adapter is currently selected.
  *
- * Device lists and subscriptions will be automatically updated if necessary.
+ * @return  A pointer to the currently selected adapter with a reference claimed.
+ *          Or NULL if there is no currently selected adapter.
  */
-DllExport void OhNetSetDefaultSubnet();
+DllExport OhNetHandleNetworkInterface OhNetCurrentSubnet();
 
 /* @} */
 

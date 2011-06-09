@@ -91,7 +91,10 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     }
     aInitParams->SetMsearchTime(1);
     UpnpLibrary::Initialise(aInitParams);
-    UpnpLibrary::StartCombined();
+    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    TIpAddress subnet = (*subnetList)[0]->Subnet();
+    UpnpLibrary::DestroySubnetList(subnetList);
+    UpnpLibrary::StartCombined(subnet);
 	//Debug::SetLevel(Debug::kEvent | Debug::kDvEvent);
 
     Print("TestDvDeviceStd - starting\n");

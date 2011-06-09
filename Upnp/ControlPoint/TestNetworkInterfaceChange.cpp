@@ -106,7 +106,7 @@ void setTestNifIndex(TInt aIndex, Blocker& aBlocker)
                        when they would/wouldn't be run */
     NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
     TIpAddress addr = (nif==NULL? 0 : nif->Address());
-    delete nif;
+    nif->RemoveRef();
     Endpoint endpt(0, addr);
     Endpoint::AddressBuf buf;
     endpt.GetAddress(buf);
@@ -233,8 +233,11 @@ void PropertyLogger::LogShuffle()
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
-    Net::UpnpLibrary::Initialise(aInitParams);
-    Net::UpnpLibrary::StartCp();
+    UpnpLibrary::Initialise(aInitParams);
+    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    TIpAddress subnet = (*subnetList)[0]->Subnet();
+    UpnpLibrary::DestroySubnetList(subnetList);
+    UpnpLibrary::StartCp(subnet);
     Debug::SetLevel(Debug::kNone);
 
     Blocker* blocker = new Blocker;

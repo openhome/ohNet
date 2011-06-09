@@ -20,7 +20,11 @@ namespace OpenHome.Net
             };
             Library lib = new Library();
             lib.Initialise(initParams);
-            lib.StartCombined();
+            IntPtr subnetList = lib.SubnetListCreate();
+            IntPtr nif = lib.SubnetAt(subnetList, 0);
+            uint subnet = lib.NetworkInterfaceSubnet(nif);
+            lib.SubnetListDestroy(subnetList);
+            lib.StartCombined(subnet);
 
             Console.Write("TestCpDeviceDvCs - starting\n");
             DeviceBasic device = new DeviceBasic();

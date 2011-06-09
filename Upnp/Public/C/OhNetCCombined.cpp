@@ -4,7 +4,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-void OhNetLibraryStartCombined()
+void OhNetLibraryStartCombined(TIpAddress aSubnet)
 {
-    UpnpLibrary::StartCombined();
+    UpnpLibrary::StartCombined(aSubnet);
 }

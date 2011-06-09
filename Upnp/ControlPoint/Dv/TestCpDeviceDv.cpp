@@ -217,7 +217,7 @@ static void RandomiseUdn(Bwh& aUdn)
     Bws<Ascii::kMaxUintStringBytes> buf;
     NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
     TUint max = nif->Address();
-    delete nif;
+    nif->RemoveRef();
     (void)Ascii::AppendDec(buf, Random(max));
     aUdn.Append(buf);
     aUdn.PtrZ();
@@ -415,7 +415,10 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
 {
     aInitParams->SetUseLoopbackNetworkInterface();
     UpnpLibrary::Initialise(aInitParams);
-    UpnpLibrary::StartCombined();
+    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    TIpAddress subnet = (*subnetList)[0]->Subnet();
+    UpnpLibrary::DestroySubnetList(subnetList);
+    UpnpLibrary::StartCombined(subnet);
 
     Print("TestCpDeviceDv - starting\n");
 

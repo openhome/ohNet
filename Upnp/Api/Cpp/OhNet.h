@@ -33,13 +33,18 @@ public:
      *                      so can safely be deleted by the caller when this returns
      */
     NetworkInterface(TIpAddress aAddress, TIpAddress aNetMask, const char* aName);
-    ~NetworkInterface();
     /**
-     * Copy a NetworkInterface instance (probably using the output from UpnpLibrary::SubnetList())
+     * Add a reference.  This NetworkInterface instance won't be deleted until the last reference is removed.
      *
-     * @return  Newly allocated NetworkInterface instance.  The caller is responsible for freeing this
+     * Callers must (eventually) call RemoveRef() exactly once for each call to AddRef().
      */
-    NetworkInterface* Clone() const;
+    void AddRef();
+    /**
+     * Remove a reference previously claimed by the c'tor or by AddRef().
+     *
+     * This object will be deleted when the reference count reaches zero.
+     */
+    void RemoveRef();
     /**
      * Query the IP address of the interface
      *
@@ -67,13 +72,23 @@ public:
      */
     bool ContainsAddress(TIpAddress aAddress);
     /**
-     * Get the name of the subnet
+     * Get the name of the network adapter.
      *
      * @return  The subnet name.  Can't be modified; will remain valid until this
      *          NetworkInterface is deleted
      */
     const char* Name() const;
+    /**
+     * Get the full name of the network adapter.
+     *
+     * @return  String in the form a.b.c.d (name).
+     *          The caller is responsible for freeing this.
+     */
+    char* FullName() const;
 private:
+    ~NetworkInterface();
+private:
+    TUint iRefCount;
     TIpAddress iAddress;
     TIpAddress iNetMask;
     Brhz iName;
@@ -307,8 +322,11 @@ public:
 
     /**
      * Start the library as a UPnP control point stack
+     *
+     * @param aSubnet    The subnet to use.  Likely to be the Subnet() from a
+     *                   NetworkInterface returned by SubnetList.
      */
-    static void StartCp();
+    static void StartCp(TIpAddress aSubnet);
 
     /**
      * Start the library as a UPnP device stack
@@ -317,8 +335,12 @@ public:
 
     /**
      * Start the library as both UPnP control point and device stacks
+     *
+     * @param aSubnet    The subnet to use for the control point stack (the device stack
+     *                   operates on all subnets).  Likely to be the Subnet() from a
+     *                   NetworkInterface returned by SubnetList.
      */
-    static void StartCombined();
+    static void StartCombined(TIpAddress aSubnet);
 
     /**
      * Close the UPnP library.
@@ -330,13 +352,20 @@ public:
     /**
      * Create a vector of the available subnets.
      *
-     * The returned vector and all its pointers are allocated.  Ownership is
-     * transferred to the caller who is responsible for later deleting each
-     * NetworkInterface* then the vector.
+     * The returned vector and all its pointers are allocated.  Use DestroySubnetList
+     * to later free this memory.
      *
-     * @return  A newly allocated vector of newly allocated interfaces
+     * @return  A newly allocated vector containing the adapter judged most suitable for
+     *          each available subnet.
      */
-    static std::vector<NetworkInterface*>* SubnetList();
+    static std::vector<NetworkInterface*>* CreateSubnetList();
+
+    /**
+     * Destroy a subnet list created using CreateSubnetList().
+     *
+     * @param aSubnetList  Returned by CreateSubnetList().
+     */
+    static void DestroySubnetList(std::vector<NetworkInterface*>* aSubnetList);
 
     /**
      * Set which subnet the library should use.
@@ -344,18 +373,18 @@ public:
      * Device lists and subscriptions will be automatically updated.
      * No other subnet will be selected if aSubnet is not available
      *
-     * @param aSubnet    The subnet to use.  Likely to be a reference to a
-     *                   NetworkInterface returned by SubnetList
+     * @param aSubnet    The subnet to use.  Likely to be the Subnet() from a
+     *                   NetworkInterface returned by CreateSubnetList.
      */
-    static void SetCurrentSubnet(const NetworkInterface& aSubnet);
+    static void SetCurrentSubnet(TIpAddress aSubnet);
 
     /**
-     * Clear any subnet previously specified using SetCurrentSubnet() or
-     * InitialisationParams::SetDefaultSubnet().  OS-specified defaults will be
-     * used instead.
-     * Device lists and subscriptions will be automatically updated if necessary.
+     * Query which network adapter is currently selected.
+     *
+     * @return  A pointer to the currently selected adapter with a reference claimed.
+     *          Or NULL if there is no currently selected adapter.
      */
-    static void SetDefaultSubnet();
+    static NetworkInterface* CurrentSubnet();
 };
 
 } // namespace Net

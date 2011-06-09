@@ -18,7 +18,10 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
 {
     aInitParams->SetUseLoopbackNetworkInterface();
     UpnpLibrary::Initialise(aInitParams);
-    UpnpLibrary::StartCombined();
+    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    TIpAddress subnet = (*subnetList)[0]->Subnet();
+    UpnpLibrary::DestroySubnetList(subnetList);
+    UpnpLibrary::StartCombined(subnet);
 
     Print("TestCpDeviceDvStd - starting\n");
 

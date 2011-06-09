@@ -38,7 +38,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress addr = (*ifs)[adapter.Value()]->Address();
     for (TUint i=0; i<ifs->size(); i++) {
-        delete (*ifs)[i];
+        (*ifs)[i]->RemoveRef();
     }
     delete ifs;
     Endpoint endpt(0, addr);

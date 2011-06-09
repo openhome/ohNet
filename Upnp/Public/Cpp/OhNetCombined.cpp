@@ -3,8 +3,8 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-void UpnpLibrary::StartCombined()
+void UpnpLibrary::StartCombined(TIpAddress aSubnet)
 {
-    UpnpLibrary::StartCp();
+    UpnpLibrary::StartCp(aSubnet);
     UpnpLibrary::StartDv();
 }

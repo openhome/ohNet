@@ -137,7 +137,10 @@ void DeviceList::Removed(CpDevice& aDevice)
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     UpnpLibrary::Initialise(aInitParams);
-    UpnpLibrary::StartCp();
+    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    TIpAddress subnet = (*subnetList)[0]->Subnet();
+    UpnpLibrary::DestroySubnetList(subnetList);
+    UpnpLibrary::StartCp(subnet);
 
     Debug::SetLevel(Debug::kNone);
     DeviceList* deviceList = new DeviceList;

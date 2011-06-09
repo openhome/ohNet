@@ -126,17 +126,16 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     }
 
     UpnpLibrary::Initialise(aInitParams);
-    UpnpLibrary::StartCp();
-
     std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
-    UpnpLibrary::SetCurrentSubnet(*(*ifs)[adapter.Value()]);
-    TIpAddress addr = (*ifs)[adapter.Value()]->Address();
+    TIpAddress subnet = (*ifs)[adapter.Value()]->Subnet();
     for (TUint i=0; i<ifs->size(); i++) {
-        delete (*ifs)[i];
+        (*ifs)[i]->RemoveRef();
     }
     delete ifs;
-    Endpoint endpt(0, addr);
+    UpnpLibrary::StartCp(subnet);
+
+    Endpoint endpt(0, subnet);
     Endpoint::AddressBuf buf;
     endpt.AppendAddress(buf);
     Print("Using network interface %s\n\n", buf.Ptr());

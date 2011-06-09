@@ -23,7 +23,11 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
     OhNetInitParamsSetUseLoopbackNetworkInterface(aInitParams);
     OhNetLibraryInitialise(aInitParams);
     Print("TestCpDeviceDvC - starting\n");
-    OhNetLibraryStartCombined();
+    OhNetHandleNetworkInterfaceList subnetList = OhNetSubnetListCreate();
+    OhNetHandleNetworkInterface nif = OhNetSubnetAt(subnetList, 0);
+    TIpAddress subnet = OhNetNetworkInterfaceSubnet(nif);
+    OhNetSubnetListDestroy(subnetList);
+    OhNetLibraryStartCombined(subnet);
 
     DeviceBasicC* device = new DeviceBasicC(DeviceBasicC::eProtocolNone);
     CpDeviceC cph = CpDeviceDvCreate(device->Device());

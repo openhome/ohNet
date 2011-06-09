@@ -57,13 +57,13 @@ private:
     class Nif : INonCopyable
     {
     public:
-        Nif(NetworkInterface* aNif, NetworkInterfaceInfo* aMdnsInfo);
+        Nif(NetworkInterface& aNif, NetworkInterfaceInfo* aMdnsInfo);
         ~Nif();
         NetworkInterface& Interface();
         TIpAddress Address() const;
         TBool ContainsAddress(TIpAddress aAddress) const;
     private:
-        NetworkInterface* iNif;
+        NetworkInterface& iNif;
         NetworkInterfaceInfo* iMdnsInfo;
     };
 private:

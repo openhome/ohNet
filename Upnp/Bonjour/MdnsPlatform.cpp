@@ -21,31 +21,32 @@ using namespace OpenHome::Net;
 
 static const mDNSInterfaceID kInterfaceId = (mDNSInterfaceID)2;
 
-MdnsPlatform::Nif::Nif(NetworkInterface* aNif, NetworkInterfaceInfo* aMdnsInfo)
-    : iMdnsInfo(aMdnsInfo)
+MdnsPlatform::Nif::Nif(NetworkInterface& aNif, NetworkInterfaceInfo* aMdnsInfo)
+    : iNif(aNif)
+    , iMdnsInfo(aMdnsInfo)
 {
-    iNif = aNif->Clone();
+    iNif.AddRef();
 }
 
 MdnsPlatform::Nif::~Nif()
 {
-    delete iNif;
+    iNif.RemoveRef();
     free(iMdnsInfo);
 }
 
 NetworkInterface& MdnsPlatform::Nif::Interface()
 {
-    return *iNif;
+    return iNif;
 }
 
 TIpAddress MdnsPlatform::Nif::Address() const
 {
-    return iNif->Address();
+    return iNif.Address();
 }
 
 TBool MdnsPlatform::Nif::ContainsAddress(TIpAddress aAddress) const
 {
-    return iNif->ContainsAddress(aAddress);
+    return iNif.ContainsAddress(aAddress);
 }
 
 
@@ -128,7 +129,7 @@ MdnsPlatform::Status MdnsPlatform::AddInterface(NetworkInterface* aNif)
     nifInfo->McastTxRx = mDNStrue;
     status = mDNS_RegisterInterface(iMdns, nifInfo, false);
     if (status == mStatus_NoError) {
-        iInterfaces.push_back(new MdnsPlatform::Nif(aNif, nifInfo));
+        iInterfaces.push_back(new MdnsPlatform::Nif(*aNif, nifInfo));
     }
     else {
         free(nifInfo);

@@ -116,7 +116,11 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
     OhNetInitParamsSetUseLoopbackNetworkInterface(aInitParams);
     OhNetLibraryInitialise(aInitParams);
     Print("TestDvDeviceC - starting\n");
-    OhNetLibraryStartCombined();
+    OhNetHandleNetworkInterfaceList subnetList = OhNetSubnetListCreate();
+    OhNetHandleNetworkInterface nif = OhNetSubnetAt(subnetList, 0);
+    TIpAddress subnet = OhNetNetworkInterfaceSubnet(nif);
+    OhNetSubnetListDestroy(subnetList);
+    OhNetLibraryStartCombined(subnet);
 //    Debug::SetLevel(Debug::kService);
 
     Semaphore* sem = new Semaphore("SEM1", 0);

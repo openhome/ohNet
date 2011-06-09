@@ -171,7 +171,7 @@ void CpiSubscription::DoSubscribe()
         THROW(NetworkError);
     }
     Endpoint endpt(CpiSubscriptionManager::EventServer()->Port(), nif->Address());
-    delete nif;
+    nif->RemoveRef();
     Endpoint::EndpointBuf buf;
     endpt.AppendEndpoint(buf);
     uri.Append(buf);
@@ -402,7 +402,7 @@ CpiSubscriptionManager::CpiSubscriptionManager()
         iLock.Wait();
         iEventServer = new EventServerUpnp(currentInterface->Address());
         iLock.Signal();
-        delete currentInterface;
+        currentInterface->RemoveRef();
     }
 
     TChar thName[5] = "SBS ";
@@ -608,6 +608,7 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
     else {
         iEventServer = new EventServerUpnp(currentInterface->Address());
     }
+    currentInterface->RemoveRef();
 
     // take a note of all active and pending subscriptions
     Map activeSubscriptions;

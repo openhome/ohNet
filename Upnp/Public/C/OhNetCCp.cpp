@@ -4,7 +4,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-void OhNetLibraryStartCp()
+void OhNetLibraryStartCp(TIpAddress aSubnet)
 {
-    UpnpLibrary::StartCp();
+    UpnpLibrary::StartCp(aSubnet);
 }

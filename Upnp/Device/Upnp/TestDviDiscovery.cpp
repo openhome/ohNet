@@ -220,7 +220,7 @@ static void RandomiseUdn(Bwh& aUdn)
     Bws<Ascii::kMaxUintStringBytes> buf;
     NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
     TUint max = nif->Address();
-    delete nif;
+    nif->RemoveRef();
     (void)Ascii::AppendDec(buf, Random(max));
     aUdn.Append(buf);
     aUdn.PtrZ();
@@ -245,7 +245,7 @@ void SuiteAlive::Test()
     CpListenerBasic* listener = new CpListenerBasic;
     NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
     SsdpListenerMulticast* listenerMulticast = new SsdpListenerMulticast(nif->Address());
-    delete nif;
+    nif->RemoveRef();
     TInt listenerId = listenerMulticast->AddNotifyHandler(listener);
     listenerMulticast->Start();
 
@@ -346,7 +346,7 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
     Endpoint endpt(0, uri.Host());
     NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
     TBool correctSubnet = nif->ContainsAddress(endpt.Address());
-    delete nif;
+    nif->RemoveRef();
     if (!correctSubnet) {
 #if 0
         Print("Discarding advertisement from ");
@@ -469,7 +469,7 @@ SuiteMsearch::SuiteMsearch()
     iListener = new CpListenerMsearch;
     NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
     iListenerUnicast = new SsdpListenerUnicast(*iListener, nif->Address());
-    delete nif;
+    nif->RemoveRef();
     iListenerUnicast->Start();
 }
 
@@ -714,6 +714,10 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     aInitParams->SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
     //aInitParams->SetUseLoopbackNetworkInterface();
     UpnpLibrary::Initialise(aInitParams);
+    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    TIpAddress subnet = (*subnetList)[0]->Subnet();
+    UpnpLibrary::DestroySubnetList(subnetList);
+    UpnpLibrary::SetCurrentSubnet(subnet);
     UpnpLibrary::StartDv();
 
     //Debug::SetLevel(Debug::kNetwork);

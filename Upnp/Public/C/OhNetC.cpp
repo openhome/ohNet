@@ -321,9 +321,16 @@ const char* OhNetNetworkInterfaceName(OhNetHandleNetworkInterface aNif)
     return nif->Name();
 }
 
+char* OhNetNetworkInterfaceFullName(OhNetHandleNetworkInterface aNif)
+{
+    NetworkInterface* nif = reinterpret_cast<NetworkInterface*>(aNif);
+    ASSERT(nif != NULL);
+    return nif->FullName();
+}
+
 OhNetHandleNetworkInterfaceList OhNetSubnetListCreate()
 {
-    return (OhNetHandleNetworkInterfaceList)UpnpLibrary::SubnetList();
+    return (OhNetHandleNetworkInterfaceList)UpnpLibrary::CreateSubnetList();
 }
 
 uint32_t OhNetSubnetListSize(OhNetHandleNetworkInterfaceList aList)
@@ -343,23 +350,18 @@ OhNetHandleNetworkInterface OhNetSubnetAt(OhNetHandleNetworkInterfaceList aList,
 void OhNetSubnetListDestroy(OhNetHandleNetworkInterfaceList aList)
 {
     std::vector<NetworkInterface*>* list = reinterpret_cast<std::vector<NetworkInterface*>*>(aList);
-    if (list != NULL) {
-        for (uint32_t i=0; i<list->size(); i++) {
-            delete (*list)[i];
-        }
-        delete list;
-    }
+    UpnpLibrary::DestroySubnetList(list);
 }
 
 void OhNetSetCurrentSubnet(OhNetHandleNetworkInterface aSubnet)
 {
     NetworkInterface* nif = reinterpret_cast<NetworkInterface*>(aSubnet);
-    UpnpLibrary::SetCurrentSubnet(*nif);
+    UpnpLibrary::SetCurrentSubnet(nif->Subnet());
 }
 
-void OhNetSetDefaultSubnet()
+OhNetHandleNetworkInterface OhNetCurrentSubnet()
 {
-    UpnpLibrary::SetDefaultSubnet();
+    return (OhNetHandleNetworkInterface)UpnpLibrary::CurrentSubnet();
 }
 
 void OhNetFreeExternal(void* aPtr)

@@ -158,9 +158,9 @@ static void RandomiseUdn(std::string& aUdn)
     udn.Append(buf);
     udn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> addr;
-    NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
-    TUint max = nif->Address();
-    delete nif;
+    std::vector<NetworkInterface*>* subnetList = Stack::NetworkInterfaceList().CreateSubnetList();
+    TUint max = (*subnetList)[0]->Address();
+    Stack::NetworkInterfaceList().DestroySubnetList(subnetList);
     (void)Ascii::AppendDec(addr, Random(max));
     udn.Append(addr);
     udn.PtrZ();

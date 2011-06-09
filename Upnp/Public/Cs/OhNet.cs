@@ -396,11 +396,11 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern int OhNetLibraryInitialiseMinimal(IntPtr aInitParams);
         [DllImport ("ohNet")]
-        static extern void OhNetLibraryStartCp();
+        static extern void OhNetLibraryStartCp(uint aSubnet);
         [DllImport ("ohNet")]
         static extern void OhNetLibraryStartDv();
         [DllImport ("ohNet")]
-        static extern void OhNetLibraryStartCombined();
+        static extern void OhNetLibraryStartCombined(uint aSubnet);
         [DllImport ("ohNet")]
         static extern void OhNetLibraryClose();
         [DllImport("ohNet")]
@@ -412,11 +412,13 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet", CallingConvention = CallingConvention.StdCall, EntryPoint = "OhNetNetworkInterfaceName", ExactSpelling = false)]
         static extern IntPtr OhNetNetworkInterfaceName(IntPtr aNif);
         [DllImport("ohNet")]
+        static extern IntPtr OhNetNetworkInterfaceFullName(IntPtr aNif);
+        [DllImport("ohNet")]
         static extern IntPtr OhNetSubnetListCreate();
         [DllImport("ohNet")]
         static extern uint OhNetSubnetListSize(IntPtr aList);
         [DllImport("ohNet")]
-        static extern uint OhNetSubnetAt(IntPtr aList, uint aIndex);
+        static extern IntPtr OhNetSubnetAt(IntPtr aList, uint aIndex);
         [DllImport("ohNet")]
         static extern void OhNetSubnetListDestroy(IntPtr aList);
         [DllImport("ohNet")]
@@ -476,9 +478,9 @@ namespace OpenHome.Net.Core
         /// <returns>
         /// A control-point stack. Can be used to create device list factories.
         /// </returns>
-        public ControlPointStack StartCp()
+        public ControlPointStack StartCp(uint aSubnet)
         {
-            OhNetLibraryStartCp();
+            OhNetLibraryStartCp(aSubnet);
             return new ControlPointStack();
         }
 
@@ -497,9 +499,9 @@ namespace OpenHome.Net.Core
         /// <summary>
         /// Start the library as both UPnP control point and device stacks
         /// </summary>
-        public CombinedStack StartCombined()
+        public CombinedStack StartCombined(uint aSubnet)
         {
-            OhNetLibraryStartCombined();
+            OhNetLibraryStartCombined(aSubnet);
             return new CombinedStack();
         }
 
@@ -552,6 +554,19 @@ namespace OpenHome.Net.Core
         }
 
         /// <summary>
+        /// Get the full name for a given network interface.
+        /// </summary>
+        /// <param name="aNif">Handle returned by SubnetAt().</param>
+        /// <returns>String in the form a.b.c.d (name).</returns>
+        public string NetworkInterfaceFullName(IntPtr aNif)
+        {
+            IntPtr cStr = OhNetNetworkInterfaceFullName(aNif);
+            string name = Marshal.PtrToStringAnsi(cStr);
+            OhNetFree(cStr);
+            return name;
+        }
+
+        /// <summary>
         /// Create a vector of the available subnets
         /// </summary>
         /// <returns>Subnet list handle.  Caller must later call SubnetListDestroy()</returns>
@@ -576,7 +591,7 @@ namespace OpenHome.Net.Core
         /// <param name="aList">Subnet list handle returned by SubnetListCreate()</param>
         /// <param name="aIndex">Index of the list item to get a handle to (0..SubnetListSize()-1)</param>
         /// <returns>Handle to the subnet</returns>
-        public uint SubnetAt(IntPtr aList, uint aIndex)
+        public IntPtr SubnetAt(IntPtr aList, uint aIndex)
         {
             return OhNetSubnetAt(aList, aIndex);
         }

@@ -61,7 +61,10 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         aInitParams->SetUseLoopbackNetworkInterface();
     }
     UpnpLibrary::Initialise(aInitParams);
-    UpnpLibrary::StartCp();
+    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    TIpAddress subnet = (*subnetList)[0]->Subnet();
+    UpnpLibrary::DestroySubnetList(subnetList);
+    UpnpLibrary::StartCp(subnet);
 
     Brn domainName;
     Brn type;

@@ -330,7 +330,7 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice a
         iUnicastListener = new SsdpListenerUnicast(*this, iInterface);
         iMulticastListener = &Stack::MulticastListenerClaim(iInterface);
         iNotifyHandlerId = iMulticastListener->AddNotifyHandler(this);
-        delete current;
+        current->RemoveRef();
     }
 }
 
@@ -438,10 +438,12 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
     iLock.Wait();
     Endpoint endpt(0, uri.Host());
     NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
-    if (nif->Address() == iInterface && nif->ContainsAddress(endpt.Address())) {
-        reachable = true;
+    if (nif != NULL) {
+        if (nif->Address() == iInterface && nif->ContainsAddress(endpt.Address())) {
+            reachable = true;
+        }
+        nif->RemoveRef();
     }
-    delete nif;
     iLock.Signal();
     return reachable;
 }
@@ -482,7 +484,7 @@ void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
     }
 
     iInterface = current->Address();
-    delete current;
+    current->RemoveRef();
     if (aNewSubnet) {
         RemoveAll();
     }

@@ -54,7 +54,7 @@ void DviServer::Initialise()
     iLock.Signal();
 }
 
-void DviServer::AddServer(const NetworkInterface& aNif)
+void DviServer::AddServer(NetworkInterface& aNif)
 {
     SocketTcpServer* tcpServer = CreateServer(aNif);
     DviServer::Server* server = new DviServer::Server(tcpServer, aNif);
@@ -117,14 +117,15 @@ TInt DviServer::FindServer(TIpAddress aSubnet)
 
 //  DviServer::Server
 
-DviServer::Server::Server(SocketTcpServer* aTcpServer, const NetworkInterface& aNif)
+DviServer::Server::Server(SocketTcpServer* aTcpServer, NetworkInterface& aNif)
+    : iNif(aNif)
 {
     iServer = aTcpServer;
-    iNif = aNif.Clone();
+    iNif.AddRef();
 }
 
 DviServer::Server::~Server()
 {
     delete iServer;
-    delete iNif;
+    iNif.RemoveRef();
 }

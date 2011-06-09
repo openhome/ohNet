@@ -47,7 +47,11 @@ namespace OpenHome.Net.Device
             InitParams initParams = new InitParams();
             using (Library lib = Library.Create(initParams))
             {
-                var deviceListFactory = new CpUpnpDeviceListFactory(lib.StartCp());
+                IntPtr subnetList = lib.SubnetListCreate();
+                IntPtr nif = lib.SubnetAt(subnetList, 0);
+                uint subnet = lib.NetworkInterfaceSubnet(nif);
+                lib.SubnetListDestroy(subnetList);
+                var deviceListFactory = new CpUpnpDeviceListFactory(lib.StartCp(subnet));
                 CpDevice device = null;
                 Semaphore sem = new Semaphore(0, 1);
                 var deviceList = deviceListFactory.CreateListServiceType("openhome.org", "TestBasic", 1,

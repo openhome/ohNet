@@ -11,7 +11,8 @@ using namespace OpenHome::Net;
 // NetworkInterface
 
 NetworkInterface::NetworkInterface(TIpAddress aAddress, TIpAddress aNetMask, const char* aName)
-    : iAddress(aAddress)
+    : iRefCount(1)
+    , iAddress(aAddress)
     , iNetMask(aNetMask)
     , iName(aName)
 {
@@ -23,9 +24,21 @@ NetworkInterface::~NetworkInterface()
     Stack::RemoveObject(this, "NetworkInterface");
 }
 
-NetworkInterface* NetworkInterface::Clone() const
+void NetworkInterface::AddRef()
 {
-    return new NetworkInterface(iAddress, iNetMask, (const char*)iName.Ptr());
+    Stack::Mutex().Wait();
+    iRefCount++;
+    Stack::Mutex().Signal();
+}
+
+void NetworkInterface::RemoveRef()
+{
+    Stack::Mutex().Wait();
+    TBool dead = (--iRefCount == 0);
+    Stack::Mutex().Signal();
+    if (dead) {
+        delete this;
+    }
 }
 
 TIpAddress NetworkInterface::Address() const
@@ -51,6 +64,22 @@ bool NetworkInterface::ContainsAddress(TIpAddress aAddress)
 const char* NetworkInterface::Name() const
 {
     return (const char*)iName.Ptr();
+}
+
+char* NetworkInterface::FullName() const
+{
+    TUint len = Endpoint::kMaxAddressBytes + 4 + iName.Bytes();
+    Bwh buf(len);
+    Endpoint ep(0, iAddress);
+    ep.AppendAddress(buf);
+    buf.Append(' ');
+    buf.Append('(');
+    buf.Append(iName);
+    buf.Append(')');
+    buf.PtrZ();
+    Brhz buf2;
+    buf.TransferTo(buf2);
+    return (char*)buf2.Transfer();
 }
 
 
@@ -416,17 +445,28 @@ void UpnpLibrary::Close()
     OpenHome::Os::Destroy();
 }
 
-std::vector<NetworkInterface*>* UpnpLibrary::SubnetList()
+std::vector<NetworkInterface*>* UpnpLibrary::CreateSubnetList()
 {
     return Stack::NetworkInterfaceList().CreateSubnetList();
 }
 
-void UpnpLibrary::SetCurrentSubnet(const NetworkInterface& aSubnet)
+void UpnpLibrary::DestroySubnetList(std::vector<NetworkInterface*>* aSubnetList)
+{
+    if (aSubnetList == NULL) {
+        return;
+    }
+    for (size_t i=0; i<aSubnetList->size(); i++) {
+        (*aSubnetList)[i]->RemoveRef();
+    }
+    delete aSubnetList;
+}
+
+void UpnpLibrary::SetCurrentSubnet(TIpAddress aSubnet)
 {
     Stack::NetworkInterfaceList().SetCurrentSubnet(aSubnet);
 }
 
-void UpnpLibrary::SetDefaultSubnet()
+NetworkInterface* UpnpLibrary::CurrentSubnet()
 {
-    Stack::NetworkInterfaceList().ClearCurrentSubnet();
+    return Stack::NetworkInterfaceList().CurrentInterface();
 }
