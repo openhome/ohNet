@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the LastChange property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the LastChange property.</param>
         string PropertyLastChange();
         
     }
@@ -92,7 +92,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the LastChange property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the LastChange property.</returns>
         public string PropertyLastChange()
         {
             return iPropertyLastChange.Value();

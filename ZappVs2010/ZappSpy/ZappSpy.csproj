@@ -93,9 +93,9 @@
   <PropertyGroup>
     <PreBuildEvent>call "$(DevEnvDir)..\..\VC\vcvarsall.bat"
 cd "$(SolutionDir)..\Upnp"
-nmake.exe -s -f OhNet.mak ohNet.net.dll
-copy /B Build\Obj\Windows\Debug\ohNet.dll $(TargetDir)
-copy /B Build\Obj\Windows\Debug\ohNet.net.dll $(TargetDir)</PreBuildEvent>
+nmake.exe -s -f OhNet.mak ohNet.net.dll release=1
+copy /B Build\Obj\Windows\Release\ohNet.dll $(TargetDir)
+copy /B Build\Obj\Windows\Release\ohNet.net.dll $(TargetDir)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

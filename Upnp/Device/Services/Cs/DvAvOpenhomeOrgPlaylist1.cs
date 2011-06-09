@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the TransportState property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the TransportState property.</param>
         string PropertyTransportState();
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Repeat property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Repeat property.</param>
         bool PropertyRepeat();
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Shuffle property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Shuffle property.</param>
         bool PropertyShuffle();
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Id property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Id property.</param>
         uint PropertyId();
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the IdArray property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the IdArray property.</param>
         byte[] PropertyIdArray();
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the TracksMax property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the TracksMax property.</param>
         uint PropertyTracksMax();
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProtocolInfo property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ProtocolInfo property.</param>
         string PropertyProtocolInfo();
         
     }
@@ -182,7 +182,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the TransportState property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the TransportState property.</returns>
         public string PropertyTransportState()
         {
             return iPropertyTransportState.Value();
@@ -201,7 +201,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Repeat property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Repeat property.</returns>
         public bool PropertyRepeat()
         {
             return iPropertyRepeat.Value();
@@ -220,7 +220,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Shuffle property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Shuffle property.</returns>
         public bool PropertyShuffle()
         {
             return iPropertyShuffle.Value();
@@ -239,7 +239,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Id property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Id property.</returns>
         public uint PropertyId()
         {
             return iPropertyId.Value();
@@ -258,7 +258,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the IdArray property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the IdArray property.</returns>
         public byte[] PropertyIdArray()
         {
             return iPropertyIdArray.Value();
@@ -277,7 +277,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the TracksMax property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the TracksMax property.</returns>
         public uint PropertyTracksMax()
         {
             return iPropertyTracksMax.Value();
@@ -296,7 +296,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProtocolInfo property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ProtocolInfo property.</returns>
         public string PropertyProtocolInfo()
         {
             return iPropertyProtocolInfo.Value();

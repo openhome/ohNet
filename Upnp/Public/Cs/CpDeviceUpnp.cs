@@ -40,6 +40,7 @@ namespace OpenHome.Net.ControlPoint
         /// <summary>
         /// Create a device list that detects a UPnP devices with a specific Udn.
         /// </summary>
+        /// <param name="aUuid">Unique identifier for the target device.</param>
         /// <param name="aAdded">Delegate which will be run when a new device is detected.
         /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
         /// This callback will never be run for a device that is already in the list.</param>
@@ -55,6 +56,9 @@ namespace OpenHome.Net.ControlPoint
         /// <summary>
         /// Create a device list that detects UPnP devices of a specific type.
         /// </summary>
+        /// <param name="aDomain">Vendor domain for the target device.</param>
+        /// <param name="aDeviceType">Name of the target device.</param>
+        /// <param name="aVersion">Version number for the target device.</param>
         /// <param name="aAdded">Delegate which will be run when a new device is detected.
         /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
         /// This callback will never be run for a device that is already in the list.</param>
@@ -72,6 +76,9 @@ namespace OpenHome.Net.ControlPoint
         /// <summary>
         /// Create a device list that detects UPnP devices bearing a specific type of service.
         /// </summary>
+        /// <param name="aDomain">Vendor domain for the target service (e.g. upnp.org).</param>
+        /// <param name="aServiceType">Name of the target service.</param>
+        /// <param name="aVersion">Version number for the target service.</param>
         /// <param name="aAdded">Delegate which will be run when a new device is detected.
         /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
         /// This callback will never be run for a device that is already in the list.</param>
@@ -141,6 +148,7 @@ namespace OpenHome.Net.ControlPoint
         /// <summary>
         /// Create a device list that detects a UPnP devices with a specific Udn.
         /// </summary>
+        /// <param name="aUuid">Unique identifier for the target device.</param>
         /// <param name="aAdded">Delegate which will be run when a new device is detected.
         /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
         /// This callback will never be run for a device that is already in the list.</param>
@@ -159,6 +167,9 @@ namespace OpenHome.Net.ControlPoint
         /// <summary>
         /// Create a device list that detects UPnP devices of a specific type.
         /// </summary>
+        /// <param name="aDomain">Vendor domain for the target device.</param>
+        /// <param name="aDeviceType">Name of the target device.</param>
+        /// <param name="aVersion">Version number for the target device.</param>
         /// <param name="aAdded">Delegate which will be run when a new device is detected.
         /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
         /// This callback will never be run for a device that is already in the list.</param>
@@ -179,6 +190,9 @@ namespace OpenHome.Net.ControlPoint
         /// <summary>
         /// Create a device list that detects UPnP devices bearing a specific type of service.
         /// </summary>
+        /// <param name="aDomain">Vendor domain for the target service (e.g. upnp.org).</param>
+        /// <param name="aServiceType">Name of the target service.</param>
+        /// <param name="aVersion">Version number for the target service.</param>
         /// <param name="aAdded">Delegate which will be run when a new device is detected.
         /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
         /// This callback will never be run for a device that is already in the list.</param>
@@ -267,6 +281,7 @@ namespace OpenHome.Net.ControlPoint
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="aUuid">Unique identifier for the target device.</param>
         /// <param name="aAdded">Delegate which will be run when a new device is detected.
         /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
         /// This callback will never be run for a device that is already in the list.</param>
@@ -298,6 +313,9 @@ namespace OpenHome.Net.ControlPoint
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="aDomainName">Vendor domain for the target device.</param>
+        /// <param name="aDeviceType">Name of the target device.</param>
+        /// <param name="aVersion">Version number for the target device.</param>
         /// <param name="aAdded">Delegate which will be run when a new device is detected.
         /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
         /// This callback will never be run for a device that is already in the list.</param>
@@ -332,6 +350,9 @@ namespace OpenHome.Net.ControlPoint
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="aDomainName">Vendor domain for the target service (e.g. upnp.org).</param>
+        /// <param name="aServiceType">Name of the target service.</param>
+        /// <param name="aVersion">Version number for the target service.</param>
         /// <param name="aAdded">Delegate which will be run when a new device is detected.
         /// Clients who are interested this new device should call AddRef() on it and add it to some local collection.
         /// This callback will never be run for a device that is already in the list.</param>

@@ -170,7 +170,7 @@ DllExport void DvDeviceSetAttribute(DvDeviceC aDevice, const char* aKey, const c
 /**
  * Add a block of xml which will be returned as part of the device description
  *
- * Use is limited to UPnP for now.  Xml is returned with device xml inside the <device>
+ * Use is limited to UPnP for now.  Xml is returned with device xml inside the 'device'
  * tag (at the same level as most attributes)
  *
  * @param[in] aDevice  Handle returned by DvDeviceCreate[NoResources]

@@ -99,6 +99,7 @@ DllExport ServiceParameter ServiceParameterCreateString(const char* aName, char*
  * @return   Handle to the newly created service
  */
 DllExport ServiceParameter ServiceParameterCreateBinary(const char* aName);
+/* @} */
 /**
  * @addtogroup Property
  * @ingroup Service

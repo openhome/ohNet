@@ -213,7 +213,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::EnableActionCreateReference()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSearchCapabilities(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSearchCapabilities(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -227,7 +227,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSearchCapabilities(IDviInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSortCapabilities(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSortCapabilities(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -241,7 +241,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSortCapabilities(IDviInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSystemUpdateID(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSystemUpdateID(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -253,7 +253,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoGetSystemUpdateID(IDviInvocation& 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoBrowse(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoBrowse(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ObjectID;
@@ -290,7 +290,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoBrowse(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoSearch(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoSearch(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ContainerID;
@@ -327,7 +327,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoSearch(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateObject(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateObject(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ContainerID;
@@ -352,7 +352,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateObject(IDviInvocation& aInvo
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoDestroyObject(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoDestroyObject(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ObjectID;
@@ -364,7 +364,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoDestroyObject(IDviInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoUpdateObject(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoUpdateObject(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ObjectID;
@@ -382,7 +382,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoUpdateObject(IDviInvocation& aInvo
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoImportResource(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoImportResource(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_SourceURI;
@@ -400,7 +400,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoImportResource(IDviInvocation& aIn
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoExportResource(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoExportResource(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_SourceURI;
@@ -418,7 +418,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoExportResource(IDviInvocation& aIn
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoStopTransferResource(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoStopTransferResource(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t TransferID = aInvocation.InvocationReadUint("TransferID");
@@ -428,7 +428,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoStopTransferResource(IDviInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoGetTransferProgress(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoGetTransferProgress(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t TransferID = aInvocation.InvocationReadUint("TransferID");
@@ -453,7 +453,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoGetTransferProgress(IDviInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoDeleteResource(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoDeleteResource(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ResourceURI;
@@ -465,7 +465,7 @@ void DvProviderUpnpOrgContentDirectory1Cpp::DoDeleteResource(IDviInvocation& aIn
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateReference(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory1Cpp::DoCreateReference(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ContainerID;

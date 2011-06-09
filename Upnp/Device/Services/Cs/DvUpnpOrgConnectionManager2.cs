@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SourceProtocolInfo property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the SourceProtocolInfo property.</param>
         string PropertySourceProtocolInfo();
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SinkProtocolInfo property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the SinkProtocolInfo property.</param>
         string PropertySinkProtocolInfo();
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the CurrentConnectionIDs property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the CurrentConnectionIDs property.</param>
         string PropertyCurrentConnectionIDs();
         
     }
@@ -94,7 +94,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SourceProtocolInfo property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the SourceProtocolInfo property.</returns>
         public string PropertySourceProtocolInfo()
         {
             return iPropertySourceProtocolInfo.Value();
@@ -113,7 +113,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SinkProtocolInfo property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the SinkProtocolInfo property.</returns>
         public string PropertySinkProtocolInfo()
         {
             return iPropertySinkProtocolInfo.Value();
@@ -132,7 +132,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the CurrentConnectionIDs property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the CurrentConnectionIDs property.</returns>
         public string PropertyCurrentConnectionIDs()
         {
             return iPropertyCurrentConnectionIDs.Value();

@@ -289,6 +289,7 @@ DllExport void CpProxyAvOpenhomeOrgReceiver1SetPropertyProtocolInfoChanged(THand
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgReceiver1Create
  * @param[out] aUri
  */
 DllExport void CpProxyAvOpenhomeOrgReceiver1PropertyUri(THandle aHandle, char** aUri);
@@ -298,6 +299,7 @@ DllExport void CpProxyAvOpenhomeOrgReceiver1PropertyUri(THandle aHandle, char** 
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgReceiver1Create
  * @param[out] aMetadata
  */
 DllExport void CpProxyAvOpenhomeOrgReceiver1PropertyMetadata(THandle aHandle, char** aMetadata);
@@ -307,6 +309,7 @@ DllExport void CpProxyAvOpenhomeOrgReceiver1PropertyMetadata(THandle aHandle, ch
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgReceiver1Create
  * @param[out] aTransportState
  */
 DllExport void CpProxyAvOpenhomeOrgReceiver1PropertyTransportState(THandle aHandle, char** aTransportState);
@@ -316,6 +319,7 @@ DllExport void CpProxyAvOpenhomeOrgReceiver1PropertyTransportState(THandle aHand
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgReceiver1Create
  * @param[out] aProtocolInfo
  */
 DllExport void CpProxyAvOpenhomeOrgReceiver1PropertyProtocolInfo(THandle aHandle, char** aProtocolInfo);

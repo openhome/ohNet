@@ -749,6 +749,7 @@ DllExport void CpProxyOpenhomeOrgTestBasic1SetPropertyVarBinChanged(THandle aHan
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aVarUint
  */
 DllExport void CpProxyOpenhomeOrgTestBasic1PropertyVarUint(THandle aHandle, uint32_t* aVarUint);
@@ -758,6 +759,7 @@ DllExport void CpProxyOpenhomeOrgTestBasic1PropertyVarUint(THandle aHandle, uint
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aVarInt
  */
 DllExport void CpProxyOpenhomeOrgTestBasic1PropertyVarInt(THandle aHandle, int32_t* aVarInt);
@@ -767,6 +769,7 @@ DllExport void CpProxyOpenhomeOrgTestBasic1PropertyVarInt(THandle aHandle, int32
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aVarBool
  */
 DllExport void CpProxyOpenhomeOrgTestBasic1PropertyVarBool(THandle aHandle, uint32_t* aVarBool);
@@ -776,6 +779,7 @@ DllExport void CpProxyOpenhomeOrgTestBasic1PropertyVarBool(THandle aHandle, uint
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aVarStr
  */
 DllExport void CpProxyOpenhomeOrgTestBasic1PropertyVarStr(THandle aHandle, char** aVarStr);
@@ -785,6 +789,7 @@ DllExport void CpProxyOpenhomeOrgTestBasic1PropertyVarStr(THandle aHandle, char*
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyOpenhomeOrgTestBasic1Create
  * @param[out] aVarBin
  * @param[out] aLen
  */

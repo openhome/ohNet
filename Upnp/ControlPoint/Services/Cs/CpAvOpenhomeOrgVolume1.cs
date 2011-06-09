@@ -1476,7 +1476,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aVolume">Will be set to the value of the property</param>
+        /// <returns>Value of the Volume property</returns>
         public uint PropertyVolume()
         {
             PropertyReadLock();
@@ -1491,7 +1491,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aMute">Will be set to the value of the property</param>
+        /// <returns>Value of the Mute property</returns>
         public bool PropertyMute()
         {
             PropertyReadLock();
@@ -1506,7 +1506,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aBalance">Will be set to the value of the property</param>
+        /// <returns>Value of the Balance property</returns>
         public int PropertyBalance()
         {
             PropertyReadLock();
@@ -1521,7 +1521,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aFade">Will be set to the value of the property</param>
+        /// <returns>Value of the Fade property</returns>
         public int PropertyFade()
         {
             PropertyReadLock();
@@ -1536,7 +1536,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aVolumeLimit">Will be set to the value of the property</param>
+        /// <returns>Value of the VolumeLimit property</returns>
         public uint PropertyVolumeLimit()
         {
             PropertyReadLock();
@@ -1551,7 +1551,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aVolumeMax">Will be set to the value of the property</param>
+        /// <returns>Value of the VolumeMax property</returns>
         public uint PropertyVolumeMax()
         {
             PropertyReadLock();
@@ -1566,7 +1566,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aVolumeUnity">Will be set to the value of the property</param>
+        /// <returns>Value of the VolumeUnity property</returns>
         public uint PropertyVolumeUnity()
         {
             PropertyReadLock();
@@ -1581,7 +1581,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aVolumeSteps">Will be set to the value of the property</param>
+        /// <returns>Value of the VolumeSteps property</returns>
         public uint PropertyVolumeSteps()
         {
             PropertyReadLock();
@@ -1596,7 +1596,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aVolumeMilliDbPerStep">Will be set to the value of the property</param>
+        /// <returns>Value of the VolumeMilliDbPerStep property</returns>
         public uint PropertyVolumeMilliDbPerStep()
         {
             PropertyReadLock();
@@ -1611,7 +1611,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aBalanceMax">Will be set to the value of the property</param>
+        /// <returns>Value of the BalanceMax property</returns>
         public uint PropertyBalanceMax()
         {
             PropertyReadLock();
@@ -1626,7 +1626,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aFadeMax">Will be set to the value of the property</param>
+        /// <returns>Value of the FadeMax property</returns>
         public uint PropertyFadeMax()
         {
             PropertyReadLock();

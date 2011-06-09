@@ -1383,6 +1383,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SetPropertyLastChangeChanged(THand
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
  * @param[out] aLastChange
  */
 DllExport void CpProxyUpnpOrgRenderingControl2PropertyLastChange(THandle aHandle, char** aLastChange);

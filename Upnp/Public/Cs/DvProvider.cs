@@ -483,11 +483,10 @@ namespace OpenHome.Net.Device
         /// Set the value of a binary output argument for an invocation.
         /// </summary>
         /// <param name="aName">Name of the parameter associated with this output argument</param>
-        /// <param name="aValue">Value of the output argument</param>
+        /// <param name="aData">Value of the output argument</param>
         public unsafe void WriteBinary(String aName, byte[] aData)
         {
             IntPtr name = Marshal.StringToHGlobalAnsi(aName);
-            //IntPtr data = Marshal.StringToHGlobalAnsi(aData);
             int err = DvInvocationWriteBinaryStart(iHandle, name);
             if (err == 0)
             {
@@ -496,7 +495,6 @@ namespace OpenHome.Net.Device
                     err = DvInvocationWriteBinary(iHandle, data, (uint)aData.Length);
                 }
             }
-            //Marshal.FreeHGlobal(data);
             if (err == 0)
             {
                 err = DvInvocationWriteBinaryEnd(iHandle, name);

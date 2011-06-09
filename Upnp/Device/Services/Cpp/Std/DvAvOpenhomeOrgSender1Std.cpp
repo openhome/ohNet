@@ -129,7 +129,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::EnableActionAttributes()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoPresentationUrl(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoPresentationUrl(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -143,7 +143,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::DoPresentationUrl(IDviInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoMetadata(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoMetadata(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -157,7 +157,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::DoMetadata(IDviInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoAudio(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoAudio(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -169,7 +169,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::DoAudio(IDviInvocation& aInvocation, TUi
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoStatus(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoStatus(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -183,7 +183,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::DoStatus(IDviInvocation& aInvocation, TU
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgSender1Cpp::DoAttributes(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1Cpp::DoAttributes(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

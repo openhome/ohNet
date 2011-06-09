@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the A_ARG_Level property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the A_ARG_Level property.</param>
         uint PropertyA_ARG_Level();
         
     }
@@ -58,7 +58,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the A_ARG_Level property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the A_ARG_Level property.</returns>
         public uint PropertyA_ARG_Level()
         {
             return iPropertyA_ARG_Level.Value();

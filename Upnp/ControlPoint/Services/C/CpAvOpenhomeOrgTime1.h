@@ -117,6 +117,7 @@ DllExport void CpProxyAvOpenhomeOrgTime1SetPropertySecondsChanged(THandle aHandl
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgTime1Create
  * @param[out] aTrackCount
  */
 DllExport void CpProxyAvOpenhomeOrgTime1PropertyTrackCount(THandle aHandle, uint32_t* aTrackCount);
@@ -126,6 +127,7 @@ DllExport void CpProxyAvOpenhomeOrgTime1PropertyTrackCount(THandle aHandle, uint
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgTime1Create
  * @param[out] aDuration
  */
 DllExport void CpProxyAvOpenhomeOrgTime1PropertyDuration(THandle aHandle, uint32_t* aDuration);
@@ -135,6 +137,7 @@ DllExport void CpProxyAvOpenhomeOrgTime1PropertyDuration(THandle aHandle, uint32
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgTime1Create
  * @param[out] aSeconds
  */
 DllExport void CpProxyAvOpenhomeOrgTime1PropertySeconds(THandle aHandle, uint32_t* aSeconds);

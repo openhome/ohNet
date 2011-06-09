@@ -302,7 +302,7 @@ namespace OpenHome.Net.Device
         /// <summary>
         /// Add a block of xml which will be returned as part of the device description
         /// </summary>
-        /// <remarks>Use is limited to UPnP for now.  Xml is returned with device xml inside the <device>
+        /// <remarks>Use is limited to UPnP for now.  Xml is returned with device xml inside the 'device'
         /// tag (at the same level as most attributes)</remarks>
         /// <param name="aXml">One or more tag+value blocks</param>
         public unsafe void SetXmlExtension(string aXml)

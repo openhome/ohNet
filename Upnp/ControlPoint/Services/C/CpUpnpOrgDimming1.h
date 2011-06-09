@@ -785,6 +785,7 @@ DllExport void CpProxyUpnpOrgDimming1SetPropertyRampPausedChanged(THandle aHandl
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[out] aLoadLevelStatus
  */
 DllExport void CpProxyUpnpOrgDimming1PropertyLoadLevelStatus(THandle aHandle, uint32_t* aLoadLevelStatus);
@@ -794,6 +795,7 @@ DllExport void CpProxyUpnpOrgDimming1PropertyLoadLevelStatus(THandle aHandle, ui
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[out] aStepDelta
  */
 DllExport void CpProxyUpnpOrgDimming1PropertyStepDelta(THandle aHandle, uint32_t* aStepDelta);
@@ -803,6 +805,7 @@ DllExport void CpProxyUpnpOrgDimming1PropertyStepDelta(THandle aHandle, uint32_t
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[out] aRampRate
  */
 DllExport void CpProxyUpnpOrgDimming1PropertyRampRate(THandle aHandle, uint32_t* aRampRate);
@@ -812,6 +815,7 @@ DllExport void CpProxyUpnpOrgDimming1PropertyRampRate(THandle aHandle, uint32_t*
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[out] aIsRamping
  */
 DllExport void CpProxyUpnpOrgDimming1PropertyIsRamping(THandle aHandle, uint32_t* aIsRamping);
@@ -821,6 +825,7 @@ DllExport void CpProxyUpnpOrgDimming1PropertyIsRamping(THandle aHandle, uint32_t
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgDimming1Create
  * @param[out] aRampPaused
  */
 DllExport void CpProxyUpnpOrgDimming1PropertyRampPaused(THandle aHandle, uint32_t* aRampPaused);

@@ -1644,7 +1644,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aManufacturerName">Will be set to the value of the property</param>
+        /// <returns>Value of the ManufacturerName property</returns>
         public String PropertyManufacturerName()
         {
             PropertyReadLock();
@@ -1659,7 +1659,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aManufacturerInfo">Will be set to the value of the property</param>
+        /// <returns>Value of the ManufacturerInfo property</returns>
         public String PropertyManufacturerInfo()
         {
             PropertyReadLock();
@@ -1674,7 +1674,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aManufacturerUrl">Will be set to the value of the property</param>
+        /// <returns>Value of the ManufacturerUrl property</returns>
         public String PropertyManufacturerUrl()
         {
             PropertyReadLock();
@@ -1689,7 +1689,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aManufacturerImageUri">Will be set to the value of the property</param>
+        /// <returns>Value of the ManufacturerImageUri property</returns>
         public String PropertyManufacturerImageUri()
         {
             PropertyReadLock();
@@ -1704,7 +1704,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aModelName">Will be set to the value of the property</param>
+        /// <returns>Value of the ModelName property</returns>
         public String PropertyModelName()
         {
             PropertyReadLock();
@@ -1719,7 +1719,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aModelInfo">Will be set to the value of the property</param>
+        /// <returns>Value of the ModelInfo property</returns>
         public String PropertyModelInfo()
         {
             PropertyReadLock();
@@ -1734,7 +1734,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aModelUrl">Will be set to the value of the property</param>
+        /// <returns>Value of the ModelUrl property</returns>
         public String PropertyModelUrl()
         {
             PropertyReadLock();
@@ -1749,7 +1749,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aModelImageUri">Will be set to the value of the property</param>
+        /// <returns>Value of the ModelImageUri property</returns>
         public String PropertyModelImageUri()
         {
             PropertyReadLock();
@@ -1764,7 +1764,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aProductRoom">Will be set to the value of the property</param>
+        /// <returns>Value of the ProductRoom property</returns>
         public String PropertyProductRoom()
         {
             PropertyReadLock();
@@ -1779,7 +1779,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aProductName">Will be set to the value of the property</param>
+        /// <returns>Value of the ProductName property</returns>
         public String PropertyProductName()
         {
             PropertyReadLock();
@@ -1794,7 +1794,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aProductInfo">Will be set to the value of the property</param>
+        /// <returns>Value of the ProductInfo property</returns>
         public String PropertyProductInfo()
         {
             PropertyReadLock();
@@ -1809,7 +1809,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aProductUrl">Will be set to the value of the property</param>
+        /// <returns>Value of the ProductUrl property</returns>
         public String PropertyProductUrl()
         {
             PropertyReadLock();
@@ -1824,7 +1824,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aProductImageUri">Will be set to the value of the property</param>
+        /// <returns>Value of the ProductImageUri property</returns>
         public String PropertyProductImageUri()
         {
             PropertyReadLock();
@@ -1839,7 +1839,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aStandby">Will be set to the value of the property</param>
+        /// <returns>Value of the Standby property</returns>
         public bool PropertyStandby()
         {
             PropertyReadLock();
@@ -1854,7 +1854,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aSourceIndex">Will be set to the value of the property</param>
+        /// <returns>Value of the SourceIndex property</returns>
         public uint PropertySourceIndex()
         {
             PropertyReadLock();
@@ -1869,7 +1869,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aSourceCount">Will be set to the value of the property</param>
+        /// <returns>Value of the SourceCount property</returns>
         public uint PropertySourceCount()
         {
             PropertyReadLock();
@@ -1884,7 +1884,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aSourceXml">Will be set to the value of the property</param>
+        /// <returns>Value of the SourceXml property</returns>
         public String PropertySourceXml()
         {
             PropertyReadLock();
@@ -1899,7 +1899,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aAttributes">Will be set to the value of the property</param>
+        /// <returns>Value of the Attributes property</returns>
         public String PropertyAttributes()
         {
             PropertyReadLock();

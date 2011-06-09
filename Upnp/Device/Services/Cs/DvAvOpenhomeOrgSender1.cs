@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the PresentationUrl property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the PresentationUrl property.</param>
         string PropertyPresentationUrl();
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Metadata property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Metadata property.</param>
         string PropertyMetadata();
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Audio property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Audio property.</param>
         bool PropertyAudio();
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Status property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Status property.</param>
         string PropertyStatus();
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Attributes property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Attributes property.</param>
         string PropertyAttributes();
         
     }
@@ -130,7 +130,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the PresentationUrl property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the PresentationUrl property.</returns>
         public string PropertyPresentationUrl()
         {
             return iPropertyPresentationUrl.Value();
@@ -149,7 +149,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Metadata property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Metadata property.</returns>
         public string PropertyMetadata()
         {
             return iPropertyMetadata.Value();
@@ -168,7 +168,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Audio property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Audio property.</returns>
         public bool PropertyAudio()
         {
             return iPropertyAudio.Value();
@@ -187,7 +187,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Status property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Status property.</returns>
         public string PropertyStatus()
         {
             return iPropertyStatus.Value();
@@ -206,7 +206,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Attributes property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Attributes property.</returns>
         public string PropertyAttributes()
         {
             return iPropertyAttributes.Value();

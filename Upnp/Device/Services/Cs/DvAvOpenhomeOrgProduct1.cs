@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ManufacturerName property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ManufacturerName property.</param>
         string PropertyManufacturerName();
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ManufacturerInfo property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ManufacturerInfo property.</param>
         string PropertyManufacturerInfo();
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ManufacturerUrl property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ManufacturerUrl property.</param>
         string PropertyManufacturerUrl();
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ManufacturerImageUri property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ManufacturerImageUri property.</param>
         string PropertyManufacturerImageUri();
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ModelName property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ModelName property.</param>
         string PropertyModelName();
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ModelInfo property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ModelInfo property.</param>
         string PropertyModelInfo();
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ModelUrl property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ModelUrl property.</param>
         string PropertyModelUrl();
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ModelImageUri property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ModelImageUri property.</param>
         string PropertyModelImageUri();
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProductRoom property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ProductRoom property.</param>
         string PropertyProductRoom();
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProductName property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ProductName property.</param>
         string PropertyProductName();
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProductInfo property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ProductInfo property.</param>
         string PropertyProductInfo();
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProductUrl property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ProductUrl property.</param>
         string PropertyProductUrl();
 
         /// <summary>
@@ -175,7 +175,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProductImageUri property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ProductImageUri property.</param>
         string PropertyProductImageUri();
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Standby property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Standby property.</param>
         bool PropertyStandby();
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SourceIndex property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the SourceIndex property.</param>
         uint PropertySourceIndex();
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SourceCount property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the SourceCount property.</param>
         uint PropertySourceCount();
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SourceXml property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the SourceXml property.</param>
         string PropertySourceXml();
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Attributes property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Attributes property.</param>
         string PropertyAttributes();
         
     }
@@ -342,7 +342,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ManufacturerName property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ManufacturerName property.</returns>
         public string PropertyManufacturerName()
         {
             return iPropertyManufacturerName.Value();
@@ -361,7 +361,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ManufacturerInfo property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ManufacturerInfo property.</returns>
         public string PropertyManufacturerInfo()
         {
             return iPropertyManufacturerInfo.Value();
@@ -380,7 +380,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ManufacturerUrl property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ManufacturerUrl property.</returns>
         public string PropertyManufacturerUrl()
         {
             return iPropertyManufacturerUrl.Value();
@@ -399,7 +399,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ManufacturerImageUri property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ManufacturerImageUri property.</returns>
         public string PropertyManufacturerImageUri()
         {
             return iPropertyManufacturerImageUri.Value();
@@ -418,7 +418,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ModelName property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ModelName property.</returns>
         public string PropertyModelName()
         {
             return iPropertyModelName.Value();
@@ -437,7 +437,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ModelInfo property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ModelInfo property.</returns>
         public string PropertyModelInfo()
         {
             return iPropertyModelInfo.Value();
@@ -456,7 +456,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ModelUrl property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ModelUrl property.</returns>
         public string PropertyModelUrl()
         {
             return iPropertyModelUrl.Value();
@@ -475,7 +475,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ModelImageUri property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ModelImageUri property.</returns>
         public string PropertyModelImageUri()
         {
             return iPropertyModelImageUri.Value();
@@ -494,7 +494,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProductRoom property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ProductRoom property.</returns>
         public string PropertyProductRoom()
         {
             return iPropertyProductRoom.Value();
@@ -513,7 +513,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProductName property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ProductName property.</returns>
         public string PropertyProductName()
         {
             return iPropertyProductName.Value();
@@ -532,7 +532,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProductInfo property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ProductInfo property.</returns>
         public string PropertyProductInfo()
         {
             return iPropertyProductInfo.Value();
@@ -551,7 +551,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProductUrl property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ProductUrl property.</returns>
         public string PropertyProductUrl()
         {
             return iPropertyProductUrl.Value();
@@ -570,7 +570,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ProductImageUri property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ProductImageUri property.</returns>
         public string PropertyProductImageUri()
         {
             return iPropertyProductImageUri.Value();
@@ -589,7 +589,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Standby property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Standby property.</returns>
         public bool PropertyStandby()
         {
             return iPropertyStandby.Value();
@@ -608,7 +608,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SourceIndex property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the SourceIndex property.</returns>
         public uint PropertySourceIndex()
         {
             return iPropertySourceIndex.Value();
@@ -627,7 +627,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SourceCount property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the SourceCount property.</returns>
         public uint PropertySourceCount()
         {
             return iPropertySourceCount.Value();
@@ -646,7 +646,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SourceXml property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the SourceXml property.</returns>
         public string PropertySourceXml()
         {
             return iPropertySourceXml.Value();
@@ -665,7 +665,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Attributes property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Attributes property.</returns>
         public string PropertyAttributes()
         {
             return iPropertyAttributes.Value();

@@ -662,6 +662,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1SetPropertyProtocolInfoChanged(THandle 
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgRadio1Create
  * @param[out] aUri
  */
 DllExport void CpProxyAvOpenhomeOrgRadio1PropertyUri(THandle aHandle, char** aUri);
@@ -671,6 +672,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1PropertyUri(THandle aHandle, char** aUr
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgRadio1Create
  * @param[out] aMetadata
  */
 DllExport void CpProxyAvOpenhomeOrgRadio1PropertyMetadata(THandle aHandle, char** aMetadata);
@@ -680,6 +682,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1PropertyMetadata(THandle aHandle, char*
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgRadio1Create
  * @param[out] aTransportState
  */
 DllExport void CpProxyAvOpenhomeOrgRadio1PropertyTransportState(THandle aHandle, char** aTransportState);
@@ -689,6 +692,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1PropertyTransportState(THandle aHandle,
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgRadio1Create
  * @param[out] aId
  */
 DllExport void CpProxyAvOpenhomeOrgRadio1PropertyId(THandle aHandle, uint32_t* aId);
@@ -698,6 +702,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1PropertyId(THandle aHandle, uint32_t* a
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgRadio1Create
  * @param[out] aIdArray
  * @param[out] aLen
  */
@@ -708,6 +713,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1PropertyIdArray(THandle aHandle, char**
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgRadio1Create
  * @param[out] aChannelsMax
  */
 DllExport void CpProxyAvOpenhomeOrgRadio1PropertyChannelsMax(THandle aHandle, uint32_t* aChannelsMax);
@@ -717,6 +723,7 @@ DllExport void CpProxyAvOpenhomeOrgRadio1PropertyChannelsMax(THandle aHandle, ui
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgRadio1Create
  * @param[out] aProtocolInfo
  */
 DllExport void CpProxyAvOpenhomeOrgRadio1PropertyProtocolInfo(THandle aHandle, char** aProtocolInfo);

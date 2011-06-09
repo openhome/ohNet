@@ -922,6 +922,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1SetPropertyProtocolInfoChanged(THand
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylist1Create
  * @param[out] aTransportState
  */
 DllExport void CpProxyAvOpenhomeOrgPlaylist1PropertyTransportState(THandle aHandle, char** aTransportState);
@@ -931,6 +932,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1PropertyTransportState(THandle aHand
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylist1Create
  * @param[out] aRepeat
  */
 DllExport void CpProxyAvOpenhomeOrgPlaylist1PropertyRepeat(THandle aHandle, uint32_t* aRepeat);
@@ -940,6 +942,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1PropertyRepeat(THandle aHandle, uint
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylist1Create
  * @param[out] aShuffle
  */
 DllExport void CpProxyAvOpenhomeOrgPlaylist1PropertyShuffle(THandle aHandle, uint32_t* aShuffle);
@@ -949,6 +952,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1PropertyShuffle(THandle aHandle, uin
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylist1Create
  * @param[out] aId
  */
 DllExport void CpProxyAvOpenhomeOrgPlaylist1PropertyId(THandle aHandle, uint32_t* aId);
@@ -958,6 +962,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1PropertyId(THandle aHandle, uint32_t
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylist1Create
  * @param[out] aIdArray
  * @param[out] aLen
  */
@@ -968,6 +973,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1PropertyIdArray(THandle aHandle, cha
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylist1Create
  * @param[out] aTracksMax
  */
 DllExport void CpProxyAvOpenhomeOrgPlaylist1PropertyTracksMax(THandle aHandle, uint32_t* aTracksMax);
@@ -977,6 +983,7 @@ DllExport void CpProxyAvOpenhomeOrgPlaylist1PropertyTracksMax(THandle aHandle, u
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgPlaylist1Create
  * @param[out] aProtocolInfo
  */
 DllExport void CpProxyAvOpenhomeOrgPlaylist1PropertyProtocolInfo(THandle aHandle, char** aProtocolInfo);

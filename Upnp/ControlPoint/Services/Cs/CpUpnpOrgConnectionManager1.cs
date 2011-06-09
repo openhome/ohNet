@@ -633,7 +633,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aSourceProtocolInfo">Will be set to the value of the property</param>
+        /// <returns>Value of the SourceProtocolInfo property</returns>
         public String PropertySourceProtocolInfo()
         {
             PropertyReadLock();
@@ -648,7 +648,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aSinkProtocolInfo">Will be set to the value of the property</param>
+        /// <returns>Value of the SinkProtocolInfo property</returns>
         public String PropertySinkProtocolInfo()
         {
             PropertyReadLock();
@@ -663,7 +663,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aCurrentConnectionIDs">Will be set to the value of the property</param>
+        /// <returns>Value of the CurrentConnectionIDs property</returns>
         public String PropertyCurrentConnectionIDs()
         {
             PropertyReadLock();

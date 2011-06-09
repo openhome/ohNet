@@ -1547,7 +1547,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aVarUint">Will be set to the value of the property</param>
+        /// <returns>Value of the VarUint property</returns>
         public uint PropertyVarUint()
         {
             PropertyReadLock();
@@ -1562,7 +1562,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aVarInt">Will be set to the value of the property</param>
+        /// <returns>Value of the VarInt property</returns>
         public int PropertyVarInt()
         {
             PropertyReadLock();
@@ -1577,7 +1577,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aVarBool">Will be set to the value of the property</param>
+        /// <returns>Value of the VarBool property</returns>
         public bool PropertyVarBool()
         {
             PropertyReadLock();
@@ -1592,7 +1592,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aVarStr">Will be set to the value of the property</param>
+        /// <returns>Value of the VarStr property</returns>
         public String PropertyVarStr()
         {
             PropertyReadLock();
@@ -1607,7 +1607,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aVarBin">Will be set to the value of the property</param>
+        /// <returns>Value of the VarBin property</returns>
         public byte[] PropertyVarBin()
         {
             PropertyReadLock();

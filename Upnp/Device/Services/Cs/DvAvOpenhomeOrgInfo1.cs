@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the TrackCount property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the TrackCount property.</param>
         uint PropertyTrackCount();
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the DetailsCount property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the DetailsCount property.</param>
         uint PropertyDetailsCount();
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the MetatextCount property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the MetatextCount property.</param>
         uint PropertyMetatextCount();
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Uri property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Uri property.</param>
         string PropertyUri();
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Metadata property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Metadata property.</param>
         string PropertyMetadata();
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Duration property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Duration property.</param>
         uint PropertyDuration();
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the BitRate property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the BitRate property.</param>
         uint PropertyBitRate();
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the BitDepth property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the BitDepth property.</param>
         uint PropertyBitDepth();
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SampleRate property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the SampleRate property.</param>
         uint PropertySampleRate();
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Lossless property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Lossless property.</param>
         bool PropertyLossless();
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the CodecName property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the CodecName property.</param>
         string PropertyCodecName();
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Metatext property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the Metatext property.</param>
         string PropertyMetatext();
         
     }
@@ -237,7 +237,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the TrackCount property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the TrackCount property.</returns>
         public uint PropertyTrackCount()
         {
             return iPropertyTrackCount.Value();
@@ -256,7 +256,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the DetailsCount property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the DetailsCount property.</returns>
         public uint PropertyDetailsCount()
         {
             return iPropertyDetailsCount.Value();
@@ -275,7 +275,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the MetatextCount property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the MetatextCount property.</returns>
         public uint PropertyMetatextCount()
         {
             return iPropertyMetatextCount.Value();
@@ -294,7 +294,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Uri property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Uri property.</returns>
         public string PropertyUri()
         {
             return iPropertyUri.Value();
@@ -313,7 +313,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Metadata property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Metadata property.</returns>
         public string PropertyMetadata()
         {
             return iPropertyMetadata.Value();
@@ -332,7 +332,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Duration property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Duration property.</returns>
         public uint PropertyDuration()
         {
             return iPropertyDuration.Value();
@@ -351,7 +351,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the BitRate property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the BitRate property.</returns>
         public uint PropertyBitRate()
         {
             return iPropertyBitRate.Value();
@@ -370,7 +370,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the BitDepth property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the BitDepth property.</returns>
         public uint PropertyBitDepth()
         {
             return iPropertyBitDepth.Value();
@@ -389,7 +389,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SampleRate property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the SampleRate property.</returns>
         public uint PropertySampleRate()
         {
             return iPropertySampleRate.Value();
@@ -408,7 +408,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Lossless property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Lossless property.</returns>
         public bool PropertyLossless()
         {
             return iPropertyLossless.Value();
@@ -427,7 +427,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the CodecName property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the CodecName property.</returns>
         public string PropertyCodecName()
         {
             return iPropertyCodecName.Value();
@@ -446,7 +446,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the Metatext property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the Metatext property.</returns>
         public string PropertyMetatext()
         {
             return iPropertyMetatext.Value();

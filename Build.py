@@ -144,9 +144,10 @@ def getArguments(module,nightly,arch,valgrind,os):
             args += ' --native'
         if os == 'Windows' and arch == 'x86':
             args += ' --js'
+        if os == 'Windows' or nightly == '1':
+            args += ' --release'
         if nightly == '1':
             args += ' --full'
-            args += ' --release'
             if os == 'Linux' and arch == 'x86':
                 args += ' --valgrind'
 
@@ -264,6 +265,12 @@ def GenDocs(module, os, nightly, arch, tool):
         Build(tool,docgen_cmd,'')
 
         ret = rsync('hudson-zapp','ohnet.linn.co.uk','Upnp/Build/Docs/','~/doc','')
+
+        if ret != 0:
+            print ret
+            sys.exit(10)
+
+        ret = rsync('hudson-rsync','openhome.org','Upnp/Build/Docs/','~/build/nightly/docs','')
 
         if ret != 0:
             print ret

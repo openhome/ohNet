@@ -267,6 +267,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1SetPropertyAttributesChanged(THandle a
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aPresentationUrl
  */
 DllExport void CpProxyAvOpenhomeOrgSender1PropertyPresentationUrl(THandle aHandle, char** aPresentationUrl);
@@ -276,6 +277,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1PropertyPresentationUrl(THandle aHandl
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aMetadata
  */
 DllExport void CpProxyAvOpenhomeOrgSender1PropertyMetadata(THandle aHandle, char** aMetadata);
@@ -285,6 +287,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1PropertyMetadata(THandle aHandle, char
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aAudio
  */
 DllExport void CpProxyAvOpenhomeOrgSender1PropertyAudio(THandle aHandle, uint32_t* aAudio);
@@ -294,6 +297,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1PropertyAudio(THandle aHandle, uint32_
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aStatus
  */
 DllExport void CpProxyAvOpenhomeOrgSender1PropertyStatus(THandle aHandle, char** aStatus);
@@ -303,6 +307,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1PropertyStatus(THandle aHandle, char**
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aAttributes
  */
 DllExport void CpProxyAvOpenhomeOrgSender1PropertyAttributes(THandle aHandle, char** aAttributes);

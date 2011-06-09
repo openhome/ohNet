@@ -549,6 +549,7 @@ DllExport uint32_t OhNetSubnetListSize(OhNetHandleNetworkInterfaceList aList);
  * Get a handle to the subnet at a specified position in a subnet list.
  *
  * @param[in] aList            Handle returned by OhNetSubnetListCreate()
+ * @param[in] aIndex           Index into the list to return the subnet from
  *
  * @return  subnet handle
  */
@@ -593,7 +594,7 @@ DllExport void OhNetSetDefaultSubnet();
  *
  * Use of this function is optional.  Calling free() directly is acceptable.
  *
- * @param[in] ptr              Pointer to be freed
+ * @param[in] aPtr             Pointer to be freed
  */
 DllExport void OhNetFree(void* aPtr);
 

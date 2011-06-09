@@ -121,7 +121,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="anewTargetValue"></param>
+        /// <param name="aNewTargetValue"></param>
         public void SyncSetTarget(bool aNewTargetValue)
         {
             SyncSetTargetUpnpOrgSwitchPower1 sync = new SyncSetTargetUpnpOrgSwitchPower1(this);
@@ -136,7 +136,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>Returns immediately and will run the client-specified callback when the action
         /// later completes.  Any output arguments can then be retrieved by calling
         /// EndSetTarget().</remarks>
-        /// <param name="anewTargetValue"></param>
+        /// <param name="aNewTargetValue"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
         public void BeginSetTarget(bool aNewTargetValue, CallbackAsyncComplete aCallback)
@@ -282,7 +282,7 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
-        /// <param name="aStatus">Will be set to the value of the property</param>
+        /// <returns>Value of the Status property</returns>
         public bool PropertyStatus()
         {
             PropertyReadLock();

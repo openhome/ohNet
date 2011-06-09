@@ -219,7 +219,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::EnableActionGetRecordTaskConflicts
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetSortCapabilities(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetSortCapabilities(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -236,7 +236,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetSortCapabilities(IDviInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetPropertyList(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetPropertyList(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_DataTypeID;
@@ -253,7 +253,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetPropertyList(IDviInvocation& 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetAllowedValues(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetAllowedValues(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_DataTypeID;
@@ -273,7 +273,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetAllowedValues(IDviInvocation&
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetStateUpdateID(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetStateUpdateID(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -285,7 +285,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetStateUpdateID(IDviInvocation&
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoBrowseRecordSchedules(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoBrowseRecordSchedules(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_Filter;
@@ -316,7 +316,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoBrowseRecordSchedules(IDviInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoBrowseRecordTasks(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoBrowseRecordTasks(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RecordScheduleID;
@@ -350,7 +350,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoBrowseRecordTasks(IDviInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoCreateRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoCreateRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_Elements;
@@ -375,7 +375,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoCreateRecordSchedule(IDviInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoDeleteRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoDeleteRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RecordScheduleID;
@@ -387,7 +387,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoDeleteRecordSchedule(IDviInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RecordScheduleID;
@@ -410,7 +410,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetRecordSchedule(IDviInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoEnableRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoEnableRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RecordScheduleID;
@@ -422,7 +422,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoEnableRecordSchedule(IDviInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoDisableRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoDisableRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RecordScheduleID;
@@ -434,7 +434,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoDisableRecordSchedule(IDviInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoDeleteRecordTask(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoDeleteRecordTask(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RecordTaskID;
@@ -446,7 +446,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoDeleteRecordTask(IDviInvocation&
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetRecordTask(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetRecordTask(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RecordTaskID;
@@ -469,7 +469,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetRecordTask(IDviInvocation& aI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoEnableRecordTask(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoEnableRecordTask(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RecordTaskID;
@@ -481,7 +481,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoEnableRecordTask(IDviInvocation&
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoDisableRecordTask(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoDisableRecordTask(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RecordTaskID;
@@ -493,7 +493,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoDisableRecordTask(IDviInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoResetRecordTask(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoResetRecordTask(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RecordTaskID;
@@ -505,7 +505,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoResetRecordTask(IDviInvocation& 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetRecordScheduleConflicts(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetRecordScheduleConflicts(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RecordScheduleID;
@@ -525,7 +525,7 @@ void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetRecordScheduleConflicts(IDviI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetRecordTaskConflicts(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording1Cpp::DoGetRecordTaskConflicts(IDviInvocation& aInvocation, uint32_t aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RecordTaskID;

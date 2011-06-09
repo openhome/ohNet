@@ -19,7 +19,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the TransferIDs property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the TransferIDs property.</param>
         string PropertyTransferIDs();
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SystemUpdateID property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the SystemUpdateID property.</param>
         uint PropertySystemUpdateID();
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ContainerUpdateIDs property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
+        /// <returns>Value of the ContainerUpdateIDs property.</param>
         string PropertyContainerUpdateIDs();
         
     }
@@ -103,7 +103,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the TransferIDs property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the TransferIDs property.</returns>
         public string PropertyTransferIDs()
         {
             return iPropertyTransferIDs.Value();
@@ -122,7 +122,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the SystemUpdateID property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the SystemUpdateID property.</returns>
         public uint PropertySystemUpdateID()
         {
             return iPropertySystemUpdateID.Value();
@@ -141,7 +141,7 @@ namespace OpenHome.Net.Device.Providers
         /// <summary>
         /// Get a copy of the value of the ContainerUpdateIDs property
         /// </summary>
-        /// <returns>The value of the property</returns>
+        /// <returns>Value of the ContainerUpdateIDs property.</returns>
         public string PropertyContainerUpdateIDs()
         {
             return iPropertyContainerUpdateIDs.Value();

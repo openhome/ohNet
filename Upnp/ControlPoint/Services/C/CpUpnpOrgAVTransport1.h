@@ -689,6 +689,7 @@ DllExport void CpProxyUpnpOrgAVTransport1SetPropertyLastChangeChanged(THandle aH
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport1Create
  * @param[out] aLastChange
  */
 DllExport void CpProxyUpnpOrgAVTransport1PropertyLastChange(THandle aHandle, char** aLastChange);

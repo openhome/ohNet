@@ -709,6 +709,7 @@ DllExport void CpProxyUpnpOrgContentDirectory2SetPropertyTransferIDsChanged(THan
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgContentDirectory2Create
  * @param[out] aSystemUpdateID
  */
 DllExport void CpProxyUpnpOrgContentDirectory2PropertySystemUpdateID(THandle aHandle, uint32_t* aSystemUpdateID);
@@ -718,6 +719,7 @@ DllExport void CpProxyUpnpOrgContentDirectory2PropertySystemUpdateID(THandle aHa
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgContentDirectory2Create
  * @param[out] aContainerUpdateIDs
  */
 DllExport void CpProxyUpnpOrgContentDirectory2PropertyContainerUpdateIDs(THandle aHandle, char** aContainerUpdateIDs);
@@ -727,6 +729,7 @@ DllExport void CpProxyUpnpOrgContentDirectory2PropertyContainerUpdateIDs(THandle
  * This function is threadsafe and can only be called after the first callback
  * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
  *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgContentDirectory2Create
  * @param[out] aTransferIDs
  */
 DllExport void CpProxyUpnpOrgContentDirectory2PropertyTransferIDs(THandle aHandle, char** aTransferIDs);
