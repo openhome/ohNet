@@ -357,6 +357,7 @@ ohNetDll: ohNetCore
 ohNet: proxies devices
 	$(ar)$(libprefix)ohNet.$(libext) $(objects_core) $(objects_proxies) $(objects_devices)
 
+TestFramework: $(libprefix)TestFramework.$(libext)
 
 $(libprefix)TestFramework.$(libext): $(objdir)TestFramework.$(objext) $(objdir)Main.$(objext) $(objdir)OptionParser.$(objext)
 	$(ar)$(libprefix)TestFramework.$(libext) $(objdir)TestFramework.$(objext) $(objdir)Main.$(objext) $(objdir)OptionParser.$(objext)

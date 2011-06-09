@@ -9,11 +9,11 @@ csplatform = x86
 
 !if "$(release)"=="1"
 link_flag_debug = 
-debug_specific_cflags = /MD /Ox
+debug_specific_cflags = /MT /Ox
 build_dir = Release
 !else
 link_flag_debug = /debug
-debug_specific_cflags = /MDd /Zi /Od /RTC1
+debug_specific_cflags = /MTd /Zi /Od /RTC1
 build_dir = Debug
 !endif
 
@@ -27,7 +27,7 @@ includes = -IBuild\Include -IBuild\Include\Cpp
 bundle_build = Build\Bundles
 osdir = Windows
 objext = obj
-libprefix = 
+libprefix = lib
 libext = lib
 exeext = exe
 compiler = cl /nologo /Fo$(objdir)
