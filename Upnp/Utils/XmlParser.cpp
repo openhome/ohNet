@@ -40,7 +40,7 @@ Brn XmlParserBasic::Find(const Brx& aTag, const Brx& aDocument, Brn& aRemaining)
     ETagType tagType;
     for (;;) {
         NextTag(doc, name, attributes, ns, index, remaining, tagType);
-        if (name == aTag) {
+        if (Ascii::CaseInsensitiveEquals(name, aTag)) {
             if (state == eSearchOpen) {
                 if (tagType == eTagClose) {
                     if (--ignoreClose < 0)
@@ -168,7 +168,7 @@ Brn XmlParserBasic::FindAttribute(const Brx& aTag, const Brx& aAttribute, const 
     ETagType tagType;
     for (;;) {
         NextTag(doc, name, attributes, ns, index, remaining, tagType);
-        if (name == aTag) {
+        if (Ascii::CaseInsensitiveEquals(name, aTag)) {
             if (tagType != eTagClose) {
             	Parser parser(attributes);
             	while (!parser.Finished()) {

@@ -16,7 +16,8 @@ class DeviceXml
 public:
 	DeviceXml(const Brx& aXml);
     Brn Find(const Brx& aUdn);
-	void FriendlyName(Brh& aValue) const;
+	void GetFriendlyName(Brh& aValue) const;
+	void GetPresentationUrl(Brh& aValue) const;
 	Brn ServiceVersion(const Brx& aService) const; // e.g "upnp.org.ContentDirectory"
 private:
 	Brn iXml;
