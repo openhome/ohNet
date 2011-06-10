@@ -22,6 +22,9 @@ void CpProxy::Unsubscribe()
     iCpSubscriptionStatus = eNotSubscribed;
     iLock->Signal();
     iService->Unsubscribe();
+    iLock->Wait();
+    iInitialEventDelivered = false;
+    iLock->Signal();
 }
 
 CpProxy::CpProxy(const TChar* aDomain, const TChar* aName, TUint aVersion, CpiDevice& aDevice)
@@ -128,7 +131,7 @@ void CpProxy::EventUpdateEnd()
         changed = changed | it->second->ReportChanged();
 		it++;
     }
-    if (changed) {
+    if (changed || !iInitialEventDelivered) {
         iLock->Wait();
         if (iPropertyChanged) {
             iPropertyChanged();
