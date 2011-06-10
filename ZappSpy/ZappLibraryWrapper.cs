@@ -16,7 +16,11 @@ namespace ZappSpy
             };
             iLibrary = new OpenHome.Net.Core.Library();
             iLibrary.Initialise(initialisationParams);
-            iLibrary.StartCp();
+            IntPtr subnetList = iLibrary.SubnetListCreate();
+            IntPtr nif = iLibrary.SubnetAt(subnetList, 0);
+            uint subnet = iLibrary.NetworkInterfaceSubnet(nif);
+            iLibrary.SubnetListDestroy(subnetList);
+            iLibrary.StartCp(subnet);
         }
 
         public OpenHome.Net.ControlPoint.CpDeviceList GetUpnpRootDeviceList(
