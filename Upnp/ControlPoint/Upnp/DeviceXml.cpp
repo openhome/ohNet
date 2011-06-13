@@ -75,9 +75,16 @@ Brn DeviceXml::Find(const Brx& aUdn)
 	}
 }
 
-void DeviceXml::FriendlyName(Brh& aValue) const
+void DeviceXml::GetFriendlyName(Brh& aValue) const
 {
 	Bwh friendlyName(XmlParserBasic::Find("friendlyName", iXml));
+    Converter::FromXmlEscaped(friendlyName);
+    friendlyName.TransferTo(aValue);
+}
+
+void DeviceXml::GetPresentationUrl(Brh& aValue) const
+{
+	Bwh friendlyName(XmlParserBasic::Find("PresentationURL", iXml));
     Converter::FromXmlEscaped(friendlyName);
     friendlyName.TransferTo(aValue);
 }
