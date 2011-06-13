@@ -31,21 +31,43 @@
 #define kMinStackBytes (1024 * 512)
 #define kThreadSchedPolicy (SCHED_RR)
 
+#ifdef PLATFORM_MACOSX_GNU
+# define TEMP_FAILURE_RETRY(expression) \
+(__extension__ \
+({ long int __result; \
+do __result = (long int) (expression); \
+while (__result == -1L && errno == EINTR); \
+__result; }))
+# define MAX_FILE_DESCRIPTOR FD_SETSIZE
+#else
+# define MAX_FILE_DESCRIPTOR __FD_SETSIZE
+#endif
+
+
 static struct timeval gStartTime;
 static THandle gMutex = kHandleNull;
-
+static pthread_key_t gThreadArgKey;
 
 int32_t OsCreate()
 {
+    int errno;
     gettimeofday(&gStartTime, NULL);
     gMutex = OsMutexCreate("DNSM");
     if (gMutex == kHandleNull)
         return -1;
+    errno = pthread_key_create(&gThreadArgKey, NULL);
+    if (errno != 0)
+    {
+        OsMutexDestroy(gMutex);
+        gMutex = kHandleNull;
+        return -1;
+    }
     return 0;
 }
 
 void OsDestroy()
 {
+    pthread_key_delete(gThreadArgKey);
     OsMutexDestroy(gMutex);
     gMutex = kHandleNull;
 }
@@ -251,7 +273,7 @@ typedef struct
     uint32_t         iPriority;
 } ThreadData;
 
-__thread void* tlsThreadArg;
+/* __thread void* tlsThreadArg; */
 
 static void* threadEntrypoint(void* aArg)
 {
@@ -282,7 +304,8 @@ static void* threadEntrypoint(void* aArg)
     status = pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &oldState);
     assert(status == 0);
 
-    tlsThreadArg = data->iArg;
+    //tlsThreadArg = data->iArg;
+    pthread_setspecific(gThreadArgKey, data->iArg);
     data->iEntryPoint(data->iArg);
 
     return NULL;
@@ -316,7 +339,8 @@ THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackByt
 
 void* OsThreadTls()
 {
-    return tlsThreadArg;
+    return pthread_getspecific(gThreadArgKey);
+    //return tlsThreadArg;
 }
 
 void OsThreadDestroy(THandle aThread)
@@ -396,7 +420,7 @@ static OsNetworkHandle* CreateHandle(int32_t aSocket)
     }
     SetFdNonBlocking(handle->iPipe[0]);
     handle->iSocket = aSocket;
-    assert(aSocket >= 0 && aSocket < __FD_SETSIZE);
+    assert(aSocket >= 0 && aSocket < MAX_FILE_DESCRIPTOR);
     handle->iInterrupted = 0;
 
     return handle;
