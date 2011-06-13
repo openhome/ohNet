@@ -4,8 +4,8 @@
 # Macros used by T4.mak
 
 toolsDir = Build/Posix/Tools/
-t4 = $(toolsDir)TextTransform.exe
-ohNetGen = $(toolsDir)OhNetGen.exe
+t4 = mono $(toolsDir)TextTransform.exe
+ohNetGen = mono $(toolsDir)OhNetGen.exe
 upnpServiceXml = $(toolsDir)UpnpServiceXml.dll
 upnpServiceMake = $(toolsDir)UpnpServiceMake.dll
 argumentProcessor = $(toolsDir)ArgumentProcessor.dll
@@ -49,11 +49,11 @@ $(toolsDir)TextTransform.exe : $(toolsDir)Mono.TextTemplating.dll $(exesources)
 
 $(toolsDir)UpnpServiceDescription.xsd : T4/UpnpServiceXml/UpnpServiceDescription.xsd
 	@mkdir -p $(toolsDir)
-	cp -u T4/UpnpServiceXml/UpnpServiceDescription.xsd $(toolsDir)
+	rsync T4/UpnpServiceXml/UpnpServiceDescription.xsd $(toolsDir)
 
 $(toolsDir)UpnpServiceTemplate.xsd : T4/UpnpServiceXml/UpnpServiceTemplate.xsd
 	@mkdir -p $(toolsDir)
-	cp -u T4/UpnpServiceXml/UpnpServiceTemplate.xsd $(toolsDir)
+	rsync T4/UpnpServiceXml/UpnpServiceTemplate.xsd $(toolsDir)
 
 xmlsources = 	T4/UpnpServiceXml/AssemblyInfo.cs \
                	T4/UpnpServiceXml/UpnpServiceXml.cs
