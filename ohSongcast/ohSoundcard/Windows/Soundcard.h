@@ -51,12 +51,14 @@ DllExport void SoundcardSetTrack(THandle aSoundcard, const char* aUri, const cha
 DllExport void SoundcardSetMetatext(THandle aSoundcard, const char* aValue);
 DllExport void SoundcardDestroy(THandle aSoundcard);
 
+DllExport const char* ReceiverUdn(THandle aReceiver);
 DllExport const char* ReceiverRoom(THandle aReceiver);
 DllExport const char* ReceiverGroup(THandle aReceiver);
 DllExport const char* ReceiverName(THandle aReceiver);
 DllExport EReceiverStatus ReceiverStatus(THandle aReceiver);
 DllExport void ReceiverPlay(THandle aReceiver);
 DllExport void ReceiverStop(THandle aReceiver);
+DllExport void ReceiverStandby(THandle aReceiver);
 DllExport void ReceiverAddRef(THandle aReceiver);
 DllExport void ReceiverRemoveRef(THandle aReceiver);
 
@@ -93,6 +95,7 @@ class Receiver
 	friend class Soundcard;
 
 public:
+	const TChar* Udn() const;
 	const TChar* Room() const;
 	const TChar* Group() const;
 	const TChar* Name() const;
@@ -100,6 +103,7 @@ public:
 
 	void Play();
 	void Stop();
+	void Standby();
 
 	void AddRef();
     void RemoveRef();
@@ -110,6 +114,7 @@ private:
 
 private:
 	ReceiverManager3Receiver& iReceiver;
+	Brhz iUdn;
 	Brhz iRoom;
 	Brhz iGroup;
 	Brhz iName;

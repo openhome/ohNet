@@ -24,6 +24,8 @@ namespace OpenHome.Soundcard
     {
         void Play();
         void Stop();
+        void Standby();
+        string Udn { get; }
         string Room { get; }
         string Group { get; }
         string Name { get; }
@@ -32,6 +34,8 @@ namespace OpenHome.Soundcard
 
     internal class Receiver : IReceiver, IDisposable
     {
+        [DllImport("ohSoundcard.dll")]
+        static extern IntPtr ReceiverUdn(IntPtr aHandle);
         [DllImport("ohSoundcard.dll")]
         static extern IntPtr ReceiverRoom(IntPtr aHandle);
         [DllImport("ohSoundcard.dll")]
@@ -45,6 +49,8 @@ namespace OpenHome.Soundcard
         [DllImport("ohSoundcard.dll")]
         static extern void ReceiverStop(IntPtr aHandle);
         [DllImport("ohSoundcard.dll")]
+        static extern void ReceiverStandby(IntPtr aHandle);
+        [DllImport("ohSoundcard.dll")]
         static extern void ReceiverAddRef(IntPtr aHandle);
         [DllImport("ohSoundcard.dll")]
         static extern void ReceiverRemoveRef(IntPtr aHandle);
@@ -53,6 +59,7 @@ namespace OpenHome.Soundcard
         {
             iReceiver = aReceiver;
             ReceiverAddRef(iReceiver);
+            iUdn = Marshal.PtrToStringAnsi(ReceiverUdn(iReceiver));
             iRoom = Marshal.PtrToStringAnsi(ReceiverRoom(iReceiver));
             iGroup = Marshal.PtrToStringAnsi(ReceiverGroup(iReceiver));
             iName = Marshal.PtrToStringAnsi(ReceiverName(iReceiver));
@@ -76,6 +83,19 @@ namespace OpenHome.Soundcard
         public void Stop()
         {
             ReceiverStop(iReceiver);
+        }
+
+        public void Standby()
+        {
+            ReceiverStandby(iReceiver);
+        }
+
+        public string Udn
+        {
+            get
+            {
+                return (iUdn);
+            }
         }
 
         public string Room
@@ -111,6 +131,7 @@ namespace OpenHome.Soundcard
         }
 
         IntPtr iReceiver;
+        string iUdn;
         string iRoom;
         string iGroup;
         string iName;
@@ -152,9 +173,10 @@ namespace OpenHome.Soundcard
         {
             iHandler = aHandler;
             iReceiverList = new List<Receiver>();
+            iCallback = new DelegateReceiverCallback(ReceiverCallback);
             byte[] subnetBytes = aSubnet.GetAddressBytes();
             uint subnetAddress = BitConverter.ToUInt32(subnetBytes, 0);
-            iHandle = SoundcardCreate(subnetAddress, aChannel, aTtl, aMulticast, aEnabled, aPreset, ReceiverCallback, IntPtr.Zero);
+            iHandle = SoundcardCreate(subnetAddress, aChannel, aTtl, aMulticast, aEnabled, aPreset, iCallback, IntPtr.Zero);
         }
 
         private void ReceiverCallback(IntPtr aPtr, EReceiverCallbackType aType, IntPtr aReceiver)
@@ -230,8 +252,12 @@ namespace OpenHome.Soundcard
 
         public void SetEnabled(bool aValue)
         {
-            Console.WriteLine("Handle: {0}", iHandle);
             SoundcardSetEnabled(iHandle, aValue);
+        }
+
+        public void SetPreset(uint aValue)
+        {
+            SoundcardSetPreset(iHandle, aValue);
         }
 
         public unsafe void SetTrack(IntPtr aHandle, string aUri, string aMetadata, long aSamplesTotal, long aSampleStart)
@@ -258,5 +284,6 @@ namespace OpenHome.Soundcard
         private IReceiverHandler iHandler;
         private IntPtr iHandle;
         private List<Receiver> iReceiverList;
+        private DelegateReceiverCallback iCallback;
     }
 } // namespace OpenHome.Soundcard

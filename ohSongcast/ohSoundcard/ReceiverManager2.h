@@ -58,6 +58,7 @@ public:
 	void SetSender(const Brx& aUri, const Brx& aMetadata);
 	void Play();
 	void Stop();
+	void Standby();
 
 	void AddRef();
     void RemoveRef();
@@ -67,8 +68,8 @@ public:
 	void ChangedSelected(); 
 	void Removed();
 
-	void CallbackStop(IAsync& aAsync);		
 	void CallbackPlay(IAsync& aAsync);		
+	void CallbackStop(IAsync& aAsync);		
 	void CallbackSetSender(IAsync& aAsync);		
 
 	void EventReceiverInitialEvent();

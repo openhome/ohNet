@@ -37,6 +37,11 @@ ReceiverManager3Receiver::EStatus ReceiverManager3Receiver::EvaluateStatus()
 	return (eDisconnected);
 }
 
+const Brx& ReceiverManager3Receiver::Udn() const
+{
+	return (iReceiver.Device().Udn());
+}
+
 const Brx& ReceiverManager3Receiver::Room() const
 {
 	return (iReceiver.Room());
@@ -65,6 +70,11 @@ void ReceiverManager3Receiver::Play()
 void ReceiverManager3Receiver::Stop()
 {
 	iManager.Stop(iReceiver);
+}
+
+void ReceiverManager3Receiver::Standby()
+{
+	iManager.Standby(iReceiver);
 }
 
 void ReceiverManager3Receiver::SetUserData(void* aValue)
@@ -162,6 +172,11 @@ void ReceiverManager3::Play(ReceiverManager2Receiver& aReceiver)
 void ReceiverManager3::Stop(ReceiverManager2Receiver& aReceiver)
 {
 	aReceiver.Stop();
+}
+
+void ReceiverManager3::Standby(ReceiverManager2Receiver& aReceiver)
+{
+	aReceiver.Standby();
 }
 
 ReceiverManager3::~ReceiverManager3()

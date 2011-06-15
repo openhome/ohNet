@@ -45,6 +45,8 @@ public:
 	void Select();
 	void Deselect();
 
+	void Standby();
+
 	~ReceiverManager1Receiver();
 
 private:
@@ -73,6 +75,8 @@ public:
 	void Changed();
 
 	void Removed();
+
+	void Standby();
 
 	~ReceiverManager1Room();
 private:

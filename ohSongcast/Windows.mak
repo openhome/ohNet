@@ -1,32 +1,49 @@
-objdir = Build/Obj/Windows
-incdir = Build/Include
+# Makefile for Windows
+#
+
+!if "$(csplatform)"=="x64"
+csplatform = x64
+!else
+csplatform = x86
+!endif
+
+!if "$(release)"=="1"
+link_flag_debug = 
+debug_specific_cflags = /MT /Ox
+build_dir = Release
+ohnetdir = ../Upnp/Build/Obj/Windows/Release
+!else
+link_flag_debug = /debug
+debug_specific_cflags = /MTd /Zi /Od /RTC1
+build_dir = Debug
 ohnetdir = ../Upnp/Build/Obj/Windows/Debug
-templatesDir = ../Upnp/T4/Templates
+!endif
 
 # Macros used by Common.mak
 
 ar = lib /nologo /out:$(objdir)
-cflags = /MDd /W4 /WX /EHsc /RTC1 /Zi /FR$(objdir) /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS /Od -DDllImport=__declspec(dllimport) -DDllExport=__declspec(dllexport) -DDllExportClass=
-objdirbare = Build\Obj\Windows
+cflags = $(debug_specific_cflags) /W4 /WX /EHsc /FR$(objdir) /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS -DDllExport=__declspec(dllexport) -DDllExportClass=
+objdirbare = Build\Obj\Windows\$(build_dir)
 objdir = $(objdirbare)^\
 inc_build = Build\Include
 includes = -I..\Upnp\Build\Include -I..\Upnp\Build\Include\Cpp
 bundle_build = Build\Bundles
 osdir = Windows
 objext = obj
-libprefix = 
+libprefix = lib
 libext = lib
 exeext = exe
 compiler = cl /nologo /Fo$(objdir)
-link = link /nologo /debug /SUBSYSTEM:CONSOLE /map Ws2_32.lib Iphlpapi.lib /incremental:no
+link = link /nologo $(link_flag_debug) /SUBSYSTEM:CONSOLE /map Ws2_32.lib Iphlpapi.lib /incremental:no
 linkoutput = /out:
 dllprefix =
 dllext = dll
-link_dll = link /nologo /debug /map Ws2_32.lib Iphlpapi.lib /dll
-csharp = csc /nologo /platform:x86
+link_dll = link /nologo $(link_flag_debug) /map Ws2_32.lib Iphlpapi.lib /dll
+link_dll_service = link /nologo $(link_flag_debug)  /map $(objdir)ohNet.lib Ws2_32.lib Iphlpapi.lib /dll
+csharp = csc /nologo /platform:$(csplatform)
 publiccsdir = Public\Cs^\
 dirsep = ^\
-installdir = $(PROGRAMFILES)\Zapp
+installdir = $(PROGRAMFILES)\ohNet
 installlibdir = $(installdir)\lib
 installincludedir = $(installdir)\include
 mkdir = Scripts\mkdir.bat
@@ -40,7 +57,7 @@ objects_topology = $(ohnetdir)/CpTopology.$(objext) \
 			       $(ohnetdir)/CpAvOpenhomeOrgProduct1.$(objext) \
 			       $(ohnetdir)/CpAvOpenhomeOrgVolume1.$(objext)
 
-all: $(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcardCs.$(exeext) $(objdir)/TestReceiverManager1.$(exeext) $(objdir)/TestReceiverManager2.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/WavSender.$(exeext) $(objdir)/ZoneWatcher.$(exeext)
+all: $(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(objdir)/ohSoundcard.$(exeext) $(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcardCs.$(exeext) $(objdir)/TestReceiverManager1.$(exeext) $(objdir)/TestReceiverManager2.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/WavSender.$(exeext) $(objdir)/ZoneWatcher.$(exeext)
 
 $(objdir)/$(dllprefix)ohSoundcard.$(dllext) : Services/DvAvOpenhomeOrgSender1.cpp Ohm.cpp OhmSender.cpp ohSoundcard/Windows/Soundcard.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
@@ -50,7 +67,7 @@ $(objdir)/$(dllprefix)ohSoundcard.$(dllext) : Services/DvAvOpenhomeOrgSender1.cp
 	$(compiler)/ReceiverManager2.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager2.cpp 
 	$(compiler)/ReceiverManager3.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager3.cpp 
 	$(compiler)/Soundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/Soundcard.cpp
-	$(link_dll) $(linkoutput)$(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(ohnetdir)/ohNetCore.lib $(objects_topology) $(ohnetdir)/DvAvOpenhomeOrgSender1.$(objext) $(ohnetdir)/CpAvOpenhomeOrgReceiver1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/ReceiverManager1.$(objext) $(objdir)/ReceiverManager2.$(objext) $(objdir)/ReceiverManager3.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib
+	$(link_dll) $(linkoutput)$(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(ohnetdir)/$(libprefix)ohNetCore.lib $(objects_topology) $(ohnetdir)/DvAvOpenhomeOrgSender1.$(objext) $(ohnetdir)/CpAvOpenhomeOrgReceiver1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/ReceiverManager1.$(objext) $(objdir)/ReceiverManager2.$(objext) $(objdir)/ReceiverManager3.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib
 
 $(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) ohSoundcard\Windows\Soundcard.cs
 	$(csharp) /unsafe /t:library \
@@ -58,30 +75,48 @@ $(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) : $(objdir)/$(dllprefix)ohSoundc
 		ohSoundcard\Windows\Soundcard.cs
 
 $(objdir)/TestSoundcardCs.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) ohSoundcard/Windows/TestSoundcardCs.cs
-	$(csharp) /unsafe /t:exe /debug+ \
+	$(csharp) /target:exe /debug+ \
 		/out:$(objdir)TestSoundcardCs.exe \
 		/reference:System.dll \
 		/reference:System.Net.dll \
 		/reference:$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext)  \
 		ohSoundcard\Windows\TestSoundcardCs.cs
 
+$(objdir)/ohSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) ohSoundcard/Windows/Wpf/ohSoundcard/ReceiverList.cs ohSoundcard/Windows/Wpf/ohSoundcard/ExtendedNotifyIcon.cs ohSoundcard/Windows/Wpf/ohSoundcard/App.xaml.cs ohSoundcard/Windows/Wpf/ohSoundcard/MainWindow.xaml.cs
+	$(csharp) /target:exe /debug+ \
+		/out:$(objdir)ohSoundcard.exe \
+		/reference:WindowsBase.dll \
+		/reference:PresentationCore.dll \
+		/reference:PresentationFramework.dll \
+		/reference:System.dll \
+		/reference:System.Net.dll \
+		/reference:System.Core.dll \
+		/reference:System.Drawing.dll \
+		/reference:System.Windows.Forms.dll \
+		/reference:System.Xaml.dll \
+		/reference:$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext)  \
+		ohSoundcard/Windows/Wpf/ohSoundcard/ReceiverList.cs \
+		ohSoundcard/Windows/Wpf/ohSoundcard/ExtendedNotifyIcon.cs \
+		ohSoundcard/Windows/Wpf/ohSoundcard/App.xaml.cs \
+		ohSoundcard/Windows/Wpf/ohSoundcard/MainWindow.xaml.cs \
+
 $(objdir)/TestReceiverManager1.$(exeext) : ohSoundcard/ReceiverManager1.cpp ohSoundcard/TestReceiverManager1.cpp 
 	$(compiler)/ReceiverManager1.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager1.cpp 
     $(compiler)/TestReceiverManager1.$(objext) -c $(cflags) $(includes) ohSoundcard/TestReceiverManager1.cpp 
-    $(link) $(linkoutput)$(objdir)/TestReceiverManager1.$(exeext) $(objdir)/ReceiverManager1.$(objext) $(objdir)/TestReceiverManager1.$(objext) $(objects_topology) $(ohnetdir)/ohNetCore.lib $(ohnetdir)/TestFramework.$(libext)  
+    $(link) $(linkoutput)$(objdir)/TestReceiverManager1.$(exeext) $(objdir)/ReceiverManager1.$(objext) $(objdir)/TestReceiverManager1.$(objext) $(objects_topology) $(ohnetdir)/$(libprefix)ohNetCore.lib $(ohnetdir)/TestFramework.$(libext)  
  	
 $(objdir)/TestReceiverManager2.$(exeext) : ohSoundcard/ReceiverManager2.cpp ohSoundcard/TestReceiverManager1.cpp ohSoundcard/TestReceiverManager2.cpp
 	$(compiler)/ReceiverManager1.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager1.cpp 
 	$(compiler)/ReceiverManager2.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager2.cpp 
     $(compiler)/TestReceiverManager2.$(objext) -c $(cflags) $(includes) ohSoundcard/TestReceiverManager2.cpp 
-    $(link) $(linkoutput)$(objdir)/TestReceiverManager2.$(exeext) $(objdir)/ReceiverManager2.$(objext) $(objdir)/ReceiverManager1.$(objext) $(objdir)/TestReceiverManager2.$(objext) $(objects_topology) $(ohnetdir)/ohNetCore.lib $(ohnetdir)/CpAvOpenhomeOrgReceiver1.$(objext) $(ohnetdir)/TestFramework.$(libext)  
+    $(link) $(linkoutput)$(objdir)/TestReceiverManager2.$(exeext) $(objdir)/ReceiverManager2.$(objext) $(objdir)/ReceiverManager1.$(objext) $(objdir)/TestReceiverManager2.$(objext) $(objects_topology) $(ohnetdir)/$(libprefix)ohNetCore.lib $(ohnetdir)/CpAvOpenhomeOrgReceiver1.$(objext) $(ohnetdir)/TestFramework.$(libext)  
  	
 $(objdir)/TestReceiverManager3.$(exeext) : ohSoundcard/ReceiverManager3.cpp ohSoundcard/TestReceiverManager1.cpp ohSoundcard/TestReceiverManager2.cpp ohSoundcard/TestReceiverManager3.cpp
 	$(compiler)/ReceiverManager1.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager1.cpp 
 	$(compiler)/ReceiverManager2.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager2.cpp 
 	$(compiler)/ReceiverManager3.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager3.cpp 
     $(compiler)/TestReceiverManager3.$(objext) -c $(cflags) $(includes) ohSoundcard/TestReceiverManager3.cpp 
-    $(link) $(linkoutput)$(objdir)/TestReceiverManager3.$(exeext) $(objdir)/ReceiverManager3.$(objext) $(objdir)/ReceiverManager2.$(objext) $(objdir)/ReceiverManager1.$(objext) $(objdir)/TestReceiverManager3.$(objext) $(objects_topology) $(ohnetdir)/ohNetCore.lib $(ohnetdir)/CpAvOpenhomeOrgReceiver1.$(objext) $(ohnetdir)/TestFramework.$(libext)  
+    $(link) $(linkoutput)$(objdir)/TestReceiverManager3.$(exeext) $(objdir)/ReceiverManager3.$(objext) $(objdir)/ReceiverManager2.$(objext) $(objdir)/ReceiverManager1.$(objext) $(objdir)/TestReceiverManager3.$(objext) $(objects_topology) $(ohnetdir)/$(libprefix)ohNetCore.lib $(ohnetdir)/CpAvOpenhomeOrgReceiver1.$(objext) $(ohnetdir)/TestFramework.$(libext)  
  	
 $(objdir)/TestSoundcard.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) ohSoundcard/Windows/TestSoundcard.cpp
 	$(compiler)/TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/TestSoundcard.cpp
@@ -109,21 +144,3 @@ $(objdir)/WavSender.$(exeext) : Services/DvAvOpenhomeOrgSender1.cpp Ohm.cpp OhmS
 #	$(compiler)/Receiver.$(objext) -c $(cflags) $(includes) WavReceiver/WavReceiver.cpp
 #	$(link) $(linkoutput)$(objdir)/WavReceiver.$(exeext) $(objdir)/WavReceiver.$(objext) $(objdir)/Product.$(objext) $(objdir)/DvAvOpenhomeOrgProduct1.$(objext) $(objdir)/DvAvOpenhomeOrgReceiver1.$(objext) $(ohnetdir)/$(libprefix)ohNetCore.$(libext) $(ohnetdir)/$(libprefix)TestFramework.$(libext)
 
-t4 = ..\Upnp\Build\Windows\Tools\TextTransform.exe
-
-gen: DvAvOpenhomeOrgSender1.h DvAvOpenhomeOrgSender1.cpp DvAvOpenhomeOrgProduct1.h DvAvOpenhomeOrgProduct1.cpp DvAvOpenhomeOrgReceiver1.h DvAvOpenhomeOrgReceiver1.cpp
-
-DvAvOpenhomeOrgSender1.h : $(templatesDir)/DvUpnpCppCoreHeader.tt Services/Sender1.xml
-	$(t4) -o Services/DvAvOpenhomeOrgSender1.h $(templatesDir)/DvUpnpCppCoreHeader.tt -a "xml:Services/Sender1.xml" -a domain:av.openhome.org -a type:Sender -a version:1
-DvAvOpenhomeOrgSender1.cpp : ../Upnp/T4/Templates/DvUpnpCppCoreSource.tt Services/Sender1.xml
-	$(t4) -o Services/DvAvOpenhomeOrgSender1.cpp $(templatesDir)/DvUpnpCppCoreSource.tt -a "xml:Services/Sender1.xml" -a domain:av.openhome.org -a type:Sender -a version:1
-
-DvAvOpenhomeOrgProduct1.h : $(templatesDir)/DvUpnpCppCoreHeader.tt Services/Product1.xml
-	$(t4) -o Services/DvAvOpenhomeOrgProduct1.h $(templatesDir)/DvUpnpCppCoreHeader.tt -a "xml:Services/Product1.xml" -a domain:av.openhome.org -a type:Product -a version:1
-DvAvOpenhomeOrgProduct1.cpp : ../Upnp/T4/Templates/DvUpnpCppCoreSource.tt Services/Product1.xml
-	$(t4) -o Services/DvAvOpenhomeOrgProduct1.cpp $(templatesDir)/DvUpnpCppCoreSource.tt -a "xml:Services/Product1.xml" -a domain:av.openhome.org -a type:Product -a version:1
-
-DvAvOpenhomeOrgReceiver1.h : $(templatesDir)/DvUpnpCppCoreHeader.tt Services/Receiver1.xml
-	$(t4) -o Services/DvAvOpenhomeOrgReceiver1.h $(templatesDir)/DvUpnpCppCoreHeader.tt -a "xml:Services/Receiver1.xml" -a domain:av.openhome.org -a type:Receiver -a version:1
-DvAvOpenhomeOrgReceiver1.cpp : ../Upnp/T4/Templates/DvUpnpCppCoreSource.tt Services/Receiver1.xml
-	$(t4) -o Services/DvAvOpenhomeOrgReceiver1.cpp $(templatesDir)/DvUpnpCppCoreSource.tt -a "xml:Services/Receiver1.xml" -a domain:av.openhome.org -a type:Receiver -a version:1

@@ -37,6 +37,7 @@ public:
 	};
 
 public:
+	const Brx& Udn() const;
 	const Brx& Room() const;
 	const Brx& Group() const;
 	const Brx& Name() const;
@@ -44,6 +45,7 @@ public:
 
 	void Play();
 	void Stop();
+	void Standby();
 
 	void AddRef();
     void RemoveRef();
@@ -93,6 +95,7 @@ private:
 	ReceiverManager3Receiver::EStatus Status(ReceiverManager2Receiver& aReceiver);
 	void Play(ReceiverManager2Receiver& aReceiver);
 	void Stop(ReceiverManager2Receiver& aReceiver);
+	void Standby(ReceiverManager2Receiver& aReceiver);
 
 private:
 	IReceiverManager3Handler& iHandler;

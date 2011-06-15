@@ -225,6 +225,11 @@ void ReceiverManager1Room::Removed()
 	RemoveRef();
 }
 
+void ReceiverManager1Room::Standby()
+{
+	iRoom.SetStandby(true);
+}
+
 ReceiverManager1Room::~ReceiverManager1Room()
 {
 	iRoom.RemoveRef();
@@ -267,6 +272,11 @@ void ReceiverManager1Receiver::Select()
 void ReceiverManager1Receiver::Deselect()
 {
 	iSelected = false;
+}
+
+void ReceiverManager1Receiver::Standby()
+{
+	iRoom.Standby();
 }
 
 TBool ReceiverManager1Receiver::Selected() const

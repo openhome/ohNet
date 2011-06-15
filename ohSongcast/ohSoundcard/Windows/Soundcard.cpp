@@ -214,6 +214,11 @@ void SoundcardDestroy(THandle aSoundcard)
 	delete ((Soundcard*)aSoundcard);
 }
 
+const char* ReceiverUdn(THandle aReceiver)
+{
+	return (((Receiver*)aReceiver)->Udn());
+}
+
 const char* ReceiverRoom(THandle aReceiver)
 {
 	return (((Receiver*)aReceiver)->Room());
@@ -244,6 +249,11 @@ void ReceiverStop(THandle aReceiver)
 	((Receiver*)aReceiver)->Stop();
 }
 
+void ReceiverStandby(THandle aReceiver)
+{
+	((Receiver*)aReceiver)->Standby();
+}
+
 void ReceiverAddRef(THandle aReceiver)
 {
 	((Receiver*)aReceiver)->AddRef();
@@ -258,12 +268,18 @@ void ReceiverRemoveRef(THandle aReceiver)
 
 Receiver::Receiver(ReceiverManager3Receiver& aReceiver)
 	: iReceiver(aReceiver)
+	, iUdn(iReceiver.Udn())
 	, iRoom(iReceiver.Room())
 	, iGroup(iReceiver.Group())
 	, iName(iReceiver.Name())
 	, iRefCount(1)
 {
 	iReceiver.AddRef();
+}
+
+const TChar* Receiver::Udn() const
+{
+	return (iUdn.CString());
 }
 
 const TChar* Receiver::Room() const
@@ -295,6 +311,11 @@ void Receiver::Play()
 void Receiver::Stop()
 {
 	iReceiver.Stop();
+}
+
+void Receiver::Standby()
+{
+	iReceiver.Standby();
 }
 
 void Receiver::AddRef()
@@ -335,19 +356,17 @@ Soundcard::Soundcard(TIpAddress /* aSubnet */, TUint aChannel, TUint aTtl, TBool
 
 	UpnpLibrary::Initialise(initParams);
 
-	std::vector<NetworkInterface*>* list = UpnpLibrary::SubnetList();
+	std::vector<NetworkInterface*>* list = UpnpLibrary::CreateSubnetList();
 
 	ASSERT(list->size() > 0);
 
 	NetworkInterface* iface = *list->begin();
 
-	delete (list);
-
-	UpnpLibrary::SetCurrentSubnet(*iface);
-
 	printf("Using %x\n", iface->Address());
     
-    UpnpLibrary::StartCombined();
+    UpnpLibrary::StartCombined(iface->Address());
+
+	delete (list);
 
 	Bws<kMaxUdnBytes> computer;
 	Bws<kMaxUdnBytes> udn;

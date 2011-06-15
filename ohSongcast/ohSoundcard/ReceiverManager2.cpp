@@ -128,16 +128,24 @@ void ReceiverManager2Receiver::SenderMetadata(Bwx& aValue) const
 
 // Actions
 
-void ReceiverManager2Receiver::Stop()
-{
-}
-
 void ReceiverManager2Receiver::Play()
 {
+	iServiceReceiver->BeginPlay(iFunctorPlay);
 }
 
-void ReceiverManager2Receiver::SetSender(const Brx& /* aUri */, const Brx& /* aMetadata */)
+void ReceiverManager2Receiver::Stop()
 {
+	iServiceReceiver->BeginStop(iFunctorStop);
+}
+
+void ReceiverManager2Receiver::Standby()
+{
+	iReceiver.Standby();
+}
+
+void ReceiverManager2Receiver::SetSender(const Brx& aUri, const Brx& aMetadata)
+{
+	iServiceReceiver->BeginSetSender(aUri, aMetadata, iFunctorSetSender);
 }
 
 // Action callbacks

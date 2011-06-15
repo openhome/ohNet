@@ -1,0 +1,210 @@
+﻿<Window x:Class="OpenHome.Soundcard.MediaPlayerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SettingsWindow"
+        ShowInTaskbar="False"
+        WindowStyle="None" 
+        AllowsTransparency="True" 
+        ResizeMode="NoResize"
+        Background="Transparent"
+        Visibility="Collapsed">
+    <Window.Resources>
+        <LinearGradientBrush x:Key="BrushStrokeButtonSurround" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#000000" Offset="0"/>
+            <GradientStop Color="#000000" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BrushFillButtonSurround" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#888888" Offset="0"/>
+            <GradientStop Color="#888888" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BrushStrokeButtonSurroundHighlight" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#000000" Offset="0"/>
+            <GradientStop Color="#000000" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BrushFillButtonSurroundHighlight" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#000000" Offset="0"/>
+            <GradientStop Color="#000000" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BrushStrokeButtonSurface" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#000000" Offset="1"/>
+            <GradientStop Color="#000000"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BrushFillButtonSurface" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#CCCCCC" Offset="1"/>
+            <GradientStop Color="#FFFFFF"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BrushStrokeButtonSurfacePressed" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FFFFFF" Offset="1"/>
+            <GradientStop Color="#000000"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BrushFillButtonSurfacePressed" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#888888" Offset="1"/>
+            <GradientStop Color="#FFFFFF"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BrushStrokeButtonDetail" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#000000" Offset="0"/>
+            <GradientStop Color="#000000" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BrushFillButtonDetail" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FFFFFF" Offset="0"/>
+            <GradientStop Color="#FFFFFF" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BrushFillButtonDetailChecked" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#416DCD" Offset="0"/>
+            <GradientStop Color="#416DCD" Offset="1"/>
+        </LinearGradientBrush>
+
+        <Storyboard x:Key="storyBoardFadeIn">
+            <DoubleAnimation Storyboard.TargetName="LayoutRoot" BeginTime="0:0:0.1" Storyboard.TargetProperty="Opacity" From="0.00" To="1.00" AutoReverse="False" Duration="0:0:0.3" />
+        </Storyboard>
+        <Storyboard x:Key="storyBoardFadeOut">
+            <DoubleAnimation Storyboard.TargetName="LayoutRoot" BeginTime="0:0:0.5" Storyboard.TargetProperty="Opacity" From="1.00" To="0.00" AutoReverse="False" Duration="0:0:0.3" />
+        </Storyboard>
+        <ControlTemplate x:Key="ButtonControlTemplateAttached" TargetType="{x:Type ToggleButton}">
+            <Viewbox Height="Auto" Stretch="Fill" Width="Auto">
+                <Canvas Height="382" Width="382">
+                    <Path x:Name="surround" Stretch="Fill" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="F1 M 2440,3130L 2740,3130C 2762.09,3130 2780,3147.91 2780,3170L 2780,3470C 2780,3492.09 2762.09,3510 2740,3510L 2440,3510C 2417.91,3510 2400,3492.09 2400,3470L 2400,3170C 2400,3147.91 2417.91,3130 2440,3130 Z " Height="382" Margin="0" VerticalAlignment="Stretch" Width="382" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Stroke="{DynamicResource BrushStrokeButtonSurround}" Fill="{DynamicResource BrushFillButtonSurround}" />
+                    <Path x:Name="surface" Stretch="Fill" StrokeThickness="6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="F1 M 2440,3150L 2740,3150C 2751.04,3150 2760,3158.95 2760,3170L 2760,3470C 2760,3481.05 2751.04,3490 2740,3490L 2440,3490C 2428.95,3490 2420,3481.05 2420,3470L 2420,3170C 2420,3158.95 2428.95,3150 2440,3150 Z " Height="342" Margin="0" VerticalAlignment="Stretch" Width="341.999" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Canvas.Left="20" Canvas.Top="20" Stroke="{DynamicResource BrushStrokeButtonSurface}" Fill="{DynamicResource BrushFillButtonSurface}"/>
+                    <Path x:Name="detail" Data="m 7.1050841,175.37936 c 0,0 47.9715589,54.02075 57.5658699,76.08767 l 41.255536,0 C 123.19625,198.6983 190.35644,72.720219 247.92231,28.586381 259.84933,13.251633 229.88682,6.9217851 205.70733,17.073206 169.26531,32.372904 100.5346,149.18799 87.697305,177.29822 69.468111,182.09537 50.279481,146.59642 50.279481,146.59642 L 7.1050841,175.37936 z" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" StrokeStartLineCap="Round" Stretch="Fill" StrokeEndLineCap="Round" Fill="{DynamicResource BrushFillButtonDetail}" Stroke="{DynamicResource BrushStrokeButtonDetail}" StrokeThickness="4" StrokeLineJoin="Round" Canvas.Left="70" Canvas.Top="65" VerticalAlignment="Stretch" />
+                </Canvas>
+            </Viewbox>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsChecked" Value="true">
+                    <Setter TargetName="detail" Property="Fill" Value="{DynamicResource BrushFillButtonDetailChecked}" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="surround" Property="Stroke" Value="{DynamicResource BrushStrokeButtonSurroundHighlight}" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="surround" Property="Fill" Value="{DynamicResource BrushFillButtonSurroundHighlight}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="surface" Property="Stroke" Value="{DynamicResource BrushStrokeButtonSurfacePressed}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="surface" Property="Fill" Value="{DynamicResource BrushFillButtonSurfacePressed}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="detail" Property="RenderTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.96" ScaleY="0.96" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="surface" Property="RenderTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.96" ScaleY="0.96" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate x:Key="ButtonControlTemplatePlayStop" TargetType="{x:Type Button}">
+            <Viewbox Height="Auto" Stretch="Fill" Width="Auto">
+                <Canvas Height="382" Width="382">
+                    <Path x:Name="surround" Stretch="Fill" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="F1 M 2440,3130L 2740,3130C 2762.09,3130 2780,3147.91 2780,3170L 2780,3470C 2780,3492.09 2762.09,3510 2740,3510L 2440,3510C 2417.91,3510 2400,3492.09 2400,3470L 2400,3170C 2400,3147.91 2417.91,3130 2440,3130 Z " Height="382" Margin="0" VerticalAlignment="Stretch" Width="382" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Stroke="{DynamicResource BrushStrokeButtonSurround}" Fill="{DynamicResource BrushFillButtonSurround}" />
+                    <Path x:Name="surface" Stretch="Fill" StrokeThickness="6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="F1 M 2440,3150L 2740,3150C 2751.04,3150 2760,3158.95 2760,3170L 2760,3470C 2760,3481.05 2751.04,3490 2740,3490L 2440,3490C 2428.95,3490 2420,3481.05 2420,3470L 2420,3170C 2420,3158.95 2428.95,3150 2440,3150 Z " Height="342" Margin="0" VerticalAlignment="Stretch" Width="341.999" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Canvas.Left="20" Canvas.Top="20" Stroke="{DynamicResource BrushStrokeButtonSurface}" Fill="{DynamicResource BrushFillButtonSurface}"/>
+                    <Path x:Name="play" Data="M 0,0 0,200 160,100 z" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" StrokeStartLineCap="Round" Stretch="Fill" StrokeEndLineCap="Round" Fill="{DynamicResource BrushFillButtonDetail}" Stroke="{DynamicResource BrushStrokeButtonDetail}" StrokeThickness="4" StrokeLineJoin="Round" Canvas.Left="110" Canvas.Top="90" VerticalAlignment="Stretch" />
+                    <Path x:Name="stop" Data="m 0,0 160,0 0,160 -160,0 z" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" StrokeStartLineCap="Round" Stretch="Fill" StrokeEndLineCap="Round" Fill="{DynamicResource BrushFillButtonDetail}" Stroke="{DynamicResource BrushStrokeButtonDetail}" StrokeThickness="4" StrokeLineJoin="Round" Canvas.Left="110" Canvas.Top="110" VerticalAlignment="Stretch" />
+                </Canvas>
+            </Viewbox>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Content" Value="Playing">
+                    <Setter TargetName="stop" Property="Opacity" Value="1" />
+                    <Setter TargetName="play" Property="Opacity" Value="0" />
+                    <Setter TargetName="stop" Property="Fill" Value="{DynamicResource BrushFillButtonDetailChecked}" />
+                </Trigger>
+                <Trigger Property="Content" Value="Buffering">
+                    <Setter TargetName="stop" Property="Opacity" Value="1" />
+                    <Setter TargetName="play" Property="Opacity" Value="0" />
+                    <Setter TargetName="stop" Property="Fill" Value="{DynamicResource BrushFillButtonDetail}" />
+                </Trigger>
+                <Trigger Property="Content" Value="Stopped">
+                    <Setter TargetName="stop" Property="Opacity" Value="0" />
+                    <Setter TargetName="play" Property="Opacity" Value="1" />
+                    <Setter TargetName="play" Property="Fill" Value="{DynamicResource BrushFillButtonDetailChecked}" />
+                </Trigger>
+                <Trigger Property="Content" Value="Off">
+                    <Setter TargetName="stop" Property="Opacity" Value="0" />
+                    <Setter TargetName="play" Property="Opacity" Value="0" />
+                    <Setter Property="IsEnabled" Value="false" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="surround" Property="Stroke" Value="{DynamicResource BrushStrokeButtonSurroundHighlight}" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="surround" Property="Fill" Value="{DynamicResource BrushFillButtonSurroundHighlight}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="surface" Property="Stroke" Value="{DynamicResource BrushStrokeButtonSurfacePressed}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="surface" Property="Fill" Value="{DynamicResource BrushFillButtonSurfacePressed}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="stop" Property="RenderTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.96" ScaleY="0.96" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="play" Property="RenderTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.96" ScaleY="0.96" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="surface" Property="RenderTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.96" ScaleY="0.96" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </Window.Resources>
+
+    <Canvas>
+        <Border x:Name="LayoutRoot" CornerRadius="20" BorderThickness="5" Height="400" Width="468" BorderBrush="Black">
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0,0.5" StartPoint="1,0.5">
+                    <GradientStop Color="#DDDDDD" Offset="0"/>
+                    <GradientStop Color="#FFFFFF" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Canvas>
+                <TextBlock TextAlignment="Left" FontFamily="Arial Black" FontWeight="Bold" FontSize="22" Canvas.Left="15" Canvas.Top="8" Text="Media Players" />
+                <Line Stroke="Black" StrokeThickness="5" Y1="40" Y2="40" X2="460"></Line>
+                <ListBox x:Name="listBoxReceivers" Canvas.Left="6" Canvas.Top="48" Height="336" Width="446" Background="{x:Null}" BorderBrush="{x:Null}">
+                    <ListBox.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
+                    </ListBox.Resources>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <ToggleButton Canvas.Left="400" Canvas.Top="32" Height="40" Width="40" IsChecked="{Binding Path=Attached}" Template="{DynamicResource ButtonControlTemplateAttached}" />
+                                <Button Canvas.Left="400" Canvas.Top="32" Height="40" Width="40" Content="{Binding Path=Status}" Template="{DynamicResource ButtonControlTemplatePlayStop}" Click="EventPlayStopClick"/>
+                                <TextBlock Foreground="Black" FontFamily="Arial Black" FontSize="16" Text="{Binding Path=Description}" Margin="5" />
+                                <Separator></Separator>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Canvas>
+        </Border>
+    </Canvas>
+</Window>
