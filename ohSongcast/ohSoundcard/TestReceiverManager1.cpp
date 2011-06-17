@@ -95,8 +95,10 @@ int __cdecl main(int aArgc, char* aArgv[])
     }
 
     UpnpLibrary::Initialise(initParams);
-    
-    UpnpLibrary::StartCp();
+    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    TIpAddress subnet = (*subnetList)[0]->Subnet();
+    UpnpLibrary::DestroySubnetList(subnetList);
+    UpnpLibrary::StartCp(subnet);
 
     //Debug::SetLevel(Debug::kTopology);
 

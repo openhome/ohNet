@@ -207,9 +207,9 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
+    NetworkInterface* nif = UpnpLibrary::CurrentSubnet();
     TUint max = nif->Address();
-    delete nif;
+    nif->RemoveRef();
     (void)Ascii::AppendDec(buf, Random(max));
     aUdn.Append(buf);
     aUdn.PtrZ();
@@ -246,15 +246,12 @@ int CDECL main(int aArgc, char* aArgv[])
         return (1);
     }
 
-    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
-    ASSERT(ifs->size() > 0 && optionAdapter.Value() < ifs->size());
-    TIpAddress interface = (*ifs)[optionAdapter.Value()]->Address();
-    for (TUint i=0; i<ifs->size(); i++) {
-        delete (*ifs)[i];
-    }
-    delete ifs;
-    
-    printf("Using network interface %d.%d.%d.%d\n", interface&0xff, (interface>>8)&0xff, (interface>>16)&0xff, (interface>>24)&0xff);
+    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    TIpAddress subnet = (*subnetList)[optionAdapter.Value()]->Subnet();
+    TIpAddress interface = (*subnetList)[optionAdapter.Value()]->Address();
+    UpnpLibrary::DestroySubnetList(subnetList);
+
+    printf("Using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
 	Brhz file(optionFile.Value());
     

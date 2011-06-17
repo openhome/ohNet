@@ -32,8 +32,7 @@ namespace OpenHome.Soundcard
             if (!File.Exists(path))
             {
                 configuration = new Configuration();
-                configuration.DefaultToAttached = false;
-                configuration.Network = String.Empty;
+                configuration.Subnet = 0;
                 configuration.Multicast = false;
                 configuration.MulticastChannel = (uint)(new Random().Next(65535) + 1);
                 configuration.Ttl = 1;
@@ -70,31 +69,17 @@ namespace OpenHome.Soundcard
 
         private string iPath;
 
-        [XmlElement("DefaultToAttached")]
-
-        public bool DefaultToAttached
-        {
-            get
-            {
-                return (iDefaultToAttached);
-            }
-            set
-            {
-                iDefaultToAttached = value;
-            }
-        }
-
         [XmlElement("Network")]
 
-        public string Network
+        public uint Subnet
         {
             get
             {
-                return (iNetwork);
+                return (iSubnet);
             }
             set
             {
-                iNetwork = value;
+                iSubnet = value;
             }
         }
 
@@ -169,8 +154,7 @@ namespace OpenHome.Soundcard
         }
 
 
-        private bool iDefaultToAttached;
-        private string iNetwork;
+        private uint iSubnet;
         private bool iMulticast;
         private uint iMulticastChannel;
         private uint iTtl;

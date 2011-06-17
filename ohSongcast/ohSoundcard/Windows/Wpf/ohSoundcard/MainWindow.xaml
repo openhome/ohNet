@@ -14,69 +14,6 @@
     <Window.Resources>
         <Color x:Key="Fill1">#FF46A5FF</Color>
         <SolidColorBrush x:Key="SolidFill1" Color="#FF456381"/>
-        <!--
-        <LinearGradientBrush x:Key="BrushStrokeButtonSurround" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#000000" Offset="0"/>
-            <GradientStop Color="#000000" Offset="1"/>
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="BrushFillButtonSurround" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#000000" Offset="0"/>
-            <GradientStop Color="#FFFFFF" Offset="1"/>
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="BrushStrokeButtonSurroundHighlight" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#000000" Offset="0"/>
-            <GradientStop Color="#000000" Offset="1"/>
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="BrushFillButtonSurroundHighlight" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#416DCD" Offset="0"/>
-            <GradientStop Color="#416DCD" Offset="1"/>
-            <GradientStop Color="#FFFFFF" Offset="0.75"/>
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="BrushStrokeButtonSurface" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#AAAAAA" Offset="1"/>
-            <GradientStop Color="White"/>
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="BrushFillButtonSurface" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#AAAAAA" Offset="1"/>
-            <GradientStop Color="White"/>
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="BrushStrokeButtonSurfacePressed" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#FF999999" Offset="1"/>
-            <GradientStop Color="#EEEEEE"/>
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="BrushFillButtonSurfacePressed" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#FF999999" Offset="1"/>
-            <GradientStop Color="#EEEEEE"/>
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="BrushStrokeButtonSurface" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="Black" Offset="0"/>
-            <GradientStop Color="White" Offset="1"/>
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="BrushStrokeButtonDetail" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="Black" Offset="0"/>
-            <GradientStop Color="White" Offset="1"/>
-        </LinearGradientBrush>
-        <RadialGradientBrush x:Key="BrushFillButtonDetail">
-            <GradientStop Color="White" Offset="1"/>
-            <GradientStop Color="White"/>
-        </RadialGradientBrush>
-        <RadialGradientBrush x:Key="BrushFillButtonDetailPlaying">
-            <GradientStop Color="Green" Offset="1"/>
-            <GradientStop Color="Green"/>
-        </RadialGradientBrush>
-        <RadialGradientBrush x:Key="BrushFillButtonDetailBuffering">
-            <GradientStop Color="Orange" Offset="1"/>
-            <GradientStop Color="Orange"/>
-        </RadialGradientBrush>
-        <RadialGradientBrush x:Key="BrushFillButtonDetailStopped">
-            <GradientStop Color="LightGray" Offset="1"/>
-            <GradientStop Color="LightGray"/>
-        </RadialGradientBrush>
-        <RadialGradientBrush x:Key="BrushFillButtonDetailChecked">
-            <GradientStop Color="#416DCD" Offset="1"/>
-            <GradientStop Color="#719DFD"/>
-        </RadialGradientBrush>
-        -->
         <LinearGradientBrush x:Key="BrushStrokeButtonSurround" EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="#000000" Offset="0"/>
             <GradientStop Color="#000000" Offset="1"/>
@@ -114,8 +51,9 @@
             <GradientStop Color="#000000" Offset="1"/>
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="BrushFillButtonDetail" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#FFFFFF" Offset="0"/>
-            <GradientStop Color="#FFFFFF" Offset="1"/>
+            <GradientStop Color="#BBBBBB" Offset="0"/>
+            <GradientStop Color="#DDDDDD" Offset="0.5"/>
+            <GradientStop Color="#BBBBBB" Offset="1"/>
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="BrushFillButtonDetailChecked" EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="#416DCD" Offset="0"/>
@@ -265,6 +203,51 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
+        <ControlTemplate x:Key="ButtonControlTemplateHelp" TargetType="{x:Type ToggleButton}">
+            <Viewbox Height="Auto" Stretch="Fill" Width="Auto">
+                <Canvas Height="382" Width="382">
+                    <Path x:Name="surround" Stretch="Fill" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="F1 M 2440,3130L 2740,3130C 2762.09,3130 2780,3147.91 2780,3170L 2780,3470C 2780,3492.09 2762.09,3510 2740,3510L 2440,3510C 2417.91,3510 2400,3492.09 2400,3470L 2400,3170C 2400,3147.91 2417.91,3130 2440,3130 Z " Height="382" Margin="0" VerticalAlignment="Stretch" Width="382" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Stroke="{DynamicResource BrushStrokeButtonSurround}" Fill="{DynamicResource BrushFillButtonSurround}" />
+                    <Path x:Name="surface" Stretch="Fill" StrokeThickness="6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="F1 M 2440,3150L 2740,3150C 2751.04,3150 2760,3158.95 2760,3170L 2760,3470C 2760,3481.05 2751.04,3490 2740,3490L 2440,3490C 2428.95,3490 2420,3481.05 2420,3470L 2420,3170C 2420,3158.95 2428.95,3150 2440,3150 Z " Height="342" Margin="0" VerticalAlignment="Stretch" Width="341.999" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Canvas.Left="20" Canvas.Top="20" Stroke="{DynamicResource BrushStrokeButtonSurface}" Fill="{DynamicResource BrushFillButtonSurface}"/>
+                    <Path x:Name="detail" Stretch="Fill" StrokeThickness="4" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="m 131.61832,793.02244 c 0,14.13032 -13.48243,25.58528 -30.11383,25.58528 -16.63141,0 -30.113817,-11.45496 -30.113817,-25.58528 0,-14.13036 13.482407,-25.58527 30.113817,-25.58527 16.57549,0 30.03463,11.38087 30.11349,25.46356 M 92.89523,552.60122 C 47.675462,553.06615 5.975043,584.9066 2.3185043,623.38901 1.3132716,628.13985 0.8000571,632.90578 0.23473035,637.7236 26.248224,654.13102 26.248224,654.13102 56.395658,643.37749 c 0.589271,-18.08326 8.904358,-38.85213 29.844958,-46.54461 24.518784,-8.97984 58.289474,6.69028 59.051344,30.35396 -0.2345,16.34287 -17.17199,26.92642 -30.52999,36.45684 -22.534225,16.12398 -41.733404,38.78888 -41.184454,64.91191 -0.470157,7.96508 0.01322,15.93866 0.294919,23.90194 27.660365,11.32462 27.660365,11.32462 53.808295,0 -4.63806,-25.22576 -0.32289,-39.02316 17.64482,-50.91353 22.30251,-17.11178 47.90188,-34.96147 54.78297,-61.07913 10.57144,-38.92401 -25.34937,-80.7316 -71.58755,-85.69345 -11.68794,-2.08243 -23.68874,-2.31734 -35.62574,-2.1702 z" Fill="{DynamicResource BrushFillButtonDetail}" Stroke="{DynamicResource BrushStrokeButtonDetail}" Canvas.Left="80" Canvas.Top="50" RenderTransformOrigin="0.5,0.5">
+                    </Path>
+                </Canvas>
+            </Viewbox>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsChecked" Value="true">
+                    <Setter TargetName="detail" Property="Fill" Value="{DynamicResource BrushFillButtonDetailChecked}" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="surround" Property="Stroke" Value="{DynamicResource BrushStrokeButtonSurroundHighlight}" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="surround" Property="Fill" Value="{DynamicResource BrushFillButtonSurroundHighlight}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="surface" Property="Stroke" Value="{DynamicResource BrushStrokeButtonSurfacePressed}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="surface" Property="Fill" Value="{DynamicResource BrushFillButtonSurfacePressed}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="detail" Property="RenderTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.96" ScaleY="0.96" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="surface" Property="RenderTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.96" ScaleY="0.96" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
     </Window.Resources>
     <Canvas>
         <Border x:Name="LayoutRoot" CornerRadius="20" BorderThickness="5" Height="100" Width="468" BorderBrush="Black">
@@ -289,6 +272,7 @@
                     <Rectangle Stretch="Fill" StrokeThickness="40" StrokeLineJoin="Round" Stroke="#416DCD" Height="119.999" Width="120" Canvas.Left="64" Canvas.Top="220" />
                 </Canvas>
                 <TextBlock TextAlignment="Left" FontFamily="Arial Black" FontWeight="Bold" FontSize="22" Canvas.Left="70" Canvas.Top="51" Text="Soundcard" />
+                <ToggleButton x:Name="Help" Canvas.Left="262" Canvas.Top="32" Height="40" IsChecked="False" Template="{DynamicResource ButtonControlTemplateHelp}" Width="40" />
                 <ToggleButton x:Name="Settings" Canvas.Left="309" Canvas.Top="32" Height="40" Width="40" IsChecked="False" Template="{DynamicResource ButtonControlTemplateSettings}" />
                 <ToggleButton x:Name="Receivers" Canvas.Left="355" Canvas.Top="32" Height="40" Width="40" IsChecked="False" Template="{DynamicResource ButtonControlTemplateReceivers}" />
                 <ToggleButton x:Name="Power" Canvas.Left="400" Canvas.Top="32" Height="40" Width="40" IsChecked="False" Template="{DynamicResource ButtonControlTemplatePower}" />

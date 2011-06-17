@@ -164,9 +164,9 @@ void OhmSenderDriverWindows::SetTrackPosition(TUint64 /*aSamplesTotal*/, TUint64
 
 // C interface
 
-THandle SoundcardCreate(uint32_t aSubnet, uint32_t aChannel, uint32_t aTtl, uint32_t aMulticast, uint32_t aEnabled, uint32_t aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr)
+THandle SoundcardCreate(uint32_t aSubnet, uint32_t aChannel, uint32_t aTtl, uint32_t aMulticast, uint32_t aEnabled, uint32_t aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr)
 {
-	return (Soundcard::Create(aSubnet, aChannel, aTtl, (aMulticast == 0) ? false : true, (aEnabled == 0) ? false : true, aPreset, aReceiverCallback, aReceiverPtr));
+	return (Soundcard::Create(aSubnet, aChannel, aTtl, (aMulticast == 0) ? false : true, (aEnabled == 0) ? false : true, aPreset, aReceiverCallback, aReceiverPtr, aSubnetCallback, aSubnetPtr));
 }
 
 void SoundcardSetSubnet(THandle aSoundcard, uint32_t aValue)
@@ -207,6 +207,11 @@ void SoundcardSetTrack(THandle aSoundcard, const char* aUri, const char* aMetada
 void SoundcardSetMetatext(THandle aSoundcard, const char* aValue)
 {
 	((Soundcard*)aSoundcard)->SetMetatext(aValue);
+}
+
+void SoundcardRefreshReceivers(THandle aSoundcard)
+{
+	((Soundcard*)aSoundcard)->RefreshReceivers();
 }
 
 void SoundcardDestroy(THandle aSoundcard)
@@ -263,6 +268,27 @@ void ReceiverRemoveRef(THandle aReceiver)
 {
 	((Receiver*)aReceiver)->RemoveRef();
 }
+
+uint32_t SubnetAddress(THandle aSubnet)
+{
+	return (((Subnet*)aSubnet)->Address());
+}
+
+const char* SubnetAdapterName(THandle aSubnet)
+{
+	return (((Subnet*)aSubnet)->AdapterName());
+}
+
+void SubnetAddRef(THandle aSubnet)
+{
+	((Subnet*)aSubnet)->AddRef();
+}
+
+void SubnetRemoveRef(THandle aSubnet)
+{
+	((Subnet*)aSubnet)->RemoveRef();
+}
+
 
 // Receiver
 
@@ -335,12 +361,87 @@ Receiver::~Receiver()
 	iReceiver.RemoveRef();
 }
 
+// Subnet
+
+Subnet::Subnet(NetworkInterface& aAdapter)
+	: iAdapter(&aAdapter)
+{
+	AddRef();
+}
+
+Subnet::Subnet(TIpAddress aSubnet)
+	: iAdapter(0)
+	, iSubnet(aSubnet)
+{
+}
+
+TBool Subnet::IsAttachedTo(NetworkInterface& aAdapter)
+{
+	if (iAdapter != 0) {
+		return (iAdapter ==	&aAdapter);
+	}
+	return (false);
+}
+
+void Subnet::Attach(NetworkInterface& aAdapter)
+{
+	RemoveRef();
+	iAdapter = &aAdapter;
+	AddRef();
+}
+
+TIpAddress Subnet::Address() const
+{
+	if (iAdapter != 0) {
+		return (iAdapter->Subnet());
+	}
+
+	return (iSubnet);
+}
+
+TIpAddress Subnet::AdapterAddress() const
+{
+	if (iAdapter != 0) {
+		return (iAdapter->Address());
+	}
+
+	return (0);
+}
+
+const TChar* Subnet::AdapterName() const
+{
+	if (iAdapter != 0) {
+		return (iAdapter->Name());
+	}
+
+	return ("Network adapter not present");
+}
+
+void Subnet::AddRef()
+{
+	if (iAdapter != 0) {
+		iAdapter->AddRef();
+	}
+}
+
+void Subnet::RemoveRef()
+{
+	if (iAdapter != 0) {
+		iAdapter->RemoveRef();
+	}
+}
+
+Subnet::~Subnet()
+{
+	RemoveRef();
+}
+    
 // Soundcard
 
-Soundcard* Soundcard::Create(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr)
+Soundcard* Soundcard::Create(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr)
 {
 	try {
-		Soundcard* soundcard = new Soundcard(aSubnet, aChannel, aTtl, aMulticast, aEnabled, aPreset, aReceiverCallback, aReceiverPtr);
+		Soundcard* soundcard = new Soundcard(aSubnet, aChannel, aTtl, aMulticast, aEnabled, aPreset, aReceiverCallback, aReceiverPtr, aSubnetCallback, aSubnetPtr);
 		return (soundcard);
 	}
 	catch (SoundcardError) {
@@ -348,25 +449,34 @@ Soundcard* Soundcard::Create(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBo
 	return (0);
 }
 
-Soundcard::Soundcard(TIpAddress /* aSubnet */, TUint aChannel, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr)
-	: iReceiverCallback(aReceiverCallback)
+Soundcard::Soundcard(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr)
+	: iMutex("SCRD")
+	, iClosing(false)
+	, iSubnet(aSubnet)
+	, iAdapter(0)
+	, iSender(0)
+	, iReceiverCallback(aReceiverCallback)
 	, iReceiverPtr(aReceiverPtr)
+	, iSubnetCallback(aSubnetCallback)
+	, iSubnetPtr(aSubnetPtr)
 {
 	InitialisationParams* initParams = InitialisationParams::Create();
 
+	Functor callback = MakeFunctor(*this, &Soundcard::SubnetListChanged);
+
+	initParams->SetSubnetChangedListener(callback);
+
 	UpnpLibrary::Initialise(initParams);
 
-	std::vector<NetworkInterface*>* list = UpnpLibrary::CreateSubnetList();
+	// Fixes bug in stack
+	if (iSubnet == 0) {
+		SubnetListChanged();
+		iSubnet = iSubnetList[0]->Address();
+		iAdapter = iSubnetList[0]->AdapterAddress();
+	}
+	/////////////////////
 
-	ASSERT(list->size() > 0);
-
-	NetworkInterface* iface = *list->begin();
-
-	printf("Using %x\n", iface->Address());
-    
-    UpnpLibrary::StartCombined(iface->Address());
-
-	delete (list);
+	UpnpLibrary::StartCombined(iSubnet);
 
 	Bws<kMaxUdnBytes> computer;
 	Bws<kMaxUdnBytes> udn;
@@ -401,18 +511,133 @@ Soundcard::Soundcard(TIpAddress /* aSubnet */, TUint aChannel, TUint aTtl, TBool
 
     iDriver = new OhmSenderDriverWindows();
     
+	SubnetListChanged();
+
 	Brn icon(icon_png, icon_png_len);
 
-	iSender = new OhmSender(*iDevice, *iDriver, computer, aChannel, iface->Address(), aTtl, aMulticast, aEnabled, icon, Brn("image/png"), aPreset);
+	iSender = new OhmSender(*iDevice, *iDriver, computer, aChannel, iAdapter, aTtl, aMulticast, aEnabled, icon, Brn("image/png"), aPreset);
 	
-    iDevice->SetEnabled();
+	iDevice->SetEnabled();
 
 	iReceiverManager = new ReceiverManager3(*this, iSender->SenderUri(), iSender->SenderMetadata());
 }
 
-void Soundcard::SetSubnet(TIpAddress /* aValue */)
+// Don't bother removing old subnets - they might come back anyway, and there is not exactly
+// a huge traffic in added and removed network interfaces
+
+void Soundcard::SubnetListChanged()
 {
-	// TOOD
+	iMutex.Wait();
+
+	TBool closing = iClosing;
+
+	iMutex.Signal();
+
+	if (closing) {
+		return;
+	}
+
+	// First, handle changes to the subnet list
+
+	std::vector<NetworkInterface*>*  subnetList = UpnpLibrary::CreateSubnetList();
+
+	std::vector<NetworkInterface*>::iterator it = subnetList->begin();
+
+	while (it != subnetList->end()) {
+		NetworkInterface* adapter = *it;
+
+		TBool found = false;
+
+		// find adapter's subnet in current subnet list
+
+		std::vector<Subnet*>::iterator it2 = iSubnetList.begin();
+
+		while (it2 != iSubnetList.end()) {
+			Subnet* subnet = *it2;
+
+			if (subnet->Address() == adapter->Subnet()) {
+				// adapter's subnet existed in the old subnet list, so check if the subnet is still using the same adapter
+
+				if (!subnet->IsAttachedTo(*adapter))
+				{
+					subnet->Attach(*adapter);
+					(*iSubnetCallback)(iSubnetPtr, eChanged, (THandle)subnet);
+				}
+
+				found = true;
+
+				break;
+			}
+
+			it2++;
+		}
+
+		// if not found, this is a new subnet
+
+		if (!found) {
+			Subnet* subnet = new Subnet(*adapter);
+			iSubnetList.push_back(subnet);
+			(*iSubnetCallback)(iSubnetPtr, eAdded, (THandle)subnet);
+		}
+
+		it++;
+	}
+
+	UpnpLibrary::DestroySubnetList(subnetList);
+
+	// Now manage our current subnet and adapter
+
+	if (!UpdateAdapter()) {
+
+		// Not found - make a dummy subnet entry to represent our current subnet (unless 0)
+
+		if (iSubnet != 0)
+		{
+			Subnet* subnet = new Subnet(iSubnet);
+			iSubnetList.push_back(subnet);
+			(*iSubnetCallback)(iSubnetPtr, eAdded, (THandle)subnet);
+			return;
+		}
+	}
+}
+
+// return true if the current subnet was found in the list
+
+TBool Soundcard::UpdateAdapter()
+{
+	std::vector<Subnet*>::iterator it = iSubnetList.begin();
+
+	while (it != iSubnetList.end()) {
+		Subnet* subnet = *it;
+	
+		if (iSubnet == subnet->Address())
+		{
+			TIpAddress adapter = subnet->AdapterAddress();
+
+			if (iAdapter != adapter) {
+				iAdapter = adapter;
+
+				if (iSender != 0) {
+					iSender->SetInterface(iAdapter);
+				}
+			}
+
+			return (true);
+		}
+
+		it++;
+	}
+
+	return (false);
+}
+
+void Soundcard::SetSubnet(TIpAddress aValue)
+{
+	iSubnet = aValue;
+
+	UpnpLibrary::SetCurrentSubnet(iSubnet);
+
+	ASSERT(UpdateAdapter());
 }
 
 void Soundcard::SetChannel(TUint aValue)
@@ -450,12 +675,35 @@ void Soundcard::SetMetatext(const TChar* aValue)
 {
 	iSender->SetMetatext(Brn(aValue));
 }
-   
+
+void Soundcard::RefreshReceivers()
+{
+	iReceiverManager->Refresh();
+}
+
 Soundcard::~Soundcard()
 {
-    delete (iSender);
-	delete (iDriver);
+	delete (iReceiverManager);
+	delete (iSender);
 	delete (iDevice);
+	delete (iDriver);
+
+	iMutex.Wait();
+
+	iClosing = true;
+
+	iMutex.Signal();
+
+	std::vector<Subnet*>::iterator it = iSubnetList.begin();
+
+	while (it != iSubnetList.end()) {
+		Subnet* subnet = *it;
+		(*iSubnetCallback)(iSubnetPtr, eRemoved, (THandle)subnet);
+		delete (subnet);
+		it++;
+	}
+
+	Net::UpnpLibrary::Close();
 }
 
 // IReceiverManager3Handler

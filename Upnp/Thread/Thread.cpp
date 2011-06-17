@@ -169,12 +169,12 @@ Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     , iPriority(aPriority)
 {
     ASSERT(aName != NULL);
+	iName.Fill(0);
     TUint bytes = (TUint)strlen(aName);
     if (bytes > kNameBytes) {
         bytes = kNameBytes;
     }
     iName.Replace((TByte*)aName, bytes);
-    iName.PtrZ();
 }
 
 Thread::~Thread()
@@ -188,9 +188,7 @@ Thread::~Thread()
 
 void Thread::Start()
 {
-    TChar name[kNameBytes+1] = {0};
-    (void)memcpy(name, iName.Ptr(), iName.Bytes());
-    iHandle = OpenHome::Os::ThreadCreate(name, iPriority, iStackBytes, &Thread::EntryPoint, this);
+    iHandle = OpenHome::Os::ThreadCreate((TChar*)iName.Ptr(), iPriority, iStackBytes, &Thread::EntryPoint, this);
 }
 
 void Thread::EntryPoint(void* aArg)

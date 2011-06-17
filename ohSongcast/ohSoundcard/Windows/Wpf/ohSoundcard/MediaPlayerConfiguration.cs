@@ -38,9 +38,19 @@ namespace OpenHome.Soundcard
             }
         }
 
+        public bool Active
+        {
+            get
+            {
+                return (iReceiver != null);
+            }
+        }
+
         public void SetEnabled(bool aValue)
         {
             iEnabled = aValue;
+
+            UpdateStatus();
 
             if (iReceiver != null)
             {   
@@ -61,6 +71,14 @@ namespace OpenHome.Soundcard
                     Standby();
                 }
             }
+            else
+            {
+                if (iStatus == "Playing")
+                {
+                    Stop();
+                }
+            }
+
         }
 
         public void Initialise(bool aEnabled)
@@ -87,7 +105,7 @@ namespace OpenHome.Soundcard
 
         private void UpdateStatus()
         {
-            if (iReceiver != null)
+            if (iReceiver != null && iEnabled)
             {
                 switch (iReceiver.Status)
                 {
@@ -141,9 +159,21 @@ namespace OpenHome.Soundcard
             return (changed);
         }
 
+        public void Detach()
+        {
+            iReceiver = null;
+
+            UpdateStatus();
+        }
+
         void Play()
         {
             iReceiver.Play();
+        }
+
+        void Stop()
+        {
+            iReceiver.Stop();
         }
 
         void Standby()
@@ -176,6 +206,19 @@ namespace OpenHome.Soundcard
                     if (PropertyChanged != null)
                     {
                         PropertyChanged(this, new PropertyChangedEventArgs("Attached"));
+                    }
+
+                    if (iReceiver != null)
+                    {
+                        if (iAttached && iEnabled)
+                        {
+                            Play();
+                        }
+
+                        if (!iAttached && !iEnabled)
+                        {
+                            Standby();
+                        }
                     }
                 }
             }
@@ -322,7 +365,7 @@ namespace OpenHome.Soundcard
                 return (iDescription.CompareTo(player.iDescription));
             }
 
-            return (-1);
+            return (1);
         }
 
 
@@ -377,6 +420,11 @@ namespace OpenHome.Soundcard
             return (configuration);
         }
 
+        public void SubnetChanged()
+        {
+            iMediaPlayerList.DetachAll();
+        }
+
         private void SetPath(string aPath)
         {
             iPath = aPath;
@@ -415,7 +463,7 @@ namespace OpenHome.Soundcard
 
         void EventMediaPlayerPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Autoplay")
+            if (e.PropertyName == "Attached")
             {
                 Save();
             }
@@ -435,6 +483,13 @@ namespace OpenHome.Soundcard
         public MediaPlayerConfiguration()
         {
             iMediaPlayerList = new MediaPlayerList();
+        }
+
+        public void Refresh()
+        {
+            iMediaPlayerList.Purge();
+
+            Save();
         }
 
         [XmlElement("MediaPlayerList")]
@@ -470,9 +525,19 @@ namespace OpenHome.Soundcard
 
             iMediaPlayerList.Add(newplayer);
 
-            iMediaPlayerList.Sort();
-
             Save();
+        }
+
+        public void ReceiverRemoved(Receiver aReceiver)
+        {
+            foreach (MediaPlayer player in iMediaPlayerList)
+            {
+                if (player.Udn == aReceiver.Udn)
+                {
+                    player.Detach();
+                    return;
+                }
+            }
         }
 
         public void SetEnabled(bool aEnabled)
@@ -495,9 +560,38 @@ namespace OpenHome.Soundcard
             iList = new List<MediaPlayer>();
         }
 
+        public void DetachAll()
+        {
+            foreach (MediaPlayer player in iList)
+            {
+                player.Detach();
+            }
+        }
+
         public void Add(Object aObject)
         {
-            iList.Add(aObject as MediaPlayer);
+            MediaPlayer add = aObject as MediaPlayer;
+
+            int index = 0;
+
+            foreach (MediaPlayer player in iList)
+            {
+                if (add.CompareTo(player) < 0)
+                {
+                    iList.Insert(index, add);
+
+                    if (CollectionChanged != null)
+                    {
+                        CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, aObject, index));
+                    }
+
+                    return;
+                }
+
+                index++;
+            }
+
+            iList.Add(add);
 
             if (CollectionChanged != null)
             {
@@ -515,6 +609,39 @@ namespace OpenHome.Soundcard
             foreach (MediaPlayer player in iList)
             {
                 player.SetEnabled(aValue);
+            }
+        }
+
+        internal void Purge()
+        {
+            List<int> list = new List<int>();
+
+            int index = 0;
+
+            foreach (MediaPlayer player in iList)
+            {
+                if (!player.Active)
+                {
+                    list.Add(index);
+                }
+
+                index++;
+            }
+
+            int adjustment = 0;
+
+            foreach (int i in list)
+            {
+                MediaPlayer player = iList[i + adjustment];
+
+                if (CollectionChanged != null)
+                {
+                    CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, player, i + adjustment));
+                }
+
+                iList.Remove(player);
+
+                adjustment--;
             }
         }
 

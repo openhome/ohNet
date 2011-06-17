@@ -425,14 +425,14 @@ void OhmSender::SetInterface(TIpAddress aValue)
     
 	if (iInterface != aValue) {
 		if (iStarted) {
-			StopZone();
 			Stop();
+			StopZone();
 			iInterface = aValue;
 			delete (iServer);
 			iServer = new SocketTcpServer("OHMS", 0, iInterface);
 			iServer->Add("OHMS", new OhmSenderSession(*this));
-			Start();
 			StartZone();
+			Start();
 		}
 		else {
 			StopZone();

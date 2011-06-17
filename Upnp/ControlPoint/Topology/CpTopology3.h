@@ -149,7 +149,7 @@ public:
     void SetUserData(void* aValue);
     void* UserData() const;
 
-	// functions which must not be called from ICpTopology3Handler callback thread
+	// functions which must NOT be called from ICpTopology3Handler callback thread
 
     void SetStandby(TBool aValue);
     void SetSourceIndex(TUint aIndex);

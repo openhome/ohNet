@@ -46,8 +46,9 @@
             <GradientStop Color="#000000" Offset="1"/>
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="BrushFillButtonDetail" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#FFFFFF" Offset="0"/>
-            <GradientStop Color="#FFFFFF" Offset="1"/>
+            <GradientStop Color="#BBBBBB" Offset="0"/>
+            <GradientStop Color="#DDDDDD" Offset="0.5"/>
+            <GradientStop Color="#BBBBBB" Offset="1"/>
         </LinearGradientBrush>
         <LinearGradientBrush x:Key="BrushFillButtonDetailChecked" EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="#416DCD" Offset="0"/>
@@ -175,6 +176,47 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
+        <ControlTemplate x:Key="ButtonControlTemplateRefresh" TargetType="{x:Type Button}">
+            <Viewbox Height="Auto" Stretch="Fill" Width="Auto">
+                <Canvas Height="150" Width="450">
+                    <Path x:Name="surround" Stretch="Fill" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="F1 M 2440,3130L 2740,3130C 2762.09,3130 2780,3147.91 2780,3170L 2780,3470C 2780,3492.09 2762.09,3510 2740,3510L 2440,3510C 2417.91,3510 2400,3492.09 2400,3470L 2400,3170C 2400,3147.91 2417.91,3130 2440,3130 Z " Height="382" Margin="0" VerticalAlignment="Stretch" Width="382" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Stroke="{DynamicResource BrushStrokeButtonSurround}" Fill="{DynamicResource BrushFillButtonSurround}" />
+                    <Path x:Name="surface" Stretch="Fill" StrokeThickness="6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="F1 M 2440,3150L 2740,3150C 2751.04,3150 2760,3158.95 2760,3170L 2760,3470C 2760,3481.05 2751.04,3490 2740,3490L 2440,3490C 2428.95,3490 2420,3481.05 2420,3470L 2420,3170C 2420,3158.95 2428.95,3150 2440,3150 Z " Height="342" Margin="0" VerticalAlignment="Stretch" Width="341.999" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Canvas.Left="20" Canvas.Top="20" Stroke="{DynamicResource BrushStrokeButtonSurface}" Fill="{DynamicResource BrushFillButtonSurface}"/>
+                    <TextBlock x:Name="text" FontFamily="Arial Black" FontSize="12" >Refresh</TextBlock>
+                </Canvas>
+            </Viewbox>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="surround" Property="Stroke" Value="{DynamicResource BrushStrokeButtonSurroundHighlight}" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="surround" Property="Fill" Value="{DynamicResource BrushFillButtonSurroundHighlight}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="surface" Property="Stroke" Value="{DynamicResource BrushStrokeButtonSurfacePressed}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="surface" Property="Fill" Value="{DynamicResource BrushFillButtonSurfacePressed}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="surface" Property="RenderTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.96" ScaleY="0.96" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="text" Property="RenderTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.96" ScaleY="0.96" />
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
     </Window.Resources>
 
     <Canvas>
@@ -204,6 +246,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                <Button Canvas.Left="354" Canvas.Top="10" Content="Refresh" Height="23" Name="buttonRefresh" FontFamily="Arial Black" FontSize="12" Width="75" />
             </Canvas>
         </Border>
     </Canvas>

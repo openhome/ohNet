@@ -13,6 +13,11 @@ using System.Windows.Shapes;
 
 namespace OpenHome.Soundcard
 {
+    public interface IRefreshHandler
+    {
+        void Refresh();
+    }
+
     /// <summary>
     /// Interaction logic for ReceiversWindow.xaml
     /// </summary>
@@ -22,11 +27,17 @@ namespace OpenHome.Soundcard
 
         ReceiverList iReceiverList;
 
-        public MediaPlayerWindow(bool aEnabled)
+        IRefreshHandler iRefreshHandler;
+
+        public MediaPlayerWindow(bool aEnabled, IRefreshHandler aRefreshHandler)
         {
             InitializeComponent();
 
-            iReceiverList = new ReceiverList(this);
+            iRefreshHandler = aRefreshHandler;
+
+            buttonRefresh.Click += new RoutedEventHandler(EventButtonRefreshClick);
+
+            iReceiverList = new ReceiverList(this.Dispatcher);
 
             iReceiverList.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(EventReceiverListCollectionChanged);
 
@@ -34,6 +45,13 @@ namespace OpenHome.Soundcard
 
             listBoxReceivers.ItemsSource = iMediaPlayerConfiguration.MediaPlayerList;
         }
+
+        void EventButtonRefreshClick(object sender, RoutedEventArgs e)
+        {
+            iMediaPlayerConfiguration.Refresh();
+            iRefreshHandler.Refresh();
+        }
+
 
         void EventReceiverListCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
@@ -44,6 +62,13 @@ namespace OpenHome.Soundcard
                     {
                         Receiver receiver = o as Receiver;
                         iMediaPlayerConfiguration.ReceiverAdded(receiver);
+                    }
+                    break;
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
+                    foreach (object o in e.OldItems)
+                    {
+                        Receiver receiver = o as Receiver;
+                        iMediaPlayerConfiguration.ReceiverRemoved(receiver);
                     }
                     break;
                 default:
@@ -70,6 +95,11 @@ namespace OpenHome.Soundcard
         public void SetEnabled(bool aValue)
         {
             iMediaPlayerConfiguration.SetEnabled(aValue);
+        }
+
+        public void SubnetChanged()
+        {
+            iMediaPlayerConfiguration.SubnetChanged();
         }
     }
 

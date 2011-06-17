@@ -65,6 +65,7 @@
     <Compile Include="ConfigurationWindow.xaml.cs">
       <DependentUpon>ConfigurationWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SubnetList.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -115,14 +116,14 @@
     <None Include="Resources\Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\Build\Obj\Windows\ohSoundcard.dll">
+    <Content Include="..\..\..\..\Build\Obj\Windows\Debug\ohSoundcard.dll">
       <Link>ohSoundcard.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\..\..\Build\Obj\Windows\ohSoundcard.net.dll">
+    </Content>
+    <Content Include="..\..\..\..\Build\Obj\Windows\Debug\ohSoundcard.net.dll">
       <Link>ohSoundcard.net.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

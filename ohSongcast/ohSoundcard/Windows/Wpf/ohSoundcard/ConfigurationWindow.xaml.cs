@@ -19,12 +19,19 @@ namespace OpenHome.Soundcard
     public partial class ConfigurationWindow : Window
     {
         private Configuration iConfiguration;
+        private SubnetList iSubnetList;
 
         public ConfigurationWindow()
         {
             InitializeComponent();
 
             iConfiguration = Configuration.Load();
+
+            iSubnetList = new SubnetList(this.Dispatcher);
+
+            iSubnetList.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(EventSubnetListCollectionChanged);
+
+            comboBoxNetwork.ItemsSource = iSubnetList;
 
             textBlockInfo.Text = "V" + System.Windows.Forms.Application.ProductVersion;
 
@@ -40,6 +47,32 @@ namespace OpenHome.Soundcard
             radioButtonUnicast.Checked += EventRadioButtonUnicastChecked;
             radioButtonMulticast.Checked += EventRadioButtonMulticastChecked;
             comboBoxNetwork.SelectionChanged += EventComboBoxNetworkSelectionChanged;
+        }
+
+        void EventSubnetListCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            int index = 0;
+
+            foreach (Subnet subnet in iSubnetList)
+            {
+                if (subnet.Address == iConfiguration.Subnet)
+                {
+                    comboBoxNetwork.SelectedIndex = index;
+                    return;
+                }
+
+                index++;
+            }
+
+            comboBoxNetwork.SelectedIndex = -1;
+        }
+
+        public SubnetList SubnetList
+        {
+            get
+            {
+                return (iSubnetList);
+            }
         }
 
         private void InformListeners(Action aAction)
@@ -110,36 +143,36 @@ namespace OpenHome.Soundcard
 
         private void EventComboBoxNetworkSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string network = comboBoxNetwork.SelectedValue as string;
+            int index = comboBoxNetwork.SelectedIndex;
 
-            if (iConfiguration.Network != network)
+            if (index >= 0)
             {
-                iConfiguration.Network = network;
-                iConfiguration.Save();
-                InformListeners(NetworkChanged);
+                Subnet subnet = iSubnetList.SubnetAt(index);
+                
+                uint address = subnet.Address;
+
+                if (iConfiguration.Subnet != address)
+                {
+                    iConfiguration.Subnet = address;
+                    iConfiguration.Save();
+                    InformListeners(SubnetChanged);
+                }
             }
+
         }
 
         public Action DefaultAutoplayChanged;
-        public Action NetworkChanged;
+        public Action SubnetChanged;
         public Action MulticastChanged;
         public Action MulticastChannelChanged;
         public Action TtlChanged;
         public Action PresetChanged;
 
-        public bool DefaultAutoplay
+        public uint Subnet
         {
             get
             {
-                return (iConfiguration.DefaultToAttached);
-            }
-        }
-
-        public string Network
-        {
-            get
-            {
-                return (iConfiguration.Network);
+                return (iConfiguration.Subnet);
             }
         }
 

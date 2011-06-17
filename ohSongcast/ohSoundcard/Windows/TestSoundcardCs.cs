@@ -3,7 +3,7 @@ using System.Net;
 
 using OpenHome.Soundcard;
 
-    class Program : IReceiverHandler
+    class Program : IReceiverHandler, ISubnetHandler
     {
         public static void Main(string[] args)
         {
@@ -16,7 +16,7 @@ using OpenHome.Soundcard;
         {
             bool enabled = true;
 
-            Soundcard soundcard = new Soundcard(IPAddress.Any, 1, 1, false, enabled, 99, this);
+            Soundcard soundcard = new Soundcard(0, 1, 1, false, enabled, 99, this, this);
 
             while (true)
             {
@@ -62,5 +62,20 @@ using OpenHome.Soundcard;
         public void ReceiverRemoved(IReceiver aReceiver)
         {
             Console.WriteLine("Removed {0}:{1}:{2}:{3}", aReceiver.Room, aReceiver.Group, aReceiver.Name, aReceiver.Status);
+        }
+
+        public void SubnetAdded(ISubnet aSubnet)
+        {
+            Console.WriteLine("Added   {0}:{1}", aSubnet.Address, aSubnet.AdapterName);
+        }
+
+        public void SubnetChanged(ISubnet aSubnet)
+        {
+            Console.WriteLine("Changed {0}:{1}", aSubnet.Address, aSubnet.AdapterName);
+        }
+
+        public void SubnetRemoved(ISubnet aSubnet)
+        {
+            Console.WriteLine("Removed {0}:{1}", aSubnet.Address, aSubnet.AdapterName);
         }
     }

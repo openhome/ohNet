@@ -137,19 +137,82 @@ namespace OpenHome.Soundcard
         string iName;
     }
 
+    public interface ISubnetHandler
+    {
+        void SubnetAdded(ISubnet aSubnet);
+        void SubnetChanged(ISubnet aSubnet);
+        void SubnetRemoved(ISubnet aSubnet);
+    }
+
+    public interface ISubnet
+    {
+        uint Address { get; }
+        string AdapterName { get; }
+    }
+
+    internal class Subnet : ISubnet, IDisposable
+    {
+        [DllImport("ohSoundcard.dll")]
+        static extern IntPtr SubnetAddress(IntPtr aHandle);
+        [DllImport("ohSoundcard.dll")]
+        static extern IntPtr SubnetAdapterName(IntPtr aHandle);
+        [DllImport("ohSoundcard.dll")]
+        static extern void SubnetAddRef(IntPtr aHandle);
+        [DllImport("ohSoundcard.dll")]
+        static extern void SubnetRemoveRef(IntPtr aHandle);
+
+        public Subnet(IntPtr aSubnet)
+        {
+            iSubnet = aSubnet;
+            iAddress = (uint)SubnetAddress(iSubnet);
+            iAdapterName = Marshal.PtrToStringAnsi(SubnetAdapterName(iSubnet));
+        }
+
+        internal bool Owns(IntPtr aSubnet)
+        {
+            return (iSubnet == aSubnet);
+        }
+
+        public uint Address
+        {
+            get
+            {
+                return (iAddress);
+            }
+        }
+
+        public string AdapterName
+        {
+            get
+            {
+                return (iAdapterName);
+            }
+        }
+
+        public void Dispose()
+        {
+            SubnetRemoveRef(iSubnet);
+        }
+
+        IntPtr iSubnet;
+        uint iAddress;
+        string iAdapterName;
+    }
+
     public class Soundcard : IDisposable
     {
-        private enum EReceiverCallbackType
+        private enum ECallbackType
         {
             eAdded,
             eChanged,
             eRemoved
         }
 
-        private delegate void DelegateReceiverCallback(IntPtr aPtr, EReceiverCallbackType aType, IntPtr aReceiver);
+        private delegate void DelegateReceiverCallback(IntPtr aPtr, ECallbackType aType, IntPtr aReceiver);
+        private delegate void DelegateSubnetCallback(IntPtr aPtr, ECallbackType aType, IntPtr aSubnet);
 
         [DllImport("ohSoundcard.dll")]
-        static extern unsafe IntPtr SoundcardCreate(uint aSubnet, uint aChannel, uint aTtl, bool aMulticast, bool aEnabled, uint aPreset, DelegateReceiverCallback aCallback, IntPtr aPtr);
+        static extern unsafe IntPtr SoundcardCreate(uint aSubnet, uint aChannel, uint aTtl, bool aMulticast, bool aEnabled, uint aPreset, DelegateReceiverCallback aReceiverCallback, IntPtr aReceiverPtr, DelegateSubnetCallback aSubnetCallback, IntPtr aSubnetPtr);
         [DllImport("ohSoundcard.dll")]
         static extern void SoundcardSetSubnet(IntPtr aHandle, uint aValue);
         [DllImport("ohSoundcard.dll")]
@@ -167,29 +230,32 @@ namespace OpenHome.Soundcard
         [DllImport("ohSoundcard.dll")]
         static extern unsafe void SoundcardSetMetatext(IntPtr aHandle, char* aValue);
         [DllImport("ohSoundcard.dll")]
+        static extern void SoundcardRefreshReceivers(IntPtr aHandle);
+        [DllImport("ohSoundcard.dll")]
         static extern void SoundcardDestroy(IntPtr aHandle);
 
-        public unsafe Soundcard(IPAddress aSubnet, uint aChannel, uint aTtl, bool aMulticast, bool aEnabled, uint aPreset, IReceiverHandler aHandler)
+        public unsafe Soundcard(uint aSubnet, uint aChannel, uint aTtl, bool aMulticast, bool aEnabled, uint aPreset, IReceiverHandler aReceiverHandler, ISubnetHandler aSubnetHandler)
         {
-            iHandler = aHandler;
+            iReceiverHandler = aReceiverHandler;
+            iSubnetHandler = aSubnetHandler;
+            iReceiverCallback = new DelegateReceiverCallback(ReceiverCallback);
+            iSubnetCallback = new DelegateSubnetCallback(SubnetCallback);
             iReceiverList = new List<Receiver>();
-            iCallback = new DelegateReceiverCallback(ReceiverCallback);
-            byte[] subnetBytes = aSubnet.GetAddressBytes();
-            uint subnetAddress = BitConverter.ToUInt32(subnetBytes, 0);
-            iHandle = SoundcardCreate(subnetAddress, aChannel, aTtl, aMulticast, aEnabled, aPreset, iCallback, IntPtr.Zero);
+            iSubnetList = new List<Subnet>();
+            iHandle = SoundcardCreate(aSubnet, aChannel, aTtl, aMulticast, aEnabled, aPreset, iReceiverCallback, IntPtr.Zero, iSubnetCallback, IntPtr.Zero);
         }
 
-        private void ReceiverCallback(IntPtr aPtr, EReceiverCallbackType aType, IntPtr aReceiver)
+        private void ReceiverCallback(IntPtr aPtr, ECallbackType aType, IntPtr aReceiver)
         {
             switch (aType)
             {
-                case EReceiverCallbackType.eAdded:
+                case ECallbackType.eAdded:
                     ReceiverAdded(aReceiver);
                     break;
-                case EReceiverCallbackType.eChanged:
+                case ECallbackType.eChanged:
                     ReceiverChanged(aReceiver);
                     break;
-                case EReceiverCallbackType.eRemoved:
+                case ECallbackType.eRemoved:
                     ReceiverRemoved(aReceiver);
                     break;
             }
@@ -199,7 +265,7 @@ namespace OpenHome.Soundcard
         {
             Receiver receiver = new Receiver(aReceiver);
             iReceiverList.Add(receiver);
-            iHandler.ReceiverAdded(receiver);
+            iReceiverHandler.ReceiverAdded(receiver);
         }
 
         private void ReceiverChanged(IntPtr aReceiver)
@@ -208,7 +274,7 @@ namespace OpenHome.Soundcard
             {
                 if (receiver.Owns(aReceiver))
                 {
-                    iHandler.ReceiverChanged(receiver);
+                    iReceiverHandler.ReceiverChanged(receiver);
                     return;
                 }
             }
@@ -220,7 +286,7 @@ namespace OpenHome.Soundcard
             {
                 if (receiver.Owns(aReceiver))
                 {
-                    iHandler.ReceiverRemoved(receiver);
+                    iReceiverHandler.ReceiverRemoved(receiver);
                     receiver.Dispose();
                     iReceiverList.Remove(receiver);
                     return;
@@ -228,11 +294,58 @@ namespace OpenHome.Soundcard
             }
         }
 
-        public void SetSubnet(IPAddress aValue)
+        private void SubnetCallback(IntPtr aPtr, ECallbackType aType, IntPtr aSubnet)
         {
-            byte[] subnetBytes = aValue.GetAddressBytes();
-            uint subnetAddress = BitConverter.ToUInt32(subnetBytes, 0);
-            SoundcardSetSubnet(iHandle, subnetAddress);
+            switch (aType)
+            {
+                case ECallbackType.eAdded:
+                    SubnetAdded(aSubnet);
+                    break;
+                case ECallbackType.eChanged:
+                    SubnetChanged(aSubnet);
+                    break;
+                case ECallbackType.eRemoved:
+                    SubnetRemoved(aSubnet);
+                    break;
+            }
+        }
+
+        private void SubnetAdded(IntPtr aSubnet)
+        {
+            Subnet subnet = new Subnet(aSubnet);
+            iSubnetList.Add(subnet);
+            iSubnetHandler.SubnetAdded(subnet);
+        }
+
+        private void SubnetChanged(IntPtr aSubnet)
+        {
+            foreach (Subnet subnet in iSubnetList)
+            {
+                if (subnet.Owns(aSubnet))
+                {
+                    iSubnetHandler.SubnetChanged(subnet);
+                    return;
+                }
+            }
+        }
+
+        private void SubnetRemoved(IntPtr aSubnet)
+        {
+            foreach (Subnet subnet in iSubnetList)
+            {
+                if (subnet.Owns(aSubnet))
+                {
+                    iSubnetHandler.SubnetRemoved(subnet);
+                    subnet.Dispose();
+                    iSubnetList.Remove(subnet);
+                    return;
+                }
+            }
+        }
+
+        public void SetSubnet(uint aValue)
+        {
+            SoundcardSetSubnet(iHandle, aValue);
         }
 
         public void SetChannel(uint aValue)
@@ -276,14 +389,22 @@ namespace OpenHome.Soundcard
             Marshal.FreeHGlobal(value);
         }
 
+        public void RefreshReceivers()
+        {
+            SoundcardRefreshReceivers(iHandle);
+        }
+
         public void Dispose()
         {
             SoundcardDestroy(iHandle);
         }
 
-        private IReceiverHandler iHandler;
+        private IReceiverHandler iReceiverHandler;
+        private ISubnetHandler iSubnetHandler;
         private IntPtr iHandle;
         private List<Receiver> iReceiverList;
-        private DelegateReceiverCallback iCallback;
+        private List<Subnet> iSubnetList;
+        private DelegateReceiverCallback iReceiverCallback;
+        private DelegateSubnetCallback iSubnetCallback;
     }
 } // namespace OpenHome.Soundcard

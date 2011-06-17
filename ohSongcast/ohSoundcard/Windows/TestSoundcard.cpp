@@ -25,7 +25,7 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 
-void logger(void* /* aPtr */, EReceiverCallbackType aType, THandle aReceiver)
+void loggerReceiver(void* /* aPtr */, ECallbackType aType, THandle aReceiver)
 {
 	const char* room = ReceiverRoom(aReceiver);
 	const char* group = ReceiverGroup(aReceiver);
@@ -41,6 +41,24 @@ void logger(void* /* aPtr */, EReceiverCallbackType aType, THandle aReceiver)
 		break;
 	case eRemoved:
 		printf("Removed %s %s %s %d\n", room, group, name, status);
+		break;
+	}
+}
+
+void loggerSubnet(void* /* aPtr */, ECallbackType aType, THandle aSubnet)
+{
+	TIpAddress address = SubnetAddress(aSubnet);
+	const char* name = SubnetAdapterName(aSubnet);
+
+	switch (aType) {
+	case eAdded:
+		printf("Added   %x %s \n", address, name);
+		break;
+	case eChanged:
+		printf("Changed %x %s \n", address, name);
+		break;
+	case eRemoved:
+		printf("Removed %x %s \n", address, name);
 		break;
 	}
 }
@@ -65,14 +83,14 @@ int __cdecl main(int /* aArgc */, char* /* aArgv[] */)
     printf("Using network interface %d.%d.%d.%d\n", iface&0xff, (iface>>8)&0xff, (iface>>16)&0xff, (iface>>24)&0xff);
 	*/
 
-	TIpAddress subnet = 0;
+	TIpAddress subnet = 522;
     TUint channel = 0;
     TUint ttl = 4;
     TBool multicast = false;
     TBool disabled = false;
     TUint preset = 99;
 
-	THandle soundcard = SoundcardCreate(subnet, channel, ttl, multicast, !disabled, preset, logger, 0);
+	THandle soundcard = SoundcardCreate(subnet, channel, ttl, multicast, !disabled, preset, loggerReceiver, 0, loggerSubnet, 0);
 
 	if (soundcard == 0) {
 		printf("Soundcard error\n");

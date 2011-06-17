@@ -42,7 +42,7 @@ namespace OpenHome.Soundcard
 
         public void Standby()
         {
-            iReceiver.Standby();
+            iReceiver.Stop();
         }
 
         public string Udn
@@ -113,15 +113,15 @@ namespace OpenHome.Soundcard
 
     public class ReceiverList : IReceiverHandler, IEnumerable, INotifyCollectionChanged
     {
-        public ReceiverList(Window aWindow)
+        public ReceiverList(Dispatcher aDispatcher)
         {
-            iWindow = aWindow;
+            iDispatcher = aDispatcher;
             iList = new List<Receiver>();
         }
 
         public void ReceiverAdded(IReceiver aReceiver)
         {
-            iWindow.Dispatcher.BeginInvoke(new DelegateReceiverList(Added), new object[] { aReceiver });
+            iDispatcher.BeginInvoke(new DelegateReceiverList(Added), new object[] { aReceiver });
         }
 
         internal void Added(IReceiver aReceiver)
@@ -137,7 +137,7 @@ namespace OpenHome.Soundcard
 
         public void ReceiverChanged(IReceiver aReceiver)
         {
-            iWindow.Dispatcher.Invoke(new DelegateReceiverList(Changed), new object[] { aReceiver });
+            iDispatcher.Invoke(new DelegateReceiverList(Changed), new object[] { aReceiver });
         }
 
         internal void Changed(IReceiver aReceiver)
@@ -154,7 +154,7 @@ namespace OpenHome.Soundcard
 
         public void ReceiverRemoved(IReceiver aReceiver)
         {
-            iWindow.Dispatcher.Invoke(new DelegateReceiverList(Removed), new object[] { aReceiver });
+            iDispatcher.Invoke(new DelegateReceiverList(Removed), new object[] { aReceiver });
         }
 
         internal void Removed(IReceiver aReceiver)
@@ -187,7 +187,6 @@ namespace OpenHome.Soundcard
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        Window iWindow;
         Dispatcher iDispatcher;
         List<Receiver> iList;
     }
