@@ -76,36 +76,36 @@ copy_build_includes:
 	mkdir -p $(inc_build)/Cpp
 	mkdir -p $(inc_build)/Cpp/Core
 	mkdir -p $(inc_build)/Cpp/Std
-	rsync Api/*.h $(inc_build)
-	rsync Api/C/*.h $(inc_build)/C
-	rsync Api/Cpp/*.h $(inc_build)/Cpp
-	rsync Api/Cpp/*.inl $(inc_build)/Cpp
-	rsync Api/Cpp/Core/*.h $(inc_build)/Cpp/Core
-	rsync Api/Cpp/Std/*.h $(inc_build)/Cpp/Std
-	rsync *.h $(inc_build)
-	rsync Bonjour/*.h $(inc_build)
-	rsync Bonjour/mDNSCore/*.h $(inc_build)
-	rsync ControlPoint/*.h $(inc_build)
-	rsync ControlPoint/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
-	rsync ControlPoint/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
-	rsync ControlPoint/Services/C/*.h $(inc_build)/C
-	rsync ControlPoint/Dv/*.h $(inc_build)
-	rsync ControlPoint/Upnp/*.h $(inc_build)
-	rsync Device/*.h $(inc_build)
-	rsync Device/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
-	rsync Device/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
-	rsync Device/Services/C/*.h $(inc_build)/C
-	rsync Device/Upnp/*.h $(inc_build)
-	rsync Network/*.h $(inc_build)
-	rsync Service/*.h $(inc_build)
-	rsync Ssdp/*.h $(inc_build)
-	rsync Os/*.h $(inc_build)
-	rsync Os/*.inl $(inc_build)
-	rsync Public/C/*.h $(inc_build)/C
-	rsync Public/Cpp/Std/*.h $(inc_build)/Cpp/Std
-	rsync Thread/Thread.h $(inc_build)
-	rsync Utils/*.h $(inc_build)
-	rsync TestFramework/*.h $(inc_build)
+	rsync -u Api/*.h $(inc_build)
+	rsync -u Api/C/*.h $(inc_build)/C
+	rsync -u Api/Cpp/*.h $(inc_build)/Cpp
+	rsync -u Api/Cpp/*.inl $(inc_build)/Cpp
+	rsync -u Api/Cpp/Core/*.h $(inc_build)/Cpp/Core
+	rsync -u Api/Cpp/Std/*.h $(inc_build)/Cpp/Std
+	rsync -u *.h $(inc_build)
+	rsync -u Bonjour/*.h $(inc_build)
+	rsync -u Bonjour/mDNSCore/*.h $(inc_build)
+	rsync -u ControlPoint/*.h $(inc_build)
+	rsync -u ControlPoint/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
+	rsync -u ControlPoint/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
+	rsync -u ControlPoint/Services/C/*.h $(inc_build)/C
+	rsync -u ControlPoint/Dv/*.h $(inc_build)
+	rsync -u ControlPoint/Upnp/*.h $(inc_build)
+	rsync -u Device/*.h $(inc_build)
+	rsync -u Device/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
+	rsync -u Device/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
+	rsync -u Device/Services/C/*.h $(inc_build)/C
+	rsync -u Device/Upnp/*.h $(inc_build)
+	rsync -u Network/*.h $(inc_build)
+	rsync -u Service/*.h $(inc_build)
+	rsync -u Ssdp/*.h $(inc_build)
+	rsync -u Os/*.h $(inc_build)
+	rsync -u Os/*.inl $(inc_build)
+	rsync -u Public/C/*.h $(inc_build)/C
+	rsync -u Public/Cpp/Std/*.h $(inc_build)/Cpp/Std
+	rsync -u Thread/Thread.h $(inc_build)
+	rsync -u Utils/*.h $(inc_build)
+	rsync -u TestFramework/*.h $(inc_build)
 
 install : install-pkgconf install-libs install-includes
 
@@ -117,11 +117,11 @@ install-pkgconf : tt
 
 install-libs :
 	mkdir -p $(installlibdir)
-	rsync $(installlibdir) $(objdir)*
+	rsync -u $(installlibdir) $(objdir)*
 
 install-includes :
 	mkdir -p $(installincludedir)
-	rsync -r $(installincludedir) $(inc_build)/*
+	rsync -ur $(installincludedir) $(inc_build)/*
 
 uninstall-pkgconf :
 	@echo "ERROR: no support for (un)install-pckconf yet"
