@@ -516,7 +516,7 @@ int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
             sent += bytes;
         }
     } while(bytes != -1 && sent < aBytes);    
-    
+    if (bytes == -1) fprintf(stderr, "OsNetworkSend error %d\n", errno);
     return sent;
 }
 
@@ -536,6 +536,7 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
             sent += bytes;
         }
     } while(bytes != -1 && sent < aBytes);    
+    if (bytes == -1) fprintf(stderr, "---OsNetworkSendTo error %d after sending %u bytes of %u\n", errno, sent, aBytes);
     return sent;
 }
 
@@ -797,6 +798,9 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
     struct ifaddrs* networkIf;
     struct ifaddrs* iter;
     int32_t includeLoopback = 1;
+#ifdef PLATFORM_MACOSX_GNU
+    aUseLoopback = 0;
+#endif
     *aInterfaces = NULL;
     if (TEMP_FAILURE_RETRY(getifaddrs(&networkIf)) == -1) {
         return -1;
