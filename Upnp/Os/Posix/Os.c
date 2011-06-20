@@ -516,7 +516,6 @@ int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
             sent += bytes;
         }
     } while(bytes != -1 && sent < aBytes);    
-    if (bytes == -1) fprintf(stderr, "OsNetworkSend error %d\n", errno);
     return sent;
 }
 
@@ -536,7 +535,6 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
             sent += bytes;
         }
     } while(bytes != -1 && sent < aBytes);    
-    if (bytes == -1) fprintf(stderr, "---OsNetworkSendTo error %d after sending %u bytes of %u\n", errno, sent, aBytes);
     return sent;
 }
 
