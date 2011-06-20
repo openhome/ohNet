@@ -5,16 +5,18 @@ ifeq ($(release),1)
 debug_specific_cflags = -O2
 build_dir = Release
 else
-debug_specific_cflags = -g -O0
+debug_specific_cflags = -g -O0 
 build_dir = Debug
 endif
 
 # Macros used by Common.mak
 MACHINE = $(shell uname -s)
 ifeq ($(MACHINE), Darwin)
-platform_cflags = -DPLATFORM_MACOSX_GNU
+platform_cflags = -DPLATFORM_MACOSX_GNU -arch i386 -mmacosx-version-min=10.4
+platform_linkflags = -arch i386
 else
 platform_cflags = -Wno-psabi
+platform_linkflags =
 endif
 ar = ${CROSS_COMPILE}ar rc $(objdir)
 cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))" $(platform_cflags)
@@ -28,7 +30,7 @@ libprefix = lib
 libext = a
 exeext = elf
 compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
-link = ${CROSS_COMPILE}g++ -lpthread
+link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
 linkoutput = -o 
 dllprefix = lib
 dllext = so
