@@ -115,7 +115,7 @@ TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const
 		        return (true);
 		    }
 		    if (property == Brn("PresentationUrl")) {
-		        device->GetFriendlyName(aValue);
+		        device->GetPresentationUrl(aValue);
 		        return (true);
 		    }
 		    
