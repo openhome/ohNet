@@ -9,18 +9,20 @@ debug_specific_cflags = -g -O0
 build_dir = Debug
 endif
 
-# Macros used by Common.mak
 MACHINE = $(shell uname -s)
 ifeq ($(MACHINE), Darwin)
 platform_cflags = -DPLATFORM_MACOSX_GNU -arch i386 -mmacosx-version-min=10.4
 platform_linkflags = -arch i386
+objdir = Build/Obj/Mac/$(build_dir)/
 else
 platform_cflags = -Wno-psabi
 platform_linkflags =
+objdir = Build/Obj/Posix/$(build_dir)/
 endif
+
+# Macros used by Common.mak
 ar = ${CROSS_COMPILE}ar rc $(objdir)
 cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))" $(platform_cflags)
-objdir = Build/Obj/Posix/$(build_dir)/
 inc_build = Build/Include
 includes = -IBuild/Include/ -IBuild/Include/Cpp/
 bundle_build = Build/Bundles
