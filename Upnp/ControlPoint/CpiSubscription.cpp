@@ -157,6 +157,9 @@ void CpiSubscription::Schedule(EOperation aOperation)
 {
     Stack::Mutex().Wait();
     iRefCount++;
+    if (iPendingOperation == eSubscribe) {
+        iSubscribeCompleted.Signal();
+    }
     iPendingOperation = aOperation;
     Stack::Mutex().Signal();
     CpiSubscriptionManager::Schedule(*this);
