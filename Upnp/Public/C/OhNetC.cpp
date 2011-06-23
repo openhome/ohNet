@@ -95,12 +95,6 @@ void OhNetInitParamsSetAsyncErrorHandler(OhNetHandleInitParams aParams, OhNetCal
     ip->SetAsyncErrorHandler(functor);
 }
 
-void OhNetInitParamsSetDefaultSubnet(OhNetHandleInitParams aParams, TIpAddress aSubnet)
-{
-    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-    ip->SetDefaultSubnet(aSubnet);
-}
-
 void OhNetInitParamsSetSubnetChangedListener(OhNetHandleInitParams aParams, OhNetCallback aCallback, void* aPtr)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);

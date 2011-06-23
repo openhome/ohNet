@@ -154,11 +154,6 @@ void InitialisationParams::SetAsyncErrorHandler(FunctorAsync aHandler)
     iAsyncErrorHandler = aHandler;
 }
 
-void InitialisationParams::SetDefaultSubnet(TIpAddress aSubnet)
-{
-    iDefaultSubnet = aSubnet;
-}
-
 void InitialisationParams::SetSubnetChangedListener(Functor aFunctor)
 {
     iSubnetChangedListener = aFunctor;
@@ -286,11 +281,6 @@ FunctorAsync& InitialisationParams::AsyncErrorHandler()
     return iAsyncErrorHandler;
 }
 
-TIpAddress InitialisationParams::DefaultSubnet() const
-{
-    return iDefaultSubnet;
-}
-
 Functor& InitialisationParams::SubnetChangedListener()
 {
     return iSubnetChangedListener;
@@ -382,8 +372,7 @@ bool InitialisationParams::DvIsBonjourEnabled() const
 }
 
 InitialisationParams::InitialisationParams()
-    : iDefaultSubnet(0)
-    , iTcpConnectTimeoutMs(500)
+    : iTcpConnectTimeoutMs(500)
     , iMsearchTimeSecs(3)
     , iMsearchTtl(2)
     , iNumEventSessionThreads(4)

@@ -174,16 +174,6 @@ DllExport void OhNetInitParamsSetAsyncEndHandler(OhNetHandleInitParams aParams, 
 DllExport void OhNetInitParamsSetAsyncErrorHandler(OhNetHandleInitParams aParams, OhNetCallbackAsync aCallback, void* aPtr);
 
 /**
- * Set which subnet to use on startup
- * The OS layer will select the most appropriate subnet if this is not called.
- * Note that this can only be called before OhNetLibraryInitialise
- *
- * @param[in] aParams          Initialisation params
- * @param[in] aSubnet          The subnet to use on startup
- */
-DllExport void OhNetInitParamsSetDefaultSubnet(OhNetHandleInitParams aParams, TIpAddress aSubnet);
-
-/**
  * Set a listener for changes in the subnet being used
  *
  * This will run if the active subnet becomes unavailable or a seemingly more
@@ -578,7 +568,6 @@ DllExport void OhNetSubnetListDestroy(OhNetHandleNetworkInterfaceList aList);
 /**
  * Set which subnet the library should use.
  *
- * This override any value set via OhNetInitParamsSetDefaultSubnet().
  * Device lists and subscriptions will be automatically updated.
  * No other subnet will be selected if aSubnet is not available
  *

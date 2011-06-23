@@ -25,7 +25,6 @@ namespace OpenHome.Net.Core
         public OhNetCallbackAsync AsyncBeginHandler { private get; set; }
         public OhNetCallbackAsync AsyncEndHandler { private get; set; }
         public OhNetCallbackAsync AsyncErrorHandler { private get; set; }
-        public uint DefaultSubnet { get; set; }
         public OhNetCallback SubnetChangedListener { private get; set; }
 
         /// <summary>
@@ -157,8 +156,6 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetAsyncErrorHandler(IntPtr aParams, OhNetCallbackAsync aCallback, IntPtr aPtr);
         [DllImport("ohNet")]
-        static extern void OhNetInitParamsSetDefaultSubnet(IntPtr aParams, uint aSubnet);
-        [DllImport("ohNet")]
         static extern void OhNetInitParamsSetSubnetChangedListener(IntPtr aParams, OhNetCallback aCallback, IntPtr aPtr);
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetTcpConnectTimeout(IntPtr aParams, uint aTimeoutMs);
@@ -245,7 +242,6 @@ namespace OpenHome.Net.Core
             AsyncBeginHandler = DefaultCallbackAsync;
             AsyncEndHandler = DefaultCallbackAsync;
             AsyncErrorHandler = DefaultCallbackAsync;
-            DefaultSubnet = 0; // FIXME: No getter?
             SubnetChangedListener = DefaultCallback;
             TcpConnectTimeoutMs = OhNetInitParamsTcpConnectTimeoutMs(defaultParams); 
             MsearchTimeSecs = OhNetInitParamsMsearchTimeSecs(defaultParams); 
@@ -290,7 +286,6 @@ namespace OpenHome.Net.Core
             {
                 OhNetInitParamsSetAsyncErrorHandler(nativeParams, AsyncErrorHandler, aCallbackPtr);
             }
-            OhNetInitParamsSetDefaultSubnet(nativeParams, DefaultSubnet);
             if (SubnetChangedListener != DefaultCallback)
             {
                 OhNetInitParamsSetSubnetChangedListener(nativeParams, SubnetChangedListener, aCallbackPtr);
@@ -423,8 +418,6 @@ namespace OpenHome.Net.Core
         static extern void OhNetSubnetListDestroy(IntPtr aList);
         [DllImport("ohNet")]
         static extern void OhNetSetCurrentSubnet(uint aSubnet);
-        [DllImport("ohNet")]
-        static extern void OhNetSetDefaultSubnet();
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetFreeExternalCallback(IntPtr aParams, CallbackFreeMemory aCallback);
 
@@ -608,25 +601,13 @@ namespace OpenHome.Net.Core
         /// <summary>
         /// Set which subnet the library should use
         /// </summary>
-        /// <remarks>Override any value set via InitialisationParams::SetDefaultSubnet.
-        /// 
-        /// Device lists and subscriptions will be automatically updated.
+        /// <remarks>Device lists and subscriptions will be automatically updated.
         /// 
         /// No other subnet will be selected if aSubnet is not available</remarks>
         /// <param name="aSubnet">Handle returned by SubnetAt()</param>
         public void SetCurrentSubnet(uint aSubnet)
         {
             OhNetSetCurrentSubnet(aSubnet);
-        }
-
-        /// <summary>
-        /// Clear any subnet previously specified using SetCurrentSubnet() or InitialisationParams::SetDefaultSubnet().
-        /// OS-specified defaults will be used instead
-        /// </summary>
-        /// <remarks>Device lists and subscriptions will be automatically updated if necessary</remarks>
-        public void SetDefaultSubnet()
-        {
-            OhNetSetDefaultSubnet();
         }
 
         private void FreeMemory(IntPtr aPtr)

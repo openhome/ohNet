@@ -127,7 +127,6 @@ public:
     void SetAsyncBeginHandler(FunctorAsync aHandler);
     void SetAsyncEndHandler(FunctorAsync aHandler);
     void SetAsyncErrorHandler(FunctorAsync aHandler);
-    void SetDefaultSubnet(TIpAddress aSubnet);
     void SetSubnetChangedListener(Functor aFunctor);
     /**
      * Set a timeout for TCP connections.  Must be greater that zero
@@ -241,7 +240,6 @@ public:
     FunctorAsync& AsyncBeginHandler();
     FunctorAsync& AsyncEndHandler();
     FunctorAsync& AsyncErrorHandler();
-    TIpAddress DefaultSubnet() const;
     Functor& SubnetChangedListener();
     uint32_t TcpConnectTimeoutMs() const;
     uint32_t MsearchTimeSecs() const;
@@ -271,7 +269,6 @@ private:
     FunctorAsync iAsyncEndHandler;
     FunctorAsync iAsyncErrorHandler;
     DefaultAsyncHandler* iDefaultAsyncHandler;
-    TIpAddress iDefaultSubnet;
     Functor iSubnetChangedListener;
     uint32_t iTcpConnectTimeoutMs;
     uint32_t iMsearchTimeSecs;
@@ -369,7 +366,6 @@ public:
 
     /**
      * Set which subnet the library should use.
-     * Override any value set via InitialisationParams::SetDefaultSubnet.
      * Device lists and subscriptions will be automatically updated.
      * No other subnet will be selected if aSubnet is not available
      *
