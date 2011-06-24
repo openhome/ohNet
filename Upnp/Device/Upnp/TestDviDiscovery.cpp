@@ -218,7 +218,7 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentInterface();
     TUint max = nif->Address();
     nif->RemoveRef();
     (void)Ascii::AppendDec(buf, Random(max));
@@ -243,7 +243,7 @@ void SuiteAlive::Test()
 {
     Blocker* blocker = new Blocker;
     CpListenerBasic* listener = new CpListenerBasic;
-    NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentInterface();
     SsdpListenerMulticast* listenerMulticast = new SsdpListenerMulticast(nif->Address());
     nif->RemoveRef();
     TInt listenerId = listenerMulticast->AddNotifyHandler(listener);
@@ -344,7 +344,7 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
 {
     Uri uri(aLocation);
     Endpoint endpt(0, uri.Host());
-    NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentInterface();
     TBool correctSubnet = nif->ContainsAddress(endpt.Address());
     nif->RemoveRef();
     if (!correctSubnet) {
@@ -467,7 +467,7 @@ SuiteMsearch::SuiteMsearch()
     RandomiseUdn(gNameDevice2Embedded1);
     iBlocker = new Blocker;
     iListener = new CpListenerMsearch;
-    NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentInterface();
     iListenerUnicast = new SsdpListenerUnicast(*iListener, nif->Address());
     nif->RemoveRef();
     iListenerUnicast->Start();
@@ -709,12 +709,12 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         return;
     }
     if (loopback.Value()) {
-        aInitParams->SetUseLoopbackNetworkInterface();
+        aInitParams->SetUseLoopbackNetworkAdapter();
     }
     aInitParams->SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
-    //aInitParams->SetUseLoopbackNetworkInterface();
+    //aInitParams->SetUseLoopbackNetworkAdapter();
     UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
     UpnpLibrary::DestroySubnetList(subnetList);
     UpnpLibrary::SetCurrentSubnet(subnet);

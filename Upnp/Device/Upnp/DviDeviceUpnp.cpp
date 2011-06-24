@@ -4,7 +4,7 @@
 #include <Buffer.h>
 #include <Stack.h>
 #include <DviStack.h>
-#include <NetworkInterfaceList.h>
+#include <NetworkAdapterList.h>
 #include <Discovery.h>
 #include <OsWrapper.h>
 #include <Maths.h>
@@ -34,15 +34,15 @@ DviDeviceUpnp::DviDeviceUpnp(DviDevice& aDevice)
 {
     iLock.Wait();
     iServer = &DviStack::ServerUpnp();
-    NetworkInterfaceList& nifList = Stack::NetworkInterfaceList();
+    NetworkAdapterList& nifList = Stack::NetworkAdapterList();
     Functor functor = MakeFunctor(*this, &DviDeviceUpnp::SubnetListChanged);
     iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
-    std::vector<NetworkInterface*>* subnetList = nifList.CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
     for (TUint i=0; i<subnetList->size(); i++) {
-        NetworkInterface* subnet = (*subnetList)[i];
+        NetworkAdapter* subnet = (*subnetList)[i];
         AddInterface(*subnet);
     }
-    NetworkInterfaceList::DestroySubnetList(subnetList);
+    NetworkAdapterList::DestroySubnetList(subnetList);
     iAliveTimer = new Timer(MakeFunctor(*this, &DviDeviceUpnp::SendAliveNotifications));
     iLock.Signal();
 }
@@ -51,7 +51,7 @@ DviDeviceUpnp::~DviDeviceUpnp()
 {
     delete iAliveTimer;
     iLock.Wait();
-    Stack::NetworkInterfaceList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
+    Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     for (TUint i=0; i<iInterfaces.size(); i++) {
         delete iInterfaces[i];
     }
@@ -120,7 +120,7 @@ void DviDeviceUpnp::MsgSchedulerComplete(DeviceMsgScheduler* aScheduler)
     }
 }
 
-void DviDeviceUpnp::AddInterface(const NetworkInterface& aNif)
+void DviDeviceUpnp::AddInterface(const NetworkAdapter& aNif)
 {
     TIpAddress addr = aNif.Address();
     Bwh uriBase;
@@ -141,9 +141,9 @@ void DviDeviceUpnp::SubnetListChanged()
     TBool update = false;
 	std::vector<Nif*> pendingDelete;
     iLock.Wait();
-    NetworkInterfaceList& interfaceList = Stack::NetworkInterfaceList();
-    std::vector<NetworkInterface*>* subnetList = interfaceList.CreateSubnetList();
-    const std::vector<NetworkInterface*>& nifList = interfaceList.List();
+    NetworkAdapterList& interfaceList = Stack::NetworkAdapterList();
+    std::vector<NetworkAdapter*>* subnetList = interfaceList.CreateSubnetList();
+    const std::vector<NetworkAdapter*>& nifList = interfaceList.List();
     TUint i = 0;
     iMsgSchedulers.clear();
     // remove listeners whose interface is no longer available
@@ -167,7 +167,7 @@ void DviDeviceUpnp::SubnetListChanged()
     }
     // add listeners for new subnets
     for (i=0; i<subnetList->size(); i++) {
-        NetworkInterface* subnet = (*subnetList)[i];
+        NetworkAdapter* subnet = (*subnetList)[i];
         if (FindListenerForSubnet(subnet->Subnet()) == -1) {
             AddInterface(*subnet);
             update = true;
@@ -184,7 +184,7 @@ void DviDeviceUpnp::SubnetListChanged()
 	}
 
     iLock.Signal();
-    NetworkInterfaceList::DestroySubnetList(subnetList);
+    NetworkAdapterList::DestroySubnetList(subnetList);
 	for (i=0; i<pendingDelete.size(); i++) {
 		delete pendingDelete[i];
 	}
@@ -194,7 +194,7 @@ void DviDeviceUpnp::SubnetListChanged()
     }
 }
 
-TInt DviDeviceUpnp::FindInterface(TIpAddress aInterface, const std::vector<NetworkInterface*>& aNifList)
+TInt DviDeviceUpnp::FindInterface(TIpAddress aInterface, const std::vector<NetworkAdapter*>& aNifList)
 {
     for (TUint i=0; i<aNifList.size(); i++) {
         if (aNifList[i]->Address() == aInterface) {
@@ -743,7 +743,7 @@ void DviDeviceUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, 
 
 // DviDeviceUpnp::Nif
 
-DviDeviceUpnp::Nif::Nif(DviDeviceUpnp& aDeviceUpnp, DviDevice& aDevice, const NetworkInterface& aNif, Bwh& aUriBase, TUint aServerPort)
+DviDeviceUpnp::Nif::Nif(DviDeviceUpnp& aDeviceUpnp, DviDevice& aDevice, const NetworkAdapter& aNif, Bwh& aUriBase, TUint aServerPort)
     : iDeviceUpnp(&aDeviceUpnp)
     , iDevice(aDevice)
     , iServerPort(aServerPort)

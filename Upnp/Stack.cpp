@@ -3,7 +3,7 @@
 #include <Standard.h>
 #include <OsWrapper.h>
 #include <Discovery.h>
-#include <NetworkInterfaceList.h>
+#include <NetworkAdapterList.h>
 #include <Printer.h>
 #include <Maths.h>
 #include <MimeTypes.h>
@@ -37,7 +37,7 @@ Stack::Stack()
     : iInitParams(NULL)
     , iTimerManager(NULL)
     , iPublicLock("GMUT")
-    , iNetworkInterfaceList(NULL)
+    , iNetworkAdapterList(NULL)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
@@ -51,7 +51,7 @@ Stack::Stack()
 Stack::Stack(InitialisationParams* aInitParams)
     : iInitParams(aInitParams)
     , iPublicLock("GMUT")
-    , iNetworkInterfaceList(NULL)
+    , iNetworkAdapterList(NULL)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
@@ -63,10 +63,10 @@ Stack::Stack(InitialisationParams* aInitParams)
     gStackInitCount++;
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
     iTimerManager = new OpenHome::TimerManager();
-    iNetworkInterfaceList = new OpenHome::NetworkInterfaceList(0);
+    iNetworkAdapterList = new OpenHome::NetworkAdapterList(0);
     Functor& subnetListChangeListener = iInitParams->SubnetListChangedListener();
     if (subnetListChangeListener) {
-        iNetworkInterfaceList->AddSubnetListChangeListener(subnetListChangeListener);
+        iNetworkAdapterList->AddSubnetListChangeListener(subnetListChangeListener);
     }
 }
 
@@ -87,7 +87,7 @@ Stack::~Stack()
     }
     delete iCpStack;
     delete iDvStack;
-    delete iNetworkInterfaceList;
+    delete iNetworkAdapterList;
     if (iObjectMap.size() != 0) {
         Log::Print("ERROR: destroying stack before some owned objects\n");
         Log::Print("...leaked objects are\n");
@@ -119,9 +119,9 @@ OpenHome::Mutex& Stack::Mutex()
     return gStack->iPublicLock;
 }
 
-NetworkInterfaceList& Stack::NetworkInterfaceList()
+NetworkAdapterList& Stack::NetworkAdapterList()
 {
-    return *(gStack->iNetworkInterfaceList);
+    return *(gStack->iNetworkAdapterList);
 }
 
 SsdpListenerMulticast& Stack::MulticastListenerClaim(TIpAddress aInterface)

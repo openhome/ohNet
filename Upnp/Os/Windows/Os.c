@@ -713,7 +713,7 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
     return err;
 }
 
-int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseLoopback)
+int32_t OsNetworkListAdapters(OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback)
 {
 #define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
         (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
@@ -721,7 +721,7 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
     MIB_IFTABLE* ifTable          = NULL;
     MIB_IPADDRTABLE* addrTable    = NULL;
     ULONG bytes                   = 0;
-    OsNetworkInterface* head      = NULL;
+    OsNetworkAdapter* head      = NULL;
     int32_t index                 = 0;
     const TIpAddress loopbackAddr = MakeIpAddress(127, 0, 0, 1);
     int32_t includeLoopback       = 1;
@@ -757,7 +757,7 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
     for (i=0; i<addrTable->dwNumEntries; i++) {
         MIB_IPADDRROW* addrRow = &(addrTable->table[i]);
         MIB_IFROW* ifRow = NULL;
-        OsNetworkInterface* nif;
+        OsNetworkAdapter* nif;
         size_t len;
 		DWORD j = 0;
 
@@ -784,7 +784,7 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
             continue;
         }
 
-        nif = (OsNetworkInterface*)calloc(1, sizeof(*nif));
+        nif = (OsNetworkAdapter*)calloc(1, sizeof(*nif));
         if (nif == NULL) {
             goto failure;
         }
@@ -808,8 +808,8 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
         }
         else {
             TIpAddress subnet = (nif->iAddress & nif->iNetMask);
-            OsNetworkInterface* p1 = head;
-            OsNetworkInterface* prev = NULL;
+            OsNetworkAdapter* p1 = head;
+            OsNetworkAdapter* prev = NULL;
             while (NULL != p1) {
                 if ((p1->iAddress & p1->iNetMask) == subnet) {
                     while (NULL != p1 && IF_TYPE_ETHERNET_CSMACD == p1->iReserved) {
@@ -844,9 +844,9 @@ failure:
     return -1;
 }
 
-void OsNetworkFreeInterfaces(OsNetworkInterface* aInterfaces)
+void OsNetworkFreeInterfaces(OsNetworkAdapter* aInterfaces)
 {
-    OsNetworkInterface* tmp;
+    OsNetworkAdapter* tmp;
     while (aInterfaces != NULL) {
         tmp = aInterfaces;
         aInterfaces = aInterfaces->iNext;
@@ -901,7 +901,7 @@ void OsNetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* 
 }
 
 /**
- * Test function.  Restrict OsNetworkListInterfaces to just item aIndex from its normal list
+ * Test function.  Restrict OsNetworkListAdapters to just item aIndex from its normal list
  * Not advertised in Os.h and not guaranteed to be available on all platforms
  */
 extern void OsNetworkSetTestInterfaceIndex(int32_t aIndex);

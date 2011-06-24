@@ -2,36 +2,36 @@
 #include <Stack.h>
 #include <Standard.h>
 #include <Printer.h>
-#include <NetworkInterfaceList.h>
+#include <NetworkAdapterList.h>
 #include <Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-// NetworkInterface
+// NetworkAdapter
 
-NetworkInterface::NetworkInterface(TIpAddress aAddress, TIpAddress aNetMask, const char* aName)
+NetworkAdapter::NetworkAdapter(TIpAddress aAddress, TIpAddress aNetMask, const char* aName)
     : iRefCount(1)
     , iAddress(aAddress)
     , iNetMask(aNetMask)
     , iName(aName)
 {
-    Stack::AddObject(this, "NetworkInterface");
+    Stack::AddObject(this, "NetworkAdapter");
 }
 
-NetworkInterface::~NetworkInterface()
+NetworkAdapter::~NetworkAdapter()
 {
-    Stack::RemoveObject(this, "NetworkInterface");
+    Stack::RemoveObject(this, "NetworkAdapter");
 }
 
-void NetworkInterface::AddRef()
+void NetworkAdapter::AddRef()
 {
     Stack::Mutex().Wait();
     iRefCount++;
     Stack::Mutex().Signal();
 }
 
-void NetworkInterface::RemoveRef()
+void NetworkAdapter::RemoveRef()
 {
     Stack::Mutex().Wait();
     TBool dead = (--iRefCount == 0);
@@ -41,32 +41,32 @@ void NetworkInterface::RemoveRef()
     }
 }
 
-TIpAddress NetworkInterface::Address() const
+TIpAddress NetworkAdapter::Address() const
 {
     return iAddress;
 }
 
-TIpAddress NetworkInterface::Subnet() const
+TIpAddress NetworkAdapter::Subnet() const
 {
     return (iAddress & iNetMask);
 }
 
-TIpAddress NetworkInterface::Mask() const
+TIpAddress NetworkAdapter::Mask() const
 {
     return iNetMask;
 }
 
-bool NetworkInterface::ContainsAddress(TIpAddress aAddress)
+bool NetworkAdapter::ContainsAddress(TIpAddress aAddress)
 {
     return ((aAddress&iNetMask) == Subnet());
 }
 
-const char* NetworkInterface::Name() const
+const char* NetworkAdapter::Name() const
 {
     return (const char*)iName.Ptr();
 }
 
-char* NetworkInterface::FullName() const
+char* NetworkAdapter::FullName() const
 {
     TUint len = Endpoint::kMaxAddressBytes + 4 + iName.Bytes();
     Bwh buf(len);
@@ -218,9 +218,9 @@ void InitialisationParams::SetFreeExternalCallback(OhNetCallbackFreeExternal aCa
     iFreeExternal = aCallback;
 }
 
-void InitialisationParams::SetUseLoopbackNetworkInterface()
+void InitialisationParams::SetUseLoopbackNetworkAdapter()
 {
-    iUseLoopbackNetworkInterface = true;
+    iUseLoopbackNetworkAdapter = true;
 }
 
 void InitialisationParams::SetDvMaxUpdateTime(uint32_t aSecs)
@@ -336,9 +336,9 @@ OhNetCallbackFreeExternal InitialisationParams::FreeExternal() const
     return iFreeExternal;
 }
 
-bool InitialisationParams::UseLoopbackNetworkInterface() const
+bool InitialisationParams::UseLoopbackNetworkAdapter() const
 {
-    return iUseLoopbackNetworkInterface;
+    return iUseLoopbackNetworkAdapter;
 }
 
 uint32_t InitialisationParams::DvMaxUpdateTimeSecs() const
@@ -382,7 +382,7 @@ InitialisationParams::InitialisationParams()
     , iNumSubscriberThreads(4)
     , iPendingSubscriptionTimeoutMs(2000)
     , iFreeExternal(NULL)
-    , iUseLoopbackNetworkInterface(false)
+    , iUseLoopbackNetworkAdapter(false)
 	, iDvMaxUpdateTimeSecs(1800)
     , iDvNumServerThreads(4)
 	, iDvNumPublisherThreads(4)
@@ -434,12 +434,12 @@ void UpnpLibrary::Close()
     OpenHome::Os::Destroy();
 }
 
-std::vector<NetworkInterface*>* UpnpLibrary::CreateSubnetList()
+std::vector<NetworkAdapter*>* UpnpLibrary::CreateSubnetList()
 {
-    return Stack::NetworkInterfaceList().CreateSubnetList();
+    return Stack::NetworkAdapterList().CreateSubnetList();
 }
 
-void UpnpLibrary::DestroySubnetList(std::vector<NetworkInterface*>* aSubnetList)
+void UpnpLibrary::DestroySubnetList(std::vector<NetworkAdapter*>* aSubnetList)
 {
     if (aSubnetList == NULL) {
         return;
@@ -452,10 +452,10 @@ void UpnpLibrary::DestroySubnetList(std::vector<NetworkInterface*>* aSubnetList)
 
 void UpnpLibrary::SetCurrentSubnet(TIpAddress aSubnet)
 {
-    Stack::NetworkInterfaceList().SetCurrentSubnet(aSubnet);
+    Stack::NetworkAdapterList().SetCurrentSubnet(aSubnet);
 }
 
-NetworkInterface* UpnpLibrary::CurrentSubnetAdapter()
+NetworkAdapter* UpnpLibrary::CurrentSubnetAdapter()
 {
-    return Stack::NetworkInterfaceList().CurrentInterface();
+    return Stack::NetworkAdapterList().CurrentInterface();
 }

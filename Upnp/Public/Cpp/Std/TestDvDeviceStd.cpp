@@ -87,11 +87,11 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         return;
     }
     if (loopback.Value()) {
-        aInitParams->SetUseLoopbackNetworkInterface();
+        aInitParams->SetUseLoopbackNetworkAdapter();
     }
     aInitParams->SetMsearchTime(1);
     UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
     UpnpLibrary::DestroySubnetList(subnetList);
     UpnpLibrary::StartCombined(subnet);

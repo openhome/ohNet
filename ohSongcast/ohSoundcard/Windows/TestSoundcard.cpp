@@ -68,7 +68,7 @@ int __cdecl main(int /* aArgc */, char* /* aArgv[] */)
 	//Debug::SetLevel(Debug::kMedia);
 	
 	/*
-    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(false);
     
 	ASSERT(ifs->size() > 0 && optionAdapter.Value() < ifs->size());
     

@@ -526,14 +526,14 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
 /**
  * Representation of a network interface
  */
-typedef struct OsNetworkInterface
+typedef struct OsNetworkAdapter
 {
     TIpAddress iAddress;  /**< Address of the interface */
     char*      iName;     /**< Nul-terminated name of the interface */
     TIpAddress iNetMask;  /**< netmask for the interface */
     int32_t    iReserved; /**< for OS-internal use */
-    struct OsNetworkInterface* iNext; /**< Pointer to next interface or NULL */
-} OsNetworkInterface;
+    struct OsNetworkAdapter* iNext; /**< Pointer to next interface or NULL */
+} OsNetworkAdapter;
 
 /**
  * Return a list of all available network interfaces (aka adaptors).
@@ -549,15 +549,15 @@ typedef struct OsNetworkInterface
  *
  * @return  0 on success; -1 on failure
  */
-int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseLoopback);
+int32_t OsNetworkListAdapters(OsNetworkAdapter** aInterfaces, uint32_t aUseLoopback);
 
 /**
- * Destroy list returned by OsNetworkListInterfaces.
+ * Destroy list returned by OsNetworkListAdapters.
  *
- * @param[in] aInterfaces       Returned by OsNetworkListInterfaces
- * @param[in] aInterfaceCount   Returned by OsNetworkListInterfaces
+ * @param[in] aInterfaces       Returned by OsNetworkListAdapters
+ * @param[in] aInterfaceCount   Returned by OsNetworkListAdapters
  */
-void OsNetworkFreeInterfaces(OsNetworkInterface* aInterfaces);
+void OsNetworkFreeInterfaces(OsNetworkAdapter* aInterfaces);
 
 /**
  * Pointer to a function which will be called if the list of available network interfaces changes

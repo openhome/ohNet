@@ -8,8 +8,8 @@
 extern "C" {
 #endif
 
-typedef THandle OhNetHandleNetworkInterface;
-typedef THandle OhNetHandleNetworkInterfaceList;
+typedef THandle OhNetHandleNetworkAdapter;
+typedef THandle OhNetHandleNetworkAdapterList;
 typedef THandle OhNetHandleInitParams;
 
 /**
@@ -289,7 +289,7 @@ DllExport void OhNetInitParamsSetFreeExternalCallback(OhNetHandleInitParams aPar
  * Limit the library to using only the loopback network interface.
  * Useful for testing but not expected to be used in production code
  */
-DllExport void OhNetInitParamsSetUseLoopbackNetworkInterface(OhNetHandleInitParams aParams);
+DllExport void OhNetInitParamsSetUseLoopbackNetworkAdapter(OhNetHandleInitParams aParams);
 
 /**
  * Set the maximum time between device announcements for the device stack
@@ -492,7 +492,7 @@ DllExport uint32_t OhNetInitParamsDvIsBonjourEnabled(OhNetHandleInitParams aPara
 /* @} */
 
 /**
- * @addtogroup NetworkInterface
+ * @addtogroup NetworkAdapter
  * @ingroup Core
  * @{
  */
@@ -504,7 +504,7 @@ DllExport uint32_t OhNetInitParamsDvIsBonjourEnabled(OhNetHandleInitParams aPara
  *
  * @return  IpV4 address as network order uint32
  */
-DllExport TIpAddress OhNetNetworkInterfaceAddress(OhNetHandleNetworkInterface aNif);
+DllExport TIpAddress OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapter aNif);
 
 /**
  * Query the subnet of a network interface is available on
@@ -513,7 +513,7 @@ DllExport TIpAddress OhNetNetworkInterfaceAddress(OhNetHandleNetworkInterface aN
  *
  * @return  IpV4 address as network order uint32
  */
-DllExport TIpAddress OhNetNetworkInterfaceSubnet(OhNetHandleNetworkInterface aNif);
+DllExport TIpAddress OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter aNif);
 
 /**
  * Query the name of a network interface
@@ -522,7 +522,7 @@ DllExport TIpAddress OhNetNetworkInterfaceSubnet(OhNetHandleNetworkInterface aNi
  *
  * @return  IpV4 address as network order uint32
  */
-DllExport const char* OhNetNetworkInterfaceName(OhNetHandleNetworkInterface aNif);
+DllExport const char* OhNetNetworkAdapterName(OhNetHandleNetworkAdapter aNif);
 
 /**
  * Get the full name of the network adapter.
@@ -530,14 +530,14 @@ DllExport const char* OhNetNetworkInterfaceName(OhNetHandleNetworkInterface aNif
  * @return  String in the form a.b.c.d (name).
  *          The caller is responsible for freeing this by calling OhNetFree().
  */
-DllExport char* OhNetNetworkInterfaceFullName(OhNetHandleNetworkInterface aNif);
+DllExport char* OhNetNetworkAdapterFullName(OhNetHandleNetworkAdapter aNif);
 
 /**
  * Create a list of all available subnets
  *
  * @return  Handle to list of subnets.  Ownership transfers to caller.
  */
-DllExport OhNetHandleNetworkInterfaceList OhNetSubnetListCreate();
+DllExport OhNetHandleNetworkAdapterList OhNetSubnetListCreate();
 
 /**
  * Query the number of elements in a subnet list
@@ -546,7 +546,7 @@ DllExport OhNetHandleNetworkInterfaceList OhNetSubnetListCreate();
  *
  * @return  number of elements (subnets) in the list
  */
-DllExport uint32_t OhNetSubnetListSize(OhNetHandleNetworkInterfaceList aList);
+DllExport uint32_t OhNetSubnetListSize(OhNetHandleNetworkAdapterList aList);
 
 /**
  * Get a handle to the subnet at a specified position in a subnet list.
@@ -556,14 +556,14 @@ DllExport uint32_t OhNetSubnetListSize(OhNetHandleNetworkInterfaceList aList);
  *
  * @return  subnet handle
  */
-DllExport OhNetHandleNetworkInterface OhNetSubnetAt(OhNetHandleNetworkInterfaceList aList, uint32_t aIndex);
+DllExport OhNetHandleNetworkAdapter OhNetSubnetAt(OhNetHandleNetworkAdapterList aList, uint32_t aIndex);
 
 /**
  * Destroy a subnet list
  *
  * @param[in] aList            Handle returned by OhNetSubnetListCreate()
  */
-DllExport void OhNetSubnetListDestroy(OhNetHandleNetworkInterfaceList aList);
+DllExport void OhNetSubnetListDestroy(OhNetHandleNetworkAdapterList aList);
 
 /**
  * Set which subnet the library should use.
@@ -573,7 +573,7 @@ DllExport void OhNetSubnetListDestroy(OhNetHandleNetworkInterfaceList aList);
  *
  * @param aSubnet              The subnet to use
  */
-DllExport void OhNetSetCurrentSubnet(OhNetHandleNetworkInterface aSubnet);
+DllExport void OhNetSetCurrentSubnet(OhNetHandleNetworkAdapter aSubnet);
 
 /**
  * Query which network adapter is currently selected.
@@ -581,7 +581,7 @@ DllExport void OhNetSetCurrentSubnet(OhNetHandleNetworkInterface aSubnet);
  * @return  A pointer to the currently selected adapter with a reference claimed.
  *          Or NULL if there is no currently selected adapter.
  */
-DllExport OhNetHandleNetworkInterface OhNetCurrentSubnetAdapter();
+DllExport OhNetHandleNetworkAdapter OhNetCurrentSubnetAdapter();
 
 /* @} */
 

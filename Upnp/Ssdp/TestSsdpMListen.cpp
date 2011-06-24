@@ -213,7 +213,7 @@ SuiteListen::~SuiteListen()
 
 TIpAddress SuiteListen::NetworkIf(TUint aIndex)
 {
-    const std::vector<NetworkInterface*>& ifs = Stack::NetworkInterfaceList().List();
+    const std::vector<NetworkAdapter*>& ifs = Stack::NetworkAdapterList().List();
     ASSERT(ifs.size() > 0 && aIndex < ifs.size());
     TIpAddress addr = ifs[aIndex]->Address();
     Endpoint endpt(0, addr);

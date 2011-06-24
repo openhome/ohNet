@@ -207,7 +207,7 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkInterface* nif = UpnpLibrary::CurrentSubnet();
+    NetworkAdapter* nif = UpnpLibrary::CurrentSubnet();
     TUint max = nif->Address();
     nif->RemoveRef();
     (void)Ascii::AppendDec(buf, Random(max));
@@ -246,7 +246,7 @@ int CDECL main(int aArgc, char* aArgv[])
         return (1);
     }
 
-    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[optionAdapter.Value()]->Subnet();
     TIpAddress interface = (*subnetList)[optionAdapter.Value()]->Address();
     UpnpLibrary::DestroySubnetList(subnetList);

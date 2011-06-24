@@ -210,7 +210,7 @@ public:
 private:
     static CpiSubscriptionManager* Self();
     void RemovePendingAdd(CpiSubscription& aSubscription);
-    void CurrentNetworkInterfaceChanged();
+    void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
     void HandleInterfaceChange(TBool aNewSubnet);
     void Run();

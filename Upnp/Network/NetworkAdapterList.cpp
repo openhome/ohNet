@@ -1,4 +1,4 @@
-#include <NetworkInterfaceList.h>
+#include <NetworkAdapterList.h>
 #include <OhNetTypes.h>
 #include <OsWrapper.h>
 #include <Thread.h>
@@ -7,27 +7,27 @@
 using namespace OpenHome;
 
 
-NetworkInterfaceList::NetworkInterfaceList(TIpAddress aDefaultSubnet)
+NetworkAdapterList::NetworkAdapterList(TIpAddress aDefaultSubnet)
     : iListLock("MNIL")
     , iListenerLock("MNIO")
     , iCurrent(NULL)
     , iNextListenerId(1)
 {
-    Net::Stack::AddObject(this, "NetworkInterfaceList");
+    Net::Stack::AddObject(this, "NetworkAdapterList");
     iDefaultSubnet = aDefaultSubnet;
-    iNetworkInterfaces = Os::NetworkListInterfaces(Net::Stack::InitParams().UseLoopbackNetworkInterface());
+    iNetworkAdapters = Os::NetworkListAdapters(Net::Stack::InitParams().UseLoopbackNetworkAdapter());
     iSubnets = CreateSubnetList();
     Os::NetworkSetInterfaceChangedObserver(&InterfaceListChanged, this);
 }
 
-NetworkInterfaceList::~NetworkInterfaceList()
+NetworkAdapterList::~NetworkAdapterList()
 {
-    DestroySubnetList(iNetworkInterfaces);
+    DestroySubnetList(iNetworkAdapters);
     DestroySubnetList(iSubnets);
-    Net::Stack::RemoveObject(this, "NetworkInterfaceList");
+    Net::Stack::RemoveObject(this, "NetworkAdapterList");
 }
 
-NetworkInterface* NetworkInterfaceList::CurrentInterface() const
+NetworkAdapter* NetworkAdapterList::CurrentInterface() const
 {
     AutoMutex a(iListLock);
     if (iCurrent == NULL) {
@@ -37,20 +37,20 @@ NetworkInterface* NetworkInterfaceList::CurrentInterface() const
     return iCurrent;
 }
 
-const std::vector<NetworkInterface*>& NetworkInterfaceList::List() const
+const std::vector<NetworkAdapter*>& NetworkAdapterList::List() const
 {
-    return *iNetworkInterfaces;
+    return *iNetworkAdapters;
 }
 
-std::vector<NetworkInterface*>* NetworkInterfaceList::CreateSubnetList() const
+std::vector<NetworkAdapter*>* NetworkAdapterList::CreateSubnetList() const
 {
     iListLock.Wait();
-    std::vector<NetworkInterface*>* list = CreateSubnetListLocked();
+    std::vector<NetworkAdapter*>* list = CreateSubnetListLocked();
     iListLock.Signal();
     return list;
 }
 
-void NetworkInterfaceList::DestroySubnetList(std::vector<NetworkInterface*>* aList)
+void NetworkAdapterList::DestroySubnetList(std::vector<NetworkAdapter*>* aList)
 {
     if (aList != NULL) {
         for (TUint i=0; i<aList->size(); i++) {
@@ -60,7 +60,7 @@ void NetworkInterfaceList::DestroySubnetList(std::vector<NetworkInterface*>* aLi
     }
 }
 
-void NetworkInterfaceList::SetCurrentSubnet(TIpAddress aSubnet)
+void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
 {
     iListLock.Wait();
     TIpAddress oldSubnet = (iCurrent==NULL? 0 : iCurrent->Subnet());
@@ -72,33 +72,33 @@ void NetworkInterfaceList::SetCurrentSubnet(TIpAddress aSubnet)
     }
 }
 
-TUint NetworkInterfaceList::AddCurrentChangeListener(Functor aFunctor)
+TUint NetworkAdapterList::AddCurrentChangeListener(Functor aFunctor)
 {
     return AddListener(aFunctor, iListenersCurrent);
 }
 
-void NetworkInterfaceList::RemoveCurrentChangeListener(TUint aId)
+void NetworkAdapterList::RemoveCurrentChangeListener(TUint aId)
 {
     RemoveSubnetListChangeListener(aId, iListenersCurrent);
 }
 
-TUint NetworkInterfaceList::AddSubnetListChangeListener(Functor aFunctor)
+TUint NetworkAdapterList::AddSubnetListChangeListener(Functor aFunctor)
 {
     return AddListener(aFunctor, iListenersSubnet);
 }
 
-void NetworkInterfaceList::RemoveSubnetListChangeListener(TUint aId)
+void NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId)
 {
     RemoveSubnetListChangeListener(aId, iListenersSubnet);
 }
 
-std::vector<NetworkInterface*>* NetworkInterfaceList::CreateSubnetListLocked() const
+std::vector<NetworkAdapter*>* NetworkAdapterList::CreateSubnetListLocked() const
 {
-    std::vector<NetworkInterface*>* list = new std::vector<NetworkInterface*>;
-    for (TUint i=0; i<iNetworkInterfaces->size(); i++) {
-        NetworkInterface* nif = (*iNetworkInterfaces)[i];
+    std::vector<NetworkAdapter*>* list = new std::vector<NetworkAdapter*>;
+    for (TUint i=0; i<iNetworkAdapters->size(); i++) {
+        NetworkAdapter* nif = (*iNetworkAdapters)[i];
         TIpAddress subnet = nif->Subnet();
-        if (-1 == NetworkInterfaceList::FindSubnet(subnet, *list)) {
+        if (-1 == NetworkAdapterList::FindSubnet(subnet, *list)) {
             nif->AddRef();
             list->push_back(nif);
         }
@@ -106,7 +106,7 @@ std::vector<NetworkInterface*>* NetworkInterfaceList::CreateSubnetListLocked() c
     return list;
 }
 
-TUint NetworkInterfaceList::AddListener(Functor aFunctor, Map& aMap)
+TUint NetworkAdapterList::AddListener(Functor aFunctor, Map& aMap)
 {
     iListenerLock.Wait();
     TUint id = iNextListenerId;
@@ -116,7 +116,7 @@ TUint NetworkInterfaceList::AddListener(Functor aFunctor, Map& aMap)
     return id;
 }
 
-void NetworkInterfaceList::RemoveSubnetListChangeListener(TUint aId, Map& aMap)
+void NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId, Map& aMap)
 {
     iListenerLock.Wait();
     Map::iterator it = aMap.find(aId);
@@ -126,12 +126,12 @@ void NetworkInterfaceList::RemoveSubnetListChangeListener(TUint aId, Map& aMap)
     iListenerLock.Signal();
 }
 
-void NetworkInterfaceList::InterfaceListChanged(void* aPtr)
+void NetworkAdapterList::InterfaceListChanged(void* aPtr)
 {
-    reinterpret_cast<NetworkInterfaceList*>(aPtr)->HandleInterfaceListChanged();
+    reinterpret_cast<NetworkAdapterList*>(aPtr)->HandleInterfaceListChanged();
 }
 
-TInt NetworkInterfaceList::FindSubnet(TIpAddress aSubnet, const std::vector<NetworkInterface*>& aList)
+TInt NetworkAdapterList::FindSubnet(TIpAddress aSubnet, const std::vector<NetworkAdapter*>& aList)
 {
     for (TUint i=0; i<aList.size(); i++) {
         if (aList[i]->Subnet() == aSubnet) {
@@ -141,12 +141,12 @@ TInt NetworkInterfaceList::FindSubnet(TIpAddress aSubnet, const std::vector<Netw
     return -1;
 }
 
-void NetworkInterfaceList::UpdateCurrentInterface()
+void NetworkAdapterList::UpdateCurrentInterface()
 {
     iCurrent = NULL;
-    if (iNetworkInterfaces != NULL && iNetworkInterfaces->size() > 0) {
-        for (TUint i=0; i<iNetworkInterfaces->size(); i++) {
-            NetworkInterface* nif = (*iNetworkInterfaces)[i];
+    if (iNetworkAdapters != NULL && iNetworkAdapters->size() > 0) {
+        for (TUint i=0; i<iNetworkAdapters->size(); i++) {
+            NetworkAdapter* nif = (*iNetworkAdapters)[i];
             if (nif->Subnet() == iDefaultSubnet) {
                 iCurrent = nif;
                 break;
@@ -155,20 +155,20 @@ void NetworkInterfaceList::UpdateCurrentInterface()
     }
 }
 
-void NetworkInterfaceList::HandleInterfaceListChanged()
+void NetworkAdapterList::HandleInterfaceListChanged()
 {
     iListLock.Wait();
-    std::vector<NetworkInterface*>* list = Os::NetworkListInterfaces(Net::Stack::InitParams().UseLoopbackNetworkInterface());
+    std::vector<NetworkAdapter*>* list = Os::NetworkListAdapters(Net::Stack::InitParams().UseLoopbackNetworkAdapter());
     TIpAddress oldAddress = (iCurrent==NULL? 0 : iCurrent->Address());
-    DestroySubnetList(iNetworkInterfaces);
-    iNetworkInterfaces = list;
+    DestroySubnetList(iNetworkAdapters);
+    iNetworkAdapters = list;
 
     // update the 'current' interface and inform observers if it has changed
     UpdateCurrentInterface();
     TIpAddress newAddress = (iCurrent==NULL? 0 : iCurrent->Address());
 
     // update the subnet list, noting if it has changed
-    std::vector<NetworkInterface*>* subnets = CreateSubnetListLocked();
+    std::vector<NetworkAdapter*>* subnets = CreateSubnetListLocked();
     TBool subnetsChanged = false;
     if (subnets->size() != iSubnets->size()) {
         subnetsChanged = true;
@@ -193,7 +193,7 @@ void NetworkInterfaceList::HandleInterfaceListChanged()
     }
 }
 
-void NetworkInterfaceList::RunCallbacks(Map& aMap)
+void NetworkAdapterList::RunCallbacks(Map& aMap)
 {
     iListenerLock.Wait();
     Map::iterator it = aMap.begin();

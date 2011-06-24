@@ -8,7 +8,7 @@
 #include <Timer.h>
 #include <Arch.h>
 #include <Stack.h>
-#include <NetworkInterfaceList.h>
+#include <NetworkAdapterList.h>
 #include <OhNet.h>
 
 #include <stdlib.h>
@@ -21,7 +21,7 @@ using namespace OpenHome::Net;
 
 static const mDNSInterfaceID kInterfaceId = (mDNSInterfaceID)2;
 
-MdnsPlatform::Nif::Nif(NetworkInterface& aNif, NetworkInterfaceInfo* aMdnsInfo)
+MdnsPlatform::Nif::Nif(NetworkAdapter& aNif, NetworkInterfaceInfo* aMdnsInfo)
     : iNif(aNif)
     , iMdnsInfo(aMdnsInfo)
 {
@@ -34,7 +34,7 @@ MdnsPlatform::Nif::~Nif()
     free(iMdnsInfo);
 }
 
-NetworkInterface& MdnsPlatform::Nif::Interface()
+NetworkAdapter& MdnsPlatform::Nif::Adapter()
 {
     return iNif;
 }
@@ -77,7 +77,7 @@ MdnsPlatform::MdnsPlatform(const TChar* aHost)
 
 MdnsPlatform::~MdnsPlatform()
 {
-    Stack::NetworkInterfaceList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
+    Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     mDNS_Close(iMdns);
     delete iMdns;
     delete iTimer;
@@ -95,16 +95,16 @@ void MdnsPlatform::TimerExpired()
 void MdnsPlatform::SubnetListChanged()
 {
     iInterfacesLock.Wait();
-    NetworkInterfaceList& nifList = Stack::NetworkInterfaceList();
-    std::vector<NetworkInterface*>* subnetList = nifList.CreateSubnetList();
+    NetworkAdapterList& nifList = Stack::NetworkAdapterList();
+    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
     for (TInt i=(TInt)iInterfaces.size()-1; i>=0; i--) {
-        if (InterfaceIndex(iInterfaces[i]->Interface(), *subnetList) == -1) {
+        if (InterfaceIndex(iInterfaces[i]->Adapter(), *subnetList) == -1) {
             delete iInterfaces[i];
             iInterfaces.erase(iInterfaces.begin()+i);
         }
     }
     for (TUint i=0; i<(TUint)subnetList->size(); i++) {
-        NetworkInterface* nif = (*subnetList)[i];
+        NetworkAdapter* nif = (*subnetList)[i];
         if (InterfaceIndex(*nif) == -1) {
             AddInterface(nif);
         }
@@ -113,7 +113,7 @@ void MdnsPlatform::SubnetListChanged()
     nifList.DestroySubnetList(subnetList);
 }
 
-MdnsPlatform::Status MdnsPlatform::AddInterface(NetworkInterface* aNif)
+MdnsPlatform::Status MdnsPlatform::AddInterface(NetworkAdapter* aNif)
 {
     Status status;
     NetworkInterfaceInfo* nifInfo = (NetworkInterfaceInfo*)calloc(1, sizeof(*nifInfo));
@@ -137,17 +137,17 @@ MdnsPlatform::Status MdnsPlatform::AddInterface(NetworkInterface* aNif)
     return status;
 }
 
-TInt MdnsPlatform::InterfaceIndex(const NetworkInterface& aNif)
+TInt MdnsPlatform::InterfaceIndex(const NetworkAdapter& aNif)
 {
     for (TUint i=0; i<(TUint)iInterfaces.size(); i++) {
-        if (NifsMatch(iInterfaces[i]->Interface(), aNif)) {
+        if (NifsMatch(iInterfaces[i]->Adapter(), aNif)) {
             return i;
         }
     }
     return -1;
 }
 
-TInt MdnsPlatform::InterfaceIndex(const NetworkInterface& aNif, const std::vector<NetworkInterface*>& aList)
+TInt MdnsPlatform::InterfaceIndex(const NetworkAdapter& aNif, const std::vector<NetworkAdapter*>& aList)
 {
     for (TUint i=0; i<(TUint)aList.size(); i++) {
         if (NifsMatch(*(aList[i]), aNif)) {
@@ -157,7 +157,7 @@ TInt MdnsPlatform::InterfaceIndex(const NetworkInterface& aNif, const std::vecto
     return -1;
 }
 
-TBool MdnsPlatform::NifsMatch(const NetworkInterface& aNif1, const NetworkInterface& aNif2)
+TBool MdnsPlatform::NifsMatch(const NetworkAdapter& aNif1, const NetworkAdapter& aNif2)
 {
     if (aNif1.Address() == aNif2.Address() && aNif1.Subnet() == aNif2.Subnet() && strcmp(aNif1.Name(), aNif2.Name()) == 0) {
         return true;
@@ -361,10 +361,10 @@ MdnsPlatform::Status MdnsPlatform::Init()
 
     iInterfacesLock.Wait();
     Status status = mStatus_NoError;
-    NetworkInterfaceList& nifList = Stack::NetworkInterfaceList();
+    NetworkAdapterList& nifList = Stack::NetworkAdapterList();
     Functor functor = MakeFunctor(*this, &MdnsPlatform::SubnetListChanged);
     iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
-    std::vector<NetworkInterface*>* subnetList = nifList.CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
     for (TUint i=0; i<(TUint)subnetList->size() && status==mStatus_NoError; i++) {
         status = AddInterface((*subnetList)[i]);
     }

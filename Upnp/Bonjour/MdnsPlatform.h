@@ -42,10 +42,10 @@ private:
     void Listen();
     void TimerExpired();
     void SubnetListChanged();
-    Status AddInterface(NetworkInterface* aNif);
-    TInt InterfaceIndex(const NetworkInterface& aNif);
-    TInt InterfaceIndex(const NetworkInterface& aNif, const std::vector<NetworkInterface*>& aList);
-    static TBool NifsMatch(const NetworkInterface& aNif1, const NetworkInterface& aNif2);
+    Status AddInterface(NetworkAdapter* aNif);
+    TInt InterfaceIndex(const NetworkAdapter& aNif);
+    TInt InterfaceIndex(const NetworkAdapter& aNif, const std::vector<NetworkAdapter*>& aList);
+    static TBool NifsMatch(const NetworkAdapter& aNif1, const NetworkAdapter& aNif2);
     static void SetAddress(mDNSAddr& aAddress, const Endpoint& aEndpoint);
     static void SetPort(mDNSIPPort& aPort, const Endpoint& aEndpoint);
     static void SetPort(mDNSIPPort& aPort, TUint aValue);
@@ -57,13 +57,13 @@ private:
     class Nif : INonCopyable
     {
     public:
-        Nif(NetworkInterface& aNif, NetworkInterfaceInfo* aMdnsInfo);
+        Nif(NetworkAdapter& aNif, NetworkInterfaceInfo* aMdnsInfo);
         ~Nif();
-        NetworkInterface& Interface();
+        NetworkAdapter& Adapter();
         TIpAddress Address() const;
         TBool ContainsAddress(TIpAddress aAddress) const;
     private:
-        NetworkInterface& iNif;
+        NetworkAdapter& iNif;
         NetworkInterfaceInfo* iMdnsInfo;
     };
 private:

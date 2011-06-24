@@ -16,9 +16,9 @@ using namespace OpenHome::TestFramework;
 
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
-    aInitParams->SetUseLoopbackNetworkInterface();
+    aInitParams->SetUseLoopbackNetworkAdapter();
     UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
     UpnpLibrary::DestroySubnetList(subnetList);
     UpnpLibrary::StartCombined(subnet);

@@ -6,6 +6,6 @@ using namespace OpenHome::Net;
 
 void UpnpLibrary::StartCp(TIpAddress aSubnet)
 {
-    Stack::NetworkInterfaceList().SetCurrentSubnet(aSubnet);
+    Stack::NetworkAdapterList().SetCurrentSubnet(aSubnet);
     new CpiStack();
 }

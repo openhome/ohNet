@@ -16,13 +16,13 @@ namespace OpenHome.Net.Device
             InitParams initParams = new InitParams
             {
                 MsearchTimeSecs = 1,
-                UseLoopbackNetworkInterface = true
+                UseLoopbackNetworkAdapter = true
             };
             Library lib = new Library();
             lib.Initialise(initParams);
             IntPtr subnetList = lib.SubnetListCreate();
             IntPtr nif = lib.SubnetAt(subnetList, 0);
-            uint subnet = lib.NetworkInterfaceSubnet(nif);
+            uint subnet = lib.NetworkAdapterSubnet(nif);
             lib.SubnetListDestroy(subnetList);
             lib.StartCombined(subnet);
             new Runner();

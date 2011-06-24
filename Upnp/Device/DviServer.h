@@ -19,24 +19,24 @@ public:
 protected:
     DviServer();
     void Initialise();
-    virtual SocketTcpServer* CreateServer(const NetworkInterface& aNif) = 0;
+    virtual SocketTcpServer* CreateServer(const NetworkAdapter& aNif) = 0;
 private:
-    void AddServer(NetworkInterface& aNif);
+    void AddServer(NetworkAdapter& aNif);
     void SubnetListChanged();
-    TInt FindInterface(TIpAddress aInterface, const std::vector<NetworkInterface*>& aNifList);
+    TInt FindInterface(TIpAddress aInterface, const std::vector<NetworkAdapter*>& aNifList);
     TInt FindServer(TIpAddress aSubnet);
 private:
     class Server : private INonCopyable
     {
     public:
-        Server(SocketTcpServer* aTcpServer, NetworkInterface& aNif);
+        Server(SocketTcpServer* aTcpServer, NetworkAdapter& aNif);
         ~Server();
         TIpAddress Interface() const { return iNif.Address(); }
         TIpAddress Subnet() const { return iNif.Subnet(); }
         TUint Port() const { return iServer->Port(); }
     private:
         SocketTcpServer* iServer;
-        NetworkInterface& iNif;
+        NetworkAdapter& iNif;
     };
 private:
     Mutex iLock;

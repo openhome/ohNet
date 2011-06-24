@@ -49,7 +49,7 @@ namespace OpenHome.Net.Device
             {
                 IntPtr subnetList = lib.SubnetListCreate();
                 IntPtr nif = lib.SubnetAt(subnetList, 0);
-                uint subnet = lib.NetworkInterfaceSubnet(nif);
+                uint subnet = lib.NetworkAdapterSubnet(nif);
                 lib.SubnetListDestroy(subnetList);
                 var deviceListFactory = new CpUpnpDeviceListFactory(lib.StartCp(subnet));
                 CpDevice device = null;

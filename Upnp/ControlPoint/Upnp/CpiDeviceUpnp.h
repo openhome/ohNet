@@ -130,7 +130,7 @@ protected:
     void SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
     void RefreshTimerComplete();
-    void CurrentNetworkInterfaceChanged();
+    void CurrentNetworkAdapterChanged();
     void SubnetListChanged();
     void HandleInterfaceChange(TBool aNewSubnet);
     void RemoveAll();
