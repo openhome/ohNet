@@ -581,7 +581,7 @@ DllExport void OhNetSetCurrentSubnet(OhNetHandleNetworkInterface aSubnet);
  * @return  A pointer to the currently selected adapter with a reference claimed.
  *          Or NULL if there is no currently selected adapter.
  */
-DllExport OhNetHandleNetworkInterface OhNetCurrentSubnet();
+DllExport OhNetHandleNetworkInterface OhNetCurrentSubnetAdapter();
 
 /* @} */
 

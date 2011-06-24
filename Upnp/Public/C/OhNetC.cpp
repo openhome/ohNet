@@ -353,9 +353,9 @@ void OhNetSetCurrentSubnet(OhNetHandleNetworkInterface aSubnet)
     UpnpLibrary::SetCurrentSubnet(nif->Subnet());
 }
 
-OhNetHandleNetworkInterface OhNetCurrentSubnet()
+OhNetHandleNetworkInterface OhNetCurrentSubnetAdapter()
 {
-    return (OhNetHandleNetworkInterface)UpnpLibrary::CurrentSubnet();
+    return (OhNetHandleNetworkInterface)UpnpLibrary::CurrentSubnetAdapter();
 }
 
 void OhNetFreeExternal(void* aPtr)
