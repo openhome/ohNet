@@ -791,7 +791,7 @@ int32_t OsNetworkListAdapters(OsNetworkAdapter** aInterfaces, uint32_t aUseLoopb
         nif->iReserved = ifRow->dwType;
         nif->iAddress = addrRow->dwAddr;
         nif->iNetMask = addrRow->dwMask;
-        len = wcslen(ifRow->wszName);
+        len = ifRow->dwDescrLen;
         nif->iName = (char*)malloc(len+1);
         if (NULL == nif->iName) {
             free(nif);
@@ -799,7 +799,7 @@ int32_t OsNetworkListAdapters(OsNetworkAdapter** aInterfaces, uint32_t aUseLoopb
         }
         // warning - lossy conversion from unicode
         for (j=0; j<len; j++) {
-            nif->iName[j] = (char)ifRow->wszName[j];
+            nif->iName[j] = (char)ifRow->bDescr[j];
         }
         nif->iName[len] = '\0';
 
