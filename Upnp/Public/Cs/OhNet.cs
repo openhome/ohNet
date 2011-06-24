@@ -25,7 +25,7 @@ namespace OpenHome.Net.Core
         public OhNetCallbackAsync AsyncBeginHandler { private get; set; }
         public OhNetCallbackAsync AsyncEndHandler { private get; set; }
         public OhNetCallbackAsync AsyncErrorHandler { private get; set; }
-        public OhNetCallback SubnetChangedListener { private get; set; }
+        public OhNetCallback SubnetListChangedListener { private get; set; }
 
         /// <summary>
         /// A timeout for TCP connections in milliseconds. Must be >0
@@ -156,7 +156,7 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetAsyncErrorHandler(IntPtr aParams, OhNetCallbackAsync aCallback, IntPtr aPtr);
         [DllImport("ohNet")]
-        static extern void OhNetInitParamsSetSubnetChangedListener(IntPtr aParams, OhNetCallback aCallback, IntPtr aPtr);
+        static extern void OhNetInitParamsSetSubnetListChangedListener(IntPtr aParams, OhNetCallback aCallback, IntPtr aPtr);
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetTcpConnectTimeout(IntPtr aParams, uint aTimeoutMs);
         [DllImport("ohNet")]
@@ -242,7 +242,7 @@ namespace OpenHome.Net.Core
             AsyncBeginHandler = DefaultCallbackAsync;
             AsyncEndHandler = DefaultCallbackAsync;
             AsyncErrorHandler = DefaultCallbackAsync;
-            SubnetChangedListener = DefaultCallback;
+            SubnetListChangedListener = DefaultCallback;
             TcpConnectTimeoutMs = OhNetInitParamsTcpConnectTimeoutMs(defaultParams); 
             MsearchTimeSecs = OhNetInitParamsMsearchTimeSecs(defaultParams); 
             MsearchTtl = OhNetInitParamsMsearchTtl(defaultParams); 
@@ -286,9 +286,9 @@ namespace OpenHome.Net.Core
             {
                 OhNetInitParamsSetAsyncErrorHandler(nativeParams, AsyncErrorHandler, aCallbackPtr);
             }
-            if (SubnetChangedListener != DefaultCallback)
+            if (SubnetListChangedListener != DefaultCallback)
             {
-                OhNetInitParamsSetSubnetChangedListener(nativeParams, SubnetChangedListener, aCallbackPtr);
+                OhNetInitParamsSetSubnetListChangedListener(nativeParams, SubnetListChangedListener, aCallbackPtr);
             }
             OhNetInitParamsSetTcpConnectTimeout(nativeParams, TcpConnectTimeoutMs);
             OhNetInitParamsSetMsearchTime(nativeParams, MsearchTimeSecs);

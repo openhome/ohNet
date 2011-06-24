@@ -154,9 +154,9 @@ void InitialisationParams::SetAsyncErrorHandler(FunctorAsync aHandler)
     iAsyncErrorHandler = aHandler;
 }
 
-void InitialisationParams::SetSubnetChangedListener(Functor aFunctor)
+void InitialisationParams::SetSubnetListChangedListener(Functor aFunctor)
 {
-    iSubnetChangedListener = aFunctor;
+    iSubnetListChangedListener = aFunctor;
 }
 
 void InitialisationParams::SetTcpConnectTimeout(uint32_t aTimeoutMs)
@@ -281,9 +281,9 @@ FunctorAsync& InitialisationParams::AsyncErrorHandler()
     return iAsyncErrorHandler;
 }
 
-Functor& InitialisationParams::SubnetChangedListener()
+Functor& InitialisationParams::SubnetListChangedListener()
 {
-    return iSubnetChangedListener;
+    return iSubnetListChangedListener;
 }
 
 uint32_t InitialisationParams::TcpConnectTimeoutMs() const

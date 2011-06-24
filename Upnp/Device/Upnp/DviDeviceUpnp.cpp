@@ -36,7 +36,7 @@ DviDeviceUpnp::DviDeviceUpnp(DviDevice& aDevice)
     iServer = &DviStack::ServerUpnp();
     NetworkInterfaceList& nifList = Stack::NetworkInterfaceList();
     Functor functor = MakeFunctor(*this, &DviDeviceUpnp::SubnetListChanged);
-    iSubnetChangeListenerId = nifList.AddSubnetChangeListener(functor);
+    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
     std::vector<NetworkInterface*>* subnetList = nifList.CreateSubnetList();
     for (TUint i=0; i<subnetList->size(); i++) {
         NetworkInterface* subnet = (*subnetList)[i];
@@ -51,7 +51,7 @@ DviDeviceUpnp::~DviDeviceUpnp()
 {
     delete iAliveTimer;
     iLock.Wait();
-    Stack::NetworkInterfaceList().RemoveSubnetChangeListener(iSubnetChangeListenerId);
+    Stack::NetworkInterfaceList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     for (TUint i=0; i<iInterfaces.size(); i++) {
         delete iInterfaces[i];
     }

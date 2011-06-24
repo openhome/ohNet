@@ -403,8 +403,8 @@ CpiSubscriptionManager::CpiSubscriptionManager()
     NetworkInterface* currentInterface = ifList.CurrentInterface();
     Functor functor = MakeFunctor(*this, &CpiSubscriptionManager::CurrentNetworkInterfaceChanged);
     iInterfaceListListenerId = ifList.AddCurrentChangeListener(functor);
-    functor = MakeFunctor(*this, &CpiSubscriptionManager::SubnetChanged);
-    iSubnetListenerId = ifList.AddSubnetChangeListener(functor);
+    functor = MakeFunctor(*this, &CpiSubscriptionManager::SubnetListChanged);
+    iSubnetListenerId = ifList.AddSubnetListChangeListener(functor);
     if (currentInterface == NULL) {
         iEventServer = NULL;
     }
@@ -458,7 +458,7 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
 
     ASSERT(iList.size() == 0);
 
-    Stack::NetworkInterfaceList().RemoveSubnetChangeListener(iSubnetListenerId);
+    Stack::NetworkInterfaceList().RemoveSubnetListChangeListener(iSubnetListenerId);
     Stack::NetworkInterfaceList().RemoveCurrentChangeListener(iInterfaceListListenerId);
     delete iEventServer;
 
@@ -594,7 +594,7 @@ void CpiSubscriptionManager::CurrentNetworkInterfaceChanged()
     HandleInterfaceChange(false);
 }
 
-void CpiSubscriptionManager::SubnetChanged()
+void CpiSubscriptionManager::SubnetListChanged()
 {
     HandleInterfaceChange(true);
 }

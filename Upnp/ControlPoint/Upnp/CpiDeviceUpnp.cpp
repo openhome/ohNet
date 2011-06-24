@@ -334,7 +334,7 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice a
     NetworkInterface* current = ifList.CurrentInterface();
     iRefreshTimer = new Timer(MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete));
     iInterfaceChangeListenerId = ifList.AddCurrentChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::CurrentNetworkInterfaceChanged));
-    iSubnetChangeListenerId = ifList.AddSubnetChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetChanged));
+    iSubnetListChangeListenerId = ifList.AddSubnetListChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetListChanged));
     if (current == NULL) {
         iInterface = 0;
         iUnicastListener = NULL;
@@ -357,7 +357,7 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     iActive = false;
     iLock.Signal();
     Stack::NetworkInterfaceList().RemoveCurrentChangeListener(iInterfaceChangeListenerId);
-    Stack::NetworkInterfaceList().RemoveSubnetChangeListener(iSubnetChangeListenerId);
+    Stack::NetworkInterfaceList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     if (iMulticastListener != NULL) {
         iMulticastListener->RemoveNotifyHandler(iNotifyHandlerId);
         Stack::MulticastListenerRelease(iInterface);
@@ -474,7 +474,7 @@ void CpiDeviceListUpnp::CurrentNetworkInterfaceChanged()
     HandleInterfaceChange(false);
 }
 
-void CpiDeviceListUpnp::SubnetChanged()
+void CpiDeviceListUpnp::SubnetListChanged()
 {
     HandleInterfaceChange(true);
 }

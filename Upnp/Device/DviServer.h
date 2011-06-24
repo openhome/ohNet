@@ -22,7 +22,7 @@ protected:
     virtual SocketTcpServer* CreateServer(const NetworkInterface& aNif) = 0;
 private:
     void AddServer(NetworkInterface& aNif);
-    void SubnetChanged();
+    void SubnetListChanged();
     TInt FindInterface(TIpAddress aInterface, const std::vector<NetworkInterface*>& aNifList);
     TInt FindServer(TIpAddress aSubnet);
 private:
@@ -41,7 +41,7 @@ private:
 private:
     Mutex iLock;
     std::vector<DviServer::Server*> iServers;
-    TInt iSubnetChangeListenerId;
+    TInt iSubnetListChangeListenerId;
 };
 
 } // namespace Net

@@ -25,13 +25,13 @@ public:
     void SetCurrentSubnet(TIpAddress aSubnet);
     TUint AddCurrentChangeListener(Functor aFunctor);
     void RemoveCurrentChangeListener(TUint aId);
-    TUint AddSubnetChangeListener(Functor aFunctor);
-    void RemoveSubnetChangeListener(TUint aId);
+    TUint AddSubnetListChangeListener(Functor aFunctor);
+    void RemoveSubnetListChangeListener(TUint aId);
 private:
     typedef std::map<TUint,Functor> Map;
     std::vector<NetworkInterface*>* CreateSubnetListLocked() const;
     TUint AddListener(Functor aFunctor, Map& aMap);
-    void RemoveSubnetChangeListener(TUint aId, Map& aMap);
+    void RemoveSubnetListChangeListener(TUint aId, Map& aMap);
     static void InterfaceListChanged(void* aPtr);
     static TInt FindSubnet(TIpAddress aSubnet, const std::vector<NetworkInterface*>& aList);
     void UpdateCurrentInterface();

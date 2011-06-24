@@ -184,7 +184,7 @@ DllExport void OhNetInitParamsSetAsyncErrorHandler(OhNetHandleInitParams aParams
  * @param[in] aCallback        Callback which will be run if the active subnet changes
  * @param[in] aPtr             Data which will be passed to aCallback
  */
-DllExport void OhNetInitParamsSetSubnetChangedListener(OhNetHandleInitParams aParams, OhNetCallback aCallback, void* aPtr);
+DllExport void OhNetInitParamsSetSubnetListChangedListener(OhNetHandleInitParams aParams, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Set a custom timeout for TCP connections.

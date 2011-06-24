@@ -127,7 +127,7 @@ public:
     void SetAsyncBeginHandler(FunctorAsync aHandler);
     void SetAsyncEndHandler(FunctorAsync aHandler);
     void SetAsyncErrorHandler(FunctorAsync aHandler);
-    void SetSubnetChangedListener(Functor aFunctor);
+    void SetSubnetListChangedListener(Functor aFunctor);
     /**
      * Set a timeout for TCP connections.  Must be greater that zero
      */
@@ -240,7 +240,7 @@ public:
     FunctorAsync& AsyncBeginHandler();
     FunctorAsync& AsyncEndHandler();
     FunctorAsync& AsyncErrorHandler();
-    Functor& SubnetChangedListener();
+    Functor& SubnetListChangedListener();
     uint32_t TcpConnectTimeoutMs() const;
     uint32_t MsearchTimeSecs() const;
     uint32_t MsearchTtl() const;
@@ -269,7 +269,7 @@ private:
     FunctorAsync iAsyncEndHandler;
     FunctorAsync iAsyncErrorHandler;
     DefaultAsyncHandler* iDefaultAsyncHandler;
-    Functor iSubnetChangedListener;
+    Functor iSubnetListChangedListener;
     uint32_t iTcpConnectTimeoutMs;
     uint32_t iMsearchTimeSecs;
     uint32_t iMsearchTtl;

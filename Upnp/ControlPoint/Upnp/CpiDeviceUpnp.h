@@ -131,7 +131,7 @@ protected:
 private:
     void RefreshTimerComplete();
     void CurrentNetworkInterfaceChanged();
-    void SubnetChanged();
+    void SubnetListChanged();
     void HandleInterfaceChange(TBool aNewSubnet);
     void RemoveAll();
 protected:
@@ -141,7 +141,7 @@ private:
     SsdpListenerMulticast* iMulticastListener;
     TInt iNotifyHandlerId;
     TUint iInterfaceChangeListenerId;
-    TUint iSubnetChangeListenerId;
+    TUint iSubnetListChangeListenerId;
     TBool iStarted;
     Timer* iRefreshTimer;
     Semaphore iXmlFetchSem;

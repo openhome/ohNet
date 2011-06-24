@@ -79,17 +79,17 @@ TUint NetworkInterfaceList::AddCurrentChangeListener(Functor aFunctor)
 
 void NetworkInterfaceList::RemoveCurrentChangeListener(TUint aId)
 {
-    RemoveSubnetChangeListener(aId, iListenersCurrent);
+    RemoveSubnetListChangeListener(aId, iListenersCurrent);
 }
 
-TUint NetworkInterfaceList::AddSubnetChangeListener(Functor aFunctor)
+TUint NetworkInterfaceList::AddSubnetListChangeListener(Functor aFunctor)
 {
     return AddListener(aFunctor, iListenersSubnet);
 }
 
-void NetworkInterfaceList::RemoveSubnetChangeListener(TUint aId)
+void NetworkInterfaceList::RemoveSubnetListChangeListener(TUint aId)
 {
-    RemoveSubnetChangeListener(aId, iListenersSubnet);
+    RemoveSubnetListChangeListener(aId, iListenersSubnet);
 }
 
 std::vector<NetworkInterface*>* NetworkInterfaceList::CreateSubnetListLocked() const
@@ -116,7 +116,7 @@ TUint NetworkInterfaceList::AddListener(Functor aFunctor, Map& aMap)
     return id;
 }
 
-void NetworkInterfaceList::RemoveSubnetChangeListener(TUint aId, Map& aMap)
+void NetworkInterfaceList::RemoveSubnetListChangeListener(TUint aId, Map& aMap)
 {
     iListenerLock.Wait();
     Map::iterator it = aMap.find(aId);

@@ -95,11 +95,11 @@ void OhNetInitParamsSetAsyncErrorHandler(OhNetHandleInitParams aParams, OhNetCal
     ip->SetAsyncErrorHandler(functor);
 }
 
-void OhNetInitParamsSetSubnetChangedListener(OhNetHandleInitParams aParams, OhNetCallback aCallback, void* aPtr)
+void OhNetInitParamsSetSubnetListChangedListener(OhNetHandleInitParams aParams, OhNetCallback aCallback, void* aPtr)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     Functor functor = MakeFunctor(aPtr, aCallback);
-    ip->SetSubnetChangedListener(functor);
+    ip->SetSubnetListChangedListener(functor);
 }
 
 void OhNetInitParamsSetTcpConnectTimeout(OhNetHandleInitParams aParams, uint32_t aTimeoutMs)

@@ -113,7 +113,7 @@ private:
     AttributeMap iAttributeMap;
     Mutex iLock;
     std::vector<Nif*> iInterfaces;
-    TInt iSubnetChangeListenerId;
+    TInt iSubnetListChangeListenerId;
     std::vector<DeviceMsgScheduler*> iMsgSchedulers;
     TUint iSubnetDisableCount;
     Functor iDisableComplete;

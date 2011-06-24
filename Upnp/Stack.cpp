@@ -64,9 +64,9 @@ Stack::Stack(InitialisationParams* aInitParams)
     SetRandomSeed((TUint)(time(NULL) % UINT32_MAX));
     iTimerManager = new OpenHome::TimerManager();
     iNetworkInterfaceList = new OpenHome::NetworkInterfaceList(0);
-    Functor& subnetChangeListener = iInitParams->SubnetChangedListener();
-    if (subnetChangeListener) {
-        iNetworkInterfaceList->AddSubnetChangeListener(subnetChangeListener);
+    Functor& subnetListChangeListener = iInitParams->SubnetListChangedListener();
+    if (subnetListChangeListener) {
+        iNetworkInterfaceList->AddSubnetListChangeListener(subnetListChangeListener);
     }
 }
 

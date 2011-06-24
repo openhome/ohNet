@@ -77,7 +77,7 @@ MdnsPlatform::MdnsPlatform(const TChar* aHost)
 
 MdnsPlatform::~MdnsPlatform()
 {
-    Stack::NetworkInterfaceList().RemoveSubnetChangeListener(iSubnetChangeListenerId);
+    Stack::NetworkInterfaceList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     mDNS_Close(iMdns);
     delete iMdns;
     delete iTimer;
@@ -363,7 +363,7 @@ MdnsPlatform::Status MdnsPlatform::Init()
     Status status = mStatus_NoError;
     NetworkInterfaceList& nifList = Stack::NetworkInterfaceList();
     Functor functor = MakeFunctor(*this, &MdnsPlatform::SubnetListChanged);
-    iSubnetChangeListenerId = nifList.AddSubnetChangeListener(functor);
+    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
     std::vector<NetworkInterface*>* subnetList = nifList.CreateSubnetList();
     for (TUint i=0; i<(TUint)subnetList->size() && status==mStatus_NoError; i++) {
         status = AddInterface((*subnetList)[i]);

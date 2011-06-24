@@ -14,7 +14,7 @@ using namespace OpenHome::Net;
 DviServer::~DviServer()
 {
     iLock.Wait();
-    Stack::NetworkInterfaceList().RemoveSubnetChangeListener(iSubnetChangeListenerId);
+    Stack::NetworkInterfaceList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     for (TUint i=0; i<iServers.size(); i++) {
         delete iServers[i];
     }
@@ -36,15 +36,15 @@ TUint DviServer::Port(TIpAddress aInterface)
 
 DviServer::DviServer()
     : iLock("DSUM")
-    , iSubnetChangeListenerId(NetworkInterfaceList::kListenerIdNull)
+    , iSubnetListChangeListenerId(NetworkInterfaceList::kListenerIdNull)
 {
 }
 
 void DviServer::Initialise()
 {
-    Functor functor = MakeFunctor(*this, &DviServer::SubnetChanged);
+    Functor functor = MakeFunctor(*this, &DviServer::SubnetListChanged);
     NetworkInterfaceList& nifList = Stack::NetworkInterfaceList();
-    iSubnetChangeListenerId = nifList.AddSubnetChangeListener(functor);
+    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
     iLock.Wait();
     std::vector<NetworkInterface*>* subnetList = nifList.CreateSubnetList();
     for (TUint i=0; i<subnetList->size(); i++) {
@@ -61,7 +61,7 @@ void DviServer::AddServer(NetworkInterface& aNif)
     iServers.push_back(server);
 }
 
-void DviServer::SubnetChanged()
+void DviServer::SubnetListChanged()
 {
     /* DviDeviceUpnp relies on servers being available on all appropriate interfaces.
        We assume this happens through DviServer being created before any devices
