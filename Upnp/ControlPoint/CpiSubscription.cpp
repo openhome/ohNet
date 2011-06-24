@@ -102,8 +102,14 @@ void CpiSubscription::RunInSubscriber()
     EOperation op = iPendingOperation;
     iPendingOperation = eNone;
     Stack::Mutex().Signal();
+    RunInSubscriber(op);
+    RemoveRef();
+}
 
-    switch (op)
+void CpiSubscription::RunInSubscriber(EOperation aOperation)
+{
+    AutoMutex a(iSubscriberLock);
+    switch (aOperation)
     {
     case eNone:
         break;
@@ -121,11 +127,11 @@ void CpiSubscription::RunInSubscriber()
         Schedule(eSubscribe);
         break;
     }
-    RemoveRef();
 }
 
 CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType)
     : iLock("SUBM")
+    , iSubscriberLock("SBM2")
     , iDevice(aDevice)
     , iEventProcessor(&aEventProcessor)
     , iServiceType(aServiceType)
@@ -144,10 +150,11 @@ CpiSubscription::~CpiSubscription()
 {
     iTimer->Cancel();
     Stack::Mutex().Wait();
-    if (iSid.Bytes() > 0) {
-        CpiSubscriptionManager::Remove(*this);
-    }
+    bool subscribed = (iSid.Bytes() > 0);
     Stack::Mutex().Signal();
+    if (subscribed) {
+        DoUnsubscribe();
+    }
     iDevice.RemoveRef();
     delete iTimer;
     Stack::RemoveObject(this, "CpiSubscription");

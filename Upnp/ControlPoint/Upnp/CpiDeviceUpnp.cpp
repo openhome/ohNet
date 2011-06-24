@@ -31,6 +31,8 @@ CpiDeviceUpnp::CpiDeviceUpnp(const Brx& aUdn, const Brx& aLocation, TUint aMaxAg
     , iDeviceXml(NULL)
     , iExpiryTime(0)
     , iDeviceList(aDeviceList)
+    , iSemReady("CDUS", 0)
+    , iRemoved(false)
 {
     iDevice = new CpiDevice(aUdn, *this, *this, this);
     iTimer = new Timer(MakeFunctor(*this, &CpiDeviceUpnp::TimerExpired));
@@ -169,6 +171,15 @@ void CpiDeviceUpnp::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
     eventUpnp.Unsubscribe(uri, aSid);
 }
 
+void CpiDeviceUpnp::NotifyRemovedBeforeReady()
+{
+    iLock.Wait();
+    iRemoved = true;
+    iLock.Signal();
+    InterruptXmlFetch();
+    iSemReady.Wait();
+}
+
 void CpiDeviceUpnp::Release()
 {
     iDevice = NULL; // device will delete itself when this returns;
@@ -259,7 +270,7 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
     iLock.Wait();
     iXmlFetch = NULL;
     iLock.Signal();
-    TBool err = false;
+    TBool err = iRemoved;
     try {
         XmlFetch::Xml(aAsync).TransferTo(iXml);
     }
@@ -286,6 +297,7 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
     iList->XmlFetchCompleted(*this, err);
     iList = NULL;
     iDevice->RemoveRef();
+    iSemReady.Signal();
 }
 
 

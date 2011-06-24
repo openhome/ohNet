@@ -115,6 +115,7 @@ private:
      * the class doesn't get deleted before (or, worse, during) that later operation.
      */
     void Schedule(EOperation aOperation);
+    void RunInSubscriber(EOperation aOperation);
     void DoSubscribe();
     void Renew();
     void DoRenew();
@@ -126,6 +127,7 @@ private: // IEventProcessor
     void EventUpdateEnd();
 private:
     OpenHome::Mutex iLock;
+    OpenHome::Mutex iSubscriberLock;
     CpiDevice& iDevice;
     IEventProcessor* iEventProcessor;
     OpenHome::Net::ServiceType iServiceType;

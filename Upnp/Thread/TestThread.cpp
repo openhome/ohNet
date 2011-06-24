@@ -403,13 +403,28 @@ TInt SemaphoreThread::Waits()
 class SignalThread : public Thread
 {
 public:
-    SignalThread(Semaphore& aOwner) : Thread("SEM2"), iOwner(aOwner), iSelf("STHS", 0) {}
+    SignalThread(Semaphore& aOwner);
+    ~SignalThread();
     Semaphore& Sem() { return iSelf; }
     void Run();
 private:
     Semaphore& iOwner;
     Semaphore  iSelf;
 };
+
+SignalThread::SignalThread(Semaphore& aOwner)
+    : Thread("SEM2")
+    , iOwner(aOwner)
+    , iSelf("STHS", 0)
+{
+}
+
+SignalThread::~SignalThread()
+{
+    Kill();
+    iSelf.Signal();
+    Join();
+}
 
 void SignalThread::Run()
 {
@@ -478,8 +493,6 @@ void SuiteSemaphore::Test()
         TEST(!sem4.Clear());
     }
     for (i=0; i<kNumSignalThreads; i++) {
-        th[i]->Kill();
-        th[i]->Sem().Signal();
         delete th[i];
     }
 }
