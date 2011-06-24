@@ -103,6 +103,10 @@ void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
     iSubscriptionCp = NULL;
 }
 
+void CpiDeviceDv::NotifyRemovedBeforeReady()
+{
+}
+
 void CpiDeviceDv::Release()
 {
     iDeviceDv.RemoveWeakRef();
