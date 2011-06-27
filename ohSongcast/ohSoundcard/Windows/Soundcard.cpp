@@ -464,7 +464,7 @@ Soundcard::Soundcard(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMult
 
 	Functor callback = MakeFunctor(*this, &Soundcard::SubnetListChanged);
 
-	initParams->SetSubnetChangedListener(callback);
+	initParams->SetSubnetListChangedListener(callback);
 
 	UpnpLibrary::Initialise(initParams);
 

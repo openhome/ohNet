@@ -207,7 +207,7 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = UpnpLibrary::CurrentSubnet();
+    NetworkAdapter* nif = UpnpLibrary::CurrentSubnetAdapter();
     TUint max = nif->Address();
     nif->RemoveRef();
     (void)Ascii::AppendDec(buf, Random(max));
