@@ -141,37 +141,52 @@ void DviDeviceUpnp::SubnetListChanged()
     TBool update = false;
 	std::vector<Nif*> pendingDelete;
     iLock.Wait();
-    NetworkAdapterList& interfaceList = Stack::NetworkAdapterList();
-    std::vector<NetworkAdapter*>* subnetList = interfaceList.CreateSubnetList();
-    const std::vector<NetworkAdapter*>& nifList = interfaceList.List();
+    NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
+    NetworkAdapter* current = adapterList.CurrentInterface();
     TUint i = 0;
-    iMsgSchedulers.clear();
-    // remove listeners whose interface is no longer available
-    while (i<iInterfaces.size()) {
-        if (FindInterface(iInterfaces[i]->Interface(), nifList) != -1) {
-			i++;
-		}
-		else {
-			iInterfaces[i]->SetPendingDelete();
-			pendingDelete.push_back(iInterfaces[i]);
-            iInterfaces.erase(iInterfaces.begin() + i);
+    if (current != NULL) {
+        // remove listeners whose interface is no longer available
+        while (i<iInterfaces.size()) {
+            if (iInterfaces[i]->Interface() == current->Address()) {
+			    i++;
+		    }
+		    else {
+			    iInterfaces[i]->SetPendingDelete();
+			    pendingDelete.push_back(iInterfaces[i]);
+                iInterfaces.erase(iInterfaces.begin() + i);
+            }
+            // add listener if 'current' is a new subnet
+            if (iInterfaces.size() == 0) {
+                AddInterface(*current);
+                update = true;
+            }
+        current->RemoveRef();
         }
     }
+    else {
+        std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
+        const std::vector<NetworkAdapter*>& nifList = adapterList.List();
+        // remove listeners whose interface is no longer available
+        while (i<iInterfaces.size()) {
+            if (FindInterface(iInterfaces[i]->Interface(), nifList) != -1) {
+			    i++;
+		    }
+		    else {
+			    iInterfaces[i]->SetPendingDelete();
+			    pendingDelete.push_back(iInterfaces[i]);
+                iInterfaces.erase(iInterfaces.begin() + i);
+            }
+        }
 
-	
-	for (i=0; i<iInterfaces.size(); i++) {
-        if (FindInterface(iInterfaces[i]->Interface(), nifList) == -1) {
-            delete iInterfaces[i];
-            iInterfaces.erase(iInterfaces.begin() + i);
+        // add listeners for new subnets
+        for (i=0; i<subnetList->size(); i++) {
+            NetworkAdapter* subnet = (*subnetList)[i];
+            if (FindListenerForSubnet(subnet->Subnet()) == -1) {
+                AddInterface(*subnet);
+                update = true;
+            }
         }
-    }
-    // add listeners for new subnets
-    for (i=0; i<subnetList->size(); i++) {
-        NetworkAdapter* subnet = (*subnetList)[i];
-        if (FindListenerForSubnet(subnet->Subnet()) == -1) {
-            AddInterface(*subnet);
-            update = true;
-        }
+        NetworkAdapterList::DestroySubnetList(subnetList);
     }
 
 	if (update) {
@@ -184,7 +199,6 @@ void DviDeviceUpnp::SubnetListChanged()
 	}
 
     iLock.Signal();
-    NetworkAdapterList::DestroySubnetList(subnetList);
 	for (i=0; i<pendingDelete.size(); i++) {
 		delete pendingDelete[i];
 	}

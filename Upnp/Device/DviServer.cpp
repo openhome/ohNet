@@ -70,28 +70,48 @@ void DviServer::SubnetListChanged()
        any device listeners are run. */
 
     iLock.Wait();
-    NetworkAdapterList& interfaceList = Stack::NetworkAdapterList();
-    std::vector<NetworkAdapter*>* subnetList = interfaceList.CreateSubnetList();
-    const std::vector<NetworkAdapter*>& nifList = interfaceList.List();
-    TUint i;
-    // remove servers whose interface is no longer available
-    for (i=0; i<iServers.size(); i++) {
-        DviServer::Server* server = iServers[i];
-        if (FindInterface(server->Interface(), nifList) == -1) {
-            delete server;
-            iServers.erase(iServers.begin() + i);
+    NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
+    NetworkAdapter* current = adapterList.CurrentInterface();
+    if (current != NULL) {
+        TUint i;
+        // remove servers whose interface is no longer available
+        for (i=iServers.size()-1; i>=0; i--) {
+            DviServer::Server* server = iServers[i];
+            if (server->Interface() != current->Address()) {
+                delete server;
+                iServers.erase(iServers.begin() + i);
+            }
         }
+        // add server if 'current' is a new subnet
+        if (iServers.size() == 0) {
+            AddServer(*current);
+        }
+
+        current->RemoveRef();
     }
-    // add servers for new subnets
-    for (i=0; i<subnetList->size(); i++) {
-        NetworkAdapter* subnet = (*subnetList)[i];
-        if (FindServer(subnet->Subnet()) == -1) {
-            AddServer(*subnet);
+    else {
+        std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
+        const std::vector<NetworkAdapter*>& nifList = adapterList.List();
+        TUint i;
+        // remove servers whose interface is no longer available
+        for (i=iServers.size()-1; i>=0; i--) {
+            DviServer::Server* server = iServers[i];
+            if (FindInterface(server->Interface(), nifList) == -1) {
+                delete server;
+                iServers.erase(iServers.begin() + i);
+            }
         }
+        // add servers for new subnets
+        for (i=0; i<subnetList->size(); i++) {
+            NetworkAdapter* subnet = (*subnetList)[i];
+            if (FindServer(subnet->Subnet()) == -1) {
+                AddServer(*subnet);
+            }
+        }
+        NetworkAdapterList::DestroySubnetList(subnetList);
     }
 
     iLock.Signal();
-    NetworkAdapterList::DestroySubnetList(subnetList);
 }
 
 TInt DviServer::FindInterface(TIpAddress aInterface, const std::vector<NetworkAdapter*>& aNifList)

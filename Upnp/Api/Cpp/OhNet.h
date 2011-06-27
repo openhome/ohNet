@@ -333,9 +333,8 @@ public:
     /**
      * Start the library as both UPnP control point and device stacks
      *
-     * @param aSubnet    The subnet to use for the control point stack (the device stack
-     *                   operates on all subnets).  Likely to be the Subnet() from a
-     *                   NetworkAdapter returned by SubnetList.
+     * @param aSubnet    The subnet to use for both control point and device stacks.
+     *                   Likely to be the Subnet() from a NetworkAdapter returned by SubnetList.
      */
     static void StartCombined(TIpAddress aSubnet);
 
