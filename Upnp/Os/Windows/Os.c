@@ -797,7 +797,6 @@ int32_t OsNetworkListAdapters(OsNetworkAdapter** aInterfaces, uint32_t aUseLoopb
             free(nif);
             goto failure;
         }
-        // warning - lossy conversion from unicode
         for (j=0; j<len; j++) {
             nif->iName[j] = (char)ifRow->bDescr[j];
         }
