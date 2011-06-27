@@ -18,7 +18,7 @@ public:
 public:
     NetworkAdapterList(TIpAddress aDefaultSubnet=0);
     ~NetworkAdapterList();
-    NetworkAdapter* CurrentInterface() const;
+    NetworkAdapter* CurrentAdapter() const;
     const std::vector<NetworkAdapter*>& List() const;
     std::vector<NetworkAdapter*>* CreateSubnetList() const;
     static void DestroySubnetList(std::vector<NetworkAdapter*>* aList);
@@ -34,7 +34,7 @@ private:
     void RemoveSubnetListChangeListener(TUint aId, Map& aMap);
     static void InterfaceListChanged(void* aPtr);
     static TInt FindSubnet(TIpAddress aSubnet, const std::vector<NetworkAdapter*>& aList);
-    void UpdateCurrentInterface();
+    void UpdateCurrentAdapter();
     void HandleInterfaceListChanged();
     void RunCallbacks(Map& aMap);
 private:

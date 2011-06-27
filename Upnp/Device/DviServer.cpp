@@ -71,7 +71,7 @@ void DviServer::SubnetListChanged()
 
     iLock.Wait();
     NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
-    NetworkAdapter* current = adapterList.CurrentInterface();
+    NetworkAdapter* current = adapterList.CurrentAdapter();
     if (current != NULL) {
         TUint i;
         // remove servers whose interface is no longer available

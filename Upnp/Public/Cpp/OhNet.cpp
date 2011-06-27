@@ -457,5 +457,5 @@ void UpnpLibrary::SetCurrentSubnet(TIpAddress aSubnet)
 
 NetworkAdapter* UpnpLibrary::CurrentSubnetAdapter()
 {
-    return Stack::NetworkAdapterList().CurrentInterface();
+    return Stack::NetworkAdapterList().CurrentAdapter();
 }

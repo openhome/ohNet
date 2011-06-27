@@ -27,7 +27,7 @@ NetworkAdapterList::~NetworkAdapterList()
     Net::Stack::RemoveObject(this, "NetworkAdapterList");
 }
 
-NetworkAdapter* NetworkAdapterList::CurrentInterface() const
+NetworkAdapter* NetworkAdapterList::CurrentAdapter() const
 {
     AutoMutex a(iListLock);
     if (iCurrent == NULL) {
@@ -65,7 +65,7 @@ void NetworkAdapterList::SetCurrentSubnet(TIpAddress aSubnet)
     iListLock.Wait();
     TIpAddress oldSubnet = (iCurrent==NULL? 0 : iCurrent->Subnet());
     iDefaultSubnet = aSubnet;
-    UpdateCurrentInterface();
+    UpdateCurrentAdapter();
     iListLock.Signal();
     if (aSubnet != oldSubnet) {
         RunCallbacks(iListenersCurrent);
@@ -141,7 +141,7 @@ TInt NetworkAdapterList::FindSubnet(TIpAddress aSubnet, const std::vector<Networ
     return -1;
 }
 
-void NetworkAdapterList::UpdateCurrentInterface()
+void NetworkAdapterList::UpdateCurrentAdapter()
 {
     iCurrent = NULL;
     if (iNetworkAdapters != NULL && iNetworkAdapters->size() > 0) {
@@ -163,8 +163,8 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     DestroySubnetList(iNetworkAdapters);
     iNetworkAdapters = list;
 
-    // update the 'current' interface and inform observers if it has changed
-    UpdateCurrentInterface();
+    // update the 'current' adapter and inform observers if it has changed
+    UpdateCurrentAdapter();
     TIpAddress newAddress = (iCurrent==NULL? 0 : iCurrent->Address());
 
     // update the subnet list, noting if it has changed

@@ -142,7 +142,7 @@ void DviDeviceUpnp::SubnetListChanged()
 	std::vector<Nif*> pendingDelete;
     iLock.Wait();
     NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
-    NetworkAdapter* current = adapterList.CurrentInterface();
+    NetworkAdapter* current = adapterList.CurrentAdapter();
     TUint i = 0;
     if (current != NULL) {
         // remove listeners whose interface is no longer available

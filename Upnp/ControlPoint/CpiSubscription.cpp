@@ -176,7 +176,7 @@ void CpiSubscription::DoSubscribe()
 {
     Bws<Uri::kMaxUriBytes> uri;
     uri.Append(Http::kUriPrefix);
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentInterface();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
     if (nif == NULL) {
         THROW(NetworkError);
     }
@@ -400,7 +400,7 @@ CpiSubscriptionManager::CpiSubscriptionManager()
     , iShutdownSem("SBMS", 0)
 {
     NetworkAdapterList& ifList = Stack::NetworkAdapterList();
-    NetworkAdapter* currentInterface = ifList.CurrentInterface();
+    NetworkAdapter* currentInterface = ifList.CurrentAdapter();
     Functor functor = MakeFunctor(*this, &CpiSubscriptionManager::CurrentNetworkAdapterChanged);
     iInterfaceListListenerId = ifList.AddCurrentChangeListener(functor);
     functor = MakeFunctor(*this, &CpiSubscriptionManager::SubnetListChanged);
@@ -603,7 +603,7 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
 {
     iLock.Wait();
     NetworkAdapterList& ifList = Stack::NetworkAdapterList();
-    NetworkAdapter* currentInterface = ifList.CurrentInterface();
+    NetworkAdapter* currentInterface = ifList.CurrentAdapter();
 
     // trigger CpiSubscriptionManager::WaitForPendingAdds
     if (iPendingSubscriptions.size() > 0) {

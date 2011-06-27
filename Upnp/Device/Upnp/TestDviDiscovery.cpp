@@ -218,7 +218,7 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentInterface();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
     TUint max = nif->Address();
     nif->RemoveRef();
     (void)Ascii::AppendDec(buf, Random(max));
@@ -243,7 +243,7 @@ void SuiteAlive::Test()
 {
     Blocker* blocker = new Blocker;
     CpListenerBasic* listener = new CpListenerBasic;
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentInterface();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
     SsdpListenerMulticast* listenerMulticast = new SsdpListenerMulticast(nif->Address());
     nif->RemoveRef();
     TInt listenerId = listenerMulticast->AddNotifyHandler(listener);
@@ -344,7 +344,7 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
 {
     Uri uri(aLocation);
     Endpoint endpt(0, uri.Host());
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentInterface();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
     TBool correctSubnet = nif->ContainsAddress(endpt.Address());
     nif->RemoveRef();
     if (!correctSubnet) {
@@ -467,7 +467,7 @@ SuiteMsearch::SuiteMsearch()
     RandomiseUdn(gNameDevice2Embedded1);
     iBlocker = new Blocker;
     iListener = new CpListenerMsearch;
-    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentInterface();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
     iListenerUnicast = new SsdpListenerUnicast(*iListener, nif->Address());
     nif->RemoveRef();
     iListenerUnicast->Start();
