@@ -102,8 +102,14 @@ void CpiSubscription::RunInSubscriber()
     EOperation op = iPendingOperation;
     iPendingOperation = eNone;
     Stack::Mutex().Signal();
+    RunInSubscriber(op);
+    RemoveRef();
+}
 
-    switch (op)
+void CpiSubscription::RunInSubscriber(EOperation aOperation)
+{
+    AutoMutex a(iSubscriberLock);
+    switch (aOperation)
     {
     case eNone:
         break;
@@ -121,11 +127,11 @@ void CpiSubscription::RunInSubscriber()
         Schedule(eSubscribe);
         break;
     }
-    RemoveRef();
 }
 
 CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const OpenHome::Net::ServiceType& aServiceType)
     : iLock("SUBM")
+    , iSubscriberLock("SBM2")
     , iDevice(aDevice)
     , iEventProcessor(&aEventProcessor)
     , iServiceType(aServiceType)
@@ -144,10 +150,11 @@ CpiSubscription::~CpiSubscription()
 {
     iTimer->Cancel();
     Stack::Mutex().Wait();
-    if (iSid.Bytes() > 0) {
-        CpiSubscriptionManager::Remove(*this);
-    }
+    bool subscribed = (iSid.Bytes() > 0);
     Stack::Mutex().Signal();
+    if (subscribed) {
+        DoUnsubscribe();
+    }
     iDevice.RemoveRef();
     delete iTimer;
     Stack::RemoveObject(this, "CpiSubscription");
@@ -157,6 +164,9 @@ void CpiSubscription::Schedule(EOperation aOperation)
 {
     Stack::Mutex().Wait();
     iRefCount++;
+    if (iPendingOperation == eSubscribe) {
+        iSubscribeCompleted.Signal();
+    }
     iPendingOperation = aOperation;
     Stack::Mutex().Signal();
     CpiSubscriptionManager::Schedule(*this);
@@ -166,7 +176,7 @@ void CpiSubscription::DoSubscribe()
 {
     Bws<Uri::kMaxUriBytes> uri;
     uri.Append(Http::kUriPrefix);
-    NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
     if (nif == NULL) {
         THROW(NetworkError);
     }
@@ -389,12 +399,12 @@ CpiSubscriptionManager::CpiSubscriptionManager()
     , iWaiters(0)
     , iShutdownSem("SBMS", 0)
 {
-    NetworkInterfaceList& ifList = Stack::NetworkInterfaceList();
-    NetworkInterface* currentInterface = ifList.CurrentInterface();
-    Functor functor = MakeFunctor(*this, &CpiSubscriptionManager::CurrentNetworkInterfaceChanged);
+    NetworkAdapterList& ifList = Stack::NetworkAdapterList();
+    NetworkAdapter* currentInterface = ifList.CurrentAdapter();
+    Functor functor = MakeFunctor(*this, &CpiSubscriptionManager::CurrentNetworkAdapterChanged);
     iInterfaceListListenerId = ifList.AddCurrentChangeListener(functor);
-    functor = MakeFunctor(*this, &CpiSubscriptionManager::SubnetChanged);
-    iSubnetListenerId = ifList.AddSubnetChangeListener(functor);
+    functor = MakeFunctor(*this, &CpiSubscriptionManager::SubnetListChanged);
+    iSubnetListenerId = ifList.AddSubnetListChangeListener(functor);
     if (currentInterface == NULL) {
         iEventServer = NULL;
     }
@@ -448,8 +458,8 @@ CpiSubscriptionManager::~CpiSubscriptionManager()
 
     ASSERT(iList.size() == 0);
 
-    Stack::NetworkInterfaceList().RemoveSubnetChangeListener(iSubnetListenerId);
-    Stack::NetworkInterfaceList().RemoveCurrentChangeListener(iInterfaceListListenerId);
+    Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListenerId);
+    Stack::NetworkAdapterList().RemoveCurrentChangeListener(iInterfaceListListenerId);
     delete iEventServer;
 
     LOG(kEvent, "< ~CpiSubscriptionManager()\n");
@@ -579,12 +589,12 @@ void CpiSubscriptionManager::RemovePendingAdd(CpiSubscription& aSubscription)
     }
 }
 
-void CpiSubscriptionManager::CurrentNetworkInterfaceChanged()
+void CpiSubscriptionManager::CurrentNetworkAdapterChanged()
 {
     HandleInterfaceChange(false);
 }
 
-void CpiSubscriptionManager::SubnetChanged()
+void CpiSubscriptionManager::SubnetListChanged()
 {
     HandleInterfaceChange(true);
 }
@@ -592,8 +602,8 @@ void CpiSubscriptionManager::SubnetChanged()
 void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
 {
     iLock.Wait();
-    NetworkInterfaceList& ifList = Stack::NetworkInterfaceList();
-    NetworkInterface* currentInterface = ifList.CurrentInterface();
+    NetworkAdapterList& ifList = Stack::NetworkAdapterList();
+    NetworkAdapter* currentInterface = ifList.CurrentAdapter();
 
     // trigger CpiSubscriptionManager::WaitForPendingAdds
     if (iPendingSubscriptions.size() > 0) {

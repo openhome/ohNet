@@ -516,7 +516,6 @@ int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
             sent += bytes;
         }
     } while(bytes != -1 && sent < aBytes);    
-    
     return sent;
 }
 
@@ -741,6 +740,11 @@ int32_t OsNetworkSocketSetReuseAddress(THandle aHandle)
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     int32_t reuseaddr = 1;
     int32_t err = setsockopt(handle->iSocket, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr));
+#ifdef PLATFORM_MACOSX_GNU
+    if (err == 0) {
+        err = setsockopt(handle->iSocket, SOL_SOCKET, SO_REUSEPORT, &reuseaddr, sizeof(reuseaddr));
+    }
+#endif /* PLATFOTM_MACOSX_GNU */
     return err;
 }
 
@@ -783,7 +787,7 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInte
     return err;
 }
 
-int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseLoopback)
+int32_t OsNetworkListAdapters(OsNetworkAdapter** aAdapters, uint32_t aUseLoopback)
 {
 #define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
         (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
@@ -792,7 +796,10 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
     struct ifaddrs* networkIf;
     struct ifaddrs* iter;
     int32_t includeLoopback = 1;
-    *aInterfaces = NULL;
+#ifdef PLATFORM_MACOSX_GNU
+    aUseLoopback = 0;
+#endif
+    *aAdapters = NULL;
     if (TEMP_FAILURE_RETRY(getifaddrs(&networkIf)) == -1) {
         return -1;
     }
@@ -811,8 +818,8 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
     }
     /* ...then allocate/populate the list */
     iter = networkIf;
-    OsNetworkInterface* head = NULL;
-    OsNetworkInterface* tail = NULL;
+    OsNetworkAdapter* head = NULL;
+    OsNetworkAdapter* tail = NULL;
     while (iter != NULL) {
         if (iter->ifa_addr->sa_family != AF_INET ||
             (includeLoopback == 0 && ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr == loopbackAddr) ||
@@ -821,7 +828,7 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
             continue;
         }
 
-        OsNetworkInterface* iface = (OsNetworkInterface*)calloc(1, sizeof(*iface));
+        OsNetworkAdapter* iface = (OsNetworkAdapter*)calloc(1, sizeof(*iface));
         if (iface == NULL) {
             OsNetworkFreeInterfaces(head);
             goto exit;
@@ -844,18 +851,18 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
         iter = iter->ifa_next;
     }
     ret = 0;
-    *aInterfaces = head;
+    *aAdapters = head;
 exit:
     freeifaddrs(networkIf);
     return ret;
 }
 
-void OsNetworkFreeInterfaces(OsNetworkInterface* aInterfaces)
+void OsNetworkFreeInterfaces(OsNetworkAdapter* aAdapters)
 {
-    OsNetworkInterface* tmp;
-    while (aInterfaces != NULL) {
-        tmp = aInterfaces;
-        aInterfaces = aInterfaces->iNext;
+    OsNetworkAdapter* tmp;
+    while (aAdapters != NULL) {
+        tmp = aAdapters;
+        aAdapters = aAdapters->iNext;
         free(tmp->iName);
         free(tmp);
     }

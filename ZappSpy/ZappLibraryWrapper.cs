@@ -18,7 +18,7 @@ namespace ZappSpy
             iLibrary.Initialise(initialisationParams);
             IntPtr subnetList = iLibrary.SubnetListCreate();
             IntPtr nif = iLibrary.SubnetAt(subnetList, 0);
-            uint subnet = iLibrary.NetworkInterfaceSubnet(nif);
+            uint subnet = iLibrary.NetworkAdapterSubnet(nif);
             iLibrary.SubnetListDestroy(subnetList);
             iLibrary.StartCp(subnet);
         }

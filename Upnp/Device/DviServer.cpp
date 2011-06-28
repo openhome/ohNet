@@ -3,7 +3,7 @@
 #include <Network.h>
 #include <Thread.h>
 #include <Stack.h>
-#include <NetworkInterfaceList.h>
+#include <NetworkAdapterList.h>
 #include <OhNet.h>
 
 using namespace OpenHome;
@@ -14,7 +14,7 @@ using namespace OpenHome::Net;
 DviServer::~DviServer()
 {
     iLock.Wait();
-    Stack::NetworkInterfaceList().RemoveSubnetChangeListener(iSubnetChangeListenerId);
+    Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     for (TUint i=0; i<iServers.size(); i++) {
         delete iServers[i];
     }
@@ -36,65 +36,85 @@ TUint DviServer::Port(TIpAddress aInterface)
 
 DviServer::DviServer()
     : iLock("DSUM")
-    , iSubnetChangeListenerId(NetworkInterfaceList::kListenerIdNull)
+    , iSubnetListChangeListenerId(NetworkAdapterList::kListenerIdNull)
 {
 }
 
 void DviServer::Initialise()
 {
-    Functor functor = MakeFunctor(*this, &DviServer::SubnetChanged);
-    NetworkInterfaceList& nifList = Stack::NetworkInterfaceList();
-    iSubnetChangeListenerId = nifList.AddSubnetChangeListener(functor);
+    Functor functor = MakeFunctor(*this, &DviServer::SubnetListChanged);
+    NetworkAdapterList& nifList = Stack::NetworkAdapterList();
+    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
     iLock.Wait();
-    std::vector<NetworkInterface*>* subnetList = nifList.CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
     for (TUint i=0; i<subnetList->size(); i++) {
         AddServer(*(*subnetList)[i]);
     }
-    NetworkInterfaceList::DestroySubnetList(subnetList);
+    NetworkAdapterList::DestroySubnetList(subnetList);
     iLock.Signal();
 }
 
-void DviServer::AddServer(NetworkInterface& aNif)
+void DviServer::AddServer(NetworkAdapter& aNif)
 {
     SocketTcpServer* tcpServer = CreateServer(aNif);
     DviServer::Server* server = new DviServer::Server(tcpServer, aNif);
     iServers.push_back(server);
 }
 
-void DviServer::SubnetChanged()
+void DviServer::SubnetListChanged()
 {
     /* DviDeviceUpnp relies on servers being available on all appropriate interfaces.
        We assume this happens through DviServer being created before any devices
-       so registering for subnet change notification earlier.  Assuming NetworkInterfaceList
+       so registering for subnet change notification earlier.  Assuming NetworkAdapterList
        always runs its listeners in the order they registered, we'll have updated before
        any device listeners are run. */
 
     iLock.Wait();
-    NetworkInterfaceList& interfaceList = Stack::NetworkInterfaceList();
-    std::vector<NetworkInterface*>* subnetList = interfaceList.CreateSubnetList();
-    const std::vector<NetworkInterface*>& nifList = interfaceList.List();
-    TUint i;
-    // remove servers whose interface is no longer available
-    for (i=0; i<iServers.size(); i++) {
-        DviServer::Server* server = iServers[i];
-        if (FindInterface(server->Interface(), nifList) == -1) {
-            delete server;
-            iServers.erase(iServers.begin() + i);
+    NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
+    NetworkAdapter* current = adapterList.CurrentAdapter();
+    if (current != NULL) {
+        TUint i;
+        // remove servers whose interface is no longer available
+        for (i=(TUint)iServers.size()-1; i>=0; i--) {
+            DviServer::Server* server = iServers[i];
+            if (server->Interface() != current->Address()) {
+                delete server;
+                iServers.erase(iServers.begin() + i);
+            }
         }
+        // add server if 'current' is a new subnet
+        if (iServers.size() == 0) {
+            AddServer(*current);
+        }
+
+        current->RemoveRef();
     }
-    // add servers for new subnets
-    for (i=0; i<subnetList->size(); i++) {
-        NetworkInterface* subnet = (*subnetList)[i];
-        if (FindServer(subnet->Subnet()) == -1) {
-            AddServer(*subnet);
+    else {
+        std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
+        const std::vector<NetworkAdapter*>& nifList = adapterList.List();
+        TUint i;
+        // remove servers whose interface is no longer available
+        for (i=(TUint)iServers.size()-1; i>=0; i--) {
+            DviServer::Server* server = iServers[i];
+            if (FindInterface(server->Interface(), nifList) == -1) {
+                delete server;
+                iServers.erase(iServers.begin() + i);
+            }
         }
+        // add servers for new subnets
+        for (i=0; i<subnetList->size(); i++) {
+            NetworkAdapter* subnet = (*subnetList)[i];
+            if (FindServer(subnet->Subnet()) == -1) {
+                AddServer(*subnet);
+            }
+        }
+        NetworkAdapterList::DestroySubnetList(subnetList);
     }
 
     iLock.Signal();
-    NetworkInterfaceList::DestroySubnetList(subnetList);
 }
 
-TInt DviServer::FindInterface(TIpAddress aInterface, const std::vector<NetworkInterface*>& aNifList)
+TInt DviServer::FindInterface(TIpAddress aInterface, const std::vector<NetworkAdapter*>& aNifList)
 {
     for (TUint i=0; i<aNifList.size(); i++) {
         if (aNifList[i]->Address() == aInterface) {
@@ -117,7 +137,7 @@ TInt DviServer::FindServer(TIpAddress aSubnet)
 
 //  DviServer::Server
 
-DviServer::Server::Server(SocketTcpServer* aTcpServer, NetworkInterface& aNif)
+DviServer::Server::Server(SocketTcpServer* aTcpServer, NetworkAdapter& aNif)
     : iNif(aNif)
 {
     iServer = aTcpServer;

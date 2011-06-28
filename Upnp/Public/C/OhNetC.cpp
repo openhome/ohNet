@@ -95,17 +95,11 @@ void OhNetInitParamsSetAsyncErrorHandler(OhNetHandleInitParams aParams, OhNetCal
     ip->SetAsyncErrorHandler(functor);
 }
 
-void OhNetInitParamsSetDefaultSubnet(OhNetHandleInitParams aParams, TIpAddress aSubnet)
-{
-    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-    ip->SetDefaultSubnet(aSubnet);
-}
-
-void OhNetInitParamsSetSubnetChangedListener(OhNetHandleInitParams aParams, OhNetCallback aCallback, void* aPtr)
+void OhNetInitParamsSetSubnetListChangedListener(OhNetHandleInitParams aParams, OhNetCallback aCallback, void* aPtr)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
     Functor functor = MakeFunctor(aPtr, aCallback);
-    ip->SetSubnetChangedListener(functor);
+    ip->SetSubnetListChangedListener(functor);
 }
 
 void OhNetInitParamsSetTcpConnectTimeout(OhNetHandleInitParams aParams, uint32_t aTimeoutMs)
@@ -168,10 +162,10 @@ void OhNetInitParamsSetFreeExternalCallback(OhNetHandleInitParams aParams, OhNet
     ip->SetFreeExternalCallback(aCallback);
 }
 
-void OhNetInitParamsSetUseLoopbackNetworkInterface(OhNetHandleInitParams aParams)
+void OhNetInitParamsSetUseLoopbackNetworkAdapter(OhNetHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
-    ip->SetUseLoopbackNetworkInterface();
+    ip->SetUseLoopbackNetworkAdapter();
 }
 
 void OhNetInitParamsSetDvMaxUpdateTime(OhNetHandleInitParams aParams, uint32_t aSecs)
@@ -300,68 +294,68 @@ uint32_t OhNetInitParamsDvIsBonjourEnabled(OhNetHandleInitParams aParams)
 	return (ip->DvIsBonjourEnabled()? 1 : 0);
 }
 
-TIpAddress OhNetNetworkInterfaceAddress(OhNetHandleNetworkInterface aNif)
+TIpAddress OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapter aNif)
 {
-    NetworkInterface* nif = reinterpret_cast<NetworkInterface*>(aNif);
+    NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);
     ASSERT(nif != NULL);
     return nif->Address();
 }
 
-TIpAddress OhNetNetworkInterfaceSubnet(OhNetHandleNetworkInterface aNif)
+TIpAddress OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter aNif)
 {
-    NetworkInterface* nif = reinterpret_cast<NetworkInterface*>(aNif);
+    NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);
     ASSERT(nif != NULL);
     return nif->Subnet();
 }
 
-const char* OhNetNetworkInterfaceName(OhNetHandleNetworkInterface aNif)
+const char* OhNetNetworkAdapterName(OhNetHandleNetworkAdapter aNif)
 {
-    NetworkInterface* nif = reinterpret_cast<NetworkInterface*>(aNif);
+    NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);
     ASSERT(nif != NULL);
     return nif->Name();
 }
 
-char* OhNetNetworkInterfaceFullName(OhNetHandleNetworkInterface aNif)
+char* OhNetNetworkAdapterFullName(OhNetHandleNetworkAdapter aNif)
 {
-    NetworkInterface* nif = reinterpret_cast<NetworkInterface*>(aNif);
+    NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);
     ASSERT(nif != NULL);
     return nif->FullName();
 }
 
-OhNetHandleNetworkInterfaceList OhNetSubnetListCreate()
+OhNetHandleNetworkAdapterList OhNetSubnetListCreate()
 {
-    return (OhNetHandleNetworkInterfaceList)UpnpLibrary::CreateSubnetList();
+    return (OhNetHandleNetworkAdapterList)UpnpLibrary::CreateSubnetList();
 }
 
-uint32_t OhNetSubnetListSize(OhNetHandleNetworkInterfaceList aList)
+uint32_t OhNetSubnetListSize(OhNetHandleNetworkAdapterList aList)
 {
-    std::vector<NetworkInterface*>* list = reinterpret_cast<std::vector<NetworkInterface*>*>(aList);
+    std::vector<NetworkAdapter*>* list = reinterpret_cast<std::vector<NetworkAdapter*>*>(aList);
     ASSERT(list != NULL);
     return (TUint)list->size();
 }
 
-OhNetHandleNetworkInterface OhNetSubnetAt(OhNetHandleNetworkInterfaceList aList, uint32_t aIndex)
+OhNetHandleNetworkAdapter OhNetSubnetAt(OhNetHandleNetworkAdapterList aList, uint32_t aIndex)
 {
-    std::vector<NetworkInterface*>* list = reinterpret_cast<std::vector<NetworkInterface*>*>(aList);
+    std::vector<NetworkAdapter*>* list = reinterpret_cast<std::vector<NetworkAdapter*>*>(aList);
     ASSERT(list != NULL);
-    return (OhNetHandleNetworkInterface)(*list)[aIndex];
+    return (OhNetHandleNetworkAdapter)(*list)[aIndex];
 }
 
-void OhNetSubnetListDestroy(OhNetHandleNetworkInterfaceList aList)
+void OhNetSubnetListDestroy(OhNetHandleNetworkAdapterList aList)
 {
-    std::vector<NetworkInterface*>* list = reinterpret_cast<std::vector<NetworkInterface*>*>(aList);
+    std::vector<NetworkAdapter*>* list = reinterpret_cast<std::vector<NetworkAdapter*>*>(aList);
     UpnpLibrary::DestroySubnetList(list);
 }
 
-void OhNetSetCurrentSubnet(OhNetHandleNetworkInterface aSubnet)
+void OhNetSetCurrentSubnet(OhNetHandleNetworkAdapter aSubnet)
 {
-    NetworkInterface* nif = reinterpret_cast<NetworkInterface*>(aSubnet);
+    NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aSubnet);
     UpnpLibrary::SetCurrentSubnet(nif->Subnet());
 }
 
-OhNetHandleNetworkInterface OhNetCurrentSubnet()
+OhNetHandleNetworkAdapter OhNetCurrentSubnetAdapter()
 {
-    return (OhNetHandleNetworkInterface)UpnpLibrary::CurrentSubnet();
+    return (OhNetHandleNetworkAdapter)UpnpLibrary::CurrentSubnetAdapter();
 }
 
 void OhNetFreeExternal(void* aPtr)

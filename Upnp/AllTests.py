@@ -9,6 +9,8 @@ def objPath():
     plat = 'Posix'
     if os.name == 'nt':
         plat = 'Windows'
+    elif os.uname()[0] == 'Darwin':
+        plat = 'Mac'
     variant = 'Debug'
     if gReleaseBuild == 1:
         variant = 'Release'

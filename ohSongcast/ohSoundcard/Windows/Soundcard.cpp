@@ -459,7 +459,7 @@ Receiver::~Receiver()
 
 // Subnet
 
-Subnet::Subnet(NetworkInterface& aAdapter)
+Subnet::Subnet(NetworkAdapter& aAdapter)
 	: iAdapter(&aAdapter)
 {
 	AddRef();
@@ -471,7 +471,7 @@ Subnet::Subnet(TIpAddress aSubnet)
 {
 }
 
-TBool Subnet::IsAttachedTo(NetworkInterface& aAdapter)
+TBool Subnet::IsAttachedTo(NetworkAdapter& aAdapter)
 {
 	if (iAdapter != 0) {
 		return (iAdapter ==	&aAdapter);
@@ -479,7 +479,7 @@ TBool Subnet::IsAttachedTo(NetworkInterface& aAdapter)
 	return (false);
 }
 
-void Subnet::Attach(NetworkInterface& aAdapter)
+void Subnet::Attach(NetworkAdapter& aAdapter)
 {
 	RemoveRef();
 	iAdapter = &aAdapter;
@@ -581,7 +581,7 @@ Soundcard::Soundcard(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMult
 
 	Functor callback = MakeFunctor(*this, &Soundcard::SubnetListChanged);
 
-	initParams->SetSubnetChangedListener(callback);
+	initParams->SetSubnetListChangedListener(callback);
 
 	UpnpLibrary::Initialise(initParams);
 
@@ -638,12 +638,12 @@ void Soundcard::SubnetListChanged()
 
 	// First, handle changes to the subnet list
 
-	std::vector<NetworkInterface*>*  subnetList = UpnpLibrary::CreateSubnetList();
+	std::vector<NetworkAdapter*>*  subnetList = UpnpLibrary::CreateSubnetList();
 
-	std::vector<NetworkInterface*>::iterator it = subnetList->begin();
+	std::vector<NetworkAdapter*>::iterator it = subnetList->begin();
 
 	while (it != subnetList->end()) {
-		NetworkInterface* adapter = *it;
+		NetworkAdapter* adapter = *it;
 
 		TBool found = false;
 

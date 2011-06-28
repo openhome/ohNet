@@ -5,20 +5,24 @@ ifeq ($(release),1)
 debug_specific_cflags = -O2
 build_dir = Release
 else
-debug_specific_cflags = -g -O0
+debug_specific_cflags = -g -O0 
 build_dir = Debug
 endif
 
-# Macros used by Common.mak
 MACHINE = $(shell uname -s)
 ifeq ($(MACHINE), Darwin)
-platform_cflags = -DPLATFORM_MACOSX_GNU
+platform_cflags = -DPLATFORM_MACOSX_GNU -arch i386 -mmacosx-version-min=10.4
+platform_linkflags = -arch i386
+objdir = Build/Obj/Mac/$(build_dir)/
 else
 platform_cflags = -Wno-psabi
+platform_linkflags =
+objdir = Build/Obj/Posix/$(build_dir)/
 endif
+
+# Macros used by Common.mak
 ar = ${CROSS_COMPILE}ar rc $(objdir)
 cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))" $(platform_cflags)
-objdir = Build/Obj/Posix/$(build_dir)/
 inc_build = Build/Include
 includes = -IBuild/Include/ -IBuild/Include/Cpp/
 bundle_build = Build/Bundles
@@ -28,12 +32,12 @@ libprefix = lib
 libext = a
 exeext = elf
 compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
-link = ${CROSS_COMPILE}g++ -lpthread
+link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
 linkoutput = -o 
 dllprefix = lib
 dllext = so
-link_dll = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc
-link_dll_service = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc -lohNet -L$(objdir)
+link_dll = ${CROSS_COMPILE}g++ -lpthread  $(platform_linkflags) -shared -shared-libgcc
+link_dll_service = ${CROSS_COMPILE}g++ -lpthread  $(platform_linkflags) -shared -shared-libgcc -lohNet -L$(objdir)
 csharp = gmcs /nologo
 publiccsdir = Public/Cs/
 dirsep = /
@@ -76,36 +80,36 @@ copy_build_includes:
 	mkdir -p $(inc_build)/Cpp
 	mkdir -p $(inc_build)/Cpp/Core
 	mkdir -p $(inc_build)/Cpp/Std
-	rsync Api/*.h $(inc_build)
-	rsync Api/C/*.h $(inc_build)/C
-	rsync Api/Cpp/*.h $(inc_build)/Cpp
-	rsync Api/Cpp/*.inl $(inc_build)/Cpp
-	rsync Api/Cpp/Core/*.h $(inc_build)/Cpp/Core
-	rsync Api/Cpp/Std/*.h $(inc_build)/Cpp/Std
-	rsync *.h $(inc_build)
-	rsync Bonjour/*.h $(inc_build)
-	rsync Bonjour/mDNSCore/*.h $(inc_build)
-	rsync ControlPoint/*.h $(inc_build)
-	rsync ControlPoint/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
-	rsync ControlPoint/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
-	rsync ControlPoint/Services/C/*.h $(inc_build)/C
-	rsync ControlPoint/Dv/*.h $(inc_build)
-	rsync ControlPoint/Upnp/*.h $(inc_build)
-	rsync Device/*.h $(inc_build)
-	rsync Device/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
-	rsync Device/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
-	rsync Device/Services/C/*.h $(inc_build)/C
-	rsync Device/Upnp/*.h $(inc_build)
-	rsync Network/*.h $(inc_build)
-	rsync Service/*.h $(inc_build)
-	rsync Ssdp/*.h $(inc_build)
-	rsync Os/*.h $(inc_build)
-	rsync Os/*.inl $(inc_build)
-	rsync Public/C/*.h $(inc_build)/C
-	rsync Public/Cpp/Std/*.h $(inc_build)/Cpp/Std
-	rsync Thread/Thread.h $(inc_build)
-	rsync Utils/*.h $(inc_build)
-	rsync TestFramework/*.h $(inc_build)
+	rsync -u Api/*.h $(inc_build)
+	rsync -u Api/C/*.h $(inc_build)/C
+	rsync -u Api/Cpp/*.h $(inc_build)/Cpp
+	rsync -u Api/Cpp/*.inl $(inc_build)/Cpp
+	rsync -u Api/Cpp/Core/*.h $(inc_build)/Cpp/Core
+	rsync -u Api/Cpp/Std/*.h $(inc_build)/Cpp/Std
+	rsync -u *.h $(inc_build)
+	rsync -u Bonjour/*.h $(inc_build)
+	rsync -u Bonjour/mDNSCore/*.h $(inc_build)
+	rsync -u ControlPoint/*.h $(inc_build)
+	rsync -u ControlPoint/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
+	rsync -u ControlPoint/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
+	rsync -u ControlPoint/Services/C/*.h $(inc_build)/C
+	rsync -u ControlPoint/Dv/*.h $(inc_build)
+	rsync -u ControlPoint/Upnp/*.h $(inc_build)
+	rsync -u Device/*.h $(inc_build)
+	rsync -u Device/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
+	rsync -u Device/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
+	rsync -u Device/Services/C/*.h $(inc_build)/C
+	rsync -u Device/Upnp/*.h $(inc_build)
+	rsync -u Network/*.h $(inc_build)
+	rsync -u Service/*.h $(inc_build)
+	rsync -u Ssdp/*.h $(inc_build)
+	rsync -u Os/*.h $(inc_build)
+	rsync -u Os/*.inl $(inc_build)
+	rsync -u Public/C/*.h $(inc_build)/C
+	rsync -u Public/Cpp/Std/*.h $(inc_build)/Cpp/Std
+	rsync -u Thread/Thread.h $(inc_build)
+	rsync -u Utils/*.h $(inc_build)
+	rsync -u TestFramework/*.h $(inc_build)
 
 install : install-pkgconf install-libs install-includes
 
@@ -117,11 +121,11 @@ install-pkgconf : tt
 
 install-libs :
 	mkdir -p $(installlibdir)
-	rsync $(installlibdir) $(objdir)*
+	rsync -u $(installlibdir) $(objdir)*
 
 install-includes :
 	mkdir -p $(installincludedir)
-	rsync -r $(installincludedir) $(inc_build)/*
+	rsync -ur $(installincludedir) $(inc_build)/*
 
 uninstall-pkgconf :
 	@echo "ERROR: no support for (un)install-pckconf yet"

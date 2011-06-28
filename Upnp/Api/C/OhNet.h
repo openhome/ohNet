@@ -8,8 +8,8 @@
 extern "C" {
 #endif
 
-typedef THandle OhNetHandleNetworkInterface;
-typedef THandle OhNetHandleNetworkInterfaceList;
+typedef THandle OhNetHandleNetworkAdapter;
+typedef THandle OhNetHandleNetworkAdapterList;
 typedef THandle OhNetHandleInitParams;
 
 /**
@@ -174,16 +174,6 @@ DllExport void OhNetInitParamsSetAsyncEndHandler(OhNetHandleInitParams aParams, 
 DllExport void OhNetInitParamsSetAsyncErrorHandler(OhNetHandleInitParams aParams, OhNetCallbackAsync aCallback, void* aPtr);
 
 /**
- * Set which subnet to use on startup
- * The OS layer will select the most appropriate subnet if this is not called.
- * Note that this can only be called before OhNetLibraryInitialise
- *
- * @param[in] aParams          Initialisation params
- * @param[in] aSubnet          The subnet to use on startup
- */
-DllExport void OhNetInitParamsSetDefaultSubnet(OhNetHandleInitParams aParams, TIpAddress aSubnet);
-
-/**
  * Set a listener for changes in the subnet being used
  *
  * This will run if the active subnet becomes unavailable or a seemingly more
@@ -194,7 +184,7 @@ DllExport void OhNetInitParamsSetDefaultSubnet(OhNetHandleInitParams aParams, TI
  * @param[in] aCallback        Callback which will be run if the active subnet changes
  * @param[in] aPtr             Data which will be passed to aCallback
  */
-DllExport void OhNetInitParamsSetSubnetChangedListener(OhNetHandleInitParams aParams, OhNetCallback aCallback, void* aPtr);
+DllExport void OhNetInitParamsSetSubnetListChangedListener(OhNetHandleInitParams aParams, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Set a custom timeout for TCP connections.
@@ -299,7 +289,7 @@ DllExport void OhNetInitParamsSetFreeExternalCallback(OhNetHandleInitParams aPar
  * Limit the library to using only the loopback network interface.
  * Useful for testing but not expected to be used in production code
  */
-DllExport void OhNetInitParamsSetUseLoopbackNetworkInterface(OhNetHandleInitParams aParams);
+DllExport void OhNetInitParamsSetUseLoopbackNetworkAdapter(OhNetHandleInitParams aParams);
 
 /**
  * Set the maximum time between device announcements for the device stack
@@ -502,7 +492,7 @@ DllExport uint32_t OhNetInitParamsDvIsBonjourEnabled(OhNetHandleInitParams aPara
 /* @} */
 
 /**
- * @addtogroup NetworkInterface
+ * @addtogroup NetworkAdapter
  * @ingroup Core
  * @{
  */
@@ -514,7 +504,7 @@ DllExport uint32_t OhNetInitParamsDvIsBonjourEnabled(OhNetHandleInitParams aPara
  *
  * @return  IpV4 address as network order uint32
  */
-DllExport TIpAddress OhNetNetworkInterfaceAddress(OhNetHandleNetworkInterface aNif);
+DllExport TIpAddress OhNetNetworkAdapterAddress(OhNetHandleNetworkAdapter aNif);
 
 /**
  * Query the subnet of a network interface is available on
@@ -523,7 +513,7 @@ DllExport TIpAddress OhNetNetworkInterfaceAddress(OhNetHandleNetworkInterface aN
  *
  * @return  IpV4 address as network order uint32
  */
-DllExport TIpAddress OhNetNetworkInterfaceSubnet(OhNetHandleNetworkInterface aNif);
+DllExport TIpAddress OhNetNetworkAdapterSubnet(OhNetHandleNetworkAdapter aNif);
 
 /**
  * Query the name of a network interface
@@ -532,7 +522,7 @@ DllExport TIpAddress OhNetNetworkInterfaceSubnet(OhNetHandleNetworkInterface aNi
  *
  * @return  IpV4 address as network order uint32
  */
-DllExport const char* OhNetNetworkInterfaceName(OhNetHandleNetworkInterface aNif);
+DllExport const char* OhNetNetworkAdapterName(OhNetHandleNetworkAdapter aNif);
 
 /**
  * Get the full name of the network adapter.
@@ -540,14 +530,14 @@ DllExport const char* OhNetNetworkInterfaceName(OhNetHandleNetworkInterface aNif
  * @return  String in the form a.b.c.d (name).
  *          The caller is responsible for freeing this by calling OhNetFree().
  */
-DllExport char* OhNetNetworkInterfaceFullName(OhNetHandleNetworkInterface aNif);
+DllExport char* OhNetNetworkAdapterFullName(OhNetHandleNetworkAdapter aNif);
 
 /**
  * Create a list of all available subnets
  *
  * @return  Handle to list of subnets.  Ownership transfers to caller.
  */
-DllExport OhNetHandleNetworkInterfaceList OhNetSubnetListCreate();
+DllExport OhNetHandleNetworkAdapterList OhNetSubnetListCreate();
 
 /**
  * Query the number of elements in a subnet list
@@ -556,7 +546,7 @@ DllExport OhNetHandleNetworkInterfaceList OhNetSubnetListCreate();
  *
  * @return  number of elements (subnets) in the list
  */
-DllExport uint32_t OhNetSubnetListSize(OhNetHandleNetworkInterfaceList aList);
+DllExport uint32_t OhNetSubnetListSize(OhNetHandleNetworkAdapterList aList);
 
 /**
  * Get a handle to the subnet at a specified position in a subnet list.
@@ -566,25 +556,24 @@ DllExport uint32_t OhNetSubnetListSize(OhNetHandleNetworkInterfaceList aList);
  *
  * @return  subnet handle
  */
-DllExport OhNetHandleNetworkInterface OhNetSubnetAt(OhNetHandleNetworkInterfaceList aList, uint32_t aIndex);
+DllExport OhNetHandleNetworkAdapter OhNetSubnetAt(OhNetHandleNetworkAdapterList aList, uint32_t aIndex);
 
 /**
  * Destroy a subnet list
  *
  * @param[in] aList            Handle returned by OhNetSubnetListCreate()
  */
-DllExport void OhNetSubnetListDestroy(OhNetHandleNetworkInterfaceList aList);
+DllExport void OhNetSubnetListDestroy(OhNetHandleNetworkAdapterList aList);
 
 /**
  * Set which subnet the library should use.
  *
- * This override any value set via OhNetInitParamsSetDefaultSubnet().
  * Device lists and subscriptions will be automatically updated.
  * No other subnet will be selected if aSubnet is not available
  *
  * @param aSubnet              The subnet to use
  */
-DllExport void OhNetSetCurrentSubnet(OhNetHandleNetworkInterface aSubnet);
+DllExport void OhNetSetCurrentSubnet(OhNetHandleNetworkAdapter aSubnet);
 
 /**
  * Query which network adapter is currently selected.
@@ -592,7 +581,7 @@ DllExport void OhNetSetCurrentSubnet(OhNetHandleNetworkInterface aSubnet);
  * @return  A pointer to the currently selected adapter with a reference claimed.
  *          Or NULL if there is no currently selected adapter.
  */
-DllExport OhNetHandleNetworkInterface OhNetCurrentSubnet();
+DllExport OhNetHandleNetworkAdapter OhNetCurrentSubnetAdapter();
 
 /* @} */
 

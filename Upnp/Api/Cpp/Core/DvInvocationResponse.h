@@ -42,7 +42,7 @@ public:
     virtual ~IInvocationResponseInt() {}
 };
 
-class IInvocationResponseBinary
+class IInvocationResponseBinary : public IWriter
 {
 public:
     virtual void Write(TByte aValue) = 0;
@@ -51,7 +51,7 @@ public:
 	virtual ~IInvocationResponseBinary() {}
 };
 
-class IInvocationResponseString
+class IInvocationResponseString : public IWriter
 {
 public:
     virtual void Write(TByte aValue) = 0;

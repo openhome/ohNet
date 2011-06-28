@@ -31,6 +31,8 @@ CpiDeviceUpnp::CpiDeviceUpnp(const Brx& aUdn, const Brx& aLocation, TUint aMaxAg
     , iDeviceXml(NULL)
     , iExpiryTime(0)
     , iDeviceList(aDeviceList)
+    , iSemReady("CDUS", 0)
+    , iRemoved(false)
 {
     iDevice = new CpiDevice(aUdn, *this, *this, this);
     iTimer = new Timer(MakeFunctor(*this, &CpiDeviceUpnp::TimerExpired));
@@ -115,7 +117,7 @@ TBool CpiDeviceUpnp::GetAttribute(const char* aKey, Brh& aValue) const
 		        return (true);
 		    }
 		    if (property == Brn("PresentationUrl")) {
-		        device->GetFriendlyName(aValue);
+		        device->GetPresentationUrl(aValue);
 		        return (true);
 		    }
 		    
@@ -167,6 +169,15 @@ void CpiDeviceUpnp::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
     GetServiceUri(uri, "eventSubURL", aSubscription.ServiceType());
     EventUpnp eventUpnp(aSubscription);
     eventUpnp.Unsubscribe(uri, aSid);
+}
+
+void CpiDeviceUpnp::NotifyRemovedBeforeReady()
+{
+    iLock.Wait();
+    iRemoved = true;
+    iLock.Signal();
+    InterruptXmlFetch();
+    iSemReady.Wait();
 }
 
 void CpiDeviceUpnp::Release()
@@ -259,7 +270,7 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
     iLock.Wait();
     iXmlFetch = NULL;
     iLock.Signal();
-    TBool err = false;
+    TBool err = iRemoved;
     try {
         XmlFetch::Xml(aAsync).TransferTo(iXml);
     }
@@ -286,6 +297,7 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
     iList->XmlFetchCompleted(*this, err);
     iList = NULL;
     iDevice->RemoveRef();
+    iSemReady.Signal();
 }
 
 
@@ -318,11 +330,11 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice a
     , iXmlFetchSem("DRLS", 0)
     , iXmlFetchLock("DRLM")
 {
-    NetworkInterfaceList& ifList = Stack::NetworkInterfaceList();
-    NetworkInterface* current = ifList.CurrentInterface();
+    NetworkAdapterList& ifList = Stack::NetworkAdapterList();
+    NetworkAdapter* current = ifList.CurrentAdapter();
     iRefreshTimer = new Timer(MakeFunctor(*this, &CpiDeviceListUpnp::RefreshTimerComplete));
-    iInterfaceChangeListenerId = ifList.AddCurrentChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::CurrentNetworkInterfaceChanged));
-    iSubnetChangeListenerId = ifList.AddSubnetChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetChanged));
+    iInterfaceChangeListenerId = ifList.AddCurrentChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::CurrentNetworkAdapterChanged));
+    iSubnetListChangeListenerId = ifList.AddSubnetListChangeListener(MakeFunctor(*this, &CpiDeviceListUpnp::SubnetListChanged));
     if (current == NULL) {
         iInterface = 0;
         iUnicastListener = NULL;
@@ -344,8 +356,8 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
     iLock.Wait();
     iActive = false;
     iLock.Signal();
-    Stack::NetworkInterfaceList().RemoveCurrentChangeListener(iInterfaceChangeListenerId);
-    Stack::NetworkInterfaceList().RemoveSubnetChangeListener(iSubnetChangeListenerId);
+    Stack::NetworkAdapterList().RemoveCurrentChangeListener(iInterfaceChangeListenerId);
+    Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
     if (iMulticastListener != NULL) {
         iMulticastListener->RemoveNotifyHandler(iNotifyHandlerId);
         Stack::MulticastListenerRelease(iInterface);
@@ -441,7 +453,7 @@ TBool CpiDeviceListUpnp::IsLocationReachable(const Brx& aLocation) const
     Uri uri(aLocation);
     iLock.Wait();
     Endpoint endpt(0, uri.Host());
-    NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
     if (nif != NULL) {
         if (nif->Address() == iInterface && nif->ContainsAddress(endpt.Address())) {
             reachable = true;
@@ -457,19 +469,19 @@ void CpiDeviceListUpnp::RefreshTimerComplete()
     RefreshComplete();
 }
 
-void CpiDeviceListUpnp::CurrentNetworkInterfaceChanged()
+void CpiDeviceListUpnp::CurrentNetworkAdapterChanged()
 {
     HandleInterfaceChange(false);
 }
 
-void CpiDeviceListUpnp::SubnetChanged()
+void CpiDeviceListUpnp::SubnetListChanged()
 {
     HandleInterfaceChange(true);
 }
 
 void CpiDeviceListUpnp::HandleInterfaceChange(TBool aNewSubnet)
 {
-    NetworkInterface* current = Stack::NetworkInterfaceList().CurrentInterface();
+    NetworkAdapter* current = Stack::NetworkAdapterList().CurrentAdapter();
     iLock.Wait();
     delete iUnicastListener;
     iUnicastListener = NULL;

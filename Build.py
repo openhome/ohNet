@@ -281,8 +281,8 @@ def ArmTests(module, arch, nightly):
     if module == "upnp" and arch == "arm":
 
         excludes = ['*.o', '*.a', 'Include','Docs']
-        ret = rsync('hudson-zapp','sheeva002.linn.co.uk','Upnp/Build','~/',excludes)
-        ret = rsync('hudson-zapp','sheeva002.linn.co.uk','Upnp/AllTests.py','~/',excludes)
+        ret = rsync('root','sheeva010.linn.co.uk','Upnp/Build','~/',excludes)
+        ret = rsync('root','sheeva010.linn.co.uk','Upnp/AllTests.py','~/',excludes)
 
         if ret != 0:
             print ret
@@ -290,9 +290,9 @@ def ArmTests(module, arch, nightly):
 
         if nightly == "1":
 
-            rssh('hudson-zapp','sheeva002.linn.co.uk','python AllTests.py -f -t')
+            rssh('root','sheeva010.linn.co.uk','python AllTests.py -f -t')
         else:
-            rssh('hudson-zapp','sheeva002.linn.co.uk','python AllTests.py -t')
+            rssh('root','sheeva010.linn.co.uk','python AllTests.py -t')
 
 def publish_release(ostype, arch, release_name, tool):
     target_name = "%s-%s" % (ostype, "ARM" if arch=="arm" else arch)

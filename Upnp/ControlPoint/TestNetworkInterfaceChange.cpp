@@ -104,7 +104,7 @@ void setTestNifIndex(TInt aIndex, Blocker& aBlocker)
                        not completely reliable but using the current/subnet change listeners
                        would cause problems too as we've have to hard-code knowledge of
                        when they would/wouldn't be run */
-    NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
+    NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
     TIpAddress addr = (nif==NULL? 0 : nif->Address());
     nif->RemoveRef();
     Endpoint endpt(0, addr);
@@ -234,7 +234,7 @@ void PropertyLogger::LogShuffle()
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
     UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
     UpnpLibrary::DestroySubnetList(subnetList);
     UpnpLibrary::StartCp(subnet);

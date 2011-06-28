@@ -64,7 +64,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)MdnsProvider.$(objext) \
     		   $(objdir)Maths.$(objext) \
     		   $(objdir)Md5.$(objext) \
-    		   $(objdir)NetworkInterfaceList.$(objext) \
+    		   $(objdir)NetworkAdapterList.$(objext) \
     		   $(objdir)Network.$(objext) \
     		   $(objdir)Parser.$(objext) \
     		   $(objdir)Printer.$(objext) \
@@ -151,7 +151,7 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/MdnsPlatform.h \
           $(inc_build)/MdnsProvider.h \
           $(inc_build)/Network.h \
-          $(inc_build)/NetworkInterfaceList.h \
+          $(inc_build)/NetworkAdapterList.h \
           $(inc_build)/OsWrapper.h \
           $(inc_build)/OsWrapper.inl \
           $(inc_build)/OsTypes.h \
@@ -291,8 +291,8 @@ $(objdir)Maths.$(objext) : Utils/Maths.cpp $(headers)
 	$(compiler)Maths.$(objext) -c $(cflags) $(includes) Utils/Maths.cpp
 $(objdir)Md5.$(objext) : Utils/md5.c $(headers)
 	$(compiler)Md5.$(objext) -c $(cflags) $(includes) Utils/md5.c
-$(objdir)NetworkInterfaceList.$(objext) : Network/NetworkInterfaceList.cpp $(headers)
-	$(compiler)NetworkInterfaceList.$(objext) -c $(cflags) $(includes) Network/NetworkInterfaceList.cpp
+$(objdir)NetworkAdapterList.$(objext) : Network/NetworkAdapterList.cpp $(headers)
+	$(compiler)NetworkAdapterList.$(objext) -c $(cflags) $(includes) Network/NetworkAdapterList.cpp
 $(objdir)Network.$(objext) : Network/Network.cpp $(headers)
 	$(compiler)Network.$(objext) -c $(cflags) $(includes) Network/Network.cpp
 $(objdir)Parser.$(objext) : Utils/Parser.cpp $(headers)

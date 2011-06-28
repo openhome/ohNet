@@ -11,38 +11,38 @@
 
 namespace OpenHome {
 
-class NetworkInterfaceList
+class NetworkAdapterList
 {
 public:
     static const TUint kListenerIdNull = 0;
 public:
-    NetworkInterfaceList(TIpAddress aDefaultSubnet=0);
-    ~NetworkInterfaceList();
-    NetworkInterface* CurrentInterface() const;
-    const std::vector<NetworkInterface*>& List() const;
-    std::vector<NetworkInterface*>* CreateSubnetList() const;
-    static void DestroySubnetList(std::vector<NetworkInterface*>* aList);
+    NetworkAdapterList(TIpAddress aDefaultSubnet=0);
+    ~NetworkAdapterList();
+    NetworkAdapter* CurrentAdapter() const;
+    const std::vector<NetworkAdapter*>& List() const;
+    std::vector<NetworkAdapter*>* CreateSubnetList() const;
+    static void DestroySubnetList(std::vector<NetworkAdapter*>* aList);
     void SetCurrentSubnet(TIpAddress aSubnet);
     TUint AddCurrentChangeListener(Functor aFunctor);
     void RemoveCurrentChangeListener(TUint aId);
-    TUint AddSubnetChangeListener(Functor aFunctor);
-    void RemoveSubnetChangeListener(TUint aId);
+    TUint AddSubnetListChangeListener(Functor aFunctor);
+    void RemoveSubnetListChangeListener(TUint aId);
 private:
     typedef std::map<TUint,Functor> Map;
-    std::vector<NetworkInterface*>* CreateSubnetListLocked() const;
+    std::vector<NetworkAdapter*>* CreateSubnetListLocked() const;
     TUint AddListener(Functor aFunctor, Map& aMap);
-    void RemoveSubnetChangeListener(TUint aId, Map& aMap);
+    void RemoveSubnetListChangeListener(TUint aId, Map& aMap);
     static void InterfaceListChanged(void* aPtr);
-    static TInt FindSubnet(TIpAddress aSubnet, const std::vector<NetworkInterface*>& aList);
-    void UpdateCurrentInterface();
+    static TInt FindSubnet(TIpAddress aSubnet, const std::vector<NetworkAdapter*>& aList);
+    void UpdateCurrentAdapter();
     void HandleInterfaceListChanged();
     void RunCallbacks(Map& aMap);
 private:
     mutable Mutex iListLock;
     Mutex iListenerLock;
-    std::vector<NetworkInterface*>* iNetworkInterfaces;
-    std::vector<NetworkInterface*>* iSubnets;
-    mutable NetworkInterface* iCurrent;
+    std::vector<NetworkAdapter*>* iNetworkAdapters;
+    std::vector<NetworkAdapter*>* iSubnets;
+    mutable NetworkAdapter* iCurrent;
     TIpAddress iDefaultSubnet;
     Map iListenersCurrent;
     Map iListenersSubnet;
