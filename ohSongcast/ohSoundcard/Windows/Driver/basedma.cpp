@@ -72,7 +72,7 @@ Return Value:
         (
             NonPagedPool,
             BufferSize,
-            SNEAKY_POOLTAG
+            OHSOUNDCARD_POOLTAG
         );
     if (!m_pvDmaBuffer)
     {
@@ -242,7 +242,7 @@ Return Value:
 
     if ( m_pvDmaBuffer )
     {
-        ExFreePoolWithTag( m_pvDmaBuffer, SNEAKY_POOLTAG );
+        ExFreePoolWithTag( m_pvDmaBuffer, OHSOUNDCARD_POOLTAG );
         m_ulDmaBufferSize = 0;
     }
 } // FreeBuffer

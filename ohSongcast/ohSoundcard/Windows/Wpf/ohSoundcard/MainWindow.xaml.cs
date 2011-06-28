@@ -78,7 +78,15 @@ namespace OpenHome.Soundcard
 
             this.Closing += new System.ComponentModel.CancelEventHandler(EventWindowClosing);
 
-            iSoundcard = new Soundcard(iConfigurationWindow.Subnet, iConfigurationWindow.MulticastChannel, iConfigurationWindow.Ttl, iConfigurationWindow.Multicast, iConfigurationWindow.Enabled, iConfigurationWindow.Preset, iMediaPlayerWindow.ReceiverList, iConfigurationWindow.SubnetList);
+            try
+            {
+                iSoundcard = new Soundcard(iConfigurationWindow.Subnet, iConfigurationWindow.MulticastChannel, iConfigurationWindow.Ttl, iConfigurationWindow.Multicast, iConfigurationWindow.Enabled, iConfigurationWindow.Preset, iMediaPlayerWindow.ReceiverList, iConfigurationWindow.SubnetList);
+            }
+            catch (SoundcardError e)
+            {
+                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                App.Current.Shutdown(1);
+            }
 
             iConfigurationWindow.SubnetChanged += EventSubnetChanged;
             iConfigurationWindow.MulticastChanged += EventMulticastChanged;
@@ -189,7 +197,11 @@ namespace OpenHome.Soundcard
             iMediaPlayerWindow.SetEnabled(false);
             iMediaPlayerWindow.Close();
             iExtendedNotifyIcon.Dispose();
-            iSoundcard.Dispose();
+            
+            if (iSoundcard != null)
+            {
+                iSoundcard.Dispose();
+            }
         }
 
         private void EventStoryBoardFadeInCompleted(object sender, EventArgs e)

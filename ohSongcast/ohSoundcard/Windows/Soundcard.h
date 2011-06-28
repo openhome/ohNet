@@ -82,6 +82,9 @@ public:
 	OhmSenderDriverWindows();
 
 private:    
+	TBool FindDriver();
+	TBool InstallDriver();
+
 	// IOhmSenderDriver
 	virtual void SetEnabled(TBool aValue);
 	virtual void SetEndpoint(const Endpoint& aEndpoint);

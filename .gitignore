@@ -15,4 +15,5 @@ _ReSharper.*
 /ZappSender/Build/
 /ohSongcast/Build/
 obj/
+bin/
 
