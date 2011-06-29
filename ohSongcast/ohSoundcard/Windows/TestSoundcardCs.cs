@@ -16,37 +16,44 @@ using OpenHome.Soundcard;
         {
             bool enabled = true;
 
-            Soundcard soundcard = new Soundcard(0, 1, 1, false, enabled, 99, this, this);
-
-            while (true)
+            try
             {
-                ConsoleKeyInfo key = Console.ReadKey(true);
+                Soundcard soundcard = new Soundcard(0, 1, 1, false, enabled, 99, this, this);
 
-                if (key.KeyChar == 'q')
+                while (true)
                 {
-                    break;
-                }
+                    ConsoleKeyInfo key = Console.ReadKey(true);
 
-                if (key.KeyChar == 'e')
-                {
-                    if (enabled)
+                    if (key.KeyChar == 'q')
                     {
-                        enabled = false;
-                        Console.WriteLine("Disabled");
-                    }
-                    else
-                    {
-                        enabled = true;
-                        Console.WriteLine("Enabled");
+                        break;
                     }
 
-                    soundcard.SetEnabled(enabled);
-                    
-                    continue;
+                    if (key.KeyChar == 'e')
+                    {
+                        if (enabled)
+                        {
+                            enabled = false;
+                            Console.WriteLine("Disabled");
+                        }
+                        else
+                        {
+                            enabled = true;
+                            Console.WriteLine("Enabled");
+                        }
+
+                        soundcard.SetEnabled(enabled);
+
+                        continue;
+                    }
                 }
+
+                soundcard.Dispose();
             }
-
-            soundcard.Dispose();
+            catch (SoundcardError e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         public void ReceiverAdded(IReceiver aReceiver)

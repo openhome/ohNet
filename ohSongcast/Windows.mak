@@ -1,12 +1,6 @@
 # Makefile for Windows
 #
 
-!if "$(csplatform)"=="x64"
-csplatform = x64
-!else
-csplatform = x86
-!endif
-
 !if "$(release)"=="1"
 link_flag_debug = 
 debug_specific_cflags = /MT /Ox
@@ -40,6 +34,7 @@ dllprefix =
 dllext = dll
 link_dll = link /nologo $(link_flag_debug) /map Ws2_32.lib Iphlpapi.lib /dll
 link_dll_service = link /nologo $(link_flag_debug)  /map $(objdir)ohNet.lib Ws2_32.lib Iphlpapi.lib /dll
+csplatform = x86
 csharp = csc /nologo /platform:$(csplatform)
 publiccsdir = Public\Cs^\
 dirsep = ^\
@@ -57,7 +52,7 @@ objects_topology = $(ohnetdir)/CpTopology.$(objext) \
 			       $(ohnetdir)/CpAvOpenhomeOrgProduct1.$(objext) \
 			       $(ohnetdir)/CpAvOpenhomeOrgVolume1.$(objext)
 
-all: $(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcardCs.$(exeext) $(objdir)/TestReceiverManager1.$(exeext) $(objdir)/TestReceiverManager2.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/WavSender.$(exeext) $(objdir)/ZoneWatcher.$(exeext)
+all: $(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(objdir)/Install32.$(exeext) $(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcardCs.$(exeext) $(objdir)/TestReceiverManager1.$(exeext) $(objdir)/TestReceiverManager2.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/WavSender.$(exeext) $(objdir)/ZoneWatcher.$(exeext)
 
 $(objdir)/$(dllprefix)ohSoundcard.$(dllext) : Services/DvAvOpenhomeOrgSender1.cpp Ohm.cpp OhmSender.cpp ohSoundcard/Windows/Soundcard.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
@@ -67,12 +62,20 @@ $(objdir)/$(dllprefix)ohSoundcard.$(dllext) : Services/DvAvOpenhomeOrgSender1.cp
 	$(compiler)/ReceiverManager2.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager2.cpp 
 	$(compiler)/ReceiverManager3.$(objext) -c $(cflags) $(includes) ohSoundcard/ReceiverManager3.cpp 
 	$(compiler)/Soundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/Soundcard.cpp
-	$(link_dll) $(linkoutput)$(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(ohnetdir)/$(libprefix)ohNetCore.lib $(objects_topology) $(ohnetdir)/DvAvOpenhomeOrgSender1.$(objext) $(ohnetdir)/CpAvOpenhomeOrgReceiver1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/ReceiverManager1.$(objext) $(objdir)/ReceiverManager2.$(objext) $(objdir)/ReceiverManager3.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib
+	$(link_dll) $(linkoutput)$(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(ohnetdir)/$(libprefix)ohNetCore.lib $(objects_topology) $(ohnetdir)/DvAvOpenhomeOrgSender1.$(objext) $(ohnetdir)/CpAvOpenhomeOrgReceiver1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(objdir)/ReceiverManager1.$(objext) $(objdir)/ReceiverManager2.$(objext) $(objdir)/ReceiverManager3.$(objext) $(objdir)/Soundcard.$(objext) kernel32.lib setupapi.lib shell32.lib
 
 $(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) : $(objdir)/$(dllprefix)ohSoundcard.$(dllext) ohSoundcard\Windows\Soundcard.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) \
 		ohSoundcard\Windows\Soundcard.cs
+
+$(objdir)/Install32.$(exeext) : ohSoundcard/Windows/Install.cpp
+	$(compiler)/Install32.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/Install.cpp
+	$(link) $(linkoutput)$(objdir)/Install32.$(exeext) $(objdir)/Install32.$(objext) setupapi.lib
+
+$(objdir)/Install64.$(exeext) : ohSoundcard/Windows/Install.cpp
+	$(compiler)/Install64.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/Install.cpp
+	$(link) $(linkoutput)$(objdir)/Install64.$(exeext) $(objdir)/Install64.$(objext) setupapi.lib
 
 $(objdir)/TestSoundcardCs.$(exeext) : $(objdir)/$(dllprefix)ohSoundcard.net.$(dllext) ohSoundcard/Windows/TestSoundcardCs.cs
 	$(csharp) /target:exe /debug+ \

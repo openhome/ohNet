@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:difx="http://schemas.microsoft.com/wix/DifxAppExtension" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Product Id="9AB872D1-3794-4B45-8A97-6126CFF36532" Name="ohSoundcard" Language="1033" Version="1.0.0.0" Manufacturer="OpenHome" UpgradeCode="EBE8D836-F7CF-48CC-8091-4DEF4CA46B49">
+
+    <Package InstallerVersion="200" Compressed="yes" Keywords='Installer' Description="ohSoundcard Installer" />
+
+    <Condition Message="You need to be an administrator to install this product.">
+      Privileged
+    </Condition>
+
+    <Condition Message="You need to be an administrator to install this product.">
+      AdminUser
+    </Condition>
+
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="OpenHomeFolder" Name="OpenHome">
+          <Directory Id="SoundcardFolder" Name="ohSoundcard">
+            <Component Id="Program" Guid="4AD63E96-C5F9-49C6-8640-4227909C05A7">
+              <File Id='ohSoundcard1' Name='ohSoundcard.exe' DiskId='1' Source='../ohSoundcard/bin/Release/ohSoundcard.exe' KeyPath='yes'>
+                <Shortcut Id="SoundcardStartMenu" Directory="ProgramMenuDir" Name="ohSoundcard" WorkingDirectory='SoundcardFolder' Icon="ohSoundcard.exe" IconIndex="0" Advertise="yes" />
+                <Shortcut Id="SoundcardStartup" Directory="StartupDir" Name="ohSoundcard" WorkingDirectory='SoundcardFolder' Icon="ohSoundcard.exe" IconIndex="0" Advertise="yes" />
+              </File>
+              <File Id='ohSoundcard2' Name='ohSoundcard.dll' DiskId='1' Source='../../../../Build/Obj/Windows/Release/ohSoundcard.dll' />
+              <File Id='ohSoundcard3' Name='ohSoundcard.net.dll' DiskId='1' Source='../../../../Build/Obj/Windows/Release/ohSoundcard.net.dll' />
+              <File Id='ohSoundcard4' Name='Install.exe' DiskId='1' Source='../../../../Build/Obj/Windows/Release/Install64.exe' />
+              <File Id='ohSoundcard5' Name='Install.exe.manifest' DiskId='1' Source='../ohSoundcard/Install.exe.manifest' />
+            </Component>
+            <Directory Id='ohSoundcardDriverFolder' Name='Driver'>
+              <Component Id='Driver' Guid="CC03CD86-2CAF-4A77-91D6-CF243AA07D3F" >
+                <File Id='ohSoundcardDriver1' Name='ohSoundcard.inf' DiskId='1' Source='../../Driver/pkg64/ohSoundcard.inf' KeyPath='yes' />
+                <File Id='ohSoundcardDriver2' Name='ohSoundcard.sys' DiskId='1' Source='../../Driver/pkg64/ohSoundcard.sys' />
+                <File Id='ohSoundcardDriver3' Name='ohSoundcard.cat' DiskId='1' Source='../../Driver/pkg64/ohSoundcard.cat' />
+                <difx:Driver Legacy='yes' PlugAndPlayPrompt="no" />
+                <!--
+                <difx:Driver Legacy='yes' DeleteFiles="no" ForceInstall="no" PlugAndPlayPrompt="no" AddRemovePrograms="no" />
+                -->
+              </Component>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="OpenHome">
+          <Component Id="Menu" Guid="8ABCCB3C-9A94-4C76-9FE5-FE557B1C078A">
+            <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+            <RegistryValue Root='HKCU' Key='Software\[Manufacturer]\[ProductName]\Program' Type='string' Value='' KeyPath='yes' />
+          </Component>
+        </Directory>
+        <Directory Id="StartupDir" Name="Startup">
+          <Component Id="Startup" Guid="F26D6D10-F90F-4A48-A442-6874B83791A9">
+            <RemoveFolder Id='Startup' On='uninstall' />
+            <RegistryValue Root='HKCU' Key='Software\[Manufacturer]\[ProductName]\Startup' Type='string' Value='' KeyPath='yes' />
+          </Component>
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+
+    </Directory>
+
+    <Feature Id='Complete' Title="ohSoundcard" Level='1'>
+      <ComponentRef Id='Program' />
+      <ComponentRef Id='Driver' />
+      <ComponentRef Id='Menu' />
+      <ComponentRef Id='Startup' />
+    </Feature>
+
+    <Icon Id="ohSoundcard.exe" SourceFile="../ohSoundcard/bin/Release/ohSoundcard.exe" />
+
+    <Property Id="WixShellExecTarget" Value="[#ohSoundcard1]" />
+
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+
+    <UI>
+      <UIRef Id="WixUI_Minimal" />
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">Installed</Publish>
+    </UI>
+
+  </Product>
+</Wix>
