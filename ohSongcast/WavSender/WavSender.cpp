@@ -15,6 +15,8 @@
 
 #include "../OhmSender.h"
 
+#include "Icon.h"
+
 #ifdef _WIN32
 
 #pragma warning(disable:4355) // use of 'this' in ctor lists safe in this case
@@ -155,7 +157,7 @@ void PcmSender::SetSpeed(TUint aSpeed)
 void PcmSender::CalculatePacketBytes()
 {
     TUint bytespersample = iChannels * iBitDepth / 8;
-    #
+    
 	TUint bytes = (iSampleRate * iSpeed * bytespersample * kPeriodMs) / (1000 * 100);
 	
     if (bytes > kMaxPacketBytes) {
@@ -217,8 +219,6 @@ static void RandomiseUdn(Bwh& aUdn)
 
 int CDECL main(int aArgc, char* aArgv[])
 {
-	//Debug::SetLevel(Debug::kMedia);
-	
     OptionParser parser;
     
     OptionString optionFile("-f", "--file", Brn(""), "[file] wav file to send");
@@ -245,13 +245,6 @@ int CDECL main(int aArgc, char* aArgv[])
     if (!parser.Parse(aArgc, aArgv)) {
         return (1);
     }
-
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
-    TIpAddress subnet = (*subnetList)[optionAdapter.Value()]->Subnet();
-    TIpAddress interface = (*subnetList)[optionAdapter.Value()]->Address();
-    UpnpLibrary::DestroySubnetList(subnetList);
-
-    printf("Using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
 	Brhz file(optionFile.Value());
     
@@ -431,7 +424,17 @@ int CDECL main(int aArgc, char* aArgv[])
 
     UpnpLibrary::Initialise(initParams);
     
-    UpnpLibrary::StartDv();
+	//Debug::SetLevel(Debug::kMedia);
+	
+    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
+    TIpAddress subnet = (*subnetList)[optionAdapter.Value()]->Subnet();
+    TIpAddress interface = (*subnetList)[optionAdapter.Value()]->Address();
+    UpnpLibrary::DestroySubnetList(subnetList);
+
+    printf("Using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
+
+    UpnpLibrary::StartCombined(522);
+    //UpnpLibrary::StartDv();
 
 	Bwh udn("device");
     RandomiseUdn(udn);
@@ -453,7 +456,9 @@ int CDECL main(int aArgc, char* aArgv[])
 
     OhmSenderDriver* driver = new OhmSenderDriver();
     
-	OhmSender* sender = new OhmSender(*device, *driver, name, channel, interface, ttl, multicast, !disabled, Brx::Empty(), Brx::Empty(), 0);
+	Brn icon(icon_png, icon_png_len);
+
+	OhmSender* sender = new OhmSender(*device, *driver, name, channel, interface, ttl, multicast, !disabled, icon, Brn("image/png"), 0);
 	
     PcmSender* pcmsender = new PcmSender(sender, driver, file, data, sampleCount, sampleRate, byteRate * 8, numChannels, bitsPerSample);
     

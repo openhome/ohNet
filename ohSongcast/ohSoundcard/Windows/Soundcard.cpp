@@ -557,6 +557,9 @@ Soundcard::Soundcard(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMult
 	, iSubnetCallback(aSubnetCallback)
 	, iSubnetPtr(aSubnetPtr)
 {
+	Debug::SetLevel(Debug::kMedia);
+	
+
 	// First do everything that might throw SoundcardError: get the computer name, and create the driver,
 	// which links to the installed windows ohSoundcard audio driver and throws 
 	Bws<kMaxUdnBytes> computer;

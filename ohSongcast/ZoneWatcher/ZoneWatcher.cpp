@@ -150,16 +150,16 @@ int CDECL main(int aArgc, char* aArgv[])
         return (1);
     }
 
+    InitialisationParams* initParams = InitialisationParams::Create();
+
+    UpnpLibrary::Initialise(initParams);
+
     std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[optionAdapter.Value()]->Subnet();
     TIpAddress interface = (*subnetList)[optionAdapter.Value()]->Address();
     UpnpLibrary::DestroySubnetList(subnetList);
 
     printf("Using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
-
-    InitialisationParams* initParams = InitialisationParams::Create();
-
-    UpnpLibrary::Initialise(initParams);
 
 	Watcher* watcher = new Watcher(interface);
 

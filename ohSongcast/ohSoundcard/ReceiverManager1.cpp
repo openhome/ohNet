@@ -38,15 +38,9 @@ ReceiverManager1Room::ReceiverManager1Room(IReceiverManager1Handler& aHandler, I
 			const Brx& group = iRoom.SourceGroup(i);
 			const Brx& name = iRoom.SourceName(i);
 
-			TBool selected = false;
+			ReceiverManager1Receiver* receiver = new ReceiverManager1Receiver(*this, group, name, i, device);
 
 			if (selectedDevice == &device) {
-				selected = true;
-			}
-
-			ReceiverManager1Receiver* receiver = new ReceiverManager1Receiver(*this, group, name, selected, device);
-
-			if (selected) {
 				iSelected = receiver;
 			}
 
@@ -81,9 +75,9 @@ void ReceiverManager1Room::RemoveRef()
 void ReceiverManager1Room::SourceChanged()
 {
 	if (iSelected) {
-		iSelected->Deselect();
-		iHandler.ReceiverChanged(*iSelected);
+		ReceiverManager1Receiver* receiver = iSelected;
 		iSelected = 0;
+		iHandler.ReceiverChanged(*receiver);
 	}
 
 	if (iRoom.CurrentSourceType() == Brn("Receiver")) {
@@ -94,7 +88,6 @@ void ReceiverManager1Room::SourceChanged()
 		while (it != iReceiverList.end()) {
 			ReceiverManager1Receiver* receiver = *it;
 			if (&receiver->Device() == &device) {
-				receiver->Select();
 				iSelected = receiver;
 				iHandler.ReceiverChanged(*iSelected);
 				break;
@@ -117,7 +110,6 @@ void ReceiverManager1Room::Changed()
 	std::vector<ReceiverManager1Receiver*> toadd;
 	std::vector<ReceiverManager1Receiver*> todelete;
 	std::vector<ReceiverManager1Receiver*>::iterator it;
-	
 
 	// create initial toadd list
 
@@ -127,13 +119,7 @@ void ReceiverManager1Room::Changed()
 			const Brx& group = iRoom.SourceGroup(i);
 			const Brx& name = iRoom.SourceName(i);
 
-			TBool selected = false;
-
-			if (selectedDevice == &device) {
-				selected = true;
-			}
-
-			ReceiverManager1Receiver* receiver = new ReceiverManager1Receiver(*this, group, name, selected, device);
+			ReceiverManager1Receiver* receiver = new ReceiverManager1Receiver(*this, group, name, i, device);
 
 			toadd.push_back(receiver);
 		}
@@ -153,6 +139,7 @@ void ReceiverManager1Room::Changed()
 		while (it2 != toadd.end()) {
 			ReceiverManager1Receiver* candidate = *it2;
 			if (candidate->Device().Udn() == receiver->Device().Udn()) {
+				receiver->SetSourceIndex(candidate->SourceIndex()); // update source index
 				delete (candidate);
 				toadd.erase(it2);
 				found = true;
@@ -180,7 +167,7 @@ void ReceiverManager1Room::Changed()
 
 		while (it2 != iReceiverList.end()) {
 			if (receiver == *it2) {
-				if (receiver->Selected()) {
+				if (&receiver->Device() == selectedDevice) {
 					iSelected = 0;
 				}
 				iHandler.ReceiverRemoved(*receiver);
@@ -195,7 +182,6 @@ void ReceiverManager1Room::Changed()
 		it++;
 	}
 
-
 	// apply toadd list
 
 	it = toadd.begin();
@@ -203,7 +189,7 @@ void ReceiverManager1Room::Changed()
 	while (it != toadd.end()) {
 		ReceiverManager1Receiver* receiver = *it;
 		iReceiverList.push_back(receiver);
-		if (receiver->Selected()) {
+		if (&receiver->Device() == selectedDevice) {
 			iSelected = receiver;
 		}
 		iHandler.ReceiverAdded(*receiver);
@@ -225,6 +211,16 @@ void ReceiverManager1Room::Removed()
 	RemoveRef();
 }
 
+TBool ReceiverManager1Room::Selected(const ReceiverManager1Receiver& aReceiver)
+{
+	return (iSelected == &aReceiver);
+}
+
+void ReceiverManager1Room::Select(const ReceiverManager1Receiver& aReceiver)
+{
+	iRoom.SetSourceIndex(aReceiver.SourceIndex());
+}
+
 void ReceiverManager1Room::Standby()
 {
 	iRoom.SetStandby(true);
@@ -237,11 +233,11 @@ ReceiverManager1Room::~ReceiverManager1Room()
 
 // ReceiverManager1Receiver
 
-ReceiverManager1Receiver::ReceiverManager1Receiver(ReceiverManager1Room& aRoom, const Brx& aGroup, const Brx& aName, TBool aSelected, CpDevice& aDevice)
+ReceiverManager1Receiver::ReceiverManager1Receiver(ReceiverManager1Room& aRoom, const Brx& aGroup, const Brx& aName, TUint aSourceIndex, CpDevice& aDevice)
 	: iRoom(aRoom)
 	, iGroup(aGroup)
 	, iName(aName)
-	, iSelected(aSelected)
+	, iSourceIndex(aSourceIndex)
 	, iDevice(aDevice)
 	, iUserData(0)
 	, iRefCount(1)
@@ -264,24 +260,19 @@ const Brx& ReceiverManager1Receiver::Name() const
 	return (iName);
 }
 
-void ReceiverManager1Receiver::Select()
+TBool ReceiverManager1Receiver::Selected() const
 {
-	iSelected = true;
+	return (iRoom.Selected(*this));
 }
 
-void ReceiverManager1Receiver::Deselect()
+void ReceiverManager1Receiver::Select()
 {
-	iSelected = false;
+	iRoom.Select(*this);
 }
 
 void ReceiverManager1Receiver::Standby()
 {
 	iRoom.Standby();
-}
-
-TBool ReceiverManager1Receiver::Selected() const
-{
-	return (iSelected);
 }
 
 CpDevice& ReceiverManager1Receiver::Device() const
@@ -310,6 +301,17 @@ void ReceiverManager1Receiver::RemoveRef()
 		return;
     }
 }
+
+TUint ReceiverManager1Receiver::SourceIndex() const
+{
+	return (iSourceIndex);
+}
+
+void ReceiverManager1Receiver::SetSourceIndex(TUint aValue)
+{
+	iSourceIndex = aValue;
+}
+
 
 ReceiverManager1Receiver::~ReceiverManager1Receiver()
 {
