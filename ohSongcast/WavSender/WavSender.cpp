@@ -202,15 +202,12 @@ PcmSender::~PcmSender()
 	delete (iDriver);
 }
 
-static void RandomiseUdn(Bwh& aUdn)
+static void RandomiseUdn(Bwh& aUdn, TIpAddress aAdapter)
 {
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = UpnpLibrary::CurrentSubnetAdapter();
-    TUint max = nif->Address();
-    nif->RemoveRef();
-    (void)Ascii::AppendDec(buf, Random(max));
+    (void)Ascii::AppendDec(buf, Random(aAdapter));
     aUdn.Append(buf);
     aUdn.PtrZ();
 }
@@ -246,9 +243,12 @@ int CDECL main(int aArgc, char* aArgv[])
         return (1);
     }
 
+    InitialisationParams* initParams = InitialisationParams::Create();
+    UpnpLibrary::Initialise(initParams);
+
     std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[optionAdapter.Value()]->Subnet();
-    TIpAddress interface = (*subnetList)[optionAdapter.Value()]->Address();
+    TIpAddress adapter = (*subnetList)[optionAdapter.Value()]->Address();
     UpnpLibrary::DestroySubnetList(subnetList);
 
     printf("Using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
@@ -427,14 +427,10 @@ int CDECL main(int aArgc, char* aArgv[])
 		pindex += bytesPerSample;	    
     }
     
-    InitialisationParams* initParams = InitialisationParams::Create();
-
-    UpnpLibrary::Initialise(initParams);
-    
     UpnpLibrary::StartDv();
 
 	Bwh udn("device");
-    RandomiseUdn(udn);
+    RandomiseUdn(udn, adapter);
 
     DvDeviceStandard* device = new DvDeviceStandard(udn);
     
@@ -453,7 +449,7 @@ int CDECL main(int aArgc, char* aArgv[])
 
     OhmSenderDriver* driver = new OhmSenderDriver();
     
-	OhmSender* sender = new OhmSender(*device, *driver, name, channel, interface, ttl, multicast, !disabled, Brx::Empty(), Brx::Empty(), 0);
+	OhmSender* sender = new OhmSender(*device, *driver, name, channel, adapter, ttl, multicast, !disabled, Brx::Empty(), Brx::Empty(), 0);
 	
     PcmSender* pcmsender = new PcmSender(sender, driver, file, data, sampleCount, sampleRate, byteRate * 8, numChannels, bitsPerSample);
     
