@@ -452,7 +452,7 @@ int CDECL main(int aArgc, char* aArgv[])
     
 	Brn icon(icon_png, icon_png_len);
 
-	OhmSender* sender = new OhmSender(*device, *driver, name, channel, interface, ttl, multicast, !disabled, icon, Brn("image/png"), 0);
+	OhmSender* sender = new OhmSender(*device, *driver, name, channel, adapter, ttl, multicast, !disabled, icon, Brn("image/png"), 0);
 	
     PcmSender* pcmsender = new PcmSender(sender, driver, file, data, sampleCount, sampleRate, byteRate * 8, numChannels, bitsPerSample);
     
