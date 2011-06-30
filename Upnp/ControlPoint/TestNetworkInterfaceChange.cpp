@@ -9,11 +9,12 @@
 #include <Thread.h>
 #include <Timer.h>
 #include <OsWrapper.h>
-#include <CpiDeviceUpnp.h>
+#include <Core/CpDevice.h>
+#include <Core/CpDeviceUpnp.h>
 #include <Stack.h>
-#include <FunctorCpiDevice.h>
-#include <UpnpOrgConnectionManager1.h>
-#include <LinnCoUkPlaylist1.h>
+#include <Core/FunctorCpDevice.h>
+#include <Core/CpUpnpOrgConnectionManager1.h>
+#include <Core/CpAvOpenHomeOrgPlaylist1.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -22,28 +23,26 @@ using namespace OpenHome::TestFramework;
 class DeviceListLogger
 {
 public:
-    void Added(CpiDevice& aDevice);
-    void Removed(CpiDevice& aDevice);
+    void Added(CpDevice& aDevice);
+    void Removed(CpDevice& aDevice);
 private:
-    void PrintDeviceInfo(const char* aPrologue, const CpiDevice& aDevice);
+    void PrintDeviceInfo(const char* aPrologue, const CpDevice& aDevice);
 };
 
-void DeviceListLogger::Added(CpiDevice& aDevice)
+void DeviceListLogger::Added(CpDevice& aDevice)
 {
     PrintDeviceInfo("Added", aDevice);
 }
 
-void DeviceListLogger::Removed(CpiDevice& aDevice)
+void DeviceListLogger::Removed(CpDevice& aDevice)
 {
     PrintDeviceInfo("Removed", aDevice);
 }
 
-void DeviceListLogger::PrintDeviceInfo(const char* aPrologue, const CpiDevice& aDevice)
+void DeviceListLogger::PrintDeviceInfo(const char* aPrologue, const CpDevice& aDevice)
 {
-    Print("%s\n    udn = ", aPrologue);
+    Print("%s - ", aPrologue);
     Print(aDevice.Udn());
-    Print("\n    location = ");
-    Print(static_cast<const CpiDeviceUpnp&>(aDevice).Location());
     Print("\n");
 }
 
@@ -55,11 +54,11 @@ class DevicePicker
 public:
     DevicePicker();
     ~DevicePicker();
-    CpiDevice* Transfer();
-    void Added(CpiDevice& aDevice);
-    void Removed(CpiDevice& aDevice);
+    CpDevice* Transfer();
+    void Added(CpDevice& aDevice);
+    void Removed(CpDevice& aDevice);
 private:
-    CpiDevice* iDevice;
+    CpDevice* iDevice;
 };
 
 DevicePicker::DevicePicker()
@@ -74,15 +73,15 @@ DevicePicker::~DevicePicker()
     }
 }
 
-CpiDevice* DevicePicker::Transfer()
+CpDevice* DevicePicker::Transfer()
 {
-    CpiDevice* ret = iDevice;
+    CpDevice* ret = iDevice;
     ASSERT(ret != NULL);
     iDevice = NULL;
     return ret;
 }
 
-void DevicePicker::Added(CpiDevice& aDevice)
+void DevicePicker::Added(CpDevice& aDevice)
 {
     if (iDevice == NULL) {
         iDevice = &aDevice;
@@ -90,7 +89,7 @@ void DevicePicker::Added(CpiDevice& aDevice)
     }
 }
 
-void DevicePicker::Removed(CpiDevice& /*aDevice*/)
+void DevicePicker::Removed(CpDevice& /*aDevice*/)
 {
 }
 
@@ -105,11 +104,14 @@ void setTestNifIndex(TInt aIndex, Blocker& aBlocker)
                        would cause problems too as we've have to hard-code knowledge of
                        when they would/wouldn't be run */
     NetworkAdapter* nif = Stack::NetworkAdapterList().CurrentAdapter();
-    TIpAddress addr = (nif==NULL? 0 : nif->Address());
-    nif->RemoveRef();
+    TIpAddress addr = 0;
+    if (nif !=NULL) {
+        addr = nif->Address();
+        nif->RemoveRef();
+    }
     Endpoint endpt(0, addr);
     Endpoint::AddressBuf buf;
-    endpt.GetAddress(buf);
+    endpt.AppendAddress(buf);
     Print("Current network interface %s\n\n", buf.Ptr());
 }
 
@@ -121,16 +123,15 @@ public:
     ~PropertyLogger();
     void Test();
 private:
-    void Ready();
     void LogSinkProtocolInfo();
     void LogShuffle();
 private:
     Blocker& iBlocker;
     DevicePicker iPicker;
     CpProxyUpnpOrgConnectionManager1* iConnMgr;
-    CpProxyLinnCoUkPlaylist1* iPlayList;
-    CpiDevice* iCmDevice;
-    CpiDevice* iPlDevice;
+    CpProxyAvOpenhomeOrgPlaylist1* iPlayList;
+    CpDevice* iCmDevice;
+    CpDevice* iPlDevice;
 };
 
 PropertyLogger::PropertyLogger(Blocker& aBlocker)
@@ -139,27 +140,25 @@ PropertyLogger::PropertyLogger(Blocker& aBlocker)
     // each property should be logged once initially
     Brn domainName("upnp.org");
     Brn type("ConnectionManager");
-    FunctorCpiDevice added = MakeFunctorCpiDevice(iPicker, &DevicePicker::Added);
-    FunctorCpiDevice removed = MakeFunctorCpiDevice(iPicker, &DevicePicker::Removed);
-    CpiDeviceList* deviceList = new CpiDeviceListUpnpServiceType(domainName, type, 1, 2, added, removed);
-    deviceList->Start();
+    FunctorCpDevice added = MakeFunctorCpDevice(iPicker, &DevicePicker::Added);
+    FunctorCpDevice removed = MakeFunctorCpDevice(iPicker, &DevicePicker::Removed);
+    CpDeviceList* deviceList = new CpDeviceListUpnpServiceType(domainName, type, 1, added, removed);
     iBlocker.Wait(1);
     iCmDevice = iPicker.Transfer();
     delete deviceList;
-    Functor functor = MakeFunctor(*this, &PropertyLogger::Ready);
     Print("\nTesting subscriptions...\n\n");
-    iConnMgr = new CpProxyUpnpOrgConnectionManager1(*iCmDevice, functor);
+    iConnMgr = new CpProxyUpnpOrgConnectionManager1(*iCmDevice);
+    Functor functor = MakeFunctor(*this, &PropertyLogger::LogSinkProtocolInfo);
+    iConnMgr->SetPropertySinkProtocolInfoChanged(functor);
     iConnMgr->Subscribe();
 
-    domainName.Set("linn.co.uk");
+    domainName.Set("av.openhome.org");
     type.Set("Playlist");
-    deviceList = new CpiDeviceListUpnpServiceType(domainName, type, 1, added, removed);
-    deviceList->Start();
+    deviceList = new CpDeviceListUpnpServiceType(domainName, type, 1, added, removed);
     iBlocker.Wait(1);
     iPlDevice = iPicker.Transfer();
     delete deviceList;
-    functor = MakeFunctor(*this, &PropertyLogger::Ready);
-    iPlayList = new CpProxyLinnCoUkPlaylist1(*iPlDevice, functor);
+    iPlayList = new CpProxyAvOpenhomeOrgPlaylist1(*iPlDevice);
     functor = MakeFunctor(*this, &PropertyLogger::LogShuffle);
     iPlayList->SetPropertyShuffleChanged(functor);
     iPlayList->Subscribe();
@@ -183,7 +182,7 @@ void PropertyLogger::Test()
     setTestNifIndex(0, iBlocker);
     iBlocker.Wait(3);
 
-    // select the first nig again.  No property changes should be logged
+    // select the first nif again.  No property changes should be logged
     Print("\nDisable all but first interface (again)...\n");
     setTestNifIndex(0, iBlocker);
     iBlocker.Wait(3);
@@ -203,15 +202,9 @@ void PropertyLogger::Test()
     iBlocker.Wait(3);
 }
 
-void PropertyLogger::Ready()
-{
-    Functor functor = MakeFunctor(*this, &PropertyLogger::LogSinkProtocolInfo);
-    iConnMgr->SetPropertySinkProtocolInfoChanged(functor);
-}
-
 void PropertyLogger::LogSinkProtocolInfo()
 {
-    Brh info;
+    Brhz info;
     iConnMgr->PropertySinkProtocolInfo(info);
     Log::Print("ConnMgr sink info: ");
     if (info.Bytes() > 0) {
@@ -246,10 +239,9 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     DeviceListLogger logger;
     Brn domainName("linn.co.uk");
     Brn type("Radio");
-    FunctorCpiDevice added = MakeFunctorCpiDevice(logger, &DeviceListLogger::Added);
-    FunctorCpiDevice removed = MakeFunctorCpiDevice(logger, &DeviceListLogger::Removed);
-    CpiDeviceList* deviceList = new CpiDeviceListUpnpServiceType(domainName, type, 1, added, removed);
-    deviceList->Start();
+    FunctorCpDevice added = MakeFunctorCpDevice(logger, &DeviceListLogger::Added);
+    FunctorCpDevice removed = MakeFunctorCpDevice(logger, &DeviceListLogger::Removed);
+    CpDeviceList* deviceList = new CpDeviceListUpnpServiceType(domainName, type, 1, added, removed);
     blocker->Wait(2);
     // disable all but the first network interface.  Check there are few/no changes to the list
     Print("\nDisable all but first interface...\n");

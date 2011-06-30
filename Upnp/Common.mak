@@ -472,8 +472,8 @@ $(objdir)TestSubscription.$(objext) : ControlPoint/TestSubscription.cpp $(header
 	$(compiler)TestSubscription.$(objext) -c $(cflags) $(includes) ControlPoint/TestSubscription.cpp
 
 TestNetworkInterfaceChange: $(objdir)TestNetworkInterfaceChange.$(exeext) 
-$(objdir)TestNetworkInterfaceChange.$(exeext) :  ohNetCore $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)LinnCoUkPlaylist1.$(objext) $(objdir)TestNetworkInterfaceChange.$(objext) $(libprefix)TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestNetworkInterfaceChange.$(exeext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)LinnCoUkPlaylist1.$(objext) $(objdir)TestNetworkInterfaceChange.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestNetworkInterfaceChange.$(exeext) :  ohNetCore $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)CpAvOpenHomeOrgPlaylist1.$(objext) $(objdir)TestNetworkInterfaceChange.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestNetworkInterfaceChange.$(exeext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)CpAvOpenHomeOrgPlaylist1.$(objext) $(objdir)TestNetworkInterfaceChange.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestNetworkInterfaceChange.$(objext) : ControlPoint/TestNetworkInterfaceChange.cpp $(headers)
 	$(compiler)TestNetworkInterfaceChange.$(objext) -c $(cflags) $(includes) ControlPoint/TestNetworkInterfaceChange.cpp
 

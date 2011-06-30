@@ -204,15 +204,12 @@ PcmSender::~PcmSender()
 	delete (iDriver);
 }
 
-static void RandomiseUdn(Bwh& aUdn)
+static void RandomiseUdn(Bwh& aUdn, TIpAddress aAdapter)
 {
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = UpnpLibrary::CurrentSubnetAdapter();
-    TUint max = nif->Address();
-    nif->RemoveRef();
-    (void)Ascii::AppendDec(buf, Random(max));
+    (void)Ascii::AppendDec(buf, Random(aAdapter));
     aUdn.Append(buf);
     aUdn.PtrZ();
 }
@@ -245,6 +242,17 @@ int CDECL main(int aArgc, char* aArgv[])
     if (!parser.Parse(aArgc, aArgv)) {
         return (1);
     }
+
+    InitialisationParams* initParams = InitialisationParams::Create();
+
+	UpnpLibrary::Initialise(initParams);
+
+    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
+    TIpAddress subnet = (*subnetList)[optionAdapter.Value()]->Subnet();
+    TIpAddress adapter = (*subnetList)[optionAdapter.Value()]->Address();
+    UpnpLibrary::DestroySubnetList(subnetList);
+
+    printf("Using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
 
 	Brhz file(optionFile.Value());
     
@@ -420,24 +428,10 @@ int CDECL main(int aArgc, char* aArgv[])
 		pindex += bytesPerSample;	    
     }
     
-    InitialisationParams* initParams = InitialisationParams::Create();
-
-    UpnpLibrary::Initialise(initParams);
-    
-	//Debug::SetLevel(Debug::kMedia);
-	
-    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
-    TIpAddress subnet = (*subnetList)[optionAdapter.Value()]->Subnet();
-    TIpAddress interface = (*subnetList)[optionAdapter.Value()]->Address();
-    UpnpLibrary::DestroySubnetList(subnetList);
-
-    printf("Using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
-
-    UpnpLibrary::StartCombined(522);
-    //UpnpLibrary::StartDv();
+    UpnpLibrary::StartDv();
 
 	Bwh udn("device");
-    RandomiseUdn(udn);
+    RandomiseUdn(udn, adapter);
 
     DvDeviceStandard* device = new DvDeviceStandard(udn);
     
