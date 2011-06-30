@@ -92,6 +92,10 @@ copy_build_includes:
     if not exist $(inc_build)\Js\Tests\Scripts mkdir $(inc_build)\Js\Tests\Scripts
     if not exist $(inc_build)\Js\Tests\extern mkdir $(inc_build)\Js\Tests\extern
     if not exist $(inc_build)\Js\Tests\proxy mkdir $(inc_build)\Js\Tests\proxy
+    if not exist $(inc_build)\Js\Tests\test mkdir $(inc_build)\Js\Tests\test
+    if not exist $(inc_build)\Js\Tests\test\assets mkdir $(inc_build)\Js\Tests\test\assets
+    if not exist $(inc_build)\Js\Tests\test\assets\skins mkdir $(inc_build)\Js\Tests\test\assets\skins
+    if not exist $(inc_build)\Js\Tests\test\assets\skins\sam mkdir $(inc_build)\Js\Tests\test\assets\skins\sam
 	copy Api\*.h $(inc_build) > nul
 	copy Api\C\*.h $(inc_build)\C > nul
 	copy Api\Cpp\*.h $(inc_build)\Cpp > nul
@@ -123,8 +127,10 @@ copy_build_includes:
 	copy Utils\*.h $(inc_build) > nul
 	copy TestFramework\*.h $(inc_build) > nul
     copy Public\Js\OhNet.Web.UI.Tests\*.html $(inc_build)\Js\Tests > nul
+    copy Public\Js\OhNet.Web.UI.Tests\favicon.ico $(inc_build)\Js\Tests > nul
     copy Public\Js\OhNet.Web.UI.Tests\css\*.css $(inc_build)\Js\Tests\css > nul
     copy Public\Js\OhNet.Web.UI.Tests\Scripts\*.js $(inc_build)\Js\Tests\Scripts > nul
+    copy Public\Js\OhNet.Web.UI.Tests\test\assets\skins\sam\*.css $(inc_build)\Js\Tests\test\assets\skins\sam > nul
     copy Public\Js\WebUIsdk\*.js $(inc_build)\Js\Tests\extern > nul
     copy ControlPoint\Services\Js\CpOpenhomeOrgTestBasic1.js $(inc_build)\Js\Tests\proxy > nul
     
