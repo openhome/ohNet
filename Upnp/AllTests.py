@@ -234,8 +234,8 @@ class js_test():
 		program_files = os.environ.get('ProgramFiles')
 		self.browser_location = os.path.join(program_files, 'Safari\Safari.exe')
 		self.test_dir = os.path.join(os.getcwd(), 'Build\Include\Js\Tests')
-		
-	
+
+
 	def local_call(self):
 
 		self.test_testbasic = subprocess.Popen([os.path.join(self.objpath, 'TestDvTestBasic.exe'), '-l', '-c', self.test_dir])
@@ -243,9 +243,13 @@ class js_test():
 
 		self.launch_url = test_devfinder.communicate()[1].rstrip()
 		
+	def local_call_browser(self):
+		subprocess.call(["%s" %(self.browser_location), "%s" %(self.launch_url)])
+		self.test_testbasic.terminate()
+
 	def remote_call(self):
 
-		subprocess.call(["psexec", "-i", "2", "-u", "hudson-zapp", "-p", "temp123", "%s" %(self.browser_location), "%s" %(self.launch_url)])
+		subprocess.call(["psexec", "-i", "2", "-u", "hudson-zapp", "-p", "temp123", "%s" %(self.browser_location), "%s" %(self.launch_url)])	
 		self.test_testbasic.terminate()
 
 def JsTests():
@@ -256,7 +260,13 @@ def JsTests():
 	do_jstest.set_env()
 	do_jstest.get_env(objpath)
 	do_jstest.local_call()
-	do_jstest.remote_call()
+
+	if os.getenv('JENKINS_COOKIE') is None:
+		do_jstest.local_call_browser()
+	else:
+		do_jstest.remote_call()
+
+	
 
 
 if gTestsOnly == 0:
