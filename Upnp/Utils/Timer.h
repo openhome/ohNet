@@ -71,21 +71,6 @@ private:
     OpenHome::Thread* iThreadHandle;
 };
 
-class Moderator
-{
-public:
-    Moderator(Functor aFunctor, TUint aModerationMs);
-    ~Moderator();
-    void Moderate();
-private:
-    void Redirect();
-    Timer* iTimer;
-    TBool iTimerStarted;
-    Mutex iMutex;
-    Functor iModeratedFunctor;
-    TUint iModerationMs;
-};
-
 } // namespace OpenHome
 
 #endif // HEADER_TIMER

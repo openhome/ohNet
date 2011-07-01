@@ -225,38 +225,6 @@ void SuiteTimerThrash::Test()
     }
 }
 
-class SuiteModerator : public Suite
-{
-public:
-    SuiteModerator() : Suite("Functor Moderator testing") {}
-    void Test();
-    void Callback() {iCallbacks++;}
-
-    TUint iCallbacks;
-};
-
-void SuiteModerator::Test()
-{
-    Moderator mod(MakeFunctor(*this, &SuiteModerator::Callback), 200);
-
-    iCallbacks = 0;
-
-    mod.Moderate();
-    TEST(iCallbacks == 0);
-    Thread::Sleep(300);
-    TEST(iCallbacks == 1);
-
-    iCallbacks = 0;
-
-    mod.Moderate();
-    mod.Moderate();
-    mod.Moderate();
-    mod.Moderate();
-    TEST(iCallbacks == 0);
-    Thread::Sleep(300);
-    TEST(iCallbacks == 1);
-}
-
 void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Net::InitialisationParams* aInitParams)
 {
     Net::UpnpLibrary::Initialise(aInitParams);
@@ -265,7 +233,6 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], N
     Runner runner("Timer testing\n");
     runner.Add(new SuiteTimerBasic());
     runner.Add(new SuiteTimerThrash());
-    runner.Add(new SuiteModerator());
     runner.Run();
 
     Net::UpnpLibrary::Close();
