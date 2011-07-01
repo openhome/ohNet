@@ -179,7 +179,7 @@ namespace OpenHome.Net.Device
         [DllImport("ohNet")]
         static extern void DvDeviceSetEnabled(IntPtr aDevice);
         [DllImport("ohNet")]
-        static extern unsafe void DvDeviceSetDisabled(IntPtr aDevice, System.Action<IntPtr> aCompleted, IntPtr aPtr);
+        static extern unsafe void DvDeviceSetDisabled(IntPtr aDevice, DisabledCallback aCompleted, IntPtr aPtr);
         [DllImport("ohNet")]
         static extern unsafe void DvDeviceGetAttribute(IntPtr aDevice, char* aKey, char** aValue);
         [DllImport("ohNet")]
@@ -191,6 +191,8 @@ namespace OpenHome.Net.Device
 
         protected IntPtr iHandle;
         protected GCHandle iGch;
+        private delegate void DisabledCallback(IntPtr aPtr);
+        private DisabledCallback iCallbackDisabled;
 
         /// <summary>
         /// Constructor.  Creates a device without support for any protocol but capable of adding services or attributes.
@@ -202,10 +204,12 @@ namespace OpenHome.Net.Device
             char* udn = (char*)Marshal.StringToHGlobalAnsi(aUdn).ToPointer();
             iHandle = DvDeviceCreate(udn);
             Marshal.FreeHGlobal((IntPtr)udn);
+            iCallbackDisabled = new DisabledCallback(Disabled);
         }
 
         protected DvDevice()
         {
+            iCallbackDisabled = new DisabledCallback(Disabled);
         }
 
         /// <summary>
@@ -259,7 +263,7 @@ namespace OpenHome.Net.Device
         {
             GCHandle gch = GCHandle.Alloc(aCompleted);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
-            DvDeviceSetDisabled(iHandle, Disabled, ptr);
+            DvDeviceSetDisabled(iHandle, iCallbackDisabled, ptr);
         }
 
         private static void Disabled(IntPtr aPtr)
