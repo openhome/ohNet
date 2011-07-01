@@ -221,10 +221,10 @@ class js_test():
 			os.mkdir("xout")
 
 		# write dummy XML that gets re-written by real XML if browser connects to node properly
-		dummy_xml_write = open("xout/ProxyJsTest.xml", 'w')
 
-		dummy_xml_write.writelines("dummy xml")
-		
+		dummy_xml_read = open("public/js/dummyxml.xml", 'r')
+		dummy_xml_write = open("xout/ProxyJsTest.xml", 'w')
+		dummy_xml_write.writelines(dummy_xml_read)
 		dummy_xml_write.close()
 
 	def get_env(self,objpath):
