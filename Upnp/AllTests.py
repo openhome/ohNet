@@ -245,7 +245,7 @@ class js_test():
 		
 	def remote_call(self):
 
-		subprocess.call(["psexec", "-i", "%s" %(self.browser_location), "%s" %(self.launch_url)])
+		subprocess.call(["psexec", "-i", "2", "-u", "hudson-zapp", "-p", "temp123", "%s" %(self.browser_location), "%s" %(self.launch_url)])
 		self.test_testbasic.terminate()
 
 def JsTests():
