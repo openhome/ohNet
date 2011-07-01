@@ -60,7 +60,7 @@ ReceiverManager2Receiver::ReceiverManager2Receiver(IReceiverManager2Handler& aHa
 
 	Functor functorInitial = MakeFunctor(*this, &ReceiverManager2Receiver::EventReceiverInitialEvent);
 
-    iServiceReceiver->SetPropertyInitialEvent(functorInitial);
+    iServiceReceiver->SetPropertyInitialEvent(functorInitial); 
 
 	iServiceReceiver->Subscribe();
 }
@@ -130,6 +130,7 @@ void ReceiverManager2Receiver::SenderMetadata(Bwx& aValue) const
 
 void ReceiverManager2Receiver::Play()
 {
+	iReceiver.Select();
 	iServiceReceiver->BeginPlay(iFunctorPlay);
 }
 

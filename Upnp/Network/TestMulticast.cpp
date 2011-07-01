@@ -77,8 +77,8 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
             multicast.AppendEndpoint(buf2);
             Print("Sending test message to %s\n", buf2.Ptr());
         
-	        SocketUdpMulticast socket(addr, multicast);
-            //SocketUdp socket(0, addr);
+	        //SocketUdpMulticast socket(addr, multicast);
+            SocketUdp socket(0, addr);
             
 			socket.Send(Brn("Test message"), multicast);
         }

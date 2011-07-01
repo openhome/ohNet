@@ -202,7 +202,7 @@ public:
     SocketUdp(); // lets the os select a port
     SocketUdp(TUint aPort); // stipulate a port
     SocketUdp(TUint aPort, TIpAddress aInterface); // stipulate a port and an interface
-    void SetTtl(TUint aTtl); // use if sending multicast
+    void SetTtl(TUint aTtl);
     void Send(const Brx& aBuffer, const Endpoint& aEndpoint);
     Endpoint Receive(Bwx& aBuffer);
     TUint Port() const;

@@ -54,7 +54,7 @@ objects_topology = $(ohnetdir)/CpTopology.$(objext) \
 
 all: $(objdir)/$(dllprefix)ohSoundcard.$(dllext) $(objdir)/Install32.$(exeext) $(objdir)/TestSoundcard.$(exeext) $(objdir)/TestSoundcardCs.$(exeext) $(objdir)/TestReceiverManager1.$(exeext) $(objdir)/TestReceiverManager2.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/TestReceiverManager3.$(exeext) $(objdir)/WavSender.$(exeext) $(objdir)/ZoneWatcher.$(exeext)
 
-$(objdir)/$(dllprefix)ohSoundcard.$(dllext) : Services/DvAvOpenhomeOrgSender1.cpp Ohm.cpp OhmSender.cpp ohSoundcard/Windows/Soundcard.cpp
+$(objdir)/$(dllprefix)ohSoundcard.$(dllext) : Ohm.cpp OhmSender.cpp ohSoundcard/Windows/Soundcard.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
 	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Ohm.cpp
 	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) OhmSender.cpp
@@ -131,19 +131,10 @@ $(objdir)/ZoneWatcher.$(exeext) : ZoneWatcher/ZoneWatcher.cpp
 	$(compiler)/ZoneWatcher.$(objext) -c $(cflags) $(includes) ZoneWatcher/ZoneWatcher.cpp
 	$(link) $(linkoutput)$(objdir)/ZoneWatcher.$(exeext) $(objdir)/ZoneWatcher.$(objext) $(objdir)/Ohm.$(objext) $(ohnetdir)/$(libprefix)ohNetCore.$(libext) $(ohnetdir)/$(libprefix)TestFramework.$(libext)
 
-$(objdir)/WavSender.$(exeext) : Services/DvAvOpenhomeOrgSender1.cpp Ohm.cpp OhmSender.cpp WavSender/WavSender.cpp
+$(objdir)/WavSender.$(exeext) : Ohm.cpp OhmSender.cpp WavSender/WavSender.cpp
     if not exist $(objdirbare) mkdir $(objdirbare)
-	$(compiler)/DvAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgSender1.cpp
 	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Ohm.cpp
 	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) OhmSender.cpp
 	$(compiler)/WavSender.$(objext) -c $(cflags) $(includes) WavSender/WavSender.cpp
 	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(ohnetdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(ohnetdir)/$(libprefix)ohNetCore.$(libext) $(ohnetdir)/$(libprefix)TestFramework.$(libext)
-
-#$(objdir)/WavReceiver.$(exeext) : Services/DvAvOpenhomeOrgProduct1.cpp Services/DvAvOpenhomeOrgReceiver1.cpp Product.cpp WavReceiver/WavReceiver.cpp
-#    if not exist $(objdirbare) mkdir $(objdirbare)
-#	$(compiler)/DvAvOpenhomeOrgProduct1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgProduct1.cpp
-#	$(compiler)/DvAvOpenhomeOrgReceiver1.$(objext) -c $(cflags) $(includes) Services/DvAvOpenhomeOrgReceiver1.cpp
-#	$(compiler)/Product.$(objext) -c $(cflags) $(includes) Product.cpp
-#	$(compiler)/Receiver.$(objext) -c $(cflags) $(includes) WavReceiver/WavReceiver.cpp
-#	$(link) $(linkoutput)$(objdir)/WavReceiver.$(exeext) $(objdir)/WavReceiver.$(objext) $(objdir)/Product.$(objext) $(objdir)/DvAvOpenhomeOrgProduct1.$(objext) $(objdir)/DvAvOpenhomeOrgReceiver1.$(objext) $(ohnetdir)/$(libprefix)ohNetCore.$(libext) $(ohnetdir)/$(libprefix)TestFramework.$(libext)
 
