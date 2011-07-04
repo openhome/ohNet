@@ -51,11 +51,11 @@ all: $(objdir)$(dllprefix)ohSoundcard.$(dllext) $(objdir)Install32.$(exeext) $(o
 # Include rules to build platform independent code
 include Common.mak
 
+$(objects_songcast) : make_obj_dir
 
-# Rules required by the Common.mak file
 make_obj_dir : $(objdirbare)
 
-$(objdirbare): 
+$(objdirbare) :
 	if not exist $(objdirbare) mkdir $(objdirbare)
 
 clean:

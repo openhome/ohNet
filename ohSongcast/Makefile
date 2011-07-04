@@ -50,7 +50,7 @@ default : all
 # Include rules to build the shared code
 include Common.mak
 
-# Rules required when Common.mak is included
+$(objects_songcast) : | make_obj_dir
 make_obj_dir :
 	mkdir -p $(objdir)
 

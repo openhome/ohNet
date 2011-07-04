@@ -20,10 +20,6 @@ $(objdir)Ohm.$(objext) : Ohm.cpp $(headers_songcast)
 $(objdir)OhmSender.$(objext) : OhmSender.cpp $(headers_songcast)
 	$(compiler)OhmSender.$(objext) -c $(cflags) $(includes) OhmSender.cpp
 
-# this rule ensures that the build directory exists - the make_obj_dir rule should be
-# defined in the parent makefile
-$(objects_songcast) : make_obj_dir
-
 
 objects_soundcard = $(objdir)ReceiverManager1.$(objext) \
                     $(objdir)ReceiverManager2.$(objext) \
