@@ -70,6 +70,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)Printer.$(objext) \
     		   $(objdir)ProtocolUpnp.$(objext) \
     		   $(objdir)Queue.$(objext) \
+    		   $(objdir)RefCounter.$(objext) \
     		   $(objdir)Service.$(objext) \
     		   $(objdir)ServiceC.$(objext) \
     		   $(objdir)Ssdp.$(objext) \
@@ -163,6 +164,7 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/C/CpProxy.h \
           $(inc_build)/C/CpProxyCPrivate.h \
           $(inc_build)/Queue.h \
+          $(inc_build)/RefCounter.h \
           $(inc_build)/Service.h \
           $(inc_build)/Ssdp.h \
           $(inc_build)/Stack.h \
@@ -303,6 +305,8 @@ $(objdir)ProtocolUpnp.$(objext) : ControlPoint/Upnp/ProtocolUpnp.cpp $(headers)
 	$(compiler)ProtocolUpnp.$(objext) -c $(cflags) $(includes) ControlPoint/Upnp/ProtocolUpnp.cpp
 $(objdir)Queue.$(objext) : Utils/Queue.cpp $(headers)
 	$(compiler)Queue.$(objext) -c $(cflags) $(includes) Utils/Queue.cpp
+$(objdir)RefCounter.$(objext) : Utils/RefCounter.cpp $(headers)
+	$(compiler)RefCounter.$(objext) -c $(cflags) $(includes) Utils/RefCounter.cpp
 $(objdir)Service.$(objext) : Service/Service.cpp $(headers)
 	$(compiler)Service.$(objext) -c $(cflags) $(includes) Service/Service.cpp
 $(objdir)ServiceC.$(objext) : Public/C/ServiceC.cpp $(headers)
