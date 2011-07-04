@@ -113,12 +113,12 @@ void DeviceList::Removed(CpDeviceC aDevice)
 extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
 {
     OhNetInitParamsSetMsearchTime(aInitParams, 1);
-    OhNetInitParamsSetUseLoopbackNetworkInterface(aInitParams);
+    OhNetInitParamsSetUseLoopbackNetworkAdapter(aInitParams);
     OhNetLibraryInitialise(aInitParams);
     Print("TestDvDeviceC - starting\n");
-    OhNetHandleNetworkInterfaceList subnetList = OhNetSubnetListCreate();
-    OhNetHandleNetworkInterface nif = OhNetSubnetAt(subnetList, 0);
-    TIpAddress subnet = OhNetNetworkInterfaceSubnet(nif);
+    OhNetHandleNetworkAdapterList subnetList = OhNetSubnetListCreate();
+    OhNetHandleNetworkAdapter nif = OhNetSubnetAt(subnetList, 0);
+    TIpAddress subnet = OhNetNetworkAdapterSubnet(nif);
     OhNetSubnetListDestroy(subnetList);
     OhNetLibraryStartCombined(subnet);
 //    Debug::SetLevel(Debug::kService);

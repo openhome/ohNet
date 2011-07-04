@@ -82,6 +82,9 @@ public:
 	OhmSenderDriverWindows();
 
 private:    
+	TBool FindDriver();
+	TBool InstallDriver();
+
 	// IOhmSenderDriver
 	virtual void SetEnabled(TBool aValue);
 	virtual void SetEndpoint(const Endpoint& aEndpoint);
@@ -139,14 +142,14 @@ public:
     void RemoveRef();
     
 private:
-	Subnet(NetworkInterface& aAdapter);
+	Subnet(NetworkAdapter& aAdapter);
 	Subnet(TIpAddress aSubnet);
-	void Attach(NetworkInterface& aAdapter);
-	TBool IsAttachedTo(NetworkInterface& aAdapter);
+	void Attach(NetworkAdapter& aAdapter);
+	TBool IsAttachedTo(NetworkAdapter& aAdapter);
 	~Subnet();
 
 private:
-	NetworkInterface* iAdapter;
+	NetworkAdapter* iAdapter;
 	TIpAddress iSubnet;
 };
 

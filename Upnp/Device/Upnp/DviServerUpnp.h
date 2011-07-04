@@ -195,7 +195,7 @@ public:
     DviServerUpnp(TUint aPort = 0);
     void Redirect(const Brx& aUriRequested, const Brx& aUriRedirectedTo);
 protected:
-    virtual SocketTcpServer* CreateServer(const NetworkInterface& aNif);
+    virtual SocketTcpServer* CreateServer(const NetworkAdapter& aNif);
 private:
     TBool RedirectUri(const Brx& aUri, Brn& aRedirectTo);
 private:

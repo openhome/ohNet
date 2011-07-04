@@ -6,6 +6,14 @@ using System.Collections.Generic;
 
 namespace OpenHome.Soundcard
 {
+    public class SoundcardError : Exception
+    {
+        internal SoundcardError()
+            : base("ohSoundcard audio driver not installed")
+        {
+        }
+    }
+
     public interface IReceiverHandler
     {
         void ReceiverAdded(IReceiver aReceiver);
@@ -243,6 +251,11 @@ namespace OpenHome.Soundcard
             iReceiverList = new List<Receiver>();
             iSubnetList = new List<Subnet>();
             iHandle = SoundcardCreate(aSubnet, aChannel, aTtl, aMulticast, aEnabled, aPreset, iReceiverCallback, IntPtr.Zero, iSubnetCallback, IntPtr.Zero);
+
+            if (iHandle == IntPtr.Zero)
+            {
+                throw (new SoundcardError());
+            }
         }
 
         private void ReceiverCallback(IntPtr aPtr, ECallbackType aType, IntPtr aReceiver)

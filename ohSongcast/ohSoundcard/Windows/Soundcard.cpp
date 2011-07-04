@@ -10,6 +10,7 @@
 #include <ks.h>
 #include <ksmedia.h>
 #include <initguid.h>
+#include <Shellapi.h>
 
 EXCEPTION(SoundcardError);
 
@@ -18,20 +19,113 @@ using namespace OpenHome::Net;
 
 // OhmSenderDriverWindows
 
-DEFINE_GUID(SNEAKY_GUID, 0xff89e492, 0x5c4a, 0x4b2c, 0x87, 0x9a, 0x6a, 0xf, 0xa6, 0x56, 0x1a, 0x63);
+DEFINE_GUID(OHSOUNDCARD_GUID, 0x2685C863, 0x5E57, 0x4D9A, 0x86, 0xEC, 0x2E, 0xC9, 0xB7, 0xBB, 0xBC, 0xFD);
 
-static const TUint KSPROPERTY_SNEAKY_VERSION = 0;
-static const TUint KSPROPERTY_SNEAKY_ENABLED = 1;
-static const TUint KSPROPERTY_SNEAKY_ACTIVE = 2;
-static const TUint KSPROPERTY_SNEAKY_ENDPOINT = 3;
-static const TUint KSPROPERTY_SNEAKY_TTL = 4;
+static const TUint KSPROPERTY_OHSOUNDCARD_VERSION = 0;
+static const TUint KSPROPERTY_OHSOUNDCARD_ENABLED = 1;
+static const TUint KSPROPERTY_OHSOUNDCARD_ACTIVE = 2;
+static const TUint KSPROPERTY_OHSOUNDCARD_ENDPOINT = 3;
+static const TUint KSPROPERTY_OHSOUNDCARD_TTL = 4;
 
 OhmSenderDriverWindows::OhmSenderDriverWindows()
+{
+	if (!FindDriver()) {
+		if (!InstallDriver()) {
+			THROW(SoundcardError);
+		}
+		if (!FindDriver()) {
+			THROW(SoundcardError);
+		}
+	}
+}
+
+TBool OhmSenderDriverWindows::InstallDriver()
+{
+	SHELLEXECUTEINFO shellExecuteInfo;
+
+    shellExecuteInfo.cbSize  = sizeof(SHELLEXECUTEINFO);
+    shellExecuteInfo.lpFile = "Install.exe";
+	shellExecuteInfo.fMask = SEE_MASK_NOCLOSEPROCESS;     
+    shellExecuteInfo.hwnd = NULL;  
+    shellExecuteInfo.lpVerb = "open";
+    shellExecuteInfo.lpParameters = NULL;
+    shellExecuteInfo.lpDirectory = NULL;   
+    shellExecuteInfo.nShow = SW_HIDE;
+    shellExecuteInfo.hInstApp = 0;
+
+    ShellExecuteEx(&shellExecuteInfo);
+     
+	int ret = (int)shellExecuteInfo.hInstApp;
+
+	if (ret <= 32) {
+		printf("Error %d\n", ret);
+		return (false);
+	}
+
+	if (shellExecuteInfo.hProcess ==NULL)
+	{
+		printf("No process\n", ret);
+		return (false);
+	}
+
+	WaitForSingleObject(shellExecuteInfo.hProcess, INFINITE);
+
+    CloseHandle(shellExecuteInfo.hProcess);
+
+	return (true);
+}
+
+/*
+
+
+
+
+
+
+	STARTUPINFO startupInfo;
+	PROCESS_INFORMATION processInformation;
+
+	startupInfo.cb = sizeof(STARTUPINFO);
+	startupInfo.lpReserved = NULL;
+	startupInfo.lpDesktop = NULL;
+	startupInfo.lpTitle = NULL;
+	startupInfo.dwX = 0;
+	startupInfo.dwY = 0;
+	startupInfo.dwXSize = 0;
+	startupInfo.dwYSize = 0;
+	startupInfo.dwXCountChars = 0;
+	startupInfo.dwYCountChars = 0;
+	startupInfo.dwFillAttribute = 0;
+	startupInfo.dwFlags = 0;
+	startupInfo.wShowWindow = false;
+	startupInfo.cbReserved2 = 0;
+	startupInfo.lpReserved2 = NULL;
+	startupInfo.hStdInput = 0;
+	startupInfo.hStdOutput = 0;
+	startupInfo.hStdError = 0;
+
+	if (!CreateProcess("Install.exe", NULL, NULL, NULL, false, CREATE_NO_WINDOW, NULL, NULL, &startupInfo, &processInformation))
+	{
+		printf("create failed %d\n", GetLastError());
+		return (false);
+	}
+
+	WaitForSingleObject(processInformation.hProcess, INFINITE);
+
+	CloseHandle(processInformation.hProcess );
+	CloseHandle(processInformation.hThread );
+
+	return (true);
+}
+*/
+
+
+TBool OhmSenderDriverWindows::FindDriver()
 {
     HDEVINFO deviceInfoSet = SetupDiGetClassDevs(&KSCATEGORY_AUDIO, 0, 0, DIGCF_DEVICEINTERFACE | DIGCF_PROFILE | DIGCF_PRESENT);
 
 	if (deviceInfoSet == 0) {
-		THROW(SoundcardError);
+		return (false);
 	}
 
 	SP_DEVICE_INTERFACE_DATA deviceInterfaceData;
@@ -64,8 +158,8 @@ OhmSenderDriverWindows::OhmSenderDriverWindows()
 
                 KSPROPERTY prop;
 				
-				prop.Set = SNEAKY_GUID;
-                prop.Id = KSPROPERTY_SNEAKY_VERSION;
+				prop.Set = OHSOUNDCARD_GUID;
+                prop.Id = KSPROPERTY_OHSOUNDCARD_VERSION;
                 prop.Flags = KSPROPERTY_TYPE_GET;
 
                 TByte buffer[4];
@@ -79,7 +173,7 @@ OhmSenderDriverWindows::OhmSenderDriverWindows()
 					if (version == 1) {
 						delete [] detail;
 						SetupDiDestroyDeviceInfoList(deviceInfoSet);
-						return;
+						return (true);
 					}
                 }
 			}
@@ -90,16 +184,18 @@ OhmSenderDriverWindows::OhmSenderDriverWindows()
 	}
 
 	delete [] detail;
+
 	SetupDiDestroyDeviceInfoList(deviceInfoSet);
-	THROW(SoundcardError);
+
+	return (false);
 }
 
 void OhmSenderDriverWindows::SetEnabled(TBool aValue)
 {
     KSPROPERTY prop;
 				
-	prop.Set = SNEAKY_GUID;
-    prop.Id = KSPROPERTY_SNEAKY_ENABLED;
+	prop.Set = OHSOUNDCARD_GUID;
+    prop.Id = KSPROPERTY_OHSOUNDCARD_ENABLED;
     prop.Flags = KSPROPERTY_TYPE_SET;
 
     DWORD bytes;
@@ -113,8 +209,8 @@ void OhmSenderDriverWindows::SetActive(TBool  aValue)
 {
     KSPROPERTY prop;
 				
-	prop.Set = SNEAKY_GUID;
-    prop.Id = KSPROPERTY_SNEAKY_ACTIVE;
+	prop.Set = OHSOUNDCARD_GUID;
+    prop.Id = KSPROPERTY_OHSOUNDCARD_ACTIVE;
     prop.Flags = KSPROPERTY_TYPE_SET;
 
     DWORD bytes;
@@ -128,8 +224,8 @@ void OhmSenderDriverWindows::SetEndpoint(const Endpoint& aEndpoint)
 {
 	KSPROPERTY prop;
 				
-	prop.Set = SNEAKY_GUID;
-    prop.Id = KSPROPERTY_SNEAKY_ENDPOINT;
+	prop.Set = OHSOUNDCARD_GUID;
+    prop.Id = KSPROPERTY_OHSOUNDCARD_ENDPOINT;
     prop.Flags = KSPROPERTY_TYPE_SET;
 
 	TByte buffer[8];
@@ -149,8 +245,8 @@ void OhmSenderDriverWindows::SetTtl(TUint aValue)
 {
     KSPROPERTY prop;
 				
-	prop.Set = SNEAKY_GUID;
-    prop.Id = KSPROPERTY_SNEAKY_TTL;
+	prop.Set = OHSOUNDCARD_GUID;
+    prop.Id = KSPROPERTY_OHSOUNDCARD_TTL;
     prop.Flags = KSPROPERTY_TYPE_SET;
 
     DWORD bytes;
@@ -363,7 +459,7 @@ Receiver::~Receiver()
 
 // Subnet
 
-Subnet::Subnet(NetworkInterface& aAdapter)
+Subnet::Subnet(NetworkAdapter& aAdapter)
 	: iAdapter(&aAdapter)
 {
 	AddRef();
@@ -375,7 +471,7 @@ Subnet::Subnet(TIpAddress aSubnet)
 {
 }
 
-TBool Subnet::IsAttachedTo(NetworkInterface& aAdapter)
+TBool Subnet::IsAttachedTo(NetworkAdapter& aAdapter)
 {
 	if (iAdapter != 0) {
 		return (iAdapter ==	&aAdapter);
@@ -383,7 +479,7 @@ TBool Subnet::IsAttachedTo(NetworkInterface& aAdapter)
 	return (false);
 }
 
-void Subnet::Attach(NetworkInterface& aAdapter)
+void Subnet::Attach(NetworkAdapter& aAdapter)
 {
 	RemoveRef();
 	iAdapter = &aAdapter;
@@ -446,6 +542,7 @@ Soundcard* Soundcard::Create(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBo
 	}
 	catch (SoundcardError) {
 	}
+
 	return (0);
 }
 
@@ -460,24 +557,11 @@ Soundcard::Soundcard(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMult
 	, iSubnetCallback(aSubnetCallback)
 	, iSubnetPtr(aSubnetPtr)
 {
-	InitialisationParams* initParams = InitialisationParams::Create();
+	Debug::SetLevel(Debug::kMedia);
+	
 
-	Functor callback = MakeFunctor(*this, &Soundcard::SubnetListChanged);
-
-	initParams->SetSubnetChangedListener(callback);
-
-	UpnpLibrary::Initialise(initParams);
-
-	// Fixes bug in stack
-	if (iSubnet == 0) {
-		SubnetListChanged();
-		iSubnet = iSubnetList[0]->Address();
-		iAdapter = iSubnetList[0]->AdapterAddress();
-	}
-	/////////////////////
-
-	UpnpLibrary::StartCombined(iSubnet);
-
+	// First do everything that might throw SoundcardError: get the computer name, and create the driver,
+	// which links to the installed windows ohSoundcard audio driver and throws 
 	Bws<kMaxUdnBytes> computer;
 	Bws<kMaxUdnBytes> udn;
 	Bws<kMaxUdnBytes + 1> friendly;
@@ -494,6 +578,26 @@ Soundcard::Soundcard(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMult
 	friendly.Replace(udn);
 	friendly.Append('\0');
 
+    iDriver = new OhmSenderDriverWindows();
+
+	InitialisationParams* initParams = InitialisationParams::Create();
+
+	Functor callback = MakeFunctor(*this, &Soundcard::SubnetListChanged);
+
+	initParams->SetSubnetListChangedListener(callback);
+
+	UpnpLibrary::Initialise(initParams);
+
+	// Fixes bug in stack
+	if (iSubnet == 0) {
+		SubnetListChanged();
+		iSubnet = iSubnetList[0]->Address();
+		iAdapter = iSubnetList[0]->AdapterAddress();
+	}
+	/////////////////////
+
+	UpnpLibrary::StartCombined(iSubnet);
+
 	iDevice = new DvDeviceStandard(udn);
     
 	iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
@@ -509,8 +613,6 @@ Soundcard::Soundcard(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMult
     iDevice->SetAttribute("Upnp.SerialNumber", "");
     iDevice->SetAttribute("Upnp.Upc", "");
 
-    iDriver = new OhmSenderDriverWindows();
-    
 	SubnetListChanged();
 
 	Brn icon(icon_png, icon_png_len);
@@ -539,12 +641,12 @@ void Soundcard::SubnetListChanged()
 
 	// First, handle changes to the subnet list
 
-	std::vector<NetworkInterface*>*  subnetList = UpnpLibrary::CreateSubnetList();
+	std::vector<NetworkAdapter*>*  subnetList = UpnpLibrary::CreateSubnetList();
 
-	std::vector<NetworkInterface*>::iterator it = subnetList->begin();
+	std::vector<NetworkAdapter*>::iterator it = subnetList->begin();
 
 	while (it != subnetList->end()) {
-		NetworkInterface* adapter = *it;
+		NetworkAdapter* adapter = *it;
 
 		TBool found = false;
 

@@ -142,31 +142,31 @@ PCPROPERTY_ITEM FilterProperties[] =
 {
     {
         &KSPROPSETID_Private,
-        KSPROPERTY_SNEAKY_VERSION,
+        KSPROPERTY_OHSOUNDCARD_VERSION,
         KSPROPERTY_TYPE_GET,
         PropertyHandler_Wave
     },
     {
         &KSPROPSETID_Private,
-        KSPROPERTY_SNEAKY_ENABLED,
+        KSPROPERTY_OHSOUNDCARD_ENABLED,
         KSPROPERTY_TYPE_SET,
         PropertyHandler_Wave
     },
     {
         &KSPROPSETID_Private,
-        KSPROPERTY_SNEAKY_ACTIVE,
+        KSPROPERTY_OHSOUNDCARD_ACTIVE,
         KSPROPERTY_TYPE_SET,
         PropertyHandler_Wave
     },
     {
         &KSPROPSETID_Private,
-        KSPROPERTY_SNEAKY_ENDPOINT,
+        KSPROPERTY_OHSOUNDCARD_ENDPOINT,
         KSPROPERTY_TYPE_SET,
         PropertyHandler_Wave
     },
     {
         &KSPROPSETID_Private,
-        KSPROPERTY_SNEAKY_TTL,
+        KSPROPERTY_OHSOUNDCARD_TTL,
         KSPROPERTY_TYPE_SET,
         PropertyHandler_Wave
     }

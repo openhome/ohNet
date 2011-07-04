@@ -11,7 +11,7 @@
 #include <Thread.h>
 #include <Timer.h>
 #include <OsWrapper.h>
-#include <NetworkInterfaceList.h>
+#include <NetworkAdapterList.h>
 #include <Discovery.h>
 #include <OhNet.h>
 #include <Printer.h>
@@ -43,7 +43,7 @@ public:
      */
     static OpenHome::Mutex& Mutex();
 
-    static OpenHome::NetworkInterfaceList& NetworkInterfaceList();
+    static OpenHome::NetworkAdapterList& NetworkAdapterList();
     static SsdpListenerMulticast& MulticastListenerClaim(TIpAddress aInterface);
     static void MulticastListenerRelease(TIpAddress aInterface);
     static TUint SequenceNumber();
@@ -90,7 +90,7 @@ private:
     InitialisationParams* iInitParams;
     OpenHome::TimerManager* iTimerManager;
     OpenHome::Mutex iPublicLock;
-    OpenHome::NetworkInterfaceList* iNetworkInterfaceList;
+    OpenHome::NetworkAdapterList* iNetworkAdapterList;
     typedef std::vector<MListener*> MulticastListeners;
     MulticastListeners iMulticastListeners;
     TUint iSequenceNumber;

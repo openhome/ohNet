@@ -65,24 +65,6 @@ void loggerSubnet(void* /* aPtr */, ECallbackType aType, THandle aSubnet)
 
 int __cdecl main(int /* aArgc */, char* /* aArgv[] */)
 {
-	//Debug::SetLevel(Debug::kMedia);
-	
-	/*
-    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
-    
-	ASSERT(ifs->size() > 0 && optionAdapter.Value() < ifs->size());
-    
-	TIpAddress iface = (*ifs)[optionAdapter.Value()]->Address();
-    
-	for (TUint i=0; i<ifs->size(); i++) {
-        delete (*ifs)[i];
-    }
-    
-	delete ifs;
-    
-    printf("Using network interface %d.%d.%d.%d\n", iface&0xff, (iface>>8)&0xff, (iface>>16)&0xff, (iface>>24)&0xff);
-	*/
-
 	TIpAddress subnet = 522;
     TUint channel = 0;
     TUint ttl = 4;

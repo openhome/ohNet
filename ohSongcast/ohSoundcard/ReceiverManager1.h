@@ -26,24 +26,28 @@ class ReceiverManager1Room;
 
 class ReceiverManager1Receiver  : private INonCopyable
 {
+	friend class ReceiverManager1Room;
+
 	static const TUint kMaxNameBytes = 20;
 	static const TUint kMaxGroupBytes = 20;
 
 public:
-	ReceiverManager1Receiver(ReceiverManager1Room& aRoom, const Brx& aGroup, const Brx& aName, TBool aSelected, CpDevice& aDevice);
+	ReceiverManager1Receiver(ReceiverManager1Room& aRoom, const Brx& aGroup, const Brx& aName, TUint aSourceIndex, CpDevice& aDevice);
 	const Brx& Room() const;
 	const Brx& Group() const;
 	const Brx& Name() const;
-	TBool Selected() const;
+	TUint SourceIndex() const;
 	CpDevice& Device() const;
+
+	void SetSourceIndex(TUint aValue);
+
+	void Select();
+	TBool Selected() const;
 
     void AddRef();
     void RemoveRef();
     void SetUserData(void* aValue);
 	void* UserData() const;
-
-	void Select();
-	void Deselect();
 
 	void Standby();
 
@@ -53,7 +57,7 @@ private:
 	ReceiverManager1Room& iRoom;
 	Bws<kMaxGroupBytes> iGroup;
 	Bws<kMaxNameBytes> iName;
-	TBool iSelected;
+	TUint iSourceIndex;
 	CpDevice& iDevice;
 	void* iUserData;
     TUint iRefCount;
@@ -65,19 +69,16 @@ class ReceiverManager1Room  : private INonCopyable
 {
 public:
 	ReceiverManager1Room(IReceiverManager1Handler& aHandler, IRoom& aRoom);
-	const Brx& Name() const;
+	const Brx& Name() const;	
 	IRoom& Room() const;
-
     void AddRef();
     void RemoveRef();
-
 	void SourceChanged();
 	void Changed();
-
 	void Removed();
-
 	void Standby();
-
+	void Select(const ReceiverManager1Receiver& aReceiver);
+	TBool Selected(const ReceiverManager1Receiver& aReceiver);
 	~ReceiverManager1Room();
 private:
 	IReceiverManager1Handler& iHandler;

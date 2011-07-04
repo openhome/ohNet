@@ -6,39 +6,45 @@ using namespace OpenHome::Net;
 // OhmSocket
 
 OhmSocket::OhmSocket()
-    : iSocket(0)
+    : iRxSocket(0)
+	, iTxSocket(0)
 {
 }
 
 void OhmSocket::OpenUnicast(TIpAddress aInterface, TUint aTtl)
 {
-    ASSERT(!iSocket);
-    iSocket = new SocketUdp(0, aInterface);
-    iSocket->SetTtl(aTtl);
-    iSocket->SetSendBufBytes(kSendBufBytes);
-    iReader = new UdpReader(*iSocket);
-    iThis.Replace(Endpoint(iSocket->Port(), aInterface));
+    ASSERT(!iRxSocket);
+    ASSERT(!iTxSocket);
+    ASSERT(!iReader);
+    iRxSocket = new SocketUdp(0, aInterface);
+	iTxSocket = new SocketUdp(0, aInterface);
+    iTxSocket->SetTtl(aTtl);
+    iTxSocket->SetSendBufBytes(kSendBufBytes);
+    iReader = new UdpReader(*iRxSocket);
+    iThis.Replace(Endpoint(iRxSocket->Port(), aInterface));
 }
 
 void OhmSocket::OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint)
 {
-    ASSERT(!iSocket);
-    iSocket = new SocketUdpMulticast(aInterface, aEndpoint);
-    iSocket->SetTtl(aTtl);
-    iSocket->SetSendBufBytes(kSendBufBytes);
-    iReader = new UdpReader(*iSocket);
+    ASSERT(!iRxSocket);
+    ASSERT(!iTxSocket);
+    ASSERT(!iReader);
+    iRxSocket = new SocketUdpMulticast(aInterface, aEndpoint);
+	iTxSocket = new SocketUdp(0, aInterface);
+    iTxSocket->SetTtl(aTtl);
+    iTxSocket->SetSendBufBytes(kSendBufBytes);
+    iReader = new UdpReader(*iRxSocket);
     iThis.Replace(aEndpoint);
 }
 
 void OhmSocket::Send(const Brx& aBuffer, const Endpoint& aEndpoint)
 {
-    ASSERT(iSocket);
-    iSocket->Send(aBuffer, aEndpoint);
+    ASSERT(iTxSocket);
+    iTxSocket->Send(aBuffer, aEndpoint);
 }
 
 Endpoint OhmSocket::This() const
 {
-    ASSERT(iSocket);
     return (iThis);
 }
 
@@ -50,34 +56,38 @@ Endpoint OhmSocket::Sender() const
 
 void OhmSocket::Close()
 {
-    ASSERT(iSocket);
-    delete (iSocket);
+    ASSERT(iRxSocket);
+    ASSERT(iTxSocket);
+    ASSERT(iReader);
+    delete (iRxSocket);
+    delete (iTxSocket);
     delete (iReader);
+    iRxSocket = 0;
+    iTxSocket = 0;
     iReader = 0;
-    iSocket = 0;
 }
     
 void OhmSocket::Read(Bwx& aBuffer)
 {
-    ASSERT(iSocket);
+    ASSERT(iReader);
     iReader->Read(aBuffer);
 }
 
 void OhmSocket::ReadFlush()
 {
-    ASSERT(iSocket != 0);
+    ASSERT(iReader);
     iReader->ReadFlush();
 }
 
 void OhmSocket::ReadInterrupt()
 {
-    ASSERT(iSocket != 0);
+    ASSERT(iReader);
     iReader->ReadInterrupt();
 }
 
 OhmSocket::~OhmSocket()
 {
-    if (iSocket != 0) {
+    if (iRxSocket != 0) {
         Close();
     }
 }
@@ -86,55 +96,59 @@ OhmSocket::~OhmSocket()
 // OhzSocket
 
 OhzSocket::OhzSocket()
-	: iSocket(0)
+	: iRxSocket(0)
+	, iTxSocket(0)
 	, iEndpoint(51972, Brn("239.255.255.250"))
 {
 }
 
 void OhzSocket::Open(TIpAddress aInterface, TUint aTtl)
 {
-    ASSERT(!iSocket);
-    iSocket = new SocketUdpMulticast(aInterface, iEndpoint);
-    iSocket->SetTtl(aTtl);
-    iReader = new UdpReader(*iSocket);
+    ASSERT(!iRxSocket);
+    iRxSocket = new SocketUdpMulticast(aInterface, iEndpoint);
+	iTxSocket = new SocketUdp(0, aInterface);
+    iTxSocket->SetTtl(aTtl);
+    iReader = new UdpReader(*iRxSocket);
 }
 
 void OhzSocket::Send(const Brx& aBuffer)
 {
-    ASSERT(iSocket);
-    iSocket->Send(aBuffer, iEndpoint);
+    ASSERT(iTxSocket);
+    iTxSocket->Send(aBuffer, iEndpoint);
 }
 
 void OhzSocket::Close()
 {
-    ASSERT(iSocket);
-    delete (iSocket);
+    ASSERT(iRxSocket);
+    delete (iRxSocket);
+	delete (iTxSocket);
     delete (iReader);
+    iRxSocket = 0;
+	iTxSocket = 0;
     iReader = 0;
-    iSocket = 0;
 }
     
 void OhzSocket::Read(Bwx& aBuffer)
 {
-    ASSERT(iSocket);
+    ASSERT(iRxSocket);
     iReader->Read(aBuffer);
 }
 
 void OhzSocket::ReadFlush()
 {
-    ASSERT(iSocket != 0);
+    ASSERT(iRxSocket != 0);
     iReader->ReadFlush();
 }
 
 void OhzSocket::ReadInterrupt()
 {
-    ASSERT(iSocket != 0);
+    ASSERT(iRxSocket != 0);
     iReader->ReadInterrupt();
 }
 
 OhzSocket::~OhzSocket()
 {
-    if (iSocket != 0) {
+    if (iRxSocket != 0) {
         Close();
     }
 }

@@ -23,7 +23,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         return;
     }
     if (loopback.Value()) {
-        aInitParams->SetUseLoopbackNetworkInterface();
+        aInitParams->SetUseLoopbackNetworkAdapter();
     }
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartDv();

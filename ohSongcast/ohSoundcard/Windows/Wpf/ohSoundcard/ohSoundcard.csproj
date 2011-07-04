@@ -35,6 +35,14 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <StartupObject>OpenHome.Soundcard.App</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ohSoundcard.net, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
@@ -116,11 +124,11 @@
     <None Include="Resources\Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\..\Build\Obj\Windows\Debug\ohSoundcard.dll">
+    <Content Include="..\..\..\..\Build\Obj\Windows\Release\ohSoundcard.dll">
       <Link>ohSoundcard.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\..\..\Build\Obj\Windows\Debug\ohSoundcard.net.dll">
+    <Content Include="..\..\..\..\Build\Obj\Windows\Release\ohSoundcard.net.dll">
       <Link>ohSoundcard.net.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

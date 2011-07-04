@@ -39,9 +39,9 @@ public:
     TUint Version() const;
     void MsgSchedulerComplete(DeviceMsgScheduler* aScheduler);
 private:
-    void AddInterface(const NetworkInterface& aNif);
+    void AddInterface(const NetworkAdapter& aNif);
     void SubnetListChanged();
-    TInt FindInterface(TIpAddress aInterface, const std::vector<NetworkInterface*>& aNifList);
+    TInt FindInterface(TIpAddress aInterface, const std::vector<NetworkAdapter*>& aNifList);
     TInt FindListenerForSubnet(TIpAddress aSubnet);
     TInt FindListenerForInterface(TIpAddress aSubnet);
     void SubnetDisabled();
@@ -74,7 +74,7 @@ private:
     {
         friend class DviDeviceUpnp;
     public:
-        Nif(DviDeviceUpnp& aDeviceUpnp, DviDevice& aDevice, const NetworkInterface& aNif, Bwh& aUriBase, TUint aServerPort);
+        Nif(DviDeviceUpnp& aDeviceUpnp, DviDevice& aDevice, const NetworkAdapter& aNif, Bwh& aUriBase, TUint aServerPort);
         ~Nif();
         TIpAddress Interface() const;
         TIpAddress Subnet() const;
@@ -113,7 +113,7 @@ private:
     AttributeMap iAttributeMap;
     Mutex iLock;
     std::vector<Nif*> iInterfaces;
-    TInt iSubnetChangeListenerId;
+    TInt iSubnetListChangeListenerId;
     std::vector<DeviceMsgScheduler*> iMsgSchedulers;
     TUint iSubnetDisableCount;
     Functor iDisableComplete;

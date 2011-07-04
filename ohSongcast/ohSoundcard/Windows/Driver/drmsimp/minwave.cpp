@@ -414,7 +414,7 @@ Return Value:
     //
     if (NT_SUCCESS(ntStatus))
     {
-        stream = new (NonPagedPool, SNEAKY_POOLTAG) 
+        stream = new (NonPagedPool, OHSOUNDCARD_POOLTAG) 
             CMiniportWaveCyclicStream(OuterUnknown);
 
         if (stream)
@@ -539,12 +539,12 @@ NTSTATUS PropertyHandler_Wave
 
     ASSERT (PropertyRequest);
 
-    // We only have a get defined for KSPROPERTY_SNEAKY_VERSION
+    // We only have a get defined for KSPROPERTY_OHSOUNDCARD_VERSION
 
     if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
     {
         // Check the ID ("function" in "group").
-        if (PropertyRequest->PropertyItem->Id != KSPROPERTY_SNEAKY_VERSION)
+        if (PropertyRequest->PropertyItem->Id != KSPROPERTY_OHSOUNDCARD_VERSION)
 		{
             return STATUS_INVALID_PARAMETER;
 		}
@@ -572,7 +572,7 @@ NTSTATUS PropertyHandler_Wave
     }
     else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
     {
-        if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_ENABLED)
+        if (PropertyRequest->PropertyItem->Id == KSPROPERTY_OHSOUNDCARD_ENABLED)
 		{
 			if (PropertyRequest->ValueSize != sizeof (ULONG))
 			{
@@ -602,7 +602,7 @@ NTSTATUS PropertyHandler_Wave
 
 			return STATUS_SUCCESS;
 		}
-        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_ACTIVE)
+        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_OHSOUNDCARD_ACTIVE)
 		{
 			if (PropertyRequest->ValueSize != sizeof (ULONG))
 			{
@@ -632,7 +632,7 @@ NTSTATUS PropertyHandler_Wave
 
 			return STATUS_SUCCESS;
 		}
-        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_ENDPOINT)
+        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_OHSOUNDCARD_ENDPOINT)
 		{
 			if (PropertyRequest->ValueSize != (sizeof (ULONG) * 2))
 			{
@@ -658,7 +658,7 @@ NTSTATUS PropertyHandler_Wave
 
 			return STATUS_SUCCESS;
 		}
-        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_SNEAKY_TTL)
+        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_OHSOUNDCARD_TTL)
 		{
 			if (PropertyRequest->ValueSize != sizeof (ULONG))
 			{
@@ -894,7 +894,7 @@ void SocketInitialised(void* aContext)
 
 void WskInitialised(void* aContext)
 {
-	Socket = new (NonPagedPool, SNEAKY_POOLTAG) CSocketOhm();
+	Socket = new (NonPagedPool, OHSOUNDCARD_POOLTAG) CSocketOhm();
 	Socket->Initialise(*Wsk, SocketInitialised, aContext);
 }
 

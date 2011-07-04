@@ -30,6 +30,7 @@ private: // ICpiProtocol
     TUint Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri& aSubscriber);
     TUint Renew(CpiSubscription& aSubscription);
     void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid);
+    void NotifyRemovedBeforeReady();
 private: // ICpiDeviceObserver
     void Release();
 private: // IPropertyWriterFactory

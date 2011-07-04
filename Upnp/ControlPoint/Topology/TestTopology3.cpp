@@ -126,7 +126,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     }
 
     UpnpLibrary::Initialise(aInitParams);
-    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(false);
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress subnet = (*ifs)[adapter.Value()]->Subnet();
     for (TUint i=0; i<ifs->size(); i++) {

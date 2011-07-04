@@ -25,10 +25,10 @@ Abstract:
 //=============================================================================
 
 // Pool tag used for MSVAD allocations
-#define SNEAKY_POOLTAG               'SNKY'  
+#define OHSOUNDCARD_POOLTAG               'OHSC'  
 
 // Debug module name
-#define STR_MODULENAME              "SNEAKY: "
+#define STR_MODULENAME              "OHSOUNDCARD: "
 
 // Debug utility macros
 #define D_FUNC                      4

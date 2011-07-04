@@ -14,7 +14,7 @@ namespace OpenHome.Net
             lib.Initialise(initParams);
             IntPtr subnetList = lib.SubnetListCreate();
             IntPtr nif = lib.SubnetAt(subnetList, 0);
-            uint subnet = lib.NetworkInterfaceSubnet(nif);
+            uint subnet = lib.NetworkAdapterSubnet(nif);
             lib.SubnetListDestroy(subnetList);
             lib.StartCp(subnet);
             new Runner((int)initParams.MsearchTimeSecs);
