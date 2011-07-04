@@ -388,7 +388,7 @@ int CDECL main(int aArgc, char* aArgv[])
     
     if (count != subChunk2Size)
     {
-    	printf("Unable to read wav file %d, %d\n", count, subChunk2Size);
+    	printf("Unable to read wav file %d, %d\n", (int)count, subChunk2Size);
     	return (1);
     }
     

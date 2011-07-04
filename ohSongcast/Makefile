@@ -1,46 +1,62 @@
-objdir = Build/Obj/Posix
-incdir = Build/Include
-ohnetdir = ../Upnp/Build/Obj/Posix/Debug
-toolsDir = ../Upnp/Build/Posix/Tools
-templatesDir = ../Upnp/T4/Templates
+
+# Makefile for linux and mac
+
+
+ifeq ($(release), 1)
+debug_specific_flags = -O2
+build_dir = Release
+else
+debug_specific_flags = -g -O0
+build_dir = Debug
+endif
+
+
+MACHINE = $(shell uname -s)
+ifeq ($(MACHINE), Darwin)
+platform_cflags = -DPLATFORM_MACOSX_GNU -arch i386 -mmacosx-version-min=10.4
+platform_linkflags = -arch i386
+objdir = Build/Obj/Mac/$(build_dir)/
+ohnetdir = ../Upnp/Build/Obj/Mac/$(build_dir)/
+else
+platform_cflags = -Wno-psabi
+platform_linkflags = 
+objdir = Build/Obj/Posix/$(build_dir)/
+ohnetdir = ../Upnp/Build/Obj/Posix/$(build_dir)/
+endif
+
 
 # Macros used by Common.mak
 
 ar = ${CROSS_COMPILE}ar rc $(objdir)
-cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -g -O0 -Wno-psabi -fvisibility=hidden -DDllImport="__attribute__ ((visibility(\"default\")))" -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))"
-objdir = Build/Obj/Posix/
-inc_build = Build/Include
+cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_flags) -fvisibility=hidden -DDllImport="__attribute__ ((visibility(\"default\")))" -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))" $(platform_cflags)
+inc_build = Build/Include/
 includes = -I../Upnp/Build/Include/ -I../Upnp/Build/Include/Cpp/
-bundle_build = Build/Bundles
-osdir = Posix
 objext = o
 libprefix = lib
 libext = a
 exeext = elf
 compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
-link = ${CROSS_COMPILE}g++ -lpthread
+link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
 linkoutput = -o 
 dllprefix = lib
 dllext = so
-link_dll = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc
+link_dll = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags) -shared -shared-libgcc
 csharp = gmcs /nologo
-publiccsdir = Public/Cs/
 dirsep = /
-prefix = /usr/local
-installlibdir = $(prefix)/lib/zapp
-installincludedir = $(prefix)/include/zapp
-installpkgconfdir = $(prefix)/lib/pkgconfig
-mkdir = mkdir -p
-rmdir = rm -rf
-uset4 = no
 
-all: $(objdir)/WavSender.$(exeext) 
 
-$(objdir)/WavSender.$(exeext) : Ohm.cpp OhmSender.cpp WavSender/WavSender.cpp
+default : all
+
+# Include rules to build the shared code
+include Common.mak
+
+# Rules required when Common.mak is included
+make_obj_dir :
 	mkdir -p $(objdir)
-	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Ohm.cpp
-	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) OhmSender.cpp
-	$(compiler)/WavSender.$(objext) -c $(cflags) $(includes) WavSender/WavSender.cpp
-	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(ohnetdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(ohnetdir)/$(libprefix)ohNetCore.$(libext) $(ohnetdir)/$(libprefix)TestFramework.$(libext)
+
+clean :
+	rm -rf $(objdir)
+
+all : all_common
 
 

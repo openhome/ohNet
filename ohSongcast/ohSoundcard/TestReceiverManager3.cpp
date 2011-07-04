@@ -13,6 +13,14 @@
 
 #include "ReceiverManager3.h"
 
+
+#ifdef _WIN32
+#define CDECL __cdecl
+#else
+#define CDECL 
+#endif
+
+
 namespace OpenHome {
 namespace Net {
 
@@ -103,7 +111,7 @@ void ReceiverManager3Logger::ReceiverRemoved(ReceiverManager3Receiver& aReceiver
     Print("\n");
 }
 
-int __cdecl main(int aArgc, char* aArgv[])
+int CDECL main(int aArgc, char* aArgv[])
 {
 	InitialisationParams* initParams = InitialisationParams::Create();
 
