@@ -11,10 +11,12 @@ class RefCounter
 {
 public:
     RefCounter();
-    virtual ~RefCounter();
     void IncRef();
     void DecRef();
 
+protected:
+    virtual ~RefCounter();
+    
 private:
     AtomicInt iCounter; 
 };
