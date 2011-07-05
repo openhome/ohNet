@@ -10,7 +10,7 @@
 #include <vector>
 #include <stdio.h>
 
-#include "SoundcardDriver.h"
+#include "../Soundcard.h"
 
 #pragma warning(disable:4355) // use of 'this' in ctor lists safe in this case
 
