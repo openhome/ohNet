@@ -5,8 +5,6 @@
 #include <OhNetTypes.h>
 #include <Thread.h>
 
-EXCEPTION(UriError);
-
 namespace OpenHome {
 
 class RefCounter
@@ -20,7 +18,6 @@ public:
 private:
     AtomicInt iCounter; 
 };
-
 
 } // namespace OpenHome
 
