@@ -137,7 +137,11 @@ class DllExportClass Soundcard : public IReceiverManager3Handler
 	static const TUint kMaxUdnBytes = 100;
 
 public:
+    // This static function is the only part of this class that is required to be implemented
+    // in platform specific code
 	static Soundcard* Create(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr);
+
+public:
     void SetSubnet(TIpAddress aValue);
 	void SetChannel(TUint aValue);
     void SetTtl(TUint aValue);
@@ -150,7 +154,7 @@ public:
 	~Soundcard();
 
 private:
-	Soundcard(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr);
+	Soundcard(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr, const Brx& aComputer, IOhmSenderDriver* aDriver);
 
 	void SubnetListChanged();
 	TBool UpdateAdapter();

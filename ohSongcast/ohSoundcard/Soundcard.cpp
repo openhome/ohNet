@@ -1,4 +1,7 @@
 #include "Soundcard.h"
+#include "Icon.h"
+
+#include <Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -279,6 +282,72 @@ Subnet::~Subnet()
 }
     
 // Soundcard
+
+Soundcard::Soundcard(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr, const Brx& aComputer, IOhmSenderDriver* aDriver)
+	: iMutex("SCRD")
+	, iClosing(false)
+	, iSubnet(aSubnet)
+	, iAdapter(0)
+	, iSender(0)
+    , iDriver(aDriver)
+	, iReceiverCallback(aReceiverCallback)
+	, iReceiverPtr(aReceiverPtr)
+	, iSubnetCallback(aSubnetCallback)
+	, iSubnetPtr(aSubnetPtr)
+{
+	Debug::SetLevel(Debug::kMedia);
+
+	Bws<kMaxUdnBytes> udn;
+	Bws<kMaxUdnBytes + 1> friendly;
+
+	udn.Replace("ohSoundcard-");
+	udn.Append(aComputer);
+	friendly.Replace(udn);
+	friendly.Append('\0');
+
+	InitialisationParams* initParams = InitialisationParams::Create();
+
+	Functor callback = MakeFunctor(*this, &Soundcard::SubnetListChanged);
+
+	initParams->SetSubnetListChangedListener(callback);
+
+	UpnpLibrary::Initialise(initParams);
+
+	// Fixes bug in stack
+	if (iSubnet == 0) {
+		SubnetListChanged();
+		iSubnet = iSubnetList[0]->Address();
+		iAdapter = iSubnetList[0]->AdapterAddress();
+	}
+	/////////////////////
+
+	UpnpLibrary::StartCombined(iSubnet);
+
+	iDevice = new DvDeviceStandard(udn);
+    
+	iDevice->SetAttribute("Upnp.Domain", "av.openhome.org");
+    iDevice->SetAttribute("Upnp.Type", "Soundcard");
+    iDevice->SetAttribute("Upnp.Version", "1");
+    iDevice->SetAttribute("Upnp.FriendlyName", (TChar*)friendly.Ptr());
+    iDevice->SetAttribute("Upnp.Manufacturer", "Openhome");
+    iDevice->SetAttribute("Upnp.ManufacturerUrl", "http://www.openhome.org");
+    iDevice->SetAttribute("Upnp.ModelDescription", "OpenHome Soundcard");
+    iDevice->SetAttribute("Upnp.ModelName", "ohSoundcard");
+    iDevice->SetAttribute("Upnp.ModelNumber", "1");
+    iDevice->SetAttribute("Upnp.ModelUrl", "http://www.openhome.org");
+    iDevice->SetAttribute("Upnp.SerialNumber", "");
+    iDevice->SetAttribute("Upnp.Upc", "");
+
+	SubnetListChanged();
+
+	Brn icon(icon_png, icon_png_len);
+
+	iSender = new OhmSender(*iDevice, *iDriver, aComputer, aChannel, iAdapter, aTtl, aMulticast, aEnabled, icon, Brn("image/png"), aPreset);
+	
+	iDevice->SetEnabled();
+
+	iReceiverManager = new ReceiverManager3(*this, iSender->SenderUri(), iSender->SenderMetadata());
+}
 
 // Don't bother removing old subnets - they might come back anyway, and there is not exactly
 // a huge traffic in added and removed network interfaces

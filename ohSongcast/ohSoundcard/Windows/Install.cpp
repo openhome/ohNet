@@ -1,5 +1,4 @@
 #include "SoundcardDriver.h"
-#include "Icon.h"
 
 #include <Ascii.h>
 #include <Maths.h>
