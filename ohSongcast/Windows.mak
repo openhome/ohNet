@@ -105,7 +105,7 @@ $(objdir)ohSoundcard.$(exeext) : $(objdir)$(dllprefix)ohSoundcard.net.$(dllext) 
 		ohSoundcard\Windows\Wpf\ohSoundcard\App.xaml.cs \
 		ohSoundcard\Windows\Wpf\ohSoundcard\MainWindow.xaml.cs \
  	
-$(objdir)TestSoundcard.$(exeext) : $(objdir)$(dllprefix)ohSoundcard.$(dllext) ohSoundcard\Windows\TestSoundcard.cpp
-	$(compiler)TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard\Windows\TestSoundcard.cpp
+$(objdir)TestSoundcard.$(exeext) : $(objdir)$(dllprefix)ohSoundcard.$(dllext) ohSoundcard\TestSoundcard.cpp
+	$(compiler)TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard\TestSoundcard.cpp
 	$(link) $(linkoutput)$(objdir)TestSoundcard.$(exeext) $(objdir)ohSoundcard.$(libext) $(objdir)TestSoundcard.$(objext) 
 
