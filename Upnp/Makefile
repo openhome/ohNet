@@ -149,7 +149,7 @@ docs:
 	mkdir -p Build/Docs/Cs
 	doxygen DoxyfileCs
 	mkdir -p Build/Docs/Js
-	perl ./JsDoc/jsdoc.pl -d Build/Docs/Js ControlPoint/Services/Js
+	perl ./JsDoc/jsdoc.pl -d Build/Docs/Js ControlPoint/Services/Js Public/Js/WebUIsdk
 
 bundle: tt
 	mkdir -p $(bundle_build)
