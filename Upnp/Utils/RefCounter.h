@@ -11,12 +11,14 @@ class RefCounter
 {
 public:
     RefCounter();
-    virtual ~RefCounter();
-    void IncRef();
-    void DecRef();
+    void IncRef() const;
+    void DecRef() const;
 
+protected:
+    virtual ~RefCounter();
+    
 private:
-    AtomicInt iCounter; 
+    mutable AtomicInt iCounter; 
 };
 
 } // namespace OpenHome
