@@ -95,6 +95,10 @@ TUint CpiDeviceDv::Renew(CpiSubscription& /*aSubscription*/)
 
 void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
 {
+    if (NULL == iSubscriptionDv)
+    {
+        return;
+    }
     DviService* service = Service(aSubscription.ServiceType());
     ASSERT(service != NULL);
     service->RemoveSubscription(aSid);

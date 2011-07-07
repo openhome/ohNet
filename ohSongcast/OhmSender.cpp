@@ -1,5 +1,5 @@
 #include "OhmSender.h"
-#include "Services/DvAvOpenhomeOrgSender1.h"
+#include <Core/DvAvOpenhomeOrgSender1.h>
 #include <Ascii.h>
 #include <Maths.h>
 #include <Arch.h>
@@ -1220,10 +1220,14 @@ void OhmSender::RunZone()
 		        LOG(kMedia, "OhmSender::RunZone received message\n");
 
 				if (header.MsgType() == OhzHeader::kMsgTypeZoneQuery) {
-			        LOG(kMedia, "OhmSender::RunZone received zone query\n");
 					OhzHeaderZoneQuery headerZoneQuery;
 					headerZoneQuery.Internalise(iRxZone, header);
+
 					Brn zone = iRxZone.Read(headerZoneQuery.ZoneBytes());
+
+			        LOG(kMedia, "OhmSender::RunZone received zone query for ");
+					LOG(kMedia, zone);
+					LOG(kMedia, "\n");
                 
 					if (zone == iDevice.Udn())
 					{
@@ -1283,15 +1287,19 @@ void OhmSender::SendZoneUri()
         writer.Write(iDevice.Udn());
         writer.Write(iUri);
         
-        iSocketOhz.Send(iTxZone);
+        LOG(kMedia, "OhmSender::SendZoneUri %d\n", iSendZoneUriCount);
+
+		iSocketOhz.Send(iTxZone);
         
         iSendZoneUriCount--;
     }
     catch (OhzError&)
     {
+        LOG(kMedia, "OhmSender::SendZoneUri OhzError\n");
     }
     catch (WriterError&)
     {
+        LOG(kMedia, "OhmSender::SendZoneUri WriterError\n");
     }
 
     if (iSendZoneUriCount > 0) {

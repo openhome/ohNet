@@ -224,6 +224,17 @@ private:
     Mutex& iMutex;
 };
 
+class AtomicInt : public INonCopyable
+{
+public:
+    AtomicInt(TInt aInitialValue);
+    AtomicInt();
+    TInt Inc();
+    TInt Dec();
+private:
+    TInt iInt;
+};
+
 } // namespace OpenHome
 
 #endif

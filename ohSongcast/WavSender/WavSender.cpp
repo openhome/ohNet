@@ -15,6 +15,8 @@
 
 #include "../OhmSender.h"
 
+#include "Icon.h"
+
 #ifdef _WIN32
 
 #pragma warning(disable:4355) // use of 'this' in ctor lists safe in this case
@@ -155,7 +157,7 @@ void PcmSender::SetSpeed(TUint aSpeed)
 void PcmSender::CalculatePacketBytes()
 {
     TUint bytespersample = iChannels * iBitDepth / 8;
-    #
+    
 	TUint bytes = (iSampleRate * iSpeed * bytespersample * kPeriodMs) / (1000 * 100);
 	
     if (bytes > kMaxPacketBytes) {
@@ -202,23 +204,18 @@ PcmSender::~PcmSender()
 	delete (iDriver);
 }
 
-static void RandomiseUdn(Bwh& aUdn)
+static void RandomiseUdn(Bwh& aUdn, TIpAddress aAdapter)
 {
     aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
     aUdn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkAdapter* nif = UpnpLibrary::CurrentSubnetAdapter();
-    TUint max = nif->Address();
-    nif->RemoveRef();
-    (void)Ascii::AppendDec(buf, Random(max));
+    (void)Ascii::AppendDec(buf, Random(aAdapter));
     aUdn.Append(buf);
     aUdn.PtrZ();
 }
 
 int CDECL main(int aArgc, char* aArgv[])
 {
-	//Debug::SetLevel(Debug::kMedia);
-	
     OptionParser parser;
     
     OptionString optionFile("-f", "--file", Brn(""), "[file] wav file to send");
@@ -246,9 +243,13 @@ int CDECL main(int aArgc, char* aArgv[])
         return (1);
     }
 
+    InitialisationParams* initParams = InitialisationParams::Create();
+
+	UpnpLibrary::Initialise(initParams);
+
     std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[optionAdapter.Value()]->Subnet();
-    TIpAddress interface = (*subnetList)[optionAdapter.Value()]->Address();
+    TIpAddress adapter = (*subnetList)[optionAdapter.Value()]->Address();
     UpnpLibrary::DestroySubnetList(subnetList);
 
     printf("Using subnet %d.%d.%d.%d\n", subnet&0xff, (subnet>>8)&0xff, (subnet>>16)&0xff, (subnet>>24)&0xff);
@@ -387,7 +388,7 @@ int CDECL main(int aArgc, char* aArgv[])
     
     if (count != subChunk2Size)
     {
-    	printf("Unable to read wav file %d, %d\n", count, subChunk2Size);
+    	printf("Unable to read wav file %d, %d\n", (int)count, subChunk2Size);
     	return (1);
     }
     
@@ -427,14 +428,10 @@ int CDECL main(int aArgc, char* aArgv[])
 		pindex += bytesPerSample;	    
     }
     
-    InitialisationParams* initParams = InitialisationParams::Create();
-
-    UpnpLibrary::Initialise(initParams);
-    
     UpnpLibrary::StartDv();
 
 	Bwh udn("device");
-    RandomiseUdn(udn);
+    RandomiseUdn(udn, adapter);
 
     DvDeviceStandard* device = new DvDeviceStandard(udn);
     
@@ -453,7 +450,9 @@ int CDECL main(int aArgc, char* aArgv[])
 
     OhmSenderDriver* driver = new OhmSenderDriver();
     
-	OhmSender* sender = new OhmSender(*device, *driver, name, channel, interface, ttl, multicast, !disabled, Brx::Empty(), Brx::Empty(), 0);
+	Brn icon(icon_png, icon_png_len);
+
+	OhmSender* sender = new OhmSender(*device, *driver, name, channel, adapter, ttl, multicast, !disabled, icon, Brn("image/png"), 0);
 	
     PcmSender* pcmsender = new PcmSender(sender, driver, file, data, sampleCount, sampleRate, byteRate * 8, numChannels, bitsPerSample);
     

@@ -15,8 +15,6 @@ namespace OpenHome.Soundcard
     {
         public static Configuration Load()
         {
-            Configuration configuration;
-
             XmlSerializer xml = new XmlSerializer(typeof(Configuration));
 
             string common = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
@@ -31,23 +29,35 @@ namespace OpenHome.Soundcard
 
             if (!File.Exists(path))
             {
-                configuration = new Configuration();
-                configuration.Subnet = 0;
-                configuration.Multicast = false;
-                configuration.MulticastChannel = (uint)(new Random().Next(65535) + 1);
-                configuration.Ttl = 1;
-                configuration.Preset = 0;
-                configuration.SetPath(path);
-                configuration.Save();
+                return (New(path));
             }
             else
             {
-                TextReader reader = new StreamReader(path);
-                configuration = (Configuration)xml.Deserialize(reader);
-                configuration.SetPath(path);
-                reader.Close();
+                try
+                {
+                    TextReader reader = new StreamReader(path);
+                    Configuration configuration = (Configuration)xml.Deserialize(reader);
+                    configuration.SetPath(path);
+                    reader.Close();
+                    return (configuration);
+                }
+                catch (XmlException)
+                {
+                    return (New(path));
+                }
             }
+        }
 
+        private static Configuration New(string aPath)
+        {
+            Configuration configuration = new Configuration();
+            configuration.Subnet = 0;
+            configuration.Multicast = false;
+            configuration.MulticastChannel = (uint)(new Random().Next(65535) + 1);
+            configuration.Ttl = 1;
+            configuration.Preset = 0;
+            configuration.SetPath(aPath);
+            configuration.Save();
             return (configuration);
         }
 

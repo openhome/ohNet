@@ -617,8 +617,8 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
     }
     else {
         iEventServer = new EventServerUpnp(currentInterface->Address());
+        currentInterface->RemoveRef();
     }
-    currentInterface->RemoveRef();
 
     // take a note of all active and pending subscriptions
     Map activeSubscriptions;
@@ -656,6 +656,7 @@ void CpiSubscriptionManager::HandleInterfaceChange(TBool aNewSubnet)
         it = activeSubscriptions.begin();
         while (it != activeSubscriptions.end()) {
             it->second->Unsubscribe();
+            it->second->iSubscribeCompleted.Signal();
             it++;
         }
     }

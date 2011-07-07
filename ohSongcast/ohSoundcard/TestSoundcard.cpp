@@ -12,7 +12,11 @@
 
 #include "Soundcard.h"
 
+#ifdef _WIN32
+
 #pragma warning(disable:4355) // use of 'this' in ctor lists safe in this case
+
+#define CDECL __cdecl
 
 #include <conio.h>
 
@@ -20,6 +24,29 @@ int mygetch()
 {
     return (_getch());
 }
+
+#else
+
+#define CDECL
+
+#include <termios.h>
+#include <unistd.h>
+
+int mygetch()
+{
+    struct termios oldt, newt;
+    int ch;
+    tcgetattr( STDIN_FILENO, &oldt );
+    newt = oldt;
+    newt.c_lflag &= ~( ICANON | ECHO );
+    tcsetattr( STDIN_FILENO, TCSANOW, &newt );
+    ch = getchar();
+    tcsetattr( STDIN_FILENO, TCSANOW, &oldt );
+    return ch;
+}
+
+#endif
+
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -63,26 +90,8 @@ void loggerSubnet(void* /* aPtr */, ECallbackType aType, THandle aSubnet)
 	}
 }
 
-int __cdecl main(int /* aArgc */, char* /* aArgv[] */)
+int CDECL main(int /* aArgc */, char** /* aArgv[] */)
 {
-	//Debug::SetLevel(Debug::kMedia);
-	
-	/*
-    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(false);
-    
-	ASSERT(ifs->size() > 0 && optionAdapter.Value() < ifs->size());
-    
-	TIpAddress iface = (*ifs)[optionAdapter.Value()]->Address();
-    
-	for (TUint i=0; i<ifs->size(); i++) {
-        delete (*ifs)[i];
-    }
-    
-	delete ifs;
-    
-    printf("Using network interface %d.%d.%d.%d\n", iface&0xff, (iface>>8)&0xff, (iface>>16)&0xff, (iface>>24)&0xff);
-	*/
-
 	TIpAddress subnet = 522;
     TUint channel = 0;
     TUint ttl = 4;
