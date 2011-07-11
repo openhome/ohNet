@@ -1217,8 +1217,6 @@ void OhmSender::RunZone()
 	           		continue;
 				}
 
-		        LOG(kMedia, "OhmSender::RunZone received message\n");
-
 				if (header.MsgType() == OhzHeader::kMsgTypeZoneQuery) {
 					OhzHeaderZoneQuery headerZoneQuery;
 					headerZoneQuery.Internalise(iRxZone, header);
@@ -1251,6 +1249,10 @@ void OhmSender::RunZone()
 					}
 				}
 
+				else {
+					LOG(kMedia, "OhmSender::RunZone received message type %d\n", header.MsgType());
+				}
+
 				iRxZone.ReadFlush();
 			}
 		}
@@ -1268,12 +1270,13 @@ void OhmSender::RunZone()
 void OhmSender::SendZoneUri(TUint aCount)
 {
     iSendZoneUriCount = aCount;
-
-    SendZoneUri();
+	iTimerZoneUri.FireIn(0);
 }
 
 void OhmSender::SendZoneUri()
 {
+	ASSERT(iSendZoneUriCount <= 3);
+
     try
     {
         OhzHeaderZoneUri headerZoneUri(iDevice.Udn(), iUri);

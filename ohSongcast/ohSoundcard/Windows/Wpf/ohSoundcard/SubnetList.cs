@@ -69,7 +69,6 @@ namespace OpenHome.Soundcard
         }
 
         private ISubnet iSubnet;
-        private IPAddress iAddress;
         private string iDescription;
     }
 
@@ -91,7 +90,7 @@ namespace OpenHome.Soundcard
 
         public void SubnetAdded(ISubnet aSubnet)
         {
-            iDispatcher.BeginInvoke(new DelegateSubnetList(Added), new object[] { aSubnet });
+            iDispatcher.Invoke(new DelegateSubnetList(Added), new object[] { aSubnet });
         }
 
         internal void Added(ISubnet aSubnet)
