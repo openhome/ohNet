@@ -543,6 +543,8 @@ void OhmSender::StopZone()
 {
     iSocketOhz.ReadInterrupt();
     iZoneDeactivated.Wait();
+	iTimerZoneUri.Cancel();
+	iTimerPresetInfo.Cancel();
     iSocketOhz.Close();
 }
 
@@ -597,6 +599,8 @@ OhmSender::~OhmSender()
 	StopZone();
     iMutexStartStop.Signal();
 
+	delete iThreadZone;
+	delete iThreadUnicast;
     delete iThreadMulticast;
 }
 
