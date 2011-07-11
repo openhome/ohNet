@@ -160,11 +160,4 @@
     <type>TestLights</type>
     <version>1</version>
   </service>
-  <service>
-    <publisher>OpenHome</publisher>
-    <dcpdir>Test</dcpdir>
-    <domain>openhome.org</domain>
-    <type>TestDimmableLight</type>
-    <version>1</version>
-  </service>
 </servicelist>

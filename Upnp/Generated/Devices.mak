@@ -73,9 +73,6 @@ objects_devices = \
                   $(objdir)DvOpenhomeOrgTestLights1.$(objext) \
                   $(objdir)DvOpenhomeOrgTestLights1Std.$(objext) \
                   $(objdir)DvOpenhomeOrgTestLights1C.$(objext) \
-                  $(objdir)DvOpenhomeOrgTestDimmableLight1.$(objext) \
-                  $(objdir)DvOpenhomeOrgTestDimmableLight1Std.$(objext) \
-                  $(objdir)DvOpenhomeOrgTestDimmableLight1C.$(objext) \
 
 # Devices have well controlled dependencies so we can document a more limited set of headers
 headers_device = $(inc_build)/Cpp/OhNetTypes.h \
@@ -108,7 +105,6 @@ device_dotnet_assemblies = \
         DvAvOpenhomeOrgSender1.net.dll \
         DvOpenhomeOrgTestBasic1.net.dll \
         DvOpenhomeOrgTestLights1.net.dll \
-        DvOpenhomeOrgTestDimmableLight1.net.dll \
 
 device_dotnet_assemblies_with_path = \
         $(objdir)DvUpnpOrgAVTransport1.net.dll \
@@ -134,7 +130,6 @@ device_dotnet_assemblies_with_path = \
         $(objdir)DvAvOpenhomeOrgSender1.net.dll \
         $(objdir)DvOpenhomeOrgTestBasic1.net.dll \
         $(objdir)DvOpenhomeOrgTestLights1.net.dll \
-        $(objdir)DvOpenhomeOrgTestDimmableLight1.net.dll \
 
 devices : ohNetCore $(objects_devices)
 	$(ar)$(libprefix)ohNetDevices.$(libext) $(objects_devices)
@@ -276,12 +271,6 @@ $(objdir)DvOpenhomeOrgTestLights1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgTes
 	$(compiler)DvOpenhomeOrgTestLights1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvOpenhomeOrgTestLights1Std.cpp
 $(objdir)DvOpenhomeOrgTestLights1C.$(objext) : $(deviceC)DvOpenhomeOrgTestLights1C.cpp $(headers_device) Device/Services/C/DvOpenhomeOrgTestLights1.h
 	$(compiler)DvOpenhomeOrgTestLights1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvOpenhomeOrgTestLights1C.cpp
-$(objdir)DvOpenhomeOrgTestDimmableLight1.$(objext) : $(deviceCppCore)DvOpenhomeOrgTestDimmableLight1.cpp $(headers_device) Device/Services/Cpp/Core/DvOpenhomeOrgTestDimmableLight1.h
-	$(compiler)DvOpenhomeOrgTestDimmableLight1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvOpenhomeOrgTestDimmableLight1.cpp
-$(objdir)DvOpenhomeOrgTestDimmableLight1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgTestDimmableLight1Std.cpp $(headers_device) Device/Services/Cpp/Std/DvOpenhomeOrgTestDimmableLight1.h
-	$(compiler)DvOpenhomeOrgTestDimmableLight1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvOpenhomeOrgTestDimmableLight1Std.cpp
-$(objdir)DvOpenhomeOrgTestDimmableLight1C.$(objext) : $(deviceC)DvOpenhomeOrgTestDimmableLight1C.cpp $(headers_device) Device/Services/C/DvOpenhomeOrgTestDimmableLight1.h
-	$(compiler)DvOpenhomeOrgTestDimmableLight1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvOpenhomeOrgTestDimmableLight1C.cpp
 
 device_dlls = \
              DvUpnpOrgAVTransport1Dll \
@@ -307,7 +296,6 @@ device_dlls = \
              DvAvOpenhomeOrgSender1Dll \
              DvOpenhomeOrgTestBasic1Dll \
              DvOpenhomeOrgTestLights1Dll \
-             DvOpenhomeOrgTestDimmableLight1Dll \
 
 DvDeviceDlls: $(device_dlls)
 DvUpnpOrgAVTransport1Dll: $(objdir)$(dllprefix)DvUpnpOrgAVTransport1.$(dllext) 
@@ -379,9 +367,6 @@ $(objdir)$(dllprefix)DvOpenhomeOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)Dv
 DvOpenhomeOrgTestLights1Dll: $(objdir)$(dllprefix)DvOpenhomeOrgTestLights1.$(dllext) 
 $(objdir)$(dllprefix)DvOpenhomeOrgTestLights1.$(dllext) : ZappUpnpDll $(objdir)DvOpenhomeOrgTestLights1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvOpenhomeOrgTestLights1.$(dllext) $(objdir)DvOpenhomeOrgTestLights1.$(objext)
-DvOpenhomeOrgTestDimmableLight1Dll: $(objdir)$(dllprefix)DvOpenhomeOrgTestDimmableLight1.$(dllext) 
-$(objdir)$(dllprefix)DvOpenhomeOrgTestDimmableLight1.$(dllext) : ZappUpnpDll $(objdir)DvOpenhomeOrgTestDimmableLight1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvOpenhomeOrgTestDimmableLight1.$(dllext) $(objdir)DvOpenhomeOrgTestDimmableLight1.$(objext)
 
 
 # Device assemblies for .NET:
@@ -503,10 +488,5 @@ $(objdir)DvOpenhomeOrgTestLights1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvO
 		/out:$(objdir)DvOpenhomeOrgTestLights1.net.dll \
 		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvOpenhomeOrgTestLights1.cs
-$(objdir)DvOpenhomeOrgTestDimmableLight1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvOpenhomeOrgTestDimmableLight1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)DvOpenhomeOrgTestDimmableLight1.net.dll \
-		/reference:$(objdir)ohNet.net.dll \
-		$(deviceCs)DvOpenhomeOrgTestDimmableLight1.cs
 
 
