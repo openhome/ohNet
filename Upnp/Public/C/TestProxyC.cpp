@@ -238,9 +238,9 @@ void DeviceList::GetProtocolInfoComplete(OhNetHandleAsync aAsync)
 extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
 {
     OhNetLibraryInitialise(aInitParams);
-    OhNetHandleNetworkInterfaceList subnetList = OhNetSubnetListCreate();
-    OhNetHandleNetworkInterface nif = OhNetSubnetAt(subnetList, 0);
-    TIpAddress subnet = OhNetNetworkInterfaceSubnet(nif);
+    OhNetHandleNetworkAdapterList subnetList = OhNetSubnetListCreate();
+    OhNetHandleNetworkAdapter nif = OhNetSubnetAt(subnetList, 0);
+    TIpAddress subnet = OhNetNetworkAdapterSubnet(nif);
     OhNetSubnetListDestroy(subnetList);
     OhNetLibraryStartCp(subnet);
 //    Debug::SetLevel(Debug::kService);

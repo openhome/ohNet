@@ -34,7 +34,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
 
     Net::UpnpLibrary::InitialiseMinimal(aInitParams);
 
-    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
+    std::vector<NetworkAdapter*>* ifs = Os::NetworkListAdapters(false);
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress addr = (*ifs)[adapter.Value()]->Address();
     for (TUint i=0; i<ifs->size(); i++) {
@@ -77,8 +77,8 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Net::Init
             multicast.AppendEndpoint(buf2);
             Print("Sending test message to %s\n", buf2.Ptr());
         
-	        SocketUdpMulticast socket(addr, multicast);
-            //SocketUdp socket(0, addr);
+	        //SocketUdpMulticast socket(addr, multicast);
+            SocketUdp socket(0, addr);
             
 			socket.Send(Brn("Test message"), multicast);
         }

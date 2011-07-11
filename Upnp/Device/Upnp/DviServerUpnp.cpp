@@ -1,6 +1,6 @@
 #include <DviServerUpnp.h>
 #include <Network.h>
-#include <NetworkInterfaceList.h>
+#include <NetworkAdapterList.h>
 #include <Http.h>
 #include <Ascii.h>
 #include <Parser.h>
@@ -1093,7 +1093,7 @@ void DviServerUpnp::Redirect(const Brx& aUriRequested, const Brx& aUriRedirected
     Stack::Mutex().Signal();
 }
 
-SocketTcpServer* DviServerUpnp::CreateServer(const NetworkInterface& aNif)
+SocketTcpServer* DviServerUpnp::CreateServer(const NetworkAdapter& aNif)
 {
     SocketTcpServer* server = new SocketTcpServer("DSVU", iPort, aNif.Address());
     TChar thName[5];

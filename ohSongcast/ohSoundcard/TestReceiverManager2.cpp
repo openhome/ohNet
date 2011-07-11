@@ -13,6 +13,14 @@
 
 #include "ReceiverManager2.h"
 
+
+#ifdef _WIN32
+#define CDECL __cdecl
+#else
+#define CDECL 
+#endif
+
+
 namespace OpenHome {
 namespace Net {
 
@@ -101,7 +109,7 @@ void ReceiverManager2Logger::ReceiverRemoved(ReceiverManager2Receiver& aReceiver
     Print("\n");
 }
 
-int __cdecl main(int aArgc, char* aArgv[])
+int CDECL main(int aArgc, char* aArgv[])
 {
 	InitialisationParams* initParams = InitialisationParams::Create();
 
@@ -116,7 +124,7 @@ int __cdecl main(int aArgc, char* aArgv[])
     }
 
     UpnpLibrary::Initialise(initParams);
-    std::vector<NetworkInterface*>* subnetList = UpnpLibrary::CreateSubnetList();
+    std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
     UpnpLibrary::DestroySubnetList(subnetList);
     UpnpLibrary::StartCp(subnet);

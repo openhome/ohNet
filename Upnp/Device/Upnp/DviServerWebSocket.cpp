@@ -792,7 +792,7 @@ DviServerWebSocket::DviServerWebSocket()
     }    
 }
 
-SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkInterface& aNif)
+SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkAdapter& aNif)
 {
     SocketTcpServer* server = new SocketTcpServer("WSSV", Stack::InitParams().DvWebSocketPort(), aNif.Address());
     TChar thName[5];

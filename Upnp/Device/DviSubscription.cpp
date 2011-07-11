@@ -68,6 +68,13 @@ void DviSubscription::Start(DviService& aService)
     }
 }
 
+void DviSubscription::Stop()
+{
+    iLock.Wait();
+    iService = NULL;
+    iLock.Signal();
+}
+
 void DviSubscription::AddRef()
 {
     Stack::Mutex().Wait();
@@ -123,7 +130,10 @@ IPropertyWriter* DviSubscription::CreateWriter()
         return NULL;
     }
 
-    ASSERT(iService != NULL); // null service => not Start()ed
+    if (iService == NULL) {
+        LOG(kDvEvent, "Subscription stopped; don't publish changes\n");
+        return NULL;
+    }
     AutoPropertiesLock b(*iService);
     if (iExpired) {
         LOG(kDvEvent, "Subscription expired; don't publish changes\n");

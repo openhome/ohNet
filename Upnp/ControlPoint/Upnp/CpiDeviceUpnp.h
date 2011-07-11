@@ -53,13 +53,13 @@ private: // ICpiProtocol
     TUint Subscribe(CpiSubscription& aSubscription, const Uri& aSubscriber);
     TUint Renew(CpiSubscription& aSubscription);
     void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid);
+    void NotifyRemovedBeforeReady();
 private: // ICpiDeviceObserver
     void Release();
 private:
     ~CpiDeviceUpnp();
     void TimerExpired();
     void GetServiceUri(Uri& aUri, const TChar* aType, const ServiceType& aServiceType);
-    void GetControlUri(const Invocation& aInvocation, Uri& aUri);
     void XmlFetchCompleted(IAsync& aAsync);
     static TBool UdnMatches(const Brx& aFound, const Brx& aTarget);
 private:
@@ -82,9 +82,10 @@ private:
     Timer* iTimer;
     TUint iExpiryTime;
     IDeviceRemover& iDeviceList;
-    Brh iControlUrl;
     CpiDeviceListUpnp* iList;
     Invocable* iInvocable;
+    Semaphore iSemReady;
+    TBool iRemoved;
     friend class Invocable;
 };
 
@@ -127,8 +128,8 @@ protected:
     void SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
     void RefreshTimerComplete();
-    void CurrentNetworkInterfaceChanged();
-    void SubnetChanged();
+    void CurrentNetworkAdapterChanged();
+    void SubnetListChanged();
     void HandleInterfaceChange(TBool aNewSubnet);
     void RemoveAll();
 protected:
@@ -138,7 +139,7 @@ private:
     SsdpListenerMulticast* iMulticastListener;
     TInt iNotifyHandlerId;
     TUint iInterfaceChangeListenerId;
-    TUint iSubnetChangeListenerId;
+    TUint iSubnetListChangeListenerId;
     TBool iStarted;
     Timer* iRefreshTimer;
     Semaphore iXmlFetchSem;

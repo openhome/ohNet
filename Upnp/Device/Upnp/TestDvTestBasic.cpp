@@ -330,7 +330,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     }
 
     if (loopback.Value()) {
-        aInitParams->SetUseLoopbackNetworkInterface();
+        aInitParams->SetUseLoopbackNetworkAdapter();
     }
     aInitParams->SetDvNumWebSocketThreads(5);
     aInitParams->SetDvWebSocketPort(54321);

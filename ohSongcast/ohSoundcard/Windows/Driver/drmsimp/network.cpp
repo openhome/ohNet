@@ -6,7 +6,7 @@
 ********************************************************************************/
 
 // Every debug output has "Modulname text"
-static char STR_MODULENAME[] = "Sneaky Soundcard Network: ";
+static char STR_MODULENAME[] = "OHSOUNDCARD Network: ";
 
 #include "network.h"
 //#include "wdm.h"

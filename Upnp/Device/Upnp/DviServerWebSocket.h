@@ -214,7 +214,7 @@ class DviServerWebSocket : public DviServer
 public:
     DviServerWebSocket();
 protected:
-    virtual SocketTcpServer* CreateServer(const NetworkInterface& aNif);
+    virtual SocketTcpServer* CreateServer(const NetworkAdapter& aNif);
 };
 
 } // namespace Net

@@ -64,12 +64,13 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)MdnsProvider.$(objext) \
     		   $(objdir)Maths.$(objext) \
     		   $(objdir)Md5.$(objext) \
-    		   $(objdir)NetworkInterfaceList.$(objext) \
+    		   $(objdir)NetworkAdapterList.$(objext) \
     		   $(objdir)Network.$(objext) \
     		   $(objdir)Parser.$(objext) \
     		   $(objdir)Printer.$(objext) \
     		   $(objdir)ProtocolUpnp.$(objext) \
     		   $(objdir)Queue.$(objext) \
+    		   $(objdir)RefCounter.$(objext) \
     		   $(objdir)Service.$(objext) \
     		   $(objdir)ServiceC.$(objext) \
     		   $(objdir)Ssdp.$(objext) \
@@ -151,7 +152,7 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/MdnsPlatform.h \
           $(inc_build)/MdnsProvider.h \
           $(inc_build)/Network.h \
-          $(inc_build)/NetworkInterfaceList.h \
+          $(inc_build)/NetworkAdapterList.h \
           $(inc_build)/OsWrapper.h \
           $(inc_build)/OsWrapper.inl \
           $(inc_build)/OsTypes.h \
@@ -163,6 +164,7 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/C/CpProxy.h \
           $(inc_build)/C/CpProxyCPrivate.h \
           $(inc_build)/Queue.h \
+          $(inc_build)/RefCounter.h \
           $(inc_build)/Service.h \
           $(inc_build)/Ssdp.h \
           $(inc_build)/Stack.h \
@@ -291,8 +293,8 @@ $(objdir)Maths.$(objext) : Utils/Maths.cpp $(headers)
 	$(compiler)Maths.$(objext) -c $(cflags) $(includes) Utils/Maths.cpp
 $(objdir)Md5.$(objext) : Utils/md5.c $(headers)
 	$(compiler)Md5.$(objext) -c $(cflags) $(includes) Utils/md5.c
-$(objdir)NetworkInterfaceList.$(objext) : Network/NetworkInterfaceList.cpp $(headers)
-	$(compiler)NetworkInterfaceList.$(objext) -c $(cflags) $(includes) Network/NetworkInterfaceList.cpp
+$(objdir)NetworkAdapterList.$(objext) : Network/NetworkAdapterList.cpp $(headers)
+	$(compiler)NetworkAdapterList.$(objext) -c $(cflags) $(includes) Network/NetworkAdapterList.cpp
 $(objdir)Network.$(objext) : Network/Network.cpp $(headers)
 	$(compiler)Network.$(objext) -c $(cflags) $(includes) Network/Network.cpp
 $(objdir)Parser.$(objext) : Utils/Parser.cpp $(headers)
@@ -303,6 +305,8 @@ $(objdir)ProtocolUpnp.$(objext) : ControlPoint/Upnp/ProtocolUpnp.cpp $(headers)
 	$(compiler)ProtocolUpnp.$(objext) -c $(cflags) $(includes) ControlPoint/Upnp/ProtocolUpnp.cpp
 $(objdir)Queue.$(objext) : Utils/Queue.cpp $(headers)
 	$(compiler)Queue.$(objext) -c $(cflags) $(includes) Utils/Queue.cpp
+$(objdir)RefCounter.$(objext) : Utils/RefCounter.cpp $(headers)
+	$(compiler)RefCounter.$(objext) -c $(cflags) $(includes) Utils/RefCounter.cpp
 $(objdir)Service.$(objext) : Service/Service.cpp $(headers)
 	$(compiler)Service.$(objext) -c $(cflags) $(includes) Service/Service.cpp
 $(objdir)ServiceC.$(objext) : Public/C/ServiceC.cpp $(headers)
@@ -472,8 +476,8 @@ $(objdir)TestSubscription.$(objext) : ControlPoint/TestSubscription.cpp $(header
 	$(compiler)TestSubscription.$(objext) -c $(cflags) $(includes) ControlPoint/TestSubscription.cpp
 
 TestNetworkInterfaceChange: $(objdir)TestNetworkInterfaceChange.$(exeext) 
-$(objdir)TestNetworkInterfaceChange.$(exeext) :  ohNetCore $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)LinnCoUkPlaylist1.$(objext) $(objdir)TestNetworkInterfaceChange.$(objext) $(libprefix)TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestNetworkInterfaceChange.$(exeext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)LinnCoUkPlaylist1.$(objext) $(objdir)TestNetworkInterfaceChange.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
+$(objdir)TestNetworkInterfaceChange.$(exeext) :  ohNetCore $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)CpAvOpenHomeOrgPlaylist1.$(objext) $(objdir)TestNetworkInterfaceChange.$(objext) $(libprefix)TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestNetworkInterfaceChange.$(exeext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)CpAvOpenHomeOrgPlaylist1.$(objext) $(objdir)TestNetworkInterfaceChange.$(objext) $(objdir)$(libprefix)TestFramework.$(libext) $(objdir)$(libprefix)ohNetCore.$(libext)
 $(objdir)TestNetworkInterfaceChange.$(objext) : ControlPoint/TestNetworkInterfaceChange.cpp $(headers)
 	$(compiler)TestNetworkInterfaceChange.$(objext) -c $(cflags) $(includes) ControlPoint/TestNetworkInterfaceChange.cpp
 

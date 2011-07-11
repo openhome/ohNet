@@ -10,9 +10,6 @@ _ReSharper.*
 /Upnp/vgout/
 /Upnp/hgout/
 /Upnp/xout/
-/build/
-/install/
 /ZappSender/Build/
 /ohSongcast/Build/
-obj/
 

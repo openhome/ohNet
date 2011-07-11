@@ -275,7 +275,7 @@ Return Value:
 
     // Initialize HW.
     // 
-    m_pHW = new (NonPagedPool, SNEAKY_POOLTAG)  CMSVADHW;
+    m_pHW = new (NonPagedPool, OHSOUNDCARD_POOLTAG)  CMSVADHW;
     if (!m_pHW)
     {
         DPF(D_TERSE, ("Insufficient memory for MSVAD HW"));

@@ -323,3 +323,34 @@ AutoMutex::~AutoMutex()
 {
     iMutex.Signal();
 }
+
+//
+// AtomicInt
+//
+
+AtomicInt::AtomicInt(TInt aInitialValue)
+    : iInt(aInitialValue)
+{
+}
+
+AtomicInt::AtomicInt()
+    : iInt(0)
+{
+}
+
+TInt AtomicInt::Inc()
+{
+    Net::Stack::Mutex().Wait();
+    TInt value = ++iInt;
+    Net::Stack::Mutex().Signal();
+    return value;
+}
+
+TInt AtomicInt::Dec()
+{
+    Net::Stack::Mutex().Wait();
+    TInt value = --iInt;
+    Net::Stack::Mutex().Signal();
+    return value;
+}
+

@@ -180,6 +180,13 @@ namespace OpenHome.Net.ControlPoint
 
         protected void DisposeProxy()
         {
+            bool unsubscribe;
+            lock (iSubscriptionStatusLock)
+            {
+                unsubscribe = (iSubscriptionStatus != SubscriptionStatus.eNotSubscribed);
+            }
+            if (unsubscribe)
+                Unsubscribe();
             if(iGchProxy.IsAllocated)
                 iGchProxy.Free();
             CpProxyDestroy(iHandle);

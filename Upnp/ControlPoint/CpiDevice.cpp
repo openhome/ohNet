@@ -92,6 +92,11 @@ void CpiDevice::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
     iProtocol.Unsubscribe(aSubscription, aSid);
 }
 
+void CpiDevice::NotifyRemovedBeforeReady()
+{
+    iProtocol.NotifyRemovedBeforeReady();
+}
+
 void CpiDevice::SetReady()
 {
     iReady = true;
@@ -309,6 +314,9 @@ void CpiDeviceList::DoRemove(const Brx& aUdn)
         return;
     }
     CpiDevice* device = it->second;
+    if (!device->IsReady()) {
+        device->NotifyRemovedBeforeReady();
+    }
     // don't remove our ref to the device yet, re-use it for the observer
     callObserver = (iActive && device->IsReady());
     it->second = NULL;

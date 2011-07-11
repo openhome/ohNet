@@ -29,22 +29,23 @@ class OhmSocket : public IReaderSource, public INonCopyable
 
 public:
     OhmSocket();
-
     void OpenUnicast(TIpAddress aInterface, TUint aTtl);
     void OpenMulticast(TIpAddress aInterface, TUint aTtl, const Endpoint& aEndpoint);
     Endpoint This() const;
     Endpoint Sender() const;
     void Send(const Brx& aBuffer, const Endpoint& aEndpoint);
     void Close();
+    ~OhmSocket();
 
-    // IReaderSource
+public:
+	// IReaderSource
     virtual void Read(Bwx& aBuffer);
     virtual void ReadFlush();
     virtual void ReadInterrupt();
-    
-    ~OhmSocket();
+
 private:
-    SocketUdp* iSocket;
+    SocketUdp* iRxSocket;
+	SocketUdp* iTxSocket;
     UdpReader* iReader;
     Endpoint iThis;
 };
@@ -68,7 +69,8 @@ public:
     ~OhzSocket();
 
 private:
-    SocketUdpMulticast* iSocket;
+    SocketUdpMulticast* iRxSocket;
+    SocketUdp* iTxSocket;
     Endpoint iEndpoint;
     UdpReader* iReader;
 };

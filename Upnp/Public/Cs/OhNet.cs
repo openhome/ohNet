@@ -25,8 +25,7 @@ namespace OpenHome.Net.Core
         public OhNetCallbackAsync AsyncBeginHandler { private get; set; }
         public OhNetCallbackAsync AsyncEndHandler { private get; set; }
         public OhNetCallbackAsync AsyncErrorHandler { private get; set; }
-        public uint DefaultSubnet { get; set; }
-        public OhNetCallback SubnetChangedListener { private get; set; }
+        public OhNetCallback SubnetListChangedListener { private get; set; }
 
         /// <summary>
         /// A timeout for TCP connections in milliseconds. Must be >0
@@ -131,7 +130,7 @@ namespace OpenHome.Net.Core
         /// Limit the library to using only the loopback network interface
         /// </summary>
         /// <remarks>Useful for testing but not expected to be used in production code</remarks>
-        public bool UseLoopbackNetworkInterface { get; set; }
+        public bool UseLoopbackNetworkAdapter { get; set; }
 
         /// <summary>
         /// Enable use of Bonjour.
@@ -157,9 +156,7 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetAsyncErrorHandler(IntPtr aParams, OhNetCallbackAsync aCallback, IntPtr aPtr);
         [DllImport("ohNet")]
-        static extern void OhNetInitParamsSetDefaultSubnet(IntPtr aParams, uint aSubnet);
-        [DllImport("ohNet")]
-        static extern void OhNetInitParamsSetSubnetChangedListener(IntPtr aParams, OhNetCallback aCallback, IntPtr aPtr);
+        static extern void OhNetInitParamsSetSubnetListChangedListener(IntPtr aParams, OhNetCallback aCallback, IntPtr aPtr);
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetTcpConnectTimeout(IntPtr aParams, uint aTimeoutMs);
         [DllImport("ohNet")]
@@ -191,7 +188,7 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetDvEnableBonjour(IntPtr aParams);
         [DllImport("ohNet")]
-        static extern void OhNetInitParamsSetUseLoopbackNetworkInterface(IntPtr aParams);
+        static extern void OhNetInitParamsSetUseLoopbackNetworkAdapter(IntPtr aParams);
         [DllImport("ohNet")]
         static extern uint OhNetInitParamsTcpConnectTimeoutMs(IntPtr aParams);
         [DllImport("ohNet")]
@@ -245,8 +242,7 @@ namespace OpenHome.Net.Core
             AsyncBeginHandler = DefaultCallbackAsync;
             AsyncEndHandler = DefaultCallbackAsync;
             AsyncErrorHandler = DefaultCallbackAsync;
-            DefaultSubnet = 0; // FIXME: No getter?
-            SubnetChangedListener = DefaultCallback;
+            SubnetListChangedListener = DefaultCallback;
             TcpConnectTimeoutMs = OhNetInitParamsTcpConnectTimeoutMs(defaultParams); 
             MsearchTimeSecs = OhNetInitParamsMsearchTimeSecs(defaultParams); 
             MsearchTtl = OhNetInitParamsMsearchTtl(defaultParams); 
@@ -261,7 +257,7 @@ namespace OpenHome.Net.Core
             DvNumPublisherThreads = OhNetInitParamsDvNumPublisherThreads(defaultParams);
             DvNumWebSocketThreads = OhNetInitParamsDvNumWebSocketThreads(defaultParams);
             DvWebSocketPort = OhNetInitParamsDvWebSocketPort(defaultParams); 
-            UseLoopbackNetworkInterface = false; // FIXME: No getter?
+            UseLoopbackNetworkAdapter = false; // FIXME: No getter?
             DvEnableBonjour = OhNetInitParamsDvIsBonjourEnabled(defaultParams) != 0; 
 
             OhNetInitParamsDestroy(defaultParams);
@@ -290,10 +286,9 @@ namespace OpenHome.Net.Core
             {
                 OhNetInitParamsSetAsyncErrorHandler(nativeParams, AsyncErrorHandler, aCallbackPtr);
             }
-            OhNetInitParamsSetDefaultSubnet(nativeParams, DefaultSubnet);
-            if (SubnetChangedListener != DefaultCallback)
+            if (SubnetListChangedListener != DefaultCallback)
             {
-                OhNetInitParamsSetSubnetChangedListener(nativeParams, SubnetChangedListener, aCallbackPtr);
+                OhNetInitParamsSetSubnetListChangedListener(nativeParams, SubnetListChangedListener, aCallbackPtr);
             }
             OhNetInitParamsSetTcpConnectTimeout(nativeParams, TcpConnectTimeoutMs);
             OhNetInitParamsSetMsearchTime(nativeParams, MsearchTimeSecs);
@@ -313,9 +308,9 @@ namespace OpenHome.Net.Core
             {
                 OhNetInitParamsSetDvEnableBonjour(nativeParams);
             }
-            if (UseLoopbackNetworkInterface)
+            if (UseLoopbackNetworkAdapter)
             {
-                OhNetInitParamsSetUseLoopbackNetworkInterface(nativeParams);
+                OhNetInitParamsSetUseLoopbackNetworkAdapter(nativeParams);
             }
             return nativeParams;
         }
@@ -406,13 +401,13 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern void OhNetFree(IntPtr aPtr);
         [DllImport("ohNet")]
-        static extern uint OhNetNetworkInterfaceAddress(IntPtr aNif);
+        static extern uint OhNetNetworkAdapterAddress(IntPtr aNif);
         [DllImport("ohNet")]
-        static extern uint OhNetNetworkInterfaceSubnet(IntPtr aNif);
-        [DllImport("ohNet", CallingConvention = CallingConvention.StdCall, EntryPoint = "OhNetNetworkInterfaceName", ExactSpelling = false)]
-        static extern IntPtr OhNetNetworkInterfaceName(IntPtr aNif);
+        static extern uint OhNetNetworkAdapterSubnet(IntPtr aNif);
+        [DllImport("ohNet", CallingConvention = CallingConvention.StdCall, EntryPoint = "OhNetNetworkAdapterName", ExactSpelling = false)]
+        static extern IntPtr OhNetNetworkAdapterName(IntPtr aNif);
         [DllImport("ohNet")]
-        static extern IntPtr OhNetNetworkInterfaceFullName(IntPtr aNif);
+        static extern IntPtr OhNetNetworkAdapterFullName(IntPtr aNif);
         [DllImport("ohNet")]
         static extern IntPtr OhNetSubnetListCreate();
         [DllImport("ohNet")]
@@ -423,8 +418,6 @@ namespace OpenHome.Net.Core
         static extern void OhNetSubnetListDestroy(IntPtr aList);
         [DllImport("ohNet")]
         static extern void OhNetSetCurrentSubnet(uint aSubnet);
-        [DllImport("ohNet")]
-        static extern void OhNetSetDefaultSubnet();
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetFreeExternalCallback(IntPtr aParams, CallbackFreeMemory aCallback);
 
@@ -528,9 +521,9 @@ namespace OpenHome.Net.Core
         /// </summary>
         /// <param name="aNif">Handle returned by SubnetAt()</param>
         /// <returns>IPv4 address in network byte order</returns>
-        public uint NetworkInterfaceAddress(IntPtr aNif)
+        public uint NetworkAdapterAddress(IntPtr aNif)
         {
-            return OhNetNetworkInterfaceAddress(aNif);
+            return OhNetNetworkAdapterAddress(aNif);
         }
 
         /// <summary>
@@ -538,9 +531,9 @@ namespace OpenHome.Net.Core
         /// </summary>
         /// <param name="aNif">Handle returned by SubnetAt()</param>
         /// <returns>IPv4 address in network byte order</returns>
-        public uint NetworkInterfaceSubnet(IntPtr aNif)
+        public uint NetworkAdapterSubnet(IntPtr aNif)
         {
-            return OhNetNetworkInterfaceSubnet(aNif);
+            return OhNetNetworkAdapterSubnet(aNif);
         }
 
         /// <summary>
@@ -548,9 +541,9 @@ namespace OpenHome.Net.Core
         /// </summary>
         /// <param name="aNif">Handle returned by SubnetAt()</param>
         /// <returns>Pointer to a nul-terminated character array.  Caller is responsible for Free()ing this</returns>
-        public IntPtr NetworkInterfaceName(IntPtr aNif)
+        public IntPtr NetworkAdapterName(IntPtr aNif)
         {
-            return OhNetNetworkInterfaceName(aNif);
+            return OhNetNetworkAdapterName(aNif);
         }
 
         /// <summary>
@@ -558,9 +551,9 @@ namespace OpenHome.Net.Core
         /// </summary>
         /// <param name="aNif">Handle returned by SubnetAt().</param>
         /// <returns>String in the form a.b.c.d (name).</returns>
-        public string NetworkInterfaceFullName(IntPtr aNif)
+        public string NetworkAdapterFullName(IntPtr aNif)
         {
-            IntPtr cStr = OhNetNetworkInterfaceFullName(aNif);
+            IntPtr cStr = OhNetNetworkAdapterFullName(aNif);
             string name = Marshal.PtrToStringAnsi(cStr);
             OhNetFree(cStr);
             return name;
@@ -608,25 +601,13 @@ namespace OpenHome.Net.Core
         /// <summary>
         /// Set which subnet the library should use
         /// </summary>
-        /// <remarks>Override any value set via InitialisationParams::SetDefaultSubnet.
-        /// 
-        /// Device lists and subscriptions will be automatically updated.
+        /// <remarks>Device lists and subscriptions will be automatically updated.
         /// 
         /// No other subnet will be selected if aSubnet is not available</remarks>
         /// <param name="aSubnet">Handle returned by SubnetAt()</param>
         public void SetCurrentSubnet(uint aSubnet)
         {
             OhNetSetCurrentSubnet(aSubnet);
-        }
-
-        /// <summary>
-        /// Clear any subnet previously specified using SetCurrentSubnet() or InitialisationParams::SetDefaultSubnet().
-        /// OS-specified defaults will be used instead
-        /// </summary>
-        /// <remarks>Device lists and subscriptions will be automatically updated if necessary</remarks>
-        public void SetDefaultSubnet()
-        {
-            OhNetSetDefaultSubnet();
         }
 
         private void FreeMemory(IntPtr aPtr)

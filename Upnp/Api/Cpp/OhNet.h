@@ -19,7 +19,7 @@ namespace OpenHome {
  * Represents a single network interface
  * @ingroup Core
  */
-class NetworkInterface
+class NetworkAdapter
 {
 public:
     /**
@@ -32,9 +32,9 @@ public:
      * @param[in] aName     Name for the interface.  Will be copied inside this function
      *                      so can safely be deleted by the caller when this returns
      */
-    NetworkInterface(TIpAddress aAddress, TIpAddress aNetMask, const char* aName);
+    NetworkAdapter(TIpAddress aAddress, TIpAddress aNetMask, const char* aName);
     /**
-     * Add a reference.  This NetworkInterface instance won't be deleted until the last reference is removed.
+     * Add a reference.  This NetworkAdapter instance won't be deleted until the last reference is removed.
      *
      * Callers must (eventually) call RemoveRef() exactly once for each call to AddRef().
      */
@@ -75,7 +75,7 @@ public:
      * Get the name of the network adapter.
      *
      * @return  The subnet name.  Can't be modified; will remain valid until this
-     *          NetworkInterface is deleted
+     *          NetworkAdapter is deleted
      */
     const char* Name() const;
     /**
@@ -86,7 +86,7 @@ public:
      */
     char* FullName() const;
 private:
-    ~NetworkInterface();
+    ~NetworkAdapter();
 private:
     TUint iRefCount;
     TIpAddress iAddress;
@@ -127,8 +127,7 @@ public:
     void SetAsyncBeginHandler(FunctorAsync aHandler);
     void SetAsyncEndHandler(FunctorAsync aHandler);
     void SetAsyncErrorHandler(FunctorAsync aHandler);
-    void SetDefaultSubnet(TIpAddress aSubnet);
-    void SetSubnetChangedListener(Functor aFunctor);
+    void SetSubnetListChangedListener(Functor aFunctor);
     /**
      * Set a timeout for TCP connections.  Must be greater that zero
      */
@@ -194,7 +193,7 @@ public:
      * Limit the library to using only the loopback network interface.
      * Useful for testing but not expected to be used in production code
      */
-    void SetUseLoopbackNetworkInterface();
+    void SetUseLoopbackNetworkAdapter();
 	/**
 	 * Set the maximum time between device announcements for the device stack
 	 */
@@ -241,8 +240,7 @@ public:
     FunctorAsync& AsyncBeginHandler();
     FunctorAsync& AsyncEndHandler();
     FunctorAsync& AsyncErrorHandler();
-    TIpAddress DefaultSubnet() const;
-    Functor& SubnetChangedListener();
+    Functor& SubnetListChangedListener();
     uint32_t TcpConnectTimeoutMs() const;
     uint32_t MsearchTimeSecs() const;
     uint32_t MsearchTtl() const;
@@ -253,7 +251,7 @@ public:
     uint32_t NumSubscriberThreads() const;
     uint32_t PendingSubscriptionTimeoutMs() const;
 	OhNetCallbackFreeExternal FreeExternal() const;
-    bool UseLoopbackNetworkInterface() const;
+    bool UseLoopbackNetworkAdapter() const;
 	uint32_t DvMaxUpdateTimeSecs() const;
     uint32_t DvNumServerThreads() const;
     uint32_t DvNumPublisherThreads() const;
@@ -271,8 +269,7 @@ private:
     FunctorAsync iAsyncEndHandler;
     FunctorAsync iAsyncErrorHandler;
     DefaultAsyncHandler* iDefaultAsyncHandler;
-    TIpAddress iDefaultSubnet;
-    Functor iSubnetChangedListener;
+    Functor iSubnetListChangedListener;
     uint32_t iTcpConnectTimeoutMs;
     uint32_t iMsearchTimeSecs;
     uint32_t iMsearchTtl;
@@ -283,7 +280,7 @@ private:
     uint32_t iNumSubscriberThreads;
     uint32_t iPendingSubscriptionTimeoutMs;
 	OhNetCallbackFreeExternal iFreeExternal;
-    bool iUseLoopbackNetworkInterface;
+    bool iUseLoopbackNetworkAdapter;
 	uint32_t iDvMaxUpdateTimeSecs;
     uint32_t iDvNumServerThreads;
 	uint32_t iDvNumPublisherThreads;
@@ -324,7 +321,7 @@ public:
      * Start the library as a UPnP control point stack
      *
      * @param aSubnet    The subnet to use.  Likely to be the Subnet() from a
-     *                   NetworkInterface returned by SubnetList.
+     *                   NetworkAdapter returned by SubnetList.
      */
     static void StartCp(TIpAddress aSubnet);
 
@@ -336,9 +333,8 @@ public:
     /**
      * Start the library as both UPnP control point and device stacks
      *
-     * @param aSubnet    The subnet to use for the control point stack (the device stack
-     *                   operates on all subnets).  Likely to be the Subnet() from a
-     *                   NetworkInterface returned by SubnetList.
+     * @param aSubnet    The subnet to use for both control point and device stacks.
+     *                   Likely to be the Subnet() from a NetworkAdapter returned by SubnetList.
      */
     static void StartCombined(TIpAddress aSubnet);
 
@@ -358,23 +354,22 @@ public:
      * @return  A newly allocated vector containing the adapter judged most suitable for
      *          each available subnet.
      */
-    static std::vector<NetworkInterface*>* CreateSubnetList();
+    static std::vector<NetworkAdapter*>* CreateSubnetList();
 
     /**
      * Destroy a subnet list created using CreateSubnetList().
      *
      * @param aSubnetList  Returned by CreateSubnetList().
      */
-    static void DestroySubnetList(std::vector<NetworkInterface*>* aSubnetList);
+    static void DestroySubnetList(std::vector<NetworkAdapter*>* aSubnetList);
 
     /**
      * Set which subnet the library should use.
-     * Override any value set via InitialisationParams::SetDefaultSubnet.
      * Device lists and subscriptions will be automatically updated.
      * No other subnet will be selected if aSubnet is not available
      *
      * @param aSubnet    The subnet to use.  Likely to be the Subnet() from a
-     *                   NetworkInterface returned by CreateSubnetList.
+     *                   NetworkAdapter returned by CreateSubnetList.
      */
     static void SetCurrentSubnet(TIpAddress aSubnet);
 
@@ -384,7 +379,7 @@ public:
      * @return  A pointer to the currently selected adapter with a reference claimed.
      *          Or NULL if there is no currently selected adapter.
      */
-    static NetworkInterface* CurrentSubnet();
+    static NetworkAdapter* CurrentSubnetAdapter();
 };
 
 } // namespace Net

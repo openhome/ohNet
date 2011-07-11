@@ -1,0 +1,138 @@
+; Module Name:
+;   ohSoundcard.inf
+;
+; Abstract:
+;    INF file for installing the ohSoundcard driver
+;
+
+[Version]
+Signature="$CHICAGO$"
+Class=MEDIA
+ClassGUID={4d36e96c-e325-11ce-bfc1-08002be10318}
+Provider=%OPENHOME%
+CatalogFile=ohSoundcard.cat
+DriverVer=06/01/2011, 1.0.0000.1
+DriverPackageDisplayName=%OHSOUNDCARD.PackageDisplayName%
+DriverPackageType=PlugAndPlay
+
+[SourceDisksNames]
+222="ohSoundcard installation media","",222
+
+[SourceDisksFiles]
+ohSoundcard.sys=222
+
+;;This syntax is only recognized on Windows XP and above- it is needed to install 64-bit drivers on
+;;Windows Server 2003 Service Pack 1 and above.
+
+[Manufacturer]
+%OPENHOME%=OpenHome,NTAMD64,NTIA64
+
+;;  For Windows Server 2003 Service Pack 1 and above, a 64-bit OS will not install a driver
+;;  unless the Manufacturer and Models Sections explicitly show it is a driver for that platform
+;;  But the individual model section decorations (or lack thereof) work as they always have.
+;;  All of the model sections referred to are undecorated or NT-decorated, hence work on all platforms
+
+[OpenHome]
+%OHSOUNDCARD.DeviceDescription%=OHSOUNDCARD, {D6BAC7AB-8758-43A9-917F-D702501F4DB0}\ohSoundcard
+
+;; This section enables installing on x64 systems
+
+[OpenHome.NTAMD64]
+%OHSOUNDCARD.DeviceDescription%=OHSOUNDCARD, {D6BAC7AB-8758-43A9-917F-D702501F4DB0}\ohSoundcard
+
+;;  This section enables installing on Itanium systems
+
+[OpenHome.NTIA64]
+%OHSOUNDCARD.DeviceDescription%=OHSOUNDCARD, {D6BAC7AB-8758-43A9-917F-D702501F4DB0}\ohSoundcard
+
+[DestinationDirs]
+OHSOUNDCARD.CopyList=10,system32\drivers
+
+;======================================================
+; OHSOUNDCARD
+;======================================================
+[OHSOUNDCARD]
+Include=ks.inf,wdmaudio.inf
+Needs=KS.Registration, WDMAUDIO.Registration
+CopyFiles=OHSOUNDCARD.CopyList
+AddReg=OHSOUNDCARD.AddReg
+
+[OHSOUNDCARD.Interfaces]
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Wave%,OHSOUNDCARD.I.Wave
+AddInterface=%KSCATEGORY_RENDER%,%KSNAME_Wave%,OHSOUNDCARD.I.Wave
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Topology%,OHSOUNDCARD.I.Topo
+
+[OHSOUNDCARD.Services]
+AddService=ohSoundcard,0x00000002,OHSOUNDCARD_Service_Inst
+
+[OHSOUNDCARD.NT]
+Include=ks.inf,wdmaudio.inf
+Needs=KS.Registration, WDMAUDIO.Registration
+CopyFiles=OHSOUNDCARD.CopyList
+AddReg=OHSOUNDCARD.AddReg
+
+[OHSOUNDCARD.NT.Interfaces]
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Wave%,OHSOUNDCARD.I.Wave
+AddInterface=%KSCATEGORY_RENDER%,%KSNAME_Wave%,OHSOUNDCARD.I.Wave
+AddInterface=%KSCATEGORY_AUDIO%,%KSNAME_Topology%,OHSOUNDCARD.I.Topo
+
+[OHSOUNDCARD.NT.Services]
+AddService=ohSoundcard,0x00000002,OHSOUNDCARD_Service_Inst
+
+[OHSOUNDCARD.CopyList]
+ohSoundcard.sys
+
+[OHSOUNDCARD.AddReg]
+HKR,,AssociatedFilters,,"wdmaud,swmidi,redbook"
+HKR,,Driver,,ohSoundcard.sys
+
+HKR,Drivers,SubClasses,,"wave,midi,mixer"
+
+HKR,Drivers\wave\wdmaud.drv,Driver,,wdmaud.drv
+HKR,Drivers\midi\wdmaud.drv,Driver,,wdmaud.drv
+HKR,Drivers\mixer\wdmaud.drv,Driver,,wdmaud.drv
+
+HKR,Drivers\wave\wdmaud.drv,Description,,%OHSOUNDCARD.DeviceDescription%
+HKR,Drivers\midi\wdmaud.drv,Description,,%OHSOUNDCARD.DeviceDescription%
+HKR,Drivers\mixer\wdmaud.drv,Description,,%OHSOUNDCARD.DeviceDescription%
+
+[OHSOUNDCARD.I.Wave]
+AddReg=OHSOUNDCARD.I.Wave.AddReg
+
+; HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\DeviceClasses\{6994AD04-93EF-11D0-A3CC-00A0C9223196}\##?#ROOT#MEDIA#0000#{6994ad04-93ef-11d0-a3cc-00a0c9223196}
+
+[OHSOUNDCARD.I.Wave.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%OHSOUNDCARD.Wave.szPname%
+
+[OHSOUNDCARD.I.Topo]
+AddReg=OHSOUNDCARD.I.Topo.AddReg
+
+[OHSOUNDCARD.I.Topo.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%OHSOUNDCARD.Topo.szPname%
+
+[OHSOUNDCARD_Service_Inst]
+DisplayName=%OHSOUNDCARD.DeviceDescription%
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%10%\system32\drivers\ohSoundcard.sys
+
+;======================================================
+; COMMON
+;======================================================
+[Strings]
+OPENHOME="OpenHome"
+OHSOUNDCARD.PackageDisplayName="ohSoundcard Driver"
+OHSOUNDCARD.DeviceDescription="ohSoundcard"
+OHSOUNDCARD.Wave.szPname="ohSoundcard Wave"
+OHSOUNDCARD.Topo.szPname="ohSoundcard Topology"
+
+Proxy.CLSID="{17CCA71B-ECD7-11D0-B908-00A0C9223196}"
+KSCATEGORY_AUDIO="{6994AD04-93EF-11D0-A3CC-00A0C9223196}"
+KSCATEGORY_RENDER="{65E8773E-8F56-11D0-A3B9-00A0C9223196}"
+KSCATEGORY_CAPTURE="{65E8773D-8F56-11D0-A3B9-00A0C9223196}"
+
+KSNAME_Wave="Wave"
+KSNAME_Topology="Topology"

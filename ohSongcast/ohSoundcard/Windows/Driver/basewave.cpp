@@ -501,12 +501,12 @@ Return Value:
     if (m_pTimer)
     {
         KeCancelTimer(m_pTimer);
-        ExFreePoolWithTag(m_pTimer, SNEAKY_POOLTAG);
+        ExFreePoolWithTag(m_pTimer, OHSOUNDCARD_POOLTAG);
     }
 
     if (m_pDpc)
     {
-        ExFreePoolWithTag( m_pDpc, SNEAKY_POOLTAG );
+        ExFreePoolWithTag( m_pDpc, OHSOUNDCARD_POOLTAG );
     }
 
     // Free the DMA buffer
@@ -624,7 +624,7 @@ Return Value:
             (
                 NonPagedPool,
                 sizeof(KDPC),
-                SNEAKY_POOLTAG
+                OHSOUNDCARD_POOLTAG
             );
         if (!m_pDpc)
         {
@@ -640,7 +640,7 @@ Return Value:
             (
                 NonPagedPool,
                 sizeof(KTIMER),
-                SNEAKY_POOLTAG
+                OHSOUNDCARD_POOLTAG
             );
         if (!m_pTimer)
         {
