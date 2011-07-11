@@ -3,11 +3,10 @@
 
 #include <OhNetTypes.h>
 #include <OhNet.h>
-#include <Windows.h>
 
-#include "../../Ohm.h"
-#include "../../OhmSender.h"
-#include "../ReceiverManager3.h"
+#include "../Ohm.h"
+#include "../OhmSender.h"
+#include "ReceiverManager3.h"
 
 ////////////////////////////////////////////
 // Exported C interface
@@ -76,26 +75,6 @@ DllExport void SubnetRemoveRef(THandle aReceiver);
 namespace OpenHome {
 namespace Net {
 
-class OhmSenderDriverWindows : public IOhmSenderDriver
-{
-public:
-	OhmSenderDriverWindows();
-
-private:    
-	TBool FindDriver();
-	TBool InstallDriver();
-
-	// IOhmSenderDriver
-	virtual void SetEnabled(TBool aValue);
-	virtual void SetEndpoint(const Endpoint& aEndpoint);
-	virtual void SetActive(TBool aValue);
-	virtual void SetTtl(TUint aValue);
-	virtual void SetTrackPosition(TUint64 aSampleStart, TUint64 aSamplesTotal);
-
-private:
-	HANDLE iHandle;
-};
-
 class Soundcard;
 
 class Receiver
@@ -158,7 +137,11 @@ class DllExportClass Soundcard : public IReceiverManager3Handler
 	static const TUint kMaxUdnBytes = 100;
 
 public:
+    // This static function is the only part of this class that is required to be implemented
+    // in platform specific code
 	static Soundcard* Create(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr);
+
+public:
     void SetSubnet(TIpAddress aValue);
 	void SetChannel(TUint aValue);
     void SetTtl(TUint aValue);
@@ -171,7 +154,7 @@ public:
 	~Soundcard();
 
 private:
-	Soundcard(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr);
+	Soundcard(TIpAddress aSubnet, TUint aChannel, TUint aTtl, TBool aMulticast, TBool aEnabled, TUint aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr, const Brx& aComputer, IOhmSenderDriver* aDriver);
 
 	void SubnetListChanged();
 	TBool UpdateAdapter();
@@ -188,7 +171,7 @@ private:
 	TIpAddress iAdapter;
 	std::vector<Subnet*> iSubnetList;
 	OhmSender* iSender;
-	OhmSenderDriverWindows* iDriver;
+	IOhmSenderDriver* iDriver;
 	DvDeviceStandard* iDevice;
 	ReceiverManager3* iReceiverManager;
 	ReceiverCallback iReceiverCallback;
