@@ -90,7 +90,7 @@ namespace OpenHome.Soundcard
 
         public void SubnetAdded(ISubnet aSubnet)
         {
-            iDispatcher.Invoke(new DelegateSubnetList(Added), new object[] { aSubnet });
+            iDispatcher.BeginInvoke(new DelegateSubnetList(Added), new object[] { aSubnet });
         }
 
         internal void Added(ISubnet aSubnet)
@@ -107,7 +107,7 @@ namespace OpenHome.Soundcard
 
         public void SubnetChanged(ISubnet aSubnet)
         {
-            iDispatcher.Invoke(new DelegateSubnetList(Changed), new object[] { aSubnet });
+            iDispatcher.BeginInvoke(new DelegateSubnetList(Changed), new object[] { aSubnet });
         }
 
         internal void Changed(ISubnet aSubnet)
@@ -124,7 +124,7 @@ namespace OpenHome.Soundcard
 
         public void SubnetRemoved(ISubnet aSubnet)
         {
-            iDispatcher.Invoke(new DelegateSubnetList(Removed), new object[] { aSubnet });
+            iDispatcher.BeginInvoke(new DelegateSubnetList(Removed), new object[] { aSubnet });
         }
 
         internal void Removed(ISubnet aSubnet)

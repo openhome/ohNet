@@ -202,6 +202,7 @@ void ReceiverManager3::ReceiverChanged(ReceiverManager2Receiver& aReceiver)
 void ReceiverManager3::ReceiverRemoved(ReceiverManager2Receiver& aReceiver)
 {
 	ReceiverManager3Receiver* receiver = (ReceiverManager3Receiver*)(aReceiver.UserData());
+    LOG(kTopology, "ReceiverManager3::~ReceiverRemoved %x\n", receiver);
 	ASSERT(receiver);
 	receiver->Removed();
 }
