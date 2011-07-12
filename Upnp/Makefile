@@ -11,17 +11,37 @@ endif
 
 MACHINE = $(shell uname -s)
 ifeq ($(MACHINE), Darwin)
+ifeq ($(mac-arm),1)
+devroot=/Developer/Platforms/iPhoneOS.platform/Developer
+sdkroot=$(devroot)/SDKs/iPhoneOS4.3.sdk
+platform_cflags = -I$(sdkroot)/usr/lib/gcc/arm-apple-darwin10/4.2.1/include/ -I$(sdkroot)/usr/include/ -I/usr/bin/arm-apple-darwin10-gcc -miphoneos-version-min=2.2 -pipe -no-cpp-precomp -isysroot $(sdkroot) -DPLATFORM_MACOSX_GNU -I$(sdkroot)/usr/include/c++/4.2.1/armv6-apple-darwin10/ 
+objdir = Build/Obj/Mac/arm/$(build_dir)/
+platform_linkflags = -L$(sdkroot)/usr/lib/ -arch armv6  -L$(sdkroot)/usr/lib/system
+compiler = $(devroot)/usr/bin/llvm-gcc-4.2  -arch armv6 -isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS4.3.sdk -o $(objdir)
+# No support for linking Shared Objects for ARM MAC
+# link = $(devroot)/usr/bin/llvm-gcc-4.2  -lpthread -Wl $(platform_linkflags)
+ar = /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ar rc $(objdir)
+
+else
 platform_cflags = -DPLATFORM_MACOSX_GNU -arch i386 -mmacosx-version-min=10.4
 platform_linkflags = -arch i386
 objdir = Build/Obj/Mac/$(build_dir)/
+compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
+link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
+ar = ${CROSS_COMPILE}ar rc $(objdir)
+
+endif
 else
 platform_cflags = -Wno-psabi
 platform_linkflags =
 objdir = Build/Obj/Posix/$(build_dir)/
+compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
+link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
+ar = ${CROSS_COMPILE}ar rc $(objdir)
+
 endif
 
 # Macros used by Common.mak
-ar = ${CROSS_COMPILE}ar rc $(objdir)
 cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))" $(platform_cflags)
 inc_build = Build/Include
 includes = -IBuild/Include/ -IBuild/Include/Cpp/
@@ -31,8 +51,8 @@ objext = o
 libprefix = lib
 libext = a
 exeext = elf
-compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
-link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
+
+
 linkoutput = -o 
 dllprefix = lib
 dllext = so

@@ -510,16 +510,31 @@ void Soundcard::RefreshReceivers()
 
 Soundcard::~Soundcard()
 {
+    LOG(kMedia, "Soundcard::~Soundcard\n");
+
 	delete (iReceiverManager);
+
+    LOG(kMedia, "Soundcard::~Soundcard receiver manager destroyed\n");
+
 	delete (iSender);
+
+    LOG(kMedia, "Soundcard::~Soundcard sender destroyed\n");
+
 	delete (iDevice);
+
+    LOG(kMedia, "Soundcard::~Soundcard device destroyed\n");
+
 	delete (iDriver);
+
+    LOG(kMedia, "Soundcard::~Soundcard driver destroyed\n");
 
 	iMutex.Wait();
 
 	iClosing = true;
 
 	iMutex.Signal();
+
+    LOG(kMedia, "Soundcard::~Soundcard registered closing\n");
 
 	std::vector<Subnet*>::iterator it = iSubnetList.begin();
 
@@ -530,7 +545,11 @@ Soundcard::~Soundcard()
 		it++;
 	}
 
+    LOG(kMedia, "Soundcard::~Soundcard subnets destroyed\n");
+
 	Net::UpnpLibrary::Close();
+
+    LOG(kMedia, "Soundcard::~Soundcard library closed\n");
 }
 
 // IReceiverManager3Handler

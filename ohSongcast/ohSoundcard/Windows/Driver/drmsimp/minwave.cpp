@@ -25,16 +25,16 @@ FAST_MUTEX MpusFastMutex;
 
 SOCKADDR MpusAddress;
 
-ULONG MpusEnabled;
-ULONG MpusActive;
-ULONG MpusTtl;
-ULONG MpusAddr;
-ULONG MpusPort;
-ULONG MpusAudioSampleRate;
-ULONG MpusAudioBitRate;
-ULONG MpusAudioBitDepth;
-ULONG MpusAudioChannels;
-ULONG MpusSendFormat;
+UINT MpusEnabled;
+UINT MpusActive;
+UINT MpusTtl;
+UINT MpusAddr;
+UINT MpusPort;
+UINT MpusAudioSampleRate;
+UINT MpusAudioBitRate;
+UINT MpusAudioBitDepth;
+UINT MpusAudioChannels;
+UINT MpusSendFormat;
 
 KEVENT WskInitialisedEvent;
 
@@ -45,7 +45,19 @@ void SocketInitialised(void* aContext);
 void WskInitialised(void* aContext);
 void MpusStop();
 void MpusSend(UCHAR* aBuffer, UINT aBytes);
-void MpusSetFormat(ULONG aSampleRate, ULONG aBitRate, ULONG aBitDepth, ULONG aChannels);
+void MpusSetFormat(UINT aSampleRate, UINT aBitRate, UINT aBitDepth, UINT aChannels);
+
+
+KSJACK_DESCRIPTION JackDescSpeakers =
+{
+    KSAUDIO_SPEAKER_STEREO,
+    0xFFFFFFFF, // HDAudio color spec for unknown colour
+    eConnTypeUnknown,
+    eGeoLocFront,
+    eGenLocOther,
+    ePortConnJack,
+    FALSE
+};
 
 #pragma code_seg("PAGE")
 
@@ -550,14 +562,14 @@ NTSTATUS PropertyHandler_Wave
 		}
 
         // validate buffer size.
-        if (PropertyRequest->ValueSize != sizeof (ULONG))
+        if (PropertyRequest->ValueSize != sizeof (UINT))
 		{
             return STATUS_INVALID_PARAMETER;
 		}
 
         // The "Value" is the out buffer that you pass in DeviceIoControl call.
 
-        ULONG* pValue = (ULONG*)PropertyRequest->Value;
+        UINT* pValue = (UINT*)PropertyRequest->Value;
         
         // Check the buffer.
 
@@ -574,14 +586,14 @@ NTSTATUS PropertyHandler_Wave
     {
         if (PropertyRequest->PropertyItem->Id == KSPROPERTY_OHSOUNDCARD_ENABLED)
 		{
-			if (PropertyRequest->ValueSize != sizeof (ULONG))
+			if (PropertyRequest->ValueSize != sizeof (UINT))
 			{
 				return STATUS_INVALID_PARAMETER;
 			}
 
-            ULONG* pValue = (ULONG*)PropertyRequest->Value;
+            UINT* pValue = (UINT*)PropertyRequest->Value;
 
-			ULONG enabled = *pValue;
+			UINT enabled = *pValue;
 
 			ExAcquireFastMutex(&MpusFastMutex);
 
@@ -592,10 +604,12 @@ NTSTATUS PropertyHandler_Wave
 					}
 					MpusEnabled = 0;
 					MpusSendFormat = 1;
+					JackDescSpeakers.IsConnected = false;
 				}
 			}
 			else {
 				MpusEnabled = 1;
+				JackDescSpeakers.IsConnected = true;
 			}
 
 			ExReleaseFastMutex(&MpusFastMutex);
@@ -604,14 +618,14 @@ NTSTATUS PropertyHandler_Wave
 		}
         else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_OHSOUNDCARD_ACTIVE)
 		{
-			if (PropertyRequest->ValueSize != sizeof (ULONG))
+			if (PropertyRequest->ValueSize != sizeof (UINT))
 			{
 				return STATUS_INVALID_PARAMETER;
 			}
 
-            ULONG* pValue = (ULONG*)PropertyRequest->Value;
+            UINT* pValue = (UINT*)PropertyRequest->Value;
 
-			ULONG active = *pValue;
+			UINT active = *pValue;
 
 			ExAcquireFastMutex(&MpusFastMutex);
 
@@ -634,15 +648,15 @@ NTSTATUS PropertyHandler_Wave
 		}
         else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_OHSOUNDCARD_ENDPOINT)
 		{
-			if (PropertyRequest->ValueSize != (sizeof (ULONG) * 2))
+			if (PropertyRequest->ValueSize != (sizeof (UINT) * 2))
 			{
 				return STATUS_INVALID_PARAMETER;
 			}
 
-            ULONG* pValue = (ULONG*)PropertyRequest->Value;
+            UINT* pValue = (UINT*)PropertyRequest->Value;
 
-			ULONG addr = *pValue++;
-			ULONG port = *pValue;
+			UINT addr = *pValue++;
+			UINT port = *pValue;
 
 			ExAcquireFastMutex(&MpusFastMutex);
 
@@ -660,12 +674,12 @@ NTSTATUS PropertyHandler_Wave
 		}
         else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_OHSOUNDCARD_TTL)
 		{
-			if (PropertyRequest->ValueSize != sizeof (ULONG))
+			if (PropertyRequest->ValueSize != sizeof (UINT))
 			{
 				return STATUS_INVALID_PARAMETER;
 			}
 
-            ULONG* pValue = (ULONG*)PropertyRequest->Value;
+            UINT* pValue = (UINT*)PropertyRequest->Value;
 
 			ExAcquireFastMutex(&MpusFastMutex);
 
@@ -940,7 +954,7 @@ void MpusSend(UCHAR* aBuffer, UINT aBytes)
 // MpusSetFormat
 //=============================================================================
 
-void MpusSetFormat(ULONG aSampleRate, ULONG aBitRate, ULONG aBitDepth, ULONG aChannels)
+void MpusSetFormat(UINT aSampleRate, UINT aBitRate, UINT aBitDepth, UINT aChannels)
 {
 	ExAcquireFastMutex(&MpusFastMutex);
 

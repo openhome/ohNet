@@ -19,7 +19,7 @@ Abstract:
 #include "basewave.h"
 
 extern void MpusStop();
-extern void MpusSetFormat(ULONG aSampleRate, ULONG aBitRate, ULONG aBitDepth, ULONG aChannels);
+extern void MpusSetFormat(UINT aSampleRate, UINT aBitRate, UINT aBitDepth, UINT aChannels);
 
 //=============================================================================
 // CMiniportWaveCyclicMSVAD

@@ -543,6 +543,8 @@ void OhmSender::StopZone()
 {
     iSocketOhz.ReadInterrupt();
     iZoneDeactivated.Wait();
+	iTimerZoneUri.Cancel();
+	iTimerPresetInfo.Cancel();
     iSocketOhz.Close();
 }
 
@@ -592,12 +594,26 @@ void OhmSender::SetPreset(TUint aValue)
     
 OhmSender::~OhmSender()
 {
+    LOG(kMedia, "OhmSender::~OhmSender\n");
     iMutexStartStop.Wait();
     Stop();
 	StopZone();
     iMutexStartStop.Signal();
 
+    LOG(kMedia, "OhmSender::~OhmSender stopped\n");
+
+	delete iThreadZone;
+
+    LOG(kMedia, "OhmSender::~OhmSender deleted zone thread\n");
+
+
+	delete iThreadUnicast;
+
+    LOG(kMedia, "OhmSender::~OhmSender deleted unicast thread\n");
+
     delete iThreadMulticast;
+
+    LOG(kMedia, "OhmSender::~OhmSender deleted multicast thread\n");
 }
 
 //  This runs a little state machine where the current state is reflected by:
@@ -1217,8 +1233,6 @@ void OhmSender::RunZone()
 	           		continue;
 				}
 
-		        LOG(kMedia, "OhmSender::RunZone received message\n");
-
 				if (header.MsgType() == OhzHeader::kMsgTypeZoneQuery) {
 					OhzHeaderZoneQuery headerZoneQuery;
 					headerZoneQuery.Internalise(iRxZone, header);
@@ -1251,6 +1265,10 @@ void OhmSender::RunZone()
 					}
 				}
 
+				else {
+					LOG(kMedia, "OhmSender::RunZone received message type %d\n", header.MsgType());
+				}
+
 				iRxZone.ReadFlush();
 			}
 		}
@@ -1268,12 +1286,13 @@ void OhmSender::RunZone()
 void OhmSender::SendZoneUri(TUint aCount)
 {
     iSendZoneUriCount = aCount;
-
-    SendZoneUri();
+	iTimerZoneUri.FireIn(0);
 }
 
 void OhmSender::SendZoneUri()
 {
+	ASSERT(iSendZoneUriCount <= 3);
+
     try
     {
         OhzHeaderZoneUri headerZoneUri(iDevice.Udn(), iUri);

@@ -37,8 +37,16 @@ class CMiniportTopology :
     ~CMiniportTopology();
 
     IMP_IMiniportTopology;
+
+    NTSTATUS                    PropertyHandlerJackDescription
+    (
+        IN PPCPROPERTY_REQUEST  PropertyRequest
+    );
+
 };
 typedef CMiniportTopology *PCMiniportTopology;
+
+extern NTSTATUS PropertyHandler_TopoFilter(IN PPCPROPERTY_REQUEST PropertyRequest);
 
 #endif
 

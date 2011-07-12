@@ -8,6 +8,7 @@ using namespace OpenHome::Net;
 OhmSocket::OhmSocket()
     : iRxSocket(0)
 	, iTxSocket(0)
+	, iReader(0)
 {
 }
 

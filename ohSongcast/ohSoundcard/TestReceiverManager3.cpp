@@ -135,7 +135,7 @@ int CDECL main(int aArgc, char* aArgv[])
     UpnpLibrary::DestroySubnetList(subnetList);
     UpnpLibrary::StartCp(subnet);
 
-    // Debug::SetLevel(Debug::kTopology);
+    Debug::SetLevel(Debug::kTopology);
 
 	ReceiverManager3Logger* logger = new ReceiverManager3Logger(optionUri.Value());
 	
