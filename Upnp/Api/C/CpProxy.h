@@ -1,6 +1,7 @@
 #ifndef HEADER_SERVICE_PROXYC
 #define HEADER_SERVICE_PROXYC
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/OhNet.h>
 #include <C/Service.h>

@@ -1,6 +1,7 @@
 #ifndef HEADER_CPDEVICEC
 #define HEADER_CPDEVICEC
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 
 #ifdef __cplusplus

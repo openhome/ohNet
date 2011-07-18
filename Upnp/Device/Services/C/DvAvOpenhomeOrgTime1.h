@@ -4,6 +4,7 @@
 #ifndef HEADER_DVAVOPENHOMEORGTIME1_C
 #define HEADER_DVAVOPENHOMEORGTIME1_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 

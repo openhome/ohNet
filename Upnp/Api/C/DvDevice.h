@@ -9,6 +9,7 @@
 #ifndef HEADER_DVDEVICEC
 #define HEADER_DVDEVICEC
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 
 #ifdef __cplusplus

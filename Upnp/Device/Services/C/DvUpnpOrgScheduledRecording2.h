@@ -4,6 +4,7 @@
 #ifndef HEADER_DVUPNPORGSCHEDULEDRECORDING2_C
 #define HEADER_DVUPNPORGSCHEDULEDRECORDING2_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 

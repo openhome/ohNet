@@ -5,6 +5,7 @@
 #define HEADER_UPNPORGSCHEDULEDRECORDING2_C
 
 #include <OsTypes.h>
+#include <OhNetDefines.h>
 #include <C/Async.h>
 #include <C/OhNet.h>
 #include <C/CpDevice.h>

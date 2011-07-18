@@ -1,6 +1,7 @@
 #ifndef HEADER_CPSERVICEC
 #define HEADER_CPSERVICEC
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/CpDevice.h>
 #include <C/Service.h>

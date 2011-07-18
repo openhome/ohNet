@@ -1,6 +1,7 @@
 #ifndef HEADER_SERVICEC
 #define HEADER_SERVICEC
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/OhNet.h>
 

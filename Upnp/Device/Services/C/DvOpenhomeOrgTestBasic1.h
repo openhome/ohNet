@@ -4,6 +4,7 @@
 #ifndef HEADER_DVOPENHOMEORGTESTBASIC1_C
 #define HEADER_DVOPENHOMEORGTESTBASIC1_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 

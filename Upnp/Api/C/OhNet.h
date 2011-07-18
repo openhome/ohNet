@@ -1,6 +1,7 @@
 #ifndef HEADER_UPNPC
 #define HEADER_UPNPC
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/Async.h>
 

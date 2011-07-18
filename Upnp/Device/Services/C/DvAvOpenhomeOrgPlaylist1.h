@@ -4,6 +4,7 @@
 #ifndef HEADER_DVAVOPENHOMEORGPLAYLIST1_C
 #define HEADER_DVAVOPENHOMEORGPLAYLIST1_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 

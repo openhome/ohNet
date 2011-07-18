@@ -4,6 +4,7 @@
 #ifndef HEADER_DVAVOPENHOMEORGRECEIVER1_C
 #define HEADER_DVAVOPENHOMEORGRECEIVER1_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 

@@ -1,6 +1,7 @@
 #ifndef HEADER_DVSERVERUPNPC
 #define HEADER_DVSERVERUPNPC
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 

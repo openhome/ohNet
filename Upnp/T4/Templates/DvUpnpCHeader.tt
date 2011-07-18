@@ -48,6 +48,7 @@
 #ifndef HEADER_DV<#=fileName.ToUpper()#>_C
 #define HEADER_DV<#=fileName.ToUpper()#>_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 

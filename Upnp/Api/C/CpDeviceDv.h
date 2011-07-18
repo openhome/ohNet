@@ -1,6 +1,7 @@
 #ifndef HEADER_CPDEVICEDVC
 #define HEADER_CPDEVICEDVC
 
+#include <OhNetDefines.h>
 #include <C/CpDevice.h>
 #include <C/DvDevice.h>
 

@@ -1,6 +1,7 @@
 #ifndef HEADER_ASYNC_C
 #define HEADER_ASYNC_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 
 #ifdef __cplusplus

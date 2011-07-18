@@ -4,6 +4,7 @@
 #ifndef HEADER_DVAVOPENHOMEORGINFO1_C
 #define HEADER_DVAVOPENHOMEORGINFO1_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 

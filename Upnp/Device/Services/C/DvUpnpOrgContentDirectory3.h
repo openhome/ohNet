@@ -4,6 +4,7 @@
 #ifndef HEADER_DVUPNPORGCONTENTDIRECTORY3_C
 #define HEADER_DVUPNPORGCONTENTDIRECTORY3_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 

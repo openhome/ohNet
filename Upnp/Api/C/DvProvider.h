@@ -1,6 +1,7 @@
 #ifndef HEADER_DVPROVIDER_C
 #define HEADER_DVPROVIDER_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 #include <C/Service.h>

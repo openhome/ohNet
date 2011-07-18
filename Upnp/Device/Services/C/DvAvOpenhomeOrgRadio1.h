@@ -4,6 +4,7 @@
 #ifndef HEADER_DVAVOPENHOMEORGRADIO1_C
 #define HEADER_DVAVOPENHOMEORGRADIO1_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 

@@ -1,6 +1,7 @@
 #ifndef HEADER_CPDEVICEUPNPC
 #define HEADER_CPDEVICEUPNPC
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/CpDevice.h>
 
