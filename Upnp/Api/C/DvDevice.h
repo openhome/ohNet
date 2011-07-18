@@ -27,7 +27,7 @@ extern "C" {
  */
 typedef THandle DvDeviceC;
 
-typedef void (*OhNetCallback)(void* aPtr);
+typedef void (STDCALL *OhNetCallback)(void* aPtr);
 
 /**
  * Callback which is run before serving a file begins
@@ -36,7 +36,7 @@ typedef void (*OhNetCallback)(void* aPtr);
  * @param[in] aTotalBytes  Size in bytes of the file.  Can be 0 if size is unknown.
  * @param[in] aMimeType    MIME type of the file.  May be NULL if this is unknown.
  */
-typedef void (*OhNetCallbackWriteResourceBegin)(void* aWriterData, uint32_t aTotalBytes, const char* aMimeType);
+typedef void (STDCALL *OhNetCallbackWriteResourceBegin)(void* aWriterData, uint32_t aTotalBytes, const char* aMimeType);
 
 /**
  * Callback which runs to serve a chunk of a file
@@ -47,7 +47,7 @@ typedef void (*OhNetCallbackWriteResourceBegin)(void* aWriterData, uint32_t aTot
  * @param[in] aData        File data to write
  * @param[in] aBytes       Size in bytes of aData
  */
-typedef void (*OhNetCallbackWriteResource)(void* aWriterData, const uint8_t* aData, uint32_t aBytes);
+typedef void (STDCALL *OhNetCallbackWriteResource)(void* aWriterData, const uint8_t* aData, uint32_t aBytes);
 
 /**
  * Called when serving of a file is complete
@@ -59,7 +59,7 @@ typedef void (*OhNetCallbackWriteResource)(void* aWriterData, const uint8_t* aDa
  *
  * @param[in] aWriterData  Opaque pointer passed to OhNetCallbackResourceManager
  */
-typedef void (*OhNetCallbackWriteResourceEnd)(void* aWriterData);
+typedef void (STDCALL *OhNetCallbackWriteResourceEnd)(void* aWriterData);
 
 /**
  * Callback which runs when a device is asked to serve an unknown file
@@ -79,10 +79,10 @@ typedef void (*OhNetCallbackWriteResourceEnd)(void* aWriterData);
  * @param[in] aWriteEnd       Callback to be run at the end of serving a file.
  *                            Must be called if aWriteBegin is called.
  */
-typedef void (*OhNetCallbackResourceManager)(void* aUserData, const char* aUriTail, TIpAddress aInterface, THandle aLanguageList, void* aWriterData,
-	                                        OhNetCallbackWriteResourceBegin aWriteBegin,
-                                            OhNetCallbackWriteResource aWriteResource,
-                                            OhNetCallbackWriteResourceEnd aWriteEnd);
+typedef void (STDCALL *OhNetCallbackResourceManager)(void* aUserData, const char* aUriTail, TIpAddress aInterface, THandle aLanguageList, void* aWriterData,
+	                                                 OhNetCallbackWriteResourceBegin aWriteBegin,
+                                                     OhNetCallbackWriteResource aWriteResource,
+                                                     OhNetCallbackWriteResourceEnd aWriteEnd);
 
 
 /**
@@ -94,7 +94,7 @@ typedef void (*OhNetCallbackResourceManager)(void* aUserData, const char* aUriTa
  *
  * @return  Handle to the new device
  */
-DllExport DvDeviceC DvDeviceCreate(const char* aUdn);
+DllExport DvDeviceC STDCALL DvDeviceCreate(const char* aUdn);
 
 /**
  * Destroy a device.
@@ -102,7 +102,7 @@ DllExport DvDeviceC DvDeviceCreate(const char* aUdn);
  *
  * @param[in] aDevice  Handle returned by DvDeviceCreate[NoResources]
  */
-DllExport void DvDeviceDestroy(DvDeviceC aDevice);
+DllExport void STDCALL DvDeviceDestroy(DvDeviceC aDevice);
 
 /**
  * Query the (client-specified) unique device name
@@ -111,7 +111,7 @@ DllExport void DvDeviceDestroy(DvDeviceC aDevice);
  *
  * @return  The name passed to the c'tor
  */
-DllExport const char* DvDeviceUdn(DvDeviceC aDevice);
+DllExport const char* STDCALL DvDeviceUdn(DvDeviceC aDevice);
 
 /**
  * Query whether a device is enabled
@@ -120,7 +120,7 @@ DllExport const char* DvDeviceUdn(DvDeviceC aDevice);
  *
  * @return  1 if the device is enabled; 0 otherwise
  */
-DllExport int32_t DvDeviceEnabled(DvDeviceC aDevice);
+DllExport int32_t STDCALL DvDeviceEnabled(DvDeviceC aDevice);
 
 /**
  * Set the device ready for external use
@@ -132,7 +132,7 @@ DllExport int32_t DvDeviceEnabled(DvDeviceC aDevice);
  *
  * @param[in] aDevice  Handle returned by DvDeviceCreate[NoResources]
  */
-DllExport void DvDeviceSetEnabled(DvDeviceC aDevice);
+DllExport void STDCALL DvDeviceSetEnabled(DvDeviceC aDevice);
 
 /**
  * Disable the device, withdrawing its availability for external use
@@ -147,7 +147,7 @@ DllExport void DvDeviceSetEnabled(DvDeviceC aDevice);
  *                        Until this runs, the device should be considered to still be enabled.
  * @param[in] aPtr        Data to be passed to the aCompleted callback
  */
-DllExport void DvDeviceSetDisabled(DvDeviceC aDevice, OhNetCallback aCompleted, void* aPtr);
+DllExport void STDCALL DvDeviceSetDisabled(DvDeviceC aDevice, OhNetCallback aCompleted, void* aPtr);
 
 /**
  * Query the value of an atrribute
@@ -157,7 +157,7 @@ DllExport void DvDeviceSetDisabled(DvDeviceC aDevice, OhNetCallback aCompleted, 
  *                     Commonly used keys are published ... (!!!! where?)
  * @param[out] aValue  const pointer to the attribute or NULL if the attribute has not been set.
  */
-DllExport void DvDeviceGetAttribute(DvDeviceC aDevice, const char* aKey, const char** aValue);
+DllExport void STDCALL DvDeviceGetAttribute(DvDeviceC aDevice, const char* aKey, const char** aValue);
 
 /**
  * Set the value of an attribute
@@ -166,7 +166,7 @@ DllExport void DvDeviceGetAttribute(DvDeviceC aDevice, const char* aKey, const c
  * @param[in] aKey     string of the form protocol_name.protocol_specific_key
  * @param[in] aValue   attribute will be set to a copy of this string
  */
-DllExport void DvDeviceSetAttribute(DvDeviceC aDevice, const char* aKey, const char* aValue);
+DllExport void STDCALL DvDeviceSetAttribute(DvDeviceC aDevice, const char* aKey, const char* aValue);
 
 /**
  * Add a block of xml which will be returned as part of the device description
@@ -177,7 +177,7 @@ DllExport void DvDeviceSetAttribute(DvDeviceC aDevice, const char* aKey, const c
  * @param[in] aDevice  Handle returned by DvDeviceCreate[NoResources]
  * @param[in] aXml     One or more tag+value blocks
  */
-DllExport void DvDeviceSetXmlExtension(DvDeviceC aDevice, const char* aXml);
+DllExport void STDCALL DvDeviceSetXmlExtension(DvDeviceC aDevice, const char* aXml);
 
 /**
  * Constructor.  Creates a device capable of operating on any of the protocols the device
@@ -188,7 +188,7 @@ DllExport void DvDeviceSetXmlExtension(DvDeviceC aDevice, const char* aXml);
  *
  * @return  Handle to the new device
  */
-DllExport DvDeviceC DvDeviceStandardCreateNoResources(const char* aUdn);
+DllExport DvDeviceC STDCALL DvDeviceStandardCreateNoResources(const char* aUdn);
 
 /**
  * Constructor.  Creates a device capable of serving UI files and of operating on any of the
@@ -202,7 +202,7 @@ DllExport DvDeviceC DvDeviceStandardCreateNoResources(const char* aUdn);
  *
  * @return  Handle to the new device
  */
-DllExport DvDeviceC DvDeviceStandardCreate(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr);
+DllExport DvDeviceC STDCALL DvDeviceStandardCreate(const char* aUdn, OhNetCallbackResourceManager aResourceManager, void* aPtr);
 
 /**
  * Query the number of languages accepted by the resource writer.
@@ -211,7 +211,7 @@ DllExport DvDeviceC DvDeviceStandardCreate(const char* aUdn, OhNetCallbackResour
  *
  * @return  Number of accepted languages
  */
-DllExport uint32_t DvResourceWriterLanguageCount(THandle aLanguageList);
+DllExport uint32_t STDCALL DvResourceWriterLanguageCount(THandle aLanguageList);
 
 /**
  * Query a language accepted by the resource writer.
@@ -223,7 +223,7 @@ DllExport uint32_t DvResourceWriterLanguageCount(THandle aLanguageList);
  *
  * @return  ISO 639 style language code (e.g. "en-gb" or "en")
  */
-DllExport const char* DvResourceWriterLanguage(THandle aLanguageList, uint32_t aIndex);
+DllExport const char* STDCALL DvResourceWriterLanguage(THandle aLanguageList, uint32_t aIndex);
 
 /* @} */
 

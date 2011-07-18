@@ -17,9 +17,9 @@ protected:
     DviDeviceC();
 private:
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
-    static void WriteResourceBegin(void* aPtr, uint32_t aTotalBytes, const char* aMimeType);
-    static void WriteResource(void* aPtr, const uint8_t* aData, uint32_t aBytes);
-    static void WriteResourceEnd(void* aPtr);
+    static void STDCALL WriteResourceBegin(void* aPtr, uint32_t aTotalBytes, const char* aMimeType);
+    static void STDCALL WriteResource(void* aPtr, const uint8_t* aData, uint32_t aBytes);
+    static void STDCALL WriteResourceEnd(void* aPtr);
 protected:
     DvDevice* iDevice;
 	OhNetCallbackResourceManager iResourceManager;

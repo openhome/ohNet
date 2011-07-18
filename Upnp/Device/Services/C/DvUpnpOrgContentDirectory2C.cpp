@@ -756,136 +756,136 @@ void DvProviderUpnpOrgContentDirectory2C::DoCreateReference(IDviInvocation& aInv
 
 
 
-THandle DvProviderUpnpOrgContentDirectory2Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderUpnpOrgContentDirectory2Create(DvDeviceC aDevice)
 {
 	return new DvProviderUpnpOrgContentDirectory2C(aDevice);
 }
 
-void DvProviderUpnpOrgContentDirectory2Destroy(THandle aProvider)
+void STDCALL DvProviderUpnpOrgContentDirectory2Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionGetSearchCapabilities(THandle aProvider, CallbackContentDirectory2GetSearchCapabilities aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionGetSearchCapabilities(THandle aProvider, CallbackContentDirectory2GetSearchCapabilities aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionGetSearchCapabilities(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionGetSortCapabilities(THandle aProvider, CallbackContentDirectory2GetSortCapabilities aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionGetSortCapabilities(THandle aProvider, CallbackContentDirectory2GetSortCapabilities aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionGetSortCapabilities(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionGetSortExtensionCapabilities(THandle aProvider, CallbackContentDirectory2GetSortExtensionCapabilities aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionGetSortExtensionCapabilities(THandle aProvider, CallbackContentDirectory2GetSortExtensionCapabilities aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionGetSortExtensionCapabilities(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionGetFeatureList(THandle aProvider, CallbackContentDirectory2GetFeatureList aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionGetFeatureList(THandle aProvider, CallbackContentDirectory2GetFeatureList aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionGetFeatureList(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionGetSystemUpdateID(THandle aProvider, CallbackContentDirectory2GetSystemUpdateID aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionGetSystemUpdateID(THandle aProvider, CallbackContentDirectory2GetSystemUpdateID aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionGetSystemUpdateID(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionBrowse(THandle aProvider, CallbackContentDirectory2Browse aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionBrowse(THandle aProvider, CallbackContentDirectory2Browse aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionBrowse(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionSearch(THandle aProvider, CallbackContentDirectory2Search aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionSearch(THandle aProvider, CallbackContentDirectory2Search aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionSearch(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionCreateObject(THandle aProvider, CallbackContentDirectory2CreateObject aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionCreateObject(THandle aProvider, CallbackContentDirectory2CreateObject aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionCreateObject(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionDestroyObject(THandle aProvider, CallbackContentDirectory2DestroyObject aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionDestroyObject(THandle aProvider, CallbackContentDirectory2DestroyObject aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionDestroyObject(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionUpdateObject(THandle aProvider, CallbackContentDirectory2UpdateObject aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionUpdateObject(THandle aProvider, CallbackContentDirectory2UpdateObject aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionUpdateObject(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionMoveObject(THandle aProvider, CallbackContentDirectory2MoveObject aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionMoveObject(THandle aProvider, CallbackContentDirectory2MoveObject aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionMoveObject(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionImportResource(THandle aProvider, CallbackContentDirectory2ImportResource aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionImportResource(THandle aProvider, CallbackContentDirectory2ImportResource aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionImportResource(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionExportResource(THandle aProvider, CallbackContentDirectory2ExportResource aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionExportResource(THandle aProvider, CallbackContentDirectory2ExportResource aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionExportResource(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionDeleteResource(THandle aProvider, CallbackContentDirectory2DeleteResource aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionDeleteResource(THandle aProvider, CallbackContentDirectory2DeleteResource aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionDeleteResource(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionStopTransferResource(THandle aProvider, CallbackContentDirectory2StopTransferResource aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionStopTransferResource(THandle aProvider, CallbackContentDirectory2StopTransferResource aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionStopTransferResource(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionGetTransferProgress(THandle aProvider, CallbackContentDirectory2GetTransferProgress aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionGetTransferProgress(THandle aProvider, CallbackContentDirectory2GetTransferProgress aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionGetTransferProgress(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgContentDirectory2EnableActionCreateReference(THandle aProvider, CallbackContentDirectory2CreateReference aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgContentDirectory2EnableActionCreateReference(THandle aProvider, CallbackContentDirectory2CreateReference aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->EnableActionCreateReference(aCallback, aPtr);
 }
 
-int32_t DvProviderUpnpOrgContentDirectory2SetPropertySystemUpdateID(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderUpnpOrgContentDirectory2SetPropertySystemUpdateID(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->SetPropertySystemUpdateID(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderUpnpOrgContentDirectory2GetPropertySystemUpdateID(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderUpnpOrgContentDirectory2GetPropertySystemUpdateID(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->GetPropertySystemUpdateID(val);
     *aValue = val;
 }
 
-int32_t DvProviderUpnpOrgContentDirectory2SetPropertyContainerUpdateIDs(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderUpnpOrgContentDirectory2SetPropertyContainerUpdateIDs(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->SetPropertyContainerUpdateIDs(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderUpnpOrgContentDirectory2GetPropertyContainerUpdateIDs(THandle aProvider, char** aValue)
+void STDCALL DvProviderUpnpOrgContentDirectory2GetPropertyContainerUpdateIDs(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->GetPropertyContainerUpdateIDs(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderUpnpOrgContentDirectory2SetPropertyTransferIDs(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderUpnpOrgContentDirectory2SetPropertyTransferIDs(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->SetPropertyTransferIDs(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderUpnpOrgContentDirectory2GetPropertyTransferIDs(THandle aProvider, char** aValue)
+void STDCALL DvProviderUpnpOrgContentDirectory2GetPropertyTransferIDs(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderUpnpOrgContentDirectory2C*>(aProvider)->GetPropertyTransferIDs(buf);

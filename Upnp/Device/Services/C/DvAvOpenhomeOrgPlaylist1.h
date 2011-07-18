@@ -26,7 +26,7 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1Play)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackPlaylist1Play)(void* aPtr, uint32_t aVersion);
 /**
  * Callback which runs when the Pause action is invoked
  *
@@ -35,7 +35,7 @@ typedef int32_t (*CallbackPlaylist1Play)(void* aPtr, uint32_t aVersion);
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1Pause)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackPlaylist1Pause)(void* aPtr, uint32_t aVersion);
 /**
  * Callback which runs when the Stop action is invoked
  *
@@ -44,7 +44,7 @@ typedef int32_t (*CallbackPlaylist1Pause)(void* aPtr, uint32_t aVersion);
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1Stop)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackPlaylist1Stop)(void* aPtr, uint32_t aVersion);
 /**
  * Callback which runs when the Next action is invoked
  *
@@ -53,7 +53,7 @@ typedef int32_t (*CallbackPlaylist1Stop)(void* aPtr, uint32_t aVersion);
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1Next)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackPlaylist1Next)(void* aPtr, uint32_t aVersion);
 /**
  * Callback which runs when the Previous action is invoked
  *
@@ -62,7 +62,7 @@ typedef int32_t (*CallbackPlaylist1Next)(void* aPtr, uint32_t aVersion);
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1Previous)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackPlaylist1Previous)(void* aPtr, uint32_t aVersion);
 /**
  * Callback which runs when the SetRepeat action is invoked
  *
@@ -72,7 +72,7 @@ typedef int32_t (*CallbackPlaylist1Previous)(void* aPtr, uint32_t aVersion);
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1SetRepeat)(void* aPtr, uint32_t aVersion, uint32_t aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1SetRepeat)(void* aPtr, uint32_t aVersion, uint32_t aValue);
 /**
  * Callback which runs when the Repeat action is invoked
  *
@@ -82,7 +82,7 @@ typedef int32_t (*CallbackPlaylist1SetRepeat)(void* aPtr, uint32_t aVersion, uin
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1Repeat)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1Repeat)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
 /**
  * Callback which runs when the SetShuffle action is invoked
  *
@@ -92,7 +92,7 @@ typedef int32_t (*CallbackPlaylist1Repeat)(void* aPtr, uint32_t aVersion, uint32
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1SetShuffle)(void* aPtr, uint32_t aVersion, uint32_t aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1SetShuffle)(void* aPtr, uint32_t aVersion, uint32_t aValue);
 /**
  * Callback which runs when the Shuffle action is invoked
  *
@@ -102,7 +102,7 @@ typedef int32_t (*CallbackPlaylist1SetShuffle)(void* aPtr, uint32_t aVersion, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1Shuffle)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1Shuffle)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
 /**
  * Callback which runs when the SeekSecondAbsolute action is invoked
  *
@@ -112,7 +112,7 @@ typedef int32_t (*CallbackPlaylist1Shuffle)(void* aPtr, uint32_t aVersion, uint3
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1SeekSecondAbsolute)(void* aPtr, uint32_t aVersion, uint32_t aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1SeekSecondAbsolute)(void* aPtr, uint32_t aVersion, uint32_t aValue);
 /**
  * Callback which runs when the SeekSecondRelative action is invoked
  *
@@ -122,7 +122,7 @@ typedef int32_t (*CallbackPlaylist1SeekSecondAbsolute)(void* aPtr, uint32_t aVer
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1SeekSecondRelative)(void* aPtr, uint32_t aVersion, int32_t aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1SeekSecondRelative)(void* aPtr, uint32_t aVersion, int32_t aValue);
 /**
  * Callback which runs when the SeekId action is invoked
  *
@@ -132,7 +132,7 @@ typedef int32_t (*CallbackPlaylist1SeekSecondRelative)(void* aPtr, uint32_t aVer
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1SeekId)(void* aPtr, uint32_t aVersion, uint32_t aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1SeekId)(void* aPtr, uint32_t aVersion, uint32_t aValue);
 /**
  * Callback which runs when the SeekIndex action is invoked
  *
@@ -142,7 +142,7 @@ typedef int32_t (*CallbackPlaylist1SeekId)(void* aPtr, uint32_t aVersion, uint32
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1SeekIndex)(void* aPtr, uint32_t aVersion, uint32_t aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1SeekIndex)(void* aPtr, uint32_t aVersion, uint32_t aValue);
 /**
  * Callback which runs when the TransportState action is invoked
  *
@@ -152,7 +152,7 @@ typedef int32_t (*CallbackPlaylist1SeekIndex)(void* aPtr, uint32_t aVersion, uin
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1TransportState)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1TransportState)(void* aPtr, uint32_t aVersion, char** aValue);
 /**
  * Callback which runs when the Id action is invoked
  *
@@ -162,7 +162,7 @@ typedef int32_t (*CallbackPlaylist1TransportState)(void* aPtr, uint32_t aVersion
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1Id)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1Id)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
 /**
  * Callback which runs when the Read action is invoked
  *
@@ -174,7 +174,7 @@ typedef int32_t (*CallbackPlaylist1Id)(void* aPtr, uint32_t aVersion, uint32_t* 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1Read)(void* aPtr, uint32_t aVersion, uint32_t aId, char** aUri, char** aMetadata);
+typedef int32_t (STDCALL *CallbackPlaylist1Read)(void* aPtr, uint32_t aVersion, uint32_t aId, char** aUri, char** aMetadata);
 /**
  * Callback which runs when the ReadList action is invoked
  *
@@ -185,7 +185,7 @@ typedef int32_t (*CallbackPlaylist1Read)(void* aPtr, uint32_t aVersion, uint32_t
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1ReadList)(void* aPtr, uint32_t aVersion, const char* aIdList, char** aTrackList);
+typedef int32_t (STDCALL *CallbackPlaylist1ReadList)(void* aPtr, uint32_t aVersion, const char* aIdList, char** aTrackList);
 /**
  * Callback which runs when the Insert action is invoked
  *
@@ -198,7 +198,7 @@ typedef int32_t (*CallbackPlaylist1ReadList)(void* aPtr, uint32_t aVersion, cons
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1Insert)(void* aPtr, uint32_t aVersion, uint32_t aAfterId, const char* aUri, const char* aMetadata, uint32_t* aNewId);
+typedef int32_t (STDCALL *CallbackPlaylist1Insert)(void* aPtr, uint32_t aVersion, uint32_t aAfterId, const char* aUri, const char* aMetadata, uint32_t* aNewId);
 /**
  * Callback which runs when the DeleteId action is invoked
  *
@@ -208,7 +208,7 @@ typedef int32_t (*CallbackPlaylist1Insert)(void* aPtr, uint32_t aVersion, uint32
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1DeleteId)(void* aPtr, uint32_t aVersion, uint32_t aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1DeleteId)(void* aPtr, uint32_t aVersion, uint32_t aValue);
 /**
  * Callback which runs when the DeleteAll action is invoked
  *
@@ -217,7 +217,7 @@ typedef int32_t (*CallbackPlaylist1DeleteId)(void* aPtr, uint32_t aVersion, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1DeleteAll)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackPlaylist1DeleteAll)(void* aPtr, uint32_t aVersion);
 /**
  * Callback which runs when the TracksMax action is invoked
  *
@@ -227,7 +227,7 @@ typedef int32_t (*CallbackPlaylist1DeleteAll)(void* aPtr, uint32_t aVersion);
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1TracksMax)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1TracksMax)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
 /**
  * Callback which runs when the IdArray action is invoked
  *
@@ -239,7 +239,7 @@ typedef int32_t (*CallbackPlaylist1TracksMax)(void* aPtr, uint32_t aVersion, uin
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1IdArray)(void* aPtr, uint32_t aVersion, uint32_t* aToken, char** aArray, uint32_t* aArrayLen);
+typedef int32_t (STDCALL *CallbackPlaylist1IdArray)(void* aPtr, uint32_t aVersion, uint32_t* aToken, char** aArray, uint32_t* aArrayLen);
 /**
  * Callback which runs when the IdArrayChanged action is invoked
  *
@@ -250,7 +250,7 @@ typedef int32_t (*CallbackPlaylist1IdArray)(void* aPtr, uint32_t aVersion, uint3
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1IdArrayChanged)(void* aPtr, uint32_t aVersion, uint32_t aToken, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1IdArrayChanged)(void* aPtr, uint32_t aVersion, uint32_t aToken, uint32_t* aValue);
 /**
  * Callback which runs when the ProtocolInfo action is invoked
  *
@@ -260,7 +260,7 @@ typedef int32_t (*CallbackPlaylist1IdArrayChanged)(void* aPtr, uint32_t aVersion
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackPlaylist1ProtocolInfo)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackPlaylist1ProtocolInfo)(void* aPtr, uint32_t aVersion, char** aValue);
 
 /**
  * Provider constructor
@@ -269,14 +269,14 @@ typedef int32_t (*CallbackPlaylist1ProtocolInfo)(void* aPtr, uint32_t aVersion, 
  *
  * @return  Handle to this provider
  */
-DllExport THandle DvProviderAvOpenhomeOrgPlaylist1Create(DvDeviceC aDevice);
+DllExport THandle STDCALL DvProviderAvOpenhomeOrgPlaylist1Create(DvDeviceC aDevice);
 
 /**
  * Provider destructor
  *
  * @param[in] aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1Destroy(THandle aProvider);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1Destroy(THandle aProvider);
 
 /**
  * Register a callback for the action Play
@@ -288,7 +288,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1Destroy(THandle aProvider);
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionPlay(THandle aProvider, CallbackPlaylist1Play aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionPlay(THandle aProvider, CallbackPlaylist1Play aCallback, void* aPtr);
 /**
  * Register a callback for the action Pause
  *
@@ -299,7 +299,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionPlay(THandle aProvide
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionPause(THandle aProvider, CallbackPlaylist1Pause aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionPause(THandle aProvider, CallbackPlaylist1Pause aCallback, void* aPtr);
 /**
  * Register a callback for the action Stop
  *
@@ -310,7 +310,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionPause(THandle aProvid
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionStop(THandle aProvider, CallbackPlaylist1Stop aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionStop(THandle aProvider, CallbackPlaylist1Stop aCallback, void* aPtr);
 /**
  * Register a callback for the action Next
  *
@@ -321,7 +321,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionStop(THandle aProvide
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionNext(THandle aProvider, CallbackPlaylist1Next aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionNext(THandle aProvider, CallbackPlaylist1Next aCallback, void* aPtr);
 /**
  * Register a callback for the action Previous
  *
@@ -332,7 +332,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionNext(THandle aProvide
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionPrevious(THandle aProvider, CallbackPlaylist1Previous aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionPrevious(THandle aProvider, CallbackPlaylist1Previous aCallback, void* aPtr);
 /**
  * Register a callback for the action SetRepeat
  *
@@ -343,7 +343,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionPrevious(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionSetRepeat(THandle aProvider, CallbackPlaylist1SetRepeat aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionSetRepeat(THandle aProvider, CallbackPlaylist1SetRepeat aCallback, void* aPtr);
 /**
  * Register a callback for the action Repeat
  *
@@ -354,7 +354,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionSetRepeat(THandle aPr
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionRepeat(THandle aProvider, CallbackPlaylist1Repeat aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionRepeat(THandle aProvider, CallbackPlaylist1Repeat aCallback, void* aPtr);
 /**
  * Register a callback for the action SetShuffle
  *
@@ -365,7 +365,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionRepeat(THandle aProvi
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionSetShuffle(THandle aProvider, CallbackPlaylist1SetShuffle aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionSetShuffle(THandle aProvider, CallbackPlaylist1SetShuffle aCallback, void* aPtr);
 /**
  * Register a callback for the action Shuffle
  *
@@ -376,7 +376,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionSetShuffle(THandle aP
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionShuffle(THandle aProvider, CallbackPlaylist1Shuffle aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionShuffle(THandle aProvider, CallbackPlaylist1Shuffle aCallback, void* aPtr);
 /**
  * Register a callback for the action SeekSecondAbsolute
  *
@@ -387,7 +387,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionShuffle(THandle aProv
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekSecondAbsolute(THandle aProvider, CallbackPlaylist1SeekSecondAbsolute aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekSecondAbsolute(THandle aProvider, CallbackPlaylist1SeekSecondAbsolute aCallback, void* aPtr);
 /**
  * Register a callback for the action SeekSecondRelative
  *
@@ -398,7 +398,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekSecondAbsolute(TH
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekSecondRelative(THandle aProvider, CallbackPlaylist1SeekSecondRelative aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekSecondRelative(THandle aProvider, CallbackPlaylist1SeekSecondRelative aCallback, void* aPtr);
 /**
  * Register a callback for the action SeekId
  *
@@ -409,7 +409,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekSecondRelative(TH
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekId(THandle aProvider, CallbackPlaylist1SeekId aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekId(THandle aProvider, CallbackPlaylist1SeekId aCallback, void* aPtr);
 /**
  * Register a callback for the action SeekIndex
  *
@@ -420,7 +420,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekId(THandle aProvi
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekIndex(THandle aProvider, CallbackPlaylist1SeekIndex aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekIndex(THandle aProvider, CallbackPlaylist1SeekIndex aCallback, void* aPtr);
 /**
  * Register a callback for the action TransportState
  *
@@ -431,7 +431,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekIndex(THandle aPr
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionTransportState(THandle aProvider, CallbackPlaylist1TransportState aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionTransportState(THandle aProvider, CallbackPlaylist1TransportState aCallback, void* aPtr);
 /**
  * Register a callback for the action Id
  *
@@ -442,7 +442,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionTransportState(THandl
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionId(THandle aProvider, CallbackPlaylist1Id aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionId(THandle aProvider, CallbackPlaylist1Id aCallback, void* aPtr);
 /**
  * Register a callback for the action Read
  *
@@ -453,7 +453,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionId(THandle aProvider,
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionRead(THandle aProvider, CallbackPlaylist1Read aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionRead(THandle aProvider, CallbackPlaylist1Read aCallback, void* aPtr);
 /**
  * Register a callback for the action ReadList
  *
@@ -464,7 +464,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionRead(THandle aProvide
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionReadList(THandle aProvider, CallbackPlaylist1ReadList aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionReadList(THandle aProvider, CallbackPlaylist1ReadList aCallback, void* aPtr);
 /**
  * Register a callback for the action Insert
  *
@@ -475,7 +475,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionReadList(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionInsert(THandle aProvider, CallbackPlaylist1Insert aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionInsert(THandle aProvider, CallbackPlaylist1Insert aCallback, void* aPtr);
 /**
  * Register a callback for the action DeleteId
  *
@@ -486,7 +486,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionInsert(THandle aProvi
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionDeleteId(THandle aProvider, CallbackPlaylist1DeleteId aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionDeleteId(THandle aProvider, CallbackPlaylist1DeleteId aCallback, void* aPtr);
 /**
  * Register a callback for the action DeleteAll
  *
@@ -497,7 +497,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionDeleteId(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionDeleteAll(THandle aProvider, CallbackPlaylist1DeleteAll aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionDeleteAll(THandle aProvider, CallbackPlaylist1DeleteAll aCallback, void* aPtr);
 /**
  * Register a callback for the action TracksMax
  *
@@ -508,7 +508,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionDeleteAll(THandle aPr
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionTracksMax(THandle aProvider, CallbackPlaylist1TracksMax aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionTracksMax(THandle aProvider, CallbackPlaylist1TracksMax aCallback, void* aPtr);
 /**
  * Register a callback for the action IdArray
  *
@@ -519,7 +519,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionTracksMax(THandle aPr
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionIdArray(THandle aProvider, CallbackPlaylist1IdArray aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionIdArray(THandle aProvider, CallbackPlaylist1IdArray aCallback, void* aPtr);
 /**
  * Register a callback for the action IdArrayChanged
  *
@@ -530,7 +530,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionIdArray(THandle aProv
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionIdArrayChanged(THandle aProvider, CallbackPlaylist1IdArrayChanged aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionIdArrayChanged(THandle aProvider, CallbackPlaylist1IdArrayChanged aCallback, void* aPtr);
 /**
  * Register a callback for the action ProtocolInfo
  *
@@ -541,7 +541,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionIdArrayChanged(THandl
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionProtocolInfo(THandle aProvider, CallbackPlaylist1ProtocolInfo aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionProtocolInfo(THandle aProvider, CallbackPlaylist1ProtocolInfo aCallback, void* aPtr);
 
 /**
  * Set the value of the TransportState property
@@ -553,14 +553,14 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1EnableActionProtocolInfo(THandle 
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyTransportState(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyTransportState(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the TransportState property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1GetPropertyTransportState(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyTransportState(THandle aProvider, char** aValue);
 /**
  * Set the value of the Repeat property
  *
@@ -571,14 +571,14 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1GetPropertyTransportState(THandle
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyRepeat(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyRepeat(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Repeat property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1GetPropertyRepeat(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyRepeat(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the Shuffle property
  *
@@ -589,14 +589,14 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1GetPropertyRepeat(THandle aProvid
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyShuffle(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyShuffle(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Shuffle property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1GetPropertyShuffle(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyShuffle(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the Id property
  *
@@ -607,14 +607,14 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1GetPropertyShuffle(THandle aProvi
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyId(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyId(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Id property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1GetPropertyId(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyId(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the IdArray property
  *
@@ -626,7 +626,7 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1GetPropertyId(THandle aProvider, 
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyIdArray(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyIdArray(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
 /**
  * Get a copy of the value of the IdArray property
  *
@@ -634,7 +634,7 @@ DllExport int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyIdArray(THandle aPr
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  * @param[out] aValueLen  Size in bytes pointed to by aValue
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1GetPropertyIdArray(THandle aProvider, char** aValue, uint32_t* aValueLen);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyIdArray(THandle aProvider, char** aValue, uint32_t* aValueLen);
 /**
  * Set the value of the TracksMax property
  *
@@ -645,14 +645,14 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1GetPropertyIdArray(THandle aProvi
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyTracksMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyTracksMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the TracksMax property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1GetPropertyTracksMax(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyTracksMax(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the ProtocolInfo property
  *
@@ -663,14 +663,14 @@ DllExport void DvProviderAvOpenhomeOrgPlaylist1GetPropertyTracksMax(THandle aPro
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ProtocolInfo property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylist1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgPlaylist1GetPropertyProtocolInfo(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyProtocolInfo(THandle aProvider, char** aValue);
 
 /* @} */
 

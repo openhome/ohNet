@@ -708,165 +708,165 @@ void DvProviderOpenhomeOrgTestBasic1C::DoShutdown(IDviInvocation& aInvocation, T
 
 
 
-THandle DvProviderOpenhomeOrgTestBasic1Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderOpenhomeOrgTestBasic1Create(DvDeviceC aDevice)
 {
 	return new DvProviderOpenhomeOrgTestBasic1C(aDevice);
 }
 
-void DvProviderOpenhomeOrgTestBasic1Destroy(THandle aProvider)
+void STDCALL DvProviderOpenhomeOrgTestBasic1Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionIncrement(THandle aProvider, CallbackTestBasic1Increment aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionIncrement(THandle aProvider, CallbackTestBasic1Increment aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionIncrement(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionDecrement(THandle aProvider, CallbackTestBasic1Decrement aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionDecrement(THandle aProvider, CallbackTestBasic1Decrement aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionDecrement(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionToggle(THandle aProvider, CallbackTestBasic1Toggle aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionToggle(THandle aProvider, CallbackTestBasic1Toggle aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionToggle(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionEchoString(THandle aProvider, CallbackTestBasic1EchoString aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionEchoString(THandle aProvider, CallbackTestBasic1EchoString aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionEchoString(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionEchoBinary(THandle aProvider, CallbackTestBasic1EchoBinary aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionEchoBinary(THandle aProvider, CallbackTestBasic1EchoBinary aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionEchoBinary(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionSetUint(THandle aProvider, CallbackTestBasic1SetUint aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetUint(THandle aProvider, CallbackTestBasic1SetUint aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionSetUint(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionGetUint(THandle aProvider, CallbackTestBasic1GetUint aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetUint(THandle aProvider, CallbackTestBasic1GetUint aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionGetUint(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionSetInt(THandle aProvider, CallbackTestBasic1SetInt aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetInt(THandle aProvider, CallbackTestBasic1SetInt aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionSetInt(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionGetInt(THandle aProvider, CallbackTestBasic1GetInt aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetInt(THandle aProvider, CallbackTestBasic1GetInt aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionGetInt(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionSetBool(THandle aProvider, CallbackTestBasic1SetBool aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetBool(THandle aProvider, CallbackTestBasic1SetBool aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionSetBool(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionGetBool(THandle aProvider, CallbackTestBasic1GetBool aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetBool(THandle aProvider, CallbackTestBasic1GetBool aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionGetBool(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionSetMultiple(THandle aProvider, CallbackTestBasic1SetMultiple aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetMultiple(THandle aProvider, CallbackTestBasic1SetMultiple aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionSetMultiple(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionSetString(THandle aProvider, CallbackTestBasic1SetString aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetString(THandle aProvider, CallbackTestBasic1SetString aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionSetString(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionGetString(THandle aProvider, CallbackTestBasic1GetString aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetString(THandle aProvider, CallbackTestBasic1GetString aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionGetString(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionSetBinary(THandle aProvider, CallbackTestBasic1SetBinary aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetBinary(THandle aProvider, CallbackTestBasic1SetBinary aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionSetBinary(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionGetBinary(THandle aProvider, CallbackTestBasic1GetBinary aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetBinary(THandle aProvider, CallbackTestBasic1GetBinary aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionGetBinary(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionToggleBool(THandle aProvider, CallbackTestBasic1ToggleBool aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionToggleBool(THandle aProvider, CallbackTestBasic1ToggleBool aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionToggleBool(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionWriteFile(THandle aProvider, CallbackTestBasic1WriteFile aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionWriteFile(THandle aProvider, CallbackTestBasic1WriteFile aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionWriteFile(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestBasic1EnableActionShutdown(THandle aProvider, CallbackTestBasic1Shutdown aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionShutdown(THandle aProvider, CallbackTestBasic1Shutdown aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->EnableActionShutdown(aCallback, aPtr);
 }
 
-int32_t DvProviderOpenhomeOrgTestBasic1SetPropertyVarUint(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarUint(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->SetPropertyVarUint(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderOpenhomeOrgTestBasic1GetPropertyVarUint(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarUint(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->GetPropertyVarUint(val);
     *aValue = val;
 }
 
-int32_t DvProviderOpenhomeOrgTestBasic1SetPropertyVarInt(THandle aProvider, int32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarInt(THandle aProvider, int32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->SetPropertyVarInt(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderOpenhomeOrgTestBasic1GetPropertyVarInt(THandle aProvider, int32_t* aValue)
+void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarInt(THandle aProvider, int32_t* aValue)
 {
     int32_t val;
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->GetPropertyVarInt(val);
     *aValue = val;
 }
 
-int32_t DvProviderOpenhomeOrgTestBasic1SetPropertyVarBool(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarBool(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->SetPropertyVarBool((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderOpenhomeOrgTestBasic1GetPropertyVarBool(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarBool(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->GetPropertyVarBool(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderOpenhomeOrgTestBasic1SetPropertyVarStr(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarStr(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->SetPropertyVarStr(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderOpenhomeOrgTestBasic1GetPropertyVarStr(THandle aProvider, char** aValue)
+void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarStr(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->GetPropertyVarStr(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderOpenhomeOrgTestBasic1SetPropertyVarBin(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
+int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarBin(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
 {
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
@@ -874,7 +874,7 @@ int32_t DvProviderOpenhomeOrgTestBasic1SetPropertyVarBin(THandle aProvider, cons
     return 0;
 }
 
-void DvProviderOpenhomeOrgTestBasic1GetPropertyVarBin(THandle aProvider, char** aValue, uint32_t* aValueLen)
+void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarBin(THandle aProvider, char** aValue, uint32_t* aValueLen)
 {
     Brh buf;
     reinterpret_cast<DvProviderOpenhomeOrgTestBasic1C*>(aProvider)->GetPropertyVarBin(buf);

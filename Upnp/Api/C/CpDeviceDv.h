@@ -22,7 +22,7 @@ extern "C" {
  *
  * @return  Device handle
  */
-DllExport CpDeviceC CpDeviceDvCreate(DvDeviceC aDevice);
+DllExport CpDeviceC STDCALL CpDeviceDvCreate(DvDeviceC aDevice);
 
 /* @} */
 

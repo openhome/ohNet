@@ -1346,209 +1346,209 @@ void DvProviderUpnpOrgRenderingControl2C::DoSetStateVariables(IDviInvocation& aI
 
 
 
-THandle DvProviderUpnpOrgRenderingControl2Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderUpnpOrgRenderingControl2Create(DvDeviceC aDevice)
 {
 	return new DvProviderUpnpOrgRenderingControl2C(aDevice);
 }
 
-void DvProviderUpnpOrgRenderingControl2Destroy(THandle aProvider)
+void STDCALL DvProviderUpnpOrgRenderingControl2Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionListPresets(THandle aProvider, CallbackRenderingControl2ListPresets aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionListPresets(THandle aProvider, CallbackRenderingControl2ListPresets aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionListPresets(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSelectPreset(THandle aProvider, CallbackRenderingControl2SelectPreset aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSelectPreset(THandle aProvider, CallbackRenderingControl2SelectPreset aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSelectPreset(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetBrightness(THandle aProvider, CallbackRenderingControl2GetBrightness aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetBrightness(THandle aProvider, CallbackRenderingControl2GetBrightness aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetBrightness(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetBrightness(THandle aProvider, CallbackRenderingControl2SetBrightness aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetBrightness(THandle aProvider, CallbackRenderingControl2SetBrightness aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetBrightness(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetContrast(THandle aProvider, CallbackRenderingControl2GetContrast aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetContrast(THandle aProvider, CallbackRenderingControl2GetContrast aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetContrast(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetContrast(THandle aProvider, CallbackRenderingControl2SetContrast aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetContrast(THandle aProvider, CallbackRenderingControl2SetContrast aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetContrast(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetSharpness(THandle aProvider, CallbackRenderingControl2GetSharpness aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetSharpness(THandle aProvider, CallbackRenderingControl2GetSharpness aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetSharpness(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetSharpness(THandle aProvider, CallbackRenderingControl2SetSharpness aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetSharpness(THandle aProvider, CallbackRenderingControl2SetSharpness aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetSharpness(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetRedVideoGain(THandle aProvider, CallbackRenderingControl2GetRedVideoGain aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetRedVideoGain(THandle aProvider, CallbackRenderingControl2GetRedVideoGain aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetRedVideoGain(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetRedVideoGain(THandle aProvider, CallbackRenderingControl2SetRedVideoGain aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetRedVideoGain(THandle aProvider, CallbackRenderingControl2SetRedVideoGain aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetRedVideoGain(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetGreenVideoGain(THandle aProvider, CallbackRenderingControl2GetGreenVideoGain aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetGreenVideoGain(THandle aProvider, CallbackRenderingControl2GetGreenVideoGain aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetGreenVideoGain(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetGreenVideoGain(THandle aProvider, CallbackRenderingControl2SetGreenVideoGain aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetGreenVideoGain(THandle aProvider, CallbackRenderingControl2SetGreenVideoGain aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetGreenVideoGain(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetBlueVideoGain(THandle aProvider, CallbackRenderingControl2GetBlueVideoGain aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetBlueVideoGain(THandle aProvider, CallbackRenderingControl2GetBlueVideoGain aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetBlueVideoGain(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetBlueVideoGain(THandle aProvider, CallbackRenderingControl2SetBlueVideoGain aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetBlueVideoGain(THandle aProvider, CallbackRenderingControl2SetBlueVideoGain aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetBlueVideoGain(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetRedVideoBlackLevel(THandle aProvider, CallbackRenderingControl2GetRedVideoBlackLevel aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetRedVideoBlackLevel(THandle aProvider, CallbackRenderingControl2GetRedVideoBlackLevel aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetRedVideoBlackLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetRedVideoBlackLevel(THandle aProvider, CallbackRenderingControl2SetRedVideoBlackLevel aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetRedVideoBlackLevel(THandle aProvider, CallbackRenderingControl2SetRedVideoBlackLevel aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetRedVideoBlackLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetGreenVideoBlackLevel(THandle aProvider, CallbackRenderingControl2GetGreenVideoBlackLevel aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetGreenVideoBlackLevel(THandle aProvider, CallbackRenderingControl2GetGreenVideoBlackLevel aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetGreenVideoBlackLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetGreenVideoBlackLevel(THandle aProvider, CallbackRenderingControl2SetGreenVideoBlackLevel aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetGreenVideoBlackLevel(THandle aProvider, CallbackRenderingControl2SetGreenVideoBlackLevel aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetGreenVideoBlackLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetBlueVideoBlackLevel(THandle aProvider, CallbackRenderingControl2GetBlueVideoBlackLevel aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetBlueVideoBlackLevel(THandle aProvider, CallbackRenderingControl2GetBlueVideoBlackLevel aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetBlueVideoBlackLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetBlueVideoBlackLevel(THandle aProvider, CallbackRenderingControl2SetBlueVideoBlackLevel aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetBlueVideoBlackLevel(THandle aProvider, CallbackRenderingControl2SetBlueVideoBlackLevel aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetBlueVideoBlackLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetColorTemperature(THandle aProvider, CallbackRenderingControl2GetColorTemperature aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetColorTemperature(THandle aProvider, CallbackRenderingControl2GetColorTemperature aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetColorTemperature(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetColorTemperature(THandle aProvider, CallbackRenderingControl2SetColorTemperature aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetColorTemperature(THandle aProvider, CallbackRenderingControl2SetColorTemperature aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetColorTemperature(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetHorizontalKeystone(THandle aProvider, CallbackRenderingControl2GetHorizontalKeystone aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetHorizontalKeystone(THandle aProvider, CallbackRenderingControl2GetHorizontalKeystone aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetHorizontalKeystone(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetHorizontalKeystone(THandle aProvider, CallbackRenderingControl2SetHorizontalKeystone aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetHorizontalKeystone(THandle aProvider, CallbackRenderingControl2SetHorizontalKeystone aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetHorizontalKeystone(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetVerticalKeystone(THandle aProvider, CallbackRenderingControl2GetVerticalKeystone aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetVerticalKeystone(THandle aProvider, CallbackRenderingControl2GetVerticalKeystone aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetVerticalKeystone(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetVerticalKeystone(THandle aProvider, CallbackRenderingControl2SetVerticalKeystone aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetVerticalKeystone(THandle aProvider, CallbackRenderingControl2SetVerticalKeystone aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetVerticalKeystone(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetMute(THandle aProvider, CallbackRenderingControl2GetMute aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetMute(THandle aProvider, CallbackRenderingControl2GetMute aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetMute(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetMute(THandle aProvider, CallbackRenderingControl2SetMute aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetMute(THandle aProvider, CallbackRenderingControl2SetMute aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetMute(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetVolume(THandle aProvider, CallbackRenderingControl2GetVolume aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetVolume(THandle aProvider, CallbackRenderingControl2GetVolume aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetVolume(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetVolume(THandle aProvider, CallbackRenderingControl2SetVolume aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetVolume(THandle aProvider, CallbackRenderingControl2SetVolume aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetVolume(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetVolumeDB(THandle aProvider, CallbackRenderingControl2GetVolumeDB aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetVolumeDB(THandle aProvider, CallbackRenderingControl2GetVolumeDB aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetVolumeDB(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetVolumeDB(THandle aProvider, CallbackRenderingControl2SetVolumeDB aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetVolumeDB(THandle aProvider, CallbackRenderingControl2SetVolumeDB aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetVolumeDB(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetVolumeDBRange(THandle aProvider, CallbackRenderingControl2GetVolumeDBRange aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetVolumeDBRange(THandle aProvider, CallbackRenderingControl2GetVolumeDBRange aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetVolumeDBRange(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetLoudness(THandle aProvider, CallbackRenderingControl2GetLoudness aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetLoudness(THandle aProvider, CallbackRenderingControl2GetLoudness aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetLoudness(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetLoudness(THandle aProvider, CallbackRenderingControl2SetLoudness aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetLoudness(THandle aProvider, CallbackRenderingControl2SetLoudness aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetLoudness(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionGetStateVariables(THandle aProvider, CallbackRenderingControl2GetStateVariables aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionGetStateVariables(THandle aProvider, CallbackRenderingControl2GetStateVariables aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionGetStateVariables(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl2EnableActionSetStateVariables(THandle aProvider, CallbackRenderingControl2SetStateVariables aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgRenderingControl2EnableActionSetStateVariables(THandle aProvider, CallbackRenderingControl2SetStateVariables aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->EnableActionSetStateVariables(aCallback, aPtr);
 }
 
-int32_t DvProviderUpnpOrgRenderingControl2SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderUpnpOrgRenderingControl2SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->SetPropertyLastChange(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderUpnpOrgRenderingControl2GetPropertyLastChange(THandle aProvider, char** aValue)
+void STDCALL DvProviderUpnpOrgRenderingControl2GetPropertyLastChange(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderUpnpOrgRenderingControl2C*>(aProvider)->GetPropertyLastChange(buf);

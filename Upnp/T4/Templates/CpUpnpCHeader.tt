@@ -79,7 +79,7 @@ extern "C" {
  *
  * @return  Handle which should be used with all other functions in this header
  */
-DllExport THandle <#=className#>Create(CpDeviceC aDevice);
+DllExport THandle STDCALL <#=className#>Create(CpDeviceC aDevice);
 /**
  * Destructor.
  * If any asynchronous method is in progress, this will block until they complete.
@@ -89,7 +89,7 @@ DllExport THandle <#=className#>Create(CpDeviceC aDevice);
  *
  * @param[in]  aHandle   Handle returned by <#=className#>Create
  */
-DllExport void <#=className#>Destroy(THandle aHandle);
+DllExport void STDCALL <#=className#>Destroy(THandle aHandle);
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
@@ -115,7 +115,7 @@ DllExport void <#=className#>Destroy(THandle aHandle);
 <#          } #>
 <#      } #>
  */
-DllExport void <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>);
+DllExport void STDCALL <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -135,7 +135,7 @@ DllExport void <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>);
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InStringTrailingComma(a)#>OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InStringTrailingComma(a)#>OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -154,7 +154,7 @@ DllExport void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InStringTraili
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=OutputArgStringPrefix("OhNetHandleAsync aAsync", a)#>);
+DllExport int32_t STDCALL <#=className#>End<#=a.name#>(THandle aHandle, <#=OutputArgStringPrefix("OhNetHandleAsync aAsync", a)#>);
 <#  } #>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
@@ -168,7 +168,7 @@ DllExport int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=OutputArgStri
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 <#  } #>
 
 <#  foreach (Variable s in u.evented) #>
@@ -185,12 +185,12 @@ DllExport void <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, OhNe
 <#      { #>
  * @param[out] aLen
  */
-DllExport void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>, uint32_t* aLen);
+DllExport void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>, uint32_t* aLen);
 <#      } #>
 <#      else #>
 <#      { #>
  */
-DllExport void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>);
+DllExport void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>);
 <#      } #>
 <#  } #>
 

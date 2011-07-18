@@ -27,7 +27,7 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackSwitchPower1SetTarget)(void* aPtr, uint32_t aVersion, uint32_t anewTargetValue);
+typedef int32_t (STDCALL *CallbackSwitchPower1SetTarget)(void* aPtr, uint32_t aVersion, uint32_t anewTargetValue);
 /**
  * Callback which runs when the GetTarget action is invoked
  *
@@ -37,7 +37,7 @@ typedef int32_t (*CallbackSwitchPower1SetTarget)(void* aPtr, uint32_t aVersion, 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackSwitchPower1GetTarget)(void* aPtr, uint32_t aVersion, uint32_t* aRetTargetValue);
+typedef int32_t (STDCALL *CallbackSwitchPower1GetTarget)(void* aPtr, uint32_t aVersion, uint32_t* aRetTargetValue);
 /**
  * Callback which runs when the GetStatus action is invoked
  *
@@ -47,7 +47,7 @@ typedef int32_t (*CallbackSwitchPower1GetTarget)(void* aPtr, uint32_t aVersion, 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackSwitchPower1GetStatus)(void* aPtr, uint32_t aVersion, uint32_t* aResultStatus);
+typedef int32_t (STDCALL *CallbackSwitchPower1GetStatus)(void* aPtr, uint32_t aVersion, uint32_t* aResultStatus);
 
 /**
  * Provider constructor
@@ -56,14 +56,14 @@ typedef int32_t (*CallbackSwitchPower1GetStatus)(void* aPtr, uint32_t aVersion, 
  *
  * @return  Handle to this provider
  */
-DllExport THandle DvProviderUpnpOrgSwitchPower1Create(DvDeviceC aDevice);
+DllExport THandle STDCALL DvProviderUpnpOrgSwitchPower1Create(DvDeviceC aDevice);
 
 /**
  * Provider destructor
  *
  * @param[in] aProvider  Handle returned by DvProviderUpnpOrgSwitchPower1Create
  */
-DllExport void DvProviderUpnpOrgSwitchPower1Destroy(THandle aProvider);
+DllExport void STDCALL DvProviderUpnpOrgSwitchPower1Destroy(THandle aProvider);
 
 /**
  * Register a callback for the action SetTarget
@@ -75,7 +75,7 @@ DllExport void DvProviderUpnpOrgSwitchPower1Destroy(THandle aProvider);
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgSwitchPower1EnableActionSetTarget(THandle aProvider, CallbackSwitchPower1SetTarget aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgSwitchPower1EnableActionSetTarget(THandle aProvider, CallbackSwitchPower1SetTarget aCallback, void* aPtr);
 /**
  * Register a callback for the action GetTarget
  *
@@ -86,7 +86,7 @@ DllExport void DvProviderUpnpOrgSwitchPower1EnableActionSetTarget(THandle aProvi
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgSwitchPower1EnableActionGetTarget(THandle aProvider, CallbackSwitchPower1GetTarget aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgSwitchPower1EnableActionGetTarget(THandle aProvider, CallbackSwitchPower1GetTarget aCallback, void* aPtr);
 /**
  * Register a callback for the action GetStatus
  *
@@ -97,7 +97,7 @@ DllExport void DvProviderUpnpOrgSwitchPower1EnableActionGetTarget(THandle aProvi
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(THandle aProvider, CallbackSwitchPower1GetStatus aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(THandle aProvider, CallbackSwitchPower1GetStatus aCallback, void* aPtr);
 
 /**
  * Set the value of the Status property
@@ -109,14 +109,14 @@ DllExport void DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(THandle aProvi
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderUpnpOrgSwitchPower1SetPropertyStatus(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderUpnpOrgSwitchPower1SetPropertyStatus(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Status property
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgSwitchPower1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderUpnpOrgSwitchPower1GetPropertyStatus(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderUpnpOrgSwitchPower1GetPropertyStatus(THandle aProvider, uint32_t* aValue);
 
 /* @} */
 

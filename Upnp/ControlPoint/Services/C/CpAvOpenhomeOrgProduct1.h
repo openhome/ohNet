@@ -30,7 +30,7 @@ extern "C" {
  *
  * @return  Handle which should be used with all other functions in this header
  */
-DllExport THandle CpProxyAvOpenhomeOrgProduct1Create(CpDeviceC aDevice);
+DllExport THandle STDCALL CpProxyAvOpenhomeOrgProduct1Create(CpDeviceC aDevice);
 /**
  * Destructor.
  * If any asynchronous method is in progress, this will block until they complete.
@@ -40,7 +40,7 @@ DllExport THandle CpProxyAvOpenhomeOrgProduct1Create(CpDeviceC aDevice);
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1Destroy(THandle aHandle);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1Destroy(THandle aHandle);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -52,7 +52,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1Destroy(THandle aHandle);
  * @param[out] aUrl
  * @param[out] aImageUri
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SyncManufacturer(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncManufacturer(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -64,7 +64,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SyncManufacturer(THandle aHandle, cha
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1BeginManufacturer(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1BeginManufacturer(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -79,7 +79,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1BeginManufacturer(THandle aHandle, Oh
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndManufacturer(THandle aHandle, OhNetHandleAsync aAsync, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndManufacturer(THandle aHandle, OhNetHandleAsync aAsync, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -91,7 +91,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndManufacturer(THandle aHandle, O
  * @param[out] aUrl
  * @param[out] aImageUri
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SyncModel(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncModel(THandle aHandle, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -103,7 +103,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SyncModel(THandle aHandle, char** aNa
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1BeginModel(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1BeginModel(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -118,7 +118,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1BeginModel(THandle aHandle, OhNetCall
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndModel(THandle aHandle, OhNetHandleAsync aAsync, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndModel(THandle aHandle, OhNetHandleAsync aAsync, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -131,7 +131,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndModel(THandle aHandle, OhNetHan
  * @param[out] aUrl
  * @param[out] aImageUri
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SyncProduct(THandle aHandle, char** aRoom, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncProduct(THandle aHandle, char** aRoom, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -143,7 +143,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SyncProduct(THandle aHandle, char** a
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1BeginProduct(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1BeginProduct(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -159,7 +159,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1BeginProduct(THandle aHandle, OhNetCa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndProduct(THandle aHandle, OhNetHandleAsync aAsync, char** aRoom, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndProduct(THandle aHandle, OhNetHandleAsync aAsync, char** aRoom, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -168,7 +168,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndProduct(THandle aHandle, OhNetH
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SyncStandby(THandle aHandle, uint32_t* aValue);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncStandby(THandle aHandle, uint32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -180,7 +180,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SyncStandby(THandle aHandle, uint32_t
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1BeginStandby(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1BeginStandby(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -192,7 +192,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1BeginStandby(THandle aHandle, OhNetCa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndStandby(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndStandby(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -201,139 +201,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndStandby(THandle aHandle, OhNetH
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[in]  aValue
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SyncSetStandby(THandle aHandle, uint32_t aValue);
-/**
- * Invoke the action asynchronously.
- * Returns immediately and will run the client-specified callback when the action
- * later completes.  Any output arguments can then be retrieved by calling
- * EndGetProtocolInfo().
- *
- * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
- * @param[in]  aValue
- * @param[in]  aCallback Callback to run when the action completes.
- *                       This is guaranteed to be run but may indicate an error
- * @param[in]  aPtr      Data to be passed to the callback
- */
-DllExport void CpProxyAvOpenhomeOrgProduct1BeginSetStandby(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
-/**
- * Retrieve the output arguments from an asynchronously invoked action.
- * This may only be called from the callback set in the above Begin function.
- *
- * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
- * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
- *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
- *          arguments is not guaranteed in the case of failure
- */
-DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndSetStandby(THandle aHandle, OhNetHandleAsync aAsync);
-
-/**
- * Invoke the action synchronously.  Blocks until the action has been processed
- * on the device and sets any output arguments.
- *
- * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
- * @param[out] aValue
- */
-DllExport void CpProxyAvOpenhomeOrgProduct1SyncSourceCount(THandle aHandle, uint32_t* aValue);
-/**
- * Invoke the action asynchronously.
- * Returns immediately and will run the client-specified callback when the action
- * later completes.  Any output arguments can then be retrieved by calling
- * EndGetProtocolInfo().
- *
- * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
- * @param[in]  aCallback Callback to run when the action completes.
- *                       This is guaranteed to be run but may indicate an error
- * @param[in]  aPtr      Data to be passed to the callback
- */
-DllExport void CpProxyAvOpenhomeOrgProduct1BeginSourceCount(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
-/**
- * Retrieve the output arguments from an asynchronously invoked action.
- * This may only be called from the callback set in the above Begin function.
- *
- * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
- * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
- * @param[out] aValue
- *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
- *          arguments is not guaranteed in the case of failure
- */
-DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndSourceCount(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
-
-/**
- * Invoke the action synchronously.  Blocks until the action has been processed
- * on the device and sets any output arguments.
- *
- * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
- * @param[out] aValue
- */
-DllExport void CpProxyAvOpenhomeOrgProduct1SyncSourceXml(THandle aHandle, char** aValue);
-/**
- * Invoke the action asynchronously.
- * Returns immediately and will run the client-specified callback when the action
- * later completes.  Any output arguments can then be retrieved by calling
- * EndGetProtocolInfo().
- *
- * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
- * @param[in]  aCallback Callback to run when the action completes.
- *                       This is guaranteed to be run but may indicate an error
- * @param[in]  aPtr      Data to be passed to the callback
- */
-DllExport void CpProxyAvOpenhomeOrgProduct1BeginSourceXml(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
-/**
- * Retrieve the output arguments from an asynchronously invoked action.
- * This may only be called from the callback set in the above Begin function.
- *
- * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
- * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
- * @param[out] aValue
- *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
- *          arguments is not guaranteed in the case of failure
- */
-DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndSourceXml(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
-
-/**
- * Invoke the action synchronously.  Blocks until the action has been processed
- * on the device and sets any output arguments.
- *
- * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
- * @param[out] aValue
- */
-DllExport void CpProxyAvOpenhomeOrgProduct1SyncSourceIndex(THandle aHandle, uint32_t* aValue);
-/**
- * Invoke the action asynchronously.
- * Returns immediately and will run the client-specified callback when the action
- * later completes.  Any output arguments can then be retrieved by calling
- * EndGetProtocolInfo().
- *
- * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
- * @param[in]  aCallback Callback to run when the action completes.
- *                       This is guaranteed to be run but may indicate an error
- * @param[in]  aPtr      Data to be passed to the callback
- */
-DllExport void CpProxyAvOpenhomeOrgProduct1BeginSourceIndex(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
-/**
- * Retrieve the output arguments from an asynchronously invoked action.
- * This may only be called from the callback set in the above Begin function.
- *
- * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
- * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
- * @param[out] aValue
- *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
- *          arguments is not guaranteed in the case of failure
- */
-DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndSourceIndex(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
-
-/**
- * Invoke the action synchronously.  Blocks until the action has been processed
- * on the device and sets any output arguments.
- *
- * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
- * @param[in]  aValue
- */
-DllExport void CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndex(THandle aHandle, uint32_t aValue);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetStandby(THandle aHandle, uint32_t aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -346,7 +214,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndex(THandle aHandle, u
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1BeginSetSourceIndex(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSetStandby(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -357,7 +225,106 @@ DllExport void CpProxyAvOpenhomeOrgProduct1BeginSetSourceIndex(THandle aHandle, 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndSetSourceIndex(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSetStandby(THandle aHandle, OhNetHandleAsync aAsync);
+
+/**
+ * Invoke the action synchronously.  Blocks until the action has been processed
+ * on the device and sets any output arguments.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
+ * @param[out] aValue
+ */
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceCount(THandle aHandle, uint32_t* aValue);
+/**
+ * Invoke the action asynchronously.
+ * Returns immediately and will run the client-specified callback when the action
+ * later completes.  Any output arguments can then be retrieved by calling
+ * EndGetProtocolInfo().
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
+ * @param[in]  aCallback Callback to run when the action completes.
+ *                       This is guaranteed to be run but may indicate an error
+ * @param[in]  aPtr      Data to be passed to the callback
+ */
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSourceCount(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+/**
+ * Retrieve the output arguments from an asynchronously invoked action.
+ * This may only be called from the callback set in the above Begin function.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
+ * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
+ * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
+ */
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSourceCount(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
+
+/**
+ * Invoke the action synchronously.  Blocks until the action has been processed
+ * on the device and sets any output arguments.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
+ * @param[out] aValue
+ */
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXml(THandle aHandle, char** aValue);
+/**
+ * Invoke the action asynchronously.
+ * Returns immediately and will run the client-specified callback when the action
+ * later completes.  Any output arguments can then be retrieved by calling
+ * EndGetProtocolInfo().
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
+ * @param[in]  aCallback Callback to run when the action completes.
+ *                       This is guaranteed to be run but may indicate an error
+ * @param[in]  aPtr      Data to be passed to the callback
+ */
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSourceXml(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+/**
+ * Retrieve the output arguments from an asynchronously invoked action.
+ * This may only be called from the callback set in the above Begin function.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
+ * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
+ * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
+ */
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSourceXml(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
+
+/**
+ * Invoke the action synchronously.  Blocks until the action has been processed
+ * on the device and sets any output arguments.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
+ * @param[out] aValue
+ */
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceIndex(THandle aHandle, uint32_t* aValue);
+/**
+ * Invoke the action asynchronously.
+ * Returns immediately and will run the client-specified callback when the action
+ * later completes.  Any output arguments can then be retrieved by calling
+ * EndGetProtocolInfo().
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
+ * @param[in]  aCallback Callback to run when the action completes.
+ *                       This is guaranteed to be run but may indicate an error
+ * @param[in]  aPtr      Data to be passed to the callback
+ */
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSourceIndex(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+/**
+ * Retrieve the output arguments from an asynchronously invoked action.
+ * This may only be called from the callback set in the above Begin function.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
+ * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
+ * @param[out] aValue
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
+ */
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSourceIndex(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -366,7 +333,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndSetSourceIndex(THandle aHandle,
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[in]  aValue
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndexByName(THandle aHandle, const char* aValue);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndex(THandle aHandle, uint32_t aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -379,7 +346,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndexByName(THandle aHan
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1BeginSetSourceIndexByName(THandle aHandle, const char* aValue, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSetSourceIndex(THandle aHandle, uint32_t aValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -390,7 +357,40 @@ DllExport void CpProxyAvOpenhomeOrgProduct1BeginSetSourceIndexByName(THandle aHa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndSetSourceIndexByName(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSetSourceIndex(THandle aHandle, OhNetHandleAsync aAsync);
+
+/**
+ * Invoke the action synchronously.  Blocks until the action has been processed
+ * on the device and sets any output arguments.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
+ * @param[in]  aValue
+ */
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSetSourceIndexByName(THandle aHandle, const char* aValue);
+/**
+ * Invoke the action asynchronously.
+ * Returns immediately and will run the client-specified callback when the action
+ * later completes.  Any output arguments can then be retrieved by calling
+ * EndGetProtocolInfo().
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
+ * @param[in]  aValue
+ * @param[in]  aCallback Callback to run when the action completes.
+ *                       This is guaranteed to be run but may indicate an error
+ * @param[in]  aPtr      Data to be passed to the callback
+ */
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSetSourceIndexByName(THandle aHandle, const char* aValue, OhNetCallbackAsync aCallback, void* aPtr);
+/**
+ * Retrieve the output arguments from an asynchronously invoked action.
+ * This may only be called from the callback set in the above Begin function.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
+ * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
+ */
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSetSourceIndexByName(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -403,7 +403,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndSetSourceIndexByName(THandle aH
  * @param[out] aName
  * @param[out] aVisible
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SyncSource(THandle aHandle, uint32_t aIndex, char** aSystemName, char** aType, char** aName, uint32_t* aVisible);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSource(THandle aHandle, uint32_t aIndex, char** aSystemName, char** aType, char** aName, uint32_t* aVisible);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -416,7 +416,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SyncSource(THandle aHandle, uint32_t 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1BeginSource(THandle aHandle, uint32_t aIndex, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSource(THandle aHandle, uint32_t aIndex, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -431,7 +431,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1BeginSource(THandle aHandle, uint32_t
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndSource(THandle aHandle, OhNetHandleAsync aAsync, char** aSystemName, char** aType, char** aName, uint32_t* aVisible);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSource(THandle aHandle, OhNetHandleAsync aAsync, char** aSystemName, char** aType, char** aName, uint32_t* aVisible);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -440,7 +440,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndSource(THandle aHandle, OhNetHa
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SyncAttributes(THandle aHandle, char** aValue);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncAttributes(THandle aHandle, char** aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -452,7 +452,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SyncAttributes(THandle aHandle, char*
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1BeginAttributes(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1BeginAttributes(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -464,7 +464,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1BeginAttributes(THandle aHandle, OhNe
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndAttributes(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndAttributes(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -473,7 +473,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndAttributes(THandle aHandle, OhN
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aValue
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SyncSourceXmlChangeCount(THandle aHandle, uint32_t* aValue);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SyncSourceXmlChangeCount(THandle aHandle, uint32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -485,7 +485,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SyncSourceXmlChangeCount(THandle aHan
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1BeginSourceXmlChangeCount(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1BeginSourceXmlChangeCount(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -497,7 +497,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1BeginSourceXmlChangeCount(THandle aHa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndSourceXmlChangeCount(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgProduct1EndSourceXmlChangeCount(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 /**
  * Set a callback to be run when the ManufacturerName state variable changes.
  *
@@ -508,7 +508,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgProduct1EndSourceXmlChangeCount(THandle aH
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerNameChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerNameChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ManufacturerInfo state variable changes.
  *
@@ -519,7 +519,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerNameChanged(TH
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ManufacturerUrl state variable changes.
  *
@@ -530,7 +530,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerInfoChanged(TH
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerUrlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerUrlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ManufacturerImageUri state variable changes.
  *
@@ -541,7 +541,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerUrlChanged(THa
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerImageUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerImageUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ModelName state variable changes.
  *
@@ -552,7 +552,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyManufacturerImageUriChange
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyModelNameChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyModelNameChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ModelInfo state variable changes.
  *
@@ -563,7 +563,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyModelNameChanged(THandle a
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyModelInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyModelInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ModelUrl state variable changes.
  *
@@ -574,7 +574,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyModelInfoChanged(THandle a
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyModelUrlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyModelUrlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ModelImageUri state variable changes.
  *
@@ -585,7 +585,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyModelUrlChanged(THandle aH
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyModelImageUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyModelImageUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ProductRoom state variable changes.
  *
@@ -596,7 +596,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyModelImageUriChanged(THand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyProductRoomChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyProductRoomChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ProductName state variable changes.
  *
@@ -607,7 +607,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyProductRoomChanged(THandle
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyProductNameChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyProductNameChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ProductInfo state variable changes.
  *
@@ -618,7 +618,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyProductNameChanged(THandle
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyProductInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyProductInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ProductUrl state variable changes.
  *
@@ -629,7 +629,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyProductInfoChanged(THandle
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyProductUrlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyProductUrlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the ProductImageUri state variable changes.
  *
@@ -640,7 +640,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyProductUrlChanged(THandle 
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyProductImageUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyProductImageUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Standby state variable changes.
  *
@@ -651,7 +651,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyProductImageUriChanged(THa
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyStandbyChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyStandbyChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the SourceIndex state variable changes.
  *
@@ -662,7 +662,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyStandbyChanged(THandle aHa
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertySourceIndexChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertySourceIndexChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the SourceCount state variable changes.
  *
@@ -673,7 +673,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertySourceIndexChanged(THandle
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertySourceCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertySourceCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the SourceXml state variable changes.
  *
@@ -684,7 +684,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertySourceCountChanged(THandle
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertySourceXmlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertySourceXmlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Attributes state variable changes.
  *
@@ -695,7 +695,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertySourceXmlChanged(THandle a
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyAttributesChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1SetPropertyAttributesChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the ManufacturerName property.
@@ -706,7 +706,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1SetPropertyAttributesChanged(THandle 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aManufacturerName
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerName(THandle aHandle, char** aManufacturerName);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerName(THandle aHandle, char** aManufacturerName);
 /**
  * Query the value of the ManufacturerInfo property.
  *
@@ -716,7 +716,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerName(THandle aHan
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aManufacturerInfo
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerInfo(THandle aHandle, char** aManufacturerInfo);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerInfo(THandle aHandle, char** aManufacturerInfo);
 /**
  * Query the value of the ManufacturerUrl property.
  *
@@ -726,7 +726,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerInfo(THandle aHan
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aManufacturerUrl
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerUrl(THandle aHandle, char** aManufacturerUrl);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerUrl(THandle aHandle, char** aManufacturerUrl);
 /**
  * Query the value of the ManufacturerImageUri property.
  *
@@ -736,7 +736,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerUrl(THandle aHand
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aManufacturerImageUri
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerImageUri(THandle aHandle, char** aManufacturerImageUri);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyManufacturerImageUri(THandle aHandle, char** aManufacturerImageUri);
 /**
  * Query the value of the ModelName property.
  *
@@ -746,7 +746,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyManufacturerImageUri(THandle 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aModelName
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelName(THandle aHandle, char** aModelName);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelName(THandle aHandle, char** aModelName);
 /**
  * Query the value of the ModelInfo property.
  *
@@ -756,7 +756,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelName(THandle aHandle, ch
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aModelInfo
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelInfo(THandle aHandle, char** aModelInfo);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelInfo(THandle aHandle, char** aModelInfo);
 /**
  * Query the value of the ModelUrl property.
  *
@@ -766,7 +766,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelInfo(THandle aHandle, ch
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aModelUrl
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelUrl(THandle aHandle, char** aModelUrl);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelUrl(THandle aHandle, char** aModelUrl);
 /**
  * Query the value of the ModelImageUri property.
  *
@@ -776,7 +776,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelUrl(THandle aHandle, cha
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aModelImageUri
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelImageUri(THandle aHandle, char** aModelImageUri);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyModelImageUri(THandle aHandle, char** aModelImageUri);
 /**
  * Query the value of the ProductRoom property.
  *
@@ -786,7 +786,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyModelImageUri(THandle aHandle
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductRoom
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductRoom(THandle aHandle, char** aProductRoom);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductRoom(THandle aHandle, char** aProductRoom);
 /**
  * Query the value of the ProductName property.
  *
@@ -796,7 +796,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductRoom(THandle aHandle, 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductName
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductName(THandle aHandle, char** aProductName);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductName(THandle aHandle, char** aProductName);
 /**
  * Query the value of the ProductInfo property.
  *
@@ -806,7 +806,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductName(THandle aHandle, 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductInfo
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductInfo(THandle aHandle, char** aProductInfo);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductInfo(THandle aHandle, char** aProductInfo);
 /**
  * Query the value of the ProductUrl property.
  *
@@ -816,7 +816,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductInfo(THandle aHandle, 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductUrl
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductUrl(THandle aHandle, char** aProductUrl);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductUrl(THandle aHandle, char** aProductUrl);
 /**
  * Query the value of the ProductImageUri property.
  *
@@ -826,7 +826,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductUrl(THandle aHandle, c
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aProductImageUri
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductImageUri(THandle aHandle, char** aProductImageUri);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyProductImageUri(THandle aHandle, char** aProductImageUri);
 /**
  * Query the value of the Standby property.
  *
@@ -836,7 +836,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyProductImageUri(THandle aHand
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aStandby
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyStandby(THandle aHandle, uint32_t* aStandby);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyStandby(THandle aHandle, uint32_t* aStandby);
 /**
  * Query the value of the SourceIndex property.
  *
@@ -846,7 +846,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertyStandby(THandle aHandle, uint
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aSourceIndex
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertySourceIndex(THandle aHandle, uint32_t* aSourceIndex);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceIndex(THandle aHandle, uint32_t* aSourceIndex);
 /**
  * Query the value of the SourceCount property.
  *
@@ -856,7 +856,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertySourceIndex(THandle aHandle, 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aSourceCount
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertySourceCount(THandle aHandle, uint32_t* aSourceCount);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceCount(THandle aHandle, uint32_t* aSourceCount);
 /**
  * Query the value of the SourceXml property.
  *
@@ -866,7 +866,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertySourceCount(THandle aHandle, 
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aSourceXml
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertySourceXml(THandle aHandle, char** aSourceXml);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertySourceXml(THandle aHandle, char** aSourceXml);
 /**
  * Query the value of the Attributes property.
  *
@@ -876,7 +876,7 @@ DllExport void CpProxyAvOpenhomeOrgProduct1PropertySourceXml(THandle aHandle, ch
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgProduct1Create
  * @param[out] aAttributes
  */
-DllExport void CpProxyAvOpenhomeOrgProduct1PropertyAttributes(THandle aHandle, char** aAttributes);
+DllExport void STDCALL CpProxyAvOpenhomeOrgProduct1PropertyAttributes(THandle aHandle, char** aAttributes);
 
 /* @} */
 

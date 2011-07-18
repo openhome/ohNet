@@ -30,7 +30,7 @@ extern "C" {
  *
  * @return  Handle which should be used with all other functions in this header
  */
-DllExport THandle CpProxyAvOpenhomeOrgTime1Create(CpDeviceC aDevice);
+DllExport THandle STDCALL CpProxyAvOpenhomeOrgTime1Create(CpDeviceC aDevice);
 /**
  * Destructor.
  * If any asynchronous method is in progress, this will block until they complete.
@@ -40,7 +40,7 @@ DllExport THandle CpProxyAvOpenhomeOrgTime1Create(CpDeviceC aDevice);
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgTime1Create
  */
-DllExport void CpProxyAvOpenhomeOrgTime1Destroy(THandle aHandle);
+DllExport void STDCALL CpProxyAvOpenhomeOrgTime1Destroy(THandle aHandle);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -51,7 +51,7 @@ DllExport void CpProxyAvOpenhomeOrgTime1Destroy(THandle aHandle);
  * @param[out] aDuration
  * @param[out] aSeconds
  */
-DllExport void CpProxyAvOpenhomeOrgTime1SyncTime(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds);
+DllExport void STDCALL CpProxyAvOpenhomeOrgTime1SyncTime(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -63,7 +63,7 @@ DllExport void CpProxyAvOpenhomeOrgTime1SyncTime(THandle aHandle, uint32_t* aTra
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgTime1BeginTime(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgTime1BeginTime(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -77,7 +77,7 @@ DllExport void CpProxyAvOpenhomeOrgTime1BeginTime(THandle aHandle, OhNetCallback
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgTime1EndTime(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgTime1EndTime(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds);
 /**
  * Set a callback to be run when the TrackCount state variable changes.
  *
@@ -88,7 +88,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgTime1EndTime(THandle aHandle, OhNetHandleA
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgTime1SetPropertyTrackCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgTime1SetPropertyTrackCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Duration state variable changes.
  *
@@ -99,7 +99,7 @@ DllExport void CpProxyAvOpenhomeOrgTime1SetPropertyTrackCountChanged(THandle aHa
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgTime1SetPropertyDurationChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgTime1SetPropertyDurationChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Seconds state variable changes.
  *
@@ -110,7 +110,7 @@ DllExport void CpProxyAvOpenhomeOrgTime1SetPropertyDurationChanged(THandle aHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgTime1SetPropertySecondsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgTime1SetPropertySecondsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the TrackCount property.
@@ -121,7 +121,7 @@ DllExport void CpProxyAvOpenhomeOrgTime1SetPropertySecondsChanged(THandle aHandl
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgTime1Create
  * @param[out] aTrackCount
  */
-DllExport void CpProxyAvOpenhomeOrgTime1PropertyTrackCount(THandle aHandle, uint32_t* aTrackCount);
+DllExport void STDCALL CpProxyAvOpenhomeOrgTime1PropertyTrackCount(THandle aHandle, uint32_t* aTrackCount);
 /**
  * Query the value of the Duration property.
  *
@@ -131,7 +131,7 @@ DllExport void CpProxyAvOpenhomeOrgTime1PropertyTrackCount(THandle aHandle, uint
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgTime1Create
  * @param[out] aDuration
  */
-DllExport void CpProxyAvOpenhomeOrgTime1PropertyDuration(THandle aHandle, uint32_t* aDuration);
+DllExport void STDCALL CpProxyAvOpenhomeOrgTime1PropertyDuration(THandle aHandle, uint32_t* aDuration);
 /**
  * Query the value of the Seconds property.
  *
@@ -141,7 +141,7 @@ DllExport void CpProxyAvOpenhomeOrgTime1PropertyDuration(THandle aHandle, uint32
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgTime1Create
  * @param[out] aSeconds
  */
-DllExport void CpProxyAvOpenhomeOrgTime1PropertySeconds(THandle aHandle, uint32_t* aSeconds);
+DllExport void STDCALL CpProxyAvOpenhomeOrgTime1PropertySeconds(THandle aHandle, uint32_t* aSeconds);
 
 /* @} */
 

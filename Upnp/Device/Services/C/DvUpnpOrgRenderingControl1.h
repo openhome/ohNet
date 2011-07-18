@@ -28,7 +28,7 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1ListPresets)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aCurrentPresetNameList);
+typedef int32_t (STDCALL *CallbackRenderingControl1ListPresets)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aCurrentPresetNameList);
 /**
  * Callback which runs when the SelectPreset action is invoked
  *
@@ -39,7 +39,7 @@ typedef int32_t (*CallbackRenderingControl1ListPresets)(void* aPtr, uint32_t aVe
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SelectPreset)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aPresetName);
+typedef int32_t (STDCALL *CallbackRenderingControl1SelectPreset)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aPresetName);
 /**
  * Callback which runs when the GetBrightness action is invoked
  *
@@ -50,7 +50,7 @@ typedef int32_t (*CallbackRenderingControl1SelectPreset)(void* aPtr, uint32_t aV
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetBrightness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentBrightness);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetBrightness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentBrightness);
 /**
  * Callback which runs when the SetBrightness action is invoked
  *
@@ -61,7 +61,7 @@ typedef int32_t (*CallbackRenderingControl1GetBrightness)(void* aPtr, uint32_t a
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetBrightness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredBrightness);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetBrightness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredBrightness);
 /**
  * Callback which runs when the GetContrast action is invoked
  *
@@ -72,7 +72,7 @@ typedef int32_t (*CallbackRenderingControl1SetBrightness)(void* aPtr, uint32_t a
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetContrast)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentContrast);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetContrast)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentContrast);
 /**
  * Callback which runs when the SetContrast action is invoked
  *
@@ -83,7 +83,7 @@ typedef int32_t (*CallbackRenderingControl1GetContrast)(void* aPtr, uint32_t aVe
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetContrast)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredContrast);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetContrast)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredContrast);
 /**
  * Callback which runs when the GetSharpness action is invoked
  *
@@ -94,7 +94,7 @@ typedef int32_t (*CallbackRenderingControl1SetContrast)(void* aPtr, uint32_t aVe
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetSharpness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentSharpness);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetSharpness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentSharpness);
 /**
  * Callback which runs when the SetSharpness action is invoked
  *
@@ -105,7 +105,7 @@ typedef int32_t (*CallbackRenderingControl1GetSharpness)(void* aPtr, uint32_t aV
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetSharpness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredSharpness);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetSharpness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredSharpness);
 /**
  * Callback which runs when the GetRedVideoGain action is invoked
  *
@@ -116,7 +116,7 @@ typedef int32_t (*CallbackRenderingControl1SetSharpness)(void* aPtr, uint32_t aV
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetRedVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentRedVideoGain);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetRedVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentRedVideoGain);
 /**
  * Callback which runs when the SetRedVideoGain action is invoked
  *
@@ -127,7 +127,7 @@ typedef int32_t (*CallbackRenderingControl1GetRedVideoGain)(void* aPtr, uint32_t
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetRedVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetRedVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain);
 /**
  * Callback which runs when the GetGreenVideoGain action is invoked
  *
@@ -138,7 +138,7 @@ typedef int32_t (*CallbackRenderingControl1SetRedVideoGain)(void* aPtr, uint32_t
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetGreenVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoGain);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetGreenVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoGain);
 /**
  * Callback which runs when the SetGreenVideoGain action is invoked
  *
@@ -149,7 +149,7 @@ typedef int32_t (*CallbackRenderingControl1GetGreenVideoGain)(void* aPtr, uint32
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetGreenVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetGreenVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain);
 /**
  * Callback which runs when the GetBlueVideoGain action is invoked
  *
@@ -160,7 +160,7 @@ typedef int32_t (*CallbackRenderingControl1SetGreenVideoGain)(void* aPtr, uint32
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetBlueVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoGain);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetBlueVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoGain);
 /**
  * Callback which runs when the SetBlueVideoGain action is invoked
  *
@@ -171,7 +171,7 @@ typedef int32_t (*CallbackRenderingControl1GetBlueVideoGain)(void* aPtr, uint32_
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetBlueVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetBlueVideoGain)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain);
 /**
  * Callback which runs when the GetRedVideoBlackLevel action is invoked
  *
@@ -182,7 +182,7 @@ typedef int32_t (*CallbackRenderingControl1SetBlueVideoGain)(void* aPtr, uint32_
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetRedVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentRedVideoBlackLevel);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetRedVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentRedVideoBlackLevel);
 /**
  * Callback which runs when the SetRedVideoBlackLevel action is invoked
  *
@@ -193,7 +193,7 @@ typedef int32_t (*CallbackRenderingControl1GetRedVideoBlackLevel)(void* aPtr, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetRedVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetRedVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel);
 /**
  * Callback which runs when the GetGreenVideoBlackLevel action is invoked
  *
@@ -204,7 +204,7 @@ typedef int32_t (*CallbackRenderingControl1SetRedVideoBlackLevel)(void* aPtr, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetGreenVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoBlackLevel);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetGreenVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoBlackLevel);
 /**
  * Callback which runs when the SetGreenVideoBlackLevel action is invoked
  *
@@ -215,7 +215,7 @@ typedef int32_t (*CallbackRenderingControl1GetGreenVideoBlackLevel)(void* aPtr, 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetGreenVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetGreenVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel);
 /**
  * Callback which runs when the GetBlueVideoBlackLevel action is invoked
  *
@@ -226,7 +226,7 @@ typedef int32_t (*CallbackRenderingControl1SetGreenVideoBlackLevel)(void* aPtr, 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetBlueVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoBlackLevel);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetBlueVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoBlackLevel);
 /**
  * Callback which runs when the SetBlueVideoBlackLevel action is invoked
  *
@@ -237,7 +237,7 @@ typedef int32_t (*CallbackRenderingControl1GetBlueVideoBlackLevel)(void* aPtr, u
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetBlueVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetBlueVideoBlackLevel)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel);
 /**
  * Callback which runs when the GetColorTemperature action is invoked
  *
@@ -248,7 +248,7 @@ typedef int32_t (*CallbackRenderingControl1SetBlueVideoBlackLevel)(void* aPtr, u
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetColorTemperature)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentColorTemperature);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetColorTemperature)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aCurrentColorTemperature);
 /**
  * Callback which runs when the SetColorTemperature action is invoked
  *
@@ -259,7 +259,7 @@ typedef int32_t (*CallbackRenderingControl1GetColorTemperature)(void* aPtr, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetColorTemperature)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredColorTemperature);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetColorTemperature)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t aDesiredColorTemperature);
 /**
  * Callback which runs when the GetHorizontalKeystone action is invoked
  *
@@ -270,7 +270,7 @@ typedef int32_t (*CallbackRenderingControl1SetColorTemperature)(void* aPtr, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetHorizontalKeystone)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, int32_t* aCurrentHorizontalKeystone);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetHorizontalKeystone)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, int32_t* aCurrentHorizontalKeystone);
 /**
  * Callback which runs when the SetHorizontalKeystone action is invoked
  *
@@ -281,7 +281,7 @@ typedef int32_t (*CallbackRenderingControl1GetHorizontalKeystone)(void* aPtr, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetHorizontalKeystone)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetHorizontalKeystone)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone);
 /**
  * Callback which runs when the GetVerticalKeystone action is invoked
  *
@@ -292,7 +292,7 @@ typedef int32_t (*CallbackRenderingControl1SetHorizontalKeystone)(void* aPtr, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetVerticalKeystone)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, int32_t* aCurrentVerticalKeystone);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetVerticalKeystone)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, int32_t* aCurrentVerticalKeystone);
 /**
  * Callback which runs when the SetVerticalKeystone action is invoked
  *
@@ -303,7 +303,7 @@ typedef int32_t (*CallbackRenderingControl1GetVerticalKeystone)(void* aPtr, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetVerticalKeystone)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetVerticalKeystone)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone);
 /**
  * Callback which runs when the GetMute action is invoked
  *
@@ -315,7 +315,7 @@ typedef int32_t (*CallbackRenderingControl1SetVerticalKeystone)(void* aPtr, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetMute)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentMute);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetMute)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentMute);
 /**
  * Callback which runs when the SetMute action is invoked
  *
@@ -327,7 +327,7 @@ typedef int32_t (*CallbackRenderingControl1GetMute)(void* aPtr, uint32_t aVersio
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetMute)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetMute)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute);
 /**
  * Callback which runs when the GetVolume action is invoked
  *
@@ -339,7 +339,7 @@ typedef int32_t (*CallbackRenderingControl1SetMute)(void* aPtr, uint32_t aVersio
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetVolume)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentVolume);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetVolume)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentVolume);
 /**
  * Callback which runs when the SetVolume action is invoked
  *
@@ -351,7 +351,7 @@ typedef int32_t (*CallbackRenderingControl1GetVolume)(void* aPtr, uint32_t aVers
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetVolume)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetVolume)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume);
 /**
  * Callback which runs when the GetVolumeDB action is invoked
  *
@@ -363,7 +363,7 @@ typedef int32_t (*CallbackRenderingControl1SetVolume)(void* aPtr, uint32_t aVers
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetVolumeDB)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, int32_t* aCurrentVolume);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetVolumeDB)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, int32_t* aCurrentVolume);
 /**
  * Callback which runs when the SetVolumeDB action is invoked
  *
@@ -375,7 +375,7 @@ typedef int32_t (*CallbackRenderingControl1GetVolumeDB)(void* aPtr, uint32_t aVe
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetVolumeDB)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetVolumeDB)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume);
 /**
  * Callback which runs when the GetVolumeDBRange action is invoked
  *
@@ -388,7 +388,7 @@ typedef int32_t (*CallbackRenderingControl1SetVolumeDB)(void* aPtr, uint32_t aVe
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetVolumeDBRange)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, int32_t* aMinValue, int32_t* aMaxValue);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetVolumeDBRange)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, int32_t* aMinValue, int32_t* aMaxValue);
 /**
  * Callback which runs when the GetLoudness action is invoked
  *
@@ -400,7 +400,7 @@ typedef int32_t (*CallbackRenderingControl1GetVolumeDBRange)(void* aPtr, uint32_
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1GetLoudness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentLoudness);
+typedef int32_t (STDCALL *CallbackRenderingControl1GetLoudness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentLoudness);
 /**
  * Callback which runs when the SetLoudness action is invoked
  *
@@ -412,7 +412,7 @@ typedef int32_t (*CallbackRenderingControl1GetLoudness)(void* aPtr, uint32_t aVe
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRenderingControl1SetLoudness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness);
+typedef int32_t (STDCALL *CallbackRenderingControl1SetLoudness)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness);
 
 /**
  * Provider constructor
@@ -421,14 +421,14 @@ typedef int32_t (*CallbackRenderingControl1SetLoudness)(void* aPtr, uint32_t aVe
  *
  * @return  Handle to this provider
  */
-DllExport THandle DvProviderUpnpOrgRenderingControl1Create(DvDeviceC aDevice);
+DllExport THandle STDCALL DvProviderUpnpOrgRenderingControl1Create(DvDeviceC aDevice);
 
 /**
  * Provider destructor
  *
  * @param[in] aProvider  Handle returned by DvProviderUpnpOrgRenderingControl1Create
  */
-DllExport void DvProviderUpnpOrgRenderingControl1Destroy(THandle aProvider);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1Destroy(THandle aProvider);
 
 /**
  * Register a callback for the action ListPresets
@@ -440,7 +440,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1Destroy(THandle aProvider);
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionListPresets(THandle aProvider, CallbackRenderingControl1ListPresets aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionListPresets(THandle aProvider, CallbackRenderingControl1ListPresets aCallback, void* aPtr);
 /**
  * Register a callback for the action SelectPreset
  *
@@ -451,7 +451,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionListPresets(THandle
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSelectPreset(THandle aProvider, CallbackRenderingControl1SelectPreset aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSelectPreset(THandle aProvider, CallbackRenderingControl1SelectPreset aCallback, void* aPtr);
 /**
  * Register a callback for the action GetBrightness
  *
@@ -462,7 +462,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSelectPreset(THandl
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetBrightness(THandle aProvider, CallbackRenderingControl1GetBrightness aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetBrightness(THandle aProvider, CallbackRenderingControl1GetBrightness aCallback, void* aPtr);
 /**
  * Register a callback for the action SetBrightness
  *
@@ -473,7 +473,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetBrightness(THand
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetBrightness(THandle aProvider, CallbackRenderingControl1SetBrightness aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetBrightness(THandle aProvider, CallbackRenderingControl1SetBrightness aCallback, void* aPtr);
 /**
  * Register a callback for the action GetContrast
  *
@@ -484,7 +484,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetBrightness(THand
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetContrast(THandle aProvider, CallbackRenderingControl1GetContrast aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetContrast(THandle aProvider, CallbackRenderingControl1GetContrast aCallback, void* aPtr);
 /**
  * Register a callback for the action SetContrast
  *
@@ -495,7 +495,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetContrast(THandle
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetContrast(THandle aProvider, CallbackRenderingControl1SetContrast aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetContrast(THandle aProvider, CallbackRenderingControl1SetContrast aCallback, void* aPtr);
 /**
  * Register a callback for the action GetSharpness
  *
@@ -506,7 +506,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetContrast(THandle
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetSharpness(THandle aProvider, CallbackRenderingControl1GetSharpness aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetSharpness(THandle aProvider, CallbackRenderingControl1GetSharpness aCallback, void* aPtr);
 /**
  * Register a callback for the action SetSharpness
  *
@@ -517,7 +517,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetSharpness(THandl
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetSharpness(THandle aProvider, CallbackRenderingControl1SetSharpness aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetSharpness(THandle aProvider, CallbackRenderingControl1SetSharpness aCallback, void* aPtr);
 /**
  * Register a callback for the action GetRedVideoGain
  *
@@ -528,7 +528,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetSharpness(THandl
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoGain(THandle aProvider, CallbackRenderingControl1GetRedVideoGain aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoGain(THandle aProvider, CallbackRenderingControl1GetRedVideoGain aCallback, void* aPtr);
 /**
  * Register a callback for the action SetRedVideoGain
  *
@@ -539,7 +539,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoGain(THa
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoGain(THandle aProvider, CallbackRenderingControl1SetRedVideoGain aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoGain(THandle aProvider, CallbackRenderingControl1SetRedVideoGain aCallback, void* aPtr);
 /**
  * Register a callback for the action GetGreenVideoGain
  *
@@ -550,7 +550,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoGain(THa
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoGain(THandle aProvider, CallbackRenderingControl1GetGreenVideoGain aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoGain(THandle aProvider, CallbackRenderingControl1GetGreenVideoGain aCallback, void* aPtr);
 /**
  * Register a callback for the action SetGreenVideoGain
  *
@@ -561,7 +561,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoGain(T
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoGain(THandle aProvider, CallbackRenderingControl1SetGreenVideoGain aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoGain(THandle aProvider, CallbackRenderingControl1SetGreenVideoGain aCallback, void* aPtr);
 /**
  * Register a callback for the action GetBlueVideoGain
  *
@@ -572,7 +572,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoGain(T
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoGain(THandle aProvider, CallbackRenderingControl1GetBlueVideoGain aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoGain(THandle aProvider, CallbackRenderingControl1GetBlueVideoGain aCallback, void* aPtr);
 /**
  * Register a callback for the action SetBlueVideoGain
  *
@@ -583,7 +583,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoGain(TH
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoGain(THandle aProvider, CallbackRenderingControl1SetBlueVideoGain aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoGain(THandle aProvider, CallbackRenderingControl1SetBlueVideoGain aCallback, void* aPtr);
 /**
  * Register a callback for the action GetRedVideoBlackLevel
  *
@@ -594,7 +594,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoGain(TH
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoBlackLevel(THandle aProvider, CallbackRenderingControl1GetRedVideoBlackLevel aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoBlackLevel(THandle aProvider, CallbackRenderingControl1GetRedVideoBlackLevel aCallback, void* aPtr);
 /**
  * Register a callback for the action SetRedVideoBlackLevel
  *
@@ -605,7 +605,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoBlackLev
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoBlackLevel(THandle aProvider, CallbackRenderingControl1SetRedVideoBlackLevel aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoBlackLevel(THandle aProvider, CallbackRenderingControl1SetRedVideoBlackLevel aCallback, void* aPtr);
 /**
  * Register a callback for the action GetGreenVideoBlackLevel
  *
@@ -616,7 +616,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoBlackLev
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoBlackLevel(THandle aProvider, CallbackRenderingControl1GetGreenVideoBlackLevel aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoBlackLevel(THandle aProvider, CallbackRenderingControl1GetGreenVideoBlackLevel aCallback, void* aPtr);
 /**
  * Register a callback for the action SetGreenVideoBlackLevel
  *
@@ -627,7 +627,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoBlackL
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoBlackLevel(THandle aProvider, CallbackRenderingControl1SetGreenVideoBlackLevel aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoBlackLevel(THandle aProvider, CallbackRenderingControl1SetGreenVideoBlackLevel aCallback, void* aPtr);
 /**
  * Register a callback for the action GetBlueVideoBlackLevel
  *
@@ -638,7 +638,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoBlackL
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoBlackLevel(THandle aProvider, CallbackRenderingControl1GetBlueVideoBlackLevel aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoBlackLevel(THandle aProvider, CallbackRenderingControl1GetBlueVideoBlackLevel aCallback, void* aPtr);
 /**
  * Register a callback for the action SetBlueVideoBlackLevel
  *
@@ -649,7 +649,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoBlackLe
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoBlackLevel(THandle aProvider, CallbackRenderingControl1SetBlueVideoBlackLevel aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoBlackLevel(THandle aProvider, CallbackRenderingControl1SetBlueVideoBlackLevel aCallback, void* aPtr);
 /**
  * Register a callback for the action GetColorTemperature
  *
@@ -660,7 +660,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoBlackLe
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetColorTemperature(THandle aProvider, CallbackRenderingControl1GetColorTemperature aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetColorTemperature(THandle aProvider, CallbackRenderingControl1GetColorTemperature aCallback, void* aPtr);
 /**
  * Register a callback for the action SetColorTemperature
  *
@@ -671,7 +671,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetColorTemperature
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetColorTemperature(THandle aProvider, CallbackRenderingControl1SetColorTemperature aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetColorTemperature(THandle aProvider, CallbackRenderingControl1SetColorTemperature aCallback, void* aPtr);
 /**
  * Register a callback for the action GetHorizontalKeystone
  *
@@ -682,7 +682,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetColorTemperature
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetHorizontalKeystone(THandle aProvider, CallbackRenderingControl1GetHorizontalKeystone aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetHorizontalKeystone(THandle aProvider, CallbackRenderingControl1GetHorizontalKeystone aCallback, void* aPtr);
 /**
  * Register a callback for the action SetHorizontalKeystone
  *
@@ -693,7 +693,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetHorizontalKeysto
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetHorizontalKeystone(THandle aProvider, CallbackRenderingControl1SetHorizontalKeystone aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetHorizontalKeystone(THandle aProvider, CallbackRenderingControl1SetHorizontalKeystone aCallback, void* aPtr);
 /**
  * Register a callback for the action GetVerticalKeystone
  *
@@ -704,7 +704,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetHorizontalKeysto
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetVerticalKeystone(THandle aProvider, CallbackRenderingControl1GetVerticalKeystone aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetVerticalKeystone(THandle aProvider, CallbackRenderingControl1GetVerticalKeystone aCallback, void* aPtr);
 /**
  * Register a callback for the action SetVerticalKeystone
  *
@@ -715,7 +715,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetVerticalKeystone
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetVerticalKeystone(THandle aProvider, CallbackRenderingControl1SetVerticalKeystone aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetVerticalKeystone(THandle aProvider, CallbackRenderingControl1SetVerticalKeystone aCallback, void* aPtr);
 /**
  * Register a callback for the action GetMute
  *
@@ -726,7 +726,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetVerticalKeystone
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetMute(THandle aProvider, CallbackRenderingControl1GetMute aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetMute(THandle aProvider, CallbackRenderingControl1GetMute aCallback, void* aPtr);
 /**
  * Register a callback for the action SetMute
  *
@@ -737,7 +737,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetMute(THandle aPr
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetMute(THandle aProvider, CallbackRenderingControl1SetMute aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetMute(THandle aProvider, CallbackRenderingControl1SetMute aCallback, void* aPtr);
 /**
  * Register a callback for the action GetVolume
  *
@@ -748,7 +748,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetMute(THandle aPr
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetVolume(THandle aProvider, CallbackRenderingControl1GetVolume aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetVolume(THandle aProvider, CallbackRenderingControl1GetVolume aCallback, void* aPtr);
 /**
  * Register a callback for the action SetVolume
  *
@@ -759,7 +759,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetVolume(THandle a
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetVolume(THandle aProvider, CallbackRenderingControl1SetVolume aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetVolume(THandle aProvider, CallbackRenderingControl1SetVolume aCallback, void* aPtr);
 /**
  * Register a callback for the action GetVolumeDB
  *
@@ -770,7 +770,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetVolume(THandle a
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDB(THandle aProvider, CallbackRenderingControl1GetVolumeDB aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDB(THandle aProvider, CallbackRenderingControl1GetVolumeDB aCallback, void* aPtr);
 /**
  * Register a callback for the action SetVolumeDB
  *
@@ -781,7 +781,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDB(THandle
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetVolumeDB(THandle aProvider, CallbackRenderingControl1SetVolumeDB aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetVolumeDB(THandle aProvider, CallbackRenderingControl1SetVolumeDB aCallback, void* aPtr);
 /**
  * Register a callback for the action GetVolumeDBRange
  *
@@ -792,7 +792,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetVolumeDB(THandle
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDBRange(THandle aProvider, CallbackRenderingControl1GetVolumeDBRange aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDBRange(THandle aProvider, CallbackRenderingControl1GetVolumeDBRange aCallback, void* aPtr);
 /**
  * Register a callback for the action GetLoudness
  *
@@ -803,7 +803,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDBRange(TH
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetLoudness(THandle aProvider, CallbackRenderingControl1GetLoudness aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionGetLoudness(THandle aProvider, CallbackRenderingControl1GetLoudness aCallback, void* aPtr);
 /**
  * Register a callback for the action SetLoudness
  *
@@ -814,7 +814,7 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionGetLoudness(THandle
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetLoudness(THandle aProvider, CallbackRenderingControl1SetLoudness aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1EnableActionSetLoudness(THandle aProvider, CallbackRenderingControl1SetLoudness aCallback, void* aPtr);
 
 /**
  * Set the value of the LastChange property
@@ -826,14 +826,14 @@ DllExport void DvProviderUpnpOrgRenderingControl1EnableActionSetLoudness(THandle
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderUpnpOrgRenderingControl1SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderUpnpOrgRenderingControl1SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the LastChange property
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgRenderingControl1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderUpnpOrgRenderingControl1GetPropertyLastChange(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderUpnpOrgRenderingControl1GetPropertyLastChange(THandle aProvider, char** aValue);
 
 /* @} */
 

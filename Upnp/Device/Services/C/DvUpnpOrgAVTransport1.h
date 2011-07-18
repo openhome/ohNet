@@ -29,7 +29,7 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1SetAVTransportURI)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData);
+typedef int32_t (STDCALL *CallbackAVTransport1SetAVTransportURI)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData);
 /**
  * Callback which runs when the SetNextAVTransportURI action is invoked
  *
@@ -41,7 +41,7 @@ typedef int32_t (*CallbackAVTransport1SetAVTransportURI)(void* aPtr, uint32_t aV
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1SetNextAVTransportURI)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData);
+typedef int32_t (STDCALL *CallbackAVTransport1SetNextAVTransportURI)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData);
 /**
  * Callback which runs when the GetMediaInfo action is invoked
  *
@@ -60,7 +60,7 @@ typedef int32_t (*CallbackAVTransport1SetNextAVTransportURI)(void* aPtr, uint32_
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1GetMediaInfo)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
+typedef int32_t (STDCALL *CallbackAVTransport1GetMediaInfo)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
 /**
  * Callback which runs when the GetTransportInfo action is invoked
  *
@@ -73,7 +73,7 @@ typedef int32_t (*CallbackAVTransport1GetMediaInfo)(void* aPtr, uint32_t aVersio
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1GetTransportInfo)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
+typedef int32_t (STDCALL *CallbackAVTransport1GetTransportInfo)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
 /**
  * Callback which runs when the GetPositionInfo action is invoked
  *
@@ -91,7 +91,7 @@ typedef int32_t (*CallbackAVTransport1GetTransportInfo)(void* aPtr, uint32_t aVe
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1GetPositionInfo)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount);
+typedef int32_t (STDCALL *CallbackAVTransport1GetPositionInfo)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount);
 /**
  * Callback which runs when the GetDeviceCapabilities action is invoked
  *
@@ -104,7 +104,7 @@ typedef int32_t (*CallbackAVTransport1GetPositionInfo)(void* aPtr, uint32_t aVer
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1GetDeviceCapabilities)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
+typedef int32_t (STDCALL *CallbackAVTransport1GetDeviceCapabilities)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
 /**
  * Callback which runs when the GetTransportSettings action is invoked
  *
@@ -116,7 +116,7 @@ typedef int32_t (*CallbackAVTransport1GetDeviceCapabilities)(void* aPtr, uint32_
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1GetTransportSettings)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aPlayMode, char** aRecQualityMode);
+typedef int32_t (STDCALL *CallbackAVTransport1GetTransportSettings)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aPlayMode, char** aRecQualityMode);
 /**
  * Callback which runs when the Stop action is invoked
  *
@@ -126,7 +126,7 @@ typedef int32_t (*CallbackAVTransport1GetTransportSettings)(void* aPtr, uint32_t
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1Stop)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
+typedef int32_t (STDCALL *CallbackAVTransport1Stop)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
 /**
  * Callback which runs when the Play action is invoked
  *
@@ -137,7 +137,7 @@ typedef int32_t (*CallbackAVTransport1Stop)(void* aPtr, uint32_t aVersion, uint3
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1Play)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aSpeed);
+typedef int32_t (STDCALL *CallbackAVTransport1Play)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aSpeed);
 /**
  * Callback which runs when the Pause action is invoked
  *
@@ -147,7 +147,7 @@ typedef int32_t (*CallbackAVTransport1Play)(void* aPtr, uint32_t aVersion, uint3
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1Pause)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
+typedef int32_t (STDCALL *CallbackAVTransport1Pause)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
 /**
  * Callback which runs when the Record action is invoked
  *
@@ -157,7 +157,7 @@ typedef int32_t (*CallbackAVTransport1Pause)(void* aPtr, uint32_t aVersion, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1Record)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
+typedef int32_t (STDCALL *CallbackAVTransport1Record)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
 /**
  * Callback which runs when the Seek action is invoked
  *
@@ -169,7 +169,7 @@ typedef int32_t (*CallbackAVTransport1Record)(void* aPtr, uint32_t aVersion, uin
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1Seek)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aUnit, const char* aTarget);
+typedef int32_t (STDCALL *CallbackAVTransport1Seek)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aUnit, const char* aTarget);
 /**
  * Callback which runs when the Next action is invoked
  *
@@ -179,7 +179,7 @@ typedef int32_t (*CallbackAVTransport1Seek)(void* aPtr, uint32_t aVersion, uint3
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1Next)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
+typedef int32_t (STDCALL *CallbackAVTransport1Next)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
 /**
  * Callback which runs when the Previous action is invoked
  *
@@ -189,7 +189,7 @@ typedef int32_t (*CallbackAVTransport1Next)(void* aPtr, uint32_t aVersion, uint3
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1Previous)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
+typedef int32_t (STDCALL *CallbackAVTransport1Previous)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID);
 /**
  * Callback which runs when the SetPlayMode action is invoked
  *
@@ -200,7 +200,7 @@ typedef int32_t (*CallbackAVTransport1Previous)(void* aPtr, uint32_t aVersion, u
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1SetPlayMode)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aNewPlayMode);
+typedef int32_t (STDCALL *CallbackAVTransport1SetPlayMode)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aNewPlayMode);
 /**
  * Callback which runs when the SetRecordQualityMode action is invoked
  *
@@ -211,7 +211,7 @@ typedef int32_t (*CallbackAVTransport1SetPlayMode)(void* aPtr, uint32_t aVersion
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1SetRecordQualityMode)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aNewRecordQualityMode);
+typedef int32_t (STDCALL *CallbackAVTransport1SetRecordQualityMode)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, const char* aNewRecordQualityMode);
 /**
  * Callback which runs when the GetCurrentTransportActions action is invoked
  *
@@ -222,7 +222,7 @@ typedef int32_t (*CallbackAVTransport1SetRecordQualityMode)(void* aPtr, uint32_t
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackAVTransport1GetCurrentTransportActions)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aActions);
+typedef int32_t (STDCALL *CallbackAVTransport1GetCurrentTransportActions)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aActions);
 
 /**
  * Provider constructor
@@ -231,14 +231,14 @@ typedef int32_t (*CallbackAVTransport1GetCurrentTransportActions)(void* aPtr, ui
  *
  * @return  Handle to this provider
  */
-DllExport THandle DvProviderUpnpOrgAVTransport1Create(DvDeviceC aDevice);
+DllExport THandle STDCALL DvProviderUpnpOrgAVTransport1Create(DvDeviceC aDevice);
 
 /**
  * Provider destructor
  *
  * @param[in] aProvider  Handle returned by DvProviderUpnpOrgAVTransport1Create
  */
-DllExport void DvProviderUpnpOrgAVTransport1Destroy(THandle aProvider);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1Destroy(THandle aProvider);
 
 /**
  * Register a callback for the action SetAVTransportURI
@@ -250,7 +250,7 @@ DllExport void DvProviderUpnpOrgAVTransport1Destroy(THandle aProvider);
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetAVTransportURI(THandle aProvider, CallbackAVTransport1SetAVTransportURI aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionSetAVTransportURI(THandle aProvider, CallbackAVTransport1SetAVTransportURI aCallback, void* aPtr);
 /**
  * Register a callback for the action SetNextAVTransportURI
  *
@@ -261,7 +261,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetAVTransportURI(THandl
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(THandle aProvider, CallbackAVTransport1SetNextAVTransportURI aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(THandle aProvider, CallbackAVTransport1SetNextAVTransportURI aCallback, void* aPtr);
 /**
  * Register a callback for the action GetMediaInfo
  *
@@ -272,7 +272,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(TH
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetMediaInfo(THandle aProvider, CallbackAVTransport1GetMediaInfo aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionGetMediaInfo(THandle aProvider, CallbackAVTransport1GetMediaInfo aCallback, void* aPtr);
 /**
  * Register a callback for the action GetTransportInfo
  *
@@ -283,7 +283,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetMediaInfo(THandle aPr
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetTransportInfo(THandle aProvider, CallbackAVTransport1GetTransportInfo aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionGetTransportInfo(THandle aProvider, CallbackAVTransport1GetTransportInfo aCallback, void* aPtr);
 /**
  * Register a callback for the action GetPositionInfo
  *
@@ -294,7 +294,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetTransportInfo(THandle
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetPositionInfo(THandle aProvider, CallbackAVTransport1GetPositionInfo aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionGetPositionInfo(THandle aProvider, CallbackAVTransport1GetPositionInfo aCallback, void* aPtr);
 /**
  * Register a callback for the action GetDeviceCapabilities
  *
@@ -305,7 +305,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetPositionInfo(THandle 
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(THandle aProvider, CallbackAVTransport1GetDeviceCapabilities aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(THandle aProvider, CallbackAVTransport1GetDeviceCapabilities aCallback, void* aPtr);
 /**
  * Register a callback for the action GetTransportSettings
  *
@@ -316,7 +316,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(TH
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetTransportSettings(THandle aProvider, CallbackAVTransport1GetTransportSettings aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionGetTransportSettings(THandle aProvider, CallbackAVTransport1GetTransportSettings aCallback, void* aPtr);
 /**
  * Register a callback for the action Stop
  *
@@ -327,7 +327,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetTransportSettings(THa
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionStop(THandle aProvider, CallbackAVTransport1Stop aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionStop(THandle aProvider, CallbackAVTransport1Stop aCallback, void* aPtr);
 /**
  * Register a callback for the action Play
  *
@@ -338,7 +338,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionStop(THandle aProvider, 
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionPlay(THandle aProvider, CallbackAVTransport1Play aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionPlay(THandle aProvider, CallbackAVTransport1Play aCallback, void* aPtr);
 /**
  * Register a callback for the action Pause
  *
@@ -349,7 +349,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionPlay(THandle aProvider, 
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionPause(THandle aProvider, CallbackAVTransport1Pause aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionPause(THandle aProvider, CallbackAVTransport1Pause aCallback, void* aPtr);
 /**
  * Register a callback for the action Record
  *
@@ -360,7 +360,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionPause(THandle aProvider,
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionRecord(THandle aProvider, CallbackAVTransport1Record aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionRecord(THandle aProvider, CallbackAVTransport1Record aCallback, void* aPtr);
 /**
  * Register a callback for the action Seek
  *
@@ -371,7 +371,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionRecord(THandle aProvider
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionSeek(THandle aProvider, CallbackAVTransport1Seek aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionSeek(THandle aProvider, CallbackAVTransport1Seek aCallback, void* aPtr);
 /**
  * Register a callback for the action Next
  *
@@ -382,7 +382,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionSeek(THandle aProvider, 
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionNext(THandle aProvider, CallbackAVTransport1Next aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionNext(THandle aProvider, CallbackAVTransport1Next aCallback, void* aPtr);
 /**
  * Register a callback for the action Previous
  *
@@ -393,7 +393,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionNext(THandle aProvider, 
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionPrevious(THandle aProvider, CallbackAVTransport1Previous aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionPrevious(THandle aProvider, CallbackAVTransport1Previous aCallback, void* aPtr);
 /**
  * Register a callback for the action SetPlayMode
  *
@@ -404,7 +404,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionPrevious(THandle aProvid
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetPlayMode(THandle aProvider, CallbackAVTransport1SetPlayMode aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionSetPlayMode(THandle aProvider, CallbackAVTransport1SetPlayMode aCallback, void* aPtr);
 /**
  * Register a callback for the action SetRecordQualityMode
  *
@@ -415,7 +415,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetPlayMode(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetRecordQualityMode(THandle aProvider, CallbackAVTransport1SetRecordQualityMode aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionSetRecordQualityMode(THandle aProvider, CallbackAVTransport1SetRecordQualityMode aCallback, void* aPtr);
 /**
  * Register a callback for the action GetCurrentTransportActions
  *
@@ -426,7 +426,7 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetRecordQualityMode(THa
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(THandle aProvider, CallbackAVTransport1GetCurrentTransportActions aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(THandle aProvider, CallbackAVTransport1GetCurrentTransportActions aCallback, void* aPtr);
 
 /**
  * Set the value of the LastChange property
@@ -438,14 +438,14 @@ DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetCurrentTransportActio
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderUpnpOrgAVTransport1SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderUpnpOrgAVTransport1SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the LastChange property
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgAVTransport1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderUpnpOrgAVTransport1GetPropertyLastChange(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderUpnpOrgAVTransport1GetPropertyLastChange(THandle aProvider, char** aValue);
 
 /* @} */
 

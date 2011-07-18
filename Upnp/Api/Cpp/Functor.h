@@ -19,7 +19,7 @@
 
 namespace OpenHome {
 
-typedef void (*OhNetFunctor)(void* aPtr);
+typedef void (STDCALL *OhNetFunctor)(void* aPtr);
 
 /**
  * Generic callback

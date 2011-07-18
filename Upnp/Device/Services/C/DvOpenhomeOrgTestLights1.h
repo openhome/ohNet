@@ -27,7 +27,7 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestLights1GetCount)(void* aPtr, uint32_t aVersion, uint32_t* aCount);
+typedef int32_t (STDCALL *CallbackTestLights1GetCount)(void* aPtr, uint32_t aVersion, uint32_t* aCount);
 /**
  * Callback which runs when the GetRoom action is invoked
  *
@@ -38,7 +38,7 @@ typedef int32_t (*CallbackTestLights1GetCount)(void* aPtr, uint32_t aVersion, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestLights1GetRoom)(void* aPtr, uint32_t aVersion, uint32_t aIndex, char** aRoomName);
+typedef int32_t (STDCALL *CallbackTestLights1GetRoom)(void* aPtr, uint32_t aVersion, uint32_t aIndex, char** aRoomName);
 /**
  * Callback which runs when the GetName action is invoked
  *
@@ -49,7 +49,7 @@ typedef int32_t (*CallbackTestLights1GetRoom)(void* aPtr, uint32_t aVersion, uin
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestLights1GetName)(void* aPtr, uint32_t aVersion, uint32_t aIndex, char** aFriendlyName);
+typedef int32_t (STDCALL *CallbackTestLights1GetName)(void* aPtr, uint32_t aVersion, uint32_t aIndex, char** aFriendlyName);
 /**
  * Callback which runs when the GetPosition action is invoked
  *
@@ -62,7 +62,7 @@ typedef int32_t (*CallbackTestLights1GetName)(void* aPtr, uint32_t aVersion, uin
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestLights1GetPosition)(void* aPtr, uint32_t aVersion, uint32_t aIndex, uint32_t* aX, uint32_t* aY, uint32_t* aZ);
+typedef int32_t (STDCALL *CallbackTestLights1GetPosition)(void* aPtr, uint32_t aVersion, uint32_t aIndex, uint32_t* aX, uint32_t* aY, uint32_t* aZ);
 /**
  * Callback which runs when the SetColor action is invoked
  *
@@ -73,7 +73,7 @@ typedef int32_t (*CallbackTestLights1GetPosition)(void* aPtr, uint32_t aVersion,
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestLights1SetColor)(void* aPtr, uint32_t aVersion, uint32_t aIndex, uint32_t aColor);
+typedef int32_t (STDCALL *CallbackTestLights1SetColor)(void* aPtr, uint32_t aVersion, uint32_t aIndex, uint32_t aColor);
 /**
  * Callback which runs when the GetColor action is invoked
  *
@@ -84,7 +84,7 @@ typedef int32_t (*CallbackTestLights1SetColor)(void* aPtr, uint32_t aVersion, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestLights1GetColor)(void* aPtr, uint32_t aVersion, uint32_t aIndex, uint32_t* aColor);
+typedef int32_t (STDCALL *CallbackTestLights1GetColor)(void* aPtr, uint32_t aVersion, uint32_t aIndex, uint32_t* aColor);
 /**
  * Callback which runs when the GetColorComponents action is invoked
  *
@@ -98,7 +98,7 @@ typedef int32_t (*CallbackTestLights1GetColor)(void* aPtr, uint32_t aVersion, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestLights1GetColorComponents)(void* aPtr, uint32_t aVersion, uint32_t aColor, uint32_t* aBrightness, uint32_t* aRed, uint32_t* aGreen, uint32_t* aBlue);
+typedef int32_t (STDCALL *CallbackTestLights1GetColorComponents)(void* aPtr, uint32_t aVersion, uint32_t aColor, uint32_t* aBrightness, uint32_t* aRed, uint32_t* aGreen, uint32_t* aBlue);
 
 /**
  * Provider constructor
@@ -107,14 +107,14 @@ typedef int32_t (*CallbackTestLights1GetColorComponents)(void* aPtr, uint32_t aV
  *
  * @return  Handle to this provider
  */
-DllExport THandle DvProviderOpenhomeOrgTestLights1Create(DvDeviceC aDevice);
+DllExport THandle STDCALL DvProviderOpenhomeOrgTestLights1Create(DvDeviceC aDevice);
 
 /**
  * Provider destructor
  *
  * @param[in] aProvider  Handle returned by DvProviderOpenhomeOrgTestLights1Create
  */
-DllExport void DvProviderOpenhomeOrgTestLights1Destroy(THandle aProvider);
+DllExport void STDCALL DvProviderOpenhomeOrgTestLights1Destroy(THandle aProvider);
 
 /**
  * Register a callback for the action GetCount
@@ -126,7 +126,7 @@ DllExport void DvProviderOpenhomeOrgTestLights1Destroy(THandle aProvider);
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestLights1EnableActionGetCount(THandle aProvider, CallbackTestLights1GetCount aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionGetCount(THandle aProvider, CallbackTestLights1GetCount aCallback, void* aPtr);
 /**
  * Register a callback for the action GetRoom
  *
@@ -137,7 +137,7 @@ DllExport void DvProviderOpenhomeOrgTestLights1EnableActionGetCount(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestLights1EnableActionGetRoom(THandle aProvider, CallbackTestLights1GetRoom aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionGetRoom(THandle aProvider, CallbackTestLights1GetRoom aCallback, void* aPtr);
 /**
  * Register a callback for the action GetName
  *
@@ -148,7 +148,7 @@ DllExport void DvProviderOpenhomeOrgTestLights1EnableActionGetRoom(THandle aProv
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestLights1EnableActionGetName(THandle aProvider, CallbackTestLights1GetName aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionGetName(THandle aProvider, CallbackTestLights1GetName aCallback, void* aPtr);
 /**
  * Register a callback for the action GetPosition
  *
@@ -159,7 +159,7 @@ DllExport void DvProviderOpenhomeOrgTestLights1EnableActionGetName(THandle aProv
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestLights1EnableActionGetPosition(THandle aProvider, CallbackTestLights1GetPosition aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionGetPosition(THandle aProvider, CallbackTestLights1GetPosition aCallback, void* aPtr);
 /**
  * Register a callback for the action SetColor
  *
@@ -170,7 +170,7 @@ DllExport void DvProviderOpenhomeOrgTestLights1EnableActionGetPosition(THandle a
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestLights1EnableActionSetColor(THandle aProvider, CallbackTestLights1SetColor aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionSetColor(THandle aProvider, CallbackTestLights1SetColor aCallback, void* aPtr);
 /**
  * Register a callback for the action GetColor
  *
@@ -181,7 +181,7 @@ DllExport void DvProviderOpenhomeOrgTestLights1EnableActionSetColor(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestLights1EnableActionGetColor(THandle aProvider, CallbackTestLights1GetColor aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionGetColor(THandle aProvider, CallbackTestLights1GetColor aCallback, void* aPtr);
 /**
  * Register a callback for the action GetColorComponents
  *
@@ -192,7 +192,7 @@ DllExport void DvProviderOpenhomeOrgTestLights1EnableActionGetColor(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestLights1EnableActionGetColorComponents(THandle aProvider, CallbackTestLights1GetColorComponents aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionGetColorComponents(THandle aProvider, CallbackTestLights1GetColorComponents aCallback, void* aPtr);
 
 
 /* @} */

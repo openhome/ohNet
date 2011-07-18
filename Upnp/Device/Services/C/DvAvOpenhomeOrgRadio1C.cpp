@@ -663,152 +663,152 @@ void DvProviderAvOpenhomeOrgRadio1C::DoProtocolInfo(IDviInvocation& aInvocation,
 
 
 
-THandle DvProviderAvOpenhomeOrgRadio1Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderAvOpenhomeOrgRadio1Create(DvDeviceC aDevice)
 {
 	return new DvProviderAvOpenhomeOrgRadio1C(aDevice);
 }
 
-void DvProviderAvOpenhomeOrgRadio1Destroy(THandle aProvider)
+void STDCALL DvProviderAvOpenhomeOrgRadio1Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionPlay(THandle aProvider, CallbackRadio1Play aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionPlay(THandle aProvider, CallbackRadio1Play aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionPlay(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionPause(THandle aProvider, CallbackRadio1Pause aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionPause(THandle aProvider, CallbackRadio1Pause aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionPause(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionStop(THandle aProvider, CallbackRadio1Stop aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionStop(THandle aProvider, CallbackRadio1Stop aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionStop(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionSeekSecondAbsolute(THandle aProvider, CallbackRadio1SeekSecondAbsolute aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionSeekSecondAbsolute(THandle aProvider, CallbackRadio1SeekSecondAbsolute aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionSeekSecondAbsolute(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionSeekSecondRelative(THandle aProvider, CallbackRadio1SeekSecondRelative aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionSeekSecondRelative(THandle aProvider, CallbackRadio1SeekSecondRelative aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionSeekSecondRelative(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionChannel(THandle aProvider, CallbackRadio1Channel aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionChannel(THandle aProvider, CallbackRadio1Channel aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionChannel(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionSetChannel(THandle aProvider, CallbackRadio1SetChannel aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionSetChannel(THandle aProvider, CallbackRadio1SetChannel aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionSetChannel(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionTransportState(THandle aProvider, CallbackRadio1TransportState aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionTransportState(THandle aProvider, CallbackRadio1TransportState aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionTransportState(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionId(THandle aProvider, CallbackRadio1Id aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionId(THandle aProvider, CallbackRadio1Id aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionId(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionSetId(THandle aProvider, CallbackRadio1SetId aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionSetId(THandle aProvider, CallbackRadio1SetId aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionSetId(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionRead(THandle aProvider, CallbackRadio1Read aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionRead(THandle aProvider, CallbackRadio1Read aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionRead(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionReadList(THandle aProvider, CallbackRadio1ReadList aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionReadList(THandle aProvider, CallbackRadio1ReadList aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionReadList(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionIdArray(THandle aProvider, CallbackRadio1IdArray aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionIdArray(THandle aProvider, CallbackRadio1IdArray aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionIdArray(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionIdArrayChanged(THandle aProvider, CallbackRadio1IdArrayChanged aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionIdArrayChanged(THandle aProvider, CallbackRadio1IdArrayChanged aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionIdArrayChanged(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionChannelsMax(THandle aProvider, CallbackRadio1ChannelsMax aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionChannelsMax(THandle aProvider, CallbackRadio1ChannelsMax aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionChannelsMax(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgRadio1EnableActionProtocolInfo(THandle aProvider, CallbackRadio1ProtocolInfo aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionProtocolInfo(THandle aProvider, CallbackRadio1ProtocolInfo aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->EnableActionProtocolInfo(aCallback, aPtr);
 }
 
-int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyUri(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyUri(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->SetPropertyUri(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgRadio1GetPropertyUri(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyUri(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->GetPropertyUri(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyMetadata(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyMetadata(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->SetPropertyMetadata(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgRadio1GetPropertyMetadata(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyMetadata(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->GetPropertyMetadata(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyTransportState(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyTransportState(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->SetPropertyTransportState(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgRadio1GetPropertyTransportState(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyTransportState(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->GetPropertyTransportState(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyId(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyId(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->SetPropertyId(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgRadio1GetPropertyId(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyId(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->GetPropertyId(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyIdArray(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyIdArray(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
 {
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
@@ -816,7 +816,7 @@ int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyIdArray(THandle aProvider, const
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgRadio1GetPropertyIdArray(THandle aProvider, char** aValue, uint32_t* aValueLen)
+void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyIdArray(THandle aProvider, char** aValue, uint32_t* aValueLen)
 {
     Brh buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->GetPropertyIdArray(buf);
@@ -824,27 +824,27 @@ void DvProviderAvOpenhomeOrgRadio1GetPropertyIdArray(THandle aProvider, char** a
     *aValue = (char*)buf.Extract();
 }
 
-int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyChannelsMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyChannelsMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->SetPropertyChannelsMax(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgRadio1GetPropertyChannelsMax(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyChannelsMax(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->GetPropertyChannelsMax(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->SetPropertyProtocolInfo(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgRadio1GetPropertyProtocolInfo(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyProtocolInfo(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgRadio1C*>(aProvider)->GetPropertyProtocolInfo(buf);

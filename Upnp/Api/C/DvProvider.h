@@ -34,7 +34,7 @@ typedef THandle DvProviderC;
 /**
  * Callback which runs when an action is invoked
  */
-typedef void (*OhNetCallbackDvInvocation)(void* aPtr, DvInvocationC aInvocation, uint32_t aVersion);
+typedef void (STDCALL *OhNetCallbackDvInvocation)(void* aPtr, DvInvocationC aInvocation, uint32_t aVersion);
 
 /**
  * Create a provider (of a service)
@@ -44,14 +44,14 @@ typedef void (*OhNetCallbackDvInvocation)(void* aPtr, DvInvocationC aInvocation,
  * @param[in] aType     Name of the service being provided
  * @param[in] aVersion  Version of the service being provided
  */
-DllExport DvProviderC DvProviderCreate(DvDeviceC aDevice, const char* aDomain, const char* aType, uint32_t aVersion);
+DllExport DvProviderC STDCALL DvProviderCreate(DvDeviceC aDevice, const char* aDomain, const char* aType, uint32_t aVersion);
 
 /**
  * Destroy a provider
  *
  * @param[in] aProvider   Handle to a provider
  */
-DllExport void DvProviderDestroy(DvProviderC aProvider);
+DllExport void STDCALL DvProviderDestroy(DvProviderC aProvider);
 
 /**
  * Add an action to the provider
@@ -61,7 +61,7 @@ DllExport void DvProviderDestroy(DvProviderC aProvider);
  * @param[in] aCallback  Callback to run when the action is invoked
  * @param[in] aPtr       Pointer to pass to the above callback
  */
-DllExport void DvProviderAddAction(DvProviderC aProvider, ServiceAction aAction, OhNetCallbackDvInvocation aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAddAction(DvProviderC aProvider, ServiceAction aAction, OhNetCallbackDvInvocation aCallback, void* aPtr);
 
 /**
  * Lock the provider's properties, blocking publication of updates.
@@ -74,7 +74,7 @@ DllExport void DvProviderAddAction(DvProviderC aProvider, ServiceAction aAction,
  *
  * @param[in] aProvider   Handle to a provider
  */
-DllExport void DvProviderPropertiesLock(DvProviderC aProvider);
+DllExport void STDCALL DvProviderPropertiesLock(DvProviderC aProvider);
 
 /**
  * Unlock the provider's properties, allowing publication of updates.
@@ -84,7 +84,7 @@ DllExport void DvProviderPropertiesLock(DvProviderC aProvider);
  *
  * @param[in] aProvider   Handle to a provider
  */
-DllExport void DvProviderPropertiesUnlock(DvProviderC aProvider);
+DllExport void STDCALL DvProviderPropertiesUnlock(DvProviderC aProvider);
 
 /**
  * Add a property (passing ownership) to a provider
@@ -92,7 +92,7 @@ DllExport void DvProviderPropertiesUnlock(DvProviderC aProvider);
  * @param[in] aProvider   Handle to a provider
  * @param[in] aProperty   Returned by ServicePropertyCreate[type]Dv.  Ownership passes to aProvider.
  */
-DllExport void DvProviderAddProperty(DvProviderC aProvider, ServiceProperty aProperty);
+DllExport void STDCALL DvProviderAddProperty(DvProviderC aProvider, ServiceProperty aProperty);
 
 /**
  * Utility function which updates the value of a PropertyInt.
@@ -111,7 +111,7 @@ DllExport void DvProviderAddProperty(DvProviderC aProvider, ServiceProperty aPro
  *
  * @return  0 if the set succeeded; none-zero otherwise
  */
-DllExport int32_t DvProviderSetPropertyInt(DvProviderC aProvider, ServiceProperty aProperty, int32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderSetPropertyInt(DvProviderC aProvider, ServiceProperty aProperty, int32_t aValue, uint32_t* aChanged);
 
 /**
  * Utility function which updates the value of a PropertyUint. (Not intended for external use)
@@ -130,7 +130,7 @@ DllExport int32_t DvProviderSetPropertyInt(DvProviderC aProvider, ServicePropert
  *
  * @return  0 if the set succeeded; none-zero otherwise
  */
-DllExport int32_t DvProviderSetPropertyUint(DvProviderC aProvider, ServiceProperty aProperty, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderSetPropertyUint(DvProviderC aProvider, ServiceProperty aProperty, uint32_t aValue, uint32_t* aChanged);
 
 /**
  * Utility function which updates the value of a PropertyBool. (Not intended for external use)
@@ -149,7 +149,7 @@ DllExport int32_t DvProviderSetPropertyUint(DvProviderC aProvider, ServiceProper
  *
  * @return  0 if the set succeeded; none-zero otherwise
  */
-DllExport int32_t DvProviderSetPropertyBool(DvProviderC aProvider, ServiceProperty aProperty, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderSetPropertyBool(DvProviderC aProvider, ServiceProperty aProperty, uint32_t aValue, uint32_t* aChanged);
 
 /**
  * Utility function which updates the value of a PropertyString. (Not intended for external use)
@@ -168,7 +168,7 @@ DllExport int32_t DvProviderSetPropertyBool(DvProviderC aProvider, ServiceProper
  *
  * @return  0 if the set succeeded; none-zero otherwise
  */
-DllExport int32_t DvProviderSetPropertyString(DvProviderC aProvider, ServiceProperty aProperty, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderSetPropertyString(DvProviderC aProvider, ServiceProperty aProperty, const char* aValue, uint32_t* aChanged);
 
 /**
  * Utility function which updates the value of a PropertyBinary. (Not intended for external use)
@@ -188,7 +188,7 @@ DllExport int32_t DvProviderSetPropertyString(DvProviderC aProvider, ServiceProp
  *
  * @return  0 if the set succeeded; none-zero otherwise
  */
-DllExport int32_t DvProviderSetPropertyBinary(DvProviderC aProvider, ServiceProperty aProperty, const uint8_t* aData, uint32_t aLen, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderSetPropertyBinary(DvProviderC aProvider, ServiceProperty aProperty, const uint8_t* aData, uint32_t aLen, uint32_t* aChanged);
 
 /* @} */
 /**
@@ -207,7 +207,7 @@ DllExport int32_t DvProviderSetPropertyBinary(DvProviderC aProvider, ServiceProp
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationReadStart(DvInvocationC aInvocation);
+DllExport int32_t STDCALL DvInvocationReadStart(DvInvocationC aInvocation);
 
 /**
  * Read the value of an integer input argument for an invocation
@@ -218,7 +218,7 @@ DllExport int32_t DvInvocationReadStart(DvInvocationC aInvocation);
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationReadInt(DvInvocationC aInvocation, const char* aName, int32_t* aValue);
+DllExport int32_t STDCALL DvInvocationReadInt(DvInvocationC aInvocation, const char* aName, int32_t* aValue);
 
 /**
  * Read the value of an unsigned integer input argument for an invocation
@@ -229,7 +229,7 @@ DllExport int32_t DvInvocationReadInt(DvInvocationC aInvocation, const char* aNa
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationReadUint(DvInvocationC aInvocation, const char* aName, uint32_t* aValue);
+DllExport int32_t STDCALL DvInvocationReadUint(DvInvocationC aInvocation, const char* aName, uint32_t* aValue);
 
 /**
  * Read the value of a boolean input argument for an invocation
@@ -240,7 +240,7 @@ DllExport int32_t DvInvocationReadUint(DvInvocationC aInvocation, const char* aN
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationReadBool(DvInvocationC aInvocation, const char* aName, uint32_t* aValue);
+DllExport int32_t STDCALL DvInvocationReadBool(DvInvocationC aInvocation, const char* aName, uint32_t* aValue);
 
 /**
  * Read the value of a string input argument for an invocation
@@ -251,7 +251,7 @@ DllExport int32_t DvInvocationReadBool(DvInvocationC aInvocation, const char* aN
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationReadString(DvInvocationC aInvocation, const char* aName, char** aValue);
+DllExport int32_t STDCALL DvInvocationReadString(DvInvocationC aInvocation, const char* aName, char** aValue);
 
 /**
  * Read the value of an integer input argument for an invocation
@@ -263,7 +263,7 @@ DllExport int32_t DvInvocationReadString(DvInvocationC aInvocation, const char* 
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationReadBinary(DvInvocationC aInvocation, const char* aName, uint8_t** aData, uint32_t* aLen);
+DllExport int32_t STDCALL DvInvocationReadBinary(DvInvocationC aInvocation, const char* aName, uint8_t** aData, uint32_t* aLen);
 
 /**
  * Complete reading (input arguments for) an invocation
@@ -275,7 +275,7 @@ DllExport int32_t DvInvocationReadBinary(DvInvocationC aInvocation, const char* 
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationReadEnd(DvInvocationC aInvocation);
+DllExport int32_t STDCALL DvInvocationReadEnd(DvInvocationC aInvocation);
 
 /**
  * Report an error reading or writing an invocation
@@ -289,7 +289,7 @@ DllExport int32_t DvInvocationReadEnd(DvInvocationC aInvocation);
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationReportError(DvInvocationC aInvocation, uint32_t aCode, const char* aDescription);
+DllExport int32_t STDCALL DvInvocationReportError(DvInvocationC aInvocation, uint32_t aCode, const char* aDescription);
 
 /**
  * Begin reading (output arguments for) an invocation
@@ -301,7 +301,7 @@ DllExport int32_t DvInvocationReportError(DvInvocationC aInvocation, uint32_t aC
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationWriteStart(DvInvocationC aInvocation);
+DllExport int32_t STDCALL DvInvocationWriteStart(DvInvocationC aInvocation);
 
 /**
  * Set the value of an integer output argument for an invocation.
@@ -312,7 +312,7 @@ DllExport int32_t DvInvocationWriteStart(DvInvocationC aInvocation);
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationWriteInt(DvInvocationC aInvocation, const char* aName, int32_t aValue);
+DllExport int32_t STDCALL DvInvocationWriteInt(DvInvocationC aInvocation, const char* aName, int32_t aValue);
 
 /**
  * Set the value of an unsigned integer output argument for an invocation.
@@ -323,7 +323,7 @@ DllExport int32_t DvInvocationWriteInt(DvInvocationC aInvocation, const char* aN
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationWriteUint(DvInvocationC aInvocation, const char* aName, uint32_t aValue);
+DllExport int32_t STDCALL DvInvocationWriteUint(DvInvocationC aInvocation, const char* aName, uint32_t aValue);
 
 /**
  * Set the value of a boolean output argument for an invocation.
@@ -334,7 +334,7 @@ DllExport int32_t DvInvocationWriteUint(DvInvocationC aInvocation, const char* a
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationWriteBool(DvInvocationC aInvocation, const char* aName, uint32_t aValue);
+DllExport int32_t STDCALL DvInvocationWriteBool(DvInvocationC aInvocation, const char* aName, uint32_t aValue);
 
 /**
  * Prepare to write a string output argument for an invocation.
@@ -348,7 +348,7 @@ DllExport int32_t DvInvocationWriteBool(DvInvocationC aInvocation, const char* a
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationWriteStringStart(DvInvocationC aInvocation, const char* aName);
+DllExport int32_t STDCALL DvInvocationWriteStringStart(DvInvocationC aInvocation, const char* aName);
 
 /**
  * Write a chunk of content for a string output argument.
@@ -360,7 +360,7 @@ DllExport int32_t DvInvocationWriteStringStart(DvInvocationC aInvocation, const 
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationWriteString(DvInvocationC aInvocation, const char* aValue);
+DllExport int32_t STDCALL DvInvocationWriteString(DvInvocationC aInvocation, const char* aValue);
 
 /**
  * Complete writing of a string output argument for an invocation.
@@ -373,7 +373,7 @@ DllExport int32_t DvInvocationWriteString(DvInvocationC aInvocation, const char*
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationWriteStringEnd(DvInvocationC aInvocation, const char* aName);
+DllExport int32_t STDCALL DvInvocationWriteStringEnd(DvInvocationC aInvocation, const char* aName);
 
 /**
  * Prepare to write a binary output argument for an invocation.
@@ -387,7 +387,7 @@ DllExport int32_t DvInvocationWriteStringEnd(DvInvocationC aInvocation, const ch
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationWriteBinaryStart(DvInvocationC aInvocation, const char* aName);
+DllExport int32_t STDCALL DvInvocationWriteBinaryStart(DvInvocationC aInvocation, const char* aName);
 
 /**
  * Write a chunk of content for a binary output argument.
@@ -400,7 +400,7 @@ DllExport int32_t DvInvocationWriteBinaryStart(DvInvocationC aInvocation, const 
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationWriteBinary(DvInvocationC aInvocation, const uint8_t* aData, uint32_t aLen);
+DllExport int32_t STDCALL DvInvocationWriteBinary(DvInvocationC aInvocation, const uint8_t* aData, uint32_t aLen);
 
 /**
  * Complete writing of a binary output argument for an invocation.
@@ -413,7 +413,7 @@ DllExport int32_t DvInvocationWriteBinary(DvInvocationC aInvocation, const uint8
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationWriteBinaryEnd(DvInvocationC aInvocation, const char* aName);
+DllExport int32_t STDCALL DvInvocationWriteBinaryEnd(DvInvocationC aInvocation, const char* aName);
 
 /**
  * Complete writing (output arguments for) an invocation
@@ -425,7 +425,7 @@ DllExport int32_t DvInvocationWriteBinaryEnd(DvInvocationC aInvocation, const ch
  *
  * @return  0 on success; non-zero on error
  */
-DllExport int32_t DvInvocationWriteEnd(DvInvocationC aInvocation);
+DllExport int32_t STDCALL DvInvocationWriteEnd(DvInvocationC aInvocation);
 
 /* @} */
 

@@ -9,7 +9,7 @@ namespace OpenHome {
 namespace Net {
 
 class CpiDevice;
-typedef void (*OhNetFunctorDevice)(void* aPtr, CpiDevice* aDevice);
+typedef void (STDCALL *OhNetFunctorDevice)(void* aPtr, CpiDevice* aDevice);
 
 class FunctorCpiDevice
 {

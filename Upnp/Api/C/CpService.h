@@ -35,14 +35,14 @@ typedef THandle CpInvocationC;
  *
  * @return  Handle to the service
  */
-DllExport CpService CpServiceCreate(const char* aDomain, const char* aName, uint32_t aVersion, CpDeviceC aDevice);
+DllExport CpService STDCALL CpServiceCreate(const char* aDomain, const char* aName, uint32_t aVersion, CpDeviceC aDevice);
 
 /**
  * Destroy a service
  *
  * @param[in] aService  Returned by CpServiceCreate
  */
-DllExport void CpServiceDestroy(CpService aService);
+DllExport void STDCALL CpServiceDestroy(CpService aService);
 
 /**
  * Begin invocation of an action on a service
@@ -56,7 +56,7 @@ DllExport void CpServiceDestroy(CpService aService);
  *
  * @return   Invocation handle
  */
-DllExport CpInvocationC CpServiceInvocation(CpService aService, ServiceAction aAction, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport CpInvocationC STDCALL CpServiceInvocation(CpService aService, ServiceAction aAction, OhNetCallbackAsync aCallback, void* aPtr);
 
 /**
  * Invoke an action
@@ -67,7 +67,7 @@ DllExport CpInvocationC CpServiceInvocation(CpService aService, ServiceAction aA
  * @param[in] aService     Returned by CpServiceCreate
  * @param[in] aInvocation  Returned by CpServiceInvocation
  */
-DllExport void CpServiceInvokeAction(CpService aService, CpInvocationC aInvocation);
+DllExport void STDCALL CpServiceInvokeAction(CpService aService, CpInvocationC aInvocation);
 
 /**
  * @addtogroup Argument
@@ -95,7 +95,7 @@ typedef THandle ActionArgument;
  *
  * @return  Handle for the newly created integer type input argument
  */
-DllExport ActionArgument ActionArgumentCreateIntInput(ServiceParameter aParameter, int32_t aValue);
+DllExport ActionArgument STDCALL ActionArgumentCreateIntInput(ServiceParameter aParameter, int32_t aValue);
 
 /**
  * Create an integer output argument for an action
@@ -108,7 +108,7 @@ DllExport ActionArgument ActionArgumentCreateIntInput(ServiceParameter aParamete
  *
  * @return  Handle for the newly created integer type output argument
  */
-DllExport ActionArgument ActionArgumentCreateIntOutput(ServiceParameter aParameter);
+DllExport ActionArgument STDCALL ActionArgumentCreateIntOutput(ServiceParameter aParameter);
 
 /**
  * Create an unsigned integer input argument for an action
@@ -121,7 +121,7 @@ DllExport ActionArgument ActionArgumentCreateIntOutput(ServiceParameter aParamet
  *
  * @return  Handle for the newly created unsigned integer type input argument
  */
-DllExport ActionArgument ActionArgumentCreateUintInput(ServiceParameter aParameter, uint32_t aValue);
+DllExport ActionArgument STDCALL ActionArgumentCreateUintInput(ServiceParameter aParameter, uint32_t aValue);
 
 /**
  * Create an unsigned integer output argument for an action
@@ -134,7 +134,7 @@ DllExport ActionArgument ActionArgumentCreateUintInput(ServiceParameter aParamet
  *
  * @return  Handle for the newly created unsigned integer type output argument
  */
-DllExport ActionArgument ActionArgumentCreateUintOutput(ServiceParameter aParameter);
+DllExport ActionArgument STDCALL ActionArgumentCreateUintOutput(ServiceParameter aParameter);
 
 /**
  * Create a boolean input argument for an action
@@ -147,7 +147,7 @@ DllExport ActionArgument ActionArgumentCreateUintOutput(ServiceParameter aParame
  *
  * @return  Handle for the newly created boolean type input argument
  */
-DllExport ActionArgument ActionArgumentCreateBoolInput(ServiceParameter aParameter, uint32_t aValue);
+DllExport ActionArgument STDCALL ActionArgumentCreateBoolInput(ServiceParameter aParameter, uint32_t aValue);
 
 /**
  * Create a boolean output argument for an action
@@ -160,7 +160,7 @@ DllExport ActionArgument ActionArgumentCreateBoolInput(ServiceParameter aParamet
  *
  * @return  Handle for the newly created boolean type output argument
  */
-DllExport ActionArgument ActionArgumentCreateBoolOutput(ServiceParameter aParameter);
+DllExport ActionArgument STDCALL ActionArgumentCreateBoolOutput(ServiceParameter aParameter);
 
 /**
  * Create a string input argument for an action
@@ -173,7 +173,7 @@ DllExport ActionArgument ActionArgumentCreateBoolOutput(ServiceParameter aParame
  *
  * @return  Handle for the newly created string type input argument
  */
-DllExport ActionArgument ActionArgumentCreateStringInput(ServiceParameter aParameter, const char* aValue);
+DllExport ActionArgument STDCALL ActionArgumentCreateStringInput(ServiceParameter aParameter, const char* aValue);
 
 /**
  * Create a string output argument for an action
@@ -186,7 +186,7 @@ DllExport ActionArgument ActionArgumentCreateStringInput(ServiceParameter aParam
  *
  * @return  Handle for the newly created string type output argument
  */
-DllExport ActionArgument ActionArgumentCreateStringOutput(ServiceParameter aParameter);
+DllExport ActionArgument STDCALL ActionArgumentCreateStringOutput(ServiceParameter aParameter);
 
 /**
  * Create a binary input argument for an action
@@ -200,7 +200,7 @@ DllExport ActionArgument ActionArgumentCreateStringOutput(ServiceParameter aPara
  *
  * @return  Handle for the newly created binary type input argument
  */
-DllExport ActionArgument ActionArgumentCreateBinaryInput(ServiceParameter aParameter, const uint8_t* aData, uint32_t aLen);
+DllExport ActionArgument STDCALL ActionArgumentCreateBinaryInput(ServiceParameter aParameter, const uint8_t* aData, uint32_t aLen);
 
 /**
  * Create a binary output argument for an action
@@ -213,7 +213,7 @@ DllExport ActionArgument ActionArgumentCreateBinaryInput(ServiceParameter aParam
  *
  * @return  Handle for the newly created boolean type output argument
  */
-DllExport ActionArgument ActionArgumentCreateBinaryOutput(ServiceParameter aParameter);
+DllExport ActionArgument STDCALL ActionArgumentCreateBinaryOutput(ServiceParameter aParameter);
 
 /**
  * Read the value of an integer argument.
@@ -224,7 +224,7 @@ DllExport ActionArgument ActionArgumentCreateBinaryOutput(ServiceParameter aPara
  *
  * @return  Current value of the argument
  */
-DllExport int32_t ActionArgumentValueInt(ActionArgument aArgument);
+DllExport int32_t STDCALL ActionArgumentValueInt(ActionArgument aArgument);
 
 /**
  * Read the value of an unsigned integer argument.
@@ -235,7 +235,7 @@ DllExport int32_t ActionArgumentValueInt(ActionArgument aArgument);
  *
  * @return  Current value of the argument
  */
-DllExport uint32_t ActionArgumentValueUint(ActionArgument aArgument);
+DllExport uint32_t STDCALL ActionArgumentValueUint(ActionArgument aArgument);
 
 /**
  * Read the value of a boolean argument.
@@ -246,7 +246,7 @@ DllExport uint32_t ActionArgumentValueUint(ActionArgument aArgument);
  *
  * @return  Current value of the argument.  0 for false; none-zero for true
  */
-DllExport uint32_t ActionArgumentValueBool(ActionArgument aArgument);
+DllExport uint32_t STDCALL ActionArgumentValueBool(ActionArgument aArgument);
 
 /**
  * Read the value of a string argument.
@@ -257,7 +257,7 @@ DllExport uint32_t ActionArgumentValueBool(ActionArgument aArgument);
  *
  * @return  Current value of the argument.  Ownership passes to the client.  Use OhNetFree() to later destroy it.
  */
-DllExport char* ActionArgumentValueString(ActionArgument aArgument);
+DllExport char* STDCALL ActionArgumentValueString(ActionArgument aArgument);
 
 /**
  * Read the value of a string argument.
@@ -269,7 +269,7 @@ DllExport char* ActionArgumentValueString(ActionArgument aArgument);
  *                        Use OhNetFree() to later destroy it.
  * @param[out] aLen       Length (in bytes) of aData
  */
-DllExport void ActionArgumentGetValueBinary(ActionArgument aArgument, uint8_t** aData, uint32_t* aLen);
+DllExport void STDCALL ActionArgumentGetValueBinary(ActionArgument aArgument, uint8_t** aData, uint32_t* aLen);
 
 /* @} */
 
@@ -285,7 +285,7 @@ DllExport void ActionArgumentGetValueBinary(ActionArgument aArgument, uint8_t** 
  * @param[in] aInvocation  Returned by CpServiceInvocation
  * @param[in] aArgument    Returned by ActionArgumentCreate[Type]Input.  Ownership passes to aInvocation
  */
-DllExport void CpInvocationAddInput(CpInvocationC aInvocation, ActionArgument aArgument);
+DllExport void STDCALL CpInvocationAddInput(CpInvocationC aInvocation, ActionArgument aArgument);
 
 /**
  * Add an output argument to an invocation
@@ -293,7 +293,7 @@ DllExport void CpInvocationAddInput(CpInvocationC aInvocation, ActionArgument aA
  * @param[in] aInvocation  Returned by CpServiceInvocation
  * @param[in] aArgument    Returned by ActionArgumentCreate[Type]Output.  Ownership passes to aInvocation
  */
-DllExport void CpInvocationAddOutput(CpInvocationC aInvocation, ActionArgument aArgument);
+DllExport void STDCALL CpInvocationAddOutput(CpInvocationC aInvocation, ActionArgument aArgument);
 
 /**
  * Query whether the invocation completed successfully
@@ -302,7 +302,7 @@ DllExport void CpInvocationAddOutput(CpInvocationC aInvocation, ActionArgument a
  *
  * @return  0 for success; none-zero for error
  */
-DllExport uint32_t CpInvocationError(CpInvocationC aInvocation);
+DllExport uint32_t STDCALL CpInvocationError(CpInvocationC aInvocation);
 
 /**
  * Read the value of an integer output argument.  Only intended for use inside the invocation completed callback.
@@ -312,7 +312,7 @@ DllExport uint32_t CpInvocationError(CpInvocationC aInvocation);
  *
  * @return  Value of the integer output argument
  */
-DllExport int32_t CpInvocationOutputInt(CpInvocationC aInvocation, uint32_t aIndex);
+DllExport int32_t STDCALL CpInvocationOutputInt(CpInvocationC aInvocation, uint32_t aIndex);
 
 /**
  * Read the value of an unsigned integer output argument.  Only intended for use inside the invocation completed callback.
@@ -322,7 +322,7 @@ DllExport int32_t CpInvocationOutputInt(CpInvocationC aInvocation, uint32_t aInd
  *
  * @return  Value of the unsigned integer output argument
  */
-DllExport uint32_t CpInvocationOutputUint(CpInvocationC aInvocation, uint32_t aIndex);
+DllExport uint32_t STDCALL CpInvocationOutputUint(CpInvocationC aInvocation, uint32_t aIndex);
 
 /**
  * Read the value of a boolean output argument.  Only intended for use inside the invocation completed callback.
@@ -332,7 +332,7 @@ DllExport uint32_t CpInvocationOutputUint(CpInvocationC aInvocation, uint32_t aI
  *
  * @return  Value of the boolean output argument.  0 for false; none-zero for true
  */
-DllExport uint32_t CpInvocationOutputBool(CpInvocationC aInvocation, uint32_t aIndex);
+DllExport uint32_t STDCALL CpInvocationOutputBool(CpInvocationC aInvocation, uint32_t aIndex);
 
 /**
  * Read the value of a string output argument.  Only intended for use inside the invocation completed callback.
@@ -342,7 +342,7 @@ DllExport uint32_t CpInvocationOutputBool(CpInvocationC aInvocation, uint32_t aI
  *
  * @return  Value of the string output argument.  Ownership passes to the caller.  Use OhNetFree() to destroy this.
  */
-DllExport char* CpInvocationOutputString(CpInvocationC aInvocation, uint32_t aIndex);
+DllExport char* STDCALL CpInvocationOutputString(CpInvocationC aInvocation, uint32_t aIndex);
 
 /**
  * Read the value of a binary output argument.  Only intended for use inside the invocation completed callback.
@@ -352,7 +352,7 @@ DllExport char* CpInvocationOutputString(CpInvocationC aInvocation, uint32_t aIn
  * @param[out] aData        Value of the binary output argument.  Ownership passes to the caller.  Use OhNetFree() to destroy this.
  * @param[out] aLen         Length (in bytes) of aData
  */
-DllExport void CpInvocationGetOutputBinary(CpInvocationC aInvocation, uint32_t aIndex, char** aData, uint32_t* aLen);
+DllExport void STDCALL CpInvocationGetOutputBinary(CpInvocationC aInvocation, uint32_t aIndex, char** aData, uint32_t* aLen);
 
 /* @} */
 

@@ -68,7 +68,7 @@ void TestBasicCp::TestActions(CpDeviceCpp& aDevice)
     delete proxy;
 }
 
-static void updatesComplete(void* aPtr)
+static void STDCALL updatesComplete(void* aPtr)
 {
     reinterpret_cast<Semaphore*>(aPtr)->Signal();
 }

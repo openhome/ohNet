@@ -306,12 +306,12 @@ void <#=className#>C::<#=s.name#>PropertyChanged()
 <#  } #>
 
 
-THandle <#=className#>Create(CpDeviceC aDevice)
+THandle STDCALL <#=className#>Create(CpDeviceC aDevice)
 {
     return new <#=className#>C(aDevice);
 }
 
-void <#=className#>Destroy(THandle aHandle)
+void STDCALL <#=className#>Destroy(THandle aHandle)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     delete proxyC;
@@ -319,7 +319,7 @@ void <#=className#>Destroy(THandle aHandle)
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
+void STDCALL <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -367,7 +367,7 @@ void <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
 <#  } #>
 }
 
-void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InTypesAndNamesTrailingComma(a)#>OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InTypesAndNamesTrailingComma(a)#>OhNetCallbackAsync aCallback, void* aPtr)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -387,7 +387,7 @@ void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InTypesAndNamesTrailingC
     proxyC->Begin<#=a.name#>(<#=InNamesTrailingComma(a)#>functor);
 }
 
-int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=PrefixedOutArgTypesAndNames("OhNetHandleAsync aAsync", a)#>)
+int32_t STDCALL <#=className#>End<#=a.name#>(THandle aHandle, <#=PrefixedOutArgTypesAndNames("OhNetHandleAsync aAsync", a)#>)
 {
     int32_t err = 0;
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
@@ -433,7 +433,7 @@ int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=PrefixedOutArgTypesAndN
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
-void <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -446,7 +446,7 @@ void <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, OhNetCallback 
 
 <#      if (s.type == "string" || s.type == "uri") #>
 <#      { #>
-void <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>)
+void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -457,7 +457,7 @@ void <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>)
 <#      } #>
 <#      else if (s.type=="bin.base64") #>
 <#      { #>
-void <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>, uint32_t* aLen)
+void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>, uint32_t* aLen)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -469,7 +469,7 @@ void <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>, uin
 <#      } #>
 <#      else if (s.type=="boolean") #>
 <#      { #>
-void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
+void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -479,7 +479,7 @@ void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> 
 <#      } #>
 <#      else #>
 <#      { #>
-void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
+void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
 {
     <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
     ASSERT(proxyC != NULL);

@@ -50,7 +50,7 @@ const uint32_t kServiceParameterUintDefaultStep = 1;
  *
  * @return   Handle to the newly created service
  */
-DllExport ServiceParameter ServiceParameterCreateInt(const char* aName, int32_t aMinValue, int32_t aMaxValue, int32_t aStep);
+DllExport ServiceParameter STDCALL ServiceParameterCreateInt(const char* aName, int32_t aMinValue, int32_t aMaxValue, int32_t aStep);
 
 /**
  * Create an unsigned integer parameter
@@ -64,7 +64,7 @@ DllExport ServiceParameter ServiceParameterCreateInt(const char* aName, int32_t 
  *
  * @return   Handle to the newly created service
  */
-DllExport ServiceParameter ServiceParameterCreateUint(const char* aName, uint32_t aMinValue, uint32_t aMaxValue, uint32_t aStep);
+DllExport ServiceParameter STDCALL ServiceParameterCreateUint(const char* aName, uint32_t aMinValue, uint32_t aMaxValue, uint32_t aStep);
 
 /**
  * Create a boolean parameter
@@ -75,7 +75,7 @@ DllExport ServiceParameter ServiceParameterCreateUint(const char* aName, uint32_
  *
  * @return   Handle to the newly created service
  */
-DllExport ServiceParameter ServiceParameterCreateBool(const char* aName);
+DllExport ServiceParameter STDCALL ServiceParameterCreateBool(const char* aName);
 
 /**
  * Create a string parameter
@@ -88,7 +88,7 @@ DllExport ServiceParameter ServiceParameterCreateBool(const char* aName);
  *
  * @return   Handle to the newly created service
  */
-DllExport ServiceParameter ServiceParameterCreateString(const char* aName, char** aAllowedValues, uint32_t aCount);
+DllExport ServiceParameter STDCALL ServiceParameterCreateString(const char* aName, char** aAllowedValues, uint32_t aCount);
 
 /**
  * Create a binary parameter
@@ -99,7 +99,7 @@ DllExport ServiceParameter ServiceParameterCreateString(const char* aName, char*
  *
  * @return   Handle to the newly created service
  */
-DllExport ServiceParameter ServiceParameterCreateBinary(const char* aName);
+DllExport ServiceParameter STDCALL ServiceParameterCreateBinary(const char* aName);
 /* @} */
 /**
  * @addtogroup Property
@@ -129,7 +129,7 @@ typedef THandle ServiceProperty;
  *
  * @return   Handle to the newly created service
  */
-DllExport ServiceParameter ServiceParameterCreateRelated(const char* aName, ServiceProperty aProperty);
+DllExport ServiceParameter STDCALL ServiceParameterCreateRelated(const char* aName, ServiceProperty aProperty);
 /* @} */
 
 /**
@@ -147,7 +147,7 @@ typedef THandle ServiceProperty;
  *
  * @param[in] aProperty  Property handle returned from ServicePropertyCreate[Type][Cp|Dv]
  */
-DllExport void ServicePropertyDestroy(ServiceProperty aProperty);
+DllExport void STDCALL ServicePropertyDestroy(ServiceProperty aProperty);
 
 /**
  * Create an integer property suitable for use by a client of the control point stack
@@ -160,7 +160,7 @@ DllExport void ServicePropertyDestroy(ServiceProperty aProperty);
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateIntCp(const char* aName, OhNetCallback aCallback, void* aPtr);
+DllExport ServiceProperty STDCALL ServicePropertyCreateIntCp(const char* aName, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Create an integer property suitable for use by a client of the device stack
@@ -169,7 +169,7 @@ DllExport ServiceProperty ServicePropertyCreateIntCp(const char* aName, OhNetCal
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateIntDv(ServiceParameter aParameter);
+DllExport ServiceProperty STDCALL ServicePropertyCreateIntDv(ServiceParameter aParameter);
 
 /**
  * Create an integer property suitable for use by a client of the control point stack
@@ -182,7 +182,7 @@ DllExport ServiceProperty ServicePropertyCreateIntDv(ServiceParameter aParameter
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateUintCp(const char* aName, OhNetCallback aCallback, void* aPtr);
+DllExport ServiceProperty STDCALL ServicePropertyCreateUintCp(const char* aName, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Create an unsigned integer property suitable for use by a client of the device stack
@@ -191,7 +191,7 @@ DllExport ServiceProperty ServicePropertyCreateUintCp(const char* aName, OhNetCa
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateUintDv(ServiceParameter aParameter);
+DllExport ServiceProperty STDCALL ServicePropertyCreateUintDv(ServiceParameter aParameter);
 
 /**
  * Create a boolean property suitable for use by a control point
@@ -204,7 +204,7 @@ DllExport ServiceProperty ServicePropertyCreateUintDv(ServiceParameter aParamete
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateBoolCp(const char* aName, OhNetCallback aCallback, void* aPtr);
+DllExport ServiceProperty STDCALL ServicePropertyCreateBoolCp(const char* aName, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Create a boolean property suitable for use by a client of the device stack
@@ -213,7 +213,7 @@ DllExport ServiceProperty ServicePropertyCreateBoolCp(const char* aName, OhNetCa
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateBoolDv(ServiceParameter aParameter);
+DllExport ServiceProperty STDCALL ServicePropertyCreateBoolDv(ServiceParameter aParameter);
 
 /**
  * Create an integer property suitable for use by a client of the control point stack
@@ -226,7 +226,7 @@ DllExport ServiceProperty ServicePropertyCreateBoolDv(ServiceParameter aParamete
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateStringCp(const char* aName, OhNetCallback aCallback, void* aPtr);
+DllExport ServiceProperty STDCALL ServicePropertyCreateStringCp(const char* aName, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Create a string property suitable for use by a client of the device stack
@@ -235,7 +235,7 @@ DllExport ServiceProperty ServicePropertyCreateStringCp(const char* aName, OhNet
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateStringDv(ServiceParameter aParameter);
+DllExport ServiceProperty STDCALL ServicePropertyCreateStringDv(ServiceParameter aParameter);
 
 /**
  * Create an integer property suitable for use by a client of the control point stack
@@ -248,7 +248,7 @@ DllExport ServiceProperty ServicePropertyCreateStringDv(ServiceParameter aParame
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateBinaryCp(const char* aName, OhNetCallback aCallback, void* aPtr);
+DllExport ServiceProperty STDCALL ServicePropertyCreateBinaryCp(const char* aName, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Create a binary property suitable for use by a client of the device stack
@@ -257,7 +257,7 @@ DllExport ServiceProperty ServicePropertyCreateBinaryCp(const char* aName, OhNet
  *
  * @return   Handle to the newly created property
  */
-DllExport ServiceProperty ServicePropertyCreateBinaryDv(ServiceParameter aParameter);
+DllExport ServiceProperty STDCALL ServicePropertyCreateBinaryDv(ServiceParameter aParameter);
 
 /**
  * Read the current value of an integer property
@@ -266,7 +266,7 @@ DllExport ServiceProperty ServicePropertyCreateBinaryDv(ServiceParameter aParame
  *
  * @return   Current value of the property
  */
-DllExport int32_t ServicePropertyValueInt(ServiceProperty aProperty);
+DllExport int32_t STDCALL ServicePropertyValueInt(ServiceProperty aProperty);
 
 /**
  * Read the current value of an unsigned integer property
@@ -275,7 +275,7 @@ DllExport int32_t ServicePropertyValueInt(ServiceProperty aProperty);
  *
  * @return   Current value of the property
  */
-DllExport uint32_t ServicePropertyValueUint(ServiceProperty aProperty);
+DllExport uint32_t STDCALL ServicePropertyValueUint(ServiceProperty aProperty);
 
 /**
  * Read the current value of a boolean property
@@ -284,7 +284,7 @@ DllExport uint32_t ServicePropertyValueUint(ServiceProperty aProperty);
  *
  * @return   Current value of the property.  0 for false; non-zero for true
  */
-DllExport uint32_t ServicePropertyValueBool(ServiceProperty aProperty);
+DllExport uint32_t STDCALL ServicePropertyValueBool(ServiceProperty aProperty);
 
 /**
  * Read the current value of a string property
@@ -294,7 +294,7 @@ DllExport uint32_t ServicePropertyValueBool(ServiceProperty aProperty);
  * @return   Copy of the current value of the property.  Ownership is passed to the caller.
  *           Use OhNetFree to later free it
  */
-DllExport const char* ServicePropertyValueString(ServiceProperty aProperty);
+DllExport const char* STDCALL ServicePropertyValueString(ServiceProperty aProperty);
 
 /**
  * Read the current value of a binary property
@@ -304,7 +304,7 @@ DllExport const char* ServicePropertyValueString(ServiceProperty aProperty);
  *                        Use OhNetFree to later free it
  * @param[out] aLen       Number of bytes of data returned
  */
-DllExport void ServicePropertyGetValueBinary(ServiceProperty aProperty, const uint8_t** aData, uint32_t* aLen);
+DllExport void STDCALL ServicePropertyGetValueBinary(ServiceProperty aProperty, const uint8_t** aData, uint32_t* aLen);
 
 /**
  * Set the current value of an integer property
@@ -314,7 +314,7 @@ DllExport void ServicePropertyGetValueBinary(ServiceProperty aProperty, const ui
  *
  * @return    1 if the value of the property has changed; 0 otherwise
  */
-DllExport uint32_t ServicePropertySetValueInt(ServiceProperty aProperty, int32_t aValue);
+DllExport uint32_t STDCALL ServicePropertySetValueInt(ServiceProperty aProperty, int32_t aValue);
 
 /**
  * Set the current value of an unsigned integer property
@@ -324,7 +324,7 @@ DllExport uint32_t ServicePropertySetValueInt(ServiceProperty aProperty, int32_t
  *
  * @return    1 if the value of the property has changed; 0 otherwise
  */
-DllExport uint32_t ServicePropertySetValueUint(ServiceProperty aProperty, uint32_t aValue);
+DllExport uint32_t STDCALL ServicePropertySetValueUint(ServiceProperty aProperty, uint32_t aValue);
 
 /**
  * Set the current value of a boolean property
@@ -334,7 +334,7 @@ DllExport uint32_t ServicePropertySetValueUint(ServiceProperty aProperty, uint32
  *
  * @return    1 if the value of the property has changed; 0 otherwise
  */
-DllExport uint32_t ServicePropertySetValueBool(ServiceProperty aProperty, uint32_t aValue);
+DllExport uint32_t STDCALL ServicePropertySetValueBool(ServiceProperty aProperty, uint32_t aValue);
 
 /**
  * Set the current value of a string property
@@ -344,7 +344,7 @@ DllExport uint32_t ServicePropertySetValueBool(ServiceProperty aProperty, uint32
  *
  * @return    1 if the value of the property has changed; 0 otherwise
  */
-DllExport uint32_t ServicePropertySetValueString(ServiceProperty aProperty, const char* aValue);
+DllExport uint32_t STDCALL ServicePropertySetValueString(ServiceProperty aProperty, const char* aValue);
 
 /**
  * Set the current value of a binary property
@@ -355,7 +355,7 @@ DllExport uint32_t ServicePropertySetValueString(ServiceProperty aProperty, cons
  *
  * @return    1 if the value of the property has changed; 0 otherwise
  */
-DllExport uint32_t ServicePropertySetValueBinary(ServiceProperty aProperty, uint8_t* aValue, uint32_t aLen);
+DllExport uint32_t STDCALL ServicePropertySetValueBinary(ServiceProperty aProperty, uint8_t* aValue, uint32_t aLen);
 
 /* @} */
 
@@ -379,14 +379,14 @@ typedef THandle ServiceAction;
  *
  * @return   Handle to the newly created action
  */
-DllExport ServiceAction ServiceActionCreate(const char* aName);
+DllExport ServiceAction STDCALL ServiceActionCreate(const char* aName);
 
 /**
  * Destroy an action
  *
  * @param[in] aAction     Returned by ServiceActionCreate
  */
-DllExport void ServiceActionDestroy(ServiceAction aAction);
+DllExport void STDCALL ServiceActionDestroy(ServiceAction aAction);
 
 /**
  * Add an input parameter to an action
@@ -394,7 +394,7 @@ DllExport void ServiceActionDestroy(ServiceAction aAction);
  * @param[in] aAction     Returned by ServiceActionCreate
  * @param[in] aParameter  Input parameter to be added.  Ownership passes to the action
  */
-DllExport void ServiceActionAddInputParameter(ServiceAction aAction, ServiceParameter aParameter);
+DllExport void STDCALL ServiceActionAddInputParameter(ServiceAction aAction, ServiceParameter aParameter);
 
 /**
  * Add an output parameter to an action
@@ -402,7 +402,7 @@ DllExport void ServiceActionAddInputParameter(ServiceAction aAction, ServicePara
  * @param[in] aAction     Returned by ServiceActionCreate
  * @param[in] aParameter  Input parameter to be added.  Ownership passes to the action
  */
-DllExport void ServiceActionAddOutputParameter(ServiceAction aAction, ServiceParameter aParameter);
+DllExport void STDCALL ServiceActionAddOutputParameter(ServiceAction aAction, ServiceParameter aParameter);
 
 /**
  * Query the action name
@@ -411,7 +411,7 @@ DllExport void ServiceActionAddOutputParameter(ServiceAction aAction, ServicePar
  *
  * @return   The action name
  */
-DllExport const char* ServiceActionName(ServiceAction aAction);
+DllExport const char* STDCALL ServiceActionName(ServiceAction aAction);
 
 /* @} */
 

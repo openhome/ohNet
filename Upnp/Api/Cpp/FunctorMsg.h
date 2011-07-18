@@ -7,7 +7,7 @@
 
 namespace OpenHome {
 
-typedef void (*OhNetFunctorMsg)(void* aPtr, const char* aMsg);
+typedef void (STDCALL *OhNetFunctorMsg)(void* aPtr, const char* aMsg);
 
 /**
  * Callback used to pass a message (a nul-terminated const char*).

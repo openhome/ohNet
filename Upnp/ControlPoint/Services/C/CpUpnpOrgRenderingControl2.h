@@ -30,7 +30,7 @@ extern "C" {
  *
  * @return  Handle which should be used with all other functions in this header
  */
-DllExport THandle CpProxyUpnpOrgRenderingControl2Create(CpDeviceC aDevice);
+DllExport THandle STDCALL CpProxyUpnpOrgRenderingControl2Create(CpDeviceC aDevice);
 /**
  * Destructor.
  * If any asynchronous method is in progress, this will block until they complete.
@@ -40,7 +40,7 @@ DllExport THandle CpProxyUpnpOrgRenderingControl2Create(CpDeviceC aDevice);
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
  */
-DllExport void CpProxyUpnpOrgRenderingControl2Destroy(THandle aHandle);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2Destroy(THandle aHandle);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -50,7 +50,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2Destroy(THandle aHandle);
  * @param[in]  aInstanceID
  * @param[out] aCurrentPresetNameList
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncListPresets(THandle aHandle, uint32_t aInstanceID, char** aCurrentPresetNameList);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncListPresets(THandle aHandle, uint32_t aInstanceID, char** aCurrentPresetNameList);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -63,7 +63,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncListPresets(THandle aHandle, u
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginListPresets(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginListPresets(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -75,7 +75,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginListPresets(THandle aHandle, 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndListPresets(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentPresetNameList);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndListPresets(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentPresetNameList);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -85,7 +85,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndListPresets(THandle aHandle,
  * @param[in]  aInstanceID
  * @param[in]  aPresetName
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -99,7 +99,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSelectPreset(THandle aHandle, 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -110,7 +110,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSelectPreset(THandle aHandle,
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSelectPreset(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSelectPreset(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -120,7 +120,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSelectPreset(THandle aHandle
  * @param[in]  aInstanceID
  * @param[out] aCurrentBrightness
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBrightness);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBrightness);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -133,7 +133,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetBrightness(THandle aHandle,
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetBrightness(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetBrightness(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -145,7 +145,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetBrightness(THandle aHandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetBrightness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBrightness);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetBrightness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBrightness);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -155,7 +155,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetBrightness(THandle aHandl
  * @param[in]  aInstanceID
  * @param[in]  aDesiredBrightness
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -169,7 +169,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetBrightness(THandle aHandle,
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -180,7 +180,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetBrightness(THandle aHandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetBrightness(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetBrightness(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -190,7 +190,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetBrightness(THandle aHandl
  * @param[in]  aInstanceID
  * @param[out] aCurrentContrast
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentContrast);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentContrast);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -203,7 +203,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetContrast(THandle aHandle, u
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetContrast(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetContrast(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -215,7 +215,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetContrast(THandle aHandle, 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetContrast(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentContrast);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetContrast(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentContrast);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -225,7 +225,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetContrast(THandle aHandle,
  * @param[in]  aInstanceID
  * @param[in]  aDesiredContrast
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -239,7 +239,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetContrast(THandle aHandle, u
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -250,7 +250,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetContrast(THandle aHandle, 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetContrast(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetContrast(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -260,7 +260,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetContrast(THandle aHandle,
  * @param[in]  aInstanceID
  * @param[out] aCurrentSharpness
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentSharpness);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentSharpness);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -273,7 +273,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetSharpness(THandle aHandle, 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetSharpness(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetSharpness(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -285,7 +285,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetSharpness(THandle aHandle,
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetSharpness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentSharpness);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetSharpness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentSharpness);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -295,7 +295,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetSharpness(THandle aHandle
  * @param[in]  aInstanceID
  * @param[in]  aDesiredSharpness
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -309,7 +309,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetSharpness(THandle aHandle, 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -320,7 +320,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetSharpness(THandle aHandle,
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetSharpness(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetSharpness(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -330,7 +330,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetSharpness(THandle aHandle
  * @param[in]  aInstanceID
  * @param[out] aCurrentRedVideoGain
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoGain);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoGain);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -343,7 +343,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetRedVideoGain(THandle aHandl
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -355,7 +355,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoGain(THandle aHand
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetRedVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentRedVideoGain);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetRedVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentRedVideoGain);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -365,7 +365,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetRedVideoGain(THandle aHan
  * @param[in]  aInstanceID
  * @param[in]  aDesiredRedVideoGain
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -379,7 +379,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetRedVideoGain(THandle aHandl
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -390,7 +390,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoGain(THandle aHand
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetRedVideoGain(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetRedVideoGain(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -400,7 +400,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetRedVideoGain(THandle aHan
  * @param[in]  aInstanceID
  * @param[out] aCurrentGreenVideoGain
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoGain);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoGain);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -413,7 +413,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoGain(THandle aHan
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -425,7 +425,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoGain(THandle aHa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetGreenVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentGreenVideoGain);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetGreenVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentGreenVideoGain);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -435,7 +435,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetGreenVideoGain(THandle aH
  * @param[in]  aInstanceID
  * @param[in]  aDesiredGreenVideoGain
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -449,7 +449,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoGain(THandle aHan
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -460,7 +460,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoGain(THandle aHa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetGreenVideoGain(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetGreenVideoGain(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -470,7 +470,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetGreenVideoGain(THandle aH
  * @param[in]  aInstanceID
  * @param[out] aCurrentBlueVideoGain
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoGain);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoGain);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -483,7 +483,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoGain(THandle aHand
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -495,7 +495,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoGain(THandle aHan
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetBlueVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBlueVideoGain);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetBlueVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBlueVideoGain);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -505,7 +505,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetBlueVideoGain(THandle aHa
  * @param[in]  aInstanceID
  * @param[in]  aDesiredBlueVideoGain
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -519,7 +519,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoGain(THandle aHand
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -530,7 +530,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoGain(THandle aHan
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetBlueVideoGain(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetBlueVideoGain(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -540,7 +540,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetBlueVideoGain(THandle aHa
  * @param[in]  aInstanceID
  * @param[out] aCurrentRedVideoBlackLevel
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoBlackLevel);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoBlackLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -553,7 +553,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetRedVideoBlackLevel(THandle 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -565,7 +565,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoBlackLevel(THandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetRedVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentRedVideoBlackLevel);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetRedVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentRedVideoBlackLevel);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -575,7 +575,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetRedVideoBlackLevel(THandl
  * @param[in]  aInstanceID
  * @param[in]  aDesiredRedVideoBlackLevel
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -589,7 +589,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetRedVideoBlackLevel(THandle 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -600,7 +600,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoBlackLevel(THandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetRedVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetRedVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -610,7 +610,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetRedVideoBlackLevel(THandl
  * @param[in]  aInstanceID
  * @param[out] aCurrentGreenVideoBlackLevel
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoBlackLevel);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoBlackLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -623,7 +623,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoBlackLevel(THandl
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -635,7 +635,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoBlackLevel(THand
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetGreenVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentGreenVideoBlackLevel);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetGreenVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentGreenVideoBlackLevel);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -645,7 +645,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetGreenVideoBlackLevel(THan
  * @param[in]  aInstanceID
  * @param[in]  aDesiredGreenVideoBlackLevel
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -659,7 +659,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoBlackLevel(THandl
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -670,7 +670,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoBlackLevel(THand
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetGreenVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetGreenVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -680,7 +680,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetGreenVideoBlackLevel(THan
  * @param[in]  aInstanceID
  * @param[out] aCurrentBlueVideoBlackLevel
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoBlackLevel);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoBlackLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -693,7 +693,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoBlackLevel(THandle
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -705,7 +705,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoBlackLevel(THandl
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetBlueVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBlueVideoBlackLevel);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetBlueVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBlueVideoBlackLevel);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -715,7 +715,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetBlueVideoBlackLevel(THand
  * @param[in]  aInstanceID
  * @param[in]  aDesiredBlueVideoBlackLevel
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -729,7 +729,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoBlackLevel(THandle
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -740,7 +740,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoBlackLevel(THandl
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetBlueVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetBlueVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -750,7 +750,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetBlueVideoBlackLevel(THand
  * @param[in]  aInstanceID
  * @param[out] aCurrentColorTemperature
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentColorTemperature);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentColorTemperature);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -763,7 +763,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetColorTemperature(THandle aH
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetColorTemperature(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetColorTemperature(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -775,7 +775,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetColorTemperature(THandle a
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetColorTemperature(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentColorTemperature);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetColorTemperature(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentColorTemperature);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -785,7 +785,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetColorTemperature(THandle 
  * @param[in]  aInstanceID
  * @param[in]  aDesiredColorTemperature
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -799,7 +799,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetColorTemperature(THandle aH
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -810,7 +810,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetColorTemperature(THandle a
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetColorTemperature(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetColorTemperature(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -820,7 +820,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetColorTemperature(THandle 
  * @param[in]  aInstanceID
  * @param[out] aCurrentHorizontalKeystone
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentHorizontalKeystone);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentHorizontalKeystone);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -833,7 +833,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetHorizontalKeystone(THandle 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -845,7 +845,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetHorizontalKeystone(THandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetHorizontalKeystone(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentHorizontalKeystone);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetHorizontalKeystone(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentHorizontalKeystone);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -855,7 +855,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetHorizontalKeystone(THandl
  * @param[in]  aInstanceID
  * @param[in]  aDesiredHorizontalKeystone
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -869,7 +869,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetHorizontalKeystone(THandle 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -880,7 +880,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetHorizontalKeystone(THandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetHorizontalKeystone(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetHorizontalKeystone(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -890,7 +890,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetHorizontalKeystone(THandl
  * @param[in]  aInstanceID
  * @param[out] aCurrentVerticalKeystone
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentVerticalKeystone);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentVerticalKeystone);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -903,7 +903,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetVerticalKeystone(THandle aH
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -915,7 +915,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetVerticalKeystone(THandle a
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetVerticalKeystone(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentVerticalKeystone);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetVerticalKeystone(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentVerticalKeystone);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -925,7 +925,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetVerticalKeystone(THandle 
  * @param[in]  aInstanceID
  * @param[in]  aDesiredVerticalKeystone
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -939,7 +939,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetVerticalKeystone(THandle aH
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -950,7 +950,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetVerticalKeystone(THandle a
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetVerticalKeystone(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetVerticalKeystone(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -961,7 +961,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetVerticalKeystone(THandle 
  * @param[in]  aChannel
  * @param[out] aCurrentMute
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentMute);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentMute);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -975,7 +975,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetMute(THandle aHandle, uint3
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -987,7 +987,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetMute(THandle aHandle, uint
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetMute(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentMute);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetMute(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentMute);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -998,7 +998,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetMute(THandle aHandle, OhN
  * @param[in]  aChannel
  * @param[in]  aDesiredMute
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1013,7 +1013,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetMute(THandle aHandle, uint3
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -1024,7 +1024,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetMute(THandle aHandle, uint
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetMute(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetMute(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -1035,7 +1035,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetMute(THandle aHandle, OhN
  * @param[in]  aChannel
  * @param[out] aCurrentVolume
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentVolume);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentVolume);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1049,7 +1049,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetVolume(THandle aHandle, uin
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -1061,7 +1061,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetVolume(THandle aHandle, ui
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetVolume(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentVolume);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetVolume(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentVolume);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -1072,81 +1072,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetVolume(THandle aHandle, O
  * @param[in]  aChannel
  * @param[in]  aDesiredVolume
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume);
-/**
- * Invoke the action asynchronously.
- * Returns immediately and will run the client-specified callback when the action
- * later completes.  Any output arguments can then be retrieved by calling
- * EndGetProtocolInfo().
- *
- * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
- * @param[in]  aInstanceID
- * @param[in]  aChannel
- * @param[in]  aDesiredVolume
- * @param[in]  aCallback Callback to run when the action completes.
- *                       This is guaranteed to be run but may indicate an error
- * @param[in]  aPtr      Data to be passed to the callback
- */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume, OhNetCallbackAsync aCallback, void* aPtr);
-/**
- * Retrieve the output arguments from an asynchronously invoked action.
- * This may only be called from the callback set in the above Begin function.
- *
- * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
- * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
- *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
- *          arguments is not guaranteed in the case of failure
- */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetVolume(THandle aHandle, OhNetHandleAsync aAsync);
-
-/**
- * Invoke the action synchronously.  Blocks until the action has been processed
- * on the device and sets any output arguments.
- *
- * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
- * @param[in]  aInstanceID
- * @param[in]  aChannel
- * @param[out] aCurrentVolume
- */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aCurrentVolume);
-/**
- * Invoke the action asynchronously.
- * Returns immediately and will run the client-specified callback when the action
- * later completes.  Any output arguments can then be retrieved by calling
- * EndGetProtocolInfo().
- *
- * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
- * @param[in]  aInstanceID
- * @param[in]  aChannel
- * @param[in]  aCallback Callback to run when the action completes.
- *                       This is guaranteed to be run but may indicate an error
- * @param[in]  aPtr      Data to be passed to the callback
- */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr);
-/**
- * Retrieve the output arguments from an asynchronously invoked action.
- * This may only be called from the callback set in the above Begin function.
- *
- * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
- * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
- * @param[out] aCurrentVolume
- *
- * @return  0 if the function succedded; non-zero if it failed.  State of output
- *          arguments is not guaranteed in the case of failure
- */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetVolumeDB(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentVolume);
-
-/**
- * Invoke the action synchronously.  Blocks until the action has been processed
- * on the device and sets any output arguments.
- *
- * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
- * @param[in]  aInstanceID
- * @param[in]  aChannel
- * @param[in]  aDesiredVolume
- */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1161,7 +1087,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetVolumeDB(THandle aHandle, u
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -1172,7 +1098,81 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetVolumeDB(THandle aHandle, 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetVolumeDB(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetVolume(THandle aHandle, OhNetHandleAsync aAsync);
+
+/**
+ * Invoke the action synchronously.  Blocks until the action has been processed
+ * on the device and sets any output arguments.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
+ * @param[in]  aInstanceID
+ * @param[in]  aChannel
+ * @param[out] aCurrentVolume
+ */
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aCurrentVolume);
+/**
+ * Invoke the action asynchronously.
+ * Returns immediately and will run the client-specified callback when the action
+ * later completes.  Any output arguments can then be retrieved by calling
+ * EndGetProtocolInfo().
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
+ * @param[in]  aInstanceID
+ * @param[in]  aChannel
+ * @param[in]  aCallback Callback to run when the action completes.
+ *                       This is guaranteed to be run but may indicate an error
+ * @param[in]  aPtr      Data to be passed to the callback
+ */
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr);
+/**
+ * Retrieve the output arguments from an asynchronously invoked action.
+ * This may only be called from the callback set in the above Begin function.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
+ * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
+ * @param[out] aCurrentVolume
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
+ */
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetVolumeDB(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentVolume);
+
+/**
+ * Invoke the action synchronously.  Blocks until the action has been processed
+ * on the device and sets any output arguments.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
+ * @param[in]  aInstanceID
+ * @param[in]  aChannel
+ * @param[in]  aDesiredVolume
+ */
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume);
+/**
+ * Invoke the action asynchronously.
+ * Returns immediately and will run the client-specified callback when the action
+ * later completes.  Any output arguments can then be retrieved by calling
+ * EndGetProtocolInfo().
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
+ * @param[in]  aInstanceID
+ * @param[in]  aChannel
+ * @param[in]  aDesiredVolume
+ * @param[in]  aCallback Callback to run when the action completes.
+ *                       This is guaranteed to be run but may indicate an error
+ * @param[in]  aPtr      Data to be passed to the callback
+ */
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume, OhNetCallbackAsync aCallback, void* aPtr);
+/**
+ * Retrieve the output arguments from an asynchronously invoked action.
+ * This may only be called from the callback set in the above Begin function.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
+ * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
+ */
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetVolumeDB(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -1184,7 +1184,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetVolumeDB(THandle aHandle,
  * @param[out] aMinValue
  * @param[out] aMaxValue
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aMinValue, int32_t* aMaxValue);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aMinValue, int32_t* aMaxValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1198,7 +1198,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetVolumeDBRange(THandle aHand
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -1211,7 +1211,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetVolumeDBRange(THandle aHan
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetVolumeDBRange(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aMinValue, int32_t* aMaxValue);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetVolumeDBRange(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aMinValue, int32_t* aMaxValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -1222,7 +1222,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetVolumeDBRange(THandle aHa
  * @param[in]  aChannel
  * @param[out] aCurrentLoudness
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentLoudness);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentLoudness);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1236,7 +1236,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetLoudness(THandle aHandle, u
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -1248,7 +1248,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetLoudness(THandle aHandle, 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetLoudness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentLoudness);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetLoudness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentLoudness);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -1259,7 +1259,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetLoudness(THandle aHandle,
  * @param[in]  aChannel
  * @param[in]  aDesiredLoudness
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1274,7 +1274,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetLoudness(THandle aHandle, u
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -1285,7 +1285,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetLoudness(THandle aHandle, 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetLoudness(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetLoudness(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -1296,7 +1296,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetLoudness(THandle aHandle,
  * @param[in]  aStateVariableList
  * @param[out] aStateVariableValuePairs
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, char** aStateVariableValuePairs);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, char** aStateVariableValuePairs);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1310,7 +1310,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncGetStateVariables(THandle aHan
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -1322,7 +1322,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginGetStateVariables(THandle aHa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableValuePairs);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndGetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableValuePairs);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -1336,7 +1336,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndGetStateVariables(THandle aH
  * @param[in]  aStateVariableValuePairs
  * @param[out] aStateVariableList
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SyncSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aRenderingControlUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, char** aStateVariableList);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SyncSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aRenderingControlUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, char** aStateVariableList);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -1353,7 +1353,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SyncSetStateVariables(THandle aHan
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2BeginSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aRenderingControlUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2BeginSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aRenderingControlUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -1365,7 +1365,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2BeginSetStateVariables(THandle aHa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableList);
+DllExport int32_t STDCALL CpProxyUpnpOrgRenderingControl2EndSetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableList);
 /**
  * Set a callback to be run when the LastChange state variable changes.
  *
@@ -1376,7 +1376,7 @@ DllExport int32_t CpProxyUpnpOrgRenderingControl2EndSetStateVariables(THandle aH
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgRenderingControl2SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the LastChange property.
@@ -1387,7 +1387,7 @@ DllExport void CpProxyUpnpOrgRenderingControl2SetPropertyLastChangeChanged(THand
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgRenderingControl2Create
  * @param[out] aLastChange
  */
-DllExport void CpProxyUpnpOrgRenderingControl2PropertyLastChange(THandle aHandle, char** aLastChange);
+DllExport void STDCALL CpProxyUpnpOrgRenderingControl2PropertyLastChange(THandle aHandle, char** aLastChange);
 
 /* @} */
 

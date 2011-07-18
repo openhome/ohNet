@@ -293,96 +293,96 @@ void DvProviderAvOpenhomeOrgReceiver1C::DoTransportState(IDviInvocation& aInvoca
 
 
 
-THandle DvProviderAvOpenhomeOrgReceiver1Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderAvOpenhomeOrgReceiver1Create(DvDeviceC aDevice)
 {
 	return new DvProviderAvOpenhomeOrgReceiver1C(aDevice);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1Destroy(THandle aProvider)
+void STDCALL DvProviderAvOpenhomeOrgReceiver1Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1EnableActionPlay(THandle aProvider, CallbackReceiver1Play aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgReceiver1EnableActionPlay(THandle aProvider, CallbackReceiver1Play aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->EnableActionPlay(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1EnableActionStop(THandle aProvider, CallbackReceiver1Stop aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgReceiver1EnableActionStop(THandle aProvider, CallbackReceiver1Stop aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->EnableActionStop(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1EnableActionSetSender(THandle aProvider, CallbackReceiver1SetSender aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgReceiver1EnableActionSetSender(THandle aProvider, CallbackReceiver1SetSender aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->EnableActionSetSender(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1EnableActionSender(THandle aProvider, CallbackReceiver1Sender aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgReceiver1EnableActionSender(THandle aProvider, CallbackReceiver1Sender aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->EnableActionSender(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1EnableActionProtocolInfo(THandle aProvider, CallbackReceiver1ProtocolInfo aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgReceiver1EnableActionProtocolInfo(THandle aProvider, CallbackReceiver1ProtocolInfo aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->EnableActionProtocolInfo(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgReceiver1EnableActionTransportState(THandle aProvider, CallbackReceiver1TransportState aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgReceiver1EnableActionTransportState(THandle aProvider, CallbackReceiver1TransportState aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->EnableActionTransportState(aCallback, aPtr);
 }
 
-int32_t DvProviderAvOpenhomeOrgReceiver1SetPropertyUri(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgReceiver1SetPropertyUri(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->SetPropertyUri(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgReceiver1GetPropertyUri(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgReceiver1GetPropertyUri(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->GetPropertyUri(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgReceiver1SetPropertyMetadata(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgReceiver1SetPropertyMetadata(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->SetPropertyMetadata(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgReceiver1GetPropertyMetadata(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgReceiver1GetPropertyMetadata(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->GetPropertyMetadata(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgReceiver1SetPropertyTransportState(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgReceiver1SetPropertyTransportState(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->SetPropertyTransportState(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgReceiver1GetPropertyTransportState(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgReceiver1GetPropertyTransportState(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->GetPropertyTransportState(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgReceiver1SetPropertyProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgReceiver1SetPropertyProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->SetPropertyProtocolInfo(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgReceiver1GetPropertyProtocolInfo(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgReceiver1GetPropertyProtocolInfo(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgReceiver1C*>(aProvider)->GetPropertyProtocolInfo(buf);

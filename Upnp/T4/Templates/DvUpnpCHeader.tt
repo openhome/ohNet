@@ -88,7 +88,7 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*<#=callbackPrefix#><#=a.name#>)(void* aPtr, uint32_t aVersion<#=ActionArgs(a)#>);
+typedef int32_t (STDCALL *<#=callbackPrefix#><#=a.name#>)(void* aPtr, uint32_t aVersion<#=ActionArgs(a)#>);
 <#  } #>
 
 /**
@@ -98,14 +98,14 @@ typedef int32_t (*<#=callbackPrefix#><#=a.name#>)(void* aPtr, uint32_t aVersion<
  *
  * @return  Handle to this provider
  */
-DllExport THandle <#=className#>Create(DvDeviceC aDevice);
+DllExport THandle STDCALL <#=className#>Create(DvDeviceC aDevice);
 
 /**
  * Provider destructor
  *
  * @param[in] aProvider  Handle returned by <#=className#>Create
  */
-DllExport void <#=className#>Destroy(THandle aProvider);
+DllExport void STDCALL <#=className#>Destroy(THandle aProvider);
 
 <#  foreach (Method a in u.methods) #>
 <#  { #>
@@ -119,7 +119,7 @@ DllExport void <#=className#>Destroy(THandle aProvider);
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void <#=className#>EnableAction<#=a.name#>(THandle aProvider, <#=callbackPrefix#><#=a.name#> aCallback, void* aPtr);
+DllExport void STDCALL <#=className#>EnableAction<#=a.name#>(THandle aProvider, <#=callbackPrefix#><#=a.name#> aCallback, void* aPtr);
 <#  } #>
 
 <#  foreach (Variable s in u.evented) #>
@@ -145,7 +145,7 @@ DllExport void <#=className#>EnableAction<#=a.name#>(THandle aProvider, <#=callb
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t <#=className#>SetProperty<#=s.name#>(THandle aProvider, <#=PropertyInArgs(s)#>, uint32_t* aChanged);
+DllExport int32_t STDCALL <#=className#>SetProperty<#=s.name#>(THandle aProvider, <#=PropertyInArgs(s)#>, uint32_t* aChanged);
 /**
  * Get a copy of the value of the <#=s.name#> property
  *
@@ -163,7 +163,7 @@ DllExport int32_t <#=className#>SetProperty<#=s.name#>(THandle aProvider, <#=Pro
  * @param[out] aValue     Value for the property
 <#      } #>
  */
-DllExport void <#=className#>GetProperty<#=s.name#>(THandle aProvider, <#=PropertyOutArgs(s)#>);
+DllExport void STDCALL <#=className#>GetProperty<#=s.name#>(THandle aProvider, <#=PropertyOutArgs(s)#>);
 <#  } #>
 
 /* @} */

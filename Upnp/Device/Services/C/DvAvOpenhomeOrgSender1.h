@@ -27,7 +27,7 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackSender1PresentationUrl)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackSender1PresentationUrl)(void* aPtr, uint32_t aVersion, char** aValue);
 /**
  * Callback which runs when the Metadata action is invoked
  *
@@ -37,7 +37,7 @@ typedef int32_t (*CallbackSender1PresentationUrl)(void* aPtr, uint32_t aVersion,
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackSender1Metadata)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackSender1Metadata)(void* aPtr, uint32_t aVersion, char** aValue);
 /**
  * Callback which runs when the Audio action is invoked
  *
@@ -47,7 +47,7 @@ typedef int32_t (*CallbackSender1Metadata)(void* aPtr, uint32_t aVersion, char**
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackSender1Audio)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackSender1Audio)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
 /**
  * Callback which runs when the Status action is invoked
  *
@@ -57,7 +57,7 @@ typedef int32_t (*CallbackSender1Audio)(void* aPtr, uint32_t aVersion, uint32_t*
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackSender1Status)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackSender1Status)(void* aPtr, uint32_t aVersion, char** aValue);
 /**
  * Callback which runs when the Attributes action is invoked
  *
@@ -67,7 +67,7 @@ typedef int32_t (*CallbackSender1Status)(void* aPtr, uint32_t aVersion, char** a
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackSender1Attributes)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackSender1Attributes)(void* aPtr, uint32_t aVersion, char** aValue);
 
 /**
  * Provider constructor
@@ -76,14 +76,14 @@ typedef int32_t (*CallbackSender1Attributes)(void* aPtr, uint32_t aVersion, char
  *
  * @return  Handle to this provider
  */
-DllExport THandle DvProviderAvOpenhomeOrgSender1Create(DvDeviceC aDevice);
+DllExport THandle STDCALL DvProviderAvOpenhomeOrgSender1Create(DvDeviceC aDevice);
 
 /**
  * Provider destructor
  *
  * @param[in] aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  */
-DllExport void DvProviderAvOpenhomeOrgSender1Destroy(THandle aProvider);
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1Destroy(THandle aProvider);
 
 /**
  * Register a callback for the action PresentationUrl
@@ -95,7 +95,7 @@ DllExport void DvProviderAvOpenhomeOrgSender1Destroy(THandle aProvider);
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgSender1EnableActionPresentationUrl(THandle aProvider, CallbackSender1PresentationUrl aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1EnableActionPresentationUrl(THandle aProvider, CallbackSender1PresentationUrl aCallback, void* aPtr);
 /**
  * Register a callback for the action Metadata
  *
@@ -106,7 +106,7 @@ DllExport void DvProviderAvOpenhomeOrgSender1EnableActionPresentationUrl(THandle
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgSender1EnableActionMetadata(THandle aProvider, CallbackSender1Metadata aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1EnableActionMetadata(THandle aProvider, CallbackSender1Metadata aCallback, void* aPtr);
 /**
  * Register a callback for the action Audio
  *
@@ -117,7 +117,7 @@ DllExport void DvProviderAvOpenhomeOrgSender1EnableActionMetadata(THandle aProvi
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgSender1EnableActionAudio(THandle aProvider, CallbackSender1Audio aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1EnableActionAudio(THandle aProvider, CallbackSender1Audio aCallback, void* aPtr);
 /**
  * Register a callback for the action Status
  *
@@ -128,7 +128,7 @@ DllExport void DvProviderAvOpenhomeOrgSender1EnableActionAudio(THandle aProvider
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgSender1EnableActionStatus(THandle aProvider, CallbackSender1Status aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1EnableActionStatus(THandle aProvider, CallbackSender1Status aCallback, void* aPtr);
 /**
  * Register a callback for the action Attributes
  *
@@ -139,7 +139,7 @@ DllExport void DvProviderAvOpenhomeOrgSender1EnableActionStatus(THandle aProvide
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgSender1EnableActionAttributes(THandle aProvider, CallbackSender1Attributes aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1EnableActionAttributes(THandle aProvider, CallbackSender1Attributes aCallback, void* aPtr);
 
 /**
  * Set the value of the PresentationUrl property
@@ -151,14 +151,14 @@ DllExport void DvProviderAvOpenhomeOrgSender1EnableActionAttributes(THandle aPro
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgSender1SetPropertyPresentationUrl(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyPresentationUrl(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the PresentationUrl property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgSender1GetPropertyPresentationUrl(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyPresentationUrl(THandle aProvider, char** aValue);
 /**
  * Set the value of the Metadata property
  *
@@ -169,14 +169,14 @@ DllExport void DvProviderAvOpenhomeOrgSender1GetPropertyPresentationUrl(THandle 
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgSender1SetPropertyMetadata(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyMetadata(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Metadata property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgSender1GetPropertyMetadata(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyMetadata(THandle aProvider, char** aValue);
 /**
  * Set the value of the Audio property
  *
@@ -187,14 +187,14 @@ DllExport void DvProviderAvOpenhomeOrgSender1GetPropertyMetadata(THandle aProvid
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgSender1SetPropertyAudio(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyAudio(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Audio property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderAvOpenhomeOrgSender1GetPropertyAudio(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyAudio(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the Status property
  *
@@ -205,14 +205,14 @@ DllExport void DvProviderAvOpenhomeOrgSender1GetPropertyAudio(THandle aProvider,
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgSender1SetPropertyStatus(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyStatus(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Status property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgSender1GetPropertyStatus(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyStatus(THandle aProvider, char** aValue);
 /**
  * Set the value of the Attributes property
  *
@@ -223,14 +223,14 @@ DllExport void DvProviderAvOpenhomeOrgSender1GetPropertyStatus(THandle aProvider
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgSender1SetPropertyAttributes(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyAttributes(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Attributes property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgSender1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgSender1GetPropertyAttributes(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyAttributes(THandle aProvider, char** aValue);
 
 /* @} */
 

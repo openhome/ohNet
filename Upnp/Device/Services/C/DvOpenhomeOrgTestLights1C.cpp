@@ -281,47 +281,47 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetColorComponents(IDviInvocation& aIn
 
 
 
-THandle DvProviderOpenhomeOrgTestLights1Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderOpenhomeOrgTestLights1Create(DvDeviceC aDevice)
 {
 	return new DvProviderOpenhomeOrgTestLights1C(aDevice);
 }
 
-void DvProviderOpenhomeOrgTestLights1Destroy(THandle aProvider)
+void STDCALL DvProviderOpenhomeOrgTestLights1Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderOpenhomeOrgTestLights1C*>(aProvider);
 }
 
-void DvProviderOpenhomeOrgTestLights1EnableActionGetCount(THandle aProvider, CallbackTestLights1GetCount aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionGetCount(THandle aProvider, CallbackTestLights1GetCount aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestLights1C*>(aProvider)->EnableActionGetCount(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestLights1EnableActionGetRoom(THandle aProvider, CallbackTestLights1GetRoom aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionGetRoom(THandle aProvider, CallbackTestLights1GetRoom aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestLights1C*>(aProvider)->EnableActionGetRoom(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestLights1EnableActionGetName(THandle aProvider, CallbackTestLights1GetName aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionGetName(THandle aProvider, CallbackTestLights1GetName aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestLights1C*>(aProvider)->EnableActionGetName(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestLights1EnableActionGetPosition(THandle aProvider, CallbackTestLights1GetPosition aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionGetPosition(THandle aProvider, CallbackTestLights1GetPosition aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestLights1C*>(aProvider)->EnableActionGetPosition(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestLights1EnableActionSetColor(THandle aProvider, CallbackTestLights1SetColor aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionSetColor(THandle aProvider, CallbackTestLights1SetColor aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestLights1C*>(aProvider)->EnableActionSetColor(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestLights1EnableActionGetColor(THandle aProvider, CallbackTestLights1GetColor aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionGetColor(THandle aProvider, CallbackTestLights1GetColor aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestLights1C*>(aProvider)->EnableActionGetColor(aCallback, aPtr);
 }
 
-void DvProviderOpenhomeOrgTestLights1EnableActionGetColorComponents(THandle aProvider, CallbackTestLights1GetColorComponents aCallback, void* aPtr)
+void STDCALL DvProviderOpenhomeOrgTestLights1EnableActionGetColorComponents(THandle aProvider, CallbackTestLights1GetColorComponents aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderOpenhomeOrgTestLights1C*>(aProvider)->EnableActionGetColorComponents(aCallback, aPtr);
 }

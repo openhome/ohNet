@@ -5,18 +5,18 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-THandle DvServerUpnpCreate()
+THandle STDCALL DvServerUpnpCreate()
 {
     return new DvServerUpnp();
 }
 
-void DvServerUpnpDestroy(THandle aServer)
+void STDCALL DvServerUpnpDestroy(THandle aServer)
 {
     DvServerUpnp* server = reinterpret_cast<DvServerUpnp*>(aServer);
     delete server;
 }
 
-void DvServerUpnpAddDevice(THandle aServer, DvDeviceC aDevice)
+void STDCALL DvServerUpnpAddDevice(THandle aServer, DvDeviceC aDevice)
 {
     DvServerUpnp* server = reinterpret_cast<DvServerUpnp*>(aServer);
     ASSERT(server != NULL);

@@ -11,19 +11,19 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-CpService CpServiceCreate(const char* aDomain, const char* aName, uint32_t aVersion, CpDeviceC aDevice)
+CpService STDCALL CpServiceCreate(const char* aDomain, const char* aName, uint32_t aVersion, CpDeviceC aDevice)
 {
     CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
     return (CpService)new CpiService(aDomain, aName, aVersion, *device);
 }
 
-void CpServiceDestroy(CpService aService)
+void STDCALL CpServiceDestroy(CpService aService)
 {
     CpiService* service = reinterpret_cast<CpiService*>(aService);
     delete service;
 }
 
-CpInvocationC CpServiceInvocation(CpService aService, ServiceAction aAction, OhNetCallbackAsync aCallback, void* aPtr)
+CpInvocationC STDCALL CpServiceInvocation(CpService aService, ServiceAction aAction, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpiService* service = reinterpret_cast<CpiService*>(aService);
     ASSERT(service != NULL);
@@ -33,7 +33,7 @@ CpInvocationC CpServiceInvocation(CpService aService, ServiceAction aAction, OhN
     return (CpInvocationC)service->Invocation(*action, functor);
 }
 
-void CpServiceInvokeAction(CpService aService, CpInvocationC aInvocation)
+void STDCALL CpServiceInvokeAction(CpService aService, CpInvocationC aInvocation)
 {
     CpiService* service = reinterpret_cast<CpiService*>(aService);
     ASSERT(service != NULL);
@@ -43,84 +43,84 @@ void CpServiceInvokeAction(CpService aService, CpInvocationC aInvocation)
     device.InvokeAction(*invocation);
 }
 
-ActionArgument ActionArgumentCreateIntInput(ServiceParameter aParameter, int32_t aValue)
+ActionArgument STDCALL ActionArgumentCreateIntInput(ServiceParameter aParameter, int32_t aValue)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentInt(*param, aValue);
 }
 
-ActionArgument ActionArgumentCreateIntOutput(ServiceParameter aParameter)
+ActionArgument STDCALL ActionArgumentCreateIntOutput(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentInt(*param);
 }
 
-ActionArgument ActionArgumentCreateUintInput(ServiceParameter aParameter, uint32_t aValue)
+ActionArgument STDCALL ActionArgumentCreateUintInput(ServiceParameter aParameter, uint32_t aValue)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentUint(*param, aValue);
 }
 
-ActionArgument ActionArgumentCreateUintOutput(ServiceParameter aParameter)
+ActionArgument STDCALL ActionArgumentCreateUintOutput(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentUint(*param);
 }
 
-ActionArgument ActionArgumentCreateBoolInput(ServiceParameter aParameter, uint32_t aValue)
+ActionArgument STDCALL ActionArgumentCreateBoolInput(ServiceParameter aParameter, uint32_t aValue)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     TBool val = (aValue!=0);
     return (ActionArgument)new ArgumentBool(*param, val);
 }
 
-ActionArgument ActionArgumentCreateBoolOutput(ServiceParameter aParameter)
+ActionArgument STDCALL ActionArgumentCreateBoolOutput(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentBool(*param);
 }
 
-ActionArgument ActionArgumentCreateStringInput(ServiceParameter aParameter, const char* aValue)
+ActionArgument STDCALL ActionArgumentCreateStringInput(ServiceParameter aParameter, const char* aValue)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     Brn buf(aValue);
     return (ActionArgument)new ArgumentString(*param, buf);
 }
 
-ActionArgument ActionArgumentCreateStringOutput(ServiceParameter aParameter)
+ActionArgument STDCALL ActionArgumentCreateStringOutput(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentString(*param);
 }
 
-ActionArgument ActionArgumentCreateBinaryInput(ServiceParameter aParameter, const uint8_t* aData, uint32_t aLen)
+ActionArgument STDCALL ActionArgumentCreateBinaryInput(ServiceParameter aParameter, const uint8_t* aData, uint32_t aLen)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     Brn buf(aData, aLen);
     return (ActionArgument)new ArgumentBinary(*param, buf);
 }
 
-ActionArgument ActionArgumentCreateBinaryOutput(ServiceParameter aParameter)
+ActionArgument STDCALL ActionArgumentCreateBinaryOutput(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ActionArgument)new ArgumentBinary(*param);
 }
 
-int32_t ActionArgumentValueInt(ActionArgument aArgument)
+int32_t STDCALL ActionArgumentValueInt(ActionArgument aArgument)
 {
     ArgumentInt* arg = reinterpret_cast<ArgumentInt*>(aArgument);
     ASSERT(arg != NULL);
     return arg->Value();
 }
 
-uint32_t ActionArgumentValueUint(ActionArgument aArgument)
+uint32_t STDCALL ActionArgumentValueUint(ActionArgument aArgument)
 {
     ArgumentUint* arg = reinterpret_cast<ArgumentUint*>(aArgument);
     ASSERT(arg != NULL);
     return arg->Value();
 }
 
-uint32_t ActionArgumentValueBool(ActionArgument aArgument)
+uint32_t STDCALL ActionArgumentValueBool(ActionArgument aArgument)
 {
     ArgumentBool* arg = reinterpret_cast<ArgumentBool*>(aArgument);
     ASSERT(arg != NULL);
@@ -128,7 +128,7 @@ uint32_t ActionArgumentValueBool(ActionArgument aArgument)
     return (val? 1 : 0);
 }
 
-char* ActionArgumentValueString(ActionArgument aArgument)
+char* STDCALL ActionArgumentValueString(ActionArgument aArgument)
 {
     ArgumentString* arg = reinterpret_cast<ArgumentString*>(aArgument);
     ASSERT(arg != NULL);
@@ -137,7 +137,7 @@ char* ActionArgumentValueString(ActionArgument aArgument)
     return buf.Extract();
 }
 
-void ActionArgumentGetValueBinary(ActionArgument aArgument, uint8_t** aData, uint32_t* aLen)
+void STDCALL ActionArgumentGetValueBinary(ActionArgument aArgument, uint8_t** aData, uint32_t* aLen)
 {
     ArgumentBinary* arg = reinterpret_cast<ArgumentBinary*>(aArgument);
     ASSERT(arg != NULL);
@@ -147,7 +147,7 @@ void ActionArgumentGetValueBinary(ActionArgument aArgument, uint8_t** aData, uin
     *aData = (TByte*)buf.Extract();
 }
 
-void CpInvocationAddInput(CpInvocationC aInvocation, ActionArgument aArgument)
+void STDCALL CpInvocationAddInput(CpInvocationC aInvocation, ActionArgument aArgument)
 {
     Invocation* invocation = reinterpret_cast<Invocation*>(aInvocation);
     ASSERT(invocation != NULL);
@@ -156,7 +156,7 @@ void CpInvocationAddInput(CpInvocationC aInvocation, ActionArgument aArgument)
     invocation->AddInput(arg);
 }
 
-void CpInvocationAddOutput(CpInvocationC aInvocation, ActionArgument aArgument)
+void STDCALL CpInvocationAddOutput(CpInvocationC aInvocation, ActionArgument aArgument)
 {
     Invocation* invocation = reinterpret_cast<Invocation*>(aInvocation);
     ASSERT(invocation != NULL);
@@ -165,7 +165,7 @@ void CpInvocationAddOutput(CpInvocationC aInvocation, ActionArgument aArgument)
     invocation->AddOutput(arg);
 }
 
-uint32_t CpInvocationError(CpInvocationC aInvocation)
+uint32_t STDCALL CpInvocationError(CpInvocationC aInvocation)
 {
     Invocation* invocation = reinterpret_cast<Invocation*>(aInvocation);
     ASSERT(invocation != NULL);
@@ -173,7 +173,7 @@ uint32_t CpInvocationError(CpInvocationC aInvocation)
     return (err? 1 : 0);
 }
 
-int32_t CpInvocationOutputInt(CpInvocationC aInvocation, uint32_t aIndex)
+int32_t STDCALL CpInvocationOutputInt(CpInvocationC aInvocation, uint32_t aIndex)
 {
     Invocation* invocation = reinterpret_cast<Invocation*>(aInvocation);
     ASSERT(invocation != NULL);
@@ -182,7 +182,7 @@ int32_t CpInvocationOutputInt(CpInvocationC aInvocation, uint32_t aIndex)
     return arg->Value();
 }
 
-uint32_t CpInvocationOutputUint(CpInvocationC aInvocation, uint32_t aIndex)
+uint32_t STDCALL CpInvocationOutputUint(CpInvocationC aInvocation, uint32_t aIndex)
 {
     Invocation* invocation = reinterpret_cast<Invocation*>(aInvocation);
     ASSERT(invocation != NULL);
@@ -191,7 +191,7 @@ uint32_t CpInvocationOutputUint(CpInvocationC aInvocation, uint32_t aIndex)
     return arg->Value();
 }
 
-uint32_t CpInvocationOutputBool(CpInvocationC aInvocation, uint32_t aIndex)
+uint32_t STDCALL CpInvocationOutputBool(CpInvocationC aInvocation, uint32_t aIndex)
 {
     Invocation* invocation = reinterpret_cast<Invocation*>(aInvocation);
     ASSERT(invocation != NULL);
@@ -201,7 +201,7 @@ uint32_t CpInvocationOutputBool(CpInvocationC aInvocation, uint32_t aIndex)
     return (val? 1 : 0);
 }
 
-char* CpInvocationOutputString(CpInvocationC aInvocation, uint32_t aIndex)
+char* STDCALL CpInvocationOutputString(CpInvocationC aInvocation, uint32_t aIndex)
 {
     Invocation* invocation = reinterpret_cast<Invocation*>(aInvocation);
     ASSERT(invocation != NULL);
@@ -212,7 +212,7 @@ char* CpInvocationOutputString(CpInvocationC aInvocation, uint32_t aIndex)
     return (char*)buf.Extract();
 }
 
-void CpInvocationGetOutputBinary(CpInvocationC aInvocation, uint32_t aIndex, char** aData, uint32_t* aLen)
+void STDCALL CpInvocationGetOutputBinary(CpInvocationC aInvocation, uint32_t aIndex, char** aData, uint32_t* aLen)
 {
     Invocation* invocation = reinterpret_cast<Invocation*>(aInvocation);
     ASSERT(invocation != NULL);

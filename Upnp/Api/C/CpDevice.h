@@ -31,7 +31,7 @@ typedef THandle HandleCpDeviceList;
  *
  * @return  const pointer to the udn.
  */
-DllExport const char* CpDeviceCUdn(CpDeviceC aDevice);
+DllExport const char* STDCALL CpDeviceCUdn(CpDeviceC aDevice);
 
 /**
  * Claim a reference to a device.
@@ -41,7 +41,7 @@ DllExport const char* CpDeviceCUdn(CpDeviceC aDevice);
  *
  * @param[in]  aDevice       Device originally returned to a 'added' version of DeviceListChanged
  */
-DllExport void CpDeviceCAddRef(CpDeviceC aDevice);
+DllExport void STDCALL CpDeviceCAddRef(CpDeviceC aDevice);
 
 /**
  * Release a reference to a device.
@@ -51,7 +51,7 @@ DllExport void CpDeviceCAddRef(CpDeviceC aDevice);
  *
  * @param[in]  aDevice       Device.  Probably passed to the 'removed' version of DeviceListChanged
  */
-DllExport void CpDeviceCRemoveRef(CpDeviceC aDevice);
+DllExport void STDCALL CpDeviceCRemoveRef(CpDeviceC aDevice);
 
 /**
  * Read an attribute of the device.
@@ -63,7 +63,7 @@ DllExport void CpDeviceCRemoveRef(CpDeviceC aDevice);
  *
  * @return  1 if the attribute was available; 0 if it was not available
  */
-DllExport int32_t CpDeviceCGetAttribute(CpDeviceC aDevice, const char* aKey, char** aValue);
+DllExport int32_t STDCALL CpDeviceCGetAttribute(CpDeviceC aDevice, const char* aKey, char** aValue);
 
 /**
  * Callback which will be run when devices are added to or removed from a protocol-specific list
@@ -74,7 +74,7 @@ DllExport int32_t CpDeviceCGetAttribute(CpDeviceC aDevice, const char* aKey, cha
  *                           callback; any reference should normally be removed if
  *                           the device has been removed from its container list.
  */
-typedef void (*OhNetCallbackDevice)(void* aPtr, CpDeviceC aDevice);
+typedef void (STDCALL *OhNetCallbackDevice)(void* aPtr, CpDeviceC aDevice);
 
 /* @} */
 /**
@@ -89,7 +89,7 @@ typedef void (*OhNetCallbackDevice)(void* aPtr, CpDeviceC aDevice);
  *
  * @param[in]  aListHandle   List handle returned earlier from a protocol-specific constructor
  */
-DllExport void CpDeviceListDestroy(HandleCpDeviceList aListHandle);
+DllExport void STDCALL CpDeviceListDestroy(HandleCpDeviceList aListHandle);
 
 /**
  * Refresh a device list.
@@ -97,7 +97,7 @@ DllExport void CpDeviceListDestroy(HandleCpDeviceList aListHandle);
  *
  * @param[in]  aListHandle   List handle returned earlier from a protocol-specific constructor
  */
-DllExport void CpDeviceListRefresh(HandleCpDeviceList aListHandle);
+DllExport void STDCALL CpDeviceListRefresh(HandleCpDeviceList aListHandle);
 
 /* @} */
 

@@ -28,7 +28,7 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1Increment)(void* aPtr, uint32_t aVersion, uint32_t aValue, uint32_t* aResult);
+typedef int32_t (STDCALL *CallbackTestBasic1Increment)(void* aPtr, uint32_t aVersion, uint32_t aValue, uint32_t* aResult);
 /**
  * Callback which runs when the Decrement action is invoked
  *
@@ -39,7 +39,7 @@ typedef int32_t (*CallbackTestBasic1Increment)(void* aPtr, uint32_t aVersion, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1Decrement)(void* aPtr, uint32_t aVersion, int32_t aValue, int32_t* aResult);
+typedef int32_t (STDCALL *CallbackTestBasic1Decrement)(void* aPtr, uint32_t aVersion, int32_t aValue, int32_t* aResult);
 /**
  * Callback which runs when the Toggle action is invoked
  *
@@ -50,7 +50,7 @@ typedef int32_t (*CallbackTestBasic1Decrement)(void* aPtr, uint32_t aVersion, in
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1Toggle)(void* aPtr, uint32_t aVersion, uint32_t aValue, uint32_t* aResult);
+typedef int32_t (STDCALL *CallbackTestBasic1Toggle)(void* aPtr, uint32_t aVersion, uint32_t aValue, uint32_t* aResult);
 /**
  * Callback which runs when the EchoString action is invoked
  *
@@ -61,7 +61,7 @@ typedef int32_t (*CallbackTestBasic1Toggle)(void* aPtr, uint32_t aVersion, uint3
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1EchoString)(void* aPtr, uint32_t aVersion, const char* aValue, char** aResult);
+typedef int32_t (STDCALL *CallbackTestBasic1EchoString)(void* aPtr, uint32_t aVersion, const char* aValue, char** aResult);
 /**
  * Callback which runs when the EchoBinary action is invoked
  *
@@ -74,7 +74,7 @@ typedef int32_t (*CallbackTestBasic1EchoString)(void* aPtr, uint32_t aVersion, c
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1EchoBinary)(void* aPtr, uint32_t aVersion, const char* aValue, uint32_t aValueLen, char** aResult, uint32_t* aResultLen);
+typedef int32_t (STDCALL *CallbackTestBasic1EchoBinary)(void* aPtr, uint32_t aVersion, const char* aValue, uint32_t aValueLen, char** aResult, uint32_t* aResultLen);
 /**
  * Callback which runs when the SetUint action is invoked
  *
@@ -84,7 +84,7 @@ typedef int32_t (*CallbackTestBasic1EchoBinary)(void* aPtr, uint32_t aVersion, c
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1SetUint)(void* aPtr, uint32_t aVersion, uint32_t aValueUint);
+typedef int32_t (STDCALL *CallbackTestBasic1SetUint)(void* aPtr, uint32_t aVersion, uint32_t aValueUint);
 /**
  * Callback which runs when the GetUint action is invoked
  *
@@ -94,7 +94,7 @@ typedef int32_t (*CallbackTestBasic1SetUint)(void* aPtr, uint32_t aVersion, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1GetUint)(void* aPtr, uint32_t aVersion, uint32_t* aValueUint);
+typedef int32_t (STDCALL *CallbackTestBasic1GetUint)(void* aPtr, uint32_t aVersion, uint32_t* aValueUint);
 /**
  * Callback which runs when the SetInt action is invoked
  *
@@ -104,7 +104,7 @@ typedef int32_t (*CallbackTestBasic1GetUint)(void* aPtr, uint32_t aVersion, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1SetInt)(void* aPtr, uint32_t aVersion, int32_t aValueInt);
+typedef int32_t (STDCALL *CallbackTestBasic1SetInt)(void* aPtr, uint32_t aVersion, int32_t aValueInt);
 /**
  * Callback which runs when the GetInt action is invoked
  *
@@ -114,7 +114,7 @@ typedef int32_t (*CallbackTestBasic1SetInt)(void* aPtr, uint32_t aVersion, int32
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1GetInt)(void* aPtr, uint32_t aVersion, int32_t* aValueInt);
+typedef int32_t (STDCALL *CallbackTestBasic1GetInt)(void* aPtr, uint32_t aVersion, int32_t* aValueInt);
 /**
  * Callback which runs when the SetBool action is invoked
  *
@@ -124,7 +124,7 @@ typedef int32_t (*CallbackTestBasic1GetInt)(void* aPtr, uint32_t aVersion, int32
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1SetBool)(void* aPtr, uint32_t aVersion, uint32_t aValueBool);
+typedef int32_t (STDCALL *CallbackTestBasic1SetBool)(void* aPtr, uint32_t aVersion, uint32_t aValueBool);
 /**
  * Callback which runs when the GetBool action is invoked
  *
@@ -134,7 +134,7 @@ typedef int32_t (*CallbackTestBasic1SetBool)(void* aPtr, uint32_t aVersion, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1GetBool)(void* aPtr, uint32_t aVersion, uint32_t* aValueBool);
+typedef int32_t (STDCALL *CallbackTestBasic1GetBool)(void* aPtr, uint32_t aVersion, uint32_t* aValueBool);
 /**
  * Callback which runs when the SetMultiple action is invoked
  *
@@ -146,7 +146,7 @@ typedef int32_t (*CallbackTestBasic1GetBool)(void* aPtr, uint32_t aVersion, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1SetMultiple)(void* aPtr, uint32_t aVersion, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool);
+typedef int32_t (STDCALL *CallbackTestBasic1SetMultiple)(void* aPtr, uint32_t aVersion, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool);
 /**
  * Callback which runs when the SetString action is invoked
  *
@@ -156,7 +156,7 @@ typedef int32_t (*CallbackTestBasic1SetMultiple)(void* aPtr, uint32_t aVersion, 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1SetString)(void* aPtr, uint32_t aVersion, const char* aValueStr);
+typedef int32_t (STDCALL *CallbackTestBasic1SetString)(void* aPtr, uint32_t aVersion, const char* aValueStr);
 /**
  * Callback which runs when the GetString action is invoked
  *
@@ -166,7 +166,7 @@ typedef int32_t (*CallbackTestBasic1SetString)(void* aPtr, uint32_t aVersion, co
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1GetString)(void* aPtr, uint32_t aVersion, char** aValueStr);
+typedef int32_t (STDCALL *CallbackTestBasic1GetString)(void* aPtr, uint32_t aVersion, char** aValueStr);
 /**
  * Callback which runs when the SetBinary action is invoked
  *
@@ -177,7 +177,7 @@ typedef int32_t (*CallbackTestBasic1GetString)(void* aPtr, uint32_t aVersion, ch
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1SetBinary)(void* aPtr, uint32_t aVersion, const char* aValueBin, uint32_t aValueBinLen);
+typedef int32_t (STDCALL *CallbackTestBasic1SetBinary)(void* aPtr, uint32_t aVersion, const char* aValueBin, uint32_t aValueBinLen);
 /**
  * Callback which runs when the GetBinary action is invoked
  *
@@ -188,7 +188,7 @@ typedef int32_t (*CallbackTestBasic1SetBinary)(void* aPtr, uint32_t aVersion, co
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1GetBinary)(void* aPtr, uint32_t aVersion, char** aValueBin, uint32_t* aValueBinLen);
+typedef int32_t (STDCALL *CallbackTestBasic1GetBinary)(void* aPtr, uint32_t aVersion, char** aValueBin, uint32_t* aValueBinLen);
 /**
  * Callback which runs when the ToggleBool action is invoked
  *
@@ -197,7 +197,7 @@ typedef int32_t (*CallbackTestBasic1GetBinary)(void* aPtr, uint32_t aVersion, ch
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1ToggleBool)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackTestBasic1ToggleBool)(void* aPtr, uint32_t aVersion);
 /**
  * Callback which runs when the WriteFile action is invoked
  *
@@ -208,7 +208,7 @@ typedef int32_t (*CallbackTestBasic1ToggleBool)(void* aPtr, uint32_t aVersion);
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1WriteFile)(void* aPtr, uint32_t aVersion, const char* aData, const char* aFileFullName);
+typedef int32_t (STDCALL *CallbackTestBasic1WriteFile)(void* aPtr, uint32_t aVersion, const char* aData, const char* aFileFullName);
 /**
  * Callback which runs when the Shutdown action is invoked
  *
@@ -217,7 +217,7 @@ typedef int32_t (*CallbackTestBasic1WriteFile)(void* aPtr, uint32_t aVersion, co
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestBasic1Shutdown)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackTestBasic1Shutdown)(void* aPtr, uint32_t aVersion);
 
 /**
  * Provider constructor
@@ -226,14 +226,14 @@ typedef int32_t (*CallbackTestBasic1Shutdown)(void* aPtr, uint32_t aVersion);
  *
  * @return  Handle to this provider
  */
-DllExport THandle DvProviderOpenhomeOrgTestBasic1Create(DvDeviceC aDevice);
+DllExport THandle STDCALL DvProviderOpenhomeOrgTestBasic1Create(DvDeviceC aDevice);
 
 /**
  * Provider destructor
  *
  * @param[in] aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1Destroy(THandle aProvider);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1Destroy(THandle aProvider);
 
 /**
  * Register a callback for the action Increment
@@ -245,7 +245,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1Destroy(THandle aProvider);
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionIncrement(THandle aProvider, CallbackTestBasic1Increment aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionIncrement(THandle aProvider, CallbackTestBasic1Increment aCallback, void* aPtr);
 /**
  * Register a callback for the action Decrement
  *
@@ -256,7 +256,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionIncrement(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionDecrement(THandle aProvider, CallbackTestBasic1Decrement aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionDecrement(THandle aProvider, CallbackTestBasic1Decrement aCallback, void* aPtr);
 /**
  * Register a callback for the action Toggle
  *
@@ -267,7 +267,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionDecrement(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionToggle(THandle aProvider, CallbackTestBasic1Toggle aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionToggle(THandle aProvider, CallbackTestBasic1Toggle aCallback, void* aPtr);
 /**
  * Register a callback for the action EchoString
  *
@@ -278,7 +278,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionToggle(THandle aProvid
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionEchoString(THandle aProvider, CallbackTestBasic1EchoString aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionEchoString(THandle aProvider, CallbackTestBasic1EchoString aCallback, void* aPtr);
 /**
  * Register a callback for the action EchoBinary
  *
@@ -289,7 +289,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionEchoString(THandle aPr
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionEchoBinary(THandle aProvider, CallbackTestBasic1EchoBinary aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionEchoBinary(THandle aProvider, CallbackTestBasic1EchoBinary aCallback, void* aPtr);
 /**
  * Register a callback for the action SetUint
  *
@@ -300,7 +300,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionEchoBinary(THandle aPr
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionSetUint(THandle aProvider, CallbackTestBasic1SetUint aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetUint(THandle aProvider, CallbackTestBasic1SetUint aCallback, void* aPtr);
 /**
  * Register a callback for the action GetUint
  *
@@ -311,7 +311,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionSetUint(THandle aProvi
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionGetUint(THandle aProvider, CallbackTestBasic1GetUint aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetUint(THandle aProvider, CallbackTestBasic1GetUint aCallback, void* aPtr);
 /**
  * Register a callback for the action SetInt
  *
@@ -322,7 +322,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionGetUint(THandle aProvi
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionSetInt(THandle aProvider, CallbackTestBasic1SetInt aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetInt(THandle aProvider, CallbackTestBasic1SetInt aCallback, void* aPtr);
 /**
  * Register a callback for the action GetInt
  *
@@ -333,7 +333,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionSetInt(THandle aProvid
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionGetInt(THandle aProvider, CallbackTestBasic1GetInt aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetInt(THandle aProvider, CallbackTestBasic1GetInt aCallback, void* aPtr);
 /**
  * Register a callback for the action SetBool
  *
@@ -344,7 +344,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionGetInt(THandle aProvid
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionSetBool(THandle aProvider, CallbackTestBasic1SetBool aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetBool(THandle aProvider, CallbackTestBasic1SetBool aCallback, void* aPtr);
 /**
  * Register a callback for the action GetBool
  *
@@ -355,7 +355,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionSetBool(THandle aProvi
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionGetBool(THandle aProvider, CallbackTestBasic1GetBool aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetBool(THandle aProvider, CallbackTestBasic1GetBool aCallback, void* aPtr);
 /**
  * Register a callback for the action SetMultiple
  *
@@ -366,7 +366,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionGetBool(THandle aProvi
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionSetMultiple(THandle aProvider, CallbackTestBasic1SetMultiple aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetMultiple(THandle aProvider, CallbackTestBasic1SetMultiple aCallback, void* aPtr);
 /**
  * Register a callback for the action SetString
  *
@@ -377,7 +377,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionSetMultiple(THandle aP
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionSetString(THandle aProvider, CallbackTestBasic1SetString aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetString(THandle aProvider, CallbackTestBasic1SetString aCallback, void* aPtr);
 /**
  * Register a callback for the action GetString
  *
@@ -388,7 +388,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionSetString(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionGetString(THandle aProvider, CallbackTestBasic1GetString aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetString(THandle aProvider, CallbackTestBasic1GetString aCallback, void* aPtr);
 /**
  * Register a callback for the action SetBinary
  *
@@ -399,7 +399,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionGetString(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionSetBinary(THandle aProvider, CallbackTestBasic1SetBinary aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionSetBinary(THandle aProvider, CallbackTestBasic1SetBinary aCallback, void* aPtr);
 /**
  * Register a callback for the action GetBinary
  *
@@ -410,7 +410,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionSetBinary(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionGetBinary(THandle aProvider, CallbackTestBasic1GetBinary aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionGetBinary(THandle aProvider, CallbackTestBasic1GetBinary aCallback, void* aPtr);
 /**
  * Register a callback for the action ToggleBool
  *
@@ -421,7 +421,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionGetBinary(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionToggleBool(THandle aProvider, CallbackTestBasic1ToggleBool aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionToggleBool(THandle aProvider, CallbackTestBasic1ToggleBool aCallback, void* aPtr);
 /**
  * Register a callback for the action WriteFile
  *
@@ -432,7 +432,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionToggleBool(THandle aPr
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionWriteFile(THandle aProvider, CallbackTestBasic1WriteFile aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionWriteFile(THandle aProvider, CallbackTestBasic1WriteFile aCallback, void* aPtr);
 /**
  * Register a callback for the action Shutdown
  *
@@ -443,7 +443,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionWriteFile(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionShutdown(THandle aProvider, CallbackTestBasic1Shutdown aCallback, void* aPtr);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1EnableActionShutdown(THandle aProvider, CallbackTestBasic1Shutdown aCallback, void* aPtr);
 
 /**
  * Set the value of the VarUint property
@@ -455,14 +455,14 @@ DllExport void DvProviderOpenhomeOrgTestBasic1EnableActionShutdown(THandle aProv
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderOpenhomeOrgTestBasic1SetPropertyVarUint(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarUint(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the VarUint property
  *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1GetPropertyVarUint(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarUint(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the VarInt property
  *
@@ -473,14 +473,14 @@ DllExport void DvProviderOpenhomeOrgTestBasic1GetPropertyVarUint(THandle aProvid
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderOpenhomeOrgTestBasic1SetPropertyVarInt(THandle aProvider, int32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarInt(THandle aProvider, int32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the VarInt property
  *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1GetPropertyVarInt(THandle aProvider, int32_t* aValue);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarInt(THandle aProvider, int32_t* aValue);
 /**
  * Set the value of the VarBool property
  *
@@ -491,14 +491,14 @@ DllExport void DvProviderOpenhomeOrgTestBasic1GetPropertyVarInt(THandle aProvide
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderOpenhomeOrgTestBasic1SetPropertyVarBool(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarBool(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the VarBool property
  *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1GetPropertyVarBool(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarBool(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the VarStr property
  *
@@ -509,14 +509,14 @@ DllExport void DvProviderOpenhomeOrgTestBasic1GetPropertyVarBool(THandle aProvid
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderOpenhomeOrgTestBasic1SetPropertyVarStr(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarStr(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the VarStr property
  *
  * @param[in]  aProvider  Handle returned by DvProviderOpenhomeOrgTestBasic1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1GetPropertyVarStr(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarStr(THandle aProvider, char** aValue);
 /**
  * Set the value of the VarBin property
  *
@@ -528,7 +528,7 @@ DllExport void DvProviderOpenhomeOrgTestBasic1GetPropertyVarStr(THandle aProvide
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderOpenhomeOrgTestBasic1SetPropertyVarBin(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderOpenhomeOrgTestBasic1SetPropertyVarBin(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
 /**
  * Get a copy of the value of the VarBin property
  *
@@ -536,7 +536,7 @@ DllExport int32_t DvProviderOpenhomeOrgTestBasic1SetPropertyVarBin(THandle aProv
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  * @param[out] aValueLen  Size in bytes pointed to by aValue
  */
-DllExport void DvProviderOpenhomeOrgTestBasic1GetPropertyVarBin(THandle aProvider, char** aValue, uint32_t* aValueLen);
+DllExport void STDCALL DvProviderOpenhomeOrgTestBasic1GetPropertyVarBin(THandle aProvider, char** aValue, uint32_t* aValueLen);
 
 /* @} */
 

@@ -30,7 +30,7 @@ extern "C" {
  *
  * @return  Handle which should be used with all other functions in this header
  */
-DllExport THandle CpProxyUpnpOrgAVTransport2Create(CpDeviceC aDevice);
+DllExport THandle STDCALL CpProxyUpnpOrgAVTransport2Create(CpDeviceC aDevice);
 /**
  * Destructor.
  * If any asynchronous method is in progress, this will block until they complete.
@@ -40,7 +40,7 @@ DllExport THandle CpProxyUpnpOrgAVTransport2Create(CpDeviceC aDevice);
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport2Create
  */
-DllExport void CpProxyUpnpOrgAVTransport2Destroy(THandle aHandle);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2Destroy(THandle aHandle);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -51,7 +51,7 @@ DllExport void CpProxyUpnpOrgAVTransport2Destroy(THandle aHandle);
  * @param[in]  aCurrentURI
  * @param[in]  aCurrentURIMetaData
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncSetAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncSetAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -66,7 +66,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncSetAVTransportURI(THandle aHandle, 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginSetAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginSetAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -77,7 +77,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginSetAVTransportURI(THandle aHandle,
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndSetAVTransportURI(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndSetAVTransportURI(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -88,7 +88,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndSetAVTransportURI(THandle aHandle
  * @param[in]  aNextURI
  * @param[in]  aNextURIMetaData
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncSetNextAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncSetNextAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -103,7 +103,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncSetNextAVTransportURI(THandle aHand
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginSetNextAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginSetNextAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -114,7 +114,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginSetNextAVTransportURI(THandle aHan
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndSetNextAVTransportURI(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndSetNextAVTransportURI(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -132,7 +132,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndSetNextAVTransportURI(THandle aHa
  * @param[out] aRecordMedium
  * @param[out] aWriteStatus
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo(THandle aHandle, uint32_t aInstanceID, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncGetMediaInfo(THandle aHandle, uint32_t aInstanceID, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -145,7 +145,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo(THandle aHandle, uint3
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginGetMediaInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -165,7 +165,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo(THandle aHandle, uint
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetMediaInfo(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetMediaInfo(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -184,7 +184,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetMediaInfo(THandle aHandle, OhN
  * @param[out] aRecordMedium
  * @param[out] aWriteStatus
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo_Ext(THandle aHandle, uint32_t aInstanceID, char** aCurrentType, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncGetMediaInfo_Ext(THandle aHandle, uint32_t aInstanceID, char** aCurrentType, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -197,7 +197,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo_Ext(THandle aHandle, u
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo_Ext(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginGetMediaInfo_Ext(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -218,7 +218,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo_Ext(THandle aHandle, 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetMediaInfo_Ext(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentType, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetMediaInfo_Ext(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentType, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -230,7 +230,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetMediaInfo_Ext(THandle aHandle,
  * @param[out] aCurrentTransportStatus
  * @param[out] aCurrentSpeed
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncGetTransportInfo(THandle aHandle, uint32_t aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncGetTransportInfo(THandle aHandle, uint32_t aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -243,7 +243,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncGetTransportInfo(THandle aHandle, u
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginGetTransportInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginGetTransportInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -257,7 +257,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginGetTransportInfo(THandle aHandle, 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetTransportInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetTransportInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -274,7 +274,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetTransportInfo(THandle aHandle,
  * @param[out] aRelCount
  * @param[out] aAbsCount
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncGetPositionInfo(THandle aHandle, uint32_t aInstanceID, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncGetPositionInfo(THandle aHandle, uint32_t aInstanceID, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -287,7 +287,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncGetPositionInfo(THandle aHandle, ui
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginGetPositionInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginGetPositionInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -306,7 +306,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginGetPositionInfo(THandle aHandle, u
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetPositionInfo(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetPositionInfo(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -318,7 +318,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetPositionInfo(THandle aHandle, 
  * @param[out] aRecMedia
  * @param[out] aRecQualityModes
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncGetDeviceCapabilities(THandle aHandle, uint32_t aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncGetDeviceCapabilities(THandle aHandle, uint32_t aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -331,7 +331,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncGetDeviceCapabilities(THandle aHand
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginGetDeviceCapabilities(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginGetDeviceCapabilities(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -345,7 +345,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginGetDeviceCapabilities(THandle aHan
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetDeviceCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetDeviceCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -356,7 +356,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetDeviceCapabilities(THandle aHa
  * @param[out] aPlayMode
  * @param[out] aRecQualityMode
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncGetTransportSettings(THandle aHandle, uint32_t aInstanceID, char** aPlayMode, char** aRecQualityMode);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncGetTransportSettings(THandle aHandle, uint32_t aInstanceID, char** aPlayMode, char** aRecQualityMode);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -369,7 +369,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncGetTransportSettings(THandle aHandl
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginGetTransportSettings(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginGetTransportSettings(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -382,7 +382,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginGetTransportSettings(THandle aHand
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetTransportSettings(THandle aHandle, OhNetHandleAsync aAsync, char** aPlayMode, char** aRecQualityMode);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetTransportSettings(THandle aHandle, OhNetHandleAsync aAsync, char** aPlayMode, char** aRecQualityMode);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -391,7 +391,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetTransportSettings(THandle aHan
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport2Create
  * @param[in]  aInstanceID
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncStop(THandle aHandle, uint32_t aInstanceID);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncStop(THandle aHandle, uint32_t aInstanceID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -404,7 +404,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncStop(THandle aHandle, uint32_t aIns
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginStop(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginStop(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -415,7 +415,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginStop(THandle aHandle, uint32_t aIn
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndStop(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndStop(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -425,7 +425,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndStop(THandle aHandle, OhNetHandle
  * @param[in]  aInstanceID
  * @param[in]  aSpeed
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncPlay(THandle aHandle, uint32_t aInstanceID, const char* aSpeed);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncPlay(THandle aHandle, uint32_t aInstanceID, const char* aSpeed);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -439,7 +439,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncPlay(THandle aHandle, uint32_t aIns
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginPlay(THandle aHandle, uint32_t aInstanceID, const char* aSpeed, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginPlay(THandle aHandle, uint32_t aInstanceID, const char* aSpeed, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -450,7 +450,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginPlay(THandle aHandle, uint32_t aIn
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndPlay(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndPlay(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -459,7 +459,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndPlay(THandle aHandle, OhNetHandle
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport2Create
  * @param[in]  aInstanceID
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncPause(THandle aHandle, uint32_t aInstanceID);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncPause(THandle aHandle, uint32_t aInstanceID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -472,7 +472,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncPause(THandle aHandle, uint32_t aIn
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginPause(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginPause(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -483,7 +483,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginPause(THandle aHandle, uint32_t aI
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndPause(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndPause(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -492,7 +492,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndPause(THandle aHandle, OhNetHandl
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport2Create
  * @param[in]  aInstanceID
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncRecord(THandle aHandle, uint32_t aInstanceID);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncRecord(THandle aHandle, uint32_t aInstanceID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -505,7 +505,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncRecord(THandle aHandle, uint32_t aI
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginRecord(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginRecord(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -516,7 +516,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginRecord(THandle aHandle, uint32_t a
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndRecord(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndRecord(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -527,7 +527,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndRecord(THandle aHandle, OhNetHand
  * @param[in]  aUnit
  * @param[in]  aTarget
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncSeek(THandle aHandle, uint32_t aInstanceID, const char* aUnit, const char* aTarget);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncSeek(THandle aHandle, uint32_t aInstanceID, const char* aUnit, const char* aTarget);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -542,7 +542,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncSeek(THandle aHandle, uint32_t aIns
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginSeek(THandle aHandle, uint32_t aInstanceID, const char* aUnit, const char* aTarget, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginSeek(THandle aHandle, uint32_t aInstanceID, const char* aUnit, const char* aTarget, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -553,7 +553,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginSeek(THandle aHandle, uint32_t aIn
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndSeek(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndSeek(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -562,7 +562,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndSeek(THandle aHandle, OhNetHandle
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport2Create
  * @param[in]  aInstanceID
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncNext(THandle aHandle, uint32_t aInstanceID);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncNext(THandle aHandle, uint32_t aInstanceID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -575,7 +575,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncNext(THandle aHandle, uint32_t aIns
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginNext(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginNext(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -586,7 +586,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginNext(THandle aHandle, uint32_t aIn
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndNext(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndNext(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -595,7 +595,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndNext(THandle aHandle, OhNetHandle
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport2Create
  * @param[in]  aInstanceID
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncPrevious(THandle aHandle, uint32_t aInstanceID);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncPrevious(THandle aHandle, uint32_t aInstanceID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -608,7 +608,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncPrevious(THandle aHandle, uint32_t 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginPrevious(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginPrevious(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -619,7 +619,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginPrevious(THandle aHandle, uint32_t
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndPrevious(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndPrevious(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -629,7 +629,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndPrevious(THandle aHandle, OhNetHa
  * @param[in]  aInstanceID
  * @param[in]  aNewPlayMode
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncSetPlayMode(THandle aHandle, uint32_t aInstanceID, const char* aNewPlayMode);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncSetPlayMode(THandle aHandle, uint32_t aInstanceID, const char* aNewPlayMode);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -643,7 +643,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncSetPlayMode(THandle aHandle, uint32
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginSetPlayMode(THandle aHandle, uint32_t aInstanceID, const char* aNewPlayMode, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginSetPlayMode(THandle aHandle, uint32_t aInstanceID, const char* aNewPlayMode, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -654,7 +654,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginSetPlayMode(THandle aHandle, uint3
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndSetPlayMode(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndSetPlayMode(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -664,7 +664,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndSetPlayMode(THandle aHandle, OhNe
  * @param[in]  aInstanceID
  * @param[in]  aNewRecordQualityMode
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncSetRecordQualityMode(THandle aHandle, uint32_t aInstanceID, const char* aNewRecordQualityMode);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncSetRecordQualityMode(THandle aHandle, uint32_t aInstanceID, const char* aNewRecordQualityMode);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -678,7 +678,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncSetRecordQualityMode(THandle aHandl
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginSetRecordQualityMode(THandle aHandle, uint32_t aInstanceID, const char* aNewRecordQualityMode, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginSetRecordQualityMode(THandle aHandle, uint32_t aInstanceID, const char* aNewRecordQualityMode, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -689,7 +689,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginSetRecordQualityMode(THandle aHand
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndSetRecordQualityMode(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndSetRecordQualityMode(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -699,7 +699,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndSetRecordQualityMode(THandle aHan
  * @param[in]  aInstanceID
  * @param[out] aActions
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncGetCurrentTransportActions(THandle aHandle, uint32_t aInstanceID, char** aActions);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncGetCurrentTransportActions(THandle aHandle, uint32_t aInstanceID, char** aActions);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -712,7 +712,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncGetCurrentTransportActions(THandle 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginGetCurrentTransportActions(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginGetCurrentTransportActions(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -724,7 +724,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginGetCurrentTransportActions(THandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetCurrentTransportActions(THandle aHandle, OhNetHandleAsync aAsync, char** aActions);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetCurrentTransportActions(THandle aHandle, OhNetHandleAsync aAsync, char** aActions);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -734,7 +734,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetCurrentTransportActions(THandl
  * @param[in]  aInstanceID
  * @param[out] aCurrentDRMState
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncGetDRMState(THandle aHandle, uint32_t aInstanceID, char** aCurrentDRMState);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncGetDRMState(THandle aHandle, uint32_t aInstanceID, char** aCurrentDRMState);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -747,7 +747,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncGetDRMState(THandle aHandle, uint32
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginGetDRMState(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginGetDRMState(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -759,7 +759,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginGetDRMState(THandle aHandle, uint3
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetDRMState(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentDRMState);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetDRMState(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentDRMState);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -770,7 +770,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetDRMState(THandle aHandle, OhNe
  * @param[in]  aStateVariableList
  * @param[out] aStateVariableValuePairs
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, char** aStateVariableValuePairs);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, char** aStateVariableValuePairs);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -784,7 +784,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncGetStateVariables(THandle aHandle, 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -796,7 +796,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginGetStateVariables(THandle aHandle,
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableValuePairs);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableValuePairs);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -810,7 +810,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndGetStateVariables(THandle aHandle
  * @param[in]  aStateVariableValuePairs
  * @param[out] aStateVariableList
  */
-DllExport void CpProxyUpnpOrgAVTransport2SyncSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aAVTransportUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, char** aStateVariableList);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SyncSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aAVTransportUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, char** aStateVariableList);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -827,7 +827,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SyncSetStateVariables(THandle aHandle, 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2BeginSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aAVTransportUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2BeginSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aAVTransportUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -839,7 +839,7 @@ DllExport void CpProxyUpnpOrgAVTransport2BeginSetStateVariables(THandle aHandle,
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgAVTransport2EndSetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableList);
+DllExport int32_t STDCALL CpProxyUpnpOrgAVTransport2EndSetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableList);
 /**
  * Set a callback to be run when the LastChange state variable changes.
  *
@@ -850,7 +850,7 @@ DllExport int32_t CpProxyUpnpOrgAVTransport2EndSetStateVariables(THandle aHandle
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the DRMState state variable changes.
  *
@@ -861,7 +861,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SetPropertyLastChangeChanged(THandle aH
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgAVTransport2SetPropertyDRMStateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2SetPropertyDRMStateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the LastChange property.
@@ -872,7 +872,7 @@ DllExport void CpProxyUpnpOrgAVTransport2SetPropertyDRMStateChanged(THandle aHan
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport2Create
  * @param[out] aLastChange
  */
-DllExport void CpProxyUpnpOrgAVTransport2PropertyLastChange(THandle aHandle, char** aLastChange);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2PropertyLastChange(THandle aHandle, char** aLastChange);
 /**
  * Query the value of the DRMState property.
  *
@@ -882,7 +882,7 @@ DllExport void CpProxyUpnpOrgAVTransport2PropertyLastChange(THandle aHandle, cha
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgAVTransport2Create
  * @param[out] aDRMState
  */
-DllExport void CpProxyUpnpOrgAVTransport2PropertyDRMState(THandle aHandle, char** aDRMState);
+DllExport void STDCALL CpProxyUpnpOrgAVTransport2PropertyDRMState(THandle aHandle, char** aDRMState);
 
 /* @} */
 

@@ -26,7 +26,7 @@ void AsyncOutput::Output(const TChar* aKey, const TChar* aValue)
 }
 
 
-void OhNetAsyncOutput(OhNetHandleAsync aAsync, OhNetCallbackAsyncOutput aOutput)
+void STDCALL OhNetAsyncOutput(OhNetHandleAsync aAsync, OhNetCallbackAsyncOutput aOutput)
 {
     AsyncOutput ao(aOutput);
     ((IAsync*)aAsync)->Output(ao);

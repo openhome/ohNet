@@ -4,7 +4,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-void OhNetLibraryStartDv()
+void STDCALL OhNetLibraryStartDv()
 {
     UpnpLibrary::StartDv();
 }
