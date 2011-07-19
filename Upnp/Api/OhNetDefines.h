@@ -11,10 +11,10 @@
 # define STDCALL __stdcall
 #else
 # ifndef DllExport
-#  define DllExport "__attribute__ ((visibility(\"default\")))"
+#  define DllExport __attribute__ ((visibility("default")))
 # endif
 # ifndef DllExportClass
-#  define DllExportClass "__attribute__ ((visibility(\"default\")))"
+#  define DllExportClass __attribute__ ((visibility("default")))
 # endif
 # define STDCALL
 #endif
