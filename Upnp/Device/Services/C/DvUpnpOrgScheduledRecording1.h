@@ -4,6 +4,7 @@
 #ifndef HEADER_DVUPNPORGSCHEDULEDRECORDING1_C
 #define HEADER_DVUPNPORGSCHEDULEDRECORDING1_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 
@@ -27,7 +28,7 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1GetSortCapabilities)(void* aPtr, uint32_t aVersion, char** aSortCaps, uint32_t* aSortLevelCap);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetSortCapabilities)(void* aPtr, uint32_t aVersion, char** aSortCaps, uint32_t* aSortLevelCap);
 /**
  * Callback which runs when the GetPropertyList action is invoked
  *
@@ -38,7 +39,7 @@ typedef int32_t (*CallbackScheduledRecording1GetSortCapabilities)(void* aPtr, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1GetPropertyList)(void* aPtr, uint32_t aVersion, const char* aDataTypeID, char** aPropertyList);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetPropertyList)(void* aPtr, uint32_t aVersion, const char* aDataTypeID, char** aPropertyList);
 /**
  * Callback which runs when the GetAllowedValues action is invoked
  *
@@ -50,7 +51,7 @@ typedef int32_t (*CallbackScheduledRecording1GetPropertyList)(void* aPtr, uint32
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1GetAllowedValues)(void* aPtr, uint32_t aVersion, const char* aDataTypeID, const char* aFilter, char** aPropertyInfo);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetAllowedValues)(void* aPtr, uint32_t aVersion, const char* aDataTypeID, const char* aFilter, char** aPropertyInfo);
 /**
  * Callback which runs when the GetStateUpdateID action is invoked
  *
@@ -60,7 +61,7 @@ typedef int32_t (*CallbackScheduledRecording1GetAllowedValues)(void* aPtr, uint3
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1GetStateUpdateID)(void* aPtr, uint32_t aVersion, uint32_t* aId);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetStateUpdateID)(void* aPtr, uint32_t aVersion, uint32_t* aId);
 /**
  * Callback which runs when the BrowseRecordSchedules action is invoked
  *
@@ -77,7 +78,7 @@ typedef int32_t (*CallbackScheduledRecording1GetStateUpdateID)(void* aPtr, uint3
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1BrowseRecordSchedules)(void* aPtr, uint32_t aVersion, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1BrowseRecordSchedules)(void* aPtr, uint32_t aVersion, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 /**
  * Callback which runs when the BrowseRecordTasks action is invoked
  *
@@ -95,7 +96,7 @@ typedef int32_t (*CallbackScheduledRecording1BrowseRecordSchedules)(void* aPtr, 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1BrowseRecordTasks)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1BrowseRecordTasks)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 /**
  * Callback which runs when the CreateRecordSchedule action is invoked
  *
@@ -108,7 +109,7 @@ typedef int32_t (*CallbackScheduledRecording1BrowseRecordTasks)(void* aPtr, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1CreateRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aElements, char** aRecordScheduleID, char** aResult, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1CreateRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aElements, char** aRecordScheduleID, char** aResult, uint32_t* aUpdateID);
 /**
  * Callback which runs when the DeleteRecordSchedule action is invoked
  *
@@ -118,7 +119,7 @@ typedef int32_t (*CallbackScheduledRecording1CreateRecordSchedule)(void* aPtr, u
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1DeleteRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1DeleteRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID);
 /**
  * Callback which runs when the GetRecordSchedule action is invoked
  *
@@ -131,7 +132,7 @@ typedef int32_t (*CallbackScheduledRecording1DeleteRecordSchedule)(void* aPtr, u
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1GetRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID, const char* aFilter, char** aResult, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID, const char* aFilter, char** aResult, uint32_t* aUpdateID);
 /**
  * Callback which runs when the EnableRecordSchedule action is invoked
  *
@@ -141,7 +142,7 @@ typedef int32_t (*CallbackScheduledRecording1GetRecordSchedule)(void* aPtr, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1EnableRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1EnableRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID);
 /**
  * Callback which runs when the DisableRecordSchedule action is invoked
  *
@@ -151,7 +152,7 @@ typedef int32_t (*CallbackScheduledRecording1EnableRecordSchedule)(void* aPtr, u
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1DisableRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1DisableRecordSchedule)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID);
 /**
  * Callback which runs when the DeleteRecordTask action is invoked
  *
@@ -161,7 +162,7 @@ typedef int32_t (*CallbackScheduledRecording1DisableRecordSchedule)(void* aPtr, 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1DeleteRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1DeleteRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID);
 /**
  * Callback which runs when the GetRecordTask action is invoked
  *
@@ -174,7 +175,7 @@ typedef int32_t (*CallbackScheduledRecording1DeleteRecordTask)(void* aPtr, uint3
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1GetRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID, const char* aFilter, char** aResult, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID, const char* aFilter, char** aResult, uint32_t* aUpdateID);
 /**
  * Callback which runs when the EnableRecordTask action is invoked
  *
@@ -184,7 +185,7 @@ typedef int32_t (*CallbackScheduledRecording1GetRecordTask)(void* aPtr, uint32_t
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1EnableRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1EnableRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID);
 /**
  * Callback which runs when the DisableRecordTask action is invoked
  *
@@ -194,7 +195,7 @@ typedef int32_t (*CallbackScheduledRecording1EnableRecordTask)(void* aPtr, uint3
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1DisableRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1DisableRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID);
 /**
  * Callback which runs when the ResetRecordTask action is invoked
  *
@@ -204,7 +205,7 @@ typedef int32_t (*CallbackScheduledRecording1DisableRecordTask)(void* aPtr, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1ResetRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1ResetRecordTask)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID);
 /**
  * Callback which runs when the GetRecordScheduleConflicts action is invoked
  *
@@ -216,7 +217,7 @@ typedef int32_t (*CallbackScheduledRecording1ResetRecordTask)(void* aPtr, uint32
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1GetRecordScheduleConflicts)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetRecordScheduleConflicts)(void* aPtr, uint32_t aVersion, const char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint32_t* aUpdateID);
 /**
  * Callback which runs when the GetRecordTaskConflicts action is invoked
  *
@@ -228,7 +229,7 @@ typedef int32_t (*CallbackScheduledRecording1GetRecordScheduleConflicts)(void* a
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackScheduledRecording1GetRecordTaskConflicts)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID, char** aRecordTaskConflictIDList, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackScheduledRecording1GetRecordTaskConflicts)(void* aPtr, uint32_t aVersion, const char* aRecordTaskID, char** aRecordTaskConflictIDList, uint32_t* aUpdateID);
 
 /**
  * Provider constructor
@@ -237,14 +238,14 @@ typedef int32_t (*CallbackScheduledRecording1GetRecordTaskConflicts)(void* aPtr,
  *
  * @return  Handle to this provider
  */
-DllExport THandle DvProviderUpnpOrgScheduledRecording1Create(DvDeviceC aDevice);
+DllExport THandle STDCALL DvProviderUpnpOrgScheduledRecording1Create(DvDeviceC aDevice);
 
 /**
  * Provider destructor
  *
  * @param[in] aProvider  Handle returned by DvProviderUpnpOrgScheduledRecording1Create
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1Destroy(THandle aProvider);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1Destroy(THandle aProvider);
 
 /**
  * Register a callback for the action GetSortCapabilities
@@ -256,7 +257,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1Destroy(THandle aProvider);
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetSortCapabilities(THandle aProvider, CallbackScheduledRecording1GetSortCapabilities aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionGetSortCapabilities(THandle aProvider, CallbackScheduledRecording1GetSortCapabilities aCallback, void* aPtr);
 /**
  * Register a callback for the action GetPropertyList
  *
@@ -267,7 +268,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetSortCapabiliti
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetPropertyList(THandle aProvider, CallbackScheduledRecording1GetPropertyList aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionGetPropertyList(THandle aProvider, CallbackScheduledRecording1GetPropertyList aCallback, void* aPtr);
 /**
  * Register a callback for the action GetAllowedValues
  *
@@ -278,7 +279,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetPropertyList(T
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetAllowedValues(THandle aProvider, CallbackScheduledRecording1GetAllowedValues aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionGetAllowedValues(THandle aProvider, CallbackScheduledRecording1GetAllowedValues aCallback, void* aPtr);
 /**
  * Register a callback for the action GetStateUpdateID
  *
@@ -289,7 +290,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetAllowedValues(
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetStateUpdateID(THandle aProvider, CallbackScheduledRecording1GetStateUpdateID aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionGetStateUpdateID(THandle aProvider, CallbackScheduledRecording1GetStateUpdateID aCallback, void* aPtr);
 /**
  * Register a callback for the action BrowseRecordSchedules
  *
@@ -300,7 +301,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetStateUpdateID(
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordSchedules(THandle aProvider, CallbackScheduledRecording1BrowseRecordSchedules aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordSchedules(THandle aProvider, CallbackScheduledRecording1BrowseRecordSchedules aCallback, void* aPtr);
 /**
  * Register a callback for the action BrowseRecordTasks
  *
@@ -311,7 +312,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordSched
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordTasks(THandle aProvider, CallbackScheduledRecording1BrowseRecordTasks aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordTasks(THandle aProvider, CallbackScheduledRecording1BrowseRecordTasks aCallback, void* aPtr);
 /**
  * Register a callback for the action CreateRecordSchedule
  *
@@ -322,7 +323,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordTasks
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionCreateRecordSchedule(THandle aProvider, CallbackScheduledRecording1CreateRecordSchedule aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionCreateRecordSchedule(THandle aProvider, CallbackScheduledRecording1CreateRecordSchedule aCallback, void* aPtr);
 /**
  * Register a callback for the action DeleteRecordSchedule
  *
@@ -333,7 +334,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionCreateRecordSched
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordSchedule(THandle aProvider, CallbackScheduledRecording1DeleteRecordSchedule aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordSchedule(THandle aProvider, CallbackScheduledRecording1DeleteRecordSchedule aCallback, void* aPtr);
 /**
  * Register a callback for the action GetRecordSchedule
  *
@@ -344,7 +345,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordSched
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordSchedule(THandle aProvider, CallbackScheduledRecording1GetRecordSchedule aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordSchedule(THandle aProvider, CallbackScheduledRecording1GetRecordSchedule aCallback, void* aPtr);
 /**
  * Register a callback for the action EnableRecordSchedule
  *
@@ -355,7 +356,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordSchedule
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordSchedule(THandle aProvider, CallbackScheduledRecording1EnableRecordSchedule aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordSchedule(THandle aProvider, CallbackScheduledRecording1EnableRecordSchedule aCallback, void* aPtr);
 /**
  * Register a callback for the action DisableRecordSchedule
  *
@@ -366,7 +367,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordSched
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordSchedule(THandle aProvider, CallbackScheduledRecording1DisableRecordSchedule aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordSchedule(THandle aProvider, CallbackScheduledRecording1DisableRecordSchedule aCallback, void* aPtr);
 /**
  * Register a callback for the action DeleteRecordTask
  *
@@ -377,7 +378,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordSche
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordTask(THandle aProvider, CallbackScheduledRecording1DeleteRecordTask aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordTask(THandle aProvider, CallbackScheduledRecording1DeleteRecordTask aCallback, void* aPtr);
 /**
  * Register a callback for the action GetRecordTask
  *
@@ -388,7 +389,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordTask(
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTask(THandle aProvider, CallbackScheduledRecording1GetRecordTask aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTask(THandle aProvider, CallbackScheduledRecording1GetRecordTask aCallback, void* aPtr);
 /**
  * Register a callback for the action EnableRecordTask
  *
@@ -399,7 +400,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTask(THa
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordTask(THandle aProvider, CallbackScheduledRecording1EnableRecordTask aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordTask(THandle aProvider, CallbackScheduledRecording1EnableRecordTask aCallback, void* aPtr);
 /**
  * Register a callback for the action DisableRecordTask
  *
@@ -410,7 +411,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordTask(
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordTask(THandle aProvider, CallbackScheduledRecording1DisableRecordTask aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordTask(THandle aProvider, CallbackScheduledRecording1DisableRecordTask aCallback, void* aPtr);
 /**
  * Register a callback for the action ResetRecordTask
  *
@@ -421,7 +422,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordTask
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionResetRecordTask(THandle aProvider, CallbackScheduledRecording1ResetRecordTask aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionResetRecordTask(THandle aProvider, CallbackScheduledRecording1ResetRecordTask aCallback, void* aPtr);
 /**
  * Register a callback for the action GetRecordScheduleConflicts
  *
@@ -432,7 +433,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionResetRecordTask(T
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordScheduleConflicts(THandle aProvider, CallbackScheduledRecording1GetRecordScheduleConflicts aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordScheduleConflicts(THandle aProvider, CallbackScheduledRecording1GetRecordScheduleConflicts aCallback, void* aPtr);
 /**
  * Register a callback for the action GetRecordTaskConflicts
  *
@@ -443,7 +444,7 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordSchedule
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTaskConflicts(THandle aProvider, CallbackScheduledRecording1GetRecordTaskConflicts aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTaskConflicts(THandle aProvider, CallbackScheduledRecording1GetRecordTaskConflicts aCallback, void* aPtr);
 
 /**
  * Set the value of the LastChange property
@@ -455,14 +456,14 @@ DllExport void DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTaskConf
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderUpnpOrgScheduledRecording1SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderUpnpOrgScheduledRecording1SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the LastChange property
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgScheduledRecording1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderUpnpOrgScheduledRecording1GetPropertyLastChange(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderUpnpOrgScheduledRecording1GetPropertyLastChange(THandle aProvider, char** aValue);
 
 /* @} */
 

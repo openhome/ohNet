@@ -20,7 +20,7 @@ public:
     virtual void Output(IAsyncOutput& aConsole) = 0;
 };
 
-typedef void (*OhNetFunctorAsync)(void* aPtr, IAsync* aAsync);
+typedef void (STDCALL *OhNetFunctorAsync)(void* aPtr, IAsync* aAsync);
 
 /**
  * Callback used to indicate that an asynchronous operation has completed

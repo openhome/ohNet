@@ -773,109 +773,109 @@ void DvProviderUpnpOrgAVTransport1C::DoGetCurrentTransportActions(IDviInvocation
 
 
 
-THandle DvProviderUpnpOrgAVTransport1Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderUpnpOrgAVTransport1Create(DvDeviceC aDevice)
 {
 	return new DvProviderUpnpOrgAVTransport1C(aDevice);
 }
 
-void DvProviderUpnpOrgAVTransport1Destroy(THandle aProvider)
+void STDCALL DvProviderUpnpOrgAVTransport1Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionSetAVTransportURI(THandle aProvider, CallbackAVTransport1SetAVTransportURI aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionSetAVTransportURI(THandle aProvider, CallbackAVTransport1SetAVTransportURI aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionSetAVTransportURI(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(THandle aProvider, CallbackAVTransport1SetNextAVTransportURI aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(THandle aProvider, CallbackAVTransport1SetNextAVTransportURI aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionSetNextAVTransportURI(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionGetMediaInfo(THandle aProvider, CallbackAVTransport1GetMediaInfo aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionGetMediaInfo(THandle aProvider, CallbackAVTransport1GetMediaInfo aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionGetMediaInfo(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionGetTransportInfo(THandle aProvider, CallbackAVTransport1GetTransportInfo aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionGetTransportInfo(THandle aProvider, CallbackAVTransport1GetTransportInfo aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionGetTransportInfo(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionGetPositionInfo(THandle aProvider, CallbackAVTransport1GetPositionInfo aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionGetPositionInfo(THandle aProvider, CallbackAVTransport1GetPositionInfo aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionGetPositionInfo(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(THandle aProvider, CallbackAVTransport1GetDeviceCapabilities aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(THandle aProvider, CallbackAVTransport1GetDeviceCapabilities aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionGetDeviceCapabilities(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionGetTransportSettings(THandle aProvider, CallbackAVTransport1GetTransportSettings aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionGetTransportSettings(THandle aProvider, CallbackAVTransport1GetTransportSettings aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionGetTransportSettings(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionStop(THandle aProvider, CallbackAVTransport1Stop aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionStop(THandle aProvider, CallbackAVTransport1Stop aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionStop(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionPlay(THandle aProvider, CallbackAVTransport1Play aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionPlay(THandle aProvider, CallbackAVTransport1Play aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionPlay(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionPause(THandle aProvider, CallbackAVTransport1Pause aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionPause(THandle aProvider, CallbackAVTransport1Pause aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionPause(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionRecord(THandle aProvider, CallbackAVTransport1Record aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionRecord(THandle aProvider, CallbackAVTransport1Record aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionRecord(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionSeek(THandle aProvider, CallbackAVTransport1Seek aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionSeek(THandle aProvider, CallbackAVTransport1Seek aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionSeek(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionNext(THandle aProvider, CallbackAVTransport1Next aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionNext(THandle aProvider, CallbackAVTransport1Next aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionNext(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionPrevious(THandle aProvider, CallbackAVTransport1Previous aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionPrevious(THandle aProvider, CallbackAVTransport1Previous aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionPrevious(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionSetPlayMode(THandle aProvider, CallbackAVTransport1SetPlayMode aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionSetPlayMode(THandle aProvider, CallbackAVTransport1SetPlayMode aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionSetPlayMode(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionSetRecordQualityMode(THandle aProvider, CallbackAVTransport1SetRecordQualityMode aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionSetRecordQualityMode(THandle aProvider, CallbackAVTransport1SetRecordQualityMode aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionSetRecordQualityMode(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(THandle aProvider, CallbackAVTransport1GetCurrentTransportActions aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(THandle aProvider, CallbackAVTransport1GetCurrentTransportActions aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->EnableActionGetCurrentTransportActions(aCallback, aPtr);
 }
 
-int32_t DvProviderUpnpOrgAVTransport1SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderUpnpOrgAVTransport1SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->SetPropertyLastChange(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderUpnpOrgAVTransport1GetPropertyLastChange(THandle aProvider, char** aValue)
+void STDCALL DvProviderUpnpOrgAVTransport1GetPropertyLastChange(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderUpnpOrgAVTransport1C*>(aProvider)->GetPropertyLastChange(buf);

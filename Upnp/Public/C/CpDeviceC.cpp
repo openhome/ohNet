@@ -7,28 +7,28 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-const char* CpDeviceCUdn(CpDeviceC aDevice)
+const char* STDCALL CpDeviceCUdn(CpDeviceC aDevice)
 {
     CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
     ASSERT(device != NULL);
     return (const char*)device->Udn().Ptr();
 }
 
-void CpDeviceCAddRef(CpDeviceC aDevice)
+void STDCALL CpDeviceCAddRef(CpDeviceC aDevice)
 {
     CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
     ASSERT(device != NULL);
     device->AddRef();
 }
 
-void CpDeviceCRemoveRef(CpDeviceC aDevice)
+void STDCALL CpDeviceCRemoveRef(CpDeviceC aDevice)
 {
     CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
     ASSERT(device != NULL);
     device->RemoveRef();
 }
 
-int32_t CpDeviceCGetAttribute(CpDeviceC aDevice, const char* aKey, char** aValue)
+int32_t STDCALL CpDeviceCGetAttribute(CpDeviceC aDevice, const char* aKey, char** aValue)
 {
     CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
     Brh val;
@@ -43,13 +43,13 @@ int32_t CpDeviceCGetAttribute(CpDeviceC aDevice, const char* aKey, char** aValue
     return 0;
 }
 
-void CpDeviceListDestroy(HandleCpDeviceList aListHandle)
+void STDCALL CpDeviceListDestroy(HandleCpDeviceList aListHandle)
 {
     CpiDeviceList* list = reinterpret_cast<CpiDeviceList*>(aListHandle);
     delete list;
 }
 
-void CpDeviceListRefresh(HandleCpDeviceList aListHandle)
+void STDCALL CpDeviceListRefresh(HandleCpDeviceList aListHandle)
 {
     CpiDeviceList* list = reinterpret_cast<CpiDeviceList*>(aListHandle);
     ASSERT(list != NULL);

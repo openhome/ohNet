@@ -42,7 +42,7 @@ ar = ${CROSS_COMPILE}ar rc $(objdir)
 endif
 
 # Macros used by Common.mak
-cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))" $(platform_cflags)
+cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
 inc_build = Build/Include
 includes = -IBuild/Include/ -IBuild/Include/Cpp/
 bundle_build = Build/Bundles

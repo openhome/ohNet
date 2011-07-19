@@ -4,6 +4,7 @@
 #ifndef HEADER_DVUPNPORGCONTENTDIRECTORY3_C
 #define HEADER_DVUPNPORGCONTENTDIRECTORY3_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 
@@ -26,7 +27,7 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3GetSearchCapabilities)(void* aPtr, uint32_t aVersion, char** aSearchCaps);
+typedef int32_t (STDCALL *CallbackContentDirectory3GetSearchCapabilities)(void* aPtr, uint32_t aVersion, char** aSearchCaps);
 /**
  * Callback which runs when the GetSortCapabilities action is invoked
  *
@@ -36,7 +37,7 @@ typedef int32_t (*CallbackContentDirectory3GetSearchCapabilities)(void* aPtr, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3GetSortCapabilities)(void* aPtr, uint32_t aVersion, char** aSortCaps);
+typedef int32_t (STDCALL *CallbackContentDirectory3GetSortCapabilities)(void* aPtr, uint32_t aVersion, char** aSortCaps);
 /**
  * Callback which runs when the GetSortExtensionCapabilities action is invoked
  *
@@ -46,7 +47,7 @@ typedef int32_t (*CallbackContentDirectory3GetSortCapabilities)(void* aPtr, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3GetSortExtensionCapabilities)(void* aPtr, uint32_t aVersion, char** aSortExtensionCaps);
+typedef int32_t (STDCALL *CallbackContentDirectory3GetSortExtensionCapabilities)(void* aPtr, uint32_t aVersion, char** aSortExtensionCaps);
 /**
  * Callback which runs when the GetFeatureList action is invoked
  *
@@ -56,7 +57,7 @@ typedef int32_t (*CallbackContentDirectory3GetSortExtensionCapabilities)(void* a
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3GetFeatureList)(void* aPtr, uint32_t aVersion, char** aFeatureList);
+typedef int32_t (STDCALL *CallbackContentDirectory3GetFeatureList)(void* aPtr, uint32_t aVersion, char** aFeatureList);
 /**
  * Callback which runs when the GetSystemUpdateID action is invoked
  *
@@ -66,7 +67,7 @@ typedef int32_t (*CallbackContentDirectory3GetFeatureList)(void* aPtr, uint32_t 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3GetSystemUpdateID)(void* aPtr, uint32_t aVersion, uint32_t* aId);
+typedef int32_t (STDCALL *CallbackContentDirectory3GetSystemUpdateID)(void* aPtr, uint32_t aVersion, uint32_t* aId);
 /**
  * Callback which runs when the GetServiceResetToken action is invoked
  *
@@ -76,7 +77,7 @@ typedef int32_t (*CallbackContentDirectory3GetSystemUpdateID)(void* aPtr, uint32
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3GetServiceResetToken)(void* aPtr, uint32_t aVersion, char** aResetToken);
+typedef int32_t (STDCALL *CallbackContentDirectory3GetServiceResetToken)(void* aPtr, uint32_t aVersion, char** aResetToken);
 /**
  * Callback which runs when the Browse action is invoked
  *
@@ -95,7 +96,7 @@ typedef int32_t (*CallbackContentDirectory3GetServiceResetToken)(void* aPtr, uin
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3Browse)(void* aPtr, uint32_t aVersion, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackContentDirectory3Browse)(void* aPtr, uint32_t aVersion, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 /**
  * Callback which runs when the Search action is invoked
  *
@@ -114,7 +115,7 @@ typedef int32_t (*CallbackContentDirectory3Browse)(void* aPtr, uint32_t aVersion
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3Search)(void* aPtr, uint32_t aVersion, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackContentDirectory3Search)(void* aPtr, uint32_t aVersion, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID);
 /**
  * Callback which runs when the CreateObject action is invoked
  *
@@ -127,7 +128,7 @@ typedef int32_t (*CallbackContentDirectory3Search)(void* aPtr, uint32_t aVersion
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3CreateObject)(void* aPtr, uint32_t aVersion, const char* aContainerID, const char* aElements, char** aObjectID, char** aResult);
+typedef int32_t (STDCALL *CallbackContentDirectory3CreateObject)(void* aPtr, uint32_t aVersion, const char* aContainerID, const char* aElements, char** aObjectID, char** aResult);
 /**
  * Callback which runs when the DestroyObject action is invoked
  *
@@ -137,7 +138,7 @@ typedef int32_t (*CallbackContentDirectory3CreateObject)(void* aPtr, uint32_t aV
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3DestroyObject)(void* aPtr, uint32_t aVersion, const char* aObjectID);
+typedef int32_t (STDCALL *CallbackContentDirectory3DestroyObject)(void* aPtr, uint32_t aVersion, const char* aObjectID);
 /**
  * Callback which runs when the UpdateObject action is invoked
  *
@@ -149,7 +150,7 @@ typedef int32_t (*CallbackContentDirectory3DestroyObject)(void* aPtr, uint32_t a
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3UpdateObject)(void* aPtr, uint32_t aVersion, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue);
+typedef int32_t (STDCALL *CallbackContentDirectory3UpdateObject)(void* aPtr, uint32_t aVersion, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue);
 /**
  * Callback which runs when the MoveObject action is invoked
  *
@@ -161,7 +162,7 @@ typedef int32_t (*CallbackContentDirectory3UpdateObject)(void* aPtr, uint32_t aV
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3MoveObject)(void* aPtr, uint32_t aVersion, const char* aObjectID, const char* aNewParentID, char** aNewObjectID);
+typedef int32_t (STDCALL *CallbackContentDirectory3MoveObject)(void* aPtr, uint32_t aVersion, const char* aObjectID, const char* aNewParentID, char** aNewObjectID);
 /**
  * Callback which runs when the ImportResource action is invoked
  *
@@ -173,7 +174,7 @@ typedef int32_t (*CallbackContentDirectory3MoveObject)(void* aPtr, uint32_t aVer
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3ImportResource)(void* aPtr, uint32_t aVersion, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID);
+typedef int32_t (STDCALL *CallbackContentDirectory3ImportResource)(void* aPtr, uint32_t aVersion, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID);
 /**
  * Callback which runs when the ExportResource action is invoked
  *
@@ -185,7 +186,7 @@ typedef int32_t (*CallbackContentDirectory3ImportResource)(void* aPtr, uint32_t 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3ExportResource)(void* aPtr, uint32_t aVersion, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID);
+typedef int32_t (STDCALL *CallbackContentDirectory3ExportResource)(void* aPtr, uint32_t aVersion, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID);
 /**
  * Callback which runs when the DeleteResource action is invoked
  *
@@ -195,7 +196,7 @@ typedef int32_t (*CallbackContentDirectory3ExportResource)(void* aPtr, uint32_t 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3DeleteResource)(void* aPtr, uint32_t aVersion, const char* aResourceURI);
+typedef int32_t (STDCALL *CallbackContentDirectory3DeleteResource)(void* aPtr, uint32_t aVersion, const char* aResourceURI);
 /**
  * Callback which runs when the StopTransferResource action is invoked
  *
@@ -205,7 +206,7 @@ typedef int32_t (*CallbackContentDirectory3DeleteResource)(void* aPtr, uint32_t 
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3StopTransferResource)(void* aPtr, uint32_t aVersion, uint32_t aTransferID);
+typedef int32_t (STDCALL *CallbackContentDirectory3StopTransferResource)(void* aPtr, uint32_t aVersion, uint32_t aTransferID);
 /**
  * Callback which runs when the GetTransferProgress action is invoked
  *
@@ -218,7 +219,7 @@ typedef int32_t (*CallbackContentDirectory3StopTransferResource)(void* aPtr, uin
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3GetTransferProgress)(void* aPtr, uint32_t aVersion, uint32_t aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
+typedef int32_t (STDCALL *CallbackContentDirectory3GetTransferProgress)(void* aPtr, uint32_t aVersion, uint32_t aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
 /**
  * Callback which runs when the CreateReference action is invoked
  *
@@ -230,7 +231,7 @@ typedef int32_t (*CallbackContentDirectory3GetTransferProgress)(void* aPtr, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3CreateReference)(void* aPtr, uint32_t aVersion, const char* aContainerID, const char* aObjectID, char** aNewID);
+typedef int32_t (STDCALL *CallbackContentDirectory3CreateReference)(void* aPtr, uint32_t aVersion, const char* aContainerID, const char* aObjectID, char** aNewID);
 /**
  * Callback which runs when the FreeFormQuery action is invoked
  *
@@ -244,7 +245,7 @@ typedef int32_t (*CallbackContentDirectory3CreateReference)(void* aPtr, uint32_t
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3FreeFormQuery)(void* aPtr, uint32_t aVersion, const char* aContainerID, uint32_t aCDSView, const char* aQueryRequest, char** aQueryResult, uint32_t* aUpdateID);
+typedef int32_t (STDCALL *CallbackContentDirectory3FreeFormQuery)(void* aPtr, uint32_t aVersion, const char* aContainerID, uint32_t aCDSView, const char* aQueryRequest, char** aQueryResult, uint32_t* aUpdateID);
 /**
  * Callback which runs when the GetFreeFormQueryCapabilities action is invoked
  *
@@ -254,7 +255,7 @@ typedef int32_t (*CallbackContentDirectory3FreeFormQuery)(void* aPtr, uint32_t a
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackContentDirectory3GetFreeFormQueryCapabilities)(void* aPtr, uint32_t aVersion, char** aFFQCapabilities);
+typedef int32_t (STDCALL *CallbackContentDirectory3GetFreeFormQueryCapabilities)(void* aPtr, uint32_t aVersion, char** aFFQCapabilities);
 
 /**
  * Provider constructor
@@ -263,14 +264,14 @@ typedef int32_t (*CallbackContentDirectory3GetFreeFormQueryCapabilities)(void* a
  *
  * @return  Handle to this provider
  */
-DllExport THandle DvProviderUpnpOrgContentDirectory3Create(DvDeviceC aDevice);
+DllExport THandle STDCALL DvProviderUpnpOrgContentDirectory3Create(DvDeviceC aDevice);
 
 /**
  * Provider destructor
  *
  * @param[in] aProvider  Handle returned by DvProviderUpnpOrgContentDirectory3Create
  */
-DllExport void DvProviderUpnpOrgContentDirectory3Destroy(THandle aProvider);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3Destroy(THandle aProvider);
 
 /**
  * Register a callback for the action GetSearchCapabilities
@@ -282,7 +283,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3Destroy(THandle aProvider);
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetSearchCapabilities(THandle aProvider, CallbackContentDirectory3GetSearchCapabilities aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionGetSearchCapabilities(THandle aProvider, CallbackContentDirectory3GetSearchCapabilities aCallback, void* aPtr);
 /**
  * Register a callback for the action GetSortCapabilities
  *
@@ -293,7 +294,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetSearchCapabiliti
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetSortCapabilities(THandle aProvider, CallbackContentDirectory3GetSortCapabilities aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionGetSortCapabilities(THandle aProvider, CallbackContentDirectory3GetSortCapabilities aCallback, void* aPtr);
 /**
  * Register a callback for the action GetSortExtensionCapabilities
  *
@@ -304,7 +305,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetSortCapabilities
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetSortExtensionCapabilities(THandle aProvider, CallbackContentDirectory3GetSortExtensionCapabilities aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionGetSortExtensionCapabilities(THandle aProvider, CallbackContentDirectory3GetSortExtensionCapabilities aCallback, void* aPtr);
 /**
  * Register a callback for the action GetFeatureList
  *
@@ -315,7 +316,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetSortExtensionCap
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetFeatureList(THandle aProvider, CallbackContentDirectory3GetFeatureList aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionGetFeatureList(THandle aProvider, CallbackContentDirectory3GetFeatureList aCallback, void* aPtr);
 /**
  * Register a callback for the action GetSystemUpdateID
  *
@@ -326,7 +327,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetFeatureList(THan
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetSystemUpdateID(THandle aProvider, CallbackContentDirectory3GetSystemUpdateID aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionGetSystemUpdateID(THandle aProvider, CallbackContentDirectory3GetSystemUpdateID aCallback, void* aPtr);
 /**
  * Register a callback for the action GetServiceResetToken
  *
@@ -337,7 +338,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetSystemUpdateID(T
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetServiceResetToken(THandle aProvider, CallbackContentDirectory3GetServiceResetToken aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionGetServiceResetToken(THandle aProvider, CallbackContentDirectory3GetServiceResetToken aCallback, void* aPtr);
 /**
  * Register a callback for the action Browse
  *
@@ -348,7 +349,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetServiceResetToke
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionBrowse(THandle aProvider, CallbackContentDirectory3Browse aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionBrowse(THandle aProvider, CallbackContentDirectory3Browse aCallback, void* aPtr);
 /**
  * Register a callback for the action Search
  *
@@ -359,7 +360,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionBrowse(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionSearch(THandle aProvider, CallbackContentDirectory3Search aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionSearch(THandle aProvider, CallbackContentDirectory3Search aCallback, void* aPtr);
 /**
  * Register a callback for the action CreateObject
  *
@@ -370,7 +371,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionSearch(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionCreateObject(THandle aProvider, CallbackContentDirectory3CreateObject aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionCreateObject(THandle aProvider, CallbackContentDirectory3CreateObject aCallback, void* aPtr);
 /**
  * Register a callback for the action DestroyObject
  *
@@ -381,7 +382,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionCreateObject(THandl
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionDestroyObject(THandle aProvider, CallbackContentDirectory3DestroyObject aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionDestroyObject(THandle aProvider, CallbackContentDirectory3DestroyObject aCallback, void* aPtr);
 /**
  * Register a callback for the action UpdateObject
  *
@@ -392,7 +393,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionDestroyObject(THand
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionUpdateObject(THandle aProvider, CallbackContentDirectory3UpdateObject aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionUpdateObject(THandle aProvider, CallbackContentDirectory3UpdateObject aCallback, void* aPtr);
 /**
  * Register a callback for the action MoveObject
  *
@@ -403,7 +404,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionUpdateObject(THandl
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionMoveObject(THandle aProvider, CallbackContentDirectory3MoveObject aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionMoveObject(THandle aProvider, CallbackContentDirectory3MoveObject aCallback, void* aPtr);
 /**
  * Register a callback for the action ImportResource
  *
@@ -414,7 +415,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionMoveObject(THandle 
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionImportResource(THandle aProvider, CallbackContentDirectory3ImportResource aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionImportResource(THandle aProvider, CallbackContentDirectory3ImportResource aCallback, void* aPtr);
 /**
  * Register a callback for the action ExportResource
  *
@@ -425,7 +426,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionImportResource(THan
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionExportResource(THandle aProvider, CallbackContentDirectory3ExportResource aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionExportResource(THandle aProvider, CallbackContentDirectory3ExportResource aCallback, void* aPtr);
 /**
  * Register a callback for the action DeleteResource
  *
@@ -436,7 +437,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionExportResource(THan
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionDeleteResource(THandle aProvider, CallbackContentDirectory3DeleteResource aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionDeleteResource(THandle aProvider, CallbackContentDirectory3DeleteResource aCallback, void* aPtr);
 /**
  * Register a callback for the action StopTransferResource
  *
@@ -447,7 +448,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionDeleteResource(THan
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionStopTransferResource(THandle aProvider, CallbackContentDirectory3StopTransferResource aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionStopTransferResource(THandle aProvider, CallbackContentDirectory3StopTransferResource aCallback, void* aPtr);
 /**
  * Register a callback for the action GetTransferProgress
  *
@@ -458,7 +459,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionStopTransferResourc
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetTransferProgress(THandle aProvider, CallbackContentDirectory3GetTransferProgress aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionGetTransferProgress(THandle aProvider, CallbackContentDirectory3GetTransferProgress aCallback, void* aPtr);
 /**
  * Register a callback for the action CreateReference
  *
@@ -469,7 +470,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetTransferProgress
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionCreateReference(THandle aProvider, CallbackContentDirectory3CreateReference aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionCreateReference(THandle aProvider, CallbackContentDirectory3CreateReference aCallback, void* aPtr);
 /**
  * Register a callback for the action FreeFormQuery
  *
@@ -480,7 +481,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionCreateReference(THa
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionFreeFormQuery(THandle aProvider, CallbackContentDirectory3FreeFormQuery aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionFreeFormQuery(THandle aProvider, CallbackContentDirectory3FreeFormQuery aCallback, void* aPtr);
 /**
  * Register a callback for the action GetFreeFormQueryCapabilities
  *
@@ -491,7 +492,7 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionFreeFormQuery(THand
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetFreeFormQueryCapabilities(THandle aProvider, CallbackContentDirectory3GetFreeFormQueryCapabilities aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3EnableActionGetFreeFormQueryCapabilities(THandle aProvider, CallbackContentDirectory3GetFreeFormQueryCapabilities aCallback, void* aPtr);
 
 /**
  * Set the value of the SystemUpdateID property
@@ -503,14 +504,14 @@ DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetFreeFormQueryCap
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderUpnpOrgContentDirectory3SetPropertySystemUpdateID(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderUpnpOrgContentDirectory3SetPropertySystemUpdateID(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the SystemUpdateID property
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgContentDirectory3Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderUpnpOrgContentDirectory3GetPropertySystemUpdateID(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3GetPropertySystemUpdateID(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the ContainerUpdateIDs property
  *
@@ -521,14 +522,14 @@ DllExport void DvProviderUpnpOrgContentDirectory3GetPropertySystemUpdateID(THand
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderUpnpOrgContentDirectory3SetPropertyContainerUpdateIDs(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderUpnpOrgContentDirectory3SetPropertyContainerUpdateIDs(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ContainerUpdateIDs property
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgContentDirectory3Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderUpnpOrgContentDirectory3GetPropertyContainerUpdateIDs(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3GetPropertyContainerUpdateIDs(THandle aProvider, char** aValue);
 /**
  * Set the value of the LastChange property
  *
@@ -539,14 +540,14 @@ DllExport void DvProviderUpnpOrgContentDirectory3GetPropertyContainerUpdateIDs(T
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderUpnpOrgContentDirectory3SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderUpnpOrgContentDirectory3SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the LastChange property
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgContentDirectory3Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderUpnpOrgContentDirectory3GetPropertyLastChange(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3GetPropertyLastChange(THandle aProvider, char** aValue);
 /**
  * Set the value of the TransferIDs property
  *
@@ -557,14 +558,14 @@ DllExport void DvProviderUpnpOrgContentDirectory3GetPropertyLastChange(THandle a
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderUpnpOrgContentDirectory3SetPropertyTransferIDs(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderUpnpOrgContentDirectory3SetPropertyTransferIDs(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the TransferIDs property
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgContentDirectory3Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderUpnpOrgContentDirectory3GetPropertyTransferIDs(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderUpnpOrgContentDirectory3GetPropertyTransferIDs(THandle aProvider, char** aValue);
 
 /* @} */
 

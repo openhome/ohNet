@@ -4,6 +4,7 @@
 #ifndef HEADER_DVUPNPORGCONNECTIONMANAGER1_C
 #define HEADER_DVUPNPORGCONNECTIONMANAGER1_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 
@@ -27,7 +28,7 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackConnectionManager1GetProtocolInfo)(void* aPtr, uint32_t aVersion, char** aSource, char** aSink);
+typedef int32_t (STDCALL *CallbackConnectionManager1GetProtocolInfo)(void* aPtr, uint32_t aVersion, char** aSource, char** aSink);
 /**
  * Callback which runs when the PrepareForConnection action is invoked
  *
@@ -43,7 +44,7 @@ typedef int32_t (*CallbackConnectionManager1GetProtocolInfo)(void* aPtr, uint32_
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackConnectionManager1PrepareForConnection)(void* aPtr, uint32_t aVersion, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID);
+typedef int32_t (STDCALL *CallbackConnectionManager1PrepareForConnection)(void* aPtr, uint32_t aVersion, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID);
 /**
  * Callback which runs when the ConnectionComplete action is invoked
  *
@@ -53,7 +54,7 @@ typedef int32_t (*CallbackConnectionManager1PrepareForConnection)(void* aPtr, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackConnectionManager1ConnectionComplete)(void* aPtr, uint32_t aVersion, int32_t aConnectionID);
+typedef int32_t (STDCALL *CallbackConnectionManager1ConnectionComplete)(void* aPtr, uint32_t aVersion, int32_t aConnectionID);
 /**
  * Callback which runs when the GetCurrentConnectionIDs action is invoked
  *
@@ -63,7 +64,7 @@ typedef int32_t (*CallbackConnectionManager1ConnectionComplete)(void* aPtr, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackConnectionManager1GetCurrentConnectionIDs)(void* aPtr, uint32_t aVersion, char** aConnectionIDs);
+typedef int32_t (STDCALL *CallbackConnectionManager1GetCurrentConnectionIDs)(void* aPtr, uint32_t aVersion, char** aConnectionIDs);
 /**
  * Callback which runs when the GetCurrentConnectionInfo action is invoked
  *
@@ -80,7 +81,7 @@ typedef int32_t (*CallbackConnectionManager1GetCurrentConnectionIDs)(void* aPtr,
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackConnectionManager1GetCurrentConnectionInfo)(void* aPtr, uint32_t aVersion, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus);
+typedef int32_t (STDCALL *CallbackConnectionManager1GetCurrentConnectionInfo)(void* aPtr, uint32_t aVersion, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus);
 
 /**
  * Provider constructor
@@ -89,14 +90,14 @@ typedef int32_t (*CallbackConnectionManager1GetCurrentConnectionInfo)(void* aPtr
  *
  * @return  Handle to this provider
  */
-DllExport THandle DvProviderUpnpOrgConnectionManager1Create(DvDeviceC aDevice);
+DllExport THandle STDCALL DvProviderUpnpOrgConnectionManager1Create(DvDeviceC aDevice);
 
 /**
  * Provider destructor
  *
  * @param[in] aProvider  Handle returned by DvProviderUpnpOrgConnectionManager1Create
  */
-DllExport void DvProviderUpnpOrgConnectionManager1Destroy(THandle aProvider);
+DllExport void STDCALL DvProviderUpnpOrgConnectionManager1Destroy(THandle aProvider);
 
 /**
  * Register a callback for the action GetProtocolInfo
@@ -108,7 +109,7 @@ DllExport void DvProviderUpnpOrgConnectionManager1Destroy(THandle aProvider);
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgConnectionManager1EnableActionGetProtocolInfo(THandle aProvider, CallbackConnectionManager1GetProtocolInfo aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgConnectionManager1EnableActionGetProtocolInfo(THandle aProvider, CallbackConnectionManager1GetProtocolInfo aCallback, void* aPtr);
 /**
  * Register a callback for the action PrepareForConnection
  *
@@ -119,7 +120,7 @@ DllExport void DvProviderUpnpOrgConnectionManager1EnableActionGetProtocolInfo(TH
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgConnectionManager1EnableActionPrepareForConnection(THandle aProvider, CallbackConnectionManager1PrepareForConnection aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgConnectionManager1EnableActionPrepareForConnection(THandle aProvider, CallbackConnectionManager1PrepareForConnection aCallback, void* aPtr);
 /**
  * Register a callback for the action ConnectionComplete
  *
@@ -130,7 +131,7 @@ DllExport void DvProviderUpnpOrgConnectionManager1EnableActionPrepareForConnecti
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgConnectionManager1EnableActionConnectionComplete(THandle aProvider, CallbackConnectionManager1ConnectionComplete aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgConnectionManager1EnableActionConnectionComplete(THandle aProvider, CallbackConnectionManager1ConnectionComplete aCallback, void* aPtr);
 /**
  * Register a callback for the action GetCurrentConnectionIDs
  *
@@ -141,7 +142,7 @@ DllExport void DvProviderUpnpOrgConnectionManager1EnableActionConnectionComplete
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnectionIDs(THandle aProvider, CallbackConnectionManager1GetCurrentConnectionIDs aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnectionIDs(THandle aProvider, CallbackConnectionManager1GetCurrentConnectionIDs aCallback, void* aPtr);
 /**
  * Register a callback for the action GetCurrentConnectionInfo
  *
@@ -152,7 +153,7 @@ DllExport void DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnecti
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnectionInfo(THandle aProvider, CallbackConnectionManager1GetCurrentConnectionInfo aCallback, void* aPtr);
+DllExport void STDCALL DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnectionInfo(THandle aProvider, CallbackConnectionManager1GetCurrentConnectionInfo aCallback, void* aPtr);
 
 /**
  * Set the value of the SourceProtocolInfo property
@@ -164,14 +165,14 @@ DllExport void DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnecti
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderUpnpOrgConnectionManager1SetPropertySourceProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderUpnpOrgConnectionManager1SetPropertySourceProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the SourceProtocolInfo property
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgConnectionManager1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderUpnpOrgConnectionManager1GetPropertySourceProtocolInfo(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderUpnpOrgConnectionManager1GetPropertySourceProtocolInfo(THandle aProvider, char** aValue);
 /**
  * Set the value of the SinkProtocolInfo property
  *
@@ -182,14 +183,14 @@ DllExport void DvProviderUpnpOrgConnectionManager1GetPropertySourceProtocolInfo(
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderUpnpOrgConnectionManager1SetPropertySinkProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderUpnpOrgConnectionManager1SetPropertySinkProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the SinkProtocolInfo property
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgConnectionManager1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderUpnpOrgConnectionManager1GetPropertySinkProtocolInfo(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderUpnpOrgConnectionManager1GetPropertySinkProtocolInfo(THandle aProvider, char** aValue);
 /**
  * Set the value of the CurrentConnectionIDs property
  *
@@ -200,14 +201,14 @@ DllExport void DvProviderUpnpOrgConnectionManager1GetPropertySinkProtocolInfo(TH
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDs(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDs(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the CurrentConnectionIDs property
  *
  * @param[in]  aProvider  Handle returned by DvProviderUpnpOrgConnectionManager1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderUpnpOrgConnectionManager1GetPropertyCurrentConnectionIDs(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderUpnpOrgConnectionManager1GetPropertyCurrentConnectionIDs(THandle aProvider, char** aValue);
 
 /* @} */
 

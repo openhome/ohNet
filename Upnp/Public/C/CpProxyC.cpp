@@ -29,39 +29,39 @@ CpProxyC::~CpProxyC()
 }
 
 
-THandle CpProxyCreate(const char* aDomain, const char* aName, uint32_t aVersion, CpDeviceC aDevice)
+THandle STDCALL CpProxyCreate(const char* aDomain, const char* aName, uint32_t aVersion, CpDeviceC aDevice)
 {
     CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
     return new CpProxyC(aDomain, aName, aVersion, *device);
 }
 
-void CpProxyDestroy(THandle aProxy)
+void STDCALL CpProxyDestroy(THandle aProxy)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aProxy);
     delete proxyC;
 }
 
-THandle CpProxyService(THandle aProxy)
+THandle STDCALL CpProxyService(THandle aProxy)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aProxy);
     return (THandle)proxyC->Service();
 }
 
-void CpProxySubscribe(THandle aHandle)
+void STDCALL CpProxySubscribe(THandle aHandle)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Subscribe();
 }
 
-void CpProxyUnsubscribe(THandle aHandle)
+void STDCALL CpProxyUnsubscribe(THandle aHandle)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Unsubscribe();
 }
 
-void CpProxySetPropertyChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxySetPropertyChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -69,7 +69,7 @@ void CpProxySetPropertyChanged(THandle aHandle, OhNetCallback aCallback, void* a
     proxyC->SetPropertyChanged(functor);
 }
 
-void CpProxySetPropertyInitialEvent(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxySetPropertyInitialEvent(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -77,21 +77,21 @@ void CpProxySetPropertyInitialEvent(THandle aHandle, OhNetCallback aCallback, vo
     proxyC->SetPropertyInitialEvent(functor);
 }
 
-void CpProxyPropertyReadLock(THandle aHandle)
+void STDCALL CpProxyPropertyReadLock(THandle aHandle)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->PropertyReadLock();
 }
 
-void CpProxyPropertyReadUnlock(THandle aHandle)
+void STDCALL CpProxyPropertyReadUnlock(THandle aHandle)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->PropertyReadUnlock();
 }
 
-void CpProxyAddProperty(THandle aHandle, ServiceProperty aProperty)
+void STDCALL CpProxyAddProperty(THandle aHandle, ServiceProperty aProperty)
 {
     CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);

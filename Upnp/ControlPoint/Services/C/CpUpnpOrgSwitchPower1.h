@@ -5,6 +5,7 @@
 #define HEADER_UPNPORGSWITCHPOWER1_C
 
 #include <OsTypes.h>
+#include <OhNetDefines.h>
 #include <C/Async.h>
 #include <C/OhNet.h>
 #include <C/CpDevice.h>
@@ -29,7 +30,7 @@ extern "C" {
  *
  * @return  Handle which should be used with all other functions in this header
  */
-DllExport THandle CpProxyUpnpOrgSwitchPower1Create(CpDeviceC aDevice);
+DllExport THandle STDCALL CpProxyUpnpOrgSwitchPower1Create(CpDeviceC aDevice);
 /**
  * Destructor.
  * If any asynchronous method is in progress, this will block until they complete.
@@ -39,7 +40,7 @@ DllExport THandle CpProxyUpnpOrgSwitchPower1Create(CpDeviceC aDevice);
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgSwitchPower1Create
  */
-DllExport void CpProxyUpnpOrgSwitchPower1Destroy(THandle aHandle);
+DllExport void STDCALL CpProxyUpnpOrgSwitchPower1Destroy(THandle aHandle);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -48,7 +49,7 @@ DllExport void CpProxyUpnpOrgSwitchPower1Destroy(THandle aHandle);
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgSwitchPower1Create
  * @param[in]  anewTargetValue
  */
-DllExport void CpProxyUpnpOrgSwitchPower1SyncSetTarget(THandle aHandle, uint32_t anewTargetValue);
+DllExport void STDCALL CpProxyUpnpOrgSwitchPower1SyncSetTarget(THandle aHandle, uint32_t anewTargetValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -61,7 +62,7 @@ DllExport void CpProxyUpnpOrgSwitchPower1SyncSetTarget(THandle aHandle, uint32_t
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgSwitchPower1BeginSetTarget(THandle aHandle, uint32_t anewTargetValue, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgSwitchPower1BeginSetTarget(THandle aHandle, uint32_t anewTargetValue, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -72,7 +73,7 @@ DllExport void CpProxyUpnpOrgSwitchPower1BeginSetTarget(THandle aHandle, uint32_
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgSwitchPower1EndSetTarget(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgSwitchPower1EndSetTarget(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -81,7 +82,7 @@ DllExport int32_t CpProxyUpnpOrgSwitchPower1EndSetTarget(THandle aHandle, OhNetH
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgSwitchPower1Create
  * @param[out] aRetTargetValue
  */
-DllExport void CpProxyUpnpOrgSwitchPower1SyncGetTarget(THandle aHandle, uint32_t* aRetTargetValue);
+DllExport void STDCALL CpProxyUpnpOrgSwitchPower1SyncGetTarget(THandle aHandle, uint32_t* aRetTargetValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -93,7 +94,7 @@ DllExport void CpProxyUpnpOrgSwitchPower1SyncGetTarget(THandle aHandle, uint32_t
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgSwitchPower1BeginGetTarget(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgSwitchPower1BeginGetTarget(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -105,7 +106,7 @@ DllExport void CpProxyUpnpOrgSwitchPower1BeginGetTarget(THandle aHandle, OhNetCa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgSwitchPower1EndGetTarget(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aRetTargetValue);
+DllExport int32_t STDCALL CpProxyUpnpOrgSwitchPower1EndGetTarget(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aRetTargetValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -114,7 +115,7 @@ DllExport int32_t CpProxyUpnpOrgSwitchPower1EndGetTarget(THandle aHandle, OhNetH
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgSwitchPower1Create
  * @param[out] aResultStatus
  */
-DllExport void CpProxyUpnpOrgSwitchPower1SyncGetStatus(THandle aHandle, uint32_t* aResultStatus);
+DllExport void STDCALL CpProxyUpnpOrgSwitchPower1SyncGetStatus(THandle aHandle, uint32_t* aResultStatus);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -126,7 +127,7 @@ DllExport void CpProxyUpnpOrgSwitchPower1SyncGetStatus(THandle aHandle, uint32_t
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgSwitchPower1BeginGetStatus(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgSwitchPower1BeginGetStatus(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -138,7 +139,7 @@ DllExport void CpProxyUpnpOrgSwitchPower1BeginGetStatus(THandle aHandle, OhNetCa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgSwitchPower1EndGetStatus(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aResultStatus);
+DllExport int32_t STDCALL CpProxyUpnpOrgSwitchPower1EndGetStatus(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aResultStatus);
 /**
  * Set a callback to be run when the Status state variable changes.
  *
@@ -149,7 +150,7 @@ DllExport int32_t CpProxyUpnpOrgSwitchPower1EndGetStatus(THandle aHandle, OhNetH
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgSwitchPower1SetPropertyStatusChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgSwitchPower1SetPropertyStatusChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the Status property.
@@ -160,7 +161,7 @@ DllExport void CpProxyUpnpOrgSwitchPower1SetPropertyStatusChanged(THandle aHandl
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgSwitchPower1Create
  * @param[out] aStatus
  */
-DllExport void CpProxyUpnpOrgSwitchPower1PropertyStatus(THandle aHandle, uint32_t* aStatus);
+DllExport void STDCALL CpProxyUpnpOrgSwitchPower1PropertyStatus(THandle aHandle, uint32_t* aStatus);
 
 /* @} */
 

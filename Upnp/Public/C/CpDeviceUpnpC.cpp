@@ -7,8 +7,8 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-HandleCpDeviceList CpDeviceListCreateUpnpAll(OhNetCallbackDevice aAdded, void* aPtrAdded,
-                                             OhNetCallbackDevice aRemoved, void* aPtrRemoved)
+HandleCpDeviceList STDCALL CpDeviceListCreateUpnpAll(OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                                     OhNetCallbackDevice aRemoved, void* aPtrRemoved)
 {
     FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (OhNetFunctorDevice)aAdded);
     FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (OhNetFunctorDevice)aRemoved);
@@ -17,8 +17,8 @@ HandleCpDeviceList CpDeviceListCreateUpnpAll(OhNetCallbackDevice aAdded, void* a
     return (THandle)list;
 }
 
-HandleCpDeviceList CpDeviceListCreateUpnpRoot(OhNetCallbackDevice aAdded, void* aPtrAdded,
-                                              OhNetCallbackDevice aRemoved, void* aPtrRemoved)
+HandleCpDeviceList STDCALL CpDeviceListCreateUpnpRoot(OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                                      OhNetCallbackDevice aRemoved, void* aPtrRemoved)
 {
     FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (OhNetFunctorDevice)aAdded);
     FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (OhNetFunctorDevice)aRemoved);
@@ -27,9 +27,9 @@ HandleCpDeviceList CpDeviceListCreateUpnpRoot(OhNetCallbackDevice aAdded, void* 
     return (THandle)list;
 }
 
-HandleCpDeviceList CpDeviceListCreateUpnpUuid(const char* aUuid,
-                                              OhNetCallbackDevice aAdded, void* aPtrAdded,
-                                              OhNetCallbackDevice aRemoved, void* aPtrRemoved)
+HandleCpDeviceList STDCALL CpDeviceListCreateUpnpUuid(const char* aUuid,
+                                                      OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                                      OhNetCallbackDevice aRemoved, void* aPtrRemoved)
 {
     FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (OhNetFunctorDevice)aAdded);
     FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (OhNetFunctorDevice)aRemoved);
@@ -39,9 +39,9 @@ HandleCpDeviceList CpDeviceListCreateUpnpUuid(const char* aUuid,
     return (THandle)list;
 }
 
-HandleCpDeviceList CpDeviceListCreateUpnpDeviceType(const char* aDomainName, const char* aDeviceType, uint32_t aVersion,
-                                                    OhNetCallbackDevice aAdded, void* aPtrAdded,
-                                                    OhNetCallbackDevice aRemoved, void* aPtrRemoved)
+HandleCpDeviceList STDCALL CpDeviceListCreateUpnpDeviceType(const char* aDomainName, const char* aDeviceType, uint32_t aVersion,
+                                                            OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                                            OhNetCallbackDevice aRemoved, void* aPtrRemoved)
 {
     FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (OhNetFunctorDevice)aAdded);
     FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (OhNetFunctorDevice)aRemoved);
@@ -52,9 +52,9 @@ HandleCpDeviceList CpDeviceListCreateUpnpDeviceType(const char* aDomainName, con
     return (THandle)list;
 }
 
-HandleCpDeviceList CpDeviceListCreateUpnpServiceType(const char* aDomainName, const char* aServiceType, uint32_t aVersion,
-                                                     OhNetCallbackDevice aAdded, void* aPtrAdded,
-                                                     OhNetCallbackDevice aRemoved, void* aPtrRemoved)
+HandleCpDeviceList STDCALL CpDeviceListCreateUpnpServiceType(const char* aDomainName, const char* aServiceType, uint32_t aVersion,
+                                                             OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                                             OhNetCallbackDevice aRemoved, void* aPtrRemoved)
 {
     FunctorCpiDevice added = MakeFunctorCpiDeviceC(aPtrAdded, (OhNetFunctorDevice)aAdded);
     FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (OhNetFunctorDevice)aRemoved);

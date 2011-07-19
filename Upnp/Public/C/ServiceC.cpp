@@ -8,117 +8,117 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-ServiceParameter ServiceParameterCreateInt(const char* aName, int32_t aMinValue, int32_t aMaxValue, int32_t aStep)
+ServiceParameter STDCALL ServiceParameterCreateInt(const char* aName, int32_t aMinValue, int32_t aMaxValue, int32_t aStep)
 {
     return (ServiceParameter)new ParameterInt(aName, aMinValue, aMaxValue, aStep);
 }
 
-ServiceParameter ServiceParameterCreateUint(const char* aName, uint32_t aMinValue, uint32_t aMaxValue, uint32_t aStep)
+ServiceParameter STDCALL ServiceParameterCreateUint(const char* aName, uint32_t aMinValue, uint32_t aMaxValue, uint32_t aStep)
 {
     return (ServiceParameter)new ParameterUint(aName, aMinValue, aMaxValue, aStep);
 }
 
-ServiceParameter ServiceParameterCreateBool(const char* aName)
+ServiceParameter STDCALL ServiceParameterCreateBool(const char* aName)
 {
     return (ServiceParameter)new ParameterBool(aName);
 }
 
-ServiceParameter ServiceParameterCreateString(const char* aName, char** aAllowedValues, uint32_t aCount)
+ServiceParameter STDCALL ServiceParameterCreateString(const char* aName, char** aAllowedValues, uint32_t aCount)
 {
     return (ServiceParameter)new ParameterString(aName, aAllowedValues, aCount);
 }
 
-ServiceParameter ServiceParameterCreateBinary(const char* aName)
+ServiceParameter STDCALL ServiceParameterCreateBinary(const char* aName)
 {
     return (ServiceParameter)new ParameterBinary(aName);
 }
 
-ServiceParameter ServiceParameterCreateRelated(const char* aName, ServiceProperty aProperty)
+ServiceParameter STDCALL ServiceParameterCreateRelated(const char* aName, ServiceProperty aProperty)
 {
     OpenHome::Net::Property* prop = reinterpret_cast<OpenHome::Net::Property*>(aProperty);
     return (ServiceParameter)new ParameterRelated(aName, *prop);
 }
 
-void ServicePropertyDestroy(ServiceProperty aProperty)
+void STDCALL ServicePropertyDestroy(ServiceProperty aProperty)
 {
     delete reinterpret_cast<OpenHome::Net::Property*>(aProperty);
 }
 
-ServiceProperty ServicePropertyCreateIntCp(const char* aName, OhNetCallback aCallback, void* aPtr)
+ServiceProperty STDCALL ServicePropertyCreateIntCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
     return (ServiceProperty)new PropertyInt(aName, functor);
 }
 
-ServiceProperty ServicePropertyCreateIntDv(ServiceParameter aParameter)
+ServiceProperty STDCALL ServicePropertyCreateIntDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ServiceProperty)new PropertyInt(param);
 }
 
-ServiceProperty ServicePropertyCreateUintCp(const char* aName, OhNetCallback aCallback, void* aPtr)
+ServiceProperty STDCALL ServicePropertyCreateUintCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
     return (ServiceProperty)new PropertyUint(aName, functor);
 }
 
-ServiceProperty ServicePropertyCreateUintDv(ServiceParameter aParameter)
+ServiceProperty STDCALL ServicePropertyCreateUintDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ServiceProperty)new PropertyUint(param);
 }
 
-ServiceProperty ServicePropertyCreateBoolCp(const char* aName, OhNetCallback aCallback, void* aPtr)
+ServiceProperty STDCALL ServicePropertyCreateBoolCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
     return (ServiceProperty)new PropertyBool(aName, functor);
 }
 
-ServiceProperty ServicePropertyCreateBoolDv(ServiceParameter aParameter)
+ServiceProperty STDCALL ServicePropertyCreateBoolDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ServiceProperty)new PropertyBool(param);
 }
 
-ServiceProperty ServicePropertyCreateStringCp(const char* aName, OhNetCallback aCallback, void* aPtr)
+ServiceProperty STDCALL ServicePropertyCreateStringCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
     return (ServiceProperty)new PropertyString(aName, functor);
 }
 
-ServiceProperty ServicePropertyCreateStringDv(ServiceParameter aParameter)
+ServiceProperty STDCALL ServicePropertyCreateStringDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ServiceProperty)new PropertyString(param);
 }
 
-ServiceProperty ServicePropertyCreateBinaryCp(const char* aName, OhNetCallback aCallback, void* aPtr)
+ServiceProperty STDCALL ServicePropertyCreateBinaryCp(const char* aName, OhNetCallback aCallback, void* aPtr)
 {
     Functor functor = MakeFunctor(aPtr, aCallback);
     return (ServiceProperty)new PropertyBinary(aName, functor);
 }
 
-ServiceProperty ServicePropertyCreateBinaryDv(ServiceParameter aParameter)
+ServiceProperty STDCALL ServicePropertyCreateBinaryDv(ServiceParameter aParameter)
 {
     OpenHome::Net::Parameter* param = reinterpret_cast<OpenHome::Net::Parameter*>(aParameter);
     return (ServiceProperty)new PropertyBinary(param);
 }
 
-int32_t ServicePropertyValueInt(ServiceProperty aProperty)
+int32_t STDCALL ServicePropertyValueInt(ServiceProperty aProperty)
 {
     PropertyInt* prop = reinterpret_cast<PropertyInt*>(aProperty);
     ASSERT(prop != NULL);
     return prop->Value();
 }
 
-uint32_t ServicePropertyValueUint(ServiceProperty aProperty)
+uint32_t STDCALL ServicePropertyValueUint(ServiceProperty aProperty)
 {
     PropertyUint* prop = reinterpret_cast<PropertyUint*>(aProperty);
     ASSERT(prop != NULL);
     return prop->Value();
 }
 
-uint32_t ServicePropertyValueBool(ServiceProperty aProperty)
+uint32_t STDCALL ServicePropertyValueBool(ServiceProperty aProperty)
 {
     PropertyBool* prop = reinterpret_cast<PropertyBool*>(aProperty);
     ASSERT(prop != NULL);
@@ -126,7 +126,7 @@ uint32_t ServicePropertyValueBool(ServiceProperty aProperty)
     return (val? 1 : 0);
 }
 
-const char* ServicePropertyValueString(ServiceProperty aProperty)
+const char* STDCALL ServicePropertyValueString(ServiceProperty aProperty)
 {
     PropertyString* prop = reinterpret_cast<PropertyString*>(aProperty);
     ASSERT(prop != NULL);
@@ -134,7 +134,7 @@ const char* ServicePropertyValueString(ServiceProperty aProperty)
     return buf.Transfer();
 }
 
-void ServicePropertyGetValueBinary(ServiceProperty aProperty, const uint8_t** aData, uint32_t* aLen)
+void STDCALL ServicePropertyGetValueBinary(ServiceProperty aProperty, const uint8_t** aData, uint32_t* aLen)
 {
     PropertyBinary* prop = reinterpret_cast<PropertyBinary*>(aProperty);
     ASSERT(prop != NULL);
@@ -143,7 +143,7 @@ void ServicePropertyGetValueBinary(ServiceProperty aProperty, const uint8_t** aD
     *aData = (const uint8_t*)val.Extract();
 }
 
-uint32_t ServicePropertySetValueInt(ServiceProperty aProperty, int32_t aValue)
+uint32_t STDCALL ServicePropertySetValueInt(ServiceProperty aProperty, int32_t aValue)
 {
     PropertyInt* prop = reinterpret_cast<PropertyInt*>(aProperty);
     ASSERT(prop != NULL);
@@ -153,7 +153,7 @@ uint32_t ServicePropertySetValueInt(ServiceProperty aProperty, int32_t aValue)
     return 0;
 }
 
-uint32_t ServicePropertySetValueUint(ServiceProperty aProperty, uint32_t aValue)
+uint32_t STDCALL ServicePropertySetValueUint(ServiceProperty aProperty, uint32_t aValue)
 {
     PropertyUint* prop = reinterpret_cast<PropertyUint*>(aProperty);
     ASSERT(prop != NULL);
@@ -163,7 +163,7 @@ uint32_t ServicePropertySetValueUint(ServiceProperty aProperty, uint32_t aValue)
     return 0;
 }
 
-uint32_t ServicePropertySetValueBool(ServiceProperty aProperty, uint32_t aValue)
+uint32_t STDCALL ServicePropertySetValueBool(ServiceProperty aProperty, uint32_t aValue)
 {
     PropertyBool* prop = reinterpret_cast<PropertyBool*>(aProperty);
     ASSERT(prop != NULL);
@@ -174,7 +174,7 @@ uint32_t ServicePropertySetValueBool(ServiceProperty aProperty, uint32_t aValue)
     return 0;
 }
 
-uint32_t ServicePropertySetValueString(ServiceProperty aProperty, const char* aValue)
+uint32_t STDCALL ServicePropertySetValueString(ServiceProperty aProperty, const char* aValue)
 {
     PropertyString* prop = reinterpret_cast<PropertyString*>(aProperty);
     ASSERT(prop != NULL);
@@ -185,7 +185,7 @@ uint32_t ServicePropertySetValueString(ServiceProperty aProperty, const char* aV
     return 0;
 }
 
-uint32_t ServicePropertySetValueBinary(ServiceProperty aProperty, uint8_t* aValue, uint32_t aLen)
+uint32_t STDCALL ServicePropertySetValueBinary(ServiceProperty aProperty, uint8_t* aValue, uint32_t aLen)
 {
     PropertyBinary* prop = reinterpret_cast<PropertyBinary*>(aProperty);
     ASSERT(prop != NULL);
@@ -197,18 +197,18 @@ uint32_t ServicePropertySetValueBinary(ServiceProperty aProperty, uint8_t* aValu
     return 0;
 }
 
-ServiceAction ServiceActionCreate(const char* aName)
+ServiceAction STDCALL ServiceActionCreate(const char* aName)
 {
     return (ServiceAction)new OpenHome::Net::Action(aName);
 }
 
-void ServiceActionDestroy(ServiceAction aAction)
+void STDCALL ServiceActionDestroy(ServiceAction aAction)
 {
     OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
     delete action;
 }
 
-void ServiceActionAddInputParameter(ServiceAction aAction, ServiceParameter aParameter)
+void STDCALL ServiceActionAddInputParameter(ServiceAction aAction, ServiceParameter aParameter)
 {
     OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
     ASSERT(action != NULL);
@@ -217,7 +217,7 @@ void ServiceActionAddInputParameter(ServiceAction aAction, ServiceParameter aPar
     action->AddInputParameter(param);
 }
 
-void ServiceActionAddOutputParameter(ServiceAction aAction, ServiceParameter aParameter)
+void STDCALL ServiceActionAddOutputParameter(ServiceAction aAction, ServiceParameter aParameter)
 {
     OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
     ASSERT(action != NULL);
@@ -226,7 +226,7 @@ void ServiceActionAddOutputParameter(ServiceAction aAction, ServiceParameter aPa
     action->AddOutputParameter(param);
 }
 
-const char* ServiceActionName(ServiceAction aAction)
+const char* STDCALL ServiceActionName(ServiceAction aAction)
 {
     OpenHome::Net::Action* action = reinterpret_cast<OpenHome::Net::Action*>(aAction);
     ASSERT(action != NULL);

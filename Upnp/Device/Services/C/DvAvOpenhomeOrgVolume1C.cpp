@@ -677,233 +677,233 @@ void DvProviderAvOpenhomeOrgVolume1C::DoVolumeLimit(IDviInvocation& aInvocation,
 
 
 
-THandle DvProviderAvOpenhomeOrgVolume1Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderAvOpenhomeOrgVolume1Create(DvDeviceC aDevice)
 {
 	return new DvProviderAvOpenhomeOrgVolume1C(aDevice);
 }
 
-void DvProviderAvOpenhomeOrgVolume1Destroy(THandle aProvider)
+void STDCALL DvProviderAvOpenhomeOrgVolume1Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionCharacteristics(THandle aProvider, CallbackVolume1Characteristics aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionCharacteristics(THandle aProvider, CallbackVolume1Characteristics aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionCharacteristics(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionSetVolume(THandle aProvider, CallbackVolume1SetVolume aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionSetVolume(THandle aProvider, CallbackVolume1SetVolume aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionSetVolume(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionVolumeInc(THandle aProvider, CallbackVolume1VolumeInc aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionVolumeInc(THandle aProvider, CallbackVolume1VolumeInc aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionVolumeInc(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionVolumeDec(THandle aProvider, CallbackVolume1VolumeDec aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionVolumeDec(THandle aProvider, CallbackVolume1VolumeDec aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionVolumeDec(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionVolume(THandle aProvider, CallbackVolume1Volume aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionVolume(THandle aProvider, CallbackVolume1Volume aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionVolume(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionSetBalance(THandle aProvider, CallbackVolume1SetBalance aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionSetBalance(THandle aProvider, CallbackVolume1SetBalance aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionSetBalance(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionBalanceInc(THandle aProvider, CallbackVolume1BalanceInc aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionBalanceInc(THandle aProvider, CallbackVolume1BalanceInc aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionBalanceInc(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionBalanceDec(THandle aProvider, CallbackVolume1BalanceDec aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionBalanceDec(THandle aProvider, CallbackVolume1BalanceDec aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionBalanceDec(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionBalance(THandle aProvider, CallbackVolume1Balance aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionBalance(THandle aProvider, CallbackVolume1Balance aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionBalance(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionSetFade(THandle aProvider, CallbackVolume1SetFade aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionSetFade(THandle aProvider, CallbackVolume1SetFade aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionSetFade(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionFadeInc(THandle aProvider, CallbackVolume1FadeInc aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionFadeInc(THandle aProvider, CallbackVolume1FadeInc aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionFadeInc(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionFadeDec(THandle aProvider, CallbackVolume1FadeDec aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionFadeDec(THandle aProvider, CallbackVolume1FadeDec aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionFadeDec(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionFade(THandle aProvider, CallbackVolume1Fade aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionFade(THandle aProvider, CallbackVolume1Fade aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionFade(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionSetMute(THandle aProvider, CallbackVolume1SetMute aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionSetMute(THandle aProvider, CallbackVolume1SetMute aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionSetMute(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionMute(THandle aProvider, CallbackVolume1Mute aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionMute(THandle aProvider, CallbackVolume1Mute aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionMute(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgVolume1EnableActionVolumeLimit(THandle aProvider, CallbackVolume1VolumeLimit aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgVolume1EnableActionVolumeLimit(THandle aProvider, CallbackVolume1VolumeLimit aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->EnableActionVolumeLimit(aCallback, aPtr);
 }
 
-int32_t DvProviderAvOpenhomeOrgVolume1SetPropertyVolume(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyVolume(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->SetPropertyVolume(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgVolume1GetPropertyVolume(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyVolume(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->GetPropertyVolume(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgVolume1SetPropertyMute(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyMute(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->SetPropertyMute((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgVolume1GetPropertyMute(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyMute(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->GetPropertyMute(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderAvOpenhomeOrgVolume1SetPropertyBalance(THandle aProvider, int32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyBalance(THandle aProvider, int32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->SetPropertyBalance(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgVolume1GetPropertyBalance(THandle aProvider, int32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyBalance(THandle aProvider, int32_t* aValue)
 {
     int32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->GetPropertyBalance(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgVolume1SetPropertyFade(THandle aProvider, int32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyFade(THandle aProvider, int32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->SetPropertyFade(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgVolume1GetPropertyFade(THandle aProvider, int32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyFade(THandle aProvider, int32_t* aValue)
 {
     int32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->GetPropertyFade(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeLimit(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeLimit(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->SetPropertyVolumeLimit(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeLimit(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeLimit(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->GetPropertyVolumeLimit(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->SetPropertyVolumeMax(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeMax(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeMax(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->GetPropertyVolumeMax(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeUnity(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeUnity(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->SetPropertyVolumeUnity(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeUnity(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeUnity(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->GetPropertyVolumeUnity(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeSteps(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeSteps(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->SetPropertyVolumeSteps(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeSteps(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeSteps(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->GetPropertyVolumeSteps(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeMilliDbPerStep(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyVolumeMilliDbPerStep(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->SetPropertyVolumeMilliDbPerStep(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeMilliDbPerStep(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyVolumeMilliDbPerStep(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->GetPropertyVolumeMilliDbPerStep(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgVolume1SetPropertyBalanceMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyBalanceMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->SetPropertyBalanceMax(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgVolume1GetPropertyBalanceMax(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyBalanceMax(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->GetPropertyBalanceMax(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgVolume1SetPropertyFadeMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgVolume1SetPropertyFadeMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->SetPropertyFadeMax(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgVolume1GetPropertyFadeMax(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgVolume1GetPropertyFadeMax(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgVolume1C*>(aProvider)->GetPropertyFadeMax(val);

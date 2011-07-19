@@ -200,25 +200,25 @@ void CpProxyAvOpenhomeOrgTime1C::SecondsPropertyChanged()
 }
 
 
-THandle CpProxyAvOpenhomeOrgTime1Create(CpDeviceC aDevice)
+THandle STDCALL CpProxyAvOpenhomeOrgTime1Create(CpDeviceC aDevice)
 {
     return new CpProxyAvOpenhomeOrgTime1C(aDevice);
 }
 
-void CpProxyAvOpenhomeOrgTime1Destroy(THandle aHandle)
+void STDCALL CpProxyAvOpenhomeOrgTime1Destroy(THandle aHandle)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     delete proxyC;
 }
 
-void CpProxyAvOpenhomeOrgTime1SyncTime(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds)
+void STDCALL CpProxyAvOpenhomeOrgTime1SyncTime(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncTime(*aTrackCount, *aDuration, *aSeconds);
 }
 
-void CpProxyAvOpenhomeOrgTime1BeginTime(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgTime1BeginTime(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -226,7 +226,7 @@ void CpProxyAvOpenhomeOrgTime1BeginTime(THandle aHandle, OhNetCallbackAsync aCal
     proxyC->BeginTime(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgTime1EndTime(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds)
+int32_t STDCALL CpProxyAvOpenhomeOrgTime1EndTime(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrackCount, uint32_t* aDuration, uint32_t* aSeconds)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
@@ -242,7 +242,7 @@ int32_t CpProxyAvOpenhomeOrgTime1EndTime(THandle aHandle, OhNetHandleAsync aAsyn
     return err;
 }
 
-void CpProxyAvOpenhomeOrgTime1SetPropertyTrackCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgTime1SetPropertyTrackCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -250,7 +250,7 @@ void CpProxyAvOpenhomeOrgTime1SetPropertyTrackCountChanged(THandle aHandle, OhNe
     proxyC->SetPropertyTrackCountChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgTime1SetPropertyDurationChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgTime1SetPropertyDurationChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -258,7 +258,7 @@ void CpProxyAvOpenhomeOrgTime1SetPropertyDurationChanged(THandle aHandle, OhNetC
     proxyC->SetPropertyDurationChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgTime1SetPropertySecondsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgTime1SetPropertySecondsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -266,21 +266,21 @@ void CpProxyAvOpenhomeOrgTime1SetPropertySecondsChanged(THandle aHandle, OhNetCa
     proxyC->SetPropertySecondsChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgTime1PropertyTrackCount(THandle aHandle, uint32_t* aTrackCount)
+void STDCALL CpProxyAvOpenhomeOrgTime1PropertyTrackCount(THandle aHandle, uint32_t* aTrackCount)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->PropertyTrackCount(*aTrackCount);
 }
 
-void CpProxyAvOpenhomeOrgTime1PropertyDuration(THandle aHandle, uint32_t* aDuration)
+void STDCALL CpProxyAvOpenhomeOrgTime1PropertyDuration(THandle aHandle, uint32_t* aDuration)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->PropertyDuration(*aDuration);
 }
 
-void CpProxyAvOpenhomeOrgTime1PropertySeconds(THandle aHandle, uint32_t* aSeconds)
+void STDCALL CpProxyAvOpenhomeOrgTime1PropertySeconds(THandle aHandle, uint32_t* aSeconds)
 {
     CpProxyAvOpenhomeOrgTime1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgTime1C*>(aHandle);
     ASSERT(proxyC != NULL);

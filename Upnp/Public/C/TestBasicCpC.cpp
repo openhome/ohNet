@@ -73,7 +73,7 @@ void TestBasicCpC::TestActions(CpDeviceC aDevice)
     CpProxyOpenhomeOrgTestBasic1Destroy(proxy);
 }
 
-static void updatesComplete(void* aPtr)
+static void STDCALL updatesComplete(void* aPtr)
 {
     reinterpret_cast<Semaphore*>(aPtr)->Signal();
 }

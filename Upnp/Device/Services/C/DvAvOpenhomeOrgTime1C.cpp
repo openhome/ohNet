@@ -112,54 +112,54 @@ void DvProviderAvOpenhomeOrgTime1C::DoTime(IDviInvocation& aInvocation, TUint aV
 
 
 
-THandle DvProviderAvOpenhomeOrgTime1Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderAvOpenhomeOrgTime1Create(DvDeviceC aDevice)
 {
 	return new DvProviderAvOpenhomeOrgTime1C(aDevice);
 }
 
-void DvProviderAvOpenhomeOrgTime1Destroy(THandle aProvider)
+void STDCALL DvProviderAvOpenhomeOrgTime1Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderAvOpenhomeOrgTime1C*>(aProvider);
 }
 
-void DvProviderAvOpenhomeOrgTime1EnableActionTime(THandle aProvider, CallbackTime1Time aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgTime1EnableActionTime(THandle aProvider, CallbackTime1Time aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgTime1C*>(aProvider)->EnableActionTime(aCallback, aPtr);
 }
 
-int32_t DvProviderAvOpenhomeOrgTime1SetPropertyTrackCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgTime1SetPropertyTrackCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgTime1C*>(aProvider)->SetPropertyTrackCount(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgTime1GetPropertyTrackCount(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgTime1GetPropertyTrackCount(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgTime1C*>(aProvider)->GetPropertyTrackCount(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgTime1SetPropertyDuration(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgTime1SetPropertyDuration(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgTime1C*>(aProvider)->SetPropertyDuration(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgTime1GetPropertyDuration(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgTime1GetPropertyDuration(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgTime1C*>(aProvider)->GetPropertyDuration(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgTime1SetPropertySeconds(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgTime1SetPropertySeconds(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgTime1C*>(aProvider)->SetPropertySeconds(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgTime1GetPropertySeconds(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgTime1GetPropertySeconds(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgTime1C*>(aProvider)->GetPropertySeconds(val);
