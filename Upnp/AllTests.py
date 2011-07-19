@@ -239,8 +239,8 @@ class js_test():
 	def local_call(self):
 
 		self.test_testbasic = subprocess.Popen([os.path.join(self.objpath, 'TestDvTestBasic.exe'), '-l', '-c', self.test_dir])
+		time.sleep(5)
 		test_devfinder = subprocess.Popen([os.path.join(self.objpath, 'TestDeviceFinder.exe'), '-l', '-s', 'openhome.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
 		self.launch_url = test_devfinder.communicate()[1].rstrip()
 		
 	def local_call_browser(self):
