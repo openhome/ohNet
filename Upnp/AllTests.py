@@ -185,7 +185,7 @@ class TestCase(object):
             path += '.elf'
         return path
 
-gAllTests = [ TestCase('TestBuffer', [], True)
+gAllTests = [ TestCase('TestBuffer##', [], True)
              ,TestCase('TestThread', [], True)
              ,TestCase('TestFifo', [], True)
              ,TestCase('TestQueue', [], True)
