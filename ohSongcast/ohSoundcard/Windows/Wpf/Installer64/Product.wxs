@@ -8,10 +8,6 @@
       Privileged
     </Condition>
 
-    <Condition Message="You need to be an administrator to install this product.">
-      AdminUser
-    </Condition>
-
     <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -75,10 +71,45 @@
 
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
 
-    <UI>
-      <UIRef Id="WixUI_Minimal" />
+    <UI Id="WixUI_Minimal">
+      <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+      <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+      <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+
+      <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+      <Property Id="WixUI_Mode" Value="Minimal" />
+
+      <DialogRef Id="ErrorDlg" />
+      <DialogRef Id="FatalError" />
+      <DialogRef Id="FilesInUse" />
+      <DialogRef Id="MsiRMFilesInUse" />
+      <DialogRef Id="PrepareDlg" />
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ResumeDlg" />
+      <DialogRef Id="UserExit" />
+
+      <!-- This is the welcome dialog you specified-->
+      <DialogRef Id="WelcomeDlg" />
+
+      <!-- Hook the new welcome dialog to the next one in the stack-->
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="PrepareDlg">1</Publish>
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication" />
+      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+
       <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">Installed</Publish>
+
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
+
+      <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
+
+      <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+
+      <Property Id="ARPNOMODIFY" Value="1" />
     </UI>
 
+    <UIRef Id="WixUI_Common" />
+    
   </Product>
 </Wix>

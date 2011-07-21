@@ -1400,25 +1400,25 @@ void CpProxyUpnpOrgDimming1C::RampPausedPropertyChanged()
 }
 
 
-THandle CpProxyUpnpOrgDimming1Create(CpDeviceC aDevice)
+THandle STDCALL CpProxyUpnpOrgDimming1Create(CpDeviceC aDevice)
 {
     return new CpProxyUpnpOrgDimming1C(aDevice);
 }
 
-void CpProxyUpnpOrgDimming1Destroy(THandle aHandle)
+void STDCALL CpProxyUpnpOrgDimming1Destroy(THandle aHandle)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     delete proxyC;
 }
 
-void CpProxyUpnpOrgDimming1SyncSetLoadLevelTarget(THandle aHandle, uint32_t anewLoadlevelTarget)
+void STDCALL CpProxyUpnpOrgDimming1SyncSetLoadLevelTarget(THandle aHandle, uint32_t anewLoadlevelTarget)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetLoadLevelTarget(anewLoadlevelTarget);
 }
 
-void CpProxyUpnpOrgDimming1BeginSetLoadLevelTarget(THandle aHandle, uint32_t anewLoadlevelTarget, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginSetLoadLevelTarget(THandle aHandle, uint32_t anewLoadlevelTarget, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1426,7 +1426,7 @@ void CpProxyUpnpOrgDimming1BeginSetLoadLevelTarget(THandle aHandle, uint32_t ane
     proxyC->BeginSetLoadLevelTarget(anewLoadlevelTarget, functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1442,14 +1442,14 @@ int32_t CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(THandle aHandle, OhNetHandle
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncGetLoadLevelTarget(THandle aHandle, uint32_t* aGetLoadlevelTarget)
+void STDCALL CpProxyUpnpOrgDimming1SyncGetLoadLevelTarget(THandle aHandle, uint32_t* aGetLoadlevelTarget)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetLoadLevelTarget(*aGetLoadlevelTarget);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetLoadLevelTarget(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginGetLoadLevelTarget(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1457,7 +1457,7 @@ void CpProxyUpnpOrgDimming1BeginGetLoadLevelTarget(THandle aHandle, OhNetCallbac
     proxyC->BeginGetLoadLevelTarget(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aGetLoadlevelTarget)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aGetLoadlevelTarget)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1473,14 +1473,14 @@ int32_t CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(THandle aHandle, OhNetHandle
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncGetLoadLevelStatus(THandle aHandle, uint32_t* aretLoadlevelStatus)
+void STDCALL CpProxyUpnpOrgDimming1SyncGetLoadLevelStatus(THandle aHandle, uint32_t* aretLoadlevelStatus)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetLoadLevelStatus(*aretLoadlevelStatus);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetLoadLevelStatus(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginGetLoadLevelStatus(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1488,7 +1488,7 @@ void CpProxyUpnpOrgDimming1BeginGetLoadLevelStatus(THandle aHandle, OhNetCallbac
     proxyC->BeginGetLoadLevelStatus(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretLoadlevelStatus)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretLoadlevelStatus)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1504,14 +1504,14 @@ int32_t CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(THandle aHandle, OhNetHandle
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncSetOnEffectLevel(THandle aHandle, uint32_t anewOnEffectLevel)
+void STDCALL CpProxyUpnpOrgDimming1SyncSetOnEffectLevel(THandle aHandle, uint32_t anewOnEffectLevel)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetOnEffectLevel(anewOnEffectLevel);
 }
 
-void CpProxyUpnpOrgDimming1BeginSetOnEffectLevel(THandle aHandle, uint32_t anewOnEffectLevel, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginSetOnEffectLevel(THandle aHandle, uint32_t anewOnEffectLevel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1519,7 +1519,7 @@ void CpProxyUpnpOrgDimming1BeginSetOnEffectLevel(THandle aHandle, uint32_t anewO
     proxyC->BeginSetOnEffectLevel(anewOnEffectLevel, functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndSetOnEffectLevel(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndSetOnEffectLevel(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1535,7 +1535,7 @@ int32_t CpProxyUpnpOrgDimming1EndSetOnEffectLevel(THandle aHandle, OhNetHandleAs
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncSetOnEffect(THandle aHandle, const char* anewOnEffect)
+void STDCALL CpProxyUpnpOrgDimming1SyncSetOnEffect(THandle aHandle, const char* anewOnEffect)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1543,7 +1543,7 @@ void CpProxyUpnpOrgDimming1SyncSetOnEffect(THandle aHandle, const char* anewOnEf
     proxyC->SyncSetOnEffect(buf_anewOnEffect);
 }
 
-void CpProxyUpnpOrgDimming1BeginSetOnEffect(THandle aHandle, const char* anewOnEffect, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginSetOnEffect(THandle aHandle, const char* anewOnEffect, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1552,7 +1552,7 @@ void CpProxyUpnpOrgDimming1BeginSetOnEffect(THandle aHandle, const char* anewOnE
     proxyC->BeginSetOnEffect(buf_anewOnEffect, functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndSetOnEffect(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndSetOnEffect(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1568,7 +1568,7 @@ int32_t CpProxyUpnpOrgDimming1EndSetOnEffect(THandle aHandle, OhNetHandleAsync a
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(THandle aHandle, char** aretOnEffect, uint32_t* aretOnEffectLevel)
+void STDCALL CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(THandle aHandle, char** aretOnEffect, uint32_t* aretOnEffectLevel)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1577,7 +1577,7 @@ void CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(THandle aHandle, char** are
     *aretOnEffect = buf_aretOnEffect.Extract();
 }
 
-void CpProxyUpnpOrgDimming1BeginGetOnEffectParameters(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginGetOnEffectParameters(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1585,7 +1585,7 @@ void CpProxyUpnpOrgDimming1BeginGetOnEffectParameters(THandle aHandle, OhNetCall
     proxyC->BeginGetOnEffectParameters(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetOnEffectParameters(THandle aHandle, OhNetHandleAsync aAsync, char** aretOnEffect, uint32_t* aretOnEffectLevel)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndGetOnEffectParameters(THandle aHandle, OhNetHandleAsync aAsync, char** aretOnEffect, uint32_t* aretOnEffectLevel)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1604,14 +1604,14 @@ int32_t CpProxyUpnpOrgDimming1EndGetOnEffectParameters(THandle aHandle, OhNetHan
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncStepUp(THandle aHandle)
+void STDCALL CpProxyUpnpOrgDimming1SyncStepUp(THandle aHandle)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncStepUp();
 }
 
-void CpProxyUpnpOrgDimming1BeginStepUp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginStepUp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1619,7 +1619,7 @@ void CpProxyUpnpOrgDimming1BeginStepUp(THandle aHandle, OhNetCallbackAsync aCall
     proxyC->BeginStepUp(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndStepUp(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndStepUp(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1635,14 +1635,14 @@ int32_t CpProxyUpnpOrgDimming1EndStepUp(THandle aHandle, OhNetHandleAsync aAsync
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncStepDown(THandle aHandle)
+void STDCALL CpProxyUpnpOrgDimming1SyncStepDown(THandle aHandle)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncStepDown();
 }
 
-void CpProxyUpnpOrgDimming1BeginStepDown(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginStepDown(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1650,7 +1650,7 @@ void CpProxyUpnpOrgDimming1BeginStepDown(THandle aHandle, OhNetCallbackAsync aCa
     proxyC->BeginStepDown(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndStepDown(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndStepDown(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1666,14 +1666,14 @@ int32_t CpProxyUpnpOrgDimming1EndStepDown(THandle aHandle, OhNetHandleAsync aAsy
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncStartRampUp(THandle aHandle)
+void STDCALL CpProxyUpnpOrgDimming1SyncStartRampUp(THandle aHandle)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncStartRampUp();
 }
 
-void CpProxyUpnpOrgDimming1BeginStartRampUp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginStartRampUp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1681,7 +1681,7 @@ void CpProxyUpnpOrgDimming1BeginStartRampUp(THandle aHandle, OhNetCallbackAsync 
     proxyC->BeginStartRampUp(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndStartRampUp(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndStartRampUp(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1697,14 +1697,14 @@ int32_t CpProxyUpnpOrgDimming1EndStartRampUp(THandle aHandle, OhNetHandleAsync a
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncStartRampDown(THandle aHandle)
+void STDCALL CpProxyUpnpOrgDimming1SyncStartRampDown(THandle aHandle)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncStartRampDown();
 }
 
-void CpProxyUpnpOrgDimming1BeginStartRampDown(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginStartRampDown(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1712,7 +1712,7 @@ void CpProxyUpnpOrgDimming1BeginStartRampDown(THandle aHandle, OhNetCallbackAsyn
     proxyC->BeginStartRampDown(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndStartRampDown(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndStartRampDown(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1728,14 +1728,14 @@ int32_t CpProxyUpnpOrgDimming1EndStartRampDown(THandle aHandle, OhNetHandleAsync
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncStopRamp(THandle aHandle)
+void STDCALL CpProxyUpnpOrgDimming1SyncStopRamp(THandle aHandle)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncStopRamp();
 }
 
-void CpProxyUpnpOrgDimming1BeginStopRamp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginStopRamp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1743,7 +1743,7 @@ void CpProxyUpnpOrgDimming1BeginStopRamp(THandle aHandle, OhNetCallbackAsync aCa
     proxyC->BeginStopRamp(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndStopRamp(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndStopRamp(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1759,14 +1759,14 @@ int32_t CpProxyUpnpOrgDimming1EndStopRamp(THandle aHandle, OhNetHandleAsync aAsy
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncStartRampToLevel(THandle aHandle, uint32_t anewLoadLevelTarget, uint32_t anewRampTime)
+void STDCALL CpProxyUpnpOrgDimming1SyncStartRampToLevel(THandle aHandle, uint32_t anewLoadLevelTarget, uint32_t anewRampTime)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncStartRampToLevel(anewLoadLevelTarget, anewRampTime);
 }
 
-void CpProxyUpnpOrgDimming1BeginStartRampToLevel(THandle aHandle, uint32_t anewLoadLevelTarget, uint32_t anewRampTime, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginStartRampToLevel(THandle aHandle, uint32_t anewLoadLevelTarget, uint32_t anewRampTime, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1774,7 +1774,7 @@ void CpProxyUpnpOrgDimming1BeginStartRampToLevel(THandle aHandle, uint32_t anewL
     proxyC->BeginStartRampToLevel(anewLoadLevelTarget, anewRampTime, functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndStartRampToLevel(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndStartRampToLevel(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1790,14 +1790,14 @@ int32_t CpProxyUpnpOrgDimming1EndStartRampToLevel(THandle aHandle, OhNetHandleAs
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncSetStepDelta(THandle aHandle, uint32_t anewStepDelta)
+void STDCALL CpProxyUpnpOrgDimming1SyncSetStepDelta(THandle aHandle, uint32_t anewStepDelta)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetStepDelta(anewStepDelta);
 }
 
-void CpProxyUpnpOrgDimming1BeginSetStepDelta(THandle aHandle, uint32_t anewStepDelta, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginSetStepDelta(THandle aHandle, uint32_t anewStepDelta, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1805,7 +1805,7 @@ void CpProxyUpnpOrgDimming1BeginSetStepDelta(THandle aHandle, uint32_t anewStepD
     proxyC->BeginSetStepDelta(anewStepDelta, functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndSetStepDelta(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndSetStepDelta(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1821,14 +1821,14 @@ int32_t CpProxyUpnpOrgDimming1EndSetStepDelta(THandle aHandle, OhNetHandleAsync 
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncGetStepDelta(THandle aHandle, uint32_t* aretStepDelta)
+void STDCALL CpProxyUpnpOrgDimming1SyncGetStepDelta(THandle aHandle, uint32_t* aretStepDelta)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetStepDelta(*aretStepDelta);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetStepDelta(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginGetStepDelta(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1836,7 +1836,7 @@ void CpProxyUpnpOrgDimming1BeginGetStepDelta(THandle aHandle, OhNetCallbackAsync
     proxyC->BeginGetStepDelta(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetStepDelta(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretStepDelta)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndGetStepDelta(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretStepDelta)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1852,14 +1852,14 @@ int32_t CpProxyUpnpOrgDimming1EndGetStepDelta(THandle aHandle, OhNetHandleAsync 
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncSetRampRate(THandle aHandle, uint32_t anewRampRate)
+void STDCALL CpProxyUpnpOrgDimming1SyncSetRampRate(THandle aHandle, uint32_t anewRampRate)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetRampRate(anewRampRate);
 }
 
-void CpProxyUpnpOrgDimming1BeginSetRampRate(THandle aHandle, uint32_t anewRampRate, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginSetRampRate(THandle aHandle, uint32_t anewRampRate, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1867,7 +1867,7 @@ void CpProxyUpnpOrgDimming1BeginSetRampRate(THandle aHandle, uint32_t anewRampRa
     proxyC->BeginSetRampRate(anewRampRate, functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndSetRampRate(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndSetRampRate(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1883,14 +1883,14 @@ int32_t CpProxyUpnpOrgDimming1EndSetRampRate(THandle aHandle, OhNetHandleAsync a
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncGetRampRate(THandle aHandle, uint32_t* aretRampRate)
+void STDCALL CpProxyUpnpOrgDimming1SyncGetRampRate(THandle aHandle, uint32_t* aretRampRate)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetRampRate(*aretRampRate);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetRampRate(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginGetRampRate(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1898,7 +1898,7 @@ void CpProxyUpnpOrgDimming1BeginGetRampRate(THandle aHandle, OhNetCallbackAsync 
     proxyC->BeginGetRampRate(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetRampRate(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretRampRate)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndGetRampRate(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretRampRate)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1914,14 +1914,14 @@ int32_t CpProxyUpnpOrgDimming1EndGetRampRate(THandle aHandle, OhNetHandleAsync a
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncPauseRamp(THandle aHandle)
+void STDCALL CpProxyUpnpOrgDimming1SyncPauseRamp(THandle aHandle)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncPauseRamp();
 }
 
-void CpProxyUpnpOrgDimming1BeginPauseRamp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginPauseRamp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1929,7 +1929,7 @@ void CpProxyUpnpOrgDimming1BeginPauseRamp(THandle aHandle, OhNetCallbackAsync aC
     proxyC->BeginPauseRamp(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndPauseRamp(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndPauseRamp(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1945,14 +1945,14 @@ int32_t CpProxyUpnpOrgDimming1EndPauseRamp(THandle aHandle, OhNetHandleAsync aAs
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncResumeRamp(THandle aHandle)
+void STDCALL CpProxyUpnpOrgDimming1SyncResumeRamp(THandle aHandle)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncResumeRamp();
 }
 
-void CpProxyUpnpOrgDimming1BeginResumeRamp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginResumeRamp(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1960,7 +1960,7 @@ void CpProxyUpnpOrgDimming1BeginResumeRamp(THandle aHandle, OhNetCallbackAsync a
     proxyC->BeginResumeRamp(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndResumeRamp(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndResumeRamp(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -1976,7 +1976,7 @@ int32_t CpProxyUpnpOrgDimming1EndResumeRamp(THandle aHandle, OhNetHandleAsync aA
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncGetIsRamping(THandle aHandle, uint32_t* aretIsRamping)
+void STDCALL CpProxyUpnpOrgDimming1SyncGetIsRamping(THandle aHandle, uint32_t* aretIsRamping)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1984,7 +1984,7 @@ void CpProxyUpnpOrgDimming1SyncGetIsRamping(THandle aHandle, uint32_t* aretIsRam
     proxyC->SyncGetIsRamping(*(TBool*)aretIsRamping);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetIsRamping(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginGetIsRamping(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1992,7 +1992,7 @@ void CpProxyUpnpOrgDimming1BeginGetIsRamping(THandle aHandle, OhNetCallbackAsync
     proxyC->BeginGetIsRamping(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetIsRamping(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretIsRamping)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndGetIsRamping(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretIsRamping)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -2009,7 +2009,7 @@ int32_t CpProxyUpnpOrgDimming1EndGetIsRamping(THandle aHandle, OhNetHandleAsync 
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncGetRampPaused(THandle aHandle, uint32_t* aretRampPaused)
+void STDCALL CpProxyUpnpOrgDimming1SyncGetRampPaused(THandle aHandle, uint32_t* aretRampPaused)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2017,7 +2017,7 @@ void CpProxyUpnpOrgDimming1SyncGetRampPaused(THandle aHandle, uint32_t* aretRamp
     proxyC->SyncGetRampPaused(*(TBool*)aretRampPaused);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetRampPaused(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginGetRampPaused(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2025,7 +2025,7 @@ void CpProxyUpnpOrgDimming1BeginGetRampPaused(THandle aHandle, OhNetCallbackAsyn
     proxyC->BeginGetRampPaused(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetRampPaused(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretRampPaused)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndGetRampPaused(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretRampPaused)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -2042,14 +2042,14 @@ int32_t CpProxyUpnpOrgDimming1EndGetRampPaused(THandle aHandle, OhNetHandleAsync
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SyncGetRampTime(THandle aHandle, uint32_t* aretRampTime)
+void STDCALL CpProxyUpnpOrgDimming1SyncGetRampTime(THandle aHandle, uint32_t* aretRampTime)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetRampTime(*aretRampTime);
 }
 
-void CpProxyUpnpOrgDimming1BeginGetRampTime(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1BeginGetRampTime(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2057,7 +2057,7 @@ void CpProxyUpnpOrgDimming1BeginGetRampTime(THandle aHandle, OhNetCallbackAsync 
     proxyC->BeginGetRampTime(functor);
 }
 
-int32_t CpProxyUpnpOrgDimming1EndGetRampTime(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretRampTime)
+int32_t STDCALL CpProxyUpnpOrgDimming1EndGetRampTime(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aretRampTime)
 {
     int32_t err = 0;
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
@@ -2073,7 +2073,7 @@ int32_t CpProxyUpnpOrgDimming1EndGetRampTime(THandle aHandle, OhNetHandleAsync a
     return err;
 }
 
-void CpProxyUpnpOrgDimming1SetPropertyLoadLevelStatusChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1SetPropertyLoadLevelStatusChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2081,7 +2081,7 @@ void CpProxyUpnpOrgDimming1SetPropertyLoadLevelStatusChanged(THandle aHandle, Oh
     proxyC->SetPropertyLoadLevelStatusChanged(functor);
 }
 
-void CpProxyUpnpOrgDimming1SetPropertyStepDeltaChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1SetPropertyStepDeltaChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2089,7 +2089,7 @@ void CpProxyUpnpOrgDimming1SetPropertyStepDeltaChanged(THandle aHandle, OhNetCal
     proxyC->SetPropertyStepDeltaChanged(functor);
 }
 
-void CpProxyUpnpOrgDimming1SetPropertyRampRateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1SetPropertyRampRateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2097,7 +2097,7 @@ void CpProxyUpnpOrgDimming1SetPropertyRampRateChanged(THandle aHandle, OhNetCall
     proxyC->SetPropertyRampRateChanged(functor);
 }
 
-void CpProxyUpnpOrgDimming1SetPropertyIsRampingChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1SetPropertyIsRampingChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2105,7 +2105,7 @@ void CpProxyUpnpOrgDimming1SetPropertyIsRampingChanged(THandle aHandle, OhNetCal
     proxyC->SetPropertyIsRampingChanged(functor);
 }
 
-void CpProxyUpnpOrgDimming1SetPropertyRampPausedChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgDimming1SetPropertyRampPausedChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2113,28 +2113,28 @@ void CpProxyUpnpOrgDimming1SetPropertyRampPausedChanged(THandle aHandle, OhNetCa
     proxyC->SetPropertyRampPausedChanged(functor);
 }
 
-void CpProxyUpnpOrgDimming1PropertyLoadLevelStatus(THandle aHandle, uint32_t* aLoadLevelStatus)
+void STDCALL CpProxyUpnpOrgDimming1PropertyLoadLevelStatus(THandle aHandle, uint32_t* aLoadLevelStatus)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->PropertyLoadLevelStatus(*aLoadLevelStatus);
 }
 
-void CpProxyUpnpOrgDimming1PropertyStepDelta(THandle aHandle, uint32_t* aStepDelta)
+void STDCALL CpProxyUpnpOrgDimming1PropertyStepDelta(THandle aHandle, uint32_t* aStepDelta)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->PropertyStepDelta(*aStepDelta);
 }
 
-void CpProxyUpnpOrgDimming1PropertyRampRate(THandle aHandle, uint32_t* aRampRate)
+void STDCALL CpProxyUpnpOrgDimming1PropertyRampRate(THandle aHandle, uint32_t* aRampRate)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->PropertyRampRate(*aRampRate);
 }
 
-void CpProxyUpnpOrgDimming1PropertyIsRamping(THandle aHandle, uint32_t* aIsRamping)
+void STDCALL CpProxyUpnpOrgDimming1PropertyIsRamping(THandle aHandle, uint32_t* aIsRamping)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2142,7 +2142,7 @@ void CpProxyUpnpOrgDimming1PropertyIsRamping(THandle aHandle, uint32_t* aIsRampi
     proxyC->PropertyIsRamping(*(TBool*)aIsRamping);
 }
 
-void CpProxyUpnpOrgDimming1PropertyRampPaused(THandle aHandle, uint32_t* aRampPaused)
+void STDCALL CpProxyUpnpOrgDimming1PropertyRampPaused(THandle aHandle, uint32_t* aRampPaused)
 {
     CpProxyUpnpOrgDimming1C* proxyC = reinterpret_cast<CpProxyUpnpOrgDimming1C*>(aHandle);
     ASSERT(proxyC != NULL);

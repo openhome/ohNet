@@ -376,190 +376,190 @@ void DvProviderAvOpenhomeOrgInfo1C::DoMetatext(IDviInvocation& aInvocation, TUin
 
 
 
-THandle DvProviderAvOpenhomeOrgInfo1Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderAvOpenhomeOrgInfo1Create(DvDeviceC aDevice)
 {
 	return new DvProviderAvOpenhomeOrgInfo1C(aDevice);
 }
 
-void DvProviderAvOpenhomeOrgInfo1Destroy(THandle aProvider)
+void STDCALL DvProviderAvOpenhomeOrgInfo1Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider);
 }
 
-void DvProviderAvOpenhomeOrgInfo1EnableActionCounters(THandle aProvider, CallbackInfo1Counters aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgInfo1EnableActionCounters(THandle aProvider, CallbackInfo1Counters aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->EnableActionCounters(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgInfo1EnableActionTrack(THandle aProvider, CallbackInfo1Track aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgInfo1EnableActionTrack(THandle aProvider, CallbackInfo1Track aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->EnableActionTrack(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgInfo1EnableActionDetails(THandle aProvider, CallbackInfo1Details aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgInfo1EnableActionDetails(THandle aProvider, CallbackInfo1Details aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->EnableActionDetails(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgInfo1EnableActionMetatext(THandle aProvider, CallbackInfo1Metatext aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgInfo1EnableActionMetatext(THandle aProvider, CallbackInfo1Metatext aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->EnableActionMetatext(aCallback, aPtr);
 }
 
-int32_t DvProviderAvOpenhomeOrgInfo1SetPropertyTrackCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyTrackCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->SetPropertyTrackCount(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgInfo1GetPropertyTrackCount(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyTrackCount(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->GetPropertyTrackCount(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgInfo1SetPropertyDetailsCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyDetailsCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->SetPropertyDetailsCount(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgInfo1GetPropertyDetailsCount(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyDetailsCount(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->GetPropertyDetailsCount(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgInfo1SetPropertyMetatextCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyMetatextCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->SetPropertyMetatextCount(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgInfo1GetPropertyMetatextCount(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyMetatextCount(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->GetPropertyMetatextCount(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgInfo1SetPropertyUri(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyUri(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->SetPropertyUri(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgInfo1GetPropertyUri(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyUri(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->GetPropertyUri(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgInfo1SetPropertyMetadata(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyMetadata(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->SetPropertyMetadata(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgInfo1GetPropertyMetadata(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyMetadata(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->GetPropertyMetadata(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgInfo1SetPropertyDuration(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyDuration(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->SetPropertyDuration(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgInfo1GetPropertyDuration(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyDuration(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->GetPropertyDuration(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgInfo1SetPropertyBitRate(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyBitRate(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->SetPropertyBitRate(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgInfo1GetPropertyBitRate(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyBitRate(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->GetPropertyBitRate(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgInfo1SetPropertyBitDepth(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyBitDepth(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->SetPropertyBitDepth(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgInfo1GetPropertyBitDepth(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyBitDepth(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->GetPropertyBitDepth(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgInfo1SetPropertySampleRate(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertySampleRate(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->SetPropertySampleRate(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgInfo1GetPropertySampleRate(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertySampleRate(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->GetPropertySampleRate(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgInfo1SetPropertyLossless(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyLossless(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->SetPropertyLossless((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgInfo1GetPropertyLossless(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyLossless(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->GetPropertyLossless(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderAvOpenhomeOrgInfo1SetPropertyCodecName(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyCodecName(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->SetPropertyCodecName(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgInfo1GetPropertyCodecName(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyCodecName(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->GetPropertyCodecName(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgInfo1SetPropertyMetatext(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgInfo1SetPropertyMetatext(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->SetPropertyMetatext(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgInfo1GetPropertyMetatext(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgInfo1GetPropertyMetatext(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgInfo1C*>(aProvider)->GetPropertyMetatext(buf);

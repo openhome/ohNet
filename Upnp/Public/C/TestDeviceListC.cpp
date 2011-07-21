@@ -29,7 +29,7 @@ static void printDeviceInfo(const char* aPrologue, CpDeviceC aDevice)
     free(friendlyName);
 }
 
-static void added(void* aPtr, CpDeviceC aDevice)
+static void STDCALL added(void* aPtr, CpDeviceC aDevice)
 {
     Mutex* lock = (Mutex*)aPtr;
     lock->Wait();
@@ -37,7 +37,7 @@ static void added(void* aPtr, CpDeviceC aDevice)
     lock->Signal();
 }
 
-static void removed(void* aPtr, CpDeviceC aDevice)
+static void STDCALL removed(void* aPtr, CpDeviceC aDevice)
 {
     Mutex* lock = (Mutex*)aPtr;
     lock->Wait();

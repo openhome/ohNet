@@ -73,9 +73,6 @@ objects_proxies = \
                   $(objdir)CpOpenhomeOrgTestLights1.$(objext) \
                   $(objdir)CpOpenhomeOrgTestLights1C.$(objext) \
                   $(objdir)CpOpenhomeOrgTestLights1Std.$(objext) \
-                  $(objdir)CpOpenhomeOrgTestDimmableLight1.$(objext) \
-                  $(objdir)CpOpenhomeOrgTestDimmableLight1C.$(objext) \
-                  $(objdir)CpOpenhomeOrgTestDimmableLight1Std.$(objext) \
 
 # Service proxies have well controlled dependencies so we can document a more limited set of headers
 headers_proxy = $(inc_build)/Cpp/Buffer.h \
@@ -114,7 +111,6 @@ proxy_dotnet_assemblies = \
         CpAvOpenhomeOrgSender1.net.dll \
         CpOpenhomeOrgTestBasic1.net.dll \
         CpOpenhomeOrgTestLights1.net.dll \
-        CpOpenhomeOrgTestDimmableLight1.net.dll \
 
 proxy_dotnet_assemblies_with_path = \
         $(objdir)CpUpnpOrgAVTransport1.net.dll \
@@ -140,7 +136,6 @@ proxy_dotnet_assemblies_with_path = \
         $(objdir)CpAvOpenhomeOrgSender1.net.dll \
         $(objdir)CpOpenhomeOrgTestBasic1.net.dll \
         $(objdir)CpOpenhomeOrgTestLights1.net.dll \
-        $(objdir)CpOpenhomeOrgTestDimmableLight1.net.dll \
 
 proxy_java_classes_with_path = \
         $(proxyjavadir)CpProxyUpnpOrgAVTransport1.class \
@@ -309,12 +304,6 @@ $(objdir)CpOpenhomeOrgTestLights1C.$(objext) : $(proxyC)CpOpenhomeOrgTestLights1
 	$(compiler)CpOpenhomeOrgTestLights1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpOpenhomeOrgTestLights1C.cpp
 $(objdir)CpOpenhomeOrgTestLights1Std.$(objext) : $(proxyCppStd)CpOpenhomeOrgTestLights1Std.cpp $(headers_proxy) ControlPoint/Services/Cpp/Std/CpOpenhomeOrgTestLights1.h
 	$(compiler)CpOpenhomeOrgTestLights1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpOpenhomeOrgTestLights1Std.cpp
-$(objdir)CpOpenhomeOrgTestDimmableLight1.$(objext) : $(proxyCppCore)CpOpenhomeOrgTestDimmableLight1.cpp $(headers_proxy) ControlPoint/Services/Cpp/Core/CpOpenhomeOrgTestDimmableLight1.h
-	$(compiler)CpOpenhomeOrgTestDimmableLight1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpOpenhomeOrgTestDimmableLight1.cpp
-$(objdir)CpOpenhomeOrgTestDimmableLight1C.$(objext) : $(proxyC)CpOpenhomeOrgTestDimmableLight1C.cpp $(headers_proxy) ControlPoint/Services/C/CpOpenhomeOrgTestDimmableLight1.h
-	$(compiler)CpOpenhomeOrgTestDimmableLight1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpOpenhomeOrgTestDimmableLight1C.cpp
-$(objdir)CpOpenhomeOrgTestDimmableLight1Std.$(objext) : $(proxyCppStd)CpOpenhomeOrgTestDimmableLight1Std.cpp $(headers_proxy) ControlPoint/Services/Cpp/Std/CpOpenhomeOrgTestDimmableLight1.h
-	$(compiler)CpOpenhomeOrgTestDimmableLight1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpOpenhomeOrgTestDimmableLight1Std.cpp
 
 proxy_dlls = \
              CpUpnpOrgAVTransport1Dll \
@@ -340,7 +329,6 @@ proxy_dlls = \
              CpAvOpenhomeOrgSender1Dll \
              CpOpenhomeOrgTestBasic1Dll \
              CpOpenhomeOrgTestLights1Dll \
-             CpOpenhomeOrgTestDimmableLight1Dll \
 
 CpProxyDlls: $(proxy_dlls)
 
@@ -413,9 +401,6 @@ $(objdir)$(dllprefix)CpOpenhomeOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)Cp
 CpOpenhomeOrgTestLights1Dll: $(objdir)$(dllprefix)CpOpenhomeOrgTestLights1.$(dllext)
 $(objdir)$(dllprefix)CpOpenhomeOrgTestLights1.$(dllext) : ZappUpnpDll $(objdir)CpOpenhomeOrgTestLights1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpOpenhomeOrgTestLights1.$(dllext) $(objdir)CpOpenhomeOrgTestLights1.$(objext)
-CpOpenhomeOrgTestDimmableLight1Dll: $(objdir)$(dllprefix)CpOpenhomeOrgTestDimmableLight1.$(dllext)
-$(objdir)$(dllprefix)CpOpenhomeOrgTestDimmableLight1.$(dllext) : ZappUpnpDll $(objdir)CpOpenhomeOrgTestDimmableLight1.$(objext)
-	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpOpenhomeOrgTestDimmableLight1.$(dllext) $(objdir)CpOpenhomeOrgTestDimmableLight1.$(objext)
 
 # Proxy assemblies for .NET:
 
@@ -536,11 +521,6 @@ $(objdir)CpOpenhomeOrgTestLights1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOp
 		/out:$(objdir)CpOpenhomeOrgTestLights1.net.dll \
 		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpOpenhomeOrgTestLights1.cs
-$(objdir)CpOpenhomeOrgTestDimmableLight1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOpenhomeOrgTestDimmableLight1.cs
-	$(csharp) /unsafe /t:library \
-		/out:$(objdir)CpOpenhomeOrgTestDimmableLight1.net.dll \
-		/reference:$(objdir)ohNet.net.dll \
-		$(proxyCs)CpOpenhomeOrgTestDimmableLight1.cs
 
 # Proxy classes for Java:
 

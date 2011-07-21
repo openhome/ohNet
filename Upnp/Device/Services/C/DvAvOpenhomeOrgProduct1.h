@@ -4,6 +4,7 @@
 #ifndef HEADER_DVAVOPENHOMEORGPRODUCT1_C
 #define HEADER_DVAVOPENHOMEORGPRODUCT1_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 
@@ -29,7 +30,7 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackProduct1Manufacturer)(void* aPtr, uint32_t aVersion, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+typedef int32_t (STDCALL *CallbackProduct1Manufacturer)(void* aPtr, uint32_t aVersion, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Callback which runs when the Model action is invoked
  *
@@ -42,7 +43,7 @@ typedef int32_t (*CallbackProduct1Manufacturer)(void* aPtr, uint32_t aVersion, c
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackProduct1Model)(void* aPtr, uint32_t aVersion, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+typedef int32_t (STDCALL *CallbackProduct1Model)(void* aPtr, uint32_t aVersion, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Callback which runs when the Product action is invoked
  *
@@ -56,7 +57,7 @@ typedef int32_t (*CallbackProduct1Model)(void* aPtr, uint32_t aVersion, char** a
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackProduct1Product)(void* aPtr, uint32_t aVersion, char** aRoom, char** aName, char** aInfo, char** aUrl, char** aImageUri);
+typedef int32_t (STDCALL *CallbackProduct1Product)(void* aPtr, uint32_t aVersion, char** aRoom, char** aName, char** aInfo, char** aUrl, char** aImageUri);
 /**
  * Callback which runs when the Standby action is invoked
  *
@@ -66,7 +67,7 @@ typedef int32_t (*CallbackProduct1Product)(void* aPtr, uint32_t aVersion, char**
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackProduct1Standby)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackProduct1Standby)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
 /**
  * Callback which runs when the SetStandby action is invoked
  *
@@ -76,7 +77,7 @@ typedef int32_t (*CallbackProduct1Standby)(void* aPtr, uint32_t aVersion, uint32
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackProduct1SetStandby)(void* aPtr, uint32_t aVersion, uint32_t aValue);
+typedef int32_t (STDCALL *CallbackProduct1SetStandby)(void* aPtr, uint32_t aVersion, uint32_t aValue);
 /**
  * Callback which runs when the SourceCount action is invoked
  *
@@ -86,7 +87,7 @@ typedef int32_t (*CallbackProduct1SetStandby)(void* aPtr, uint32_t aVersion, uin
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackProduct1SourceCount)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackProduct1SourceCount)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
 /**
  * Callback which runs when the SourceXml action is invoked
  *
@@ -96,7 +97,7 @@ typedef int32_t (*CallbackProduct1SourceCount)(void* aPtr, uint32_t aVersion, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackProduct1SourceXml)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackProduct1SourceXml)(void* aPtr, uint32_t aVersion, char** aValue);
 /**
  * Callback which runs when the SourceIndex action is invoked
  *
@@ -106,7 +107,7 @@ typedef int32_t (*CallbackProduct1SourceXml)(void* aPtr, uint32_t aVersion, char
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackProduct1SourceIndex)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackProduct1SourceIndex)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
 /**
  * Callback which runs when the SetSourceIndex action is invoked
  *
@@ -116,7 +117,7 @@ typedef int32_t (*CallbackProduct1SourceIndex)(void* aPtr, uint32_t aVersion, ui
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackProduct1SetSourceIndex)(void* aPtr, uint32_t aVersion, uint32_t aValue);
+typedef int32_t (STDCALL *CallbackProduct1SetSourceIndex)(void* aPtr, uint32_t aVersion, uint32_t aValue);
 /**
  * Callback which runs when the SetSourceIndexByName action is invoked
  *
@@ -126,7 +127,7 @@ typedef int32_t (*CallbackProduct1SetSourceIndex)(void* aPtr, uint32_t aVersion,
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackProduct1SetSourceIndexByName)(void* aPtr, uint32_t aVersion, const char* aValue);
+typedef int32_t (STDCALL *CallbackProduct1SetSourceIndexByName)(void* aPtr, uint32_t aVersion, const char* aValue);
 /**
  * Callback which runs when the Source action is invoked
  *
@@ -140,7 +141,7 @@ typedef int32_t (*CallbackProduct1SetSourceIndexByName)(void* aPtr, uint32_t aVe
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackProduct1Source)(void* aPtr, uint32_t aVersion, uint32_t aIndex, char** aSystemName, char** aType, char** aName, uint32_t* aVisible);
+typedef int32_t (STDCALL *CallbackProduct1Source)(void* aPtr, uint32_t aVersion, uint32_t aIndex, char** aSystemName, char** aType, char** aName, uint32_t* aVisible);
 /**
  * Callback which runs when the Attributes action is invoked
  *
@@ -150,7 +151,7 @@ typedef int32_t (*CallbackProduct1Source)(void* aPtr, uint32_t aVersion, uint32_
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackProduct1Attributes)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackProduct1Attributes)(void* aPtr, uint32_t aVersion, char** aValue);
 /**
  * Callback which runs when the SourceXmlChangeCount action is invoked
  *
@@ -160,7 +161,7 @@ typedef int32_t (*CallbackProduct1Attributes)(void* aPtr, uint32_t aVersion, cha
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackProduct1SourceXmlChangeCount)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackProduct1SourceXmlChangeCount)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
 
 /**
  * Provider constructor
@@ -169,14 +170,14 @@ typedef int32_t (*CallbackProduct1SourceXmlChangeCount)(void* aPtr, uint32_t aVe
  *
  * @return  Handle to this provider
  */
-DllExport THandle DvProviderAvOpenhomeOrgProduct1Create(DvDeviceC aDevice);
+DllExport THandle STDCALL DvProviderAvOpenhomeOrgProduct1Create(DvDeviceC aDevice);
 
 /**
  * Provider destructor
  *
  * @param[in] aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1Destroy(THandle aProvider);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1Destroy(THandle aProvider);
 
 /**
  * Register a callback for the action Manufacturer
@@ -188,7 +189,7 @@ DllExport void DvProviderAvOpenhomeOrgProduct1Destroy(THandle aProvider);
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionManufacturer(THandle aProvider, CallbackProduct1Manufacturer aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionManufacturer(THandle aProvider, CallbackProduct1Manufacturer aCallback, void* aPtr);
 /**
  * Register a callback for the action Model
  *
@@ -199,7 +200,7 @@ DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionManufacturer(THandle a
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionModel(THandle aProvider, CallbackProduct1Model aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionModel(THandle aProvider, CallbackProduct1Model aCallback, void* aPtr);
 /**
  * Register a callback for the action Product
  *
@@ -210,7 +211,7 @@ DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionModel(THandle aProvide
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionProduct(THandle aProvider, CallbackProduct1Product aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionProduct(THandle aProvider, CallbackProduct1Product aCallback, void* aPtr);
 /**
  * Register a callback for the action Standby
  *
@@ -221,7 +222,7 @@ DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionProduct(THandle aProvi
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionStandby(THandle aProvider, CallbackProduct1Standby aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionStandby(THandle aProvider, CallbackProduct1Standby aCallback, void* aPtr);
 /**
  * Register a callback for the action SetStandby
  *
@@ -232,7 +233,7 @@ DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionStandby(THandle aProvi
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSetStandby(THandle aProvider, CallbackProduct1SetStandby aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSetStandby(THandle aProvider, CallbackProduct1SetStandby aCallback, void* aPtr);
 /**
  * Register a callback for the action SourceCount
  *
@@ -243,7 +244,7 @@ DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSetStandby(THandle aPr
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSourceCount(THandle aProvider, CallbackProduct1SourceCount aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSourceCount(THandle aProvider, CallbackProduct1SourceCount aCallback, void* aPtr);
 /**
  * Register a callback for the action SourceXml
  *
@@ -254,7 +255,7 @@ DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSourceCount(THandle aP
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSourceXml(THandle aProvider, CallbackProduct1SourceXml aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSourceXml(THandle aProvider, CallbackProduct1SourceXml aCallback, void* aPtr);
 /**
  * Register a callback for the action SourceIndex
  *
@@ -265,7 +266,7 @@ DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSourceXml(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSourceIndex(THandle aProvider, CallbackProduct1SourceIndex aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSourceIndex(THandle aProvider, CallbackProduct1SourceIndex aCallback, void* aPtr);
 /**
  * Register a callback for the action SetSourceIndex
  *
@@ -276,7 +277,7 @@ DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSourceIndex(THandle aP
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSetSourceIndex(THandle aProvider, CallbackProduct1SetSourceIndex aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSetSourceIndex(THandle aProvider, CallbackProduct1SetSourceIndex aCallback, void* aPtr);
 /**
  * Register a callback for the action SetSourceIndexByName
  *
@@ -287,7 +288,7 @@ DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSetSourceIndex(THandle
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSetSourceIndexByName(THandle aProvider, CallbackProduct1SetSourceIndexByName aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSetSourceIndexByName(THandle aProvider, CallbackProduct1SetSourceIndexByName aCallback, void* aPtr);
 /**
  * Register a callback for the action Source
  *
@@ -298,7 +299,7 @@ DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSetSourceIndexByName(T
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSource(THandle aProvider, CallbackProduct1Source aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSource(THandle aProvider, CallbackProduct1Source aCallback, void* aPtr);
 /**
  * Register a callback for the action Attributes
  *
@@ -309,7 +310,7 @@ DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSource(THandle aProvid
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionAttributes(THandle aProvider, CallbackProduct1Attributes aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionAttributes(THandle aProvider, CallbackProduct1Attributes aCallback, void* aPtr);
 /**
  * Register a callback for the action SourceXmlChangeCount
  *
@@ -320,7 +321,7 @@ DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionAttributes(THandle aPr
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSourceXmlChangeCount(THandle aProvider, CallbackProduct1SourceXmlChangeCount aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSourceXmlChangeCount(THandle aProvider, CallbackProduct1SourceXmlChangeCount aCallback, void* aPtr);
 
 /**
  * Set the value of the ManufacturerName property
@@ -332,14 +333,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1EnableActionSourceXmlChangeCount(T
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerName(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerName(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ManufacturerName property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerName(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerName(THandle aProvider, char** aValue);
 /**
  * Set the value of the ManufacturerInfo property
  *
@@ -350,14 +351,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerName(THandl
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ManufacturerInfo property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerInfo(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerInfo(THandle aProvider, char** aValue);
 /**
  * Set the value of the ManufacturerUrl property
  *
@@ -368,14 +369,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerInfo(THandl
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerUrl(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerUrl(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ManufacturerUrl property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerUrl(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerUrl(THandle aProvider, char** aValue);
 /**
  * Set the value of the ManufacturerImageUri property
  *
@@ -386,14 +387,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerUrl(THandle
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerImageUri(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerImageUri(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ManufacturerImageUri property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerImageUri(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerImageUri(THandle aProvider, char** aValue);
 /**
  * Set the value of the ModelName property
  *
@@ -404,14 +405,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerImageUri(TH
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyModelName(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyModelName(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ModelName property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyModelName(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyModelName(THandle aProvider, char** aValue);
 /**
  * Set the value of the ModelInfo property
  *
@@ -422,14 +423,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyModelName(THandle aProv
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyModelInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyModelInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ModelInfo property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyModelInfo(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyModelInfo(THandle aProvider, char** aValue);
 /**
  * Set the value of the ModelUrl property
  *
@@ -440,14 +441,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyModelInfo(THandle aProv
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyModelUrl(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyModelUrl(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ModelUrl property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyModelUrl(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyModelUrl(THandle aProvider, char** aValue);
 /**
  * Set the value of the ModelImageUri property
  *
@@ -458,14 +459,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyModelUrl(THandle aProvi
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyModelImageUri(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyModelImageUri(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ModelImageUri property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyModelImageUri(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyModelImageUri(THandle aProvider, char** aValue);
 /**
  * Set the value of the ProductRoom property
  *
@@ -476,14 +477,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyModelImageUri(THandle a
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyProductRoom(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductRoom(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ProductRoom property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyProductRoom(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductRoom(THandle aProvider, char** aValue);
 /**
  * Set the value of the ProductName property
  *
@@ -494,14 +495,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyProductRoom(THandle aPr
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyProductName(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductName(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ProductName property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyProductName(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductName(THandle aProvider, char** aValue);
 /**
  * Set the value of the ProductInfo property
  *
@@ -512,14 +513,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyProductName(THandle aPr
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyProductInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ProductInfo property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyProductInfo(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductInfo(THandle aProvider, char** aValue);
 /**
  * Set the value of the ProductUrl property
  *
@@ -530,14 +531,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyProductInfo(THandle aPr
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyProductUrl(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductUrl(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ProductUrl property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyProductUrl(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductUrl(THandle aProvider, char** aValue);
 /**
  * Set the value of the ProductImageUri property
  *
@@ -548,14 +549,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyProductUrl(THandle aPro
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyProductImageUri(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductImageUri(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ProductImageUri property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyProductImageUri(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductImageUri(THandle aProvider, char** aValue);
 /**
  * Set the value of the Standby property
  *
@@ -566,14 +567,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyProductImageUri(THandle
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyStandby(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyStandby(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Standby property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyStandby(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyStandby(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the SourceIndex property
  *
@@ -584,14 +585,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyStandby(THandle aProvid
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertySourceIndex(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertySourceIndex(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the SourceIndex property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertySourceIndex(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertySourceIndex(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the SourceCount property
  *
@@ -602,14 +603,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertySourceIndex(THandle aPr
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertySourceCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertySourceCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the SourceCount property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertySourceCount(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertySourceCount(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the SourceXml property
  *
@@ -620,14 +621,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertySourceCount(THandle aPr
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertySourceXml(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertySourceXml(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the SourceXml property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertySourceXml(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertySourceXml(THandle aProvider, char** aValue);
 /**
  * Set the value of the Attributes property
  *
@@ -638,14 +639,14 @@ DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertySourceXml(THandle aProv
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyAttributes(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyAttributes(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Attributes property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgProduct1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgProduct1GetPropertyAttributes(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyAttributes(THandle aProvider, char** aValue);
 
 /* @} */
 

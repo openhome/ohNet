@@ -804,324 +804,324 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSourceXmlChangeCount(IDviInvocation& aI
 
 
 
-THandle DvProviderAvOpenhomeOrgProduct1Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderAvOpenhomeOrgProduct1Create(DvDeviceC aDevice)
 {
 	return new DvProviderAvOpenhomeOrgProduct1C(aDevice);
 }
 
-void DvProviderAvOpenhomeOrgProduct1Destroy(THandle aProvider)
+void STDCALL DvProviderAvOpenhomeOrgProduct1Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider);
 }
 
-void DvProviderAvOpenhomeOrgProduct1EnableActionManufacturer(THandle aProvider, CallbackProduct1Manufacturer aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionManufacturer(THandle aProvider, CallbackProduct1Manufacturer aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->EnableActionManufacturer(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgProduct1EnableActionModel(THandle aProvider, CallbackProduct1Model aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionModel(THandle aProvider, CallbackProduct1Model aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->EnableActionModel(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgProduct1EnableActionProduct(THandle aProvider, CallbackProduct1Product aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionProduct(THandle aProvider, CallbackProduct1Product aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->EnableActionProduct(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgProduct1EnableActionStandby(THandle aProvider, CallbackProduct1Standby aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionStandby(THandle aProvider, CallbackProduct1Standby aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->EnableActionStandby(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgProduct1EnableActionSetStandby(THandle aProvider, CallbackProduct1SetStandby aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSetStandby(THandle aProvider, CallbackProduct1SetStandby aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->EnableActionSetStandby(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgProduct1EnableActionSourceCount(THandle aProvider, CallbackProduct1SourceCount aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSourceCount(THandle aProvider, CallbackProduct1SourceCount aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->EnableActionSourceCount(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgProduct1EnableActionSourceXml(THandle aProvider, CallbackProduct1SourceXml aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSourceXml(THandle aProvider, CallbackProduct1SourceXml aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->EnableActionSourceXml(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgProduct1EnableActionSourceIndex(THandle aProvider, CallbackProduct1SourceIndex aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSourceIndex(THandle aProvider, CallbackProduct1SourceIndex aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->EnableActionSourceIndex(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgProduct1EnableActionSetSourceIndex(THandle aProvider, CallbackProduct1SetSourceIndex aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSetSourceIndex(THandle aProvider, CallbackProduct1SetSourceIndex aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->EnableActionSetSourceIndex(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgProduct1EnableActionSetSourceIndexByName(THandle aProvider, CallbackProduct1SetSourceIndexByName aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSetSourceIndexByName(THandle aProvider, CallbackProduct1SetSourceIndexByName aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->EnableActionSetSourceIndexByName(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgProduct1EnableActionSource(THandle aProvider, CallbackProduct1Source aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSource(THandle aProvider, CallbackProduct1Source aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->EnableActionSource(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgProduct1EnableActionAttributes(THandle aProvider, CallbackProduct1Attributes aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionAttributes(THandle aProvider, CallbackProduct1Attributes aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->EnableActionAttributes(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgProduct1EnableActionSourceXmlChangeCount(THandle aProvider, CallbackProduct1SourceXmlChangeCount aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgProduct1EnableActionSourceXmlChangeCount(THandle aProvider, CallbackProduct1SourceXmlChangeCount aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->EnableActionSourceXmlChangeCount(aCallback, aPtr);
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerName(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerName(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyManufacturerName(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerName(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerName(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyManufacturerName(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerInfo(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerInfo(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyManufacturerInfo(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerInfo(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerInfo(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyManufacturerInfo(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerUrl(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerUrl(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyManufacturerUrl(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerUrl(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerUrl(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyManufacturerUrl(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerImageUri(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyManufacturerImageUri(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyManufacturerImageUri(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerImageUri(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyManufacturerImageUri(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyManufacturerImageUri(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyModelName(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyModelName(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyModelName(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyModelName(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyModelName(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyModelName(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyModelInfo(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyModelInfo(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyModelInfo(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyModelInfo(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyModelInfo(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyModelInfo(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyModelUrl(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyModelUrl(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyModelUrl(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyModelUrl(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyModelUrl(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyModelUrl(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyModelImageUri(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyModelImageUri(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyModelImageUri(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyModelImageUri(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyModelImageUri(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyModelImageUri(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyProductRoom(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductRoom(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyProductRoom(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyProductRoom(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductRoom(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyProductRoom(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyProductName(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductName(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyProductName(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyProductName(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductName(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyProductName(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyProductInfo(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductInfo(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyProductInfo(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyProductInfo(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductInfo(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyProductInfo(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyProductUrl(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductUrl(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyProductUrl(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyProductUrl(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductUrl(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyProductUrl(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyProductImageUri(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyProductImageUri(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyProductImageUri(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyProductImageUri(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyProductImageUri(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyProductImageUri(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyStandby(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyStandby(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyStandby((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyStandby(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyStandby(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyStandby(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertySourceIndex(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertySourceIndex(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertySourceIndex(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertySourceIndex(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertySourceIndex(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertySourceIndex(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertySourceCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertySourceCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertySourceCount(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertySourceCount(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertySourceCount(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertySourceCount(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertySourceXml(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertySourceXml(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertySourceXml(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertySourceXml(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertySourceXml(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertySourceXml(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgProduct1SetPropertyAttributes(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgProduct1SetPropertyAttributes(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->SetPropertyAttributes(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgProduct1GetPropertyAttributes(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgProduct1GetPropertyAttributes(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgProduct1C*>(aProvider)->GetPropertyAttributes(buf);

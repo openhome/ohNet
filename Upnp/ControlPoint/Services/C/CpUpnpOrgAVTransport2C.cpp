@@ -1644,18 +1644,18 @@ void CpProxyUpnpOrgAVTransport2C::DRMStatePropertyChanged()
 }
 
 
-THandle CpProxyUpnpOrgAVTransport2Create(CpDeviceC aDevice)
+THandle STDCALL CpProxyUpnpOrgAVTransport2Create(CpDeviceC aDevice)
 {
     return new CpProxyUpnpOrgAVTransport2C(aDevice);
 }
 
-void CpProxyUpnpOrgAVTransport2Destroy(THandle aHandle)
+void STDCALL CpProxyUpnpOrgAVTransport2Destroy(THandle aHandle)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     delete proxyC;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncSetAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncSetAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1664,7 +1664,7 @@ void CpProxyUpnpOrgAVTransport2SyncSetAVTransportURI(THandle aHandle, uint32_t a
     proxyC->SyncSetAVTransportURI(aInstanceID, buf_aCurrentURI, buf_aCurrentURIMetaData);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginSetAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginSetAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aCurrentURI, const char* aCurrentURIMetaData, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1674,7 +1674,7 @@ void CpProxyUpnpOrgAVTransport2BeginSetAVTransportURI(THandle aHandle, uint32_t 
     proxyC->BeginSetAVTransportURI(aInstanceID, buf_aCurrentURI, buf_aCurrentURIMetaData, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndSetAVTransportURI(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndSetAVTransportURI(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -1690,7 +1690,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndSetAVTransportURI(THandle aHandle, OhNetHan
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncSetNextAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncSetNextAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1699,7 +1699,7 @@ void CpProxyUpnpOrgAVTransport2SyncSetNextAVTransportURI(THandle aHandle, uint32
     proxyC->SyncSetNextAVTransportURI(aInstanceID, buf_aNextURI, buf_aNextURIMetaData);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginSetNextAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginSetNextAVTransportURI(THandle aHandle, uint32_t aInstanceID, const char* aNextURI, const char* aNextURIMetaData, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1709,7 +1709,7 @@ void CpProxyUpnpOrgAVTransport2BeginSetNextAVTransportURI(THandle aHandle, uint3
     proxyC->BeginSetNextAVTransportURI(aInstanceID, buf_aNextURI, buf_aNextURIMetaData, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndSetNextAVTransportURI(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndSetNextAVTransportURI(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -1725,7 +1725,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndSetNextAVTransportURI(THandle aHandle, OhNe
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo(THandle aHandle, uint32_t aInstanceID, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncGetMediaInfo(THandle aHandle, uint32_t aInstanceID, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1748,7 +1748,7 @@ void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo(THandle aHandle, uint32_t aInsta
     *aWriteStatus = buf_aWriteStatus.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginGetMediaInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1756,7 +1756,7 @@ void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo(THandle aHandle, uint32_t aInst
     proxyC->BeginGetMediaInfo(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetMediaInfo(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetMediaInfo(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -1796,7 +1796,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndGetMediaInfo(THandle aHandle, OhNetHandleAs
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo_Ext(THandle aHandle, uint32_t aInstanceID, char** aCurrentType, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncGetMediaInfo_Ext(THandle aHandle, uint32_t aInstanceID, char** aCurrentType, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1821,7 +1821,7 @@ void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo_Ext(THandle aHandle, uint32_t aI
     *aWriteStatus = buf_aWriteStatus.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo_Ext(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginGetMediaInfo_Ext(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1829,7 +1829,7 @@ void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo_Ext(THandle aHandle, uint32_t a
     proxyC->BeginGetMediaInfo_Ext(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetMediaInfo_Ext(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentType, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetMediaInfo_Ext(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentType, uint32_t* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -1872,7 +1872,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndGetMediaInfo_Ext(THandle aHandle, OhNetHand
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncGetTransportInfo(THandle aHandle, uint32_t aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncGetTransportInfo(THandle aHandle, uint32_t aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1885,7 +1885,7 @@ void CpProxyUpnpOrgAVTransport2SyncGetTransportInfo(THandle aHandle, uint32_t aI
     *aCurrentSpeed = buf_aCurrentSpeed.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetTransportInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginGetTransportInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1893,7 +1893,7 @@ void CpProxyUpnpOrgAVTransport2BeginGetTransportInfo(THandle aHandle, uint32_t a
     proxyC->BeginGetTransportInfo(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetTransportInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetTransportInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -1918,7 +1918,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndGetTransportInfo(THandle aHandle, OhNetHand
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncGetPositionInfo(THandle aHandle, uint32_t aInstanceID, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncGetPositionInfo(THandle aHandle, uint32_t aInstanceID, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1935,7 +1935,7 @@ void CpProxyUpnpOrgAVTransport2SyncGetPositionInfo(THandle aHandle, uint32_t aIn
     *aAbsTime = buf_aAbsTime.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetPositionInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginGetPositionInfo(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1943,7 +1943,7 @@ void CpProxyUpnpOrgAVTransport2BeginGetPositionInfo(THandle aHandle, uint32_t aI
     proxyC->BeginGetPositionInfo(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetPositionInfo(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetPositionInfo(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int32_t* aRelCount, int32_t* aAbsCount)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -1974,7 +1974,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndGetPositionInfo(THandle aHandle, OhNetHandl
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncGetDeviceCapabilities(THandle aHandle, uint32_t aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncGetDeviceCapabilities(THandle aHandle, uint32_t aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1987,7 +1987,7 @@ void CpProxyUpnpOrgAVTransport2SyncGetDeviceCapabilities(THandle aHandle, uint32
     *aRecQualityModes = buf_aRecQualityModes.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetDeviceCapabilities(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginGetDeviceCapabilities(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -1995,7 +1995,7 @@ void CpProxyUpnpOrgAVTransport2BeginGetDeviceCapabilities(THandle aHandle, uint3
     proxyC->BeginGetDeviceCapabilities(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetDeviceCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetDeviceCapabilities(THandle aHandle, OhNetHandleAsync aAsync, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2020,7 +2020,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndGetDeviceCapabilities(THandle aHandle, OhNe
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncGetTransportSettings(THandle aHandle, uint32_t aInstanceID, char** aPlayMode, char** aRecQualityMode)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncGetTransportSettings(THandle aHandle, uint32_t aInstanceID, char** aPlayMode, char** aRecQualityMode)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2031,7 +2031,7 @@ void CpProxyUpnpOrgAVTransport2SyncGetTransportSettings(THandle aHandle, uint32_
     *aRecQualityMode = buf_aRecQualityMode.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetTransportSettings(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginGetTransportSettings(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2039,7 +2039,7 @@ void CpProxyUpnpOrgAVTransport2BeginGetTransportSettings(THandle aHandle, uint32
     proxyC->BeginGetTransportSettings(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetTransportSettings(THandle aHandle, OhNetHandleAsync aAsync, char** aPlayMode, char** aRecQualityMode)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetTransportSettings(THandle aHandle, OhNetHandleAsync aAsync, char** aPlayMode, char** aRecQualityMode)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2061,14 +2061,14 @@ int32_t CpProxyUpnpOrgAVTransport2EndGetTransportSettings(THandle aHandle, OhNet
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncStop(THandle aHandle, uint32_t aInstanceID)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncStop(THandle aHandle, uint32_t aInstanceID)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncStop(aInstanceID);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginStop(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginStop(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2076,7 +2076,7 @@ void CpProxyUpnpOrgAVTransport2BeginStop(THandle aHandle, uint32_t aInstanceID, 
     proxyC->BeginStop(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndStop(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndStop(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2092,7 +2092,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndStop(THandle aHandle, OhNetHandleAsync aAsy
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncPlay(THandle aHandle, uint32_t aInstanceID, const char* aSpeed)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncPlay(THandle aHandle, uint32_t aInstanceID, const char* aSpeed)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2100,7 +2100,7 @@ void CpProxyUpnpOrgAVTransport2SyncPlay(THandle aHandle, uint32_t aInstanceID, c
     proxyC->SyncPlay(aInstanceID, buf_aSpeed);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginPlay(THandle aHandle, uint32_t aInstanceID, const char* aSpeed, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginPlay(THandle aHandle, uint32_t aInstanceID, const char* aSpeed, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2109,7 +2109,7 @@ void CpProxyUpnpOrgAVTransport2BeginPlay(THandle aHandle, uint32_t aInstanceID, 
     proxyC->BeginPlay(aInstanceID, buf_aSpeed, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndPlay(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndPlay(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2125,14 +2125,14 @@ int32_t CpProxyUpnpOrgAVTransport2EndPlay(THandle aHandle, OhNetHandleAsync aAsy
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncPause(THandle aHandle, uint32_t aInstanceID)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncPause(THandle aHandle, uint32_t aInstanceID)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncPause(aInstanceID);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginPause(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginPause(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2140,7 +2140,7 @@ void CpProxyUpnpOrgAVTransport2BeginPause(THandle aHandle, uint32_t aInstanceID,
     proxyC->BeginPause(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndPause(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndPause(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2156,14 +2156,14 @@ int32_t CpProxyUpnpOrgAVTransport2EndPause(THandle aHandle, OhNetHandleAsync aAs
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncRecord(THandle aHandle, uint32_t aInstanceID)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncRecord(THandle aHandle, uint32_t aInstanceID)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncRecord(aInstanceID);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginRecord(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginRecord(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2171,7 +2171,7 @@ void CpProxyUpnpOrgAVTransport2BeginRecord(THandle aHandle, uint32_t aInstanceID
     proxyC->BeginRecord(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndRecord(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndRecord(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2187,7 +2187,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndRecord(THandle aHandle, OhNetHandleAsync aA
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncSeek(THandle aHandle, uint32_t aInstanceID, const char* aUnit, const char* aTarget)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncSeek(THandle aHandle, uint32_t aInstanceID, const char* aUnit, const char* aTarget)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2196,7 +2196,7 @@ void CpProxyUpnpOrgAVTransport2SyncSeek(THandle aHandle, uint32_t aInstanceID, c
     proxyC->SyncSeek(aInstanceID, buf_aUnit, buf_aTarget);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginSeek(THandle aHandle, uint32_t aInstanceID, const char* aUnit, const char* aTarget, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginSeek(THandle aHandle, uint32_t aInstanceID, const char* aUnit, const char* aTarget, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2206,7 +2206,7 @@ void CpProxyUpnpOrgAVTransport2BeginSeek(THandle aHandle, uint32_t aInstanceID, 
     proxyC->BeginSeek(aInstanceID, buf_aUnit, buf_aTarget, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndSeek(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndSeek(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2222,14 +2222,14 @@ int32_t CpProxyUpnpOrgAVTransport2EndSeek(THandle aHandle, OhNetHandleAsync aAsy
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncNext(THandle aHandle, uint32_t aInstanceID)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncNext(THandle aHandle, uint32_t aInstanceID)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncNext(aInstanceID);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginNext(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginNext(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2237,7 +2237,7 @@ void CpProxyUpnpOrgAVTransport2BeginNext(THandle aHandle, uint32_t aInstanceID, 
     proxyC->BeginNext(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndNext(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndNext(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2253,14 +2253,14 @@ int32_t CpProxyUpnpOrgAVTransport2EndNext(THandle aHandle, OhNetHandleAsync aAsy
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncPrevious(THandle aHandle, uint32_t aInstanceID)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncPrevious(THandle aHandle, uint32_t aInstanceID)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncPrevious(aInstanceID);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginPrevious(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginPrevious(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2268,7 +2268,7 @@ void CpProxyUpnpOrgAVTransport2BeginPrevious(THandle aHandle, uint32_t aInstance
     proxyC->BeginPrevious(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndPrevious(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndPrevious(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2284,7 +2284,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndPrevious(THandle aHandle, OhNetHandleAsync 
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncSetPlayMode(THandle aHandle, uint32_t aInstanceID, const char* aNewPlayMode)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncSetPlayMode(THandle aHandle, uint32_t aInstanceID, const char* aNewPlayMode)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2292,7 +2292,7 @@ void CpProxyUpnpOrgAVTransport2SyncSetPlayMode(THandle aHandle, uint32_t aInstan
     proxyC->SyncSetPlayMode(aInstanceID, buf_aNewPlayMode);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginSetPlayMode(THandle aHandle, uint32_t aInstanceID, const char* aNewPlayMode, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginSetPlayMode(THandle aHandle, uint32_t aInstanceID, const char* aNewPlayMode, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2301,7 +2301,7 @@ void CpProxyUpnpOrgAVTransport2BeginSetPlayMode(THandle aHandle, uint32_t aInsta
     proxyC->BeginSetPlayMode(aInstanceID, buf_aNewPlayMode, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndSetPlayMode(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndSetPlayMode(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2317,7 +2317,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndSetPlayMode(THandle aHandle, OhNetHandleAsy
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncSetRecordQualityMode(THandle aHandle, uint32_t aInstanceID, const char* aNewRecordQualityMode)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncSetRecordQualityMode(THandle aHandle, uint32_t aInstanceID, const char* aNewRecordQualityMode)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2325,7 +2325,7 @@ void CpProxyUpnpOrgAVTransport2SyncSetRecordQualityMode(THandle aHandle, uint32_
     proxyC->SyncSetRecordQualityMode(aInstanceID, buf_aNewRecordQualityMode);
 }
 
-void CpProxyUpnpOrgAVTransport2BeginSetRecordQualityMode(THandle aHandle, uint32_t aInstanceID, const char* aNewRecordQualityMode, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginSetRecordQualityMode(THandle aHandle, uint32_t aInstanceID, const char* aNewRecordQualityMode, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2334,7 +2334,7 @@ void CpProxyUpnpOrgAVTransport2BeginSetRecordQualityMode(THandle aHandle, uint32
     proxyC->BeginSetRecordQualityMode(aInstanceID, buf_aNewRecordQualityMode, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndSetRecordQualityMode(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndSetRecordQualityMode(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2350,7 +2350,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndSetRecordQualityMode(THandle aHandle, OhNet
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncGetCurrentTransportActions(THandle aHandle, uint32_t aInstanceID, char** aActions)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncGetCurrentTransportActions(THandle aHandle, uint32_t aInstanceID, char** aActions)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2359,7 +2359,7 @@ void CpProxyUpnpOrgAVTransport2SyncGetCurrentTransportActions(THandle aHandle, u
     *aActions = buf_aActions.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetCurrentTransportActions(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginGetCurrentTransportActions(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2367,7 +2367,7 @@ void CpProxyUpnpOrgAVTransport2BeginGetCurrentTransportActions(THandle aHandle, 
     proxyC->BeginGetCurrentTransportActions(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetCurrentTransportActions(THandle aHandle, OhNetHandleAsync aAsync, char** aActions)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetCurrentTransportActions(THandle aHandle, OhNetHandleAsync aAsync, char** aActions)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2386,7 +2386,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndGetCurrentTransportActions(THandle aHandle,
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncGetDRMState(THandle aHandle, uint32_t aInstanceID, char** aCurrentDRMState)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncGetDRMState(THandle aHandle, uint32_t aInstanceID, char** aCurrentDRMState)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2395,7 +2395,7 @@ void CpProxyUpnpOrgAVTransport2SyncGetDRMState(THandle aHandle, uint32_t aInstan
     *aCurrentDRMState = buf_aCurrentDRMState.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetDRMState(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginGetDRMState(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2403,7 +2403,7 @@ void CpProxyUpnpOrgAVTransport2BeginGetDRMState(THandle aHandle, uint32_t aInsta
     proxyC->BeginGetDRMState(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetDRMState(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentDRMState)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetDRMState(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentDRMState)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2422,7 +2422,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndGetDRMState(THandle aHandle, OhNetHandleAsy
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, char** aStateVariableValuePairs)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, char** aStateVariableValuePairs)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2432,7 +2432,7 @@ void CpProxyUpnpOrgAVTransport2SyncGetStateVariables(THandle aHandle, uint32_t a
     *aStateVariableValuePairs = buf_aStateVariableValuePairs.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginGetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aStateVariableList, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2441,7 +2441,7 @@ void CpProxyUpnpOrgAVTransport2BeginGetStateVariables(THandle aHandle, uint32_t 
     proxyC->BeginGetStateVariables(aInstanceID, buf_aStateVariableList, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndGetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableValuePairs)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndGetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableValuePairs)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2460,7 +2460,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndGetStateVariables(THandle aHandle, OhNetHan
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SyncSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aAVTransportUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, char** aStateVariableList)
+void STDCALL CpProxyUpnpOrgAVTransport2SyncSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aAVTransportUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, char** aStateVariableList)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2473,7 +2473,7 @@ void CpProxyUpnpOrgAVTransport2SyncSetStateVariables(THandle aHandle, uint32_t a
     *aStateVariableList = buf_aStateVariableList.Extract();
 }
 
-void CpProxyUpnpOrgAVTransport2BeginSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aAVTransportUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2BeginSetStateVariables(THandle aHandle, uint32_t aInstanceID, const char* aAVTransportUDN, const char* aServiceType, const char* aServiceId, const char* aStateVariableValuePairs, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2485,7 +2485,7 @@ void CpProxyUpnpOrgAVTransport2BeginSetStateVariables(THandle aHandle, uint32_t 
     proxyC->BeginSetStateVariables(aInstanceID, buf_aAVTransportUDN, buf_aServiceType, buf_aServiceId, buf_aStateVariableValuePairs, functor);
 }
 
-int32_t CpProxyUpnpOrgAVTransport2EndSetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableList)
+int32_t STDCALL CpProxyUpnpOrgAVTransport2EndSetStateVariables(THandle aHandle, OhNetHandleAsync aAsync, char** aStateVariableList)
 {
     int32_t err = 0;
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
@@ -2504,7 +2504,7 @@ int32_t CpProxyUpnpOrgAVTransport2EndSetStateVariables(THandle aHandle, OhNetHan
     return err;
 }
 
-void CpProxyUpnpOrgAVTransport2SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2512,7 +2512,7 @@ void CpProxyUpnpOrgAVTransport2SetPropertyLastChangeChanged(THandle aHandle, OhN
     proxyC->SetPropertyLastChangeChanged(functor);
 }
 
-void CpProxyUpnpOrgAVTransport2SetPropertyDRMStateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgAVTransport2SetPropertyDRMStateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2520,7 +2520,7 @@ void CpProxyUpnpOrgAVTransport2SetPropertyDRMStateChanged(THandle aHandle, OhNet
     proxyC->SetPropertyDRMStateChanged(functor);
 }
 
-void CpProxyUpnpOrgAVTransport2PropertyLastChange(THandle aHandle, char** aLastChange)
+void STDCALL CpProxyUpnpOrgAVTransport2PropertyLastChange(THandle aHandle, char** aLastChange)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2529,7 +2529,7 @@ void CpProxyUpnpOrgAVTransport2PropertyLastChange(THandle aHandle, char** aLastC
     *aLastChange = buf_aLastChange.Transfer();
 }
 
-void CpProxyUpnpOrgAVTransport2PropertyDRMState(THandle aHandle, char** aDRMState)
+void STDCALL CpProxyUpnpOrgAVTransport2PropertyDRMState(THandle aHandle, char** aDRMState)
 {
     CpProxyUpnpOrgAVTransport2C* proxyC = reinterpret_cast<CpProxyUpnpOrgAVTransport2C*>(aHandle);
     ASSERT(proxyC != NULL);

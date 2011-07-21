@@ -55,22 +55,22 @@ private:
 };
 
 
-void added(void* aPtr, CpDeviceC aDevice)
+void STDCALL added(void* aPtr, CpDeviceC aDevice)
 {
     reinterpret_cast<DeviceList*>(aPtr)->Added(aDevice);
 }
 
-void removed(void* aPtr, CpDeviceC aDevice)
+void STDCALL removed(void* aPtr, CpDeviceC aDevice)
 {
     reinterpret_cast<DeviceList*>(aPtr)->Removed(aDevice);
 }
 
-void getProtocolInfoComplete(void* aPtr, OhNetHandleAsync aAsync)
+void STDCALL getProtocolInfoComplete(void* aPtr, OhNetHandleAsync aAsync)
 {
     reinterpret_cast<DeviceList*>(aPtr)->GetProtocolInfoComplete(aAsync);
 }
 
-void initialNotificationComplete(void* aPtr)
+void STDCALL initialNotificationComplete(void* aPtr)
 {
     reinterpret_cast<Semaphore*>(aPtr)->Signal();
 }

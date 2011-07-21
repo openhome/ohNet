@@ -134,38 +134,38 @@ void DvProviderUpnpOrgSwitchPower1C::DoGetStatus(IDviInvocation& aInvocation, TU
 
 
 
-THandle DvProviderUpnpOrgSwitchPower1Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderUpnpOrgSwitchPower1Create(DvDeviceC aDevice)
 {
 	return new DvProviderUpnpOrgSwitchPower1C(aDevice);
 }
 
-void DvProviderUpnpOrgSwitchPower1Destroy(THandle aProvider)
+void STDCALL DvProviderUpnpOrgSwitchPower1Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider);
 }
 
-void DvProviderUpnpOrgSwitchPower1EnableActionSetTarget(THandle aProvider, CallbackSwitchPower1SetTarget aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgSwitchPower1EnableActionSetTarget(THandle aProvider, CallbackSwitchPower1SetTarget aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider)->EnableActionSetTarget(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgSwitchPower1EnableActionGetTarget(THandle aProvider, CallbackSwitchPower1GetTarget aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgSwitchPower1EnableActionGetTarget(THandle aProvider, CallbackSwitchPower1GetTarget aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider)->EnableActionGetTarget(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(THandle aProvider, CallbackSwitchPower1GetStatus aCallback, void* aPtr)
+void STDCALL DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(THandle aProvider, CallbackSwitchPower1GetStatus aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider)->EnableActionGetStatus(aCallback, aPtr);
 }
 
-int32_t DvProviderUpnpOrgSwitchPower1SetPropertyStatus(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderUpnpOrgSwitchPower1SetPropertyStatus(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider)->SetPropertyStatus((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderUpnpOrgSwitchPower1GetPropertyStatus(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderUpnpOrgSwitchPower1GetPropertyStatus(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
     reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider)->GetPropertyStatus(val);

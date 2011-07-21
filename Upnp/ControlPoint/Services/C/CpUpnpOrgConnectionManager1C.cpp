@@ -521,18 +521,18 @@ void CpProxyUpnpOrgConnectionManager1C::CurrentConnectionIDsPropertyChanged()
 }
 
 
-THandle CpProxyUpnpOrgConnectionManager1Create(CpDeviceC aDevice)
+THandle STDCALL CpProxyUpnpOrgConnectionManager1Create(CpDeviceC aDevice)
 {
     return new CpProxyUpnpOrgConnectionManager1C(aDevice);
 }
 
-void CpProxyUpnpOrgConnectionManager1Destroy(THandle aHandle)
+void STDCALL CpProxyUpnpOrgConnectionManager1Destroy(THandle aHandle)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     delete proxyC;
 }
 
-void CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHandle, char** aSource, char** aSink)
+void STDCALL CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHandle, char** aSource, char** aSink)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -543,7 +543,7 @@ void CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHandle, char**
     *aSink = buf_aSink.Extract();
 }
 
-void CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -551,7 +551,7 @@ void CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(THandle aHandle, OhNet
     proxyC->BeginGetProtocolInfo(functor);
 }
 
-int32_t CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aSource, char** aSink)
+int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aSource, char** aSink)
 {
     int32_t err = 0;
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
@@ -573,7 +573,7 @@ int32_t CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(THandle aHandle, OhNe
     return err;
 }
 
-void CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID)
+void STDCALL CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -583,7 +583,7 @@ void CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle aHandle, c
     proxyC->SyncPrepareForConnection(buf_aRemoteProtocolInfo, buf_aPeerConnectionManager, aPeerConnectionID, buf_aDirection, *aConnectionID, *aAVTransportID, *aRcsID);
 }
 
-void CpProxyUpnpOrgConnectionManager1BeginPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgConnectionManager1BeginPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -594,7 +594,7 @@ void CpProxyUpnpOrgConnectionManager1BeginPrepareForConnection(THandle aHandle, 
     proxyC->BeginPrepareForConnection(buf_aRemoteProtocolInfo, buf_aPeerConnectionManager, aPeerConnectionID, buf_aDirection, functor);
 }
 
-int32_t CpProxyUpnpOrgConnectionManager1EndPrepareForConnection(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID)
+int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndPrepareForConnection(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID)
 {
     int32_t err = 0;
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
@@ -610,14 +610,14 @@ int32_t CpProxyUpnpOrgConnectionManager1EndPrepareForConnection(THandle aHandle,
     return err;
 }
 
-void CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(THandle aHandle, int32_t aConnectionID)
+void STDCALL CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(THandle aHandle, int32_t aConnectionID)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncConnectionComplete(aConnectionID);
 }
 
-void CpProxyUpnpOrgConnectionManager1BeginConnectionComplete(THandle aHandle, int32_t aConnectionID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgConnectionManager1BeginConnectionComplete(THandle aHandle, int32_t aConnectionID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -625,7 +625,7 @@ void CpProxyUpnpOrgConnectionManager1BeginConnectionComplete(THandle aHandle, in
     proxyC->BeginConnectionComplete(aConnectionID, functor);
 }
 
-int32_t CpProxyUpnpOrgConnectionManager1EndConnectionComplete(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndConnectionComplete(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
@@ -641,7 +641,7 @@ int32_t CpProxyUpnpOrgConnectionManager1EndConnectionComplete(THandle aHandle, O
     return err;
 }
 
-void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THandle aHandle, char** aConnectionIDs)
+void STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THandle aHandle, char** aConnectionIDs)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -650,7 +650,7 @@ void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THandle aHandle
     *aConnectionIDs = buf_aConnectionIDs.Extract();
 }
 
-void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionIDs(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionIDs(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -658,7 +658,7 @@ void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionIDs(THandle aHandl
     proxyC->BeginGetCurrentConnectionIDs(functor);
 }
 
-int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionIDs(THandle aHandle, OhNetHandleAsync aAsync, char** aConnectionIDs)
+int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionIDs(THandle aHandle, OhNetHandleAsync aAsync, char** aConnectionIDs)
 {
     int32_t err = 0;
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
@@ -677,7 +677,7 @@ int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionIDs(THandle aHand
     return err;
 }
 
-void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus)
+void STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -692,7 +692,7 @@ void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandle aHandl
     *aStatus = buf_aStatus.Extract();
 }
 
-void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -700,7 +700,7 @@ void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionInfo(THandle aHand
     proxyC->BeginGetCurrentConnectionInfo(aConnectionID, functor);
 }
 
-int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionInfo(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus)
+int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionInfo(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus)
 {
     int32_t err = 0;
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
@@ -728,7 +728,7 @@ int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionInfo(THandle aHan
     return err;
 }
 
-void CpProxyUpnpOrgConnectionManager1SetPropertySourceProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgConnectionManager1SetPropertySourceProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -736,7 +736,7 @@ void CpProxyUpnpOrgConnectionManager1SetPropertySourceProtocolInfoChanged(THandl
     proxyC->SetPropertySourceProtocolInfoChanged(functor);
 }
 
-void CpProxyUpnpOrgConnectionManager1SetPropertySinkProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgConnectionManager1SetPropertySinkProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -744,7 +744,7 @@ void CpProxyUpnpOrgConnectionManager1SetPropertySinkProtocolInfoChanged(THandle 
     proxyC->SetPropertySinkProtocolInfoChanged(functor);
 }
 
-void CpProxyUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -752,7 +752,7 @@ void CpProxyUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDsChanged(THan
     proxyC->SetPropertyCurrentConnectionIDsChanged(functor);
 }
 
-void CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInfo(THandle aHandle, char** aSourceProtocolInfo)
+void STDCALL CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInfo(THandle aHandle, char** aSourceProtocolInfo)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -761,7 +761,7 @@ void CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInfo(THandle aHandle,
     *aSourceProtocolInfo = buf_aSourceProtocolInfo.Transfer();
 }
 
-void CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(THandle aHandle, char** aSinkProtocolInfo)
+void STDCALL CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(THandle aHandle, char** aSinkProtocolInfo)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -770,7 +770,7 @@ void CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(THandle aHandle, c
     *aSinkProtocolInfo = buf_aSinkProtocolInfo.Transfer();
 }
 
-void CpProxyUpnpOrgConnectionManager1PropertyCurrentConnectionIDs(THandle aHandle, char** aCurrentConnectionIDs)
+void STDCALL CpProxyUpnpOrgConnectionManager1PropertyCurrentConnectionIDs(THandle aHandle, char** aCurrentConnectionIDs)
 {
     CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);

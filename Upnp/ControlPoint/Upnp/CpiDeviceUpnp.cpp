@@ -200,18 +200,6 @@ void CpiDeviceUpnp::TimerExpired()
     iDeviceList.Remove(Udn());
 }
 
-void CpiDeviceUpnp::GetControlUri(const Invocation& aInvocation, Uri& aUri)
-{
-    AutoMutex a(iLock);
-    if (iControlUrl.Bytes() != 0) {
-        aUri.Replace(iControlUrl);
-    }
-    else {
-        GetServiceUri(aUri, "controlURL", aInvocation.ServiceType());
-        iControlUrl.Set(aUri.AbsoluteUri());
-    }
-}
-
 void CpiDeviceUpnp::GetServiceUri(Uri& aUri, const TChar* aType, const ServiceType& aServiceType)
 {
     Brn root = XmlParserBasic::Find("root", iXml);
@@ -312,7 +300,7 @@ void CpiDeviceUpnp::Invocable::InvokeAction(Invocation& aInvocation)
 {
     try {
         Uri uri;
-        iDevice.GetControlUri(aInvocation, uri);
+        iDevice.GetServiceUri(uri, "controlURL", aInvocation.ServiceType());
         InvocationUpnp invoker(aInvocation);
         invoker.Invoke(uri);
     }

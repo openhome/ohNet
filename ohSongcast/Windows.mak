@@ -62,9 +62,9 @@ clean:
 	del /S /Q $(objdirbare)
 
 
-$(objdir)$(dllprefix)ohSoundcard.$(dllext) : $(objects_songcast) $(objects_soundcard) ohSoundcard\Windows\Soundcard.cpp
-	$(compiler)Soundcard.$(objext) -c $(cflags) $(includes) ohSoundcard\Windows\Soundcard.cpp
-	$(link_dll) $(linkoutput)$(objdir)$(dllprefix)ohSoundcard.$(dllext) $(ohnetdir)$(libprefix)ohNetCore.lib $(objects_topology) $(objects_songcast) $(objects_soundcard) $(objdir)Soundcard.$(objext) kernel32.lib setupapi.lib shell32.lib
+$(objdir)$(dllprefix)ohSoundcard.$(dllext) : $(objects_songcast) $(objects_soundcard) ohSoundcard\Windows\SoundcardDriver.cpp
+	$(compiler)SoundcardDriver.$(objext) -c $(cflags) $(includes) ohSoundcard\Windows\SoundcardDriver.cpp
+	$(link_dll) $(linkoutput)$(objdir)$(dllprefix)ohSoundcard.$(dllext) $(ohnetdir)$(libprefix)ohNetCore.lib $(objects_topology) $(objects_songcast) $(objects_soundcard) $(objdir)SoundcardDriver.$(objext) kernel32.lib setupapi.lib shell32.lib
 
 $(objdir)$(dllprefix)ohSoundcard.net.$(dllext) : $(objdir)$(dllprefix)ohSoundcard.$(dllext) ohSoundcard\Windows\Soundcard.cs
 	$(csharp) /unsafe /t:library \
@@ -105,7 +105,7 @@ $(objdir)ohSoundcard.$(exeext) : $(objdir)$(dllprefix)ohSoundcard.net.$(dllext) 
 		ohSoundcard\Windows\Wpf\ohSoundcard\App.xaml.cs \
 		ohSoundcard\Windows\Wpf\ohSoundcard\MainWindow.xaml.cs \
  	
-$(objdir)TestSoundcard.$(exeext) : $(objdir)$(dllprefix)ohSoundcard.$(dllext) ohSoundcard\Windows\TestSoundcard.cpp
-	$(compiler)TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard\Windows\TestSoundcard.cpp
+$(objdir)TestSoundcard.$(exeext) : $(objdir)$(dllprefix)ohSoundcard.$(dllext) ohSoundcard\TestSoundcard.cpp
+	$(compiler)TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard\TestSoundcard.cpp
 	$(link) $(linkoutput)$(objdir)TestSoundcard.$(exeext) $(objdir)ohSoundcard.$(libext) $(objdir)TestSoundcard.$(objext) 
 

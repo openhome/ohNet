@@ -14,14 +14,14 @@ endif
 MACHINE = $(shell uname -s)
 ifeq ($(MACHINE), Darwin)
 platform_cflags = -DPLATFORM_MACOSX_GNU -arch i386 -mmacosx-version-min=10.4
-platform_linkflags = -arch i386
-objdir = Build/Obj/Mac/$(build_dir)/
-ohnetdir = ../Upnp/Build/Obj/Mac/$(build_dir)/
+platform_linkflags = -arch i386 -framework IOKit
+platform_include = -I/System/Library/Frameworks/IOKit.framework/Headers/
+osdir = Mac
 else
 platform_cflags = -Wno-psabi
 platform_linkflags = 
-objdir = Build/Obj/Posix/$(build_dir)/
-ohnetdir = ../Upnp/Build/Obj/Posix/$(build_dir)/
+platform_include = 
+osdir = Posix
 endif
 
 
@@ -29,8 +29,10 @@ endif
 
 ar = ${CROSS_COMPILE}ar rc $(objdir)
 cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_flags) -fvisibility=hidden -DDllImport="__attribute__ ((visibility(\"default\")))" -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))" $(platform_cflags)
+ohnetdir = ../Upnp/Build/Obj/$(osdir)/$(build_dir)/
+objdir = Build/Obj/$(osdir)/$(build_dir)/
 inc_build = Build/Include/
-includes = -I../Upnp/Build/Include/ -I../Upnp/Build/Include/Cpp/
+includes = -I../Upnp/Build/Include/ -I../Upnp/Build/Include/Cpp/ $(platform_includes)
 objext = o
 libprefix = lib
 libext = a
@@ -40,7 +42,7 @@ link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
 linkoutput = -o 
 dllprefix = lib
 dllext = so
-link_dll = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags) -shared -shared-libgcc
+link_dll = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags) -shared -shared-libgcc --whole-archive
 csharp = gmcs /nologo
 dirsep = /
 
@@ -57,6 +59,28 @@ make_obj_dir :
 clean :
 	rm -rf $(objdir)
 
-all : all_common
+all : all_common $(objdir)$(dllprefix)ohSoundcard.$(dllext) $(objdir)TestSoundcard.$(exeext)
+
+
+ifeq ($(MACHINE), Darwin)
+objects_soundcard_os = $(objdir)SoundcardDriver.$(objext)
+
+$(objdir)SoundcardDriver.$(objext) : ohSoundcard/Mac/SoundcardDriver.cpp
+	$(compiler)SoundcardDriver.$(objext) -c $(cflags) $(includes) ohSoundcard/Mac/SoundcardDriver.cpp
+else
+objects_soundcard_os = $(objdir)SoundcardDriver.$(objext)
+
+$(objdir)SoundcardDriver.$(objext) : ohSoundcard/Posix/SoundcardDriver.cpp
+	$(compiler)SoundcardDriver.$(objext) -c $(cflags) $(includes) ohSoundcard/Posix/SoundcardDriver.cpp
+endif
+
+
+$(objdir)$(dllprefix)ohSoundcard.$(dllext) : $(objects_songcast) $(objects_soundcard) $(objects_soundcard_os)
+	$(link_dll) $(linkoutput)$(objdir)$(dllprefix)ohSoundcard.$(dllext) $(objects_topology) $(objects_songcast) $(objects_soundcard) $(objects_soundcard_os) $(ohnetdir)$(libprefix)ohNetCore.$(libext)
+
+
+$(objdir)TestSoundcard.$(exeext) : $(objdir)$(dllprefix)ohSoundcard.$(dllext) ohSoundcard/TestSoundcard.cpp
+	$(compiler)TestSoundcard.$(objext) -c $(cflags) $(includes) ohSoundcard/TestSoundcard.cpp
+	$(link) $(linkoutput)$(objdir)TestSoundcard.$(exeext) $(objdir)TestSoundcard.$(objext) $(objdir)$(dllprefix)ohSoundcard.$(dllext)
 
 

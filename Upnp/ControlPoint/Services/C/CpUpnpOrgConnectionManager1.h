@@ -5,6 +5,7 @@
 #define HEADER_UPNPORGCONNECTIONMANAGER1_C
 
 #include <OsTypes.h>
+#include <OhNetDefines.h>
 #include <C/Async.h>
 #include <C/OhNet.h>
 #include <C/CpDevice.h>
@@ -29,7 +30,7 @@ extern "C" {
  *
  * @return  Handle which should be used with all other functions in this header
  */
-DllExport THandle CpProxyUpnpOrgConnectionManager1Create(CpDeviceC aDevice);
+DllExport THandle STDCALL CpProxyUpnpOrgConnectionManager1Create(CpDeviceC aDevice);
 /**
  * Destructor.
  * If any asynchronous method is in progress, this will block until they complete.
@@ -39,7 +40,7 @@ DllExport THandle CpProxyUpnpOrgConnectionManager1Create(CpDeviceC aDevice);
  *
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  */
-DllExport void CpProxyUpnpOrgConnectionManager1Destroy(THandle aHandle);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1Destroy(THandle aHandle);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -49,7 +50,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1Destroy(THandle aHandle);
  * @param[out] aSource
  * @param[out] aSink
  */
-DllExport void CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHandle, char** aSource, char** aSink);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHandle, char** aSource, char** aSink);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -61,7 +62,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHand
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -74,7 +75,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(THandle aHan
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aSource, char** aSink);
+DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aSource, char** aSink);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -89,7 +90,7 @@ DllExport int32_t CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(THandle aHa
  * @param[out] aAVTransportID
  * @param[out] aRcsID
  */
-DllExport void CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -105,7 +106,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgConnectionManager1BeginPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1BeginPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -119,7 +120,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1BeginPrepareForConnection(THandle
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgConnectionManager1EndPrepareForConnection(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID);
+DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndPrepareForConnection(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -128,7 +129,7 @@ DllExport int32_t CpProxyUpnpOrgConnectionManager1EndPrepareForConnection(THandl
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[in]  aConnectionID
  */
-DllExport void CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(THandle aHandle, int32_t aConnectionID);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(THandle aHandle, int32_t aConnectionID);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -141,7 +142,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(THandle aH
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgConnectionManager1BeginConnectionComplete(THandle aHandle, int32_t aConnectionID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1BeginConnectionComplete(THandle aHandle, int32_t aConnectionID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -152,7 +153,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1BeginConnectionComplete(THandle a
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgConnectionManager1EndConnectionComplete(THandle aHandle, OhNetHandleAsync aAsync);
+DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndConnectionComplete(THandle aHandle, OhNetHandleAsync aAsync);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -161,7 +162,7 @@ DllExport int32_t CpProxyUpnpOrgConnectionManager1EndConnectionComplete(THandle 
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[out] aConnectionIDs
  */
-DllExport void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THandle aHandle, char** aConnectionIDs);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THandle aHandle, char** aConnectionIDs);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -173,7 +174,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THand
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionIDs(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionIDs(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -185,7 +186,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionIDs(THan
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionIDs(THandle aHandle, OhNetHandleAsync aAsync, char** aConnectionIDs);
+DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionIDs(THandle aHandle, OhNetHandleAsync aAsync, char** aConnectionIDs);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -201,7 +202,7 @@ DllExport int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionIDs(THa
  * @param[out] aDirection
  * @param[out] aStatus
  */
-DllExport void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -214,7 +215,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THan
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -232,7 +233,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionInfo(THa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionInfo(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus);
+DllExport int32_t STDCALL CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionInfo(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus);
 /**
  * Set a callback to be run when the SourceProtocolInfo state variable changes.
  *
@@ -243,7 +244,7 @@ DllExport int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionInfo(TH
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgConnectionManager1SetPropertySourceProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SetPropertySourceProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the SinkProtocolInfo state variable changes.
  *
@@ -254,7 +255,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1SetPropertySourceProtocolInfoChan
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgConnectionManager1SetPropertySinkProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SetPropertySinkProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the CurrentConnectionIDs state variable changes.
  *
@@ -265,7 +266,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1SetPropertySinkProtocolInfoChange
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDsChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the SourceProtocolInfo property.
@@ -276,7 +277,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDsCh
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[out] aSourceProtocolInfo
  */
-DllExport void CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInfo(THandle aHandle, char** aSourceProtocolInfo);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInfo(THandle aHandle, char** aSourceProtocolInfo);
 /**
  * Query the value of the SinkProtocolInfo property.
  *
@@ -286,7 +287,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInfo(THandl
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[out] aSinkProtocolInfo
  */
-DllExport void CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(THandle aHandle, char** aSinkProtocolInfo);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(THandle aHandle, char** aSinkProtocolInfo);
 /**
  * Query the value of the CurrentConnectionIDs property.
  *
@@ -296,7 +297,7 @@ DllExport void CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(THandle 
  * @param[in]  aHandle   Handle returned by CpProxyUpnpOrgConnectionManager1Create
  * @param[out] aCurrentConnectionIDs
  */
-DllExport void CpProxyUpnpOrgConnectionManager1PropertyCurrentConnectionIDs(THandle aHandle, char** aCurrentConnectionIDs);
+DllExport void STDCALL CpProxyUpnpOrgConnectionManager1PropertyCurrentConnectionIDs(THandle aHandle, char** aCurrentConnectionIDs);
 
 /* @} */
 

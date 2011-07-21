@@ -6,7 +6,7 @@
 using namespace OpenHome;
 using namespace OpenHome::Net;
 
-CpDeviceC CpDeviceDvCreate(DvDeviceC aDevice)
+CpDeviceC STDCALL CpDeviceDvCreate(DvDeviceC aDevice)
 {
     DvDevice* dv = DviDeviceC::DeviceFromHandle(aDevice);
     CpiDeviceDv* cp = new CpiDeviceDv(dv->Device());

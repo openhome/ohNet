@@ -86,6 +86,24 @@ PCPIN_DESCRIPTOR MiniportPins[] =
 };
 
 //=============================================================================
+extern KSJACK_DESCRIPTION JackDescSpeakers;
+
+KSJACK_DESCRIPTION2 JackCapsSpeakers = 
+{
+	0,
+	JACKDESC2_PRESENCE_DETECT_CAPABILITY
+};
+
+// One entry per miniport pin, jacks go on the outside
+
+static 
+PKSJACK_DESCRIPTION JackDescriptions[] =
+{
+	NULL,
+    &JackDescSpeakers
+};
+
+//=============================================================================
 static
 PCPROPERTY_ITEM PropertiesMute[] =
 {
@@ -138,10 +156,24 @@ PCCONNECTION_DESCRIPTOR MiniportConnections[] =
 
 //=============================================================================
 static
+PCPROPERTY_ITEM PropertiesTopoFilter[] =
+{
+    {
+        &KSPROPSETID_Jack,
+        KSPROPERTY_JACK_DESCRIPTION,
+        KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
+        PropertyHandler_TopoFilter
+    }
+};
+
+DEFINE_PCAUTOMATION_TABLE_PROP(AutomationTopoFilter, PropertiesTopoFilter);
+
+//=============================================================================
+static
 PCFILTER_DESCRIPTOR MiniportFilterDescriptor =
 {
   0,                                  // Version
-  NULL,                               // AutomationTable
+  &AutomationTopoFilter,              // AutomationTable
   sizeof(PCPIN_DESCRIPTOR),           // PinSize
   SIZEOF_ARRAY(MiniportPins),         // PinCount
   MiniportPins,                       // Pins
