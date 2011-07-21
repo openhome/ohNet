@@ -9,7 +9,7 @@
 #include <OpenHome/Net/C/CpDevice.h>
 #include <OpenHome/Net/C/CpDeviceDv.h>
 #include <OpenHome/Private/Debug.h>
-#include "..\..\Device\Tests\TestBasicDv.h"
+#include "../../Device/Tests/TestBasicDv.h"
 #include "TestBasicCp.h"
 
 using namespace OpenHome;

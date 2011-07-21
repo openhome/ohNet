@@ -5,7 +5,7 @@
 #include <OpenHome/Net/Cpp/CpDevice.h>
 #include <OpenHome/Net/Cpp/CpDeviceUpnp.h>
 #include "TestBasicDv.h"
-#include "..\..\ControlPoint\Tests\TestBasicCp.h"
+#include "../../ControlPoint/Tests/TestBasicCp.h"
 #include <OpenHome/Net/Cpp/DvDevice.h>
 
 #include <string>

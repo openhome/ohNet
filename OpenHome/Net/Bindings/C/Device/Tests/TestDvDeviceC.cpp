@@ -16,7 +16,7 @@
 #include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Private/Debug.h>
 #include "TestBasicDv.h"
-#include "..\..\ControlPoint\Tests\TestBasicCp.h"
+#include "../../ControlPoint/Tests/TestBasicCp.h"
 
 #include <stdlib.h>
 #include <string.h>

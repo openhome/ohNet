@@ -3,7 +3,7 @@
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Net/Cpp/CpDeviceDv.h>
-#include "..\..\Device\Tests\TestBasicDv.h"
+#include "../../Device/Tests/TestBasicDv.h"
 #include "TestBasicCp.h"
 
 #include <string>
