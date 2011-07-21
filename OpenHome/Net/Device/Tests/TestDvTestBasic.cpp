@@ -1,11 +1,8 @@
 #include <OpenHome/Private/TestFramework.h>
 #include <OpenHome/Private/OptionParser.h>
-#include <OpenHome/OhNetTypes.h>
-#include <OpenHome/Net/Core/DvDevice.h>
+#include <OpenHome/Net/Core/DvStack.h>
 #include <OpenHome/Net/Core/DvOpenhomeOrgTestBasic1.h>
 #include <OpenHome/Net/Core/CpOpenhomeOrgTestBasic1.h>
-#include <OpenHome/Net/Core/OhNet.h>
-#include <OpenHome/MimeTypes.h>
 
 #include <stdlib.h>
 #include <vector>

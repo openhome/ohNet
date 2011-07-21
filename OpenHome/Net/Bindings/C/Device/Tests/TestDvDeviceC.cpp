@@ -6,13 +6,11 @@
 #include <OpenHome/Net/C/OhNet.h>
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Private/TestFramework.h>
+#include <OpenHome/Net/C/CpStack.h>
+#include <OpenHome/Net/C/DvStack.h>
 #include <OpenHome/Net/Private/DviDevice.h>
-#include <OpenHome/Net/C/DvProvider.h>
 #include <OpenHome/Net/C/DvOpenhomeOrgTestBasic1.h>
-#include <OpenHome/Net/C/CpProxy.h>
 #include <OpenHome/Net/C/CpOpenhomeOrgTestBasic1.h>
-#include <OpenHome/Net/C/CpDevice.h>
-#include <OpenHome/Net/C/CpDeviceUpnp.h>
 #include <OpenHome/Private/Ascii.h>
 #include <OpenHome/Private/Maths.h>
 #include <OpenHome/Net/Private/Stack.h>
