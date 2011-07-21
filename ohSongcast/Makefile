@@ -27,10 +27,10 @@ endif
 
 ar = ${CROSS_COMPILE}ar rc $(objdir)
 cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_flags) -fvisibility=hidden -DDllImport="__attribute__ ((visibility(\"default\")))" -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))" $(platform_cflags)
-ohnetdir = ../Upnp/Build/Obj/$(osdir)/$(build_dir)/
+ohnetdir = ../Build/Obj/$(osdir)/$(build_dir)/
 objdir = Build/Obj/$(osdir)/$(build_dir)/
 inc_build = Build/Include/
-includes = -I../Upnp/Build/Include/ -I../Upnp/Build/Include/Cpp/
+includes = -I../Build/Include/
 objext = o
 libprefix = lib
 libext = a

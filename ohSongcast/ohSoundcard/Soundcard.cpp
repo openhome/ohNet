@@ -1,7 +1,7 @@
 #include "Soundcard.h"
 #include "Icon.h"
 
-#include <Debug.h>
+#include <OpenHome/Private/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
