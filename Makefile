@@ -59,6 +59,7 @@ dllext = so
 link_dll = ${CROSS_COMPILE}g++ -lpthread  $(platform_linkflags) -shared -shared-libgcc
 link_dll_service = ${CROSS_COMPILE}g++ -lpthread  $(platform_linkflags) -shared -shared-libgcc -lohNet -L$(objdir)
 csharp = gmcs /nologo
+publicjavadir = Public/Java/
 dirsep = /
 prefix = /usr/local
 installlibdir = $(prefix)/lib/ohNet
@@ -233,6 +234,13 @@ uninstall-libs :
 
 uninstall-includes :
 	rm -rf $(installincludedir)
+
+java_packages = ohnet \
+				openhome.net.controlpoint \
+				openhome.net.controlpoint.proxies \
+				openhome.net.core \
+				org.openhome.net.device \
+				org.openhome.net.test \
 
 docs:
 	rm -rf Build/Docs

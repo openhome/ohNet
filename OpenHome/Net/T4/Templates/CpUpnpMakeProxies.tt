@@ -44,6 +44,12 @@ proxy_dotnet_assemblies_with_path = \
         $(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
 <#  } #>
 
+proxy_java_classes_with_path = \
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+        $(proxyjavadir)CpProxy<#=FilePrefixTypeAndVersion(s)#>.class \
+<#  } #>
+
 
 proxies : ohNetCore $(objects_proxies)
 	$(ar)$(libprefix)ohNetProxies.$(libext) $(objects_proxies)
@@ -83,6 +89,16 @@ $(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll: $(objdir)ohNet.net.dll $(pr
 		/out:$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
 		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
+<# } #>
+
+# Proxy classes for Java:
+
+CpProxyJavaClasses: $(proxy_java_classes_with_path)
+
+<# foreach (Service s in u.iServices) #>
+<# { #>
+$(proxyjavadir)CpProxy<#=FilePrefixTypeAndVersion(s)#>.class : $(objdir)ohnet.jar $(proxyJava)CpProxy<#=FilePrefixTypeAndVersion(s)#>.java
+	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxy<#=FilePrefixTypeAndVersion(s)#>.java
 <# } #>
 
 <#+

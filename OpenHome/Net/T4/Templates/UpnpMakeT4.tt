@@ -13,7 +13,7 @@
 
 GenAll: AllCp AllDv
 
-AllCp: CpCppCore CpCppStd CpC CpCs CpJs
+AllCp: CpCppCore CpCppStd CpC CpCs CpJava CpJs
 
 AllDv: DvCppCore DvCppStd DvC DvCs
 
@@ -52,6 +52,15 @@ CpCs:  <# foreach (Service s in u.iServices) { #> $(proxyCs)Cp<#=FilePrefix(s)#>
 $(proxyCs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs : $(tt) OpenHome/Net/T4/Templates/CpUpnpCs.tt <#=ServiceXmlPath(s)#>
 	echo Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs
 	$(ohNetGen) --language=cs --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyCs) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+<#  } #>
+
+CpJava:  <# foreach (Service s in u.iServices) { #> $(proxyJava)CpProxy<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.java<# } #>
+
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+$(proxyJava)CpProxy<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt <#=ServiceXmlPath(s)#>
+	echo CpProxy<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.java
+	$(ohNetGen) --language=java --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyJava) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
 <#  } #>
 
 CpJs:  <# foreach (Service s in u.iServices) { #> $(proxyJs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.js<# } #>

@@ -5,7 +5,7 @@
 
 GenAll: AllCp AllDv
 
-AllCp: CpCppCore CpCppStd CpC CpCs CpJs
+AllCp: CpCppCore CpCppStd CpC CpCs CpJava CpJs
 
 AllDv: DvCppCore DvCppStd DvC DvCs
 
@@ -293,6 +293,77 @@ $(proxyCs)CpOpenhomeOrgTestBasic1.cs : $(tt) OpenHome/Net/T4/Templates/CpUpnpCs.
 $(proxyCs)CpOpenhomeOrgTestLights1.cs : $(tt) OpenHome/Net/T4/Templates/CpUpnpCs.tt OpenHome/Net/Service/Upnp/OpenHome/Test/TestLights1.xml
 	echo CpOpenhomeOrgTestLights1.cs
 	$(ohNetGen) --language=cs --stack=cp "--xml=OpenHome/Net/Service/Upnp/OpenHome/Test/TestLights1.xml" --output=$(proxyCs) --domain=openhome.org --type=TestLights --version=1
+
+CpJava:   $(proxyJava)CpProxyUpnpOrgAVTransport1.java $(proxyJava)CpProxyUpnpOrgAVTransport2.java $(proxyJava)CpProxyUpnpOrgConnectionManager1.java $(proxyJava)CpProxyUpnpOrgConnectionManager2.java $(proxyJava)CpProxyUpnpOrgContentDirectory1.java $(proxyJava)CpProxyUpnpOrgContentDirectory2.java $(proxyJava)CpProxyUpnpOrgContentDirectory3.java $(proxyJava)CpProxyUpnpOrgRenderingControl1.java $(proxyJava)CpProxyUpnpOrgRenderingControl2.java $(proxyJava)CpProxyUpnpOrgScheduledRecording1.java $(proxyJava)CpProxyUpnpOrgScheduledRecording2.java $(proxyJava)CpProxyUpnpOrgSwitchPower1.java $(proxyJava)CpProxyUpnpOrgDimming1.java $(proxyJava)CpProxyAvOpenhomeOrgInfo1.java $(proxyJava)CpProxyAvOpenhomeOrgTime1.java $(proxyJava)CpProxyAvOpenhomeOrgPlaylist1.java $(proxyJava)CpProxyAvOpenhomeOrgVolume1.java $(proxyJava)CpProxyAvOpenhomeOrgProduct1.java $(proxyJava)CpProxyAvOpenhomeOrgRadio1.java $(proxyJava)CpProxyAvOpenhomeOrgReceiver1.java $(proxyJava)CpProxyAvOpenhomeOrgSender1.java $(proxyJava)CpProxyOpenhomeOrgTestBasic1.java $(proxyJava)CpProxyOpenhomeOrgTestLights1.java
+$(proxyJava)CpProxyUpnpOrgAVTransport1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/AVTransport1.xml
+	echo CpProxyUpnpOrgAVTransport1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/AVTransport1.xml" --output=$(proxyJava) --domain=upnp.org --type=AVTransport --version=1
+$(proxyJava)CpProxyUpnpOrgAVTransport2.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/AVTransport2.xml
+	echo CpProxyUpnpOrgAVTransport2.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/AVTransport2.xml" --output=$(proxyJava) --domain=upnp.org --type=AVTransport --version=2
+$(proxyJava)CpProxyUpnpOrgConnectionManager1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ConnectionManager1.xml
+	echo CpProxyUpnpOrgConnectionManager1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ConnectionManager1.xml" --output=$(proxyJava) --domain=upnp.org --type=ConnectionManager --version=1
+$(proxyJava)CpProxyUpnpOrgConnectionManager2.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ConnectionManager2.xml
+	echo CpProxyUpnpOrgConnectionManager2.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ConnectionManager2.xml" --output=$(proxyJava) --domain=upnp.org --type=ConnectionManager --version=2
+$(proxyJava)CpProxyUpnpOrgContentDirectory1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ContentDirectory1.xml
+	echo CpProxyUpnpOrgContentDirectory1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ContentDirectory1.xml" --output=$(proxyJava) --domain=upnp.org --type=ContentDirectory --version=1
+$(proxyJava)CpProxyUpnpOrgContentDirectory2.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ContentDirectory2.xml
+	echo CpProxyUpnpOrgContentDirectory2.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ContentDirectory2.xml" --output=$(proxyJava) --domain=upnp.org --type=ContentDirectory --version=2
+$(proxyJava)CpProxyUpnpOrgContentDirectory3.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ContentDirectory3.xml
+	echo CpProxyUpnpOrgContentDirectory3.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ContentDirectory3.xml" --output=$(proxyJava) --domain=upnp.org --type=ContentDirectory --version=3
+$(proxyJava)CpProxyUpnpOrgRenderingControl1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/RenderingControl1.xml
+	echo CpProxyUpnpOrgRenderingControl1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/RenderingControl1.xml" --output=$(proxyJava) --domain=upnp.org --type=RenderingControl --version=1
+$(proxyJava)CpProxyUpnpOrgRenderingControl2.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/RenderingControl2.xml
+	echo CpProxyUpnpOrgRenderingControl2.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/RenderingControl2.xml" --output=$(proxyJava) --domain=upnp.org --type=RenderingControl --version=2
+$(proxyJava)CpProxyUpnpOrgScheduledRecording1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ScheduledRecording1.xml
+	echo CpProxyUpnpOrgScheduledRecording1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ScheduledRecording1.xml" --output=$(proxyJava) --domain=upnp.org --type=ScheduledRecording --version=1
+$(proxyJava)CpProxyUpnpOrgScheduledRecording2.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ScheduledRecording2.xml
+	echo CpProxyUpnpOrgScheduledRecording2.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ScheduledRecording2.xml" --output=$(proxyJava) --domain=upnp.org --type=ScheduledRecording --version=2
+$(proxyJava)CpProxyUpnpOrgSwitchPower1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/LightingControls_1/SwitchPower1.xml
+	echo CpProxyUpnpOrgSwitchPower1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/Upnp/LightingControls_1/SwitchPower1.xml" --output=$(proxyJava) --domain=upnp.org --type=SwitchPower --version=1
+$(proxyJava)CpProxyUpnpOrgDimming1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/LightingControls_1/Dimming1.xml
+	echo CpProxyUpnpOrgDimming1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/Upnp/LightingControls_1/Dimming1.xml" --output=$(proxyJava) --domain=upnp.org --type=Dimming --version=1
+$(proxyJava)CpProxyAvOpenhomeOrgInfo1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Info1.xml
+	echo CpProxyAvOpenhomeOrgInfo1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/OpenHome/Info1.xml" --output=$(proxyJava) --domain=av.openhome.org --type=Info --version=1
+$(proxyJava)CpProxyAvOpenhomeOrgTime1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Time1.xml
+	echo CpProxyAvOpenhomeOrgTime1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/OpenHome/Time1.xml" --output=$(proxyJava) --domain=av.openhome.org --type=Time --version=1
+$(proxyJava)CpProxyAvOpenhomeOrgPlaylist1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Playlist1.xml
+	echo CpProxyAvOpenhomeOrgPlaylist1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/OpenHome/Playlist1.xml" --output=$(proxyJava) --domain=av.openhome.org --type=Playlist --version=1
+$(proxyJava)CpProxyAvOpenhomeOrgVolume1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Volume1.xml
+	echo CpProxyAvOpenhomeOrgVolume1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/OpenHome/Volume1.xml" --output=$(proxyJava) --domain=av.openhome.org --type=Volume --version=1
+$(proxyJava)CpProxyAvOpenhomeOrgProduct1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Product1.xml
+	echo CpProxyAvOpenhomeOrgProduct1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/OpenHome/Product1.xml" --output=$(proxyJava) --domain=av.openhome.org --type=Product --version=1
+$(proxyJava)CpProxyAvOpenhomeOrgRadio1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Radio1.xml
+	echo CpProxyAvOpenhomeOrgRadio1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/OpenHome/Radio1.xml" --output=$(proxyJava) --domain=av.openhome.org --type=Radio --version=1
+$(proxyJava)CpProxyAvOpenhomeOrgReceiver1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Receiver1.xml
+	echo CpProxyAvOpenhomeOrgReceiver1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/OpenHome/Receiver1.xml" --output=$(proxyJava) --domain=av.openhome.org --type=Receiver --version=1
+$(proxyJava)CpProxyAvOpenhomeOrgSender1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Sender1.xml
+	echo CpProxyAvOpenhomeOrgSender1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/OpenHome/Sender1.xml" --output=$(proxyJava) --domain=av.openhome.org --type=Sender --version=1
+$(proxyJava)CpProxyOpenhomeOrgTestBasic1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Test/TestBasic1.xml
+	echo CpProxyOpenhomeOrgTestBasic1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/OpenHome/Test/TestBasic1.xml" --output=$(proxyJava) --domain=openhome.org --type=TestBasic --version=1
+$(proxyJava)CpProxyOpenhomeOrgTestLights1.java : $(tt) OpenHome/Net/T4/Templates/CpUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Test/TestLights1.xml
+	echo CpProxyOpenhomeOrgTestLights1.java
+	$(ohNetGen) --language=java --stack=cp "--xml=OpenHome/Net/Service/Upnp/OpenHome/Test/TestLights1.xml" --output=$(proxyJava) --domain=openhome.org --type=TestLights --version=1
 
 CpJs:   $(proxyJs)CpUpnpOrgAVTransport1.js $(proxyJs)CpUpnpOrgAVTransport2.js $(proxyJs)CpUpnpOrgConnectionManager1.js $(proxyJs)CpUpnpOrgConnectionManager2.js $(proxyJs)CpUpnpOrgContentDirectory1.js $(proxyJs)CpUpnpOrgContentDirectory2.js $(proxyJs)CpUpnpOrgContentDirectory3.js $(proxyJs)CpUpnpOrgRenderingControl1.js $(proxyJs)CpUpnpOrgRenderingControl2.js $(proxyJs)CpUpnpOrgScheduledRecording1.js $(proxyJs)CpUpnpOrgScheduledRecording2.js $(proxyJs)CpUpnpOrgSwitchPower1.js $(proxyJs)CpUpnpOrgDimming1.js $(proxyJs)CpAvOpenhomeOrgInfo1.js $(proxyJs)CpAvOpenhomeOrgTime1.js $(proxyJs)CpAvOpenhomeOrgPlaylist1.js $(proxyJs)CpAvOpenhomeOrgVolume1.js $(proxyJs)CpAvOpenhomeOrgProduct1.js $(proxyJs)CpAvOpenhomeOrgRadio1.js $(proxyJs)CpAvOpenhomeOrgReceiver1.js $(proxyJs)CpAvOpenhomeOrgSender1.js $(proxyJs)CpOpenhomeOrgTestBasic1.js $(proxyJs)CpOpenhomeOrgTestLights1.js
 $(proxyJs)CpUpnpOrgAVTransport1.js : $(tt) OpenHome/Net/T4/Templates/CpUpnpJs.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/AVTransport1.xml

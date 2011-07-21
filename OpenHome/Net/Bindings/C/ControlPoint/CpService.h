@@ -244,7 +244,7 @@ DllExport uint32_t STDCALL ActionArgumentValueUint(ActionArgument aArgument);
  *
  * @param[in] aArgument  Returned by ActionArgumentCreateBoolOutput
  *
- * @return  Current value of the argument.  0 for false; none-zero for true
+ * @return  Current value of the argument.  0 for false; non-zero for true
  */
 DllExport uint32_t STDCALL ActionArgumentValueBool(ActionArgument aArgument);
 
@@ -300,7 +300,7 @@ DllExport void STDCALL CpInvocationAddOutput(CpInvocationC aInvocation, ActionAr
  *
  * @param[in] aInvocation  Returned by CpServiceInvocation
  *
- * @return  0 for success; none-zero for error
+ * @return  0 for success; non-zero for error
  */
 DllExport uint32_t STDCALL CpInvocationError(CpInvocationC aInvocation);
 
@@ -330,7 +330,7 @@ DllExport uint32_t STDCALL CpInvocationOutputUint(CpInvocationC aInvocation, uin
  * @param[in] aInvocation  Returned by CpServiceInvocation
  * @param[in] aIndex       Zero-based index into array of output arguments.  Must refer to a boolean argument.
  *
- * @return  Value of the boolean output argument.  0 for false; none-zero for true
+ * @return  Value of the boolean output argument.  0 for false; non-zero for true
  */
 DllExport uint32_t STDCALL CpInvocationOutputBool(CpInvocationC aInvocation, uint32_t aIndex);
 
