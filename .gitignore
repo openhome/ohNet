@@ -5,11 +5,11 @@
 *.suo
 _ReSharper.*
 
-/Upnp/*.sbr
-/Upnp/Build/
-/Upnp/vgout/
-/Upnp/hgout/
-/Upnp/xout/
+/*.sbr
+/Build/
+/vgout/
+/hgout/
+/xout/
 /ZappSender/Build/
 /ohSongcast/Build/
 

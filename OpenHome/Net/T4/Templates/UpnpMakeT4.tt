@@ -1,0 +1,166 @@
+<#@ assembly name="UpnpServiceMake.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
+<#@ template language="C#" #>
+<#
+	Document u = new Document(TemplateArgument("xml"));
+#>
+# Auto-generated file.  DO NOT EDIT DIRECTLY
+# Update UpnpMakeT4.tt and run 
+#    make generate-makefiles
+# to apply any updates
+
+GenAll: AllCp AllDv
+
+AllCp: CpCppCore CpCppStd CpC CpCs CpJs
+
+AllDv: DvCppCore DvCppStd DvC DvCs
+
+
+CpCppCore:  <# foreach (Service s in u.iServices) { #> $(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp<# } #>
+
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+$(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp : $(tt) OpenHome/Net/T4/Templates/CpUpnpCppBufferSource.tt OpenHome/Net/T4/Templates/CpUpnpCppHeader.tt <#=ServiceXmlPath(s)#>
+	echo Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
+	$(ohNetGen) --language=cppcore --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyCppCore) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+<#  } #>
+
+CpCppStd:  <# foreach (Service s in u.iServices) { #> $(proxyCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp<# } #>
+
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+$(proxyCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp : $(tt) OpenHome/Net/T4/Templates/CpUpnpCppStringSource.tt OpenHome/Net/T4/Templates/CpUpnpCppHeader.tt <#=ServiceXmlPath(s)#>
+	echo Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
+	$(ohNetGen) --language=cpp --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyCppStd) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+<#  } #>
+
+CpC:  <# foreach (Service s in u.iServices) { #> $(proxyC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp<# } #>
+
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+$(proxyC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp : $(tt) OpenHome/Net/T4/Templates/CpUpnpCSource.tt OpenHome/Net/T4/Templates/CpUpnpCHeader.tt <#=ServiceXmlPath(s)#>
+	echo Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
+	$(ohNetGen) --language=c --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyC) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+<#  } #>
+
+CpCs:  <# foreach (Service s in u.iServices) { #> $(proxyCs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs<# } #>
+
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+$(proxyCs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs : $(tt) OpenHome/Net/T4/Templates/CpUpnpCs.tt <#=ServiceXmlPath(s)#>
+	echo Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs
+	$(ohNetGen) --language=cs --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyCs) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+<#  } #>
+
+CpJs:  <# foreach (Service s in u.iServices) { #> $(proxyJs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.js<# } #>
+
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+$(proxyJs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.js : $(tt) OpenHome/Net/T4/Templates/CpUpnpJs.tt <#=ServiceXmlPath(s)#>
+	echo Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.js
+	$(ohNetGen) --language=js --stack=cp "--xml=<#=ServiceXmlPath(s)#>" --output=$(proxyJs) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+<#  } #>
+
+DvCppCore :  <# foreach (Service s in u.iServices) { #> $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp<# } #>
+
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+$(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp : $(tt) OpenHome/Net/T4/Templates/DvUpnpCppCoreSource.tt OpenHome/Net/T4/Templates/DvUpnpCppCoreHeader.tt <#=ServiceXmlPath(s)#>
+	echo Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
+	$(ohNetGen) --language=cppcore --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceCppCore) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+<#  } #>
+
+DvCppStd :  <# foreach (Service s in u.iServices) { #> $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp<# } #>
+
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+$(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp : $(tt) OpenHome/Net/T4/Templates/DvUpnpCppStdSource.tt OpenHome/Net/T4/Templates/DvUpnpCppStdHeader.tt <#=ServiceXmlPath(s)#>
+	echo Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
+	$(ohNetGen) --language=cpp --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceCppStd) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+<#  } #>
+
+DvC :  <# foreach (Service s in u.iServices) { #> $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp<# } #>
+
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+$(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp : $(tt) OpenHome/Net/T4/Templates/DvUpnpCSource.tt OpenHome/Net/T4/Templates/DvUpnpCHeader.tt <#=ServiceXmlPath(s)#>
+	echo Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
+	$(ohNetGen) --language=c --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceC) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+<#  } #>
+
+DvCs:  <# foreach (Service s in u.iServices) { #> $(deviceCs)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs<# } #>
+
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+$(deviceCs)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs : $(tt) OpenHome/Net/T4/Templates/DvUpnpCs.tt <#=ServiceXmlPath(s)#>
+	echo Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs
+	$(ohNetGen) --language=cs --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceCs) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+<#  } #>
+
+<#+
+string FilePrefix(Service s)
+{
+    string prefix = "";
+    char[] charSeparators = new char[] {'.'};
+    string[] res = s.iDomain.Split(charSeparators, StringSplitOptions.None);
+    foreach (string str in res)
+    {
+        prefix += str.Substring(0, 1).ToUpper();
+        if (str.Length > 1)
+        {
+            prefix += str.Substring(1, str.Length-1);
+        }
+    }
+    return prefix;
+}
+
+string DcpDir(Service s)
+{
+    string dir = "";
+    if (s.iDcpDir.Length > 0)
+    {
+        dir = s.iDcpDir + "/";
+    }
+    return dir;
+}
+
+string ServiceXmlPath(Service s)
+{
+    return String.Format("OpenHome/Net/Service/Upnp/{0}/{1}{2}{3}.xml", s.iPublisher, DcpDir(s), s.iType, s.iVersion);
+}
+
+string TemplateArgument(string aName)
+{
+	string[] args =  System.Environment.GetCommandLineArgs();
+		
+	bool isarg = false;
+	
+	foreach (string arg in args)
+	{
+		if (isarg)
+		{
+			string[] parts = arg.Split(new char[] {':'});
+			
+			if (parts.Length == 2)
+			{
+				if (parts[0] == aName)
+				{
+					return (parts[1]);
+				}
+			}
+			
+			isarg = false;
+			continue;
+		}
+		
+		if (arg == "-a")
+		{
+			isarg = true;
+		}
+	}
+	
+	throw (new ArgumentException(aName + " not specified"));
+}
+#>
