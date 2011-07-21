@@ -44,12 +44,12 @@ private:
 };
 
 
-static void added(void* aPtr, CpDeviceC aDevice)
+static void STDCALL added(void* aPtr, CpDeviceC aDevice)
 {
     reinterpret_cast<DeviceList*>(aPtr)->Added(aDevice);
 }
 
-static void removed(void* aPtr, CpDeviceC aDevice)
+static void STDCALL removed(void* aPtr, CpDeviceC aDevice)
 {
     reinterpret_cast<DeviceList*>(aPtr)->Removed(aDevice);
 }

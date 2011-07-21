@@ -5,6 +5,7 @@
 #define HEADER_AVOPENHOMEORGSENDER1_C
 
 #include <OsTypes.h>
+#include <OhNetDefines.h>
 #include <C/Async.h>
 #include <C/OhNet.h>
 #include <C/CpDevice.h>
@@ -29,7 +30,7 @@ extern "C" {
  *
  * @return  Handle which should be used with all other functions in this header
  */
-DllExport THandle CpProxyAvOpenhomeOrgSender1Create(CpDeviceC aDevice);
+DllExport THandle STDCALL CpProxyAvOpenhomeOrgSender1Create(CpDeviceC aDevice);
 /**
  * Destructor.
  * If any asynchronous method is in progress, this will block until they complete.
@@ -39,7 +40,7 @@ DllExport THandle CpProxyAvOpenhomeOrgSender1Create(CpDeviceC aDevice);
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  */
-DllExport void CpProxyAvOpenhomeOrgSender1Destroy(THandle aHandle);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1Destroy(THandle aHandle);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -48,7 +49,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1Destroy(THandle aHandle);
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aValue
  */
-DllExport void CpProxyAvOpenhomeOrgSender1SyncPresentationUrl(THandle aHandle, char** aValue);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1SyncPresentationUrl(THandle aHandle, char** aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -60,7 +61,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1SyncPresentationUrl(THandle aHandle, c
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgSender1BeginPresentationUrl(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1BeginPresentationUrl(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -72,7 +73,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1BeginPresentationUrl(THandle aHandle, 
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgSender1EndPresentationUrl(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndPresentationUrl(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -81,7 +82,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgSender1EndPresentationUrl(THandle aHandle,
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aValue
  */
-DllExport void CpProxyAvOpenhomeOrgSender1SyncMetadata(THandle aHandle, char** aValue);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1SyncMetadata(THandle aHandle, char** aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -93,7 +94,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1SyncMetadata(THandle aHandle, char** a
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgSender1BeginMetadata(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1BeginMetadata(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -105,7 +106,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1BeginMetadata(THandle aHandle, OhNetCa
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgSender1EndMetadata(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndMetadata(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -114,7 +115,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgSender1EndMetadata(THandle aHandle, OhNetH
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aValue
  */
-DllExport void CpProxyAvOpenhomeOrgSender1SyncAudio(THandle aHandle, uint32_t* aValue);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1SyncAudio(THandle aHandle, uint32_t* aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -126,7 +127,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1SyncAudio(THandle aHandle, uint32_t* a
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgSender1BeginAudio(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1BeginAudio(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -138,7 +139,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1BeginAudio(THandle aHandle, OhNetCallb
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgSender1EndAudio(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndAudio(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -147,7 +148,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgSender1EndAudio(THandle aHandle, OhNetHand
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aValue
  */
-DllExport void CpProxyAvOpenhomeOrgSender1SyncStatus(THandle aHandle, char** aValue);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1SyncStatus(THandle aHandle, char** aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -159,7 +160,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1SyncStatus(THandle aHandle, char** aVa
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgSender1BeginStatus(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1BeginStatus(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -171,7 +172,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1BeginStatus(THandle aHandle, OhNetCall
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgSender1EndStatus(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndStatus(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -180,7 +181,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgSender1EndStatus(THandle aHandle, OhNetHan
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aValue
  */
-DllExport void CpProxyAvOpenhomeOrgSender1SyncAttributes(THandle aHandle, char** aValue);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1SyncAttributes(THandle aHandle, char** aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -192,7 +193,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1SyncAttributes(THandle aHandle, char**
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgSender1BeginAttributes(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1BeginAttributes(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -204,7 +205,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1BeginAttributes(THandle aHandle, OhNet
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgSender1EndAttributes(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgSender1EndAttributes(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
 /**
  * Set a callback to be run when the PresentationUrl state variable changes.
  *
@@ -215,7 +216,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgSender1EndAttributes(THandle aHandle, OhNe
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgSender1SetPropertyPresentationUrlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1SetPropertyPresentationUrlChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Metadata state variable changes.
  *
@@ -226,7 +227,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1SetPropertyPresentationUrlChanged(THan
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgSender1SetPropertyMetadataChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1SetPropertyMetadataChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Audio state variable changes.
  *
@@ -237,7 +238,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1SetPropertyMetadataChanged(THandle aHa
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgSender1SetPropertyAudioChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1SetPropertyAudioChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Status state variable changes.
  *
@@ -248,7 +249,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1SetPropertyAudioChanged(THandle aHandl
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgSender1SetPropertyStatusChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1SetPropertyStatusChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Attributes state variable changes.
  *
@@ -259,7 +260,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1SetPropertyStatusChanged(THandle aHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgSender1SetPropertyAttributesChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1SetPropertyAttributesChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the PresentationUrl property.
@@ -270,7 +271,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1SetPropertyAttributesChanged(THandle a
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aPresentationUrl
  */
-DllExport void CpProxyAvOpenhomeOrgSender1PropertyPresentationUrl(THandle aHandle, char** aPresentationUrl);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyPresentationUrl(THandle aHandle, char** aPresentationUrl);
 /**
  * Query the value of the Metadata property.
  *
@@ -280,7 +281,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1PropertyPresentationUrl(THandle aHandl
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aMetadata
  */
-DllExport void CpProxyAvOpenhomeOrgSender1PropertyMetadata(THandle aHandle, char** aMetadata);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyMetadata(THandle aHandle, char** aMetadata);
 /**
  * Query the value of the Audio property.
  *
@@ -290,7 +291,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1PropertyMetadata(THandle aHandle, char
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aAudio
  */
-DllExport void CpProxyAvOpenhomeOrgSender1PropertyAudio(THandle aHandle, uint32_t* aAudio);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyAudio(THandle aHandle, uint32_t* aAudio);
 /**
  * Query the value of the Status property.
  *
@@ -300,7 +301,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1PropertyAudio(THandle aHandle, uint32_
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aStatus
  */
-DllExport void CpProxyAvOpenhomeOrgSender1PropertyStatus(THandle aHandle, char** aStatus);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyStatus(THandle aHandle, char** aStatus);
 /**
  * Query the value of the Attributes property.
  *
@@ -310,7 +311,7 @@ DllExport void CpProxyAvOpenhomeOrgSender1PropertyStatus(THandle aHandle, char**
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgSender1Create
  * @param[out] aAttributes
  */
-DllExport void CpProxyAvOpenhomeOrgSender1PropertyAttributes(THandle aHandle, char** aAttributes);
+DllExport void STDCALL CpProxyAvOpenhomeOrgSender1PropertyAttributes(THandle aHandle, char** aAttributes);
 
 /* @} */
 

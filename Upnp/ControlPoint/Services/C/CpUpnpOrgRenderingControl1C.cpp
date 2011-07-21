@@ -2354,18 +2354,18 @@ void CpProxyUpnpOrgRenderingControl1C::LastChangePropertyChanged()
 }
 
 
-THandle CpProxyUpnpOrgRenderingControl1Create(CpDeviceC aDevice)
+THandle STDCALL CpProxyUpnpOrgRenderingControl1Create(CpDeviceC aDevice)
 {
     return new CpProxyUpnpOrgRenderingControl1C(aDevice);
 }
 
-void CpProxyUpnpOrgRenderingControl1Destroy(THandle aHandle)
+void STDCALL CpProxyUpnpOrgRenderingControl1Destroy(THandle aHandle)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     delete proxyC;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncListPresets(THandle aHandle, uint32_t aInstanceID, char** aCurrentPresetNameList)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncListPresets(THandle aHandle, uint32_t aInstanceID, char** aCurrentPresetNameList)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2374,7 +2374,7 @@ void CpProxyUpnpOrgRenderingControl1SyncListPresets(THandle aHandle, uint32_t aI
     *aCurrentPresetNameList = buf_aCurrentPresetNameList.Extract();
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginListPresets(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginListPresets(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2382,7 +2382,7 @@ void CpProxyUpnpOrgRenderingControl1BeginListPresets(THandle aHandle, uint32_t a
     proxyC->BeginListPresets(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndListPresets(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentPresetNameList)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndListPresets(THandle aHandle, OhNetHandleAsync aAsync, char** aCurrentPresetNameList)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2401,7 +2401,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndListPresets(THandle aHandle, OhNetHand
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2409,7 +2409,7 @@ void CpProxyUpnpOrgRenderingControl1SyncSelectPreset(THandle aHandle, uint32_t a
     proxyC->SyncSelectPreset(aInstanceID, buf_aPresetName);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2418,7 +2418,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSelectPreset(THandle aHandle, uint32_t 
     proxyC->BeginSelectPreset(aInstanceID, buf_aPresetName, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSelectPreset(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSelectPreset(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2434,14 +2434,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSelectPreset(THandle aHandle, OhNetHan
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBrightness)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBrightness)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetBrightness(aInstanceID, *aCurrentBrightness);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetBrightness(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetBrightness(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2449,7 +2449,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetBrightness(THandle aHandle, uint32_t
     proxyC->BeginGetBrightness(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetBrightness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBrightness)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetBrightness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBrightness)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2465,14 +2465,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetBrightness(THandle aHandle, OhNetHa
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetBrightness(aInstanceID, aDesiredBrightness);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2480,7 +2480,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetBrightness(THandle aHandle, uint32_t
     proxyC->BeginSetBrightness(aInstanceID, aDesiredBrightness, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetBrightness(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetBrightness(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2496,14 +2496,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetBrightness(THandle aHandle, OhNetHa
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentContrast)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentContrast)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetContrast(aInstanceID, *aCurrentContrast);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetContrast(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetContrast(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2511,7 +2511,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetContrast(THandle aHandle, uint32_t a
     proxyC->BeginGetContrast(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetContrast(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentContrast)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetContrast(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentContrast)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2527,14 +2527,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetContrast(THandle aHandle, OhNetHand
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetContrast(aInstanceID, aDesiredContrast);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2542,7 +2542,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetContrast(THandle aHandle, uint32_t a
     proxyC->BeginSetContrast(aInstanceID, aDesiredContrast, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetContrast(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetContrast(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2558,14 +2558,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetContrast(THandle aHandle, OhNetHand
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentSharpness)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentSharpness)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetSharpness(aInstanceID, *aCurrentSharpness);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetSharpness(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetSharpness(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2573,7 +2573,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetSharpness(THandle aHandle, uint32_t 
     proxyC->BeginGetSharpness(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetSharpness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentSharpness)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetSharpness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentSharpness)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2589,14 +2589,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetSharpness(THandle aHandle, OhNetHan
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetSharpness(aInstanceID, aDesiredSharpness);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2604,7 +2604,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetSharpness(THandle aHandle, uint32_t 
     proxyC->BeginSetSharpness(aInstanceID, aDesiredSharpness, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetSharpness(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetSharpness(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2620,14 +2620,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetSharpness(THandle aHandle, OhNetHan
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoGain)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoGain)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetRedVideoGain(aInstanceID, *aCurrentRedVideoGain);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2635,7 +2635,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetRedVideoGain(THandle aHandle, uint32
     proxyC->BeginGetRedVideoGain(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetRedVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentRedVideoGain)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetRedVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentRedVideoGain)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2651,14 +2651,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetRedVideoGain(THandle aHandle, OhNet
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetRedVideoGain(aInstanceID, aDesiredRedVideoGain);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2666,7 +2666,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetRedVideoGain(THandle aHandle, uint32
     proxyC->BeginSetRedVideoGain(aInstanceID, aDesiredRedVideoGain, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetRedVideoGain(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetRedVideoGain(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2682,14 +2682,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetRedVideoGain(THandle aHandle, OhNet
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoGain)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoGain)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetGreenVideoGain(aInstanceID, *aCurrentGreenVideoGain);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2697,7 +2697,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetGreenVideoGain(THandle aHandle, uint
     proxyC->BeginGetGreenVideoGain(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetGreenVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentGreenVideoGain)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetGreenVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentGreenVideoGain)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2713,14 +2713,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetGreenVideoGain(THandle aHandle, OhN
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetGreenVideoGain(aInstanceID, aDesiredGreenVideoGain);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2728,7 +2728,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetGreenVideoGain(THandle aHandle, uint
     proxyC->BeginSetGreenVideoGain(aInstanceID, aDesiredGreenVideoGain, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetGreenVideoGain(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetGreenVideoGain(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2744,14 +2744,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetGreenVideoGain(THandle aHandle, OhN
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoGain)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoGain)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetBlueVideoGain(aInstanceID, *aCurrentBlueVideoGain);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2759,7 +2759,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetBlueVideoGain(THandle aHandle, uint3
     proxyC->BeginGetBlueVideoGain(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetBlueVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBlueVideoGain)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetBlueVideoGain(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBlueVideoGain)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2775,14 +2775,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetBlueVideoGain(THandle aHandle, OhNe
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetBlueVideoGain(aInstanceID, aDesiredBlueVideoGain);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2790,7 +2790,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetBlueVideoGain(THandle aHandle, uint3
     proxyC->BeginSetBlueVideoGain(aInstanceID, aDesiredBlueVideoGain, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetBlueVideoGain(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetBlueVideoGain(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2806,14 +2806,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetBlueVideoGain(THandle aHandle, OhNe
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoBlackLevel)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoBlackLevel)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetRedVideoBlackLevel(aInstanceID, *aCurrentRedVideoBlackLevel);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2821,7 +2821,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetRedVideoBlackLevel(THandle aHandle, 
     proxyC->BeginGetRedVideoBlackLevel(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetRedVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentRedVideoBlackLevel)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetRedVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentRedVideoBlackLevel)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2837,14 +2837,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetRedVideoBlackLevel(THandle aHandle,
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetRedVideoBlackLevel(aInstanceID, aDesiredRedVideoBlackLevel);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2852,7 +2852,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetRedVideoBlackLevel(THandle aHandle, 
     proxyC->BeginSetRedVideoBlackLevel(aInstanceID, aDesiredRedVideoBlackLevel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetRedVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetRedVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2868,14 +2868,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetRedVideoBlackLevel(THandle aHandle,
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoBlackLevel)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoBlackLevel)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetGreenVideoBlackLevel(aInstanceID, *aCurrentGreenVideoBlackLevel);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2883,7 +2883,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetGreenVideoBlackLevel(THandle aHandle
     proxyC->BeginGetGreenVideoBlackLevel(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetGreenVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentGreenVideoBlackLevel)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetGreenVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentGreenVideoBlackLevel)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2899,14 +2899,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetGreenVideoBlackLevel(THandle aHandl
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetGreenVideoBlackLevel(aInstanceID, aDesiredGreenVideoBlackLevel);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2914,7 +2914,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetGreenVideoBlackLevel(THandle aHandle
     proxyC->BeginSetGreenVideoBlackLevel(aInstanceID, aDesiredGreenVideoBlackLevel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetGreenVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetGreenVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2930,14 +2930,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetGreenVideoBlackLevel(THandle aHandl
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoBlackLevel)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoBlackLevel)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetBlueVideoBlackLevel(aInstanceID, *aCurrentBlueVideoBlackLevel);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2945,7 +2945,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetBlueVideoBlackLevel(THandle aHandle,
     proxyC->BeginGetBlueVideoBlackLevel(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetBlueVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBlueVideoBlackLevel)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetBlueVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentBlueVideoBlackLevel)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2961,14 +2961,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetBlueVideoBlackLevel(THandle aHandle
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetBlueVideoBlackLevel(aInstanceID, aDesiredBlueVideoBlackLevel);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -2976,7 +2976,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetBlueVideoBlackLevel(THandle aHandle,
     proxyC->BeginSetBlueVideoBlackLevel(aInstanceID, aDesiredBlueVideoBlackLevel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetBlueVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetBlueVideoBlackLevel(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -2992,14 +2992,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetBlueVideoBlackLevel(THandle aHandle
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentColorTemperature)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentColorTemperature)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetColorTemperature(aInstanceID, *aCurrentColorTemperature);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetColorTemperature(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetColorTemperature(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3007,7 +3007,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetColorTemperature(THandle aHandle, ui
     proxyC->BeginGetColorTemperature(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetColorTemperature(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentColorTemperature)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetColorTemperature(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentColorTemperature)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3023,14 +3023,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetColorTemperature(THandle aHandle, O
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetColorTemperature(aInstanceID, aDesiredColorTemperature);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3038,7 +3038,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetColorTemperature(THandle aHandle, ui
     proxyC->BeginSetColorTemperature(aInstanceID, aDesiredColorTemperature, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetColorTemperature(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetColorTemperature(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3054,14 +3054,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetColorTemperature(THandle aHandle, O
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentHorizontalKeystone)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentHorizontalKeystone)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetHorizontalKeystone(aInstanceID, *aCurrentHorizontalKeystone);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3069,7 +3069,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetHorizontalKeystone(THandle aHandle, 
     proxyC->BeginGetHorizontalKeystone(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetHorizontalKeystone(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentHorizontalKeystone)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetHorizontalKeystone(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentHorizontalKeystone)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3085,14 +3085,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetHorizontalKeystone(THandle aHandle,
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetHorizontalKeystone(aInstanceID, aDesiredHorizontalKeystone);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3100,7 +3100,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetHorizontalKeystone(THandle aHandle, 
     proxyC->BeginSetHorizontalKeystone(aInstanceID, aDesiredHorizontalKeystone, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetHorizontalKeystone(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetHorizontalKeystone(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3116,14 +3116,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetHorizontalKeystone(THandle aHandle,
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentVerticalKeystone)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentVerticalKeystone)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncGetVerticalKeystone(aInstanceID, *aCurrentVerticalKeystone);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3131,7 +3131,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetVerticalKeystone(THandle aHandle, ui
     proxyC->BeginGetVerticalKeystone(aInstanceID, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetVerticalKeystone(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentVerticalKeystone)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetVerticalKeystone(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentVerticalKeystone)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3147,14 +3147,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetVerticalKeystone(THandle aHandle, O
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetVerticalKeystone(aInstanceID, aDesiredVerticalKeystone);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3162,7 +3162,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetVerticalKeystone(THandle aHandle, ui
     proxyC->BeginSetVerticalKeystone(aInstanceID, aDesiredVerticalKeystone, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetVerticalKeystone(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetVerticalKeystone(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3178,7 +3178,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetVerticalKeystone(THandle aHandle, O
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentMute)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentMute)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3187,7 +3187,7 @@ void CpProxyUpnpOrgRenderingControl1SyncGetMute(THandle aHandle, uint32_t aInsta
     proxyC->SyncGetMute(aInstanceID, buf_aChannel, *(TBool*)aCurrentMute);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3196,7 +3196,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetMute(THandle aHandle, uint32_t aInst
     proxyC->BeginGetMute(aInstanceID, buf_aChannel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetMute(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentMute)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetMute(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentMute)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3213,7 +3213,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetMute(THandle aHandle, OhNetHandleAs
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3221,7 +3221,7 @@ void CpProxyUpnpOrgRenderingControl1SyncSetMute(THandle aHandle, uint32_t aInsta
     proxyC->SyncSetMute(aInstanceID, buf_aChannel, (aDesiredMute==0? false : true));
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3230,7 +3230,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetMute(THandle aHandle, uint32_t aInst
     proxyC->BeginSetMute(aInstanceID, buf_aChannel, (aDesiredMute==0? false : true), functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetMute(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetMute(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3246,7 +3246,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetMute(THandle aHandle, OhNetHandleAs
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentVolume)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentVolume)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3254,7 +3254,7 @@ void CpProxyUpnpOrgRenderingControl1SyncGetVolume(THandle aHandle, uint32_t aIns
     proxyC->SyncGetVolume(aInstanceID, buf_aChannel, *aCurrentVolume);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3263,7 +3263,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetVolume(THandle aHandle, uint32_t aIn
     proxyC->BeginGetVolume(aInstanceID, buf_aChannel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetVolume(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentVolume)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetVolume(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentVolume)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3279,7 +3279,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetVolume(THandle aHandle, OhNetHandle
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3287,7 +3287,7 @@ void CpProxyUpnpOrgRenderingControl1SyncSetVolume(THandle aHandle, uint32_t aIns
     proxyC->SyncSetVolume(aInstanceID, buf_aChannel, aDesiredVolume);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3296,7 +3296,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetVolume(THandle aHandle, uint32_t aIn
     proxyC->BeginSetVolume(aInstanceID, buf_aChannel, aDesiredVolume, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetVolume(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetVolume(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3312,7 +3312,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetVolume(THandle aHandle, OhNetHandle
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aCurrentVolume)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aCurrentVolume)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3320,7 +3320,7 @@ void CpProxyUpnpOrgRenderingControl1SyncGetVolumeDB(THandle aHandle, uint32_t aI
     proxyC->SyncGetVolumeDB(aInstanceID, buf_aChannel, *aCurrentVolume);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3329,7 +3329,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetVolumeDB(THandle aHandle, uint32_t a
     proxyC->BeginGetVolumeDB(aInstanceID, buf_aChannel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetVolumeDB(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentVolume)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetVolumeDB(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aCurrentVolume)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3345,7 +3345,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetVolumeDB(THandle aHandle, OhNetHand
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3353,7 +3353,7 @@ void CpProxyUpnpOrgRenderingControl1SyncSetVolumeDB(THandle aHandle, uint32_t aI
     proxyC->SyncSetVolumeDB(aInstanceID, buf_aChannel, aDesiredVolume);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3362,7 +3362,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetVolumeDB(THandle aHandle, uint32_t a
     proxyC->BeginSetVolumeDB(aInstanceID, buf_aChannel, aDesiredVolume, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetVolumeDB(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetVolumeDB(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3378,7 +3378,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetVolumeDB(THandle aHandle, OhNetHand
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aMinValue, int32_t* aMaxValue)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aMinValue, int32_t* aMaxValue)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3386,7 +3386,7 @@ void CpProxyUpnpOrgRenderingControl1SyncGetVolumeDBRange(THandle aHandle, uint32
     proxyC->SyncGetVolumeDBRange(aInstanceID, buf_aChannel, *aMinValue, *aMaxValue);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3395,7 +3395,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetVolumeDBRange(THandle aHandle, uint3
     proxyC->BeginGetVolumeDBRange(aInstanceID, buf_aChannel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetVolumeDBRange(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aMinValue, int32_t* aMaxValue)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetVolumeDBRange(THandle aHandle, OhNetHandleAsync aAsync, int32_t* aMinValue, int32_t* aMaxValue)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3411,7 +3411,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetVolumeDBRange(THandle aHandle, OhNe
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentLoudness)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentLoudness)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3420,7 +3420,7 @@ void CpProxyUpnpOrgRenderingControl1SyncGetLoudness(THandle aHandle, uint32_t aI
     proxyC->SyncGetLoudness(aInstanceID, buf_aChannel, *(TBool*)aCurrentLoudness);
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3429,7 +3429,7 @@ void CpProxyUpnpOrgRenderingControl1BeginGetLoudness(THandle aHandle, uint32_t a
     proxyC->BeginGetLoudness(aInstanceID, buf_aChannel, functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndGetLoudness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentLoudness)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndGetLoudness(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aCurrentLoudness)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3446,7 +3446,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetLoudness(THandle aHandle, OhNetHand
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SyncSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness)
+void STDCALL CpProxyUpnpOrgRenderingControl1SyncSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3454,7 +3454,7 @@ void CpProxyUpnpOrgRenderingControl1SyncSetLoudness(THandle aHandle, uint32_t aI
     proxyC->SyncSetLoudness(aInstanceID, buf_aChannel, (aDesiredLoudness==0? false : true));
 }
 
-void CpProxyUpnpOrgRenderingControl1BeginSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1BeginSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3463,7 +3463,7 @@ void CpProxyUpnpOrgRenderingControl1BeginSetLoudness(THandle aHandle, uint32_t a
     proxyC->BeginSetLoudness(aInstanceID, buf_aChannel, (aDesiredLoudness==0? false : true), functor);
 }
 
-int32_t CpProxyUpnpOrgRenderingControl1EndSetLoudness(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgRenderingControl1EndSetLoudness(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
@@ -3479,7 +3479,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetLoudness(THandle aHandle, OhNetHand
     return err;
 }
 
-void CpProxyUpnpOrgRenderingControl1SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgRenderingControl1SetPropertyLastChangeChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -3487,7 +3487,7 @@ void CpProxyUpnpOrgRenderingControl1SetPropertyLastChangeChanged(THandle aHandle
     proxyC->SetPropertyLastChangeChanged(functor);
 }
 
-void CpProxyUpnpOrgRenderingControl1PropertyLastChange(THandle aHandle, char** aLastChange)
+void STDCALL CpProxyUpnpOrgRenderingControl1PropertyLastChange(THandle aHandle, char** aLastChange)
 {
     CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
     ASSERT(proxyC != NULL);

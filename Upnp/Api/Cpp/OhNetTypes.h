@@ -2,6 +2,7 @@
 #define HEADER_TYPES
 
 #include <OsTypes.h>
+#include <OhNetDefines.h>
 
 namespace OpenHome {
 

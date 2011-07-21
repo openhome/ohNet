@@ -289,10 +289,20 @@ def ArmTests(module, arch, nightly):
             sys.exit(10)
 
         if nightly == "1":
+		
+            ret = rssh('root','sheeva010.linn.co.uk','python AllTests.py -f -t')
 
-            rssh('root','sheeva010.linn.co.uk','python AllTests.py -f -t')
+            if ret != 0:
+            	print ret
+             	sys.exit(10)
+
         else:
-            rssh('root','sheeva010.linn.co.uk','python AllTests.py -t')
+            ret = rssh('root','sheeva010.linn.co.uk','python AllTests.py -t')
+
+            if ret != 0:
+            	print ret
+            	sys.exit(10)
+
 
 def publish_release(ostype, arch, release_name, tool):
     target_name = "%s-%s" % (ostype, "ARM" if arch=="arm" else arch)

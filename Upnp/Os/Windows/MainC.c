@@ -7,7 +7,7 @@
 #include <C/OhNet.h>
 
 
-void logger(void* aPtr, const char* aMsg)
+void STDCALL logger(void* aPtr, const char* aMsg)
 {
     aPtr = aPtr;
     fprintf(stdout, "%s", aMsg);

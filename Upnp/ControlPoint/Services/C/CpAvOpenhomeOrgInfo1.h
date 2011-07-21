@@ -5,6 +5,7 @@
 #define HEADER_AVOPENHOMEORGINFO1_C
 
 #include <OsTypes.h>
+#include <OhNetDefines.h>
 #include <C/Async.h>
 #include <C/OhNet.h>
 #include <C/CpDevice.h>
@@ -29,7 +30,7 @@ extern "C" {
  *
  * @return  Handle which should be used with all other functions in this header
  */
-DllExport THandle CpProxyAvOpenhomeOrgInfo1Create(CpDeviceC aDevice);
+DllExport THandle STDCALL CpProxyAvOpenhomeOrgInfo1Create(CpDeviceC aDevice);
 /**
  * Destructor.
  * If any asynchronous method is in progress, this will block until they complete.
@@ -39,7 +40,7 @@ DllExport THandle CpProxyAvOpenhomeOrgInfo1Create(CpDeviceC aDevice);
  *
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1Destroy(THandle aHandle);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1Destroy(THandle aHandle);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -50,7 +51,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1Destroy(THandle aHandle);
  * @param[out] aDetailsCount
  * @param[out] aMetatextCount
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SyncCounters(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SyncCounters(THandle aHandle, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -62,7 +63,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SyncCounters(THandle aHandle, uint32_t* 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1BeginCounters(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1BeginCounters(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -76,7 +77,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1BeginCounters(THandle aHandle, OhNetCall
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndCounters(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgInfo1EndCounters(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aTrackCount, uint32_t* aDetailsCount, uint32_t* aMetatextCount);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -86,7 +87,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndCounters(THandle aHandle, OhNetHan
  * @param[out] aUri
  * @param[out] aMetadata
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SyncTrack(THandle aHandle, char** aUri, char** aMetadata);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SyncTrack(THandle aHandle, char** aUri, char** aMetadata);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -98,7 +99,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SyncTrack(THandle aHandle, char** aUri, 
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1BeginTrack(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1BeginTrack(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -111,7 +112,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1BeginTrack(THandle aHandle, OhNetCallbac
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndTrack(THandle aHandle, OhNetHandleAsync aAsync, char** aUri, char** aMetadata);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgInfo1EndTrack(THandle aHandle, OhNetHandleAsync aAsync, char** aUri, char** aMetadata);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -125,7 +126,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndTrack(THandle aHandle, OhNetHandle
  * @param[out] aLossless
  * @param[out] aCodecName
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SyncDetails(THandle aHandle, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SyncDetails(THandle aHandle, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -137,7 +138,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SyncDetails(THandle aHandle, uint32_t* a
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1BeginDetails(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1BeginDetails(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -154,7 +155,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1BeginDetails(THandle aHandle, OhNetCallb
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndDetails(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgInfo1EndDetails(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aDuration, uint32_t* aBitRate, uint32_t* aBitDepth, uint32_t* aSampleRate, uint32_t* aLossless, char** aCodecName);
 
 /**
  * Invoke the action synchronously.  Blocks until the action has been processed
@@ -163,7 +164,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndDetails(THandle aHandle, OhNetHand
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aValue
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SyncMetatext(THandle aHandle, char** aValue);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SyncMetatext(THandle aHandle, char** aValue);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -175,7 +176,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SyncMetatext(THandle aHandle, char** aVa
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1BeginMetatext(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1BeginMetatext(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.
@@ -187,7 +188,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1BeginMetatext(THandle aHandle, OhNetCall
  * @return  0 if the function succedded; non-zero if it failed.  State of output
  *          arguments is not guaranteed in the case of failure
  */
-DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndMetatext(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
+DllExport int32_t STDCALL CpProxyAvOpenhomeOrgInfo1EndMetatext(THandle aHandle, OhNetHandleAsync aAsync, char** aValue);
 /**
  * Set a callback to be run when the TrackCount state variable changes.
  *
@@ -198,7 +199,7 @@ DllExport int32_t CpProxyAvOpenhomeOrgInfo1EndMetatext(THandle aHandle, OhNetHan
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyTrackCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SetPropertyTrackCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the DetailsCount state variable changes.
  *
@@ -209,7 +210,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyTrackCountChanged(THandle aHa
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyDetailsCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SetPropertyDetailsCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the MetatextCount state variable changes.
  *
@@ -220,7 +221,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyDetailsCountChanged(THandle a
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextCountChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Uri state variable changes.
  *
@@ -231,7 +232,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextCountChanged(THandle 
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SetPropertyUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Metadata state variable changes.
  *
@@ -242,7 +243,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyUriChanged(THandle aHandle, O
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetadataChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SetPropertyMetadataChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Duration state variable changes.
  *
@@ -253,7 +254,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetadataChanged(THandle aHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyDurationChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SetPropertyDurationChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the BitRate state variable changes.
  *
@@ -264,7 +265,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyDurationChanged(THandle aHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyBitRateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SetPropertyBitRateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the BitDepth state variable changes.
  *
@@ -275,7 +276,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyBitRateChanged(THandle aHandl
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyBitDepthChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SetPropertyBitDepthChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the SampleRate state variable changes.
  *
@@ -286,7 +287,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyBitDepthChanged(THandle aHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertySampleRateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SetPropertySampleRateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Lossless state variable changes.
  *
@@ -297,7 +298,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertySampleRateChanged(THandle aHa
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyLosslessChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SetPropertyLosslessChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the CodecName state variable changes.
  *
@@ -308,7 +309,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyLosslessChanged(THandle aHand
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyCodecNameChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SetPropertyCodecNameChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 /**
  * Set a callback to be run when the Metatext state variable changes.
  *
@@ -319,7 +320,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyCodecNameChanged(THandle aHan
  * @param[in]  aCallback The callback to run when the state variable changes
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Query the value of the TrackCount property.
@@ -330,7 +331,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1SetPropertyMetatextChanged(THandle aHand
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aTrackCount
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1PropertyTrackCount(THandle aHandle, uint32_t* aTrackCount);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1PropertyTrackCount(THandle aHandle, uint32_t* aTrackCount);
 /**
  * Query the value of the DetailsCount property.
  *
@@ -340,7 +341,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyTrackCount(THandle aHandle, uint
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aDetailsCount
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1PropertyDetailsCount(THandle aHandle, uint32_t* aDetailsCount);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1PropertyDetailsCount(THandle aHandle, uint32_t* aDetailsCount);
 /**
  * Query the value of the MetatextCount property.
  *
@@ -350,7 +351,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyDetailsCount(THandle aHandle, ui
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aMetatextCount
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1PropertyMetatextCount(THandle aHandle, uint32_t* aMetatextCount);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1PropertyMetatextCount(THandle aHandle, uint32_t* aMetatextCount);
 /**
  * Query the value of the Uri property.
  *
@@ -360,7 +361,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyMetatextCount(THandle aHandle, u
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aUri
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1PropertyUri(THandle aHandle, char** aUri);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1PropertyUri(THandle aHandle, char** aUri);
 /**
  * Query the value of the Metadata property.
  *
@@ -370,7 +371,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyUri(THandle aHandle, char** aUri
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aMetadata
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1PropertyMetadata(THandle aHandle, char** aMetadata);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1PropertyMetadata(THandle aHandle, char** aMetadata);
 /**
  * Query the value of the Duration property.
  *
@@ -380,7 +381,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyMetadata(THandle aHandle, char**
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aDuration
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1PropertyDuration(THandle aHandle, uint32_t* aDuration);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1PropertyDuration(THandle aHandle, uint32_t* aDuration);
 /**
  * Query the value of the BitRate property.
  *
@@ -390,7 +391,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyDuration(THandle aHandle, uint32
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aBitRate
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1PropertyBitRate(THandle aHandle, uint32_t* aBitRate);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1PropertyBitRate(THandle aHandle, uint32_t* aBitRate);
 /**
  * Query the value of the BitDepth property.
  *
@@ -400,7 +401,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyBitRate(THandle aHandle, uint32_
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aBitDepth
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1PropertyBitDepth(THandle aHandle, uint32_t* aBitDepth);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1PropertyBitDepth(THandle aHandle, uint32_t* aBitDepth);
 /**
  * Query the value of the SampleRate property.
  *
@@ -410,7 +411,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyBitDepth(THandle aHandle, uint32
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aSampleRate
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1PropertySampleRate(THandle aHandle, uint32_t* aSampleRate);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1PropertySampleRate(THandle aHandle, uint32_t* aSampleRate);
 /**
  * Query the value of the Lossless property.
  *
@@ -420,7 +421,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertySampleRate(THandle aHandle, uint
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aLossless
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1PropertyLossless(THandle aHandle, uint32_t* aLossless);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1PropertyLossless(THandle aHandle, uint32_t* aLossless);
 /**
  * Query the value of the CodecName property.
  *
@@ -430,7 +431,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyLossless(THandle aHandle, uint32
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aCodecName
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1PropertyCodecName(THandle aHandle, char** aCodecName);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1PropertyCodecName(THandle aHandle, char** aCodecName);
 /**
  * Query the value of the Metatext property.
  *
@@ -440,7 +441,7 @@ DllExport void CpProxyAvOpenhomeOrgInfo1PropertyCodecName(THandle aHandle, char*
  * @param[in]  aHandle   Handle returned by CpProxyAvOpenhomeOrgInfo1Create
  * @param[out] aMetatext
  */
-DllExport void CpProxyAvOpenhomeOrgInfo1PropertyMetatext(THandle aHandle, char** aMetatext);
+DllExport void STDCALL CpProxyAvOpenhomeOrgInfo1PropertyMetatext(THandle aHandle, char** aMetatext);
 
 /* @} */
 

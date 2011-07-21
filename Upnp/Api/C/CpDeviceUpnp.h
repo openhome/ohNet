@@ -1,6 +1,7 @@
 #ifndef HEADER_CPDEVICEUPNPC
 #define HEADER_CPDEVICEUPNPC
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/CpDevice.h>
 
@@ -34,8 +35,8 @@ extern "C" {
  *
  * @return  Handle to the list.  Use CpDeviceListDestroy to later destroy the list.
  */
-DllExport HandleCpDeviceList CpDeviceListCreateUpnpAll(OhNetCallbackDevice aAdded, void* aPtrAdded,
-                                                       OhNetCallbackDevice aRemoved, void* aPtrRemoved);
+DllExport HandleCpDeviceList STDCALL CpDeviceListCreateUpnpAll(OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                                               OhNetCallbackDevice aRemoved, void* aPtrRemoved);
 
 /**
  * Create a list of all root UPnP devices on the current subnet
@@ -47,8 +48,8 @@ DllExport HandleCpDeviceList CpDeviceListCreateUpnpAll(OhNetCallbackDevice aAdde
  *
  * @return  Handle to the list.  Use CpDeviceListDestroy to later destroy the list.
  */
-DllExport HandleCpDeviceList CpDeviceListCreateUpnpRoot(OhNetCallbackDevice aAdded, void* aPtrAdded,
-                                                        OhNetCallbackDevice aRemoved, void* aPtrRemoved);
+DllExport HandleCpDeviceList STDCALL CpDeviceListCreateUpnpRoot(OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                                                OhNetCallbackDevice aRemoved, void* aPtrRemoved);
 
 /**
  * Create a list of the UPnP [0..1] devices with the given uuid (udn) on the current subnet
@@ -61,9 +62,9 @@ DllExport HandleCpDeviceList CpDeviceListCreateUpnpRoot(OhNetCallbackDevice aAdd
  *
  * @return  Handle to the list.  Use CpDeviceListDestroy to later destroy the list.
  */
-DllExport HandleCpDeviceList CpDeviceListCreateUpnpUuid(const char* aUuid,
-                                                        OhNetCallbackDevice aAdded, void* aPtrAdded,
-                                                        OhNetCallbackDevice aRemoved, void* aPtrRemoved);
+DllExport HandleCpDeviceList STDCALL CpDeviceListCreateUpnpUuid(const char* aUuid,
+                                                                OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                                                OhNetCallbackDevice aRemoved, void* aPtrRemoved);
 
 /**
  * Create a list of the UPnP devices of a given device type on the current subnet
@@ -78,9 +79,9 @@ DllExport HandleCpDeviceList CpDeviceListCreateUpnpUuid(const char* aUuid,
  *
  * @return  Handle to the list.  Use CpDeviceListDestroy to later destroy the list.
  */
-DllExport HandleCpDeviceList CpDeviceListCreateUpnpDeviceType(const char* aDomainName, const char* aDeviceType, uint32_t aVersion,
-                                                              OhNetCallbackDevice aAdded, void* aPtrAdded,
-                                                              OhNetCallbackDevice aRemoved, void* aPtrRemoved);
+DllExport HandleCpDeviceList STDCALL CpDeviceListCreateUpnpDeviceType(const char* aDomainName, const char* aDeviceType, uint32_t aVersion,
+                                                                      OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                                                      OhNetCallbackDevice aRemoved, void* aPtrRemoved);
 
 /**
  * Create a list of the UPnP devices of a given service type on the current subnet
@@ -95,9 +96,9 @@ DllExport HandleCpDeviceList CpDeviceListCreateUpnpDeviceType(const char* aDomai
  *
  * @return  Handle to the list.  Use CpDeviceListDestroy to later destroy the list.
  */
-DllExport HandleCpDeviceList CpDeviceListCreateUpnpServiceType(const char* aDomainName, const char* aServiceType, uint32_t aVersion,
-                                                               OhNetCallbackDevice aAdded, void* aPtrAdded,
-                                                               OhNetCallbackDevice aRemoved, void* aPtrRemoved);
+DllExport HandleCpDeviceList STDCALL CpDeviceListCreateUpnpServiceType(const char* aDomainName, const char* aServiceType, uint32_t aVersion,
+                                                                       OhNetCallbackDevice aAdded, void* aPtrAdded,
+                                                                       OhNetCallbackDevice aRemoved, void* aPtrRemoved);
 
 /* @} */
 

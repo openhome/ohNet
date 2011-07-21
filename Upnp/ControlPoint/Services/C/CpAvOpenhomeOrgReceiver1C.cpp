@@ -517,25 +517,25 @@ void CpProxyAvOpenhomeOrgReceiver1C::ProtocolInfoPropertyChanged()
 }
 
 
-THandle CpProxyAvOpenhomeOrgReceiver1Create(CpDeviceC aDevice)
+THandle STDCALL CpProxyAvOpenhomeOrgReceiver1Create(CpDeviceC aDevice)
 {
     return new CpProxyAvOpenhomeOrgReceiver1C(aDevice);
 }
 
-void CpProxyAvOpenhomeOrgReceiver1Destroy(THandle aHandle)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1Destroy(THandle aHandle)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     delete proxyC;
 }
 
-void CpProxyAvOpenhomeOrgReceiver1SyncPlay(THandle aHandle)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1SyncPlay(THandle aHandle)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncPlay();
 }
 
-void CpProxyAvOpenhomeOrgReceiver1BeginPlay(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1BeginPlay(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -543,7 +543,7 @@ void CpProxyAvOpenhomeOrgReceiver1BeginPlay(THandle aHandle, OhNetCallbackAsync 
     proxyC->BeginPlay(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgReceiver1EndPlay(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1EndPlay(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
@@ -559,14 +559,14 @@ int32_t CpProxyAvOpenhomeOrgReceiver1EndPlay(THandle aHandle, OhNetHandleAsync a
     return err;
 }
 
-void CpProxyAvOpenhomeOrgReceiver1SyncStop(THandle aHandle)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1SyncStop(THandle aHandle)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncStop();
 }
 
-void CpProxyAvOpenhomeOrgReceiver1BeginStop(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1BeginStop(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -574,7 +574,7 @@ void CpProxyAvOpenhomeOrgReceiver1BeginStop(THandle aHandle, OhNetCallbackAsync 
     proxyC->BeginStop(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgReceiver1EndStop(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1EndStop(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
@@ -590,7 +590,7 @@ int32_t CpProxyAvOpenhomeOrgReceiver1EndStop(THandle aHandle, OhNetHandleAsync a
     return err;
 }
 
-void CpProxyAvOpenhomeOrgReceiver1SyncSetSender(THandle aHandle, const char* aUri, const char* aMetadata)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1SyncSetSender(THandle aHandle, const char* aUri, const char* aMetadata)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -599,7 +599,7 @@ void CpProxyAvOpenhomeOrgReceiver1SyncSetSender(THandle aHandle, const char* aUr
     proxyC->SyncSetSender(buf_aUri, buf_aMetadata);
 }
 
-void CpProxyAvOpenhomeOrgReceiver1BeginSetSender(THandle aHandle, const char* aUri, const char* aMetadata, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1BeginSetSender(THandle aHandle, const char* aUri, const char* aMetadata, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -609,7 +609,7 @@ void CpProxyAvOpenhomeOrgReceiver1BeginSetSender(THandle aHandle, const char* aU
     proxyC->BeginSetSender(buf_aUri, buf_aMetadata, functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgReceiver1EndSetSender(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1EndSetSender(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
@@ -625,7 +625,7 @@ int32_t CpProxyAvOpenhomeOrgReceiver1EndSetSender(THandle aHandle, OhNetHandleAs
     return err;
 }
 
-void CpProxyAvOpenhomeOrgReceiver1SyncSender(THandle aHandle, char** aUri, char** aMetadata)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1SyncSender(THandle aHandle, char** aUri, char** aMetadata)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -636,7 +636,7 @@ void CpProxyAvOpenhomeOrgReceiver1SyncSender(THandle aHandle, char** aUri, char*
     *aMetadata = buf_aMetadata.Extract();
 }
 
-void CpProxyAvOpenhomeOrgReceiver1BeginSender(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1BeginSender(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -644,7 +644,7 @@ void CpProxyAvOpenhomeOrgReceiver1BeginSender(THandle aHandle, OhNetCallbackAsyn
     proxyC->BeginSender(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgReceiver1EndSender(THandle aHandle, OhNetHandleAsync aAsync, char** aUri, char** aMetadata)
+int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1EndSender(THandle aHandle, OhNetHandleAsync aAsync, char** aUri, char** aMetadata)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
@@ -666,7 +666,7 @@ int32_t CpProxyAvOpenhomeOrgReceiver1EndSender(THandle aHandle, OhNetHandleAsync
     return err;
 }
 
-void CpProxyAvOpenhomeOrgReceiver1SyncProtocolInfo(THandle aHandle, char** aValue)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1SyncProtocolInfo(THandle aHandle, char** aValue)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -675,7 +675,7 @@ void CpProxyAvOpenhomeOrgReceiver1SyncProtocolInfo(THandle aHandle, char** aValu
     *aValue = buf_aValue.Extract();
 }
 
-void CpProxyAvOpenhomeOrgReceiver1BeginProtocolInfo(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1BeginProtocolInfo(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -683,7 +683,7 @@ void CpProxyAvOpenhomeOrgReceiver1BeginProtocolInfo(THandle aHandle, OhNetCallba
     proxyC->BeginProtocolInfo(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgReceiver1EndProtocolInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1EndProtocolInfo(THandle aHandle, OhNetHandleAsync aAsync, char** aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
@@ -702,7 +702,7 @@ int32_t CpProxyAvOpenhomeOrgReceiver1EndProtocolInfo(THandle aHandle, OhNetHandl
     return err;
 }
 
-void CpProxyAvOpenhomeOrgReceiver1SyncTransportState(THandle aHandle, char** aValue)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1SyncTransportState(THandle aHandle, char** aValue)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -711,7 +711,7 @@ void CpProxyAvOpenhomeOrgReceiver1SyncTransportState(THandle aHandle, char** aVa
     *aValue = buf_aValue.Extract();
 }
 
-void CpProxyAvOpenhomeOrgReceiver1BeginTransportState(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1BeginTransportState(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -719,7 +719,7 @@ void CpProxyAvOpenhomeOrgReceiver1BeginTransportState(THandle aHandle, OhNetCall
     proxyC->BeginTransportState(functor);
 }
 
-int32_t CpProxyAvOpenhomeOrgReceiver1EndTransportState(THandle aHandle, OhNetHandleAsync aAsync, char** aValue)
+int32_t STDCALL CpProxyAvOpenhomeOrgReceiver1EndTransportState(THandle aHandle, OhNetHandleAsync aAsync, char** aValue)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
@@ -738,7 +738,7 @@ int32_t CpProxyAvOpenhomeOrgReceiver1EndTransportState(THandle aHandle, OhNetHan
     return err;
 }
 
-void CpProxyAvOpenhomeOrgReceiver1SetPropertyUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1SetPropertyUriChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -746,7 +746,7 @@ void CpProxyAvOpenhomeOrgReceiver1SetPropertyUriChanged(THandle aHandle, OhNetCa
     proxyC->SetPropertyUriChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgReceiver1SetPropertyMetadataChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1SetPropertyMetadataChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -754,7 +754,7 @@ void CpProxyAvOpenhomeOrgReceiver1SetPropertyMetadataChanged(THandle aHandle, Oh
     proxyC->SetPropertyMetadataChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgReceiver1SetPropertyTransportStateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1SetPropertyTransportStateChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -762,7 +762,7 @@ void CpProxyAvOpenhomeOrgReceiver1SetPropertyTransportStateChanged(THandle aHand
     proxyC->SetPropertyTransportStateChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgReceiver1SetPropertyProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1SetPropertyProtocolInfoChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -770,7 +770,7 @@ void CpProxyAvOpenhomeOrgReceiver1SetPropertyProtocolInfoChanged(THandle aHandle
     proxyC->SetPropertyProtocolInfoChanged(functor);
 }
 
-void CpProxyAvOpenhomeOrgReceiver1PropertyUri(THandle aHandle, char** aUri)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1PropertyUri(THandle aHandle, char** aUri)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -779,7 +779,7 @@ void CpProxyAvOpenhomeOrgReceiver1PropertyUri(THandle aHandle, char** aUri)
     *aUri = buf_aUri.Transfer();
 }
 
-void CpProxyAvOpenhomeOrgReceiver1PropertyMetadata(THandle aHandle, char** aMetadata)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1PropertyMetadata(THandle aHandle, char** aMetadata)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -788,7 +788,7 @@ void CpProxyAvOpenhomeOrgReceiver1PropertyMetadata(THandle aHandle, char** aMeta
     *aMetadata = buf_aMetadata.Transfer();
 }
 
-void CpProxyAvOpenhomeOrgReceiver1PropertyTransportState(THandle aHandle, char** aTransportState)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1PropertyTransportState(THandle aHandle, char** aTransportState)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -797,7 +797,7 @@ void CpProxyAvOpenhomeOrgReceiver1PropertyTransportState(THandle aHandle, char**
     *aTransportState = buf_aTransportState.Transfer();
 }
 
-void CpProxyAvOpenhomeOrgReceiver1PropertyProtocolInfo(THandle aHandle, char** aProtocolInfo)
+void STDCALL CpProxyAvOpenhomeOrgReceiver1PropertyProtocolInfo(THandle aHandle, char** aProtocolInfo)
 {
     CpProxyAvOpenhomeOrgReceiver1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgReceiver1C*>(aHandle);
     ASSERT(proxyC != NULL);

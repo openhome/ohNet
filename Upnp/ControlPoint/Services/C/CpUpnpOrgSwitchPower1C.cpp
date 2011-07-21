@@ -250,25 +250,25 @@ void CpProxyUpnpOrgSwitchPower1C::StatusPropertyChanged()
 }
 
 
-THandle CpProxyUpnpOrgSwitchPower1Create(CpDeviceC aDevice)
+THandle STDCALL CpProxyUpnpOrgSwitchPower1Create(CpDeviceC aDevice)
 {
     return new CpProxyUpnpOrgSwitchPower1C(aDevice);
 }
 
-void CpProxyUpnpOrgSwitchPower1Destroy(THandle aHandle)
+void STDCALL CpProxyUpnpOrgSwitchPower1Destroy(THandle aHandle)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     delete proxyC;
 }
 
-void CpProxyUpnpOrgSwitchPower1SyncSetTarget(THandle aHandle, uint32_t anewTargetValue)
+void STDCALL CpProxyUpnpOrgSwitchPower1SyncSetTarget(THandle aHandle, uint32_t anewTargetValue)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->SyncSetTarget((anewTargetValue==0? false : true));
 }
 
-void CpProxyUpnpOrgSwitchPower1BeginSetTarget(THandle aHandle, uint32_t anewTargetValue, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgSwitchPower1BeginSetTarget(THandle aHandle, uint32_t anewTargetValue, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -276,7 +276,7 @@ void CpProxyUpnpOrgSwitchPower1BeginSetTarget(THandle aHandle, uint32_t anewTarg
     proxyC->BeginSetTarget((anewTargetValue==0? false : true), functor);
 }
 
-int32_t CpProxyUpnpOrgSwitchPower1EndSetTarget(THandle aHandle, OhNetHandleAsync aAsync)
+int32_t STDCALL CpProxyUpnpOrgSwitchPower1EndSetTarget(THandle aHandle, OhNetHandleAsync aAsync)
 {
     int32_t err = 0;
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
@@ -292,7 +292,7 @@ int32_t CpProxyUpnpOrgSwitchPower1EndSetTarget(THandle aHandle, OhNetHandleAsync
     return err;
 }
 
-void CpProxyUpnpOrgSwitchPower1SyncGetTarget(THandle aHandle, uint32_t* aRetTargetValue)
+void STDCALL CpProxyUpnpOrgSwitchPower1SyncGetTarget(THandle aHandle, uint32_t* aRetTargetValue)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -300,7 +300,7 @@ void CpProxyUpnpOrgSwitchPower1SyncGetTarget(THandle aHandle, uint32_t* aRetTarg
     proxyC->SyncGetTarget(*(TBool*)aRetTargetValue);
 }
 
-void CpProxyUpnpOrgSwitchPower1BeginGetTarget(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgSwitchPower1BeginGetTarget(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -308,7 +308,7 @@ void CpProxyUpnpOrgSwitchPower1BeginGetTarget(THandle aHandle, OhNetCallbackAsyn
     proxyC->BeginGetTarget(functor);
 }
 
-int32_t CpProxyUpnpOrgSwitchPower1EndGetTarget(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aRetTargetValue)
+int32_t STDCALL CpProxyUpnpOrgSwitchPower1EndGetTarget(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aRetTargetValue)
 {
     int32_t err = 0;
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
@@ -325,7 +325,7 @@ int32_t CpProxyUpnpOrgSwitchPower1EndGetTarget(THandle aHandle, OhNetHandleAsync
     return err;
 }
 
-void CpProxyUpnpOrgSwitchPower1SyncGetStatus(THandle aHandle, uint32_t* aResultStatus)
+void STDCALL CpProxyUpnpOrgSwitchPower1SyncGetStatus(THandle aHandle, uint32_t* aResultStatus)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -333,7 +333,7 @@ void CpProxyUpnpOrgSwitchPower1SyncGetStatus(THandle aHandle, uint32_t* aResultS
     proxyC->SyncGetStatus(*(TBool*)aResultStatus);
 }
 
-void CpProxyUpnpOrgSwitchPower1BeginGetStatus(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgSwitchPower1BeginGetStatus(THandle aHandle, OhNetCallbackAsync aCallback, void* aPtr)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -341,7 +341,7 @@ void CpProxyUpnpOrgSwitchPower1BeginGetStatus(THandle aHandle, OhNetCallbackAsyn
     proxyC->BeginGetStatus(functor);
 }
 
-int32_t CpProxyUpnpOrgSwitchPower1EndGetStatus(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aResultStatus)
+int32_t STDCALL CpProxyUpnpOrgSwitchPower1EndGetStatus(THandle aHandle, OhNetHandleAsync aAsync, uint32_t* aResultStatus)
 {
     int32_t err = 0;
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
@@ -358,7 +358,7 @@ int32_t CpProxyUpnpOrgSwitchPower1EndGetStatus(THandle aHandle, OhNetHandleAsync
     return err;
 }
 
-void CpProxyUpnpOrgSwitchPower1SetPropertyStatusChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+void STDCALL CpProxyUpnpOrgSwitchPower1SetPropertyStatusChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
@@ -366,7 +366,7 @@ void CpProxyUpnpOrgSwitchPower1SetPropertyStatusChanged(THandle aHandle, OhNetCa
     proxyC->SetPropertyStatusChanged(functor);
 }
 
-void CpProxyUpnpOrgSwitchPower1PropertyStatus(THandle aHandle, uint32_t* aStatus)
+void STDCALL CpProxyUpnpOrgSwitchPower1PropertyStatus(THandle aHandle, uint32_t* aStatus)
 {
     CpProxyUpnpOrgSwitchPower1C* proxyC = reinterpret_cast<CpProxyUpnpOrgSwitchPower1C*>(aHandle);
     ASSERT(proxyC != NULL);
