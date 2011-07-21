@@ -44,7 +44,7 @@ endif
 # Macros used by Common.mak
 cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_cflags) -fvisibility=hidden $(platform_cflags)
 inc_build = Build/Include
-includes = -IBuild/Include/ -IBuild/Include/Cpp/
+includes = -IBuild/Include/
 bundle_build = Build/Bundles
 osdir = Posix
 objext = o
@@ -94,6 +94,84 @@ make_obj_dir:
 	mkdir -p $(objdir)
 
 copy_build_includes:
+	if not exist $(inc_build) mkdir $(inc_build)
+	if not exist $(inc_build)/OpenHome mkdir $(inc_build)/OpenHome
+	if not exist $(inc_build)/OpenHome/Private mkdir $(inc_build)/OpenHome/Private
+	if not exist $(inc_build)/OpenHome/Net mkdir $(inc_build)/OpenHome/Net
+	if not exist $(inc_build)/OpenHome/Net/Private mkdir $(inc_build)/OpenHome/Net/Private
+	if not exist $(inc_build)/OpenHome/Net/Core mkdir $(inc_build)/OpenHome/Net/Core
+	if not exist $(inc_build)/OpenHome/Net/C mkdir $(inc_build)/OpenHome/Net/C
+	if not exist $(inc_build)/OpenHome/Net/Cpp mkdir $(inc_build)/OpenHome/Net/Cpp
+	if not exist $(inc_build)/OpenHome/Net/Private/Js mkdir $(inc_build)/OpenHome/Net/Private/Js
+	if not exist $(inc_build)/OpenHome/Net/Private/Js/Tests mkdir $(inc_build)/OpenHome/Net/Private/Js/Tests
+	if not exist $(inc_build)/OpenHome/Net/Private/Js/Tests/proxy mkdir $(inc_build)/OpenHome/Net/Private/Js/Tests/proxy
+	cp -p OpenHome/*.h $(inc_build)/OpenHome/Private
+	cp -p OpenHome/Buffer.inl $(inc_build)/OpenHome
+    mv $(inc_build)/OpenHome/Private/Buffer.h $(inc_build)/OpenHome
+    mv $(inc_build)/OpenHome/Private/Exception.h $(inc_build)/OpenHome
+    mv $(inc_build)/OpenHome/Private/Functor*.h $(inc_build)/OpenHome
+    mv $(inc_build)/OpenHome/Private/MimeTypes.h $(inc_build)/OpenHome
+    mv $(inc_build)/OpenHome/Private/OhNetDefines.h $(inc_build)/OpenHome
+    mv $(inc_build)/OpenHome/Private/OsTypes.h $(inc_build)/OpenHome
+    mv $(inc_build)/OpenHome/Private/OhNetTypes.h $(inc_build)/OpenHome
+	cp -p OpenHome/TestFramework/*.h $(inc_build)/OpenHome/Private
+	cp -p OpenHome/Net/*.h $(inc_build)/OpenHome/Net/Private
+    mv $(inc_build)/OpenHome/Net/Private/FunctorAsync.h $(inc_build)/OpenHome/Net/Core
+    cp -p $(inc_build)/OpenHome/Net/Core/FunctorAsync.h $(inc_build)/OpenHome/Net/Cpp
+    mv $(inc_build)/OpenHome/Net/Private/OhNet.h $(inc_build)/OpenHome/Net/Core
+    cp -p $(inc_build)/OpenHome/Net/Core/OhNet.h $(inc_build)/OpenHome/Net/Cpp
+	cp -p OpenHome/Net/ControlPoint/AsyncPrivate.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/ControlPoint/CpStack.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/ControlPoint/CpDevice.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/ControlPoint/CpDeviceDv.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/ControlPoint/CpDeviceDv.h $(inc_build)/OpenHome/Net/Cpp
+	cp -p OpenHome/Net/ControlPoint/CpDeviceUpnp.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/ControlPoint/CpProxy.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/ControlPoint/CpProxy.h $(inc_build)/OpenHome/Net/Cpp
+	cp -p OpenHome/Net/ControlPoint/CpTopology.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/ControlPoint/FunctorCpDevice.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/ControlPoint/FunctorCpDevice.h $(inc_build)/OpenHome/Net/Cpp
+	cp -p OpenHome/Net/ControlPoint/Cpi*.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/ControlPoint/FunctorCpiDevice.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/ControlPoint/Dv/CpiDeviceDv.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/ControlPoint/Proxies/*.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/ControlPoint/Topology/*.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/ControlPoint/Upnp/*.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/Device/DvStack.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/Device/DvDevice.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/Device/DvInvocationResponse.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/Device/DvProvider.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/Device/DvProvider.h $(inc_build)/OpenHome/Net/Cpp
+	cp -p OpenHome/Net/Device/DvResourceWriter.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/Device/DvResourceWriter.h $(inc_build)/OpenHome/Net/Cpp
+	cp -p OpenHome/Net/Device/DvServerUpnp.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/Device/DvServerUpnp.h $(inc_build)/OpenHome/Net/Cpp
+	cp -p OpenHome/Net/Device/DviDevice.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/Device/DviServer.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/Device/DviService.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/Device/DviStack.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/Device/DviSubscription.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/Device/FunctorDviInvocation.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/Device/Bonjour/*.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/Device/Bonjour/mDNSCore/*.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/Device/Providers/*.h $(inc_build)/OpenHome/Net/Core
+	cp -p OpenHome/Net/Device/Upnp/*.h $(inc_build)/OpenHome/Net/Private
+	cp -p OpenHome/Net/Bindings/C/*.h $(inc_build)/OpenHome/Net/C
+	cp -p OpenHome/Net/Bindings/C/ControlPoint/*.h $(inc_build)/OpenHome/Net/C
+	cp -p OpenHome/Net/Bindings/C/ControlPoint/Proxies/*.h $(inc_build)/OpenHome/Net/C
+	cp -p OpenHome/Net/Bindings/C/Device/*.h $(inc_build)/OpenHome/Net/C
+	cp -p OpenHome/Net/Bindings/C/Device/Providers/*.h $(inc_build)/OpenHome/Net/C
+	cp -p OpenHome/Net/Bindings/Cpp/ControlPoint/*.h $(inc_build)/OpenHome/Net/Cpp
+	cp -p OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/*.h $(inc_build)/OpenHome/Net/Cpp
+	cp -p OpenHome/Net/Bindings/Cpp/Device/*.h $(inc_build)/OpenHome/Net/Cpp
+	cp -p OpenHome/Net/Bindings/Cpp/Device/Providers/*.h $(inc_build)/OpenHome/Net/Cpp
+    cp -p -r OpenHome/Net/Bindings/Js/ControlPoint/Tests/*.* $(inc_build)/OpenHome/Net/Private/Js/Tests
+    cp -p OpenHome/Net/Bindings/Js/ControlPoint/*.js $(inc_build)/OpenHome/Net/Private/Js/Tests
+    cp -p OpenHome/Net/Bindings/Js/ControlPoint/Proxies/CpOpenhomeOrgTestBasic1.js $(inc_build)/OpenHome/Net/Private/Js/Tests/proxy
+	cp -p Os/*.h $(inc_build)/OpenHome
+	cp -p Os/*.inl $(inc_build)/OpenHome
+
+old_copy_build_includes:
 	mkdir -p $(inc_build)
 	mkdir -p $(inc_build)/C
 	mkdir -p $(inc_build)/Cpp
