@@ -19,7 +19,8 @@ build_dir = Debug
 
 # Macros used by Common.mak
 ar = lib /nologo /out:$(objdir)
-cflags = $(debug_specific_cflags) /W4 /WX /EHsc /FR$(objdir) /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS -DDllExport=__declspec(dllexport) -DDllExportClass=
+#cflags = $(debug_specific_cflags) /W4 /WX /EHsc /FR$(objdir) /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS -DDllExport=__declspec(dllexport) -DDllExportClass=
+cflags = $(debug_specific_cflags) /EHsc /FR$(objdir) /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS -DDllExport=__declspec(dllexport) -DDllExportClass=
 objdirbare = Build\Obj\Windows\$(build_dir)
 objdir = $(objdirbare)^\
 inc_build = Build\Include
@@ -39,6 +40,14 @@ link_dll = link /nologo $(link_flag_debug) /map Ws2_32.lib Iphlpapi.lib /dll
 link_dll_service = link /nologo $(link_flag_debug)  /map $(objdir)ohNet.lib Ws2_32.lib Iphlpapi.lib /dll
 csharp = csc /nologo /platform:$(csplatform)
 publiccsdir = Public\Cs^\
+publicjavadir = Public\Java^\
+includes_jni = -I"C:\Program Files (x86)\Java\jdk1.6.0_26\include" -I"C:\Program Files (x86)\Java\jdk1.6.0_26\include\win32"
+link_jvm = "C:\Program Files (x86)\Java\jdk1.6.0_26\lib\jvm.lib"
+proxyjavadir = $(objdir)openhome\net\controlpoint\proxies^\
+javac =  "C:\Program Files (x86)\Java\jdk1.6.0_26\bin\javac.exe"
+jar =  "C:\Program Files (x86)\Java\jdk1.6.0_26\bin\jar.exe"
+jarflags = cf
+javadoc = "C:\Program Files (x86)\Java\jdk1.6.0_26\bin\javadoc.exe"
 dirsep = ^\
 installdir = $(PROGRAMFILES)\ohNet
 installlibdir = $(installdir)\lib

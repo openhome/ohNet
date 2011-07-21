@@ -58,6 +58,7 @@ namespace OpenHome.Net
             eCppCore,
             eC,
             eCs,
+            eJava,
             eJs
         }
         enum ETargetStack
@@ -97,6 +98,10 @@ namespace OpenHome.Net
                     else if (var[1] == "cs")
                     {
                         language = ETargetLanguage.eCs;
+                    }
+                    else if (var[1] == "java")
+                    {
+                        language = ETargetLanguage.eJava;
                     }
                     else if (var[1] == "js")
                     {
@@ -210,6 +215,16 @@ namespace OpenHome.Net
                         templates.Add(new TemplateFile("DvUpnpCs.tt", ".cs"));
                     }
                     break;
+                case ETargetLanguage.eJava:
+                    if (stack == ETargetStack.eCp)
+                    {
+                        templates.Add(new TemplateFile("CpUpnpJava.tt", ".java"));
+                    }
+                    else
+                    {
+                        templates.Add(new TemplateFile("DvUpnpJava.tt", ".java"));
+                    }
+                    break;
                 case ETargetLanguage.eJs:
                     if (stack != ETargetStack.eCp)
                     {
@@ -239,11 +254,21 @@ namespace OpenHome.Net
             outputFileName += type + version;
             if (stack == ETargetStack.eCp)
             {
-                outputFileName = "Cp" + outputFileName;
+                String prefix = "Cp";
+                if (language == ETargetLanguage.eJava)
+                {
+                    prefix += "Proxy";
+                }
+                outputFileName = prefix + outputFileName;
             }
             else
             {
-                outputFileName = "Dv" + outputFileName;
+                String prefix = "Dv";
+                if (language == ETargetLanguage.eJava)
+                {
+                    prefix += "Proxy";
+                }
+                outputFileName = prefix + outputFileName;
             }
 
             String ttPath = Path.Combine(Directory.GetCurrentDirectory(), Environment.GetCommandLineArgs()[0]);
@@ -266,7 +291,7 @@ namespace OpenHome.Net
         private static void PrintUsage()
         {
             Console.WriteLine("Usage is OhNetGen");
-            Console.WriteLine("\t--language=[cpp|cppcore|c|cs|js]");
+            Console.WriteLine("\t--language=[cpp|cppcore|c|cs|java|js]");
             Console.WriteLine("\t--stack=[cp|dv]");
             Console.WriteLine("\t--xml=[path + name of xml service description]");
             Console.WriteLine("\t--output=[dir for generated files]");

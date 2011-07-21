@@ -40,6 +40,7 @@ link_dll = ${CROSS_COMPILE}g++ -lpthread  $(platform_linkflags) -shared -shared-
 link_dll_service = ${CROSS_COMPILE}g++ -lpthread  $(platform_linkflags) -shared -shared-libgcc -lohNet -L$(objdir)
 csharp = gmcs /nologo
 publiccsdir = Public/Cs/
+publicjavadir = Public/Java/
 dirsep = /
 prefix = /usr/local
 installlibdir = $(prefix)/lib/ohNet
@@ -136,6 +137,13 @@ uninstall-libs :
 
 uninstall-includes :
 	rm -rf $(installincludedir)
+	
+java_packages = ohnet \
+				openhome.net.controlpoint \
+				openhome.net.controlpoint.proxies \
+				openhome.net.core \
+				org.openhome.net.device \
+				org.openhome.net.test \
 
 docs:
 	rm -rf Build/Docs
@@ -148,6 +156,8 @@ docs:
 	doxygen DoxyfileCppStd
 	mkdir -p Build/Docs/Cs
 	doxygen DoxyfileCs
+	mkdir -p Build/Docs/Java
+	javac -d Build/Docs/Java -sourcepath $(publicjavadir) $(java_packages)
 	mkdir -p Build/Docs/Js
 	perl ./JsDoc/jsdoc.pl -d Build/Docs/Js ControlPoint/Services/Js
 

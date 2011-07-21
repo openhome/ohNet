@@ -3,6 +3,7 @@ proxyCppCore = ControlPoint$(dirsep)Services$(dirsep)Cpp$(dirsep)Core$(dirsep)
 proxyC = ControlPoint$(dirsep)Services$(dirsep)C$(dirsep)
 proxyCppStd = ControlPoint$(dirsep)Services$(dirsep)Cpp$(dirsep)Std$(dirsep)
 proxyCs = ControlPoint$(dirsep)Services$(dirsep)Cs$(dirsep)
+proxyJava = ControlPoint$(dirsep)Services$(dirsep)Java$(dirsep)
 proxyJs = ControlPoint$(dirsep)Services$(dirsep)Js$(dirsep)
 deviceCppCore = Device$(dirsep)Services$(dirsep)Cpp$(dirsep)Core$(dirsep)
 deviceCppStd = Device$(dirsep)Services$(dirsep)Cpp$(dirsep)Std$(dirsep)
@@ -752,6 +753,214 @@ $(objdir)TestPerformanceCpCs.exe: \
 		/reference:$(objdir)ohNet.net.dll \
 		/reference:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
 		$(publiccsdir)TestPerformanceCp.cs
+
+ohNetJavaAll : ohNetJni ohNetJava CpProxyJavaClasses ohNetJavaSrc
+
+objects_jni = $(objdir)JniAction.$(objext) \
+			  $(objdir)JniArgumentBinary.$(objext) \
+			  $(objdir)JniArgumentBool.$(objext) \
+			  $(objdir)JniArgumentInt.$(objext) \
+			  $(objdir)JniArgumentString.$(objext) \
+			  $(objdir)JniArgumentUint.$(objext) \
+			  $(objdir)JniCpDevice.$(objext) \
+              $(objdir)JniCpDeviceList.$(objext) \
+			  $(objdir)JniCpProxy.$(objext) \
+			  $(objdir)JniCpService.$(objext) \
+			  $(objdir)JniInitParams.$(objext) \
+			  $(objdir)JniInvocation.$(objext) \
+			  $(objdir)JniLibrary.$(objext) \
+			  $(objdir)JniNetworkAdapter.$(objext) \
+			  $(objdir)JniNetworkAdapterList.$(objext) \
+			  $(objdir)JniParameter.$(objext) \
+			  $(objdir)JniProperty.$(objext) \
+		
+ohNetJni : $(objdir)ohNetJni.dll 
+$(objdir)ohNetJni.dll : ohNetDll $(objects_jni)
+	$(link_dll) $(linkoutput)$(objdir)ohNetJni.dll $(objects_jni) $(objdir)$(dllprefix)ohNet.$(libext) $(link_jvm)
+$(objdir)JniAction.$(objext) : $(publicjavadir)Action.c $(headers)
+	$(compiler)JniAction.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Action.c
+$(objdir)JniArgumentBinary.$(objext) : $(publicjavadir)ArgumentBinary.c $(headers)
+	$(compiler)JniArgumentBinary.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ArgumentBinary.c
+$(objdir)JniArgumentBool.$(objext) : $(publicjavadir)ArgumentBool.c $(headers)
+	$(compiler)JniArgumentBool.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ArgumentBool.c
+$(objdir)JniArgumentInt.$(objext) : $(publicjavadir)ArgumentInt.c $(headers)
+	$(compiler)JniArgumentInt.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ArgumentInt.c
+$(objdir)JniArgumentString.$(objext) : $(publicjavadir)ArgumentString.c $(headers)
+	$(compiler)JniArgumentString.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ArgumentString.c
+$(objdir)JniArgumentUint.$(objext) : $(publicjavadir)ArgumentUint.c $(headers)
+	$(compiler)JniArgumentUint.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ArgumentUint.c
+$(objdir)JniCpDevice.$(objext) : $(publicjavadir)CpDevice.c $(headers)
+	$(compiler)JniCpDevice.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDevice.c
+$(objdir)JniCpDeviceList.$(objext) : $(publicjavadir)CpDeviceList.c $(headers)
+	$(compiler)JniCpDeviceList.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceList.c
+$(objdir)JniCpProxy.$(objext) : $(publicjavadir)CpProxy.c $(headers)
+	$(compiler)JniCpProxy.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpProxy.c
+$(objdir)JniCpService.$(objext) : $(publicjavadir)CpService.c $(headers)
+	$(compiler)JniCpService.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpService.c
+$(objdir)JniInitParams.$(objext) : $(publicjavadir)InitParams.c $(headers)
+	$(compiler)JniInitParams.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)InitParams.c
+$(objdir)JniInvocation.$(objext) : $(publicjavadir)Invocation.c $(headers)
+	$(compiler)JniInvocation.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Invocation.c
+$(objdir)JniLibrary.$(objext) : $(publicjavadir)Library.c $(headers)
+	$(compiler)JniLibrary.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Library.c
+$(objdir)JniNetworkAdapter.$(objext) : $(publicjavadir)NetworkAdapter.c $(headers)
+	$(compiler)JniNetworkAdapter.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)NetworkAdapter.c
+$(objdir)JniNetworkAdapterList.$(objext) : $(publicjavadir)NetworkAdapterList.c $(headers)
+	$(compiler)JniNetworkAdapterList.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)NetworkAdapterList.c
+$(objdir)JniParameter.$(objext) : $(publicjavadir)Parameter.c $(headers)
+	$(compiler)JniParameter.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Parameter.c
+$(objdir)JniProperty.$(objext) : $(publicjavadir)Property.c $(headers)
+	$(compiler)JniProperty.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Property.c
+
+java_classes = $(objdir)ohnet/Action.class \
+			   $(objdir)ohnet/CpAttribute.class \
+			   $(objdir)ohnet/CpDeviceList.class \
+			   $(objdir)ohnet/CpDeviceListListener.class \
+			   $(objdir)ohnet/CpDeviceListUpnpAll.class \
+			   $(objdir)ohnet/CpDeviceListUpnpDeviceType.class \
+			   $(objdir)ohnet/CpDeviceListUpnpRoot.class \
+			   $(objdir)ohnet/CpDeviceListUpnpServiceType.class \
+			   $(objdir)ohnet/CpDeviceListUpnpUuid.class \
+			   $(objdir)ohnet/CpUpnpDeviceListFactory.class \
+			   $(objdir)ohnet/ICpDeviceList.class \
+			   $(objdir)ohnet/ICpUpnpDeviceListFactory.class \
+			   $(objdir)ohnet/IDeviceListListener.class \
+			   $(objdir)ohnet/IPropertyChangeListener.class \
+			   $(objdir)ohnet/NetworkAdapter.class \
+			   $(objdir)ohnet/NetworkAdapterList.class \
+			   $(objdir)ohnet/Parameter.class \
+			   $(objdir)ohnet/ParameterBinary.class \
+			   $(objdir)ohnet/ParameterBool.class \
+			   $(objdir)ohnet/ParameterInt.class \
+			   $(objdir)ohnet/ParameterRelated.class \
+			   $(objdir)ohnet/ParameterString.class \
+			   $(objdir)ohnet/ParameterUint.class \
+			   $(objdir)ohnet/Property.class \
+			   $(objdir)ohnet/PropertyBinary.class \
+			   $(objdir)ohnet/PropertyBool.class \
+			   $(objdir)ohnet/PropertyChangeListener.class \
+			   $(objdir)ohnet/PropertyInt.class \
+			   $(objdir)ohnet/PropertyString.class \
+			   $(objdir)ohnet/PropertyUint.class \
+			   $(objdir)openhome/net/controlpoint/Argument.class \
+			   $(objdir)openhome/net/controlpoint/ArgumentBinary.class \
+			   $(objdir)openhome/net/controlpoint/ArgumentBool.class \
+			   $(objdir)openhome/net/controlpoint/ArgumentInt.class \
+			   $(objdir)openhome/net/controlpoint/ArgumentString.class \
+			   $(objdir)openhome/net/controlpoint/ArgumentUint.class \
+			   $(objdir)openhome/net/controlpoint/CpDevice.class \
+			   $(objdir)openhome/net/controlpoint/CpProxy.class \
+			   $(objdir)openhome/net/controlpoint/CpService.class \
+			   $(objdir)openhome/net/controlpoint/ICpProxy.class \
+			   $(objdir)openhome/net/controlpoint/ICpProxyListener.class \
+			   $(objdir)openhome/net/controlpoint/Invocation.class \
+			   $(objdir)openhome/net/controlpoint/ProxyError.class \
+			   $(objdir)openhome/net/controlpoint/SyncProxyAction.class \
+			   $(objdir)openhome/net/core/InitParams.class \
+			   $(objdir)openhome/net/core/Library.class \
+			   $(objdir)openhome/net/core/LibraryException.class \
+			   
+ohNetJava : make_obj_dir $(objdir)ohnet.jar
+$(objdir)ohnet.jar : $(java_classes)
+	$(jar) $(jarflags) $(objdir)ohnet.jar -C $(objdir) ohnet -C $(objdir) openhome
+$(objdir)ohnet/Action.class : $(publicjavadir)ohnet/Action.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/Action.java
+$(objdir)ohnet/CpAttribute.class : $(publicjavadir)ohnet/CpAttribute.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/CpAttribute.java
+$(objdir)ohnet/CpDeviceList.class : $(publicjavadir)ohnet/CpDeviceList.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/CpDeviceList.java
+$(objdir)ohnet/CpDeviceListListener.class : $(publicjavadir)ohnet/CpDeviceListListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/CpDeviceListListener.java
+$(objdir)ohnet/CpDeviceListUpnpAll.class : $(publicjavadir)ohnet/CpDeviceListUpnpAll.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/CpDeviceListUpnpAll.java
+$(objdir)ohnet/CpDeviceListUpnpDeviceType.class : $(publicjavadir)ohnet/CpDeviceListUpnpDeviceType.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/CpDeviceListUpnpDeviceType.java
+$(objdir)ohnet/CpDeviceListUpnpRoot.class : $(publicjavadir)ohnet/CpDeviceListUpnpRoot.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/CpDeviceListUpnpRoot.java
+$(objdir)ohnet/CpDeviceListUpnpServiceType.class : $(publicjavadir)ohnet/CpDeviceListUpnpServiceType.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/CpDeviceListUpnpServiceType.java
+$(objdir)ohnet/CpDeviceListUpnpUuid.class : $(publicjavadir)ohnet/CpDeviceListUpnpUuid.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/CpDeviceListUpnpUuid.java
+$(objdir)ohnet/CpUpnpDeviceListFactory.class : $(publicjavadir)ohnet/CpUpnpDeviceListFactory.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/CpUpnpDeviceListFactory.java
+$(objdir)ohnet/ICpDeviceList.class : $(publicjavadir)ohnet/ICpDeviceList.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/ICpDeviceList.java
+$(objdir)ohnet/ICpUpnpDeviceListFactory.class : $(publicjavadir)ohnet/ICpUpnpDeviceListFactory.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/ICpUpnpDeviceListFactory.java
+$(objdir)ohnet/IDeviceListListener.class : $(publicjavadir)ohnet/IDeviceListListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/IDeviceListListener.java
+$(objdir)ohnet/IPropertyChangeListener.class : $(publicjavadir)ohnet/IPropertyChangeListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/IPropertyChangeListener.java
+$(objdir)/NetworkAdapter.class : $(publicjavadir)ohnet/NetworkAdapter.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/NetworkAdapter.java
+$(objdir)ohnet/NetworkAdapterList.class : $(publicjavadir)ohnet/NetworkAdapterList.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/NetworkAdapterList.java
+$(objdir)ohnet/Parameter.class : $(publicjavadir)ohnet/Parameter.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/Parameter.java
+$(objdir)ohnet/ParameterBinary.class : $(publicjavadir)ohnet/ParameterBinary.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/ParameterBinary.java
+$(objdir)ohnet/ParameterBool.class : $(publicjavadir)ohnet/ParameterBool.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/ParameterBool.java
+$(objdir)ohnet/ParameterInt.class : $(publicjavadir)ohnet/ParameterInt.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/ParameterInt.java
+$(objdir)ohnet/ParameterRelated.class : $(publicjavadir)ohnet/ParameterRelated.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/ParameterRelated.java
+$(objdir)ohnet/ParameterString.class : $(publicjavadir)ohnet/ParameterString.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/ParameterString.java
+$(objdir)ohnet/ParameterUint.class : $(publicjavadir)ohnet/ParameterUint.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/ParameterUint.java
+$(objdir)ohnet/Property.class : $(publicjavadir)ohnet/Property.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/Property.java
+$(objdir)ohnet/PropertyBinary.class : $(publicjavadir)ohnet/PropertyBinary.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/PropertyBinary.java
+$(objdir)ohnet/PropertyBool.class : $(publicjavadir)ohnet/PropertyBool.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/PropertyBool.java
+$(objdir)ohnet/PropertyChangeListener.class : $(publicjavadir)ohnet/PropertyChangeListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/PropertyChangeListener.java
+$(objdir)ohnet/PropertyInt.class : $(publicjavadir)ohnet/PropertyInt.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/PropertyInt.java
+$(objdir)ohnet/PropertyString.class : $(publicjavadir)ohnet/PropertyString.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/PropertyString.java
+$(objdir)ohnet/PropertyUint.class : $(publicjavadir)ohnet/PropertyUint.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)ohnet/PropertyUint.java
+$(objdir)openhome/net/controlpoint/Argument.class : $(publicjavadir)openhome/net/controlpoint/Argument.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/Argument.java
+$(objdir)openhome/net/controlpoint/ArgumentBinary.class : $(publicjavadir)openhome/net/controlpoint/ArgumentBinary.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/ArgumentBinary.java
+$(objdir)openhome/net/controlpoint/ArgumentBool.class : $(publicjavadir)openhome/net/controlpoint/ArgumentBool.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/ArgumentBool.java
+$(objdir)openhome/net/controlpoint/ArgumentInt.class : $(publicjavadir)openhome/net/controlpoint/ArgumentInt.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/ArgumentInt.java
+$(objdir)openhome/net/controlpoint/ArgumentString.class : $(publicjavadir)openhome/net/controlpoint/ArgumentString.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/ArgumentString.java
+$(objdir)openhome/net/controlpoint/ArgumentUint.class : $(publicjavadir)openhome/net/controlpoint/ArgumentUint.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/ArgumentUint.java
+$(objdir)openhome/net/controlpoint/CpDevice.class : $(publicjavadir)openhome/net/controlpoint/CpDevice.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/CpDevice.java
+$(objdir)openhome/net/controlpoint/CpProxy.class : $(publicjavadir)openhome/net/controlpoint/CpProxy.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/CpProxy.java
+$(objdir)openhome/net/controlpoint/CpService.class : $(publicjavadir)openhome/net/controlpoint/CpService.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/CpService.java
+$(objdir)openhome/net/controlpoint/ICpProxy.class : $(publicjavadir)openhome/net/controlpoint/ICpProxy.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/ICpProxy.java
+$(objdir)openhome/net/controlpoint/ICpProxyListener.class : $(publicjavadir)openhome/net/controlpoint/ICpProxyListener.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/ICpProxyListener.java
+$(objdir)openhome/net/controlpoint/Invocation.class : $(publicjavadir)openhome/net/controlpoint/Invocation.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/Invocation.java
+$(objdir)openhome/net/controlpoint/ProxyError.class : $(publicjavadir)openhome/net/controlpoint/ProxyError.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/ProxyError.java
+$(objdir)openhome/net/controlpoint/SyncProxyAction.class : $(publicjavadir)openhome/net/controlpoint/SyncProxyAction.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/controlpoint/SyncProxyAction.java
+$(objdir)openhome/net/core/InitParams.class : $(publicjavadir)openhome/net/core/InitParams.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/core/InitParams.java
+$(objdir)openhome/net/core/Library.class : $(publicjavadir)openhome/net/core/Library.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/core/Library.java
+$(objdir)openhome/net/core/LibraryException.class : $(publicjavadir)openhome/net/core/LibraryException.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)openhome/net/core/LibraryException.java
+	
+ohNetJavaSrc : $(objdir)ohnet-src.jar
+$(objdir)ohnet-src.jar :
+	$(jar) $(jarflags) $(objdir)ohnet-src.jar -C $(publicjavadir) .
 
 
 Generated$(dirsep)GenerateSourceFiles.mak : $(tt) Service$(dirsep)Services.xml T4/Templates/UpnpMakeT4.tt

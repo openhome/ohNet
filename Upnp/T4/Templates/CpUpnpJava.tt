@@ -1,0 +1,895 @@
+<#@ assembly name="UpnpServiceXml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
+<#@ template language="C#" #>
+<#
+    string domain = TemplateArgument("domain");
+    string type = TemplateArgument("type");
+
+    uint version = 1;
+
+    try
+    {
+       version = Convert.ToUInt32(TemplateArgument("version"));
+    }
+    catch (FormatException)
+    {
+        throw (new ArgumentException("Invalid version number specified"));
+    }
+    catch (OverflowException)
+    {
+        throw (new ArgumentException("Invalid version number specified"));
+    }
+
+    string upnpdomain = domain.Replace(".", "-");
+
+    if (upnpdomain.StartsWith("upnp-"))
+    {
+        upnpdomain = "schemas-" + upnpdomain;
+    }
+
+    string fileName = "";
+    char[] charSeparators = new char[] {'.'};
+    string[] res = domain.Split(charSeparators, StringSplitOptions.None);
+    foreach (string str in res)
+    {
+        fileName += str.Substring(0, 1).ToUpper();
+        if (str.Length > 1)
+        {
+            fileName += str.Substring(1, str.Length-1);
+        }
+    }
+    fileName += type;
+    fileName += version;
+    string className = "CpProxy" + fileName;
+
+    Initialise();
+
+    Document u = new Document(TemplateArgument("xml"));
+#>
+package openhome.net.controlpoint.proxies;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import ohnet.*;
+import openhome.net.controlpoint.*;
+import openhome.net.controlpoint.proxies.*;
+import openhome.net.controlpoint.proxies.<#=className#>.*;
+import openhome.net.core.*;
+
+<# /* #>
+final class EndPoints
+{
+	private String iSource = null;
+	private String iSink = null;
+
+	public EndPoints(String aSource, String aSink)
+	{
+		iSource = aSource;
+		iSink = aSink;
+	}
+
+	public String getSource()
+	{
+		return iSource;
+	}
+
+	public String getSink()
+	{
+		return iSink;
+	}
+}
+	
+final class CommunicationId
+{
+	private int iConnectionID = 0;
+	private int iAVTransportID = 0;
+	private int iRcsID = 0;
+
+	public CommunicationId(int aConnectionID, int aAVTransportID, int aRcsID)
+	{
+		iConnectionID = aConnectionID;
+		iAVTransportID = aAVTransportID;
+		iRcsID = aRcsID;
+	}
+
+	public int getConnectionID()
+	{
+		return iConnectionID;
+	}
+
+	public int getAVTransportID()
+	{
+		return iAVTransportID;
+	}
+
+	public int getRcsID()
+	{
+		return iRcsID;
+	}	
+}
+	
+final class ConnectionInfo
+{
+	private int iRcsID = 0;
+	private int iAVTransportID = 0;
+	private String iProtocolInfo = null;
+	private String iPeerConnectionManager = null;
+	private int iPeerConnectionID = 0;
+	private String iDirection = null;
+	private String iStatus = null;
+
+	public ConnectionInfo(int aRcsID, int aAVTransportID, String aProtocolInfo,
+			String aPeerConnectionManager, int aPeerConnectionID,
+			String aDirection, String aStatus)
+	{
+		iRcsID = aRcsID;
+		iAVTransportID = aAVTransportID;
+		iProtocolInfo = aProtocolInfo;
+		iPeerConnectionManager = aPeerConnectionManager;
+		iPeerConnectionID = aPeerConnectionID;
+		iDirection = aDirection;
+		iStatus = aStatus;
+	}
+
+	public int getRcsID()
+	{
+		return iRcsID;
+	}
+
+	public int getAVTransportID()
+	{
+		return iAVTransportID;
+	}
+
+	public String getProtocolInfo()
+	{
+		return iProtocolInfo;
+	}
+
+	public String getPeerConnectionManager()
+	{
+		return iPeerConnectionManager;
+	}
+
+	public int getPeerConnectionID()
+	{
+		return iPeerConnectionID;
+	}
+
+	public String getDirection()
+	{
+		return iDirection;
+	}
+
+	public String getStatus()
+	{
+		return iStatus;
+	}
+}
+<# */ #>
+	
+interface I<#=className#> extends ICpProxy
+{
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+<#      String outType; #>
+<#      outType = ReturnType(a); #>
+    public <#=outType#> sync<#=a.name#>(<#=InArgsFull(a, false)#>);
+    public void begin<#=a.name#>(<#=InArgsFull(a, true)#>ICpProxyListener aCallback);
+    public <#=outType#> end<#=a.name#>(<#=Handle#> aAsyncHandle);
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    public void setProperty<#=s.name#>Changed(IPropertyChangeListener a<#=s.name#>Changed);
+    public <#=argtype[s.type]#> getProperty<#=s.name#>();
+<#  } #>
+}
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+class Sync<#=a.name#><#=fileName#> extends SyncProxyAction
+{
+    private <#=className#> iService;
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+    private <#=argtype[o.variable.type]#> i<#=ArgName(o)#>;
+<#      } #>
+
+    public Sync<#=a.name#><#=fileName#>(<#=className#> aProxy)
+    {
+        iService = aProxy;
+    }
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+    public <#=argtype[o.variable.type]#> get<#=ArgName(o)#>()
+    {
+        return i<#=ArgName(o)#>;
+    }
+<#      } #>
+    protected void completeRequest(long aAsyncHandle)
+    {
+<#      string outType = ReturnType(a); #>
+        <#=(outType == "void" ? "" : outType + " result = ")#>iService.end<#=a.name#>(aAsyncHandle);
+		
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (a.outargs.Count == 1) #>
+<#          { #>
+        i<#=ArgName(o)#> = result;
+<#          } #>
+<#          else #>
+<#          { #>
+        i<#=ArgName(o)#> = result.get<#=ArgName(o)#>();
+<#          } #>
+<#      } #>
+    }
+}
+<#  } #>
+
+/**
+ * Proxy for the <#=domain#>:<#=type#>:<#=version#> UPnP service
+ */
+public class <#=className#> extends CpProxy implements I<#=className#>
+{
+<#  Dictionary<string,string> outParams = new Dictionary<string,string>(); #>
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+<#      if (a.outargs.Count >= 2) #>
+<#      { #>
+<#          if (!outParams.ContainsKey(a.name)) #>
+<#          { #>
+
+    public class <#=a.name#>
+    {
+<#              foreach (Argument o in a.outargs) #>
+<#              { #>
+        private <#=argtype[o.variable.type]#> i<#=ArgName(o)#>;
+<#              } #>
+
+        public <#=a.name#>(
+<#              int i = 0; #>
+<#              foreach (Argument o in a.outargs) #>
+<#              { #>
+            <#=argtype[o.variable.type]#> a<#=ArgName(o)#><#=(i < a.outargs.Count-1 ? "," : "")#>
+<#                  i++; #>
+<#              } #>
+        )
+        {
+<#              foreach (Argument o in a.outargs) #>
+<#              { #>
+            i<#=ArgName(o)#> = a<#=ArgName(o)#>;
+<#              } #>
+        }
+<#              foreach (Argument o in a.outargs) #>
+<#              { #>
+        public <#=argtype[o.variable.type]#> get<#=ArgName(o)#>()
+        {
+            return i<#=ArgName(o)#>;
+        }
+<#              } #>
+    }
+<#               outParams.Add(a.name, a.name); #>
+<#          } #>
+<#      } #>
+<#  } #>
+
+<# foreach (Method a in u.methods) #>
+<# { #>
+    private Action iAction<#=a.name#>;
+<# } #>
+<# foreach (Variable s in u.evented) #>
+<# { #>
+    private <#=propertyType[s.type]#> i<#=s.name#>;
+<# } #>
+<# foreach (Variable s in u.evented) #>
+<# { #>
+    private IPropertyChangeListener i<#=s.name#>Changed;
+<# } #>
+<# if (u.evented.Count > 0) #>
+<# { #>
+    private Object iPropertyLock;
+<# } #>
+
+    /**
+     * Constructor.
+     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     *
+     * @param aDevice	the device to use.
+     */
+
+    public <#=className#>(CpDevice aDevice)
+    {
+        super("<#=upnpdomain#>", "<#=type#>", <#=version#>, aDevice);
+<#  if (u.methods.Count > 0) #>
+<#  { #>
+        <#=DeclareCtorLocalVars(u)#>
+<#      foreach (Method a in u.methods) #>
+<#    { #>
+
+        iAction<#=a.name#> = new Action("<#=a.name#>");
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+<#          if (i.variable.values.Count > 0) #>
+<#          { #>
+<#              foreach (string val in i.variable.values) #>
+<#              { #>
+        allowedValues.add("<#=val#>");
+<#              } #>
+<#          } #>
+        param = new <#=paramType[i.variable.type]#>("<#=i.name#>"<#=ParameterAllowedValues(i)#>);
+		iAction<#=a.name#>.addInputParameter(param);
+<#          if (i.variable.values.Count > 0) #>
+<#          { #>
+        allowedValues.clear();
+<#          } #>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (o.variable.values.Count > 0) #>
+<#          { #>
+<#              foreach (string val in o.variable.values) #>
+<#              { #>
+        allowedValues.add("<#=val#>");
+<#              } #>
+<#          } #>
+        param = new <#=paramType[o.variable.type]#>("<#=o.name#>"<#=ParameterAllowedValues(o)#>);
+		iAction<#=a.name#>.addOutputParameter(param);
+<#          if (o.variable.values.Count > 0) #>
+<#          { #>
+        allowedValues.clear();
+<#          } #>
+<#      } #>
+<#    } #>
+<#  } #>
+<# if (u.evented.Count > 0) #>
+<#  { #>
+
+<#      foreach (Variable s in u.evented) #>
+<#      { #>
+        i<#=s.name#>Changed = new PropertyChangeListener();
+        i<#=s.name#> = new <#=propertyType[s.type]#>("<#=s.name#>", i<#=s.name#>Changed);
+		addProperty(i<#=s.name#>);
+<#      } #>
+<#  } #>
+<#  if (u.evented.Count > 0) #>
+<#  { #>
+        iPropertyLock = new Object();
+<#  } #>
+    }
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+<#      string outType = ReturnType(a); #>
+    /**
+     * Invoke the action synchronously.
+     * Blocks until the action has been processed on the device and sets any
+     * output arguments.
+<#      if (outType != "void") #>
+<#      { #>
+     *
+     * @return the result of the invoked action.
+<#      } #>
+     */
+	public <#=outType#> sync<#=a.name#>(<#=InArgsFull(a, false)#>)
+	{
+	    Sync<#=a.name#><#=fileName#> sync = new Sync<#=a.name#><#=fileName#>(this);
+	    begin<#=a.name#>(<#=InArgsNames(a, true)#>sync.getListener());
+	    sync.waitToComplete();
+
+        try
+        {
+            sync.reportError();
+        }
+        catch (ProxyError pe) { }
+<#      if (a.outargs.Count == 1) #>
+<#      { #>
+<#          foreach (Argument o in a.outargs) #>
+<#          { #>
+
+        return sync.get<#=ArgName(o)#>();
+<#          } #>
+<#      } #>
+<#      else if (a.outargs.Count >= 2) #>
+<#      { #>
+
+        return new <#=outType#>(
+<#          int i = 0; #>
+<#          foreach (Argument o in a.outargs) #>
+<#          { #>
+            sync.get<#=ArgName(o)#>()<#=(i == a.outargs.Count-1 ? "" : ",")#>
+<#              i++; #>
+<#          } #>
+		);
+<#      } #>
+	}
+	
+	/**
+	 * Invoke the action asynchronously.
+	 * Returns immediately and will run the client-specified callback when the
+	 * action later completes.  Any output arguments can then be retrieved by
+	 * calling {@link #end<#=a.name#>}.
+	 * 
+	 * @param aCallback	listener to call back when action completes.
+	 */
+	public void begin<#=a.name#>(<#=InArgsFull(a, true)#>ICpProxyListener aCallback)
+	{
+        Invocation invocation = iService.getInvocation(iAction<#=a.name#>, aCallback);
+<#      if (a.inargs.Count > 0) #>
+<#      { #>
+        int inIndex = 0;
+<#      foreach (Argument i in a.inargs) #>
+<#          { #>
+        invocation.addInput(new <#=invArgType[i.variable.type]#>((<#=paramType[i.variable.type]#>)iAction<#=a.name#>.getInputParameter(inIndex++), a<#=ArgName(i)#>));
+<#          } #>
+<#      } #>
+<#      if (a.outargs.Count > 0) #>
+<#      { #>
+        int outIndex = 0;
+<#          foreach (Argument o in a.outargs) #>
+<#          { #>
+        invocation.addOutput(new <#=invArgType[o.variable.type]#>((<#=paramType[o.variable.type]#>)iAction<#=a.name#>.getOutputParameter(outIndex++)));
+<#          } #>
+<#      } #>
+        iService.invokeAction(invocation);
+    }
+
+	/**
+	 * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the
+     * {@link #begin<#=a.name#>} method.
+     *
+     * @param aAsyncHandle	argument passed to the delegate set in the
+	 *			{@link #begin<#=a.name#>} method.
+<#      if (outType != "void") #>
+<#      { #>
+     * @return the result of the previously invoked action.
+<#      } #>
+     */
+	public <#=outType#> end<#=a.name#>(long aAsyncHandle)
+    {
+        if (Invocation.error(aAsyncHandle))
+        {
+            throw new ProxyError();
+        }
+<#      if (a.outargs.Count > 0) #>
+<#      { #>
+        int index = 0;
+<#          foreach (Argument o in a.outargs) #>
+<#          { #>
+        <#=argtype[o.variable.type]#> <#=ArgNameLocal(ArgName(o))#> = Invocation.get<#=invOutputType[o.variable.type]#>(aAsyncHandle, index++);
+<#          } #>
+<#          if (a.outargs.Count == 1) #>
+<#          { #>
+<#              foreach (Argument o in a.outargs) #>
+<#              { #>
+        return <#=ArgNameLocal(ArgName(o))#>;
+<#              } #>
+<#          } #>
+<#          else #>
+<#          { #>
+        return new <#=outType#>(
+<#              int i = 0; #>
+<#              foreach (Argument o in a.outargs) #>
+<#              { #>
+            <#=ArgNameLocal(ArgName(o))#><#=(i == a.outargs.Count-1 ? "" : ",")#>
+<#                  i++; #>
+<#              } #>
+		);
+<#          } #>
+<#      } #>
+    }
+		
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    /**
+     * Set a delegate to be run when the <#=s.name#> state variable changes.
+     * Callbacks may be run in different threads but callbacks for a
+	 * <#=className#> instance will not overlap.
+     *
+     * @param a<#=s.name#>Changed	the listener to call back when the state
+	 * 			variable changes.
+     */
+    public void setProperty<#=s.name#>Changed(IPropertyChangeListener a<#=s.name#>Changed)
+    {
+        synchronized (iPropertyLock)
+        {
+            i<#=s.name#>Changed = a<#=s.name#>Changed;
+        }
+    }
+
+    private void <#=ArgNameLocal(s.name)#>PropertyChanged()
+    {
+        synchronized (iPropertyLock)
+        {
+            reportEvent(i<#=s.name#>Changed);
+        }
+    }
+<#  } #>
+
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    /**
+     * Query the value of the <#=s.name#> property.
+     * This function is thread-safe and can only be called if {@link 
+     * #subscribe} has been called and a first eventing callback received
+     * more recently than any call to {@link #unsubscribe}.
+     *
+	 * @return	value of the <#=s.name#> property.
+     */
+    public <#=argtype[s.type]#> getProperty<#=s.name#>()
+    {
+        propertyReadLock();
+        <#=argtype[s.type]#> val = i<#=s.name#>.getValue();
+        propertyReadUnlock();
+        return val;
+    }
+	
+<#  } #>
+    /**
+     * Dispose of this control point proxy.
+     * Must be called for each class instance.  Must be called before {@link
+     * #openhome.net.core.library.close}.
+     */
+    public void dispose()
+    {
+        synchronized (this)
+        {
+            if (iHandle == 0)
+            {
+                return;
+            }
+            disposeProxy();
+            iHandle = 0;
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+            iAction<#=a.name#>.destroy();
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+            i<#=s.name#>.destroy();
+<#  } #>
+        }
+    }
+}
+
+<#+
+
+const string Handle = "long";
+
+Dictionary<string,string> argtype = new Dictionary<string,string>();
+Dictionary<string,string> paramType = new Dictionary<string,string>();
+Dictionary<string,string> propertyType = new Dictionary<string,string>();
+Dictionary<string,string> invArgType = new Dictionary<string,string>();
+Dictionary<string,string> invOutputType = new Dictionary<string,string>();
+
+void Initialise()
+{
+    argtype.Add("ui1", "long");
+    argtype.Add("ui2", "long");
+    argtype.Add("ui4", "long");
+    argtype.Add("boolean", "boolean");
+    argtype.Add("i1", "int");
+    argtype.Add("i2", "int");
+    argtype.Add("i4", "int");
+    argtype.Add("string", "String");
+    argtype.Add("bin.base64", "byte[]");
+    argtype.Add("uri", "String");
+
+    paramType.Add("ui1", "ParameterUint");
+    paramType.Add("ui2", "ParameterUint");
+    paramType.Add("ui4", "ParameterUint");
+    paramType.Add("boolean", "ParameterBool");
+    paramType.Add("i1", "ParameterInt");
+    paramType.Add("i2", "ParameterInt");
+    paramType.Add("i4", "ParameterInt");
+    paramType.Add("string", "ParameterString");
+    paramType.Add("bin.base64", "ParameterBinary");
+    paramType.Add("uri", "ParameterString");
+
+    propertyType.Add("ui1", "PropertyUint");
+    propertyType.Add("ui2", "PropertyUint");
+    propertyType.Add("ui4", "PropertyUint");
+    propertyType.Add("boolean", "PropertyBool");
+    propertyType.Add("i1", "PropertyInt");
+    propertyType.Add("i2", "PropertyInt");
+    propertyType.Add("i4", "PropertyInt");
+    propertyType.Add("string", "PropertyString");
+    propertyType.Add("bin.base64", "PropertyBinary");
+    propertyType.Add("uri", "PropertyString");
+
+    invArgType.Add("ui1", "ArgumentUint");
+    invArgType.Add("ui2", "ArgumentUint");
+    invArgType.Add("ui4", "ArgumentUint");
+    invArgType.Add("boolean", "ArgumentBool");
+    invArgType.Add("i1", "ArgumentInt");
+    invArgType.Add("i2", "ArgumentInt");
+    invArgType.Add("i4", "ArgumentInt");
+    invArgType.Add("string", "ArgumentString");
+    invArgType.Add("bin.base64", "ArgumentBinary");
+    invArgType.Add("uri", "ArgumentString");
+
+    invOutputType.Add("ui1", "OutputUint");
+    invOutputType.Add("ui2", "OutputUint");
+    invOutputType.Add("ui4", "OutputUint");
+    invOutputType.Add("boolean", "OutputBool");
+    invOutputType.Add("i1", "OutputInt");
+    invOutputType.Add("i2", "OutputInt");
+    invOutputType.Add("i4", "OutputInt");
+    invOutputType.Add("string", "OutputString");
+    invOutputType.Add("bin.base64", "OutputBinary");
+    invOutputType.Add("uri", "OutputString");
+}
+
+string InArgsFull(Method a, bool aTrailingComma)
+{
+    string result = "";
+    
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        
+        result += argtype[i.variable.type];
+        result += " ";
+        result += "a" + ArgName(i);
+    }
+    if (aTrailingComma && result.Length > 0)
+    {
+        result += ", ";
+    }
+    
+    return result;
+} 
+
+string OutArgsFull(Method a, bool aLeadingComma)
+{
+    string result = "";
+    
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        
+        result += "out ";
+        result += argtype[o.variable.type];
+        result += " ";
+        result += "a" + ArgName(o);
+    }
+    if (aLeadingComma && result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    
+    return result;
+}
+
+string ArgsFull(Method a)
+{
+    string result = InArgsFull(a, false);
+    string outArgs = OutArgsFull(a, false);
+    if (outArgs.Length > 0)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += outArgs;
+    }
+    return result;
+}
+
+string ArgNameLocal(string aName)
+{
+    string name = aName.Substring(0, 1).ToLower();
+    if (aName.Length > 1)
+    {
+        name += aName.Substring(1, aName.Length-1);
+    }
+    return name;
+}
+
+string InArgsNames(Method a, bool aTrailingComma)
+{
+    string result = "";
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += "a" + ArgName(i);
+    }
+    if (aTrailingComma && result.Length > 0)
+    {
+        result += ", ";
+    }
+    return result;
+}
+
+string DeclareCtorLocalVars(Document u)
+{
+    bool hasParameters = false;
+    bool hasAllowedValues = false;
+
+    foreach (Method a in u.methods)
+    {
+        foreach (Argument i in a.inargs)
+        {
+            hasParameters = true;
+            if (i.variable.type == "string" || i.variable.type == "uri")
+            {
+                hasAllowedValues = true;
+            }
+        }
+        foreach (Argument o in a.outargs)
+        {
+            hasParameters = true;
+            if (o.variable.type == "string" || o.variable.type == "uri")
+            {
+                hasAllowedValues = true;
+            }
+        }
+    }
+
+    string parameterDeclaration =
+        hasParameters ?
+        "Parameter param;" :
+        "";
+    string allowedValuesDeclaration = 
+        hasAllowedValues ?
+        "List<String> allowedValues = new LinkedList<String>();":
+        "";
+    return parameterDeclaration + "\n        " + allowedValuesDeclaration;
+}
+
+string ParameterAllowedValues(Argument a)
+{
+    string result = "";
+    Variable v = a.variable;
+    if (v.type == "string" || v.type == "uri")
+    {
+        result += ", allowedValues";
+    }
+    else if (v.minspecified)
+    {
+        result += ", ";
+        result += v.min;
+        result += ", ";
+        result += v.max;
+        if (v.stepspecified)
+        {
+            result += ", ";
+            result += v.step;
+        }
+    }
+    return(result);
+}
+
+string CompleteRequestOutArgs(Method a)
+{
+    string result = "";
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += "out i" + ArgName(o);
+    }
+    if (result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return result;
+}
+
+string OutArgsNames(Method a, bool aLeadingComma, string aPrefix)
+{
+    string result = "";
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += aPrefix + ArgName(o);
+    }
+    if (aLeadingComma && result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return result;
+}
+
+string ArgsNames(Method a)
+{
+    string inStr = InArgsNames(a, false);
+    string outStr = OutArgsNames(a, false, "a");
+    if (outStr.Length > 0)
+    {
+        outStr = ", " + outStr;
+    }
+    if (inStr.Length > 0)
+    {
+        inStr = ", " + inStr;
+    }
+    string result = inStr + outStr;
+    return result;
+}
+
+string ArgName(Argument aArg)
+{
+    string name = aArg.name;
+    if (name.Substring(0, 1) == "a")
+    {
+        name = name.Substring(1);
+    }
+    string start = name.Substring(0, 1);
+    string end = name.Substring(1);
+    string ret = start.ToUpper() + end;
+    return ret;
+}
+
+string TemplateArgument(string aName)
+{
+    string[] args =  System.Environment.GetCommandLineArgs();
+        
+    bool isarg = false;
+    
+    foreach (string arg in args)
+    {
+        if (isarg)
+        {
+            string[] parts = arg.Split(new char[] {':'});
+            
+            if (parts.Length == 2)
+            {
+                if (parts[0] == aName)
+                {
+                    return (parts[1]);
+                }
+            }
+            
+            isarg = false;
+            continue;
+        }
+        
+        if (arg == "-a")
+        {
+            isarg = true;
+        }
+    }
+    
+    throw (new ArgumentException(aName + " not specified"));
+}
+
+string ReturnType(Method aMethod)
+{
+    string outType = "";
+
+    if (aMethod.outargs.Count >= 2)
+    {
+        outType = aMethod.name;
+    } 
+    else if (aMethod.outargs.Count == 1)
+    {
+        foreach (Argument o in aMethod.outargs)
+        {
+            outType = argtype[o.variable.type];
+        }
+    }
+    else
+    {
+        outType = "void";
+    }
+    
+    return outType;
+}
+#>
