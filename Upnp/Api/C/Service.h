@@ -30,12 +30,12 @@ typedef THandle HandleService;
  */
 typedef THandle ServiceParameter;
 
-const int32_t kServiceParameterIntDefaultMin  = INT32_MIN;
-const int32_t kServiceParameterIntDefaultMax  = INT32_MAX;
-const int32_t kServiceParameterIntDefaultStep = 1;
-const uint32_t kServiceParameterUintDefaultMin  = 0;
-const uint32_t kServiceParameterUintDefaultMax  = UINT32_MAX;
-const uint32_t kServiceParameterUintDefaultStep = 1;
+#define kServiceParameterIntDefaultMin INT32_MIN
+#define kServiceParameterIntDefaultMax  INT32_MAX;
+#define kServiceParameterIntDefaultStep 1;
+#define kServiceParameterUintDefaultMin  0;
+#define kServiceParameterUintDefaultMax  UINT32_MAX;
+#define kServiceParameterUintDefaultStep 1;
 
 /**
  * Create an integer parameter

@@ -299,7 +299,7 @@ DllExport void CpInvocationAddOutput(CpInvocationC aInvocation, ActionArgument a
  *
  * @param[in] aInvocation  Returned by CpServiceInvocation
  *
- * @return  0 for success; none-zero for error
+ * @return  0 for success; non-zero for error
  */
 DllExport uint32_t CpInvocationError(CpInvocationC aInvocation);
 
