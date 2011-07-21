@@ -25,6 +25,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <ifaddrs.h>
+#include <signal.h>
 
 #include <OpenHome/Os.h>
 
@@ -75,6 +76,11 @@ void OsDestroy()
 void OsQuit()
 {
     abort();
+}
+
+void OsBreakpoint()
+{
+    raise(SIGTRAP);
 }
 
 uint64_t OsTimeInUs()

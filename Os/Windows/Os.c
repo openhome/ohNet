@@ -91,6 +91,10 @@ void OsQuit()
     abort();
 }
 
+void OsBreakpoint()
+{
+}
+
 uint64_t OsTimeInUs()
 {
     uint64_t timeNow;

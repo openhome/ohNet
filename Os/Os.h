@@ -56,6 +56,14 @@ void OsDestroy();
 void OsQuit();
 
 /**
+ * Cause a breakpoint.
+ *
+ * OS specific way of causing a breakpoint such that an OS specific debugger
+ * can catch the breakpoint and allow debugging of the program.
+ */
+void OsBreakpoint();
+
+/**
  * Return the current time in microseconds.
  *
  * This is only used to determine relative time rather than absolute time, so the returned time
