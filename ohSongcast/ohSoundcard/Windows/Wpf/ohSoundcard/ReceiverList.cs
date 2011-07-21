@@ -137,7 +137,7 @@ namespace OpenHome.Soundcard
 
         public void ReceiverChanged(IReceiver aReceiver)
         {
-            iDispatcher.Invoke(new DelegateReceiverList(Changed), new object[] { aReceiver });
+            iDispatcher.BeginInvoke(new DelegateReceiverList(Changed), new object[] { aReceiver });
         }
 
         internal void Changed(IReceiver aReceiver)
@@ -154,7 +154,7 @@ namespace OpenHome.Soundcard
 
         public void ReceiverRemoved(IReceiver aReceiver)
         {
-            iDispatcher.Invoke(new DelegateReceiverList(Removed), new object[] { aReceiver });
+            iDispatcher.BeginInvoke(new DelegateReceiverList(Removed), new object[] { aReceiver });
         }
 
         internal void Removed(IReceiver aReceiver)

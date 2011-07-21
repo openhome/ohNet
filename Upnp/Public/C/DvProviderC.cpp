@@ -29,19 +29,19 @@ static DvProviderWrapper* ProviderFromHandle(DvProviderC aProvider)
     return provider;
 }
 
-DvProviderC DvProviderCreate(DvDeviceC aDevice, const char* aDomain, const char* aType, uint32_t aVersion)
+DvProviderC STDCALL DvProviderCreate(DvDeviceC aDevice, const char* aDomain, const char* aType, uint32_t aVersion)
 {
     DvDevice* d = DviDeviceC::DeviceFromHandle(aDevice);
     DviDevice& device = d->Device();
     return (DvProviderC)new DvProviderWrapper(device, aDomain, aType, aVersion);
 }
 
-void DvProviderDestroy(DvProviderC aProvider)
+void STDCALL DvProviderDestroy(DvProviderC aProvider)
 {
     delete reinterpret_cast<DvProviderWrapper*>(aProvider);
 }
 
-void DvProviderAddAction(DvProviderC aProvider, ServiceAction aAction, OhNetCallbackDvInvocation aCallback, void* aPtr)
+void STDCALL DvProviderAddAction(DvProviderC aProvider, ServiceAction aAction, OhNetCallbackDvInvocation aCallback, void* aPtr)
 {
     OhNetFunctorDviInvocation cb = reinterpret_cast<OhNetFunctorDviInvocation>(aCallback);
     FunctorDviInvocation functor = MakeFunctorDviInvocation(aPtr, cb);
@@ -49,24 +49,24 @@ void DvProviderAddAction(DvProviderC aProvider, ServiceAction aAction, OhNetCall
     ProviderFromHandle(aProvider)->AddAction(action, functor);
 }
 
-void DvProviderPropertiesLock(DvProviderC aProvider)
+void STDCALL DvProviderPropertiesLock(DvProviderC aProvider)
 {
     ProviderFromHandle(aProvider)->PropertiesLock();
 }
 
-void DvProviderPropertiesUnlock(DvProviderC aProvider)
+void STDCALL DvProviderPropertiesUnlock(DvProviderC aProvider)
 {
     ProviderFromHandle(aProvider)->PropertiesUnlock();
 }
 
-void DvProviderAddProperty(DvProviderC aProvider, ServiceProperty aProperty)
+void STDCALL DvProviderAddProperty(DvProviderC aProvider, ServiceProperty aProperty)
 {
     OpenHome::Net::Property* prop = reinterpret_cast<OpenHome::Net::Property*>(aProperty);
     ASSERT(prop != NULL);
     ProviderFromHandle(aProvider)->AddProperty(prop);
 }
 
-int32_t DvProviderSetPropertyInt(DvProviderC aProvider, ServiceProperty aProperty, int32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderSetPropertyInt(DvProviderC aProvider, ServiceProperty aProperty, int32_t aValue, uint32_t* aChanged)
 {
     try {
         PropertyInt* prop = reinterpret_cast<PropertyInt*>(aProperty);
@@ -80,7 +80,7 @@ int32_t DvProviderSetPropertyInt(DvProviderC aProvider, ServiceProperty aPropert
     return 0;
 }
 
-int32_t DvProviderSetPropertyUint(DvProviderC aProvider, ServiceProperty aProperty, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderSetPropertyUint(DvProviderC aProvider, ServiceProperty aProperty, uint32_t aValue, uint32_t* aChanged)
 {
     try {
         PropertyUint* prop = reinterpret_cast<PropertyUint*>(aProperty);
@@ -94,7 +94,7 @@ int32_t DvProviderSetPropertyUint(DvProviderC aProvider, ServiceProperty aProper
     return 0;
 }
 
-int32_t DvProviderSetPropertyBool(DvProviderC aProvider, ServiceProperty aProperty, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderSetPropertyBool(DvProviderC aProvider, ServiceProperty aProperty, uint32_t aValue, uint32_t* aChanged)
 {
     try {
         PropertyBool* prop = reinterpret_cast<PropertyBool*>(aProperty);
@@ -109,7 +109,7 @@ int32_t DvProviderSetPropertyBool(DvProviderC aProvider, ServiceProperty aProper
     return 0;
 }
 
-int32_t DvProviderSetPropertyString(DvProviderC aProvider, ServiceProperty aProperty, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderSetPropertyString(DvProviderC aProvider, ServiceProperty aProperty, const char* aValue, uint32_t* aChanged)
 {
     try {
         PropertyString* prop = reinterpret_cast<PropertyString*>(aProperty);
@@ -124,7 +124,7 @@ int32_t DvProviderSetPropertyString(DvProviderC aProvider, ServiceProperty aProp
     return 0;
 }
 
-int32_t DvProviderSetPropertyBinary(DvProviderC aProvider, ServiceProperty aProperty, const uint8_t* aData, uint32_t aLen, uint32_t* aChanged)
+int32_t STDCALL DvProviderSetPropertyBinary(DvProviderC aProvider, ServiceProperty aProperty, const uint8_t* aData, uint32_t aLen, uint32_t* aChanged)
 {
     try {
         PropertyBinary* prop = reinterpret_cast<PropertyBinary*>(aProperty);
@@ -156,7 +156,7 @@ static IDviInvocation* InvocationFromHandle(DvInvocationC aInvocation)
     return invocation;
 }
 
-int32_t DvInvocationReadStart(DvInvocationC aInvocation)
+int32_t STDCALL DvInvocationReadStart(DvInvocationC aInvocation)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -168,7 +168,7 @@ int32_t DvInvocationReadStart(DvInvocationC aInvocation)
     return 0;
 }
 
-int32_t DvInvocationReadInt(DvInvocationC aInvocation, const char* aName, int32_t* aValue)
+int32_t STDCALL DvInvocationReadInt(DvInvocationC aInvocation, const char* aName, int32_t* aValue)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -180,7 +180,7 @@ int32_t DvInvocationReadInt(DvInvocationC aInvocation, const char* aName, int32_
     return 0;
 }
 
-int32_t DvInvocationReadUint(DvInvocationC aInvocation, const char* aName, uint32_t* aValue)
+int32_t STDCALL DvInvocationReadUint(DvInvocationC aInvocation, const char* aName, uint32_t* aValue)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -192,7 +192,7 @@ int32_t DvInvocationReadUint(DvInvocationC aInvocation, const char* aName, uint3
     return 0;
 }
 
-int32_t DvInvocationReadBool(DvInvocationC aInvocation, const char* aName, uint32_t* aValue)
+int32_t STDCALL DvInvocationReadBool(DvInvocationC aInvocation, const char* aName, uint32_t* aValue)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -205,7 +205,7 @@ int32_t DvInvocationReadBool(DvInvocationC aInvocation, const char* aName, uint3
     return 0;
 }
 
-int32_t DvInvocationReadString(DvInvocationC aInvocation, const char* aName, char** aValue)
+int32_t STDCALL DvInvocationReadString(DvInvocationC aInvocation, const char* aName, char** aValue)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -219,7 +219,7 @@ int32_t DvInvocationReadString(DvInvocationC aInvocation, const char* aName, cha
     return 0;
 }
 
-int32_t DvInvocationReadBinary(DvInvocationC aInvocation, const char* aName, uint8_t** aData, uint32_t* aLen)
+int32_t STDCALL DvInvocationReadBinary(DvInvocationC aInvocation, const char* aName, uint8_t** aData, uint32_t* aLen)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -234,7 +234,7 @@ int32_t DvInvocationReadBinary(DvInvocationC aInvocation, const char* aName, uin
     return 0;
 }
 
-int32_t DvInvocationReadEnd(DvInvocationC aInvocation)
+int32_t STDCALL DvInvocationReadEnd(DvInvocationC aInvocation)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -246,7 +246,7 @@ int32_t DvInvocationReadEnd(DvInvocationC aInvocation)
     return 0;
 }
 
-int32_t DvInvocationReportError(DvInvocationC aInvocation, uint32_t aCode, const char* aDescription)
+int32_t STDCALL DvInvocationReportError(DvInvocationC aInvocation, uint32_t aCode, const char* aDescription)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -260,7 +260,7 @@ int32_t DvInvocationReportError(DvInvocationC aInvocation, uint32_t aCode, const
     return 0;
 }
 
-int32_t DvInvocationWriteStart(DvInvocationC aInvocation)
+int32_t STDCALL DvInvocationWriteStart(DvInvocationC aInvocation)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -272,7 +272,7 @@ int32_t DvInvocationWriteStart(DvInvocationC aInvocation)
     return 0;
 }
 
-int32_t DvInvocationWriteInt(DvInvocationC aInvocation, const char* aName, int32_t aValue)
+int32_t STDCALL DvInvocationWriteInt(DvInvocationC aInvocation, const char* aName, int32_t aValue)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -284,7 +284,7 @@ int32_t DvInvocationWriteInt(DvInvocationC aInvocation, const char* aName, int32
     return 0;
 }
 
-int32_t DvInvocationWriteUint(DvInvocationC aInvocation, const char* aName, uint32_t aValue)
+int32_t STDCALL DvInvocationWriteUint(DvInvocationC aInvocation, const char* aName, uint32_t aValue)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -296,7 +296,7 @@ int32_t DvInvocationWriteUint(DvInvocationC aInvocation, const char* aName, uint
     return 0;
 }
 
-int32_t DvInvocationWriteBool(DvInvocationC aInvocation, const char* aName, uint32_t aValue)
+int32_t STDCALL DvInvocationWriteBool(DvInvocationC aInvocation, const char* aName, uint32_t aValue)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -309,7 +309,7 @@ int32_t DvInvocationWriteBool(DvInvocationC aInvocation, const char* aName, uint
     return 0;
 }
 
-int32_t DvInvocationWriteStringStart(DvInvocationC aInvocation, const char* aName)
+int32_t STDCALL DvInvocationWriteStringStart(DvInvocationC aInvocation, const char* aName)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -321,7 +321,7 @@ int32_t DvInvocationWriteStringStart(DvInvocationC aInvocation, const char* aNam
     return 0;
 }
 
-int32_t DvInvocationWriteString(DvInvocationC aInvocation, const char* aValue)
+int32_t STDCALL DvInvocationWriteString(DvInvocationC aInvocation, const char* aValue)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -334,7 +334,7 @@ int32_t DvInvocationWriteString(DvInvocationC aInvocation, const char* aValue)
     return 0;
 }
 
-int32_t DvInvocationWriteStringEnd(DvInvocationC aInvocation, const char* aName)
+int32_t STDCALL DvInvocationWriteStringEnd(DvInvocationC aInvocation, const char* aName)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -346,7 +346,7 @@ int32_t DvInvocationWriteStringEnd(DvInvocationC aInvocation, const char* aName)
     return 0;
 }
 
-int32_t DvInvocationWriteBinaryStart(DvInvocationC aInvocation, const char* aName)
+int32_t STDCALL DvInvocationWriteBinaryStart(DvInvocationC aInvocation, const char* aName)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -358,7 +358,7 @@ int32_t DvInvocationWriteBinaryStart(DvInvocationC aInvocation, const char* aNam
     return 0;
 }
 
-int32_t DvInvocationWriteBinary(DvInvocationC aInvocation, const uint8_t* aData, uint32_t aLen)
+int32_t STDCALL DvInvocationWriteBinary(DvInvocationC aInvocation, const uint8_t* aData, uint32_t aLen)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -371,7 +371,7 @@ int32_t DvInvocationWriteBinary(DvInvocationC aInvocation, const uint8_t* aData,
     return 0;
 }
 
-int32_t DvInvocationWriteBinaryEnd(DvInvocationC aInvocation, const char* aName)
+int32_t STDCALL DvInvocationWriteBinaryEnd(DvInvocationC aInvocation, const char* aName)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {
@@ -383,7 +383,7 @@ int32_t DvInvocationWriteBinaryEnd(DvInvocationC aInvocation, const char* aName)
     return 0;
 }
 
-int32_t DvInvocationWriteEnd(DvInvocationC aInvocation)
+int32_t STDCALL DvInvocationWriteEnd(DvInvocationC aInvocation)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);
     try {

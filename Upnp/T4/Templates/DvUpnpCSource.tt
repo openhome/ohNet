@@ -271,19 +271,19 @@ void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
 
 
 
-THandle <#=className#>Create(DvDeviceC aDevice)
+THandle STDCALL <#=className#>Create(DvDeviceC aDevice)
 {
 	return new <#=className#>C(aDevice);
 }
 
-void <#=className#>Destroy(THandle aProvider)
+void STDCALL <#=className#>Destroy(THandle aProvider)
 {
     delete reinterpret_cast<<#=className#>C*>(aProvider);
 }
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>EnableAction<#=a.name#>(THandle aProvider, <#=callbackPrefix#><#=a.name#> aCallback, void* aPtr)
+void STDCALL <#=className#>EnableAction<#=a.name#>(THandle aProvider, <#=callbackPrefix#><#=a.name#> aCallback, void* aPtr)
 {
     reinterpret_cast<<#=className#>C*>(aProvider)->EnableAction<#=a.name#>(aCallback, aPtr);
 }
@@ -291,7 +291,7 @@ void <#=className#>EnableAction<#=a.name#>(THandle aProvider, <#=callbackPrefix#
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
-int32_t <#=className#>SetProperty<#=s.name#>(THandle aProvider, <#=PropertyInArgs(s)#>, uint32_t* aChanged)
+int32_t STDCALL <#=className#>SetProperty<#=s.name#>(THandle aProvider, <#=PropertyInArgs(s)#>, uint32_t* aChanged)
 {
 <#      if (s.type=="bin.base64") #>
 <#      { #>
@@ -315,7 +315,7 @@ int32_t <#=className#>SetProperty<#=s.name#>(THandle aProvider, <#=PropertyInArg
     return 0;
 }
 
-void <#=className#>GetProperty<#=s.name#>(THandle aProvider, <#=PropertyOutArgs(s)#>)
+void STDCALL <#=className#>GetProperty<#=s.name#>(THandle aProvider, <#=PropertyOutArgs(s)#>)
 {
 <#      if (s.type=="bin.base64") #>
 <#      { #>

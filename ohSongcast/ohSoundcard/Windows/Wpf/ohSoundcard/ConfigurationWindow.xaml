@@ -19,7 +19,7 @@
             </Border.Background>
             <Canvas >
                 <TextBlock TextAlignment="Left" FontFamily="Arial Black" FontWeight="Bold" FontSize="22" Canvas.Left="15" Canvas.Top="8" Text="Settings" />
-                <ComboBox Canvas.Left="15" Canvas.Top="87" Height="19" Name="comboBoxNetwork" Width="418" >
+                <ComboBox Canvas.Left="15" Canvas.Top="77" Height="28" Name="comboBoxNetwork" Width="418" >
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -32,23 +32,23 @@
                 <TextBlock Canvas.Left="15" Canvas.Top="141" TextAlignment="Right" Height="23" FontFamily="Arial Black" FontWeight="Bold" FontSize="16" Text="Songcast Mode" />
                 <RadioButton Canvas.Left="186" Canvas.Top="143" Content="Unicast" FontFamily="Arial Black" FontSize="14" Name="radioButtonUnicast" />
                 <RadioButton Canvas.Left="286" Canvas.Top="143" Content="Multicast" FontFamily="Arial Black" FontSize="14" Name="radioButtonMulticast" />
-                <TextBox Canvas.Left="186" Canvas.Top="200" Height="23" FontFamily="Arial Black" FontSize="14" Width="77" Name="textBoxChannel" IsReadOnly="True" />
-                <TextBlock Canvas.Left="15" Canvas.Top="203" Height="23" FontFamily="Arial Black" FontSize="16" Text="Multicast Channel" />
-                <TextBlock Canvas.Left="15" Canvas.Top="261" Height="23" FontFamily="Arial Black" FontSize="16" Text="Udp Ttl" />
+                <TextBox Canvas.Left="186" Canvas.Top="202" Height="23" FontFamily="Arial Black" FontSize="14" Width="77" Name="textBoxChannel" IsReadOnly="True" />
+                <TextBlock Canvas.Left="15" Canvas.Top="205" Height="23" FontFamily="Arial Black" FontSize="16" Text="Multicast Channel" />
+                <TextBlock Canvas.Left="15" Canvas.Top="273" Height="23" FontFamily="Arial Black" FontSize="16" Text="Udp Ttl" />
                 <TextBlock Canvas.Left="15" Canvas.Top="53" FontFamily="Arial Black" FontSize="16" Height="18" Text="Network" HorizontalAlignment="Stretch" Width="80" />
 
 
-                <TextBlock Canvas.Left="15" Canvas.Top="320" FontFamily="Arial Black" FontSize="16" FontWeight="Bold" Height="26" Text="Songcast Preset" Width="158" />
-                <TextBox Canvas.Left="186" Canvas.Top="317" FontFamily="Arial Black" FontSize="14" FontWeight="Bold" Height="26" Name="textBoxPreset" Width="56" />
-                <Button Canvas.Left="286" Canvas.Top="200" FontFamily="Arial Black" FontSize="14" FontWeight="Bold" Content="New" Height="23" Name="buttonChannelNew" Width="59" />
-                <Slider Canvas.Left="258" Canvas.Top="261" Height="23" Name="sliderTtl" Width="175" Value="4" Minimum="1" Maximum="8" SmallChange="1" TickPlacement="TopLeft" IsSnapToTickEnabled="True" />
-                <TextBox Canvas.Left="186" Canvas.Top="261" FontFamily="Arial Black" FontSize="14" FontWeight="Bold" Height="23" Width="36" IsReadOnly="True" Text="{Binding ElementName=sliderTtl, Path=Value}" />
+                <TextBlock Canvas.Left="15" Canvas.Top="343" FontFamily="Arial Black" FontSize="16" FontWeight="Bold" Height="26" Text="Songcast Preset" Width="158" />
+                <TextBox Canvas.Left="186" Canvas.Top="340" FontFamily="Arial Black" FontSize="14" FontWeight="Bold" Height="26" Name="textBoxPreset" Width="56" />
+                <Button Canvas.Left="286" Canvas.Top="202" FontFamily="Arial Black" FontSize="14" FontWeight="Bold" Content="New" Height="23" Name="buttonChannelNew" Width="59" />
+                <Slider Canvas.Left="258" Canvas.Top="273" Height="23" Name="sliderTtl" Width="175" Value="4" Minimum="1" Maximum="8" SmallChange="1" TickPlacement="TopLeft" IsSnapToTickEnabled="True" />
+                <TextBox Canvas.Left="186" Canvas.Top="273" FontFamily="Arial Black" FontSize="14" FontWeight="Bold" Height="23" Width="36" IsReadOnly="True" Text="{Binding ElementName=sliderTtl, Path=Value}" />
                 <TextBlock Canvas.Left="258" Canvas.Top="16" Height="27" FontFamily="Arial Black" FontSize="12" TextAlignment="Right" Name="textBlockInfo" Text="" Width="175" />
                 <Line Canvas.Left="0" Canvas.Top="120" Stroke="Black" StrokeThickness="2" X1="0" X2="460" Y1="0" Y2="0" Height="5" Width="463" />
                 <Line Canvas.Left="0" Canvas.Top="40" Height="7" Stroke="Black" StrokeThickness="5" Width="463" X1="0" X2="460" Y1="0" Y2="0" />
                 <Line Canvas.Left="0" Canvas.Top="180" Height="5" Stroke="Black" StrokeThickness="2" Width="463" X1="0" X2="460" Y1="0" Y2="0" />
-                <Line Canvas.Left="0" Canvas.Top="240" Height="5" Stroke="Black" StrokeThickness="2" Width="463" X1="0" X2="460" Y1="0" Y2="0" />
-                <Line Canvas.Left="0" Canvas.Top="300" Height="5" Stroke="Black" StrokeThickness="2" Width="463" X1="0" X2="460" Y1="0" Y2="0" />
+                <Line Canvas.Left="0" Canvas.Top="246" Height="5" Stroke="Black" StrokeThickness="2" Width="463" X1="0" X2="460" Y1="0" Y2="0" />
+                <Line Canvas.Left="0" Canvas.Top="317" Height="5" Stroke="Black" StrokeThickness="2" Width="463" X1="0" X2="460" Y1="0" Y2="0" />
             </Canvas>
         </Border>
     </Canvas>

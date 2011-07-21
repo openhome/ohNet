@@ -4,6 +4,7 @@
 #ifndef HEADER_DVAVOPENHOMEORGRADIO1_C
 #define HEADER_DVAVOPENHOMEORGRADIO1_C
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 
@@ -25,7 +26,7 @@ extern "C" {
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1Play)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackRadio1Play)(void* aPtr, uint32_t aVersion);
 /**
  * Callback which runs when the Pause action is invoked
  *
@@ -34,7 +35,7 @@ typedef int32_t (*CallbackRadio1Play)(void* aPtr, uint32_t aVersion);
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1Pause)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackRadio1Pause)(void* aPtr, uint32_t aVersion);
 /**
  * Callback which runs when the Stop action is invoked
  *
@@ -43,7 +44,7 @@ typedef int32_t (*CallbackRadio1Pause)(void* aPtr, uint32_t aVersion);
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1Stop)(void* aPtr, uint32_t aVersion);
+typedef int32_t (STDCALL *CallbackRadio1Stop)(void* aPtr, uint32_t aVersion);
 /**
  * Callback which runs when the SeekSecondAbsolute action is invoked
  *
@@ -53,7 +54,7 @@ typedef int32_t (*CallbackRadio1Stop)(void* aPtr, uint32_t aVersion);
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1SeekSecondAbsolute)(void* aPtr, uint32_t aVersion, uint32_t aValue);
+typedef int32_t (STDCALL *CallbackRadio1SeekSecondAbsolute)(void* aPtr, uint32_t aVersion, uint32_t aValue);
 /**
  * Callback which runs when the SeekSecondRelative action is invoked
  *
@@ -63,7 +64,7 @@ typedef int32_t (*CallbackRadio1SeekSecondAbsolute)(void* aPtr, uint32_t aVersio
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1SeekSecondRelative)(void* aPtr, uint32_t aVersion, int32_t aValue);
+typedef int32_t (STDCALL *CallbackRadio1SeekSecondRelative)(void* aPtr, uint32_t aVersion, int32_t aValue);
 /**
  * Callback which runs when the Channel action is invoked
  *
@@ -74,7 +75,7 @@ typedef int32_t (*CallbackRadio1SeekSecondRelative)(void* aPtr, uint32_t aVersio
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1Channel)(void* aPtr, uint32_t aVersion, char** aUri, char** aMetadata);
+typedef int32_t (STDCALL *CallbackRadio1Channel)(void* aPtr, uint32_t aVersion, char** aUri, char** aMetadata);
 /**
  * Callback which runs when the SetChannel action is invoked
  *
@@ -85,7 +86,7 @@ typedef int32_t (*CallbackRadio1Channel)(void* aPtr, uint32_t aVersion, char** a
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1SetChannel)(void* aPtr, uint32_t aVersion, const char* aUri, const char* aMetadata);
+typedef int32_t (STDCALL *CallbackRadio1SetChannel)(void* aPtr, uint32_t aVersion, const char* aUri, const char* aMetadata);
 /**
  * Callback which runs when the TransportState action is invoked
  *
@@ -95,7 +96,7 @@ typedef int32_t (*CallbackRadio1SetChannel)(void* aPtr, uint32_t aVersion, const
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1TransportState)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackRadio1TransportState)(void* aPtr, uint32_t aVersion, char** aValue);
 /**
  * Callback which runs when the Id action is invoked
  *
@@ -105,7 +106,7 @@ typedef int32_t (*CallbackRadio1TransportState)(void* aPtr, uint32_t aVersion, c
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1Id)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackRadio1Id)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
 /**
  * Callback which runs when the SetId action is invoked
  *
@@ -116,7 +117,7 @@ typedef int32_t (*CallbackRadio1Id)(void* aPtr, uint32_t aVersion, uint32_t* aVa
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1SetId)(void* aPtr, uint32_t aVersion, uint32_t aValue, const char* aUri);
+typedef int32_t (STDCALL *CallbackRadio1SetId)(void* aPtr, uint32_t aVersion, uint32_t aValue, const char* aUri);
 /**
  * Callback which runs when the Read action is invoked
  *
@@ -127,7 +128,7 @@ typedef int32_t (*CallbackRadio1SetId)(void* aPtr, uint32_t aVersion, uint32_t a
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1Read)(void* aPtr, uint32_t aVersion, uint32_t aId, char** aMetadata);
+typedef int32_t (STDCALL *CallbackRadio1Read)(void* aPtr, uint32_t aVersion, uint32_t aId, char** aMetadata);
 /**
  * Callback which runs when the ReadList action is invoked
  *
@@ -138,7 +139,7 @@ typedef int32_t (*CallbackRadio1Read)(void* aPtr, uint32_t aVersion, uint32_t aI
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1ReadList)(void* aPtr, uint32_t aVersion, const char* aIdList, char** aChannelList);
+typedef int32_t (STDCALL *CallbackRadio1ReadList)(void* aPtr, uint32_t aVersion, const char* aIdList, char** aChannelList);
 /**
  * Callback which runs when the IdArray action is invoked
  *
@@ -150,7 +151,7 @@ typedef int32_t (*CallbackRadio1ReadList)(void* aPtr, uint32_t aVersion, const c
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1IdArray)(void* aPtr, uint32_t aVersion, uint32_t* aToken, char** aArray, uint32_t* aArrayLen);
+typedef int32_t (STDCALL *CallbackRadio1IdArray)(void* aPtr, uint32_t aVersion, uint32_t* aToken, char** aArray, uint32_t* aArrayLen);
 /**
  * Callback which runs when the IdArrayChanged action is invoked
  *
@@ -161,7 +162,7 @@ typedef int32_t (*CallbackRadio1IdArray)(void* aPtr, uint32_t aVersion, uint32_t
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1IdArrayChanged)(void* aPtr, uint32_t aVersion, uint32_t aToken, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackRadio1IdArrayChanged)(void* aPtr, uint32_t aVersion, uint32_t aToken, uint32_t* aValue);
 /**
  * Callback which runs when the ChannelsMax action is invoked
  *
@@ -171,7 +172,7 @@ typedef int32_t (*CallbackRadio1IdArrayChanged)(void* aPtr, uint32_t aVersion, u
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1ChannelsMax)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
+typedef int32_t (STDCALL *CallbackRadio1ChannelsMax)(void* aPtr, uint32_t aVersion, uint32_t* aValue);
 /**
  * Callback which runs when the ProtocolInfo action is invoked
  *
@@ -181,7 +182,7 @@ typedef int32_t (*CallbackRadio1ChannelsMax)(void* aPtr, uint32_t aVersion, uint
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackRadio1ProtocolInfo)(void* aPtr, uint32_t aVersion, char** aValue);
+typedef int32_t (STDCALL *CallbackRadio1ProtocolInfo)(void* aPtr, uint32_t aVersion, char** aValue);
 
 /**
  * Provider constructor
@@ -190,14 +191,14 @@ typedef int32_t (*CallbackRadio1ProtocolInfo)(void* aPtr, uint32_t aVersion, cha
  *
  * @return  Handle to this provider
  */
-DllExport THandle DvProviderAvOpenhomeOrgRadio1Create(DvDeviceC aDevice);
+DllExport THandle STDCALL DvProviderAvOpenhomeOrgRadio1Create(DvDeviceC aDevice);
 
 /**
  * Provider destructor
  *
  * @param[in] aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1Destroy(THandle aProvider);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1Destroy(THandle aProvider);
 
 /**
  * Register a callback for the action Play
@@ -209,7 +210,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1Destroy(THandle aProvider);
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionPlay(THandle aProvider, CallbackRadio1Play aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionPlay(THandle aProvider, CallbackRadio1Play aCallback, void* aPtr);
 /**
  * Register a callback for the action Pause
  *
@@ -220,7 +221,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionPlay(THandle aProvider, 
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionPause(THandle aProvider, CallbackRadio1Pause aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionPause(THandle aProvider, CallbackRadio1Pause aCallback, void* aPtr);
 /**
  * Register a callback for the action Stop
  *
@@ -231,7 +232,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionPause(THandle aProvider,
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionStop(THandle aProvider, CallbackRadio1Stop aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionStop(THandle aProvider, CallbackRadio1Stop aCallback, void* aPtr);
 /**
  * Register a callback for the action SeekSecondAbsolute
  *
@@ -242,7 +243,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionStop(THandle aProvider, 
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionSeekSecondAbsolute(THandle aProvider, CallbackRadio1SeekSecondAbsolute aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionSeekSecondAbsolute(THandle aProvider, CallbackRadio1SeekSecondAbsolute aCallback, void* aPtr);
 /**
  * Register a callback for the action SeekSecondRelative
  *
@@ -253,7 +254,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionSeekSecondAbsolute(THand
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionSeekSecondRelative(THandle aProvider, CallbackRadio1SeekSecondRelative aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionSeekSecondRelative(THandle aProvider, CallbackRadio1SeekSecondRelative aCallback, void* aPtr);
 /**
  * Register a callback for the action Channel
  *
@@ -264,7 +265,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionSeekSecondRelative(THand
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionChannel(THandle aProvider, CallbackRadio1Channel aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionChannel(THandle aProvider, CallbackRadio1Channel aCallback, void* aPtr);
 /**
  * Register a callback for the action SetChannel
  *
@@ -275,7 +276,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionChannel(THandle aProvide
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionSetChannel(THandle aProvider, CallbackRadio1SetChannel aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionSetChannel(THandle aProvider, CallbackRadio1SetChannel aCallback, void* aPtr);
 /**
  * Register a callback for the action TransportState
  *
@@ -286,7 +287,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionSetChannel(THandle aProv
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionTransportState(THandle aProvider, CallbackRadio1TransportState aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionTransportState(THandle aProvider, CallbackRadio1TransportState aCallback, void* aPtr);
 /**
  * Register a callback for the action Id
  *
@@ -297,7 +298,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionTransportState(THandle a
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionId(THandle aProvider, CallbackRadio1Id aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionId(THandle aProvider, CallbackRadio1Id aCallback, void* aPtr);
 /**
  * Register a callback for the action SetId
  *
@@ -308,7 +309,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionId(THandle aProvider, Ca
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionSetId(THandle aProvider, CallbackRadio1SetId aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionSetId(THandle aProvider, CallbackRadio1SetId aCallback, void* aPtr);
 /**
  * Register a callback for the action Read
  *
@@ -319,7 +320,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionSetId(THandle aProvider,
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionRead(THandle aProvider, CallbackRadio1Read aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionRead(THandle aProvider, CallbackRadio1Read aCallback, void* aPtr);
 /**
  * Register a callback for the action ReadList
  *
@@ -330,7 +331,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionRead(THandle aProvider, 
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionReadList(THandle aProvider, CallbackRadio1ReadList aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionReadList(THandle aProvider, CallbackRadio1ReadList aCallback, void* aPtr);
 /**
  * Register a callback for the action IdArray
  *
@@ -341,7 +342,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionReadList(THandle aProvid
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionIdArray(THandle aProvider, CallbackRadio1IdArray aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionIdArray(THandle aProvider, CallbackRadio1IdArray aCallback, void* aPtr);
 /**
  * Register a callback for the action IdArrayChanged
  *
@@ -352,7 +353,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionIdArray(THandle aProvide
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionIdArrayChanged(THandle aProvider, CallbackRadio1IdArrayChanged aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionIdArrayChanged(THandle aProvider, CallbackRadio1IdArrayChanged aCallback, void* aPtr);
 /**
  * Register a callback for the action ChannelsMax
  *
@@ -363,7 +364,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionIdArrayChanged(THandle a
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionChannelsMax(THandle aProvider, CallbackRadio1ChannelsMax aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionChannelsMax(THandle aProvider, CallbackRadio1ChannelsMax aCallback, void* aPtr);
 /**
  * Register a callback for the action ProtocolInfo
  *
@@ -374,7 +375,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionChannelsMax(THandle aPro
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionProtocolInfo(THandle aProvider, CallbackRadio1ProtocolInfo aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1EnableActionProtocolInfo(THandle aProvider, CallbackRadio1ProtocolInfo aCallback, void* aPtr);
 
 /**
  * Set the value of the Uri property
@@ -386,14 +387,14 @@ DllExport void DvProviderAvOpenhomeOrgRadio1EnableActionProtocolInfo(THandle aPr
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyUri(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyUri(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Uri property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1GetPropertyUri(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyUri(THandle aProvider, char** aValue);
 /**
  * Set the value of the Metadata property
  *
@@ -404,14 +405,14 @@ DllExport void DvProviderAvOpenhomeOrgRadio1GetPropertyUri(THandle aProvider, ch
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyMetadata(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyMetadata(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Metadata property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1GetPropertyMetadata(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyMetadata(THandle aProvider, char** aValue);
 /**
  * Set the value of the TransportState property
  *
@@ -422,14 +423,14 @@ DllExport void DvProviderAvOpenhomeOrgRadio1GetPropertyMetadata(THandle aProvide
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyTransportState(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyTransportState(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the TransportState property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1GetPropertyTransportState(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyTransportState(THandle aProvider, char** aValue);
 /**
  * Set the value of the Id property
  *
@@ -440,14 +441,14 @@ DllExport void DvProviderAvOpenhomeOrgRadio1GetPropertyTransportState(THandle aP
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyId(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyId(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the Id property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1GetPropertyId(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyId(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the IdArray property
  *
@@ -459,7 +460,7 @@ DllExport void DvProviderAvOpenhomeOrgRadio1GetPropertyId(THandle aProvider, uin
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyIdArray(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyIdArray(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
 /**
  * Get a copy of the value of the IdArray property
  *
@@ -467,7 +468,7 @@ DllExport int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyIdArray(THandle aProvi
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  * @param[out] aValueLen  Size in bytes pointed to by aValue
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1GetPropertyIdArray(THandle aProvider, char** aValue, uint32_t* aValueLen);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyIdArray(THandle aProvider, char** aValue, uint32_t* aValueLen);
 /**
  * Set the value of the ChannelsMax property
  *
@@ -478,14 +479,14 @@ DllExport void DvProviderAvOpenhomeOrgRadio1GetPropertyIdArray(THandle aProvider
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyChannelsMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyChannelsMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ChannelsMax property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[out] aValue     Value for the property
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1GetPropertyChannelsMax(THandle aProvider, uint32_t* aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyChannelsMax(THandle aProvider, uint32_t* aValue);
 /**
  * Set the value of the ProtocolInfo property
  *
@@ -496,14 +497,14 @@ DllExport void DvProviderAvOpenhomeOrgRadio1GetPropertyChannelsMax(THandle aProv
  * @return  0 if the property was successfully set; non-zero if there was an error (including
  *          an attempt to set a property to a value not in its allowed range/set)
  */
-DllExport int32_t DvProviderAvOpenhomeOrgRadio1SetPropertyProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport int32_t STDCALL DvProviderAvOpenhomeOrgRadio1SetPropertyProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged);
 /**
  * Get a copy of the value of the ProtocolInfo property
  *
  * @param[in]  aProvider  Handle returned by DvProviderAvOpenhomeOrgRadio1Create
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
-DllExport void DvProviderAvOpenhomeOrgRadio1GetPropertyProtocolInfo(THandle aProvider, char** aValue);
+DllExport void STDCALL DvProviderAvOpenhomeOrgRadio1GetPropertyProtocolInfo(THandle aProvider, char** aValue);
 
 /* @} */
 

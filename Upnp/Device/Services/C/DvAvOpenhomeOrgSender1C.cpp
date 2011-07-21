@@ -278,104 +278,104 @@ void DvProviderAvOpenhomeOrgSender1C::DoAttributes(IDviInvocation& aInvocation, 
 
 
 
-THandle DvProviderAvOpenhomeOrgSender1Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderAvOpenhomeOrgSender1Create(DvDeviceC aDevice)
 {
 	return new DvProviderAvOpenhomeOrgSender1C(aDevice);
 }
 
-void DvProviderAvOpenhomeOrgSender1Destroy(THandle aProvider)
+void STDCALL DvProviderAvOpenhomeOrgSender1Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider);
 }
 
-void DvProviderAvOpenhomeOrgSender1EnableActionPresentationUrl(THandle aProvider, CallbackSender1PresentationUrl aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgSender1EnableActionPresentationUrl(THandle aProvider, CallbackSender1PresentationUrl aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->EnableActionPresentationUrl(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgSender1EnableActionMetadata(THandle aProvider, CallbackSender1Metadata aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgSender1EnableActionMetadata(THandle aProvider, CallbackSender1Metadata aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->EnableActionMetadata(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgSender1EnableActionAudio(THandle aProvider, CallbackSender1Audio aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgSender1EnableActionAudio(THandle aProvider, CallbackSender1Audio aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->EnableActionAudio(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgSender1EnableActionStatus(THandle aProvider, CallbackSender1Status aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgSender1EnableActionStatus(THandle aProvider, CallbackSender1Status aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->EnableActionStatus(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgSender1EnableActionAttributes(THandle aProvider, CallbackSender1Attributes aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgSender1EnableActionAttributes(THandle aProvider, CallbackSender1Attributes aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->EnableActionAttributes(aCallback, aPtr);
 }
 
-int32_t DvProviderAvOpenhomeOrgSender1SetPropertyPresentationUrl(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyPresentationUrl(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->SetPropertyPresentationUrl(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgSender1GetPropertyPresentationUrl(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyPresentationUrl(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->GetPropertyPresentationUrl(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgSender1SetPropertyMetadata(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyMetadata(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->SetPropertyMetadata(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgSender1GetPropertyMetadata(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyMetadata(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->GetPropertyMetadata(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgSender1SetPropertyAudio(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyAudio(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->SetPropertyAudio((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgSender1GetPropertyAudio(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyAudio(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
     reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->GetPropertyAudio(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderAvOpenhomeOrgSender1SetPropertyStatus(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyStatus(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->SetPropertyStatus(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgSender1GetPropertyStatus(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyStatus(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->GetPropertyStatus(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgSender1SetPropertyAttributes(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgSender1SetPropertyAttributes(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->SetPropertyAttributes(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgSender1GetPropertyAttributes(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgSender1GetPropertyAttributes(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgSender1C*>(aProvider)->GetPropertyAttributes(buf);

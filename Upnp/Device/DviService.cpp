@@ -54,6 +54,7 @@ DviService::~DviService()
     TUint i=0;
     for (; i<iSubscriptions.size(); i++) {
         DviSubscription* subscription = iSubscriptions[i];
+        subscription->Stop();
         DviSubscriptionManager::RemoveSubscription(*subscription);
         subscription->RemoveRef();
     }

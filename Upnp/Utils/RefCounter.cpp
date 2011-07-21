@@ -12,12 +12,12 @@ RefCounter::~RefCounter()
 {
 }
 
-void RefCounter::IncRef()
+void RefCounter::IncRef() const
 {
     iCounter.Inc();
 }
 
-void RefCounter::DecRef()
+void RefCounter::DecRef() const
 {
     if(iCounter.Dec() == 0) {
         delete this;

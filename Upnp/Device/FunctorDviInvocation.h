@@ -7,7 +7,7 @@ namespace OpenHome {
 namespace Net {
 
 class IDviInvocation;
-typedef void (*OhNetFunctorDviInvocation)(void* aPtr, IDviInvocation* aInvocation, TUint aVersion);
+typedef void (STDCALL *OhNetFunctorDviInvocation)(void* aPtr, IDviInvocation* aInvocation, TUint aVersion);
 
 class FunctorDviInvocation
 {

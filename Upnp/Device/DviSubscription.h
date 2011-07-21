@@ -38,6 +38,7 @@ public:
     DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
                     IDviSubscriptionUserData* aUserData, Brh& aSid, TUint& aDurationSecs);
     void Start(DviService& aService);
+    void Stop();
     void AddRef();
     void RemoveRef();
     void Renew(TUint& aSeconds);

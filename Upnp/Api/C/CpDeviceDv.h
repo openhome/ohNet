@@ -1,6 +1,7 @@
 #ifndef HEADER_CPDEVICEDVC
 #define HEADER_CPDEVICEDVC
 
+#include <OhNetDefines.h>
 #include <C/CpDevice.h>
 #include <C/DvDevice.h>
 
@@ -21,7 +22,7 @@ extern "C" {
  *
  * @return  Device handle
  */
-DllExport CpDeviceC CpDeviceDvCreate(DvDeviceC aDevice);
+DllExport CpDeviceC STDCALL CpDeviceDvCreate(DvDeviceC aDevice);
 
 /* @} */
 

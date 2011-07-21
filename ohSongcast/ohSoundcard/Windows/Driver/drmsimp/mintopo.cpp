@@ -298,6 +298,134 @@ Return Value:
 
 //=============================================================================
 NTSTATUS
+CMiniportTopology::PropertyHandlerJackDescription
+( 
+    IN PPCPROPERTY_REQUEST      PropertyRequest 
+)
+/*++
+
+Routine Description:
+
+  Handles ( KSPROPSETID_Jack, KSPROPERTY_JACK_DESCRIPTION )
+
+Arguments:
+
+  PropertyRequest - 
+
+Return Value:
+
+  NT status code.
+
+--*/
+{
+    PAGED_CODE();
+
+    ASSERT(PropertyRequest);
+
+    DPF_ENTER(("[PropertyHandlerJackDescription]"));
+
+    NTSTATUS ntStatus = STATUS_INVALID_DEVICE_REQUEST;
+    ULONG    nPinId = (ULONG)-1;
+
+    if (PropertyRequest->InstanceSize >= sizeof(ULONG))
+    {
+        nPinId = *(PULONG(PropertyRequest->Instance));
+
+        if ((nPinId < ARRAYSIZE(JackDescriptions)) && (JackDescriptions[nPinId] != NULL))
+        {
+            if (PropertyRequest->Verb & KSPROPERTY_TYPE_BASICSUPPORT)
+            {
+                ntStatus = 
+                    PropertyHandler_BasicSupport
+                    (
+                        PropertyRequest,
+                        KSPROPERTY_TYPE_BASICSUPPORT | KSPROPERTY_TYPE_GET,
+                        VT_ILLEGAL
+                    );
+            }
+            else
+            {
+                ULONG cbNeeded = sizeof(KSMULTIPLE_ITEM) + sizeof(KSJACK_DESCRIPTION);
+
+                if (PropertyRequest->ValueSize == 0)
+                {
+                    PropertyRequest->ValueSize = cbNeeded;
+                    ntStatus = STATUS_BUFFER_OVERFLOW;
+                }
+                else if (PropertyRequest->ValueSize < cbNeeded)
+                {
+                    ntStatus = STATUS_BUFFER_TOO_SMALL;
+                }
+                else
+                {
+                    if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
+                    {
+                        PKSMULTIPLE_ITEM pMI = (PKSMULTIPLE_ITEM)PropertyRequest->Value;
+                        PKSJACK_DESCRIPTION pDesc = (PKSJACK_DESCRIPTION)(pMI+1);
+
+                        pMI->Size = cbNeeded;
+                        pMI->Count = 1;
+
+                        RtlCopyMemory(pDesc, JackDescriptions[nPinId], sizeof(KSJACK_DESCRIPTION));
+                        ntStatus = STATUS_SUCCESS;
+                    }
+                }
+            }
+        }
+    }
+
+    return ntStatus;
+}
+
+//=============================================================================
+NTSTATUS
+PropertyHandler_TopoFilter
+( 
+    IN PPCPROPERTY_REQUEST      PropertyRequest 
+)
+/*++
+
+Routine Description:
+
+  Redirects property request to miniport object
+
+Arguments:
+
+  PropertyRequest - 
+
+Return Value:
+
+  NT status code.
+
+--*/
+{
+    PAGED_CODE();
+
+    ASSERT(PropertyRequest);
+
+    DPF_ENTER(("[PropertyHandler_TopoFilter]"));
+
+    // PropertryRequest structure is filled by portcls. 
+    // MajorTarget is a pointer to miniport object for miniports.
+    //
+    NTSTATUS            ntStatus = STATUS_INVALID_DEVICE_REQUEST;
+    PCMiniportTopology  pMiniport = (PCMiniportTopology)PropertyRequest->MajorTarget;
+
+    if (IsEqualGUIDAligned(*PropertyRequest->PropertyItem->Set, KSPROPSETID_Jack) &&
+        (PropertyRequest->PropertyItem->Id == KSPROPERTY_JACK_DESCRIPTION))
+    {
+        ntStatus = 
+            pMiniport->PropertyHandlerJackDescription
+            (
+                PropertyRequest
+            );
+    }
+
+    return ntStatus;
+} // PropertyHandler_TopoFilter
+
+//=============================================================================
+NTSTATUS
 PropertyHandler_Topology
 ( 
     IN PPCPROPERTY_REQUEST      PropertyRequest 

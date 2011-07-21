@@ -16,25 +16,25 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 
-static int32_t increment(void* /*aPtr*/, uint32_t /*aVersion*/, uint32_t aValue, uint32_t* aResult)
+static int32_t STDCALL increment(void* /*aPtr*/, uint32_t /*aVersion*/, uint32_t aValue, uint32_t* aResult)
 {
     *aResult = ++aValue;
     return 0;
 }
 
-static int32_t decrement(void* /*aPtr*/, uint32_t /*aVersion*/, int32_t aValue, int32_t* aResult)
+static int32_t STDCALL decrement(void* /*aPtr*/, uint32_t /*aVersion*/, int32_t aValue, int32_t* aResult)
 {
     *aResult = --aValue;
     return 0;
 }
 
-static int32_t toggle(void* /*aPtr*/, uint32_t /*aVersion*/, uint32_t aValue, uint32_t* aResult)
+static int32_t STDCALL toggle(void* /*aPtr*/, uint32_t /*aVersion*/, uint32_t aValue, uint32_t* aResult)
 {
     *aResult = (aValue==0? 1 : 0);
     return 0;
 }
 
-static int32_t echoString(void* /*aPtr*/, uint32_t /*aVersion*/, const char* aValue, char** aResult)
+static int32_t STDCALL echoString(void* /*aPtr*/, uint32_t /*aVersion*/, const char* aValue, char** aResult)
 {
     char* res = (char*)malloc(strlen(aValue)+1);
     (void)strcpy(res, aValue);
@@ -42,7 +42,7 @@ static int32_t echoString(void* /*aPtr*/, uint32_t /*aVersion*/, const char* aVa
     return 0;
 }
 
-static int32_t echoBinary(void* /*aPtr*/, uint32_t /*aVersion*/, const char* aValue, uint32_t aValueLen, char** aResult, uint32_t* aResultLen)
+static int32_t STDCALL echoBinary(void* /*aPtr*/, uint32_t /*aVersion*/, const char* aValue, uint32_t aValueLen, char** aResult, uint32_t* aResultLen)
 {
     char* res = (char*)malloc(aValueLen);
     (void)strncpy(res, aValue, aValueLen);
@@ -51,43 +51,43 @@ static int32_t echoBinary(void* /*aPtr*/, uint32_t /*aVersion*/, const char* aVa
     return 0;
 }
 
-static int32_t setUint(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUint)
+static int32_t STDCALL setUint(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUint)
 {
     uint32_t changed;
     return DvProviderOpenhomeOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint, &changed);
 }
 
-static int32_t getUint(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueUint)
+static int32_t STDCALL getUint(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueUint)
 {
     DvProviderOpenhomeOrgTestBasic1GetPropertyVarUint((THandle)aPtr, aValueUint);
     return 0;
 }
 
-static int32_t setInt(void* aPtr, uint32_t /*aVersion*/, int32_t aValueInt)
+static int32_t STDCALL setInt(void* aPtr, uint32_t /*aVersion*/, int32_t aValueInt)
 {
     uint32_t changed;
     return DvProviderOpenhomeOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt, &changed);
 }
 
-static int32_t getInt(void* aPtr, uint32_t /*aVersion*/, int32_t* aValueInt)
+static int32_t STDCALL getInt(void* aPtr, uint32_t /*aVersion*/, int32_t* aValueInt)
 {
     DvProviderOpenhomeOrgTestBasic1GetPropertyVarInt((THandle)aPtr, aValueInt);
     return 0;
 }
 
-static int32_t setBool(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueBool)
+static int32_t STDCALL setBool(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueBool)
 {
     uint32_t changed;
     return DvProviderOpenhomeOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool, &changed);
 }
 
-static int32_t getBool(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueBool)
+static int32_t STDCALL getBool(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueBool)
 {
     DvProviderOpenhomeOrgTestBasic1GetPropertyVarBool((THandle)aPtr, aValueBool);
     return 0;
 }
 
-static int32_t setMultiple(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool)
+static int32_t STDCALL setMultiple(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool)
 {
     uint32_t changed1;
     uint32_t changed2;
@@ -100,25 +100,25 @@ static int32_t setMultiple(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUin
     return err;
 }
 
-static int32_t setString(void* aPtr, uint32_t /*aVersion*/, const char* aValueStr)
+static int32_t STDCALL setString(void* aPtr, uint32_t /*aVersion*/, const char* aValueStr)
 {
     uint32_t changed;
     return DvProviderOpenhomeOrgTestBasic1SetPropertyVarStr((THandle)aPtr, aValueStr, &changed);
 }
 
-static int32_t getString(void* aPtr, uint32_t /*aVersion*/, char** aValueStr)
+static int32_t STDCALL getString(void* aPtr, uint32_t /*aVersion*/, char** aValueStr)
 {
     DvProviderOpenhomeOrgTestBasic1GetPropertyVarStr((THandle)aPtr, aValueStr);
     return 0;
 }
 
-static int32_t setBinary(void* aPtr, uint32_t /*aVersion*/, const char* aValueBin, uint32_t aValueBinLen)
+static int32_t STDCALL setBinary(void* aPtr, uint32_t /*aVersion*/, const char* aValueBin, uint32_t aValueBinLen)
 {
     uint32_t changed;
     return DvProviderOpenhomeOrgTestBasic1SetPropertyVarBin((THandle)aPtr, aValueBin, aValueBinLen, &changed);
 }
 
-static int32_t getBinary(void* aPtr, uint32_t /*aVersion*/, char** aValueBin, uint32_t* aValueBinLen)
+static int32_t STDCALL getBinary(void* aPtr, uint32_t /*aVersion*/, char** aValueBin, uint32_t* aValueBinLen)
 {
     DvProviderOpenhomeOrgTestBasic1GetPropertyVarBin((THandle)aPtr, aValueBin, aValueBinLen);
     return 0;

@@ -1,6 +1,7 @@
 #ifndef HEADER_DVSERVERUPNPC
 #define HEADER_DVSERVERUPNPC
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/DvDevice.h>
 
@@ -22,7 +23,7 @@ extern "C" {
  *
  * @return  Handle to a new server instance.
  */
-DllExport THandle DvServerUpnpCreate();
+DllExport THandle STDCALL DvServerUpnpCreate();
 
 /**
  * Destroy an additional UPnP server.
@@ -32,7 +33,7 @@ DllExport THandle DvServerUpnpCreate();
  *
  * @param[in] aServer   Handle returned by DvServerUpnpCreate()
  */
-DllExport void DvServerUpnpDestroy(THandle aServer);
+DllExport void STDCALL DvServerUpnpDestroy(THandle aServer);
 
 /**
  * Publish a device using an additional UPnP server
@@ -43,7 +44,7 @@ DllExport void DvServerUpnpDestroy(THandle aServer);
  * @param[in] aServer   Handle returned by DvServerUpnpCreate()
  * @param[in] aDevice   Handle returned by DvDeviceCreate[NoResources]
  */
-DllExport void DvServerUpnpAddDevice(THandle aServer, DvDeviceC aDevice);
+DllExport void STDCALL DvServerUpnpAddDevice(THandle aServer, DvDeviceC aDevice);
 
 /* @} */
 

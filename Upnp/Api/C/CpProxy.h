@@ -1,6 +1,7 @@
 #ifndef HEADER_SERVICE_PROXYC
 #define HEADER_SERVICE_PROXYC
 
+#include <OhNetDefines.h>
 #include <OsTypes.h>
 #include <C/OhNet.h>
 #include <C/Service.h>
@@ -22,14 +23,14 @@ extern "C" {
  *
  * @return  Handle to the new (empty) proxy
  */
-DllExport THandle CpProxyCreate(const char* aDomain, const char* aName, uint32_t aVersion, CpDeviceC aDevice);
+DllExport THandle STDCALL CpProxyCreate(const char* aDomain, const char* aName, uint32_t aVersion, CpDeviceC aDevice);
 
 /**
  * Destroy a proxy (only useful to clients who have called CpProxyCreate)
  *
  * @param[in] aProxy  Returned by CpProxyCreate
  */
-DllExport void CpProxyDestroy(THandle aProxy);
+DllExport void STDCALL CpProxyDestroy(THandle aProxy);
 
 /**
  * Retrieve the handle to the underlying service (only useful to clients who have called CpProxyCreate)
@@ -38,7 +39,7 @@ DllExport void CpProxyDestroy(THandle aProxy);
  *
  * @return  Handle to the underlying service
  */
-DllExport THandle CpProxyService(THandle aProxy);
+DllExport THandle STDCALL CpProxyService(THandle aProxy);
 
 /**
  * Subscribe to be notified of changes in state variables for a given service
@@ -51,7 +52,7 @@ DllExport THandle CpProxyService(THandle aProxy);
  *
  * @param[in] aHandle    Returned from [service]CreateEvented
  */
-DllExport void CpProxySubscribe(THandle aHandle);
+DllExport void STDCALL CpProxySubscribe(THandle aHandle);
 
 /**
  * Unsubscribe from notifications of changes in state variables for a given
@@ -62,7 +63,7 @@ DllExport void CpProxySubscribe(THandle aHandle);
  *
  * @param[in] aHandle    Returned from [service]CreateEvented
  */
-DllExport void CpProxyUnsubscribe(THandle aHandle);
+DllExport void STDCALL CpProxyUnsubscribe(THandle aHandle);
 
 /**
  * Register a callback which will run after each group of 1..n changes to
@@ -72,7 +73,7 @@ DllExport void CpProxyUnsubscribe(THandle aHandle);
  * @param[in] aCallback  The callback to run
  * @param[in] aPtr       Data to be passed to the callback
  */
-DllExport void CpProxySetPropertyChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxySetPropertyChanged(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Register a callback which will run when the state of all properties becomes available.
@@ -82,21 +83,21 @@ DllExport void CpProxySetPropertyChanged(THandle aHandle, OhNetCallback aCallbac
  * @param[in] aCallback  The callback to run
  * @param[in] aPtr       Data to be passed to the callback
  */
-DllExport void CpProxySetPropertyInitialEvent(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+DllExport void STDCALL CpProxySetPropertyInitialEvent(THandle aHandle, OhNetCallback aCallback, void* aPtr);
 
 /**
  * Must be called before reading the value of a property.
  *
  * @param[in] aHandle    Returned from [service]CreateEvented
  */
-DllExport void CpProxyPropertyReadLock(THandle aHandle);
+DllExport void STDCALL CpProxyPropertyReadLock(THandle aHandle);
 
 /**
  * Must be called once for each call to CpProxyReadLock() (after reading the value of a property).
  *
  * @param[in] aHandle    Returned from [service]CreateEvented
  */
-DllExport void CpProxyPropertyReadUnlock(THandle aHandle);
+DllExport void STDCALL CpProxyPropertyReadUnlock(THandle aHandle);
 
 /**
  * Add a property to a service.
@@ -105,7 +106,7 @@ DllExport void CpProxyPropertyReadUnlock(THandle aHandle);
  * @param[in] aHandle    Returned from [service]CreateEvented
  * @param[in] aProperty  Returned from ServicePropertyCreate[type]
  */
-DllExport void CpProxyAddProperty(THandle aHandle, ServiceProperty aProperty);
+DllExport void STDCALL CpProxyAddProperty(THandle aHandle, ServiceProperty aProperty);
 
 #ifdef __cplusplus
 } // extern "C"

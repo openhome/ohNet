@@ -891,190 +891,190 @@ void DvProviderAvOpenhomeOrgPlaylist1C::DoProtocolInfo(IDviInvocation& aInvocati
 
 
 
-THandle DvProviderAvOpenhomeOrgPlaylist1Create(DvDeviceC aDevice)
+THandle STDCALL DvProviderAvOpenhomeOrgPlaylist1Create(DvDeviceC aDevice)
 {
 	return new DvProviderAvOpenhomeOrgPlaylist1C(aDevice);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1Destroy(THandle aProvider)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1Destroy(THandle aProvider)
 {
     delete reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionPlay(THandle aProvider, CallbackPlaylist1Play aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionPlay(THandle aProvider, CallbackPlaylist1Play aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionPlay(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionPause(THandle aProvider, CallbackPlaylist1Pause aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionPause(THandle aProvider, CallbackPlaylist1Pause aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionPause(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionStop(THandle aProvider, CallbackPlaylist1Stop aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionStop(THandle aProvider, CallbackPlaylist1Stop aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionStop(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionNext(THandle aProvider, CallbackPlaylist1Next aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionNext(THandle aProvider, CallbackPlaylist1Next aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionNext(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionPrevious(THandle aProvider, CallbackPlaylist1Previous aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionPrevious(THandle aProvider, CallbackPlaylist1Previous aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionPrevious(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionSetRepeat(THandle aProvider, CallbackPlaylist1SetRepeat aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionSetRepeat(THandle aProvider, CallbackPlaylist1SetRepeat aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionSetRepeat(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionRepeat(THandle aProvider, CallbackPlaylist1Repeat aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionRepeat(THandle aProvider, CallbackPlaylist1Repeat aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionRepeat(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionSetShuffle(THandle aProvider, CallbackPlaylist1SetShuffle aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionSetShuffle(THandle aProvider, CallbackPlaylist1SetShuffle aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionSetShuffle(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionShuffle(THandle aProvider, CallbackPlaylist1Shuffle aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionShuffle(THandle aProvider, CallbackPlaylist1Shuffle aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionShuffle(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekSecondAbsolute(THandle aProvider, CallbackPlaylist1SeekSecondAbsolute aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekSecondAbsolute(THandle aProvider, CallbackPlaylist1SeekSecondAbsolute aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionSeekSecondAbsolute(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekSecondRelative(THandle aProvider, CallbackPlaylist1SeekSecondRelative aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekSecondRelative(THandle aProvider, CallbackPlaylist1SeekSecondRelative aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionSeekSecondRelative(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekId(THandle aProvider, CallbackPlaylist1SeekId aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekId(THandle aProvider, CallbackPlaylist1SeekId aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionSeekId(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekIndex(THandle aProvider, CallbackPlaylist1SeekIndex aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionSeekIndex(THandle aProvider, CallbackPlaylist1SeekIndex aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionSeekIndex(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionTransportState(THandle aProvider, CallbackPlaylist1TransportState aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionTransportState(THandle aProvider, CallbackPlaylist1TransportState aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionTransportState(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionId(THandle aProvider, CallbackPlaylist1Id aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionId(THandle aProvider, CallbackPlaylist1Id aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionId(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionRead(THandle aProvider, CallbackPlaylist1Read aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionRead(THandle aProvider, CallbackPlaylist1Read aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionRead(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionReadList(THandle aProvider, CallbackPlaylist1ReadList aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionReadList(THandle aProvider, CallbackPlaylist1ReadList aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionReadList(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionInsert(THandle aProvider, CallbackPlaylist1Insert aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionInsert(THandle aProvider, CallbackPlaylist1Insert aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionInsert(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionDeleteId(THandle aProvider, CallbackPlaylist1DeleteId aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionDeleteId(THandle aProvider, CallbackPlaylist1DeleteId aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionDeleteId(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionDeleteAll(THandle aProvider, CallbackPlaylist1DeleteAll aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionDeleteAll(THandle aProvider, CallbackPlaylist1DeleteAll aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionDeleteAll(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionTracksMax(THandle aProvider, CallbackPlaylist1TracksMax aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionTracksMax(THandle aProvider, CallbackPlaylist1TracksMax aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionTracksMax(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionIdArray(THandle aProvider, CallbackPlaylist1IdArray aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionIdArray(THandle aProvider, CallbackPlaylist1IdArray aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionIdArray(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionIdArrayChanged(THandle aProvider, CallbackPlaylist1IdArrayChanged aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionIdArrayChanged(THandle aProvider, CallbackPlaylist1IdArrayChanged aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionIdArrayChanged(aCallback, aPtr);
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1EnableActionProtocolInfo(THandle aProvider, CallbackPlaylist1ProtocolInfo aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1EnableActionProtocolInfo(THandle aProvider, CallbackPlaylist1ProtocolInfo aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->EnableActionProtocolInfo(aCallback, aPtr);
 }
 
-int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyTransportState(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyTransportState(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->SetPropertyTransportState(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1GetPropertyTransportState(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyTransportState(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->GetPropertyTransportState(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyRepeat(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyRepeat(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->SetPropertyRepeat((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1GetPropertyRepeat(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyRepeat(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->GetPropertyRepeat(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyShuffle(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyShuffle(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->SetPropertyShuffle((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1GetPropertyShuffle(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyShuffle(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->GetPropertyShuffle(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyId(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyId(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->SetPropertyId(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1GetPropertyId(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyId(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->GetPropertyId(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyIdArray(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyIdArray(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
 {
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
@@ -1082,7 +1082,7 @@ int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyIdArray(THandle aProvider, co
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1GetPropertyIdArray(THandle aProvider, char** aValue, uint32_t* aValueLen)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyIdArray(THandle aProvider, char** aValue, uint32_t* aValueLen)
 {
     Brh buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->GetPropertyIdArray(buf);
@@ -1090,27 +1090,27 @@ void DvProviderAvOpenhomeOrgPlaylist1GetPropertyIdArray(THandle aProvider, char*
     *aValue = (char*)buf.Extract();
 }
 
-int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyTracksMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyTracksMax(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->SetPropertyTracksMax(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1GetPropertyTracksMax(THandle aProvider, uint32_t* aValue)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyTracksMax(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->GetPropertyTracksMax(val);
     *aValue = val;
 }
 
-int32_t DvProviderAvOpenhomeOrgPlaylist1SetPropertyProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged)
+int32_t STDCALL DvProviderAvOpenhomeOrgPlaylist1SetPropertyProtocolInfo(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
     *aChanged = (reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->SetPropertyProtocolInfo(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderAvOpenhomeOrgPlaylist1GetPropertyProtocolInfo(THandle aProvider, char** aValue)
+void STDCALL DvProviderAvOpenhomeOrgPlaylist1GetPropertyProtocolInfo(THandle aProvider, char** aValue)
 {
     Brhz buf;
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylist1C*>(aProvider)->GetPropertyProtocolInfo(buf);
