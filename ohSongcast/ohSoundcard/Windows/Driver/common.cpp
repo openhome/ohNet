@@ -32,7 +32,7 @@ class CAdapterCommon :
     public CUnknown    
 {
     private:
-        PPORTWAVECYCLIC         m_pPortWave;    // Port interface
+        PUNKNOWN                m_pPortWave;    // Port interface
         PSERVICEGROUP           m_pServiceGroupWave;
         PDEVICE_OBJECT          m_pDeviceObject;      
         DEVICE_POWER_STATE      m_PowerState;        
@@ -61,7 +61,12 @@ class CAdapterCommon :
 
         STDMETHODIMP_(PUNKNOWN *)       WavePortDriverDest(void);
 
-        STDMETHODIMP_(void)     SetWaveServiceGroup
+        STDMETHODIMP_(void)     SetWavePortDriverDest
+		(
+            IN  PUNKNOWN        WavePort
+		);
+
+		STDMETHODIMP_(void)     SetWaveServiceGroup
         (   
             IN  PSERVICEGROUP   ServiceGroup
         );
@@ -272,6 +277,7 @@ Return Value:
 
     m_pDeviceObject = DeviceObject;
     m_PowerState    = PowerDeviceD0;
+	m_pPortWave = NULL;
 
     // Initialize HW.
     // 
@@ -409,6 +415,30 @@ Return Value:
 } // SetWaveServiceGroup
 
 //=============================================================================
+STDMETHODIMP_(void)
+CAdapterCommon::SetWavePortDriverDest
+( 
+    IN PUNKNOWN WavePort 
+)
+/*++
+
+Routine Description:
+
+  Set the wave port.
+
+Arguments:
+
+  PUNKNOWN : pointer to waveport
+
+--*/
+{
+    PAGED_CODE();
+
+    m_pPortWave = WavePort;
+} // WavePortDriverDest
+
+
+//=============================================================================
 STDMETHODIMP_(PUNKNOWN *)
 CAdapterCommon::WavePortDriverDest
 ( 
@@ -432,6 +462,7 @@ Return Value:
 
     return (PUNKNOWN *)&m_pPortWave;
 } // WavePortDriverDest
+
 #pragma code_seg()
 
 //=============================================================================

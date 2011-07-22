@@ -88,6 +88,8 @@ HKR,,Driver,,ohSoundcard.sys
 
 HKR,Drivers,SubClasses,,"wave,midi,mixer"
 
+HKR,,SetupPreferredAudioDevices,3,01,00,00,00
+
 HKR,Drivers\wave\wdmaud.drv,Driver,,wdmaud.drv
 HKR,Drivers\midi\wdmaud.drv,Driver,,wdmaud.drv
 HKR,Drivers\mixer\wdmaud.drv,Driver,,wdmaud.drv

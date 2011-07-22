@@ -194,7 +194,8 @@ InstallSubdevice
     __in_opt    PRESOURCELIST           ResourceList,
     __in        REFGUID                 PortInterfaceId,
     __out_opt   PUNKNOWN *              OutPortInterface,
-    __out_opt   PUNKNOWN *              OutPortUnknown
+    __out_opt   PUNKNOWN *              OutPortUnknown,
+	__in        BOOL                    Register
 )
 {
 /*++
@@ -295,7 +296,7 @@ Return Value:
                 ResourceList 
             );
 
-        if (NT_SUCCESS(ntStatus))
+        if (NT_SUCCESS(ntStatus) && Register)
         {
             // Register the subdevice (port/miniport combination).
             //
@@ -390,130 +391,88 @@ Return Value:
     NTSTATUS                    ntStatus        = STATUS_SUCCESS;
     PUNKNOWN                    unknownTopology = NULL;
     PUNKNOWN                    unknownWave     = NULL;
-    PADAPTERCOMMON              pAdapterCommon  = NULL;
     PUNKNOWN                    pUnknownCommon  = NULL;
+    PADAPTERCOMMON              pAdapterCommon  = NULL;
 
     DPF_ENTER(("[StartDevice]"));
 
     // create a new adapter common object
     //
-    ntStatus = 
-        NewAdapterCommon
-        ( 
-            &pUnknownCommon,
-            IID_IAdapterCommon,
-            NULL,
-            NonPagedPool 
-        );
-    if (NT_SUCCESS(ntStatus))
+    ntStatus = NewAdapterCommon ( 
+        &pUnknownCommon,
+        IID_IAdapterCommon,
+        NULL,
+        NonPagedPool 
+    );
+
+	if (NT_SUCCESS(ntStatus))
     {
-        ntStatus = 
-            pUnknownCommon->QueryInterface
-            ( 
-                IID_IAdapterCommon,
-                (PVOID *) &pAdapterCommon 
-            );
+        ntStatus = pUnknownCommon->QueryInterface ( 
+            IID_IAdapterCommon,
+            (PVOID *) &pAdapterCommon 
+        );
 
         if (NT_SUCCESS(ntStatus))
         {
-            ntStatus = 
-                pAdapterCommon->Init(DeviceObject);
+            ntStatus = pAdapterCommon->Init(DeviceObject);
 
             if (NT_SUCCESS(ntStatus))
             {
                 // register with PortCls for power-management services
                 //    
-                ntStatus = 
-                    PcRegisterAdapterPowerManagement
-                    ( 
-                        PUNKNOWN(pAdapterCommon),
-                        DeviceObject 
-                    );
+                ntStatus = PcRegisterAdapterPowerManagement ( 
+                    PUNKNOWN(pAdapterCommon),
+                    DeviceObject 
+                );
             }
         }
     }
 
     // install MSVAD topology miniport.
-    //
-    if (NT_SUCCESS(ntStatus))
+
+	if (NT_SUCCESS(ntStatus))
     {
-        ntStatus = 
-            InstallSubdevice
-            ( 
-                DeviceObject,
-                Irp,
-                L"Topology",
-                CLSID_PortTopology,
-                CLSID_PortTopology, 
-                CreateMiniportTopologyMSVAD,
-                pAdapterCommon,
-                NULL,
-                IID_IPortTopology,
-                NULL,
-                &unknownTopology 
-            );
+        ntStatus = InstallSubdevice ( 
+			DeviceObject,
+			Irp,
+			L"Topology",
+			CLSID_PortTopology,
+			CLSID_PortTopology, 
+			CreateMiniportTopologyMSVAD,
+			pAdapterCommon,
+			NULL,
+			IID_IPortTopology,
+			NULL,
+			&unknownTopology,
+			true
+		);
     }
 
-    // install MSVAD wavecyclic miniport.
-    //
-    if (NT_SUCCESS(ntStatus))
+	pAdapterCommon->SetWavePortDriverDest(unknownTopology);
+
+	// install MSVAD wavecyclic miniport.
+    
+	if (NT_SUCCESS(ntStatus))
     {
-        ntStatus = 
-            InstallSubdevice
-            ( 
-                DeviceObject,
-                Irp,
-                L"Wave",
-                CLSID_PortWaveCyclic,
-                CLSID_PortWaveCyclic,   
-                CreateMiniportWaveCyclicMSVAD,
-                pAdapterCommon,
-                NULL,
-                IID_IPortWaveCyclic,
-                pAdapterCommon->WavePortDriverDest(),
-                &unknownWave 
-            );
-    }
+		ntStatus = InstallSubdevice ( 
+			DeviceObject,
+			Irp,
+			L"Wave",
+			CLSID_PortWaveCyclic,
+			CLSID_PortWaveCyclic,   
+			CreateMiniportWaveCyclicMSVAD,
+			pAdapterCommon,
+			NULL,
+			IID_IPortWaveCyclic,
+			pAdapterCommon->WavePortDriverDest(),
+			&unknownWave,
+			false // don't register because this is a dynamic device that registers later
+		);
+	}
 
-    if (unknownTopology && unknownWave)
-    {
-        // register wave <=> topology connections
-        // This will connect bridge pins of wavecyclic and topology
-        // miniports.
-        //
-        if ((TopologyPhysicalConnections.ulTopologyOut != (ULONG)-1) &&
-            (TopologyPhysicalConnections.ulWaveIn != (ULONG)-1))
-        {
-            ntStatus =
-                PcRegisterPhysicalConnection
-                ( 
-                    DeviceObject,
-                    unknownTopology,
-                    TopologyPhysicalConnections.ulTopologyOut,
-                    unknownWave,
-                    TopologyPhysicalConnections.ulWaveIn
-                );
-        }
+	pAdapterCommon->SetWavePortDriverDest(unknownWave);
 
-        if (NT_SUCCESS(ntStatus))
-        {
-            if ((TopologyPhysicalConnections.ulWaveOut != (ULONG)-1) &&
-                (TopologyPhysicalConnections.ulTopologyIn != (ULONG)-1))
-            {
-                ntStatus =
-                    PcRegisterPhysicalConnection
-                    ( 
-                        DeviceObject,
-                        unknownWave,
-                        TopologyPhysicalConnections.ulWaveOut,
-                        unknownTopology,
-                        TopologyPhysicalConnections.ulTopologyIn
-                    );
-            }
-        }
-    }
-
-    // Release the adapter common object.  It either has other references,
+	// Release the adapter common object.  It either has other references,
     // or we need to delete it anyway.
     //
     if (pAdapterCommon)
@@ -531,11 +490,7 @@ Return Value:
         unknownTopology->Release();
     }
 
-    if (unknownWave)
-    {
-        unknownWave->Release();
-    }
-
     return ntStatus;
 } // StartDevice
+
 #pragma code_seg()

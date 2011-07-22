@@ -71,7 +71,7 @@ private:
 
 //Offset    Bytes                   Desc
 //0         1                       Msg Header Bytes (without the codec name)
-//1         1                       Flags (lsb first: halt flag, lossless flag, sync flag all other bits 0)
+//1         1                       Flags (lsb first: halt flag, lossless flag, timestamped flag all other bits 0)
 //2         2                       Samples in this msg
 //4         4                       Frame
 //8         4                       Network Timestamp
@@ -147,6 +147,8 @@ private:
 	ULONG iFrame;
 	ULONGLONG iSampleStart;
 	ULONGLONG iSamplesTotal;
+	ULONG iSampleRate;
+	ULONG iTimestampMultiplier;
 };
 
 #endif          // (NTDDI_VERSION >= NTDDI_VISTA)

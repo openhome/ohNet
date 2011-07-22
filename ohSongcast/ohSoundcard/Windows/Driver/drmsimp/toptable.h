@@ -15,6 +15,8 @@ Abstract:
 #ifndef _MSVAD_TOPTABLE_H_
 #define _MSVAD_TOPTABLE_H_
 
+#include "prop.h"
+
 //=============================================================================
 static
 KSDATARANGE PinDataRangesBridge[] =
@@ -86,7 +88,17 @@ PCPIN_DESCRIPTOR MiniportPins[] =
 };
 
 //=============================================================================
-extern KSJACK_DESCRIPTION JackDescSpeakers;
+
+KSJACK_DESCRIPTION JackDescSpeakers =
+{
+    KSAUDIO_SPEAKER_STEREO,
+    0xFFFFFFFF, // HDAudio color spec for unknown colour
+    eConnTypeUnknown,
+    eGeoLocFront,
+    eGenLocOther,
+    ePortConnUnknown,
+    FALSE
+};
 
 KSJACK_DESCRIPTION2 JackCapsSpeakers = 
 {
@@ -137,14 +149,15 @@ PCNODE_DESCRIPTOR TopologyNodes[] =
 };
 
 //=============================================================================
+/*
 static
 PCCONNECTION_DESCRIPTOR MiniportConnections[] =
 {
   //  FromNode,                     FromPin,                        ToNode,                      ToPin
   {   PCFILTER_NODE,                KSPIN_TOPO_WAVEOUT_SOURCE,      PCFILTER_NODE,               KSPIN_TOPO_LINEOUT_DEST }
 };
+*/
 
-/*
 static
 PCCONNECTION_DESCRIPTOR MiniportConnections[] =
 {
@@ -152,7 +165,6 @@ PCCONNECTION_DESCRIPTOR MiniportConnections[] =
   {   PCFILTER_NODE,                KSPIN_TOPO_WAVEOUT_SOURCE,      KSNODE_TOPO_WAVEOUT_MUTE,    1 },
   {   KSNODE_TOPO_WAVEOUT_MUTE,     0,                              PCFILTER_NODE,               KSPIN_TOPO_LINEOUT_DEST }
 };
-*/
 
 //=============================================================================
 static
@@ -162,7 +174,37 @@ PCPROPERTY_ITEM PropertiesTopoFilter[] =
         &KSPROPSETID_Jack,
         KSPROPERTY_JACK_DESCRIPTION,
         KSPROPERTY_TYPE_GET | KSPROPERTY_TYPE_BASICSUPPORT,
-        PropertyHandler_TopoFilter
+        PropertyHandler_Jack
+    },
+    {
+        &KSPROPSETID_Private,
+        KSPROPERTY_OHSOUNDCARD_VERSION,
+        KSPROPERTY_TYPE_GET,
+        PropertyHandler_Wave
+    },
+    {
+        &KSPROPSETID_Private,
+        KSPROPERTY_OHSOUNDCARD_ENABLED,
+        KSPROPERTY_TYPE_SET,
+        PropertyHandler_Wave
+    },
+    {
+        &KSPROPSETID_Private,
+        KSPROPERTY_OHSOUNDCARD_ACTIVE,
+        KSPROPERTY_TYPE_SET,
+        PropertyHandler_Wave
+    },
+    {
+        &KSPROPSETID_Private,
+        KSPROPERTY_OHSOUNDCARD_ENDPOINT,
+        KSPROPERTY_TYPE_SET,
+        PropertyHandler_Wave
+    },
+    {
+        &KSPROPSETID_Private,
+        KSPROPERTY_OHSOUNDCARD_TTL,
+        KSPROPERTY_TYPE_SET,
+        PropertyHandler_Wave
     }
 };
 
@@ -178,10 +220,10 @@ PCFILTER_DESCRIPTOR MiniportFilterDescriptor =
   SIZEOF_ARRAY(MiniportPins),         // PinCount
   MiniportPins,                       // Pins
   sizeof(PCNODE_DESCRIPTOR),          // NodeSize
-  0,								  // NodeCount
-  NULL,			                      // Nodes
-  //SIZEOF_ARRAY(TopologyNodes),        // NodeCount
-  //TopologyNodes,                      // Nodes
+  //0,								  // NodeCount
+  //NULL,			                      // Nodes
+  SIZEOF_ARRAY(TopologyNodes),        // NodeCount
+  TopologyNodes,                      // Nodes
   SIZEOF_ARRAY(MiniportConnections),  // ConnectionCount
   MiniportConnections,                // Connections
   0,                                  // CategoryCount

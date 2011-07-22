@@ -31,22 +31,21 @@ class CMiniportTopology :
     public IMiniportTopology,
     public CUnknown
 {
-  public:
+public:
     DECLARE_STD_UNKNOWN();
     DEFINE_STD_CONSTRUCTOR(CMiniportTopology);
     ~CMiniportTopology();
 
     IMP_IMiniportTopology;
 
-    NTSTATUS                    PropertyHandlerJackDescription
-    (
-        IN PPCPROPERTY_REQUEST  PropertyRequest
-    );
+	void CreateWaveMiniport();
+	void DestroyWaveMiniport();
 
 };
+
 typedef CMiniportTopology *PCMiniportTopology;
 
-extern NTSTATUS PropertyHandler_TopoFilter(IN PPCPROPERTY_REQUEST PropertyRequest);
+extern NTSTATUS PropertyHandler_Jack(IN PPCPROPERTY_REQUEST PropertyRequest);
 
 #endif
 

@@ -72,51 +72,6 @@ TBool OhmSenderDriverWindows::InstallDriver()
 	return (true);
 }
 
-/*
-
-
-
-
-
-
-	STARTUPINFO startupInfo;
-	PROCESS_INFORMATION processInformation;
-
-	startupInfo.cb = sizeof(STARTUPINFO);
-	startupInfo.lpReserved = NULL;
-	startupInfo.lpDesktop = NULL;
-	startupInfo.lpTitle = NULL;
-	startupInfo.dwX = 0;
-	startupInfo.dwY = 0;
-	startupInfo.dwXSize = 0;
-	startupInfo.dwYSize = 0;
-	startupInfo.dwXCountChars = 0;
-	startupInfo.dwYCountChars = 0;
-	startupInfo.dwFillAttribute = 0;
-	startupInfo.dwFlags = 0;
-	startupInfo.wShowWindow = false;
-	startupInfo.cbReserved2 = 0;
-	startupInfo.lpReserved2 = NULL;
-	startupInfo.hStdInput = 0;
-	startupInfo.hStdOutput = 0;
-	startupInfo.hStdError = 0;
-
-	if (!CreateProcess("Install.exe", NULL, NULL, NULL, false, CREATE_NO_WINDOW, NULL, NULL, &startupInfo, &processInformation))
-	{
-		printf("create failed %d\n", GetLastError());
-		return (false);
-	}
-
-	WaitForSingleObject(processInformation.hProcess, INFINITE);
-
-	CloseHandle(processInformation.hProcess );
-	CloseHandle(processInformation.hThread );
-
-	return (true);
-}
-*/
-
-
 TBool OhmSenderDriverWindows::FindDriver()
 {
     HDEVINFO deviceInfoSet = SetupDiGetClassDevs(&KSCATEGORY_AUDIO, 0, 0, DIGCF_DEVICEINTERFACE | DIGCF_PROFILE | DIGCF_PRESENT);

@@ -205,13 +205,12 @@ Return Value:
 
     NTSTATUS                    ntStatus;
 
-    ntStatus = 
-        UnknownAdapter_->QueryInterface
-        ( 
-            IID_IAdapterCommon,
-            (PVOID *) &m_AdapterCommon
-        );
-    if (NT_SUCCESS(ntStatus))
+    ntStatus = UnknownAdapter_->QueryInterface ( 
+        IID_IAdapterCommon,
+        (PVOID *) &m_AdapterCommon
+    );
+    
+	if (NT_SUCCESS(ntStatus))
     {
         m_AdapterCommon->MixerReset();
     }

@@ -22,7 +22,7 @@ static
 KSDATARANGE_AUDIO PinDataRangesStream[] =
 {
     {
-        {
+        { 
             sizeof(KSDATARANGE_AUDIO),
             0,
             0,
@@ -135,51 +135,6 @@ PCCONNECTION_DESCRIPTOR MiniportConnections[] =
     { KSNODE_WAVE_DAC,      0,                          PCFILTER_NODE,       KSPIN_WAVE_RENDER_SOURCE },    
 };
 
-//=============================================================================
-
-static
-PCPROPERTY_ITEM FilterProperties[] =
-{
-    {
-        &KSPROPSETID_Private,
-        KSPROPERTY_OHSOUNDCARD_VERSION,
-        KSPROPERTY_TYPE_GET,
-        PropertyHandler_Wave
-    },
-    {
-        &KSPROPSETID_Private,
-        KSPROPERTY_OHSOUNDCARD_ENABLED,
-        KSPROPERTY_TYPE_SET,
-        PropertyHandler_Wave
-    },
-    {
-        &KSPROPSETID_Private,
-        KSPROPERTY_OHSOUNDCARD_ACTIVE,
-        KSPROPERTY_TYPE_SET,
-        PropertyHandler_Wave
-    },
-    {
-        &KSPROPSETID_Private,
-        KSPROPERTY_OHSOUNDCARD_ENDPOINT,
-        KSPROPERTY_TYPE_SET,
-        PropertyHandler_Wave
-    },
-    {
-        &KSPROPSETID_Private,
-        KSPROPERTY_OHSOUNDCARD_TTL,
-        KSPROPERTY_TYPE_SET,
-        PropertyHandler_Wave
-    }
-};
-
-/*****************************************************************************
- * FilterAutomationPrivate
- *****************************************************************************
- * Filter's automation table for private property controls.
- */
-
-DEFINE_PCAUTOMATION_TABLE_PROP (FilterAutomation, FilterProperties);
-
 /*****************************************************************************
  * MiniportFilterDescriptor
  *****************************************************************************
@@ -198,7 +153,7 @@ static
 PCFILTER_DESCRIPTOR MiniportFilterDescriptor =
 {
     0,                                  // Version
-    &FilterAutomation,                  // AutomationTable
+    NULL,                               // AutomationTable
     sizeof(PCPIN_DESCRIPTOR),           // PinSize
     SIZEOF_ARRAY(MiniportPins),         // PinCount
     MiniportPins,                       // Pins

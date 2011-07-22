@@ -29,6 +29,7 @@ class CMiniportTopologyMSVAD
   protected:
     PADAPTERCOMMON              m_AdapterCommon;    // Adapter common object.
     PPCFILTER_DESCRIPTOR        m_FilterDescriptor; // Filter descriptor.
+    PPORTTOPOLOGY               m_Port;             // Topology Port
 
   public:
     CMiniportTopologyMSVAD();

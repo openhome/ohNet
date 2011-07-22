@@ -171,6 +171,7 @@ CSocketOhm::CSocketOhm()
 	iFrame = 0;
 	iSampleStart = 0;
 	iSamplesTotal = 0;
+	iSampleRate = 0;
 }
 
 NTSTATUS CSocketOhm::Initialise(CWinsock& aWsk, NETWORK_CALLBACK aCallback, void* aContext)
@@ -389,7 +390,7 @@ void CSocketOhm::Send(PSOCKADDR aAddress, UCHAR* aBuffer, ULONG aBytes, UCHAR aH
 
 	// Fill in multipus header
 
-	UCHAR flags = 2; // lossless flag
+	UCHAR flags = 6; // lossless + timestamped 
 
 	if (aHalt != 0)
 	{
@@ -425,6 +426,33 @@ void CSocketOhm::Send(PSOCKADDR aAddress, UCHAR* aBuffer, ULONG aBytes, UCHAR aH
 
 	header->iTotalBytes = bytes >> 8 & 0x00ff;
 	header->iTotalBytes += bytes << 8 & 0xff00;
+
+	// Create Timestamps
+
+	if (iSampleRate != aSampleRate)
+	{
+		iSampleRate = aSampleRate;
+
+		iTimestampMultiplier = 48000 * 256;
+
+		if ((iSampleRate % 441) == 0)
+		{
+			iTimestampMultiplier = 44100 * 256;
+		}
+	}
+
+	LARGE_INTEGER frequency;
+    LARGE_INTEGER timestamp = KeQueryPerformanceCounter(&frequency);
+
+	timestamp.QuadPart *= iTimestampMultiplier;
+	timestamp.QuadPart /= frequency.QuadPart;
+
+	header->iAudioNetworkTimestamp = timestamp.LowPart >> 24 & 0x000000ff;
+	header->iAudioNetworkTimestamp += timestamp.LowPart >> 8 & 0x0000ff00;
+	header->iAudioNetworkTimestamp += timestamp.LowPart << 8 & 0x00ff0000;
+	header->iAudioNetworkTimestamp += timestamp.LowPart << 24 & 0xff000000;
+
+	header->iAudioMediaTimestamp = header->iAudioNetworkTimestamp;
 
 	// Copy the audio
 

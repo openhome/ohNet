@@ -71,6 +71,9 @@
 
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
 
+    <CustomAction Id="LaunchInstall" FileKey="ohSoundcard4" ExeCommand="" Execute="immediate" Impersonate="yes" Return="check" />
+    <CustomAction Id="LaunchApplication" FileKey="ohSoundcard1" ExeCommand="" Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
+    
     <UI Id="WixUI_Minimal">
       <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
       <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
@@ -93,7 +96,9 @@
 
       <!-- Hook the new welcome dialog to the next one in the stack-->
       <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="PrepareDlg">1</Publish>
-      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication" />
+
+      <Publish Dialog="MyInstallDialog" Control="Finish" Event="DoAction" Value="LaunchInstall">LAUNCHAPPONEXIT</Publish>
+      <Publish Dialog="ExitDialog" Control="Finish" Order="1" Event="DoAction" Value="LaunchApplication">LAUNCHAPPONEXIT</Publish>
       <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
 
       <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">Installed</Publish>

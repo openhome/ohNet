@@ -16,7 +16,7 @@ ohnetdir = ../Upnp/Build/Obj/Windows/Debug
 # Macros used by Common.mak
 
 ar = lib /nologo /out:$(objdir)
-cflags = $(debug_specific_cflags) /W4 /WX /EHsc /FR$(objdir) /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS -DDllExport=__declspec(dllexport) -DDllExportClass=
+cflags = $(debug_specific_cflags) /W4 /WX /EHsc /FR$(objdir) /Gd -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS -DDllExport=__declspec(dllexport) -DDllExportClass=
 objdirbare = Build\Obj\Windows\$(build_dir)
 objdir = $(objdirbare)^\
 inc_build = Build\Include
@@ -50,4 +50,5 @@ all: $(objdir)/Install64.$(exeext)
 $(objdir)/Install64.$(exeext) : ohSoundcard/Windows/Install.cpp
 	$(compiler)/Install64.$(objext) -c $(cflags) $(includes) ohSoundcard/Windows/Install.cpp
 	$(link) $(linkoutput)$(objdir)/Install64.$(exeext) $(objdir)/Install64.$(objext) setupapi.lib
+	signtool sign /v /a /t http://timestamp.verisign.com/scripts/timestamp.dll $(objdir)/Install64.$(exeext)
 

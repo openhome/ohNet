@@ -14,7 +14,7 @@ build_dir = Debug
 # Macros used by Common.mak
 
 ar = lib /nologo /out:$(objdir)
-cflags = $(debug_specific_cflags) /W4 /WX /EHsc /FR$(objdir) /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS -DDllExport=__declspec(dllexport) -DDllExportClass=
+cflags = $(debug_specific_cflags) /W4 /WX /EHsc /FR$(objdir) /Gd -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS -DDllExport=__declspec(dllexport) -DDllExportClass=
 ohnetdir = ..\Upnp\Build\Obj\Windows\$(build_dir)^\
 objdirbare = Build\Obj\Windows\$(build_dir)
 objdir = $(objdirbare)^\
@@ -45,7 +45,7 @@ rmdir = Scripts\rmdir.bat
 uset4 = no
 
 
-all: $(objdir)$(dllprefix)ohSoundcard.$(dllext) $(objdir)Install32.$(exeext) $(objdir)TestSoundcard.$(exeext) $(objdir)TestSoundcardCs.$(exeext) all_common
+all: $(objdir)$(dllprefix)ohSoundcard.$(dllext) $(objdir)TestSoundcard.$(exeext) $(objdir)TestSoundcardCs.$(exeext) all_common
 
 
 # Include rules to build platform independent code
@@ -70,14 +70,6 @@ $(objdir)$(dllprefix)ohSoundcard.net.$(dllext) : $(objdir)$(dllprefix)ohSoundcar
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)$(dllprefix)ohSoundcard.net.$(dllext) \
 		ohSoundcard\Windows\Soundcard.cs
-
-$(objdir)Install32.$(exeext) : ohSoundcard\Windows\Install.cpp
-	$(compiler)Install32.$(objext) -c $(cflags) $(includes) ohSoundcard\Windows\Install.cpp
-	$(link) $(linkoutput)$(objdir)Install32.$(exeext) $(objdir)Install32.$(objext) setupapi.lib
-
-$(objdir)Install64.$(exeext) : ohSoundcard\Windows\Install.cpp
-	$(compiler)Install64.$(objext) -c $(cflags) $(includes) ohSoundcard\Windows\Install.cpp
-	$(link) $(linkoutput)$(objdir)Install64.$(exeext) $(objdir)Install64.$(objext) setupapi.lib
 
 $(objdir)TestSoundcardCs.$(exeext) : $(objdir)$(dllprefix)ohSoundcard.net.$(dllext) ohSoundcard\Windows\TestSoundcardCs.cs
 	$(csharp) /target:exe /debug+ \

@@ -21,20 +21,21 @@ Abstract:
 #include "wavtable.h"
 #include "network.h"
 
-FAST_MUTEX MpusFastMutex;
+extern FAST_MUTEX MpusFastMutex;
 
-SOCKADDR MpusAddress;
+extern UINT MpusEnabled;
+extern UINT MpusActive;
+extern UINT MpusTtl;
+extern UINT MpusAddr;
+extern UINT MpusPort;
 
-UINT MpusEnabled;
-UINT MpusActive;
-UINT MpusTtl;
-UINT MpusAddr;
-UINT MpusPort;
 UINT MpusAudioSampleRate;
 UINT MpusAudioBitRate;
 UINT MpusAudioBitDepth;
 UINT MpusAudioChannels;
 UINT MpusSendFormat;
+
+SOCKADDR MpusAddress;
 
 KEVENT WskInitialisedEvent;
 
@@ -46,18 +47,6 @@ void WskInitialised(void* aContext);
 void MpusStop();
 void MpusSend(UCHAR* aBuffer, UINT aBytes);
 void MpusSetFormat(UINT aSampleRate, UINT aBitRate, UINT aBitDepth, UINT aChannels);
-
-
-KSJACK_DESCRIPTION JackDescSpeakers =
-{
-    KSAUDIO_SPEAKER_STEREO,
-    0xFFFFFFFF, // HDAudio color spec for unknown colour
-    eConnTypeUnknown,
-    eGeoLocFront,
-    eGenLocOther,
-    ePortConnJack,
-    FALSE
-};
 
 #pragma code_seg("PAGE")
 
@@ -293,22 +282,13 @@ Return Value:
         m_fRenderAllocated = FALSE;
     }
 
-	ExInitializeFastMutex(&MpusFastMutex);
-
 	ExAcquireFastMutex(&MpusFastMutex);
 
-	MpusEnabled = 0;
-	MpusActive = 0;
-	MpusTtl = 0;
-	MpusAddr = 0;
-	MpusPort = 0;
 	MpusAudioSampleRate = 0;
 	MpusAudioBitRate = 0;
 	MpusAudioBitDepth = 0;
 	MpusAudioChannels = 0;
 	MpusSendFormat = 0;
-
-	CWinsock::Initialise(&MpusAddress, MpusAddr, MpusPort);
 
 	CWinsock::Initialise(&MpusAddress, MpusAddr, MpusPort);
 
@@ -335,7 +315,7 @@ Return Value:
 	}
 
     return ntStatus;
-} // Init
+}
 
 //=============================================================================
 STDMETHODIMP_(NTSTATUS)
@@ -541,160 +521,6 @@ Return Value:
     return STATUS_INVALID_PARAMETER;
 } // NonDelegatingQueryInterface
 
-
-NTSTATUS PropertyHandler_Wave
-(
-    IN PPCPROPERTY_REQUEST PropertyRequest
-)
-{
-	PAGED_CODE();
-
-    ASSERT (PropertyRequest);
-
-    // We only have a get defined for KSPROPERTY_OHSOUNDCARD_VERSION
-
-    if (PropertyRequest->Verb & KSPROPERTY_TYPE_GET)
-    {
-        // Check the ID ("function" in "group").
-        if (PropertyRequest->PropertyItem->Id != KSPROPERTY_OHSOUNDCARD_VERSION)
-		{
-            return STATUS_INVALID_PARAMETER;
-		}
-
-        // validate buffer size.
-        if (PropertyRequest->ValueSize != sizeof (UINT))
-		{
-            return STATUS_INVALID_PARAMETER;
-		}
-
-        // The "Value" is the out buffer that you pass in DeviceIoControl call.
-
-        UINT* pValue = (UINT*)PropertyRequest->Value;
-        
-        // Check the buffer.
-
-        if (!pValue)
-		{
-            return STATUS_INVALID_PARAMETER;
-		}
-
-		*pValue = 1; // Version 1
-
-		return STATUS_SUCCESS;
-    }
-    else if (PropertyRequest->Verb & KSPROPERTY_TYPE_SET)
-    {
-        if (PropertyRequest->PropertyItem->Id == KSPROPERTY_OHSOUNDCARD_ENABLED)
-		{
-			if (PropertyRequest->ValueSize != sizeof (UINT))
-			{
-				return STATUS_INVALID_PARAMETER;
-			}
-
-            UINT* pValue = (UINT*)PropertyRequest->Value;
-
-			UINT enabled = *pValue;
-
-			ExAcquireFastMutex(&MpusFastMutex);
-
-			if (!enabled) {
-				if (MpusEnabled) {
-					if (MpusActive) {
-						Socket->Send(&MpusAddress, (UCHAR*)0, 0, 1, MpusAudioSampleRate, MpusAudioBitRate, MpusAudioBitDepth,  MpusAudioChannels);
-					}
-					MpusEnabled = 0;
-					MpusSendFormat = 1;
-					JackDescSpeakers.IsConnected = false;
-				}
-			}
-			else {
-				MpusEnabled = 1;
-				JackDescSpeakers.IsConnected = true;
-			}
-
-			ExReleaseFastMutex(&MpusFastMutex);
-
-			return STATUS_SUCCESS;
-		}
-        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_OHSOUNDCARD_ACTIVE)
-		{
-			if (PropertyRequest->ValueSize != sizeof (UINT))
-			{
-				return STATUS_INVALID_PARAMETER;
-			}
-
-            UINT* pValue = (UINT*)PropertyRequest->Value;
-
-			UINT active = *pValue;
-
-			ExAcquireFastMutex(&MpusFastMutex);
-
-			if (!active) {
-				if (MpusActive) {
-					if (MpusEnabled) {
-						Socket->Send(&MpusAddress, (UCHAR*)0, 0, 1, MpusAudioSampleRate, MpusAudioBitRate, MpusAudioBitDepth,  MpusAudioChannels);
-					}
-					MpusActive = 0;
-					MpusSendFormat = 1;
-				}
-			}
-			else {
-				MpusActive = 1;
-			}
-
-			ExReleaseFastMutex(&MpusFastMutex);
-
-			return STATUS_SUCCESS;
-		}
-        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_OHSOUNDCARD_ENDPOINT)
-		{
-			if (PropertyRequest->ValueSize != (sizeof (UINT) * 2))
-			{
-				return STATUS_INVALID_PARAMETER;
-			}
-
-            UINT* pValue = (UINT*)PropertyRequest->Value;
-
-			UINT addr = *pValue++;
-			UINT port = *pValue;
-
-			ExAcquireFastMutex(&MpusFastMutex);
-
-			if (MpusAddr != addr || MpusPort != port)
-			{
-				MpusAddr = addr;
-				MpusPort = port;
-
-				CWinsock::Initialise(&MpusAddress, MpusAddr, MpusPort);
-			}
-
-			ExReleaseFastMutex(&MpusFastMutex);
-
-			return STATUS_SUCCESS;
-		}
-        else if (PropertyRequest->PropertyItem->Id == KSPROPERTY_OHSOUNDCARD_TTL)
-		{
-			if (PropertyRequest->ValueSize != sizeof (UINT))
-			{
-				return STATUS_INVALID_PARAMETER;
-			}
-
-            UINT* pValue = (UINT*)PropertyRequest->Value;
-
-			ExAcquireFastMutex(&MpusFastMutex);
-
-			MpusTtl = *pValue;
-
-			Socket->SetTtl(MpusTtl);
-
-			ExReleaseFastMutex(&MpusFastMutex);
-
-			return STATUS_SUCCESS;
-		}
-    }
-
-    return STATUS_INVALID_PARAMETER;
-}
 
 //=============================================================================
 // CMiniportWaveStreamCyclicSimple

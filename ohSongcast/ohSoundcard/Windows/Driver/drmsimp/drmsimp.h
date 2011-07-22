@@ -44,7 +44,7 @@ enum
 // topology pins.
 enum
 {
-    KSPIN_TOPO_WAVEOUT_SOURCE = 0,
+    KSPIN_TOPO_WAVEOUT_SOURCE,
     KSPIN_TOPO_LINEOUT_DEST,
 };
 

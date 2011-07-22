@@ -602,6 +602,10 @@ OhmSender::~OhmSender()
 
     LOG(kMedia, "OhmSender::~OhmSender stopped\n");
 
+	iDriver.SetEnabled(false);
+
+    LOG(kMedia, "OhmSender::~OhmSender driver disabled\n");
+
 	delete iThreadZone;
 
     LOG(kMedia, "OhmSender::~OhmSender deleted zone thread\n");
@@ -861,7 +865,8 @@ void OhmSender::RunUnicast()
                             Endpoint sender(iSocketOhm.Sender());
 
                             if (sender.Equals(iTargetEndpoint) || sender.Equals(iSocketOhm.This())) {
-                                if (iSlaveCount == 0) {
+						        iTimerExpiry.Cancel();
+                    			if (iSlaveCount == 0) {
                                     if (sender.Equals(iTargetEndpoint)) {
                                         iMutexActive.Wait();
                                         SendLeave(sender);
