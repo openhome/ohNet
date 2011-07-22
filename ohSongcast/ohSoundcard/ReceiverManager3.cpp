@@ -1,9 +1,9 @@
 #include "ReceiverManager3.h"
 
-#include <Ascii.h>
-#include <Maths.h>
-#include <Arch.h>
-#include <Debug.h>
+#include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Maths.h>
+#include <OpenHome/Private/Arch.h>
+#include <OpenHome/Private/Debug.h>
 
 // Assumes only one Receiver per group (UPnP device)
 

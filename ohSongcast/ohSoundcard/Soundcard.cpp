@@ -1,7 +1,7 @@
 #include "Soundcard.h"
 #include "Icon.h"
 
-#include <Debug.h>
+#include <OpenHome/Private/Debug.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -575,7 +575,3 @@ void Soundcard::ReceiverRemoved(ReceiverManager3Receiver& aReceiver)
 	(*iReceiverCallback)(iReceiverPtr, eRemoved, (THandle)receiver);
 	receiver->RemoveRef();
 }
-
-
-
-

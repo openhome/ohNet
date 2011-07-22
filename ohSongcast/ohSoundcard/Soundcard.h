@@ -1,8 +1,8 @@
 #ifndef HEADER_SOUNDCARD
 #define HEADER_SOUNDCARD
 
-#include <OhNetTypes.h>
-#include <OhNet.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Net/Core/OhNet.h>
 
 #include "../Ohm.h"
 #include "../OhmSender.h"

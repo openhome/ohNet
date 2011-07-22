@@ -1,11 +1,11 @@
 #ifndef HEADER_OHMRECEIVER
 #define HEADER_OHMRECEIVER
 
-#include <OhNetTypes.h>
-#include <Buffer.h>
-#include <Core/DvDevice.h>
-#include <Thread.h>
-#include <Timer.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Buffer.h>
+#include <OpenHome/Net/Core/DvDevice.h>
+#include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Timer.h>
 
 #include "Ohm.h"
 

@@ -1,10 +1,10 @@
 #ifndef HEADER_OHM
 #define HEADER_OHM
 
-#include <OhNetTypes.h>
-#include <Buffer.h>
-#include <Stream.h>
-#include <Network.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Stream.h>
+#include <OpenHome/Private/Network.h>
 
 EXCEPTION(OhmError);
 EXCEPTION(OhzError);

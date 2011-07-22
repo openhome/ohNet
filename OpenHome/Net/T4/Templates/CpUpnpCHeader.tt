@@ -1,0 +1,343 @@
+<#@ assembly name="UpnpServiceXml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
+<#@ template language="C#" #>
+<#
+    string domain = TemplateArgument("domain");
+    string type = TemplateArgument("type");
+
+    uint version = 1;
+
+    try
+    {
+	   version = Convert.ToUInt32(TemplateArgument("version"));
+	}
+	catch (FormatException)
+	{
+        throw (new ArgumentException("Invalid version number specified"));
+	}
+    catch (OverflowException)
+    {
+        throw (new ArgumentException("Invalid version number specified"));
+    }
+
+    string upnpdomain = domain.Replace(".", "-");
+    if (upnpdomain.StartsWith("upnp-"))
+    {
+        upnpdomain = "schemas-" + upnpdomain;
+    }
+
+    string fileName = "";
+    char[] charSeparators = new char[] {'.'};
+    string[] res = domain.Split(charSeparators, StringSplitOptions.None);
+    foreach (string str in res)
+    {
+        fileName += str.Substring(0, 1).ToUpper();
+        if (str.Length > 1)
+        {
+            fileName += str.Substring(1, str.Length-1);
+        }
+    }
+    fileName += type;
+    fileName += version;
+    string className = "CpProxy" + fileName;
+
+    Initialise();
+
+	Document u = new Document(TemplateArgument("xml"));
+#>
+/**
+ * Proxy for <#=domain#>:<#=type#>:<#=version#>
+ */
+#ifndef HEADER_<#=fileName.ToUpper()#>_C
+#define HEADER_<#=fileName.ToUpper()#>_C
+
+#include <OpenHome/OsTypes.h>
+#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/Net/C/Async.h>
+#include <OpenHome/Net/C/OhNet.h>
+#include <OpenHome/Net/C/CpDevice.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @addtogroup <#=className#>
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
+ * Constructor.
+ * Creates an instance of <#=className#> without support for eventing.
+ * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
+ * reporting of their changes.
+ *
+ * @param[in]  aDevice   The device to use
+ *
+ * @return  Handle which should be used with all other functions in this header
+ */
+DllExport THandle STDCALL <#=className#>Create(CpDeviceC aDevice);
+/**
+ * Destructor.
+ * If any asynchronous method is in progress, this will block until they complete.
+ * [Note that any methods still in progress are likely to complete with an error.]
+ * Clients who have called CpProxyCSubscribe() do not need to call CpProxyCSubscribe()
+ * before calling delete.  An unsubscribe will be triggered automatically when required.
+ *
+ * @param[in]  aHandle   Handle returned by <#=className#>Create
+ */
+DllExport void STDCALL <#=className#>Destroy(THandle aHandle);
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+/**
+ * Invoke the action synchronously.  Blocks until the action has been processed
+ * on the device and sets any output arguments.
+ *
+ * @param[in]  aHandle   Handle returned by <#=className#>Create
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+ * @param[in]  a<#=i.name#>
+<#          if (i.variable.type == "bin.base64") #>
+<#          { #>
+ * @param[in]  a<#=i.name#>Len
+<#          } #>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+ * @param[out] a<#=o.name#>
+<#          if (o.variable.type == "bin.base64") #>
+<#          { #>
+ * @param[out] a<#=o.name#>Len
+<#          } #>
+<#      } #>
+ */
+DllExport void STDCALL <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>);
+/**
+ * Invoke the action asynchronously.
+ * Returns immediately and will run the client-specified callback when the action
+ * later completes.  Any output arguments can then be retrieved by calling
+ * EndGetProtocolInfo().
+ *
+ * @param[in]  aHandle   Handle returned by <#=className#>Create
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+ * @param[in]  a<#=i.name#>
+<#          if (i.variable.type == "bin.base64") #>
+<#          { #>
+ * @param[in]  a<#=i.name#>Len
+<#          } #>
+<#      } #>
+ * @param[in]  aCallback Callback to run when the action completes.
+ *                       This is guaranteed to be run but may indicate an error
+ * @param[in]  aPtr      Data to be passed to the callback
+ */
+DllExport void STDCALL <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InStringTrailingComma(a)#>OhNetCallbackAsync aCallback, void* aPtr);
+/**
+ * Retrieve the output arguments from an asynchronously invoked action.
+ * This may only be called from the callback set in the above Begin function.
+ *
+ * @param[in]  aHandle   Handle returned by <#=className#>Create
+ * @param[in]  aAsync    Argument passed to the callback set in the above Begin function
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+ * @param[out] a<#=o.name#>
+<#          if (o.variable.type == "bin.base64") #>
+<#          { #>
+ * @param[in]  a<#=o.name#>Len
+<#          } #>
+<#      } #>
+ *
+ * @return  0 if the function succedded; non-zero if it failed.  State of output
+ *          arguments is not guaranteed in the case of failure
+ */
+DllExport int32_t STDCALL <#=className#>End<#=a.name#>(THandle aHandle, <#=OutputArgStringPrefix("OhNetHandleAsync aAsync", a)#>);
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+/**
+ * Set a callback to be run when the <#=s.name#> state variable changes.
+ *
+ * Callbacks may be run in different threads but callbacks for a
+ * <#=className#> instance will not overlap.
+ *
+ * @param[in]  aHandle   Handle returned by <#=className#>Create
+ * @param[in]  aCallback The callback to run when the state variable changes
+ * @param[in]  aPtr      Data to be passed to the callback
+ */
+DllExport void STDCALL <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, OhNetCallback aCallback, void* aPtr);
+<#  } #>
+
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+/**
+ * Query the value of the <#=s.name#> property.
+ *
+ * This function is threadsafe and can only be called after the first callback
+ * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
+ *
+ * @param[in]  aHandle   Handle returned by <#=className#>Create
+ * @param[out] a<#=s.name#>
+<#      if (s.type == "bin.base64") #>
+<#      { #>
+ * @param[out] aLen
+ */
+DllExport void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>, uint32_t* aLen);
+<#      } #>
+<#      else #>
+<#      { #>
+ */
+DllExport void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>);
+<#      } #>
+<#  } #>
+
+/* @} */
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
+#endif // HEADER_<#=fileName.ToUpper()#>_C
+
+<#+
+Dictionary<string,string> inargtype = new Dictionary<string,string>();
+Dictionary<string,string> outargtype = new Dictionary<string,string>();
+
+void Initialise()
+{
+    inargtype.Add("ui1", "uint32_t");
+    inargtype.Add("ui2", "uint32_t");
+    inargtype.Add("ui4", "uint32_t");
+    inargtype.Add("boolean", "uint32_t");
+    inargtype.Add("i1", "int32_t");
+    inargtype.Add("i2", "int32_t");
+    inargtype.Add("i4", "int32_t");
+    inargtype.Add("string", "const char*");
+    inargtype.Add("bin.base64", "const char*");
+    inargtype.Add("uri", "const char*");
+
+    outargtype.Add("ui1", "uint32_t*");
+    outargtype.Add("ui2", "uint32_t*");
+    outargtype.Add("ui4", "uint32_t*");
+    outargtype.Add("boolean", "uint32_t*");
+    outargtype.Add("i1", "int32_t*");
+    outargtype.Add("i2", "int32_t*");
+    outargtype.Add("i4", "int32_t*");
+    outargtype.Add("string", "char**");
+    outargtype.Add("bin.base64", "char**");
+    outargtype.Add("uri", "char**");
+}
+
+string InString(Method a)
+{
+    string result = "";
+    
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        result += inargtype[i.variable.type];
+        result += " ";
+        result += "a" + i.name;
+        if (i.variable.type == "bin.base64")
+        {
+            result += ", uint32_t a" + i.name + "Len";
+        }
+    }
+
+    return(result);
+}
+
+string OutputArgStringPrefix(string prefix, Method a)
+{
+    string result = prefix;
+
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += outargtype[o.variable.type];
+        result += " ";
+        result += "a" + o.name;
+        if (o.variable.type == "bin.base64")
+        {
+            result += ", uint32_t* a" + o.name + "Len";
+        }
+    }
+
+    return(result);
+}
+
+string OutputArgString(Method a)
+{
+    return OutputArgStringPrefix("", a);
+}
+
+string ArgString(Method a)
+{
+    string result = InString(a);
+    string outargs = OutputArgString(a);
+    if (result.Length > 0 && outargs.Length > 0)
+    {
+        result += ", ";
+    }
+    result += outargs;
+    if (result.Length > 0)
+    {
+        result = ", " + result;
+    }
+
+    return(result);
+}
+
+string InStringTrailingComma(Method a)
+{
+    string result = InString(a);
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
+    return(result);
+}
+
+string TemplateArgument(string aName)
+{
+	string[] args =  System.Environment.GetCommandLineArgs();
+		
+	bool isarg = false;
+	
+	foreach (string arg in args)
+	{
+		if (isarg)
+		{
+			string[] parts = arg.Split(new char[] {':'});
+			
+			if (parts.Length == 2)
+			{
+				if (parts[0] == aName)
+				{
+					return (parts[1]);
+				}
+			}
+			
+			isarg = false;
+			continue;
+		}
+		
+		if (arg == "-a")
+		{
+			isarg = true;
+		}
+	}
+	
+	throw (new ArgumentException(aName + " not specified"));
+}
+#>

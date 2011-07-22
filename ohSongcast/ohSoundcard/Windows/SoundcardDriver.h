@@ -1,8 +1,8 @@
 #ifndef HEADER_SOUNDCARDDRIVER
 #define HEADER_SOUNDCARDDRIVER
 
-#include <OhNetTypes.h>
-#include <OhNet.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Net/Core/OhNet.h>
 #include <Windows.h>
 
 #include "../../Ohm.h"

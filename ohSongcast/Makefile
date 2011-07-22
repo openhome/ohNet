@@ -14,11 +14,13 @@ endif
 MACHINE = $(shell uname -s)
 ifeq ($(MACHINE), Darwin)
 platform_cflags = -DPLATFORM_MACOSX_GNU -arch i386 -mmacosx-version-min=10.4
-platform_linkflags = -arch i386
+platform_linkflags = -arch i386 -framework IOKit
+platform_include = -I/System/Library/Frameworks/IOKit.framework/Headers/
 osdir = Mac
 else
 platform_cflags = -Wno-psabi
 platform_linkflags = 
+platform_include = 
 osdir = Posix
 endif
 
@@ -27,10 +29,14 @@ endif
 
 ar = ${CROSS_COMPILE}ar rc $(objdir)
 cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE $(debug_specific_flags) -fvisibility=hidden -DDllImport="__attribute__ ((visibility(\"default\")))" -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))" $(platform_cflags)
-ohnetdir = ../Upnp/Build/Obj/$(osdir)/$(build_dir)/
+ohnetdir = ../Build/Obj/$(osdir)/$(build_dir)/
 objdir = Build/Obj/$(osdir)/$(build_dir)/
 inc_build = Build/Include/
-includes = -I../Upnp/Build/Include/ -I../Upnp/Build/Include/Cpp/
+<<<<<<< HEAD
+includes = -I../Build/Include/
+=======
+includes = -I../Upnp/Build/Include/ -I../Upnp/Build/Include/Cpp/ $(platform_includes)
+>>>>>>> e4cbb0e441db93f3a6b883f8b7956aff23980442
 objext = o
 libprefix = lib
 libext = a

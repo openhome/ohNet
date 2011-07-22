@@ -1,11 +1,11 @@
 #ifndef HEADER_RECEIVER_MANAGER3
 #define HEADER_RECEIVER_MANAGER3
 
-#include <OhNetTypes.h>
-#include <Buffer.h>
-#include <Timer.h>
-#include <Exception.h>
-#include <Functor.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Timer.h>
+#include <OpenHome/Exception.h>
+#include <OpenHome/Functor.h>
 
 #include "ReceiverManager2.h"
 
