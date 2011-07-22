@@ -45,6 +45,12 @@ private:
 };
 
 
+// NOTE: This struct is __packed__ - this prevents the compiler from adding
+// padding to the struct in order to align data on 4 byte boundaries. This is
+// required because, when sending the audio packets a single buffer is allocated
+// that holds the header and the audio data. The start of this buffer is then cast
+// to an AudioHeader in order to fill in the appropriate data. If the compiler adds
+// padding to the struct, this will then screw the whole thing up.
 typedef struct AudioHeader
 {
     // common header fields
@@ -70,9 +76,9 @@ typedef struct AudioHeader
     uint8_t  iAudioChannels;
     uint8_t  iAudioReserved;
     uint8_t  iAudioCodecNameBytes;
-    uint8_t  iAudioCodecName[6];
+    uint8_t  iAudioCodecName[3];
     
-} AudioHeader;
+} __attribute__((__packed__)) AudioHeader;
 
 
 #endif // HEADER_AUDIOENGINE
