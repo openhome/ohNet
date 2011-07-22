@@ -6,6 +6,9 @@
 #include "AudioEngine.h"
 
 
+// sleep/wake handling
+
+
 class AudioDevice : public IOAudioDevice
 {
     OSDeclareDefaultStructors(AudioDevice);
