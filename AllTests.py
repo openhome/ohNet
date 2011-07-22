@@ -239,9 +239,7 @@ class js_test():
         print 'found device at ' + self.launch_url
         
     def run_browser(self):
-        print 'running browser'
         subprocess.call(["%s" %(self.browser_location), "%s" %(self.launch_url)])
-        print 'returned from browser'
         self.test_testbasic.terminate()
 
     def run_browser_jenkins(self):
