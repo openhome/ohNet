@@ -56,18 +56,7 @@ bool AudioEngine::initHardware(IOService* aProvider)
 
     IOAudioStream* outStream = 0;
     IOWorkLoop* workLoop = 0;
-
-    // initialise audio format data
     IOAudioStreamFormat format;
-    format.fNumChannels = 2;
-    format.fSampleFormat = kIOAudioStreamSampleFormatLinearPCM;
-    format.fNumericRepresentation = kIOAudioStreamNumericRepresentationSignedInt;// float???
-    format.fBitDepth = 32;
-    format.fBitWidth = 32;
-    format.fAlignment = kIOAudioStreamAlignmentHighByte;
-    format.fByteOrder = kIOAudioStreamByteOrderBigEndian;
-    format.fIsMixable = 1;
-    format.fDriverTag = 0;
 
     // base class initialisation
     if (!IOAudioEngine::initHardware(aProvider))
@@ -82,21 +71,32 @@ bool AudioEngine::initHardware(IOService* aProvider)
     if (!outStream)
         goto Error;
 
-    if (!outStream->initWithAudioEngine(this, kIOAudioStreamDirectionOutput, 1, "output stream"))
+    if (!outStream->initWithAudioEngine(this, kIOAudioStreamDirectionOutput, 1))
         goto Error;
 
+    // initialise audio format for the stream
+    format.fNumChannels = 2;
+    format.fSampleFormat = kIOAudioStreamSampleFormatLinearPCM;
+    format.fNumericRepresentation = kIOAudioStreamNumericRepresentationSignedInt;
+    format.fBitDepth = 24;
+    format.fBitWidth = 24;
+    format.fAlignment = kIOAudioStreamAlignmentHighByte;
+    format.fByteOrder = kIOAudioStreamByteOrderBigEndian;
+    format.fIsMixable = 1;
+    format.fDriverTag = 0;
     outStream->addAvailableFormat(&format, &iSampleRate, &iSampleRate);
 
-    // allocate buffer
-    iOutputBufferBytes = iBlockFrames * iNumBlocks * format.fNumChannels * format.fBitWidth / 8;
+    // allocate the output buffer
+    iOutputBufferBytes = iNumBlocks * iBlockFrames * format.fNumChannels * format.fBitWidth / 8;
     iOutputBuffer = (void*)IOMalloc(iOutputBufferBytes);
     if (!iOutputBuffer)
         goto Error;
+
+    outStream->setSampleBuffer(iOutputBuffer, iOutputBufferBytes);
     
     if (outStream->setFormat(&format) != kIOReturnSuccess)
         goto Error;
     
-    outStream->setSampleBuffer(iOutputBuffer, iOutputBufferBytes);
     if (addAudioStream(outStream) != kIOReturnSuccess)
         goto Error;
 
@@ -195,10 +195,45 @@ IOReturn AudioEngine::performFormatChange(IOAudioStream* aAudioStream, const IOA
 
 IOReturn AudioEngine::clipOutputSamples(const void* aMixBuffer, void* aSampleBuffer, UInt32 aFirstSampleFrame, UInt32 aNumSampleFrames, const IOAudioStreamFormat* aFormat, IOAudioStream* aStream)
 {
-    uint32_t offset = aFirstSampleFrame * aFormat->fNumChannels * aFormat->fBitWidth / 8;
-    uint32_t bytes = aNumSampleFrames * aFormat->fNumChannels * aFormat->fBitWidth / 8;
-    memcpy((uint8_t*)aSampleBuffer + offset, (uint8_t*)aMixBuffer + offset, bytes);
-    
+    // The audio in the input buffer is always in floating point format in range [-1,1]
+    uint8_t* inBuffer = ((uint8_t*)aMixBuffer) + (aFirstSampleFrame * aFormat->fNumChannels * sizeof(float));
+    uint8_t* outBuffer = ((uint8_t*)aSampleBuffer) + (aFirstSampleFrame * aFormat->fNumChannels * aFormat->fBitWidth / 8);
+
+    // convert the floating point audio into integer PCM
+    int numSamples = aNumSampleFrames * aFormat->fNumChannels;
+
+    // calculate the maximum integer value for the sample - the output sample
+    // will be in the range [-maxVal, maxVal-1]
+    int maxVal = 1 << (aFormat->fBitWidth - 1);
+    float maxFloatVal = 1.0f - (1.0f / maxVal);
+    int outSampleBytes = aFormat->fBitWidth / 8;
+
+    while (numSamples > 0)
+    {
+        float inSample = *((float*)inBuffer);
+
+        // clamp the input sample
+        if (inSample > maxFloatVal) {
+            inSample = maxFloatVal;
+        }
+        else if (inSample < -1.0f) {
+            inSample = -1.0f;
+        }
+
+        // convert to integer in range [maxVal-1, -maxVal]
+        int32_t outSample = (int32_t)(inSample * maxVal);
+
+        // copy the output sample into the buffer in big endian format
+        for (int i=0 ; i<outSampleBytes ; i++)
+        {
+            outBuffer[i] = (outSample >> (8*(outSampleBytes - i - 1))) & 0xff;
+        }
+
+        inBuffer += sizeof(float);
+        outBuffer += outSampleBytes;
+        numSamples--;
+    }
+
     return kIOReturnSuccess;
 }
 
@@ -222,17 +257,18 @@ void AudioEngine::TimerFired(OSObject* aOwner, IOTimerEventSource* aSender)
         {
             if (engine->iActive != 0)
             {
-                uint32_t offset = engine->iCurrentBlock * engine->iBlockFrames * 2 * 4;
-                void* block = (uint8_t*)engine->iOutputBuffer + offset;
-
                 uint8_t channels = 2;
                 uint8_t bitDepth = 24;
-                uint32_t audioBytes = engine->iBlockFrames * channels * bitDepth / 8;
                 uint32_t sampleRate = 44100;
+
+                uint32_t offset = engine->iCurrentBlock * engine->iBlockFrames * channels * bitDepth / 8;
+                void* block = (uint8_t*)engine->iOutputBuffer + offset;
+
+                uint32_t audioBytes = engine->iBlockFrames * channels * bitDepth / 8;
                 uint16_t sampleCount = engine->iBlockFrames;
                 uint32_t frame = ++engine->iCurrentFrame;
 
-                void* data = IOMalloc(sizeof(AudioHeader) + audioBytes);
+                uint8_t* data = (uint8_t*)IOMalloc(sizeof(AudioHeader) + audioBytes);
             
                 AudioHeader* header = (AudioHeader*)data;
 
@@ -265,29 +301,14 @@ void AudioEngine::TimerFired(OSObject* aOwner, IOTimerEventSource* aSender)
                 header->iAudioChannels = channels;
             
                 // codec information
-                header->iAudioCodecNameBytes = 6;
+                header->iAudioCodecNameBytes = 3;
                 header->iAudioCodecName[0]= 'P';
                 header->iAudioCodecName[1]= 'C';
                 header->iAudioCodecName[2]= 'M';
-                header->iAudioCodecName[3]= '/';
-                header->iAudioCodecName[4]= 'S';
-                header->iAudioCodecName[5]= 'C';
                 
                 // copy audio data
-                void* audioData = (void*)(header + 1);
-
-                uint8_t* src = (uint8_t*)block;
-                uint8_t* dst = (uint8_t*)audioData;
-                uint32_t samples = sampleCount * channels;
-                while (samples > 0) {
-                    dst[0] = src[3];
-                    dst[1] = src[2];
-                    dst[2] = src[1];
-                    
-                    src += 4;
-                    dst += 3;
-                    samples--;
-                }
+                uint8_t* audioData = data + sizeof(AudioHeader);
+                memcpy(audioData, block, audioBytes);
 
                 // send data
                 socket_t socket;
@@ -299,8 +320,6 @@ void AudioEngine::TimerFired(OSObject* aOwner, IOTimerEventSource* aSender)
                 addr.sa_family = AF_INET;
                 addr.port = htons((uint16_t)engine->iPort);
                 addr.addr = (uint32_t)engine->iIpAddress;
-//                addr.port = htons(12345);
-//                addr.addr = 70 << 24 | 7 << 16 | 2 << 8 | 10;
                 sock_connect(socket, (const sockaddr*)&addr, 0);
 
                 struct iovec sockdata;

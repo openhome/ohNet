@@ -108,28 +108,28 @@ copy_build_includes:
 	mkdir -p $(inc_build)/OpenHome/Net/Private/Js/Tests/proxy
 	rsync -u OpenHome/*.h $(inc_build)/OpenHome/Private
 	rsync -u OpenHome/Buffer.inl $(inc_build)/OpenHome
-	rsync -u $(inc_build)/OpenHome/Private/Buffer.h $(inc_build)/OpenHome
 	rm $(inc_build)/OpenHome/Private/Buffer.h
-	rsync -u $(inc_build)/OpenHome/Private/Exception.h $(inc_build)/OpenHome
 	rm $(inc_build)/OpenHome/Private/Exception.h
-	rsync -u $(inc_build)/OpenHome/Private/Functor*.h $(inc_build)/OpenHome
 	rm $(inc_build)/OpenHome/Private/Functor*.h
-	rsync -u $(inc_build)/OpenHome/Private/MimeTypes.h $(inc_build)/OpenHome
 	rm $(inc_build)/OpenHome/Private/MimeTypes.h
-	rsync -u $(inc_build)/OpenHome/Private/OhNetDefines.h $(inc_build)/OpenHome
 	rm $(inc_build)/OpenHome/Private/OhNetDefines.h
-	rsync -u $(inc_build)/OpenHome/Private/OsTypes.h $(inc_build)/OpenHome
 	rm $(inc_build)/OpenHome/Private/OsTypes.h
-	rsync -u $(inc_build)/OpenHome/Private/OhNetTypes.h $(inc_build)/OpenHome
 	rm $(inc_build)/OpenHome/Private/OhNetTypes.h
+	rsync -u OpenHome/Buffer.h $(inc_build)/OpenHome
+	rsync -u OpenHome/Exception.h $(inc_build)/OpenHome
+	rsync -u OpenHome/Functor*.h $(inc_build)/OpenHome
+	rsync -u OpenHome/MimeTypes.h $(inc_build)/OpenHome
+	rsync -u OpenHome/OhNetDefines.h $(inc_build)/OpenHome
+	rsync -u OpenHome/OsTypes.h $(inc_build)/OpenHome
+	rsync -u OpenHome/OhNetTypes.h $(inc_build)/OpenHome
 	rsync -u OpenHome/TestFramework/*.h $(inc_build)/OpenHome/Private
 	rsync -u OpenHome/Net/*.h $(inc_build)/OpenHome/Net/Private
-	rsync -u $(inc_build)/OpenHome/Net/Private/FunctorAsync.h $(inc_build)/OpenHome/Net/Core
 	rm $(inc_build)/OpenHome/Net/Private/FunctorAsync.h
-	rsync -u $(inc_build)/OpenHome/Net/Core/FunctorAsync.h $(inc_build)/OpenHome/Net/Cpp
-	rsync -u $(inc_build)/OpenHome/Net/Private/OhNet.h $(inc_build)/OpenHome/Net/Core
 	rm $(inc_build)/OpenHome/Net/Private/OhNet.h
-	rsync -u $(inc_build)/OpenHome/Net/Core/OhNet.h $(inc_build)/OpenHome/Net/Cpp
+	rsync -u OpenHome/Net/FunctorAsync.h $(inc_build)/OpenHome/Net/Core
+	rsync -u OpenHome/Net/FunctorAsync.h $(inc_build)/OpenHome/Net/Cpp
+	rsync -u OpenHome/Net/OhNet.h $(inc_build)/OpenHome/Net/Core
+	rsync -u OpenHome/Net/OhNet.h $(inc_build)/OpenHome/Net/Cpp
 	rsync -u OpenHome/Net/ControlPoint/AsyncPrivate.h $(inc_build)/OpenHome/Net/Private
 	rsync -u OpenHome/Net/ControlPoint/CpStack.h $(inc_build)/OpenHome/Net/Core
 	rsync -u OpenHome/Net/ControlPoint/CpDevice.h $(inc_build)/OpenHome/Net/Core
