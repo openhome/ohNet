@@ -15,11 +15,11 @@ build_dir = Debug
 
 ar = lib /nologo /out:$(objdir)
 cflags = $(debug_specific_cflags) /W4 /WX /EHsc /FR$(objdir) /Gd -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS -DDllExport=__declspec(dllexport) -DDllExportClass=
-ohnetdir = ..\Upnp\Build\Obj\Windows\$(build_dir)^\
+ohnetdir = ..\Build\Obj\Windows\$(build_dir)^\
 objdirbare = Build\Obj\Windows\$(build_dir)
 objdir = $(objdirbare)^\
 inc_build = Build\Include
-includes = -I..\Upnp\Build\Include -I..\Upnp\Build\Include\Cpp
+includes = -I..\Build\Include
 bundle_build = Build\Bundles
 osdir = Windows
 objext = obj

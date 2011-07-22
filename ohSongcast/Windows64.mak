@@ -5,12 +5,12 @@
 link_flag_debug = 
 debug_specific_cflags = /MT /Ox
 build_dir = Release
-ohnetdir = ../Upnp/Build/Obj/Windows/Release
+ohnetdir = ../Build/Obj/Windows/Release
 !else
 link_flag_debug = /debug
 debug_specific_cflags = /MTd /Zi /Od /RTC1
 build_dir = Debug
-ohnetdir = ../Upnp/Build/Obj/Windows/Debug
+ohnetdir = ../Build/Obj/Windows/Debug
 !endif
 
 # Macros used by Common.mak
@@ -20,7 +20,7 @@ cflags = $(debug_specific_cflags) /W4 /WX /EHsc /FR$(objdir) /Gd -DDEFINE_LITTLE
 objdirbare = Build\Obj\Windows\$(build_dir)
 objdir = $(objdirbare)^\
 inc_build = Build\Include
-includes = -I..\Upnp\Build\Include -I..\Upnp\Build\Include\Cpp
+includes = -I..\Build\Include
 bundle_build = Build\Bundles
 osdir = Windows
 objext = obj

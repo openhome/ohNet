@@ -1,12 +1,12 @@
-#include <OhNetTypes.h>
-#include <OhNet.h>
-#include <Ascii.h>
-#include <Maths.h>
-#include <Stack.h>
-#include <Thread.h>
-#include <OptionParser.h>
-#include <Debug.h>
-#include <TestFramework.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Maths.h>
+#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/OptionParser.h>
+#include <OpenHome/Private/Debug.h>
+#include <OpenHome/Private/TestFramework.h>
 
 #include <vector>
 #include <stdio.h>

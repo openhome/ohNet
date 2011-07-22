@@ -1,0 +1,570 @@
+<#@ assembly name="UpnpServiceXml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
+<#@ template language="C#" #>
+<#
+    string domain = TemplateArgument("domain");
+    string type = TemplateArgument("type");
+
+    uint version = 1;
+
+    try
+    {
+	   version = Convert.ToUInt32(TemplateArgument("version"));
+	}
+	catch (FormatException)
+	{
+        throw (new ArgumentException("Invalid version number specified"));
+	}
+    catch (OverflowException)
+    {
+        throw (new ArgumentException("Invalid version number specified"));
+    }
+
+    string upnpdomain = domain.Replace(".", "-");
+
+    if (upnpdomain.StartsWith("upnp-"))
+    {
+        upnpdomain = "schemas-" + upnpdomain;
+    }
+
+    string fileName = "";
+    char[] charSeparators = new char[] {'.'};
+    string[] res = domain.Split(charSeparators, StringSplitOptions.None);
+    foreach (string str in res)
+    {
+        fileName += str.Substring(0, 1).ToUpper();
+        if (str.Length > 1)
+        {
+            fileName += str.Substring(1, str.Length-1);
+        }
+    }
+    fileName += type;
+    fileName += version;
+    string className = "CpProxy" + fileName;
+    string syncClassSuffix = fileName;
+
+    Initialise();
+
+    Document u = new Document(TemplateArgument("xml"));
+#>
+#include "Cp<#=fileName#>.h"
+#include <OpenHome/Net/Core/CpProxy.h>
+#include <OpenHome/Net/Private/CpiService.h>
+#include <OpenHome/Private/Thread.h>
+#include <OpenHome/Net/Private/AsyncPrivate.h>
+#include <OpenHome/Net/Core/CpDevice.h>
+
+using namespace OpenHome;
+using namespace OpenHome::Net;
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+
+class Sync<#=a.name#><#=syncClassSuffix#> : public SyncProxyAction
+{
+public:
+    Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>& aProxy<#=OutArgTypesAndNamesCommaPrefix(a)#>);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    <#=className#>& iService;
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+    <#=outargtype[o.variable.type]#> i<#=o.name#>;
+<#      } #>
+};
+
+Sync<#=a.name#><#=syncClassSuffix#>::Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>& aProxy<#=OutArgTypesAndNamesCommaPrefix(a)#>)
+    : iService(aProxy)
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+    , i<#=o.name#>(a<#=o.name#>)
+<#      } #>
+{
+}
+
+void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
+{
+    iService.End<#=a.name#>(<#=PrefixedOutputArgNames("aAsync", a, "i")#>);
+}
+<#  } #>
+
+
+<#=className#>::<#=className#>(CpDevice& aDevice)
+    : CpProxy("<#=upnpdomain#>", "<#=type#>", <#=version#>, aDevice.Device())
+{
+    <#=DeclareConstructLocalVars(u)#>
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+    iAction<#=a.name#> = new Action("<#=a.name#>");
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+<#          if (i.variable.values.Count > 0) #>
+<#          { #>
+    index = 0;
+    allowedValues = new TChar*[<#=i.variable.values.Count#>];
+<#              foreach (string val in i.variable.values) #>
+<#              { #>
+    allowedValues[index++] = (TChar*)"<#=val#>";
+<#              } #>
+<#          } #>
+    param = new OpenHome::Net::<#=paramclass[i.variable.type]#>("<#=i.name#>"<#=ParameterAllowedValues(i)#>);
+    iAction<#=a.name#>->AddInputParameter(param);
+<#          if (i.variable.values.Count > 0) #>
+<#          { #>
+    delete[] allowedValues;
+<#          } #>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (o.variable.values.Count > 0) #>
+<#          { #>
+    index = 0;
+    allowedValues = new TChar*[<#=o.variable.values.Count#>];
+<#              foreach (string val in o.variable.values) #>
+<#              { #>
+    allowedValues[index++] = (TChar*)"<#=val#>";
+<#              } #>
+<#          } #>
+    param = new OpenHome::Net::<#=paramclass[o.variable.type]#>("<#=o.name#>"<#=ParameterAllowedValues(o)#>);
+    iAction<#=a.name#>->AddOutputParameter(param);
+<#          if (o.variable.values.Count > 0) #>
+<#          { #>
+    delete[] allowedValues;
+<#          } #>
+<#      } #>
+<#  } #>
+<#  if (u.evented.Count > 0) #>
+<#  { #>
+
+    Functor functor;
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    functor = MakeFunctor(*this, &<#=className#>::<#=s.name#>PropertyChanged);
+    i<#=s.name#> = new <#=proptype[s.type]#>("<#=s.name#>", functor);
+    AddProperty(i<#=s.name#>);
+<#  } #>
+}
+
+<#=className#>::~<#=className#>()
+{
+    DestroyService();
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+    delete iAction<#=a.name#>;
+<#  } #>
+}
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+void <#=className#>::Sync<#=a.name#>(<#=ArgString(a)#>)
+{
+    Sync<#=a.name#><#=syncClassSuffix#> sync(<#=PrefixedOutputArgNames("*this", a, "a")#>);
+    Begin<#=a.name#>(<#=InNamesTrailingComma(a)#>sync.Functor());
+    sync.Wait();
+}
+
+void <#=className#>::Begin<#=a.name#>(<#=InTypesAndNamesTrailingComma(a)#>FunctorAsync& aFunctor)
+{
+    Invocation* invocation = iService->Invocation(*iAction<#=a.name#>, aFunctor);
+<#      if (a.inargs.Count > 0) #>
+<#      { #>
+    TUint inIndex = 0;
+    const Action::VectorParameters& inParams = iAction<#=a.name#>->InputParameters();
+<#          foreach (Argument i in a.inargs) #>
+<#          { #>
+    invocation->AddInput(new <#=argclass[i.variable.type]#>(*inParams[inIndex++], a<#=i.name#>));
+<#          } #>
+<#      } #>
+<#      if (a.outargs.Count > 0) #>
+<#      { #>
+    TUint outIndex = 0;
+    const Action::VectorParameters& outParams = iAction<#=a.name#>->OutputParameters();
+<#          foreach (Argument o in a.outargs) #>
+<#          { #>
+    invocation->AddOutput(new <#=argclass[o.variable.type]#>(*outParams[outIndex++]));
+<#          } #>
+<#      } #>
+    iInvocable.InvokeAction(*invocation);
+}
+
+void <#=className#>::End<#=a.name#>(<#=PrefixedOutArgTypesAndNames("IAsync& aAsync", a)#>)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("<#=a.name#>"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
+    }
+<#      if (a.outargs.Count > 0) #>
+<#      { #>
+    TUint index = 0;
+<#          foreach (Argument o in a.outargs) #>
+<#          { #>
+<#          if (o.variable.type=="string" || o.variable.type=="bin.base64" || o.variable.type=="uri") #>
+<#              { #>
+    ((<#=argclass[o.variable.type]#>*)invocation.OutputArguments()[index++])->TransferTo(a<#=o.name#>);
+<#              } #>
+<#              else #>
+<#              { #>
+    a<#=o.name#> = ((<#=argclass[o.variable.type]#>*)invocation.OutputArguments()[index++])->Value();
+<#              } #>
+<#          } #>
+<#      } #>
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void <#=className#>::SetProperty<#=s.name#>Changed(Functor& aFunctor)
+{
+    iLock->Wait();
+    i<#=s.name#>Changed = aFunctor;
+    iLock->Signal();
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void <#=className#>::Property<#=s.name#>(<#=propargtype[s.type]#> a<#=s.name#>) const
+{
+    PropertyReadLock();
+    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+<#      if (s.type=="string" || s.type=="bin.base64" || s.type=="uri") #>
+<#      { #>
+    a<#=s.name#>.Set(i<#=s.name#>->Value());
+<#      } #>
+<#      else #>
+<#      { #>
+    a<#=s.name#> = i<#=s.name#>->Value();
+<#      } #>
+    PropertyReadUnlock();
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void <#=className#>::<#=s.name#>PropertyChanged()
+{
+    ReportEvent(i<#=s.name#>Changed);
+}
+<#  } #>
+
+<#+
+Dictionary<string,string> argtype = new Dictionary<string,string>();
+Dictionary<string,string> inargtype = new Dictionary<string,string>();
+Dictionary<string,string> outargtype = new Dictionary<string,string>();
+Dictionary<string,string> propargtype = new Dictionary<string,string>();
+Dictionary<string,string> argclass = new Dictionary<string,string>();
+Dictionary<string,string> proptype = new Dictionary<string,string>();
+Dictionary<string,string> paramclass = new Dictionary<string,string>();
+
+void Initialise()
+{
+    argtype.Add("string", "string");
+    argtype.Add("ui1", "uint");
+    argtype.Add("ui2", "uint");
+    argtype.Add("ui4", "uint");
+    argtype.Add("boolean", "bool");
+    argtype.Add("i1", "int");
+    argtype.Add("i2", "int");
+    argtype.Add("i4", "int");
+    argtype.Add("bin.base64", "byte[]");
+    argtype.Add("uri", "string");
+
+    inargtype.Add("string", "const Brx&");
+    inargtype.Add("ui1", "TUint");
+    inargtype.Add("ui2", "TUint");
+    inargtype.Add("ui4", "TUint");
+    inargtype.Add("boolean", "TBool");
+    inargtype.Add("i1", "TInt");
+    inargtype.Add("i2", "TInt");
+    inargtype.Add("i4", "TInt");
+    inargtype.Add("bin.base64", "const Brx&");
+    inargtype.Add("uri", "const Brx&");
+
+    outargtype.Add("string", "Brh&");
+    outargtype.Add("ui1", "TUint&");
+    outargtype.Add("ui2", "TUint&");
+    outargtype.Add("ui4", "TUint&");
+    outargtype.Add("boolean", "TBool&");
+    outargtype.Add("i1", "TInt&");
+    outargtype.Add("i2", "TInt&");
+    outargtype.Add("i4", "TInt&");
+    outargtype.Add("bin.base64", "Brh&");
+    outargtype.Add("uri", "Brh&");
+
+    propargtype.Add("string", "Brhz&");
+    propargtype.Add("ui1", "TUint&");
+    propargtype.Add("ui2", "TUint&");
+    propargtype.Add("ui4", "TUint&");
+    propargtype.Add("boolean", "TBool&");
+    propargtype.Add("i1", "TInt&");
+    propargtype.Add("i2", "TInt&");
+    propargtype.Add("i4", "TInt&");
+    propargtype.Add("bin.base64", "Brh&");
+    propargtype.Add("uri", "Brhz&");
+
+    argclass.Add("string", "ArgumentString");
+    argclass.Add("ui1", "ArgumentUint");
+    argclass.Add("ui2", "ArgumentUint");
+    argclass.Add("ui4", "ArgumentUint");
+    argclass.Add("boolean", "ArgumentBool");
+    argclass.Add("i1", "ArgumentInt");
+    argclass.Add("i2", "ArgumentInt");
+    argclass.Add("i4", "ArgumentInt");
+    argclass.Add("bin.base64", "ArgumentBinary");
+    argclass.Add("uri", "ArgumentString");
+
+    proptype.Add("string", "PropertyString");
+    proptype.Add("ui1", "PropertyUint");
+    proptype.Add("ui2", "PropertyUint");
+    proptype.Add("ui4", "PropertyUint");
+    proptype.Add("boolean", "PropertyBool");
+    proptype.Add("i1", "PropertyInt");
+    proptype.Add("i2", "PropertyInt");
+    proptype.Add("i4", "PropertyInt");
+    proptype.Add("bin.base64", "PropertyBinary");
+    proptype.Add("uri", "PropertyString");
+
+    paramclass.Add("string", "ParameterString");
+    paramclass.Add("ui1", "ParameterUint");
+    paramclass.Add("ui2", "ParameterUint");
+    paramclass.Add("ui4", "ParameterUint");
+    paramclass.Add("boolean", "ParameterBool");
+    paramclass.Add("i1", "ParameterInt");
+    paramclass.Add("i2", "ParameterInt");
+    paramclass.Add("i4", "ParameterInt");
+    paramclass.Add("bin.base64", "ParameterBinary");
+    paramclass.Add("uri", "ParameterString");
+}
+
+string InString(Method a)
+{
+    string result = "";
+
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        result += inargtype[i.variable.type];
+        result += " ";
+        result += "a"+i.name;
+    }
+
+    return(result);
+}
+
+string InNames(Method a)
+{
+    string result = "";
+
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        result += "a"+i.name;
+    }
+
+    return(result);
+}
+
+string OutArgTypesAndNames(Method a)
+{
+    string result = "";
+
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        result += outargtype[o.variable.type];
+        result += " ";
+        result += "a"+o.name;
+    }
+
+    return(result);
+}
+
+string OutArgTypesAndNamesCommaPrefix(Method a)
+{
+    string str = OutArgTypesAndNames(a);
+    if (str.Length > 0)
+    {
+        str = ", " + str;
+    }
+    return str;
+}
+
+string OutArgNames(Method a, string argprefix)
+{
+    string result = "";
+
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        result += argprefix + o.name;
+    }
+
+    return(result);
+}
+
+string PrefixedOutputArgNames(string prefix, Method a, string argprefix)
+{
+    string args = OutArgNames(a, argprefix);
+    string result = prefix;
+    if (args.Length > 0)
+    {
+        result += ", ";
+        result += args;
+    }
+    return(result);
+}
+
+string PrefixedOutArgTypesAndNames(string prefix, Method a)
+{
+    string result = prefix;
+    string outargs = OutArgTypesAndNames(a);
+    if (prefix.Length > 0 && outargs.Length > 0)
+    {
+        result += ", ";
+    }
+    result += outargs;
+    return(result);
+}
+
+string InTypesAndNamesTrailingComma(Method a)
+{
+    string result = InString(a);
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
+    return(result);
+}
+
+string InNamesTrailingComma(Method a)
+{
+    string result = InNames(a);
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
+    return(result);
+}
+
+string ArgString(Method a)
+{
+    string result = InString(a);
+    string outargs = OutArgTypesAndNames(a);
+    if (result.Length > 0 && outargs.Length > 0)
+    {
+        result += ", ";
+    }
+    result += outargs;;
+    return(result);
+}
+
+string DeclareConstructLocalVars(Document u)
+{
+    string result = "";
+    if (u.methods.Count > 0)
+    {
+        result += "OpenHome::Net::Parameter* param;";
+    }
+
+    foreach (Method a in u.methods)
+    {
+        foreach (Argument i in a.inargs)
+        {
+            if (i.variable.values.Count > 0)
+            {
+                result += "\n    TChar** allowedValues;\n    TUint index;";
+                return(result);
+            }
+        }
+        foreach (Argument o in a.outargs)
+        {
+            if (o.variable.values.Count > 0)
+            {
+                result += "\n    TChar** allowedValues;\n    TUint index;";
+                return(result);
+            }
+        }
+    }
+    return(result);
+}
+
+string ParameterAllowedValues(Argument a)
+{
+    string result = "";
+    Variable v = a.variable;
+    if (v.values.Count > 0)
+    {
+        result += ", allowedValues, ";
+        result += v.values.Count;
+    }
+    else if (v.minspecified)
+    {
+        result += ", ";
+        result += v.min;
+        result += ", ";
+        result += v.max;
+        if (v.stepspecified)
+        {
+            result += ", ";
+            result += v.step;
+        }
+    }
+    return(result);
+}
+
+string TemplateArgument(string aName)
+{
+	string[] args =  System.Environment.GetCommandLineArgs();
+		
+	bool isarg = false;
+	
+	foreach (string arg in args)
+	{
+		if (isarg)
+		{
+			string[] parts = arg.Split(new char[] {':'});
+			
+			if (parts.Length == 2)
+			{
+				if (parts[0] == aName)
+				{
+					return (parts[1]);
+				}
+			}
+			
+			isarg = false;
+			continue;
+		}
+		
+		if (arg == "-a")
+		{
+			isarg = true;
+		}
+	}
+	
+	throw (new ArgumentException(aName + " not specified"));
+}
+#>

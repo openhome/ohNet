@@ -1,12 +1,12 @@
 #ifndef HEADER_RECEIVER_MANAGER1
 #define HEADER_RECEIVER_MANAGER1
 
-#include <OhNetTypes.h>
-#include <Buffer.h>
-#include <Timer.h>
-#include <Exception.h>
-#include <Functor.h>
-#include <Core/CpTopology.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Timer.h>
+#include <OpenHome/Exception.h>
+#include <OpenHome/Functor.h>
+#include <OpenHome/Net/Core/CpTopology.h>
 
 namespace OpenHome {
 namespace Net {

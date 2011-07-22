@@ -1,7 +1,7 @@
 #include "SoundcardDriver.h"
 #include "../Soundcard.h"
 
-#include <Arch.h>
+#include <OpenHome/Private/Arch.h>
 
 #include <Setupapi.h>
 #include <ks.h>

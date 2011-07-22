@@ -1,7 +1,7 @@
 #include "Services/DvAvOpenhomeOrgProduct1.h"
-#include <Ascii.h>
-#include <Maths.h>
-#include <Arch.h>
+#include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Maths.h>
+#include <OpenHome/Private/Arch.h>
 
 #include <stdio.h>
 

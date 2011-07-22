@@ -1,14 +1,14 @@
-#include <OhNetTypes.h>
-#include <Core/DvDevice.h>
-#include <OhNet.h>
-#include <Core/CpDevice.h>
-#include <Core/CpDeviceUpnp.h>
-#include <Ascii.h>
-#include <Maths.h>
-#include <Stack.h>
-#include <Thread.h>
-#include <OptionParser.h>
-#include <Debug.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Net/Core/DvDevice.h>
+#include <OpenHome/Net/Core/OhNet.h>
+#include <OpenHome/Net/Core/CpDevice.h>
+#include <OpenHome/Net/Core/CpDeviceUpnp.h>
+#include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Maths.h>
+#include <OpenHome/Net/Private/Stack.h>
+#include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/OptionParser.h>
+#include <OpenHome/Private/Debug.h>
 
 #include <vector>
 #include <stdio.h>

@@ -1,14 +1,14 @@
 #ifndef HEADER_RECEIVER_MANAGER2
 #define HEADER_RECEIVER_MANAGER2
 
-#include <OhNetTypes.h>
-#include <Buffer.h>
-#include <Timer.h>
-#include <Exception.h>
-#include <Functor.h>
-#include <Fifo.h>
-#include <Core/CpDevice.h>
-#include <Core/CpAvOpenhomeOrgReceiver1.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Buffer.h>
+#include <OpenHome/Private/Timer.h>
+#include <OpenHome/Exception.h>
+#include <OpenHome/Functor.h>
+#include <OpenHome/Private/Fifo.h>
+#include <OpenHome/Net/Core/CpDevice.h>
+#include <OpenHome/Net/Core/CpAvOpenhomeOrgReceiver1.h>
 
 #include "ReceiverManager1.h"
 

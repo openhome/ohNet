@@ -1,12 +1,12 @@
 #ifndef HEADER_OHMSENDER
 #define HEADER_OHMSENDER
 
-#include <OhNetTypes.h>
-#include <Buffer.h>
-#include <Core/DvDevice.h>
-#include <Thread.h>
-#include <Timer.h>
-#include <Http.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Buffer.h>
+#include <OpenHome/Net/Core/DvDevice.h>
+#include <OpenHome/Private/Thread.h>
+#include <OpenHome/Private/Timer.h>
+#include <OpenHome/Private/Http.h>
 
 #include "Ohm.h"
 

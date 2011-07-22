@@ -1,0 +1,1012 @@
+<#@ assembly name="UpnpServiceXml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
+<#@ template language="C#" #>
+<#
+    string domain = TemplateArgument("domain");
+    string type = TemplateArgument("type");
+
+    uint version = 1;
+
+    try
+    {
+	   version = Convert.ToUInt32(TemplateArgument("version"));
+	}
+	catch (FormatException)
+	{
+        throw (new ArgumentException("Invalid version number specified"));
+	}
+    catch (OverflowException)
+    {
+        throw (new ArgumentException("Invalid version number specified"));
+    }
+
+    string upnpdomain = domain.Replace(".", "-");
+
+    if (upnpdomain.StartsWith("upnp-"))
+    {
+        upnpdomain = "schemas-" + upnpdomain;
+    }
+
+    string fileName = "";
+    char[] charSeparators = new char[] {'.'};
+    string[] res = domain.Split(charSeparators, StringSplitOptions.None);
+    foreach (string str in res)
+    {
+        fileName += str.Substring(0, 1).ToUpper();
+        if (str.Length > 1)
+        {
+            fileName += str.Substring(1, str.Length-1);
+        }
+    }
+    fileName += type;
+    fileName += version;
+    string className = "CpProxy" + fileName;
+    string syncClassSuffix = fileName + "C";
+
+    Initialise();
+
+    Document u = new Document(TemplateArgument("xml"));
+#>
+#include "Cp<#=fileName#>.h"
+#include <OpenHome/Net/Core/CpDevice.h>
+#include <OpenHome/Net/C/CpProxyCPrivate.h>
+#include <OpenHome/Net/Core/FunctorAsync.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Buffer.h>
+#include <OpenHome/Exception.h>
+#include <OpenHome/Functor.h>
+#include <OpenHome/Net/Core/CpProxy.h>
+#include <OpenHome/Net/Private/CpiService.h>
+#include <OpenHome/Private/Thread.h>
+#include <OpenHome/Net/Private/AsyncPrivate.h>
+#include <OpenHome/Net/Core/CpDevice.h>
+
+using namespace OpenHome;
+using namespace OpenHome::Net;
+
+class <#=className#>C : public CpProxyC
+{
+public:
+    <#=className#>C(CpDeviceC aDevice);
+    ~<#=className#>C();
+    //<#=className#>* Proxy() { return static_cast<<#=className#>*>(iProxy); }
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+    void Sync<#=a.name#>(<#=ArgStringCpp(a)#>);
+    void Begin<#=a.name#>(<#=InStringCppTrailingComma(a)#>FunctorAsync& aFunctor);
+    void End<#=a.name#>(<#=OutputArgStringCppPrefix("IAsync& aAsync", a)#>);
+<#  } #>
+
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    void SetProperty<#=s.name#>Changed(Functor& aFunctor);
+<#  } #>
+
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    void Property<#=s.name#>(<#=propArgType[s.type]#> a<#=s.name#>) const;
+<#  } #>
+private:
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    void <#=s.name#>PropertyChanged();
+<#  } #>
+private:
+    Mutex iLock;
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+    Action* iAction<#=a.name#>;
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    <#=propType[s.type]#>* i<#=s.name#>;
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    Functor i<#=s.name#>Changed;
+<#  } #>
+};
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+
+class Sync<#=a.name#><#=syncClassSuffix#> : public SyncProxyAction
+{
+public:
+    Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>C& aProxy<#=OutArgTypesAndNamesCommaPrefix(a)#>);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    <#=className#>C& iService;
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+    <#=outArgTypeCpp[o.variable.type]#> i<#=o.name#>;
+<#      } #>
+};
+
+Sync<#=a.name#><#=syncClassSuffix#>::Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>C& aProxy<#=OutArgTypesAndNamesCommaPrefix(a)#>)
+    : iService(aProxy)
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+    , i<#=o.name#>(a<#=o.name#>)
+<#      } #>
+{
+}
+
+void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
+{
+    iService.End<#=a.name#>(<#=PrefixedOutputArgNames("aAsync", a, "i")#>);
+}
+<#  } #>
+
+<#=className#>C::<#=className#>C(CpDeviceC aDevice)
+    : CpProxyC("<#=upnpdomain#>", "<#=type#>", <#=version#>, *reinterpret_cast<CpiDevice*>(aDevice))
+    , iLock("MPCS")
+{
+    <#=DeclareConstructLocalVars(u)#>
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+    iAction<#=a.name#> = new Action("<#=a.name#>");
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+<#          if (i.variable.values.Count > 0) #>
+<#          { #>
+    index = 0;
+    allowedValues = new TChar*[<#=i.variable.values.Count#>];
+<#              foreach (string val in i.variable.values) #>
+<#              { #>
+    allowedValues[index++] = (TChar*)"<#=val#>";
+<#              } #>
+<#          } #>
+    param = new OpenHome::Net::<#=paramClass[i.variable.type]#>("<#=i.name#>"<#=ParameterAllowedValues(i)#>);
+    iAction<#=a.name#>->AddInputParameter(param);
+<#          if (i.variable.values.Count > 0) #>
+<#          { #>
+    delete[] allowedValues;
+<#          } #>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (o.variable.values.Count > 0) #>
+<#          { #>
+    index = 0;
+    allowedValues = new TChar*[<#=o.variable.values.Count#>];
+<#              foreach (string val in o.variable.values) #>
+<#              { #>
+    allowedValues[index++] = (TChar*)"<#=val#>";
+<#              } #>
+<#          } #>
+    param = new OpenHome::Net::<#=paramClass[o.variable.type]#>("<#=o.name#>"<#=ParameterAllowedValues(o)#>);
+    iAction<#=a.name#>->AddOutputParameter(param);
+<#          if (o.variable.values.Count > 0) #>
+<#          { #>
+    delete[] allowedValues;
+<#          } #>
+<#      } #>
+<#  } #>
+<#  if (u.evented.Count > 0) #>
+<#  { #>
+
+    Functor functor;
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    functor = MakeFunctor(*this, &<#=className#>C::<#=s.name#>PropertyChanged);
+    i<#=s.name#> = new <#=propType[s.type]#>("<#=s.name#>", functor);
+    AddProperty(i<#=s.name#>);
+<#  } #>
+}
+
+<#=className#>C::~<#=className#>C()
+{
+    DestroyService();
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+    delete iAction<#=a.name#>;
+<#  } #>
+}
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+void <#=className#>C::Sync<#=a.name#>(<#=ArgStringCpp(a)#>)
+{
+    Sync<#=a.name#><#=syncClassSuffix#> sync(<#=PrefixedOutputArgNames("*this", a, "a")#>);
+    Begin<#=a.name#>(<#=InNamesCppTrailingComma(a)#>sync.Functor());
+    sync.Wait();
+}
+
+void <#=className#>C::Begin<#=a.name#>(<#=InTypesAndNamesCppTrailingComma(a)#>FunctorAsync& aFunctor)
+{
+    Invocation* invocation = Service()->Invocation(*iAction<#=a.name#>, aFunctor);
+<#      if (a.inargs.Count > 0) #>
+<#      { #>
+    TUint inIndex = 0;
+    const Action::VectorParameters& inParams = iAction<#=a.name#>->InputParameters();
+<#          foreach (Argument i in a.inargs) #>
+<#          { #>
+    invocation->AddInput(new <#=argClass[i.variable.type]#>(*inParams[inIndex++], a<#=i.name#>));
+<#          } #>
+<#      } #>
+<#      if (a.outargs.Count > 0) #>
+<#      { #>
+    TUint outIndex = 0;
+    const Action::VectorParameters& outParams = iAction<#=a.name#>->OutputParameters();
+<#          foreach (Argument o in a.outargs) #>
+<#          { #>
+    invocation->AddOutput(new <#=argClass[o.variable.type]#>(*outParams[outIndex++]));
+<#          } #>
+<#      } #>
+    Invocable().InvokeAction(*invocation);
+}
+
+void <#=className#>C::End<#=a.name#>(<#=PrefixedOutArgTypesAndNamesCpp("IAsync& aAsync", a)#>)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("<#=a.name#>"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
+    }
+<#      if (a.outargs.Count > 0) #>
+<#      { #>
+    TUint index = 0;
+<#          foreach (Argument o in a.outargs) #>
+<#          { #>
+<#          if (o.variable.type=="string" || o.variable.type=="bin.base64" || o.variable.type=="uri") #>
+<#              { #>
+    ((<#=argClass[o.variable.type]#>*)invocation.OutputArguments()[index++])->TransferTo(a<#=o.name#>);
+<#              } #>
+<#              else #>
+<#              { #>
+    a<#=o.name#> = ((<#=argClass[o.variable.type]#>*)invocation.OutputArguments()[index++])->Value();
+<#              } #>
+<#          } #>
+<#      } #>
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void <#=className#>C::SetProperty<#=s.name#>Changed(Functor& aFunctor)
+{
+    iLock.Wait();
+    i<#=s.name#>Changed = aFunctor;
+    iLock.Signal();
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void <#=className#>C::Property<#=s.name#>(<#=propArgType[s.type]#> a<#=s.name#>) const
+{
+    PropertyReadLock();
+    ASSERT(IsSubscribed());
+<#      if (s.type=="string" || s.type=="bin.base64" || s.type=="uri") #>
+<#      { #>
+    a<#=s.name#>.Set(i<#=s.name#>->Value());
+<#      } #>
+<#      else #>
+<#      { #>
+    a<#=s.name#> = i<#=s.name#>->Value();
+<#      } #>
+    PropertyReadUnlock();
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void <#=className#>C::<#=s.name#>PropertyChanged()
+{
+    ReportEvent(i<#=s.name#>Changed);
+}
+<#  } #>
+
+
+THandle STDCALL <#=className#>Create(CpDeviceC aDevice)
+{
+    return new <#=className#>C(aDevice);
+}
+
+void STDCALL <#=className#>Destroy(THandle aHandle)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    delete proxyC;
+}
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+void STDCALL <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+<#  foreach (Argument i in a.inargs) #>
+<#  { #>
+<#      if (i.variable.type == "string" || i.variable.type == "uri") #>
+<#      { #>
+    Brh buf_a<#=i.name#>(a<#=i.name#>);
+<#      } #>
+<#      else if (i.variable.type == "bin.base64") #>
+<#      { #>
+    Brh buf_a<#=i.name#>;
+    buf_a<#=i.name#>.Set((const TByte*)a<#=i.name#>, a<#=i.name#>Len);
+<#      } #>
+<#  } #>
+<#  foreach (Argument o in a.outargs) #>
+<#  { #>
+<#      if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
+<#      { #>
+    Brh buf_a<#=o.name#>;
+<#      } #>
+<#      else if (o.variable.type == "boolean") #>
+<#      { #>
+    *a<#=o.name#> = 0;
+<#      } #>
+<#  } #>
+<#  if (a.outargs.Count == 0) #>
+<#  { #>
+    proxyC->Sync<#=a.name#>(<#=InNames(a)#>);
+<#  } #>
+<#  else #>
+<#  { #>
+    proxyC->Sync<#=a.name#>(<#=InNamesTrailingComma(a)#><#=OutArgNames(a)#>);
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
+<#          { #>
+<#              if (o.variable.type == "bin.base64") #>
+<#              { #>
+    *a<#=o.name#>Len = buf_a<#=o.name#>.Bytes();
+<#              } #>
+    *a<#=o.name#> = buf_a<#=o.name#>.Extract();
+<#          } #>
+<#      } #>
+<#  } #>
+}
+
+void STDCALL <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InTypesAndNamesTrailingComma(a)#>OhNetCallbackAsync aCallback, void* aPtr)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+<#  foreach (Argument i in a.inargs) #>
+<#  { #>
+<#      if (i.variable.type == "string" || i.variable.type == "uri") #>
+<#      { #>
+    Brh buf_a<#=i.name#>(a<#=i.name#>);
+<#      } #>
+<#      else if (i.variable.type == "bin.base64") #>
+<#      { #>
+    Brh buf_a<#=i.name#>;
+    buf_a<#=i.name#>.Set((const TByte*)a<#=i.name#>, a<#=i.name#>Len);
+<#      } #>
+<#  } #>
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (OhNetFunctorAsync)aCallback);
+    proxyC->Begin<#=a.name#>(<#=InNamesTrailingComma(a)#>functor);
+}
+
+int32_t STDCALL <#=className#>End<#=a.name#>(THandle aHandle, <#=PrefixedOutArgTypesAndNames("OhNetHandleAsync aAsync", a)#>)
+{
+    int32_t err = 0;
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    ASSERT(async != NULL);
+<#  foreach (Argument o in a.outargs) #>
+<#  { #>
+<#      if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
+<#      { #>
+    Brh buf_a<#=o.name#>;
+    *a<#=o.name#> = NULL;
+<#          if (o.variable.type == "bin.base64") #>
+<#          { #>
+    *a<#=o.name#>Len = 0;
+<#          } #>
+<#      } #>
+<#      else if (o.variable.type == "boolean") #>
+<#      { #>
+    *a<#=o.name#> = 0;
+<#      } #>
+<#  } #>
+    try {
+        proxyC->End<#=a.name#>(<#=PrefixedOutputArgNames("*async", a)#>);
+<#  foreach (Argument o in a.outargs) #>
+<#  { #>
+<#      if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
+<#      { #>
+<#          if (o.variable.type == "bin.base64") #>
+<#          { #>
+        *a<#=o.name#>Len = buf_a<#=o.name#>.Bytes();
+<#          } #>
+        *a<#=o.name#> = buf_a<#=o.name#>.Extract();
+<#      } #>
+<#  } #>
+    }
+    catch(...) {
+        err = -1;
+    }
+    return err;
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void STDCALL <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, OhNetCallback aCallback, void* aPtr)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Functor functor = MakeFunctor(aPtr, aCallback);
+    proxyC->SetProperty<#=s.name#>Changed(functor);
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+<#      if (s.type == "string" || s.type == "uri") #>
+<#      { #>
+void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Brhz buf_a<#=s.name#>;
+    proxyC->Property<#=s.name#>(buf_a<#=s.name#>);
+    *a<#=s.name#> = buf_a<#=s.name#>.Transfer();
+}
+<#      } #>
+<#      else if (s.type=="bin.base64") #>
+<#      { #>
+void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>, uint32_t* aLen)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Brh buf_a<#=s.name#>;
+    proxyC->Property<#=s.name#>(buf_a<#=s.name#>);
+    *aLen = buf_a<#=s.name#>.Bytes();
+    *a<#=s.name#> = buf_a<#=s.name#>.Extract();
+}
+<#      } #>
+<#      else if (s.type=="boolean") #>
+<#      { #>
+void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    *a<#=s.name#> = false;
+    proxyC->Property<#=s.name#>(*(TBool*)a<#=s.name#>);
+}
+<#      } #>
+<#      else #>
+<#      { #>
+void STDCALL <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    proxyC->Property<#=s.name#>(*a<#=s.name#>);
+}
+<#      } #>
+<#  } #>
+
+<#+
+Dictionary<string,string> inargtype = new Dictionary<string,string>();
+Dictionary<string,string> outargtype = new Dictionary<string,string>();
+Dictionary<string,string> inArgTypeCpp = new Dictionary<string,string>();
+Dictionary<string,string> outArgTypeCpp = new Dictionary<string,string>();
+Dictionary<string,string> propArgType = new Dictionary<string,string>();
+Dictionary<string,string> propType = new Dictionary<string,string>();
+Dictionary<string,string> argClass = new Dictionary<string,string>();
+Dictionary<string,string> paramClass = new Dictionary<string,string>();
+
+void Initialise()
+{
+    inargtype.Add("string", "const char*");
+    inargtype.Add("ui1", "uint32_t");
+    inargtype.Add("ui2", "uint32_t");
+    inargtype.Add("ui4", "uint32_t");
+    inargtype.Add("boolean", "uint32_t");
+    inargtype.Add("i1", "int32_t");
+    inargtype.Add("i2", "int32_t");
+    inargtype.Add("i4", "int32_t");
+    inargtype.Add("bin.base64", "const char*");
+    inargtype.Add("uri", "const char*");
+
+    outargtype.Add("string", "char**");
+    outargtype.Add("ui1", "uint32_t*");
+    outargtype.Add("ui2", "uint32_t*");
+    outargtype.Add("ui4", "uint32_t*");
+    outargtype.Add("boolean", "uint32_t*");
+    outargtype.Add("i1", "int32_t*");
+    outargtype.Add("i2", "int32_t*");
+    outargtype.Add("i4", "int32_t*");
+    outargtype.Add("bin.base64", "char**");
+    outargtype.Add("uri", "char**");
+
+    inArgTypeCpp.Add("ui1", "TUint");
+    inArgTypeCpp.Add("ui2", "TUint");
+    inArgTypeCpp.Add("ui4", "TUint");
+    inArgTypeCpp.Add("boolean", "TBool");
+    inArgTypeCpp.Add("i1", "TInt");
+    inArgTypeCpp.Add("i2", "TInt");
+    inArgTypeCpp.Add("i4", "TInt");
+    inArgTypeCpp.Add("string", "const Brx&");
+    inArgTypeCpp.Add("bin.base64", "const Brx&");
+    inArgTypeCpp.Add("uri", "const Brx&");
+
+    outArgTypeCpp.Add("string", "Brh&");
+    outArgTypeCpp.Add("ui1", "TUint&");
+    outArgTypeCpp.Add("ui2", "TUint&");
+    outArgTypeCpp.Add("ui4", "TUint&");
+    outArgTypeCpp.Add("boolean", "TBool&");
+    outArgTypeCpp.Add("i1", "TInt&");
+    outArgTypeCpp.Add("i2", "TInt&");
+    outArgTypeCpp.Add("i4", "TInt&");
+    outArgTypeCpp.Add("bin.base64", "Brh&");
+    outArgTypeCpp.Add("uri", "Brh&");
+
+    propArgType.Add("ui1", "TUint&");
+    propArgType.Add("ui2", "TUint&");
+    propArgType.Add("ui4", "TUint&");
+    propArgType.Add("boolean", "TBool&");
+    propArgType.Add("i1", "TInt&");
+    propArgType.Add("i2", "TInt&");
+    propArgType.Add("i4", "TInt&");
+    propArgType.Add("string", "Brhz&");
+    propArgType.Add("bin.base64", "Brh&");
+    propArgType.Add("uri", "Brhz&");
+
+    propType.Add("ui1", "PropertyUint");
+    propType.Add("ui2", "PropertyUint");
+    propType.Add("ui4", "PropertyUint");
+    propType.Add("boolean", "PropertyBool");
+    propType.Add("i1", "PropertyInt");
+    propType.Add("i2", "PropertyInt");
+    propType.Add("i4", "PropertyInt");
+    propType.Add("string", "PropertyString");
+    propType.Add("bin.base64", "PropertyBinary");
+    propType.Add("uri", "PropertyString");
+
+    argClass.Add("string", "ArgumentString");
+    argClass.Add("ui1", "ArgumentUint");
+    argClass.Add("ui2", "ArgumentUint");
+    argClass.Add("ui4", "ArgumentUint");
+    argClass.Add("boolean", "ArgumentBool");
+    argClass.Add("i1", "ArgumentInt");
+    argClass.Add("i2", "ArgumentInt");
+    argClass.Add("i4", "ArgumentInt");
+    argClass.Add("bin.base64", "ArgumentBinary");
+    argClass.Add("uri", "ArgumentString");
+
+    paramClass.Add("string", "ParameterString");
+    paramClass.Add("ui1", "ParameterUint");
+    paramClass.Add("ui2", "ParameterUint");
+    paramClass.Add("ui4", "ParameterUint");
+    paramClass.Add("boolean", "ParameterBool");
+    paramClass.Add("i1", "ParameterInt");
+    paramClass.Add("i2", "ParameterInt");
+    paramClass.Add("i4", "ParameterInt");
+    paramClass.Add("bin.base64", "ParameterBinary");
+    paramClass.Add("uri", "ParameterString");
+}
+
+string InString(Method a)
+{
+    string result = "";
+
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        result += inargtype[i.variable.type];
+        result += " ";
+        result += "a"+i.name;
+        if (i.variable.type == "bin.base64")
+        {
+            result += ", uint32_t a" + i.name + "Len";
+        }
+    }
+
+    return(result);
+}
+
+string InStringCpp(Method a)
+{
+    string result = "";
+    
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        
+        result += inArgTypeCpp[i.variable.type];
+        result += " ";
+        result += "a" + i.name;
+    }
+    
+    return(result);
+}
+
+string InStringCppTrailingComma(Method a)
+{
+    string result = InStringCpp(a);
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
+    return(result);
+}
+
+string InNames(Method a)
+{
+    string result = "";
+
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        if (i.variable.type == "boolean")
+        {
+            result += "(a"+i.name+"==0? false : true)";
+        }
+        else
+        {
+            if (i.variable.type == "string" || i.variable.type == "uri" || i.variable.type == "bin.base64")
+            {
+                result += "buf_";
+            }
+            result += "a"+i.name;
+        }
+    }
+
+    return(result);
+}
+
+string InNamesCpp(Method a)
+{
+    string result = "";
+
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += "a"+i.name;
+    }
+
+    return(result);
+}
+
+string OutArgTypesAndNames(Method a)
+{
+    string result = "";
+
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        result += outargtype[o.variable.type];
+        result += " ";
+        result += "a"+o.name;
+        if (o.variable.type == "bin.base64")
+        {
+            result += ", uint32_t* a" + o.name + "Len";
+        }
+    }
+
+    return(result);
+}
+
+string OutArgNames(Method a)
+{
+    string result = "";
+
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        if (o.variable.type == "boolean")
+        {
+            result += "*(TBool*)";
+        }
+        else if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64")
+        {
+            result += "buf_";
+        }
+        else
+        {
+            result += "*";
+        }
+        result += "a" + o.name;
+    }
+
+    return(result);
+}
+
+string PrefixedOutputArgNames(string prefix, Method a)
+{
+    string args = OutArgNames(a);
+    string result = prefix;
+    if (args.Length > 0)
+    {
+        result += ", ";
+        result += args;
+    }
+    return(result);
+}
+
+string OutArgNames(Method a, string argprefix)
+{
+    string result = "";
+
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        result += argprefix + o.name;
+    }
+
+    return(result);
+}
+
+string PrefixedOutputArgNames(string prefix, Method a, string argprefix)
+{
+    string args = OutArgNames(a, argprefix);
+    string result = prefix;
+    if (args.Length > 0)
+    {
+        result += ", ";
+        result += args;
+    }
+    return(result);
+}
+
+string PrefixedOutArgTypesAndNames(string prefix, Method a)
+{
+    string result = prefix;
+    string outargs = OutArgTypesAndNames(a);
+    if (prefix.Length > 0 && outargs.Length > 0)
+    {
+        result += ", ";
+    }
+    result += outargs;
+    return(result);
+}
+
+string PrefixedOutArgTypesAndNamesCpp(string prefix, Method a)
+{
+    string result = prefix;
+    string outargs = OutArgTypesAndNamesCpp(a);
+    if (prefix.Length > 0 && outargs.Length > 0)
+    {
+        result += ", ";
+    }
+    result += outargs;
+    return(result);
+}
+
+string InTypesAndNamesTrailingComma(Method a)
+{
+    string result = InString(a);
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
+    return(result);
+}
+
+string InTypesAndNamesCppTrailingComma(Method a)
+{
+    string result = InStringCpp(a);
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
+    return(result);
+}
+
+string InNamesTrailingComma(Method a)
+{
+    string result = InNames(a);
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
+    return(result);
+}
+
+string InNamesCppTrailingComma(Method a)
+{
+    string result = InNamesCpp(a);
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
+    return(result);
+}
+
+string ArgString(Method a)
+{
+    string result = InString(a);
+    string outargs = OutArgTypesAndNames(a);
+    if (result.Length > 0 && outargs.Length > 0)
+    {
+        result += ", ";
+    }
+    result += outargs;;
+    if (result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return(result);
+}
+
+string OutputArgStringCppPrefix(string prefix, Method a)
+{
+    string result = prefix;
+
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += outArgTypeCpp[o.variable.type];
+        result += " ";
+        result += "a" + o.name;
+    }
+
+    return(result);
+}
+
+string OutputArgStringCpp(Method a)
+{
+    return OutputArgStringCppPrefix("", a);
+}
+
+string ArgStringCpp(Method a)
+{
+    string result = InStringCpp(a);
+    string outargs = OutputArgStringCpp(a);
+    if (result.Length > 0 && outargs.Length > 0)
+    {
+        result += ", ";
+    }
+    result += outargs;
+
+    return(result);
+}
+
+string OutArgTypesAndNamesCpp(Method a)
+{
+    string result = "";
+
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        result += outArgTypeCpp[o.variable.type];
+        result += " ";
+        result += "a"+o.name;
+    }
+
+    return(result);
+}
+
+string OutArgTypesAndNamesCommaPrefix(Method a)
+{
+    string str = OutArgTypesAndNamesCpp(a);
+    if (str.Length > 0)
+    {
+        str = ", " + str;
+    }
+    return str;
+}
+
+string DeclareConstructLocalVars(Document u)
+{
+    string result = "";
+    if (u.methods.Count > 0)
+    {
+        result += "OpenHome::Net::Parameter* param;";
+    }
+
+    foreach (Method a in u.methods)
+    {
+        foreach (Argument i in a.inargs)
+        {
+            if (i.variable.values.Count > 0)
+            {
+                result += "\n    TChar** allowedValues;\n    TUint index;";
+                return(result);
+            }
+        }
+        foreach (Argument o in a.outargs)
+        {
+            if (o.variable.values.Count > 0)
+            {
+                result += "\n    TChar** allowedValues;\n    TUint index;";
+                return(result);
+            }
+        }
+    }
+    return(result);
+}
+
+string ParameterAllowedValues(Argument a)
+{
+    string result = "";
+    Variable v = a.variable;
+    if (v.values.Count > 0)
+    {
+        result += ", allowedValues, ";
+        result += v.values.Count;
+    }
+    else if (v.minspecified)
+    {
+        result += ", ";
+        result += v.min;
+        result += ", ";
+        result += v.max;
+        if (v.stepspecified)
+        {
+            result += ", ";
+            result += v.step;
+        }
+    }
+    return(result);
+}
+
+string TemplateArgument(string aName)
+{
+	string[] args =  System.Environment.GetCommandLineArgs();
+		
+	bool isarg = false;
+	
+	foreach (string arg in args)
+	{
+		if (isarg)
+		{
+			string[] parts = arg.Split(new char[] {':'});
+			
+			if (parts.Length == 2)
+			{
+				if (parts[0] == aName)
+				{
+					return (parts[1]);
+				}
+			}
+			
+			isarg = false;
+			continue;
+		}
+		
+		if (arg == "-a")
+		{
+			isarg = true;
+		}
+	}
+	
+	throw (new ArgumentException(aName + " not specified"));
+}
+#>

@@ -1,0 +1,450 @@
+<#@ assembly name="UpnpServiceXml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
+<#@ template language="C#" #>
+<#
+    string domain = TemplateArgument("domain");
+    string type = TemplateArgument("type");
+
+    uint version = 1;
+
+    try
+    {
+	   version = Convert.ToUInt32(TemplateArgument("version"));
+	}
+	catch (FormatException)
+	{
+        throw (new ArgumentException("Invalid version number specified"));
+	}
+    catch (OverflowException)
+    {
+        throw (new ArgumentException("Invalid version number specified"));
+    }
+
+    string fileName = "";
+    char[] charSeparators = new char[] {'.'};
+    string[] res = domain.Split(charSeparators, StringSplitOptions.None);
+    foreach (string str in res)
+    {
+        fileName += str.Substring(0, 1).ToUpper();
+        if (str.Length > 1)
+        {
+            fileName += str.Substring(1, str.Length-1);
+        }
+    }
+    fileName += type;
+    fileName += version;
+    string className = "DvProvider" + fileName;
+
+    Initialise();
+
+    Document u = new Document(TemplateArgument("xml"));
+#>
+#include "Dv<#=fileName#>.h"
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Net/Core/DvInvocationResponse.h>
+#include <OpenHome/Net/Private/Service.h>
+#include <OpenHome/Net/Private/FunctorDviInvocation.h>
+
+using namespace OpenHome;
+using namespace OpenHome::Net;
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+TBool <#=className#>::SetProperty<#=s.name#>(<#=inArgParamType[s.type]#> aValue)
+{
+    return <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, aValue);
+}
+
+void <#=className#>::GetProperty<#=s.name#>(<#=inArgType[s.type]#>& aValue)
+{
+<#      if (s.type == "string" || s.type == "bin.base64" || s.type == "uri") #>
+<#      { #>
+    aValue.Set(iProperty<#=s.name#>->Value());
+<#      } #>
+<#      else #>
+<#      { #>
+    aValue = iProperty<#=s.name#>->Value();
+<#      } #>
+}
+<#  } #>
+
+<#=className#>::<#=className#>(DvDevice& aDevice)
+    : DvProvider(aDevice.Device(), "<#=domain#>", "<#=type#>", <#=version#>)
+{
+    <#=DeclareAllowedValuesForProperties(u)#>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+<#      if (s.values.Count > 0) #>
+<#      { #>
+    index = 0;
+    allowedValues = new TChar*[<#=s.values.Count#>];
+<#          foreach (string val in s.values) #>
+<#          { #>
+    allowedValues[index++] = (TChar*)"<#=val#>";
+<#          } #>
+<#      } #>
+    iProperty<#=s.name#> = new <#=propertyType[s.type]#>(new <#=paramType[s.type]#>("<#=s.name#>"<#=ParameterAllowedValues(s)#>));
+<#      if (s.values.Count > 0) #>
+<#      { #>
+    delete[] allowedValues;
+<#      } #>
+    iService->AddProperty(iProperty<#=s.name#>); // passes ownership
+<#  } #>
+}
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+void <#=className#>::EnableAction<#=a.name#>()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("<#=a.name#>");<#=DeclareAllowedValuesForMethod(a)#>
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+<#          if (RelatedVariableIsEvented(i, u)) #>
+<#          { #>
+    action->AddInputParameter(new ParameterRelated("<#=i.name#>", *iProperty<#=i.variable.name#>));
+<#          } #>
+<#          else #>
+<#          { #>
+<#              if (i.variable.values.Count > 0) #>
+<#              { #>
+    index = 0;
+    allowedValues = new TChar*[<#=i.variable.values.Count#>];
+<#                  foreach (string val in i.variable.values) #>
+<#                  { #>
+    allowedValues[index++] = (TChar*)"<#=val#>";
+<#                  } #>
+<#              } #>
+    action->AddInputParameter(new <#=paramType[i.variable.type]#>("<#=i.name#>"<#=ParameterAllowedValues(i.variable)#>));
+<#              if (i.variable.values.Count > 0) #>
+<#              { #>
+    delete[] allowedValues;
+<#              } #>
+<#          } #>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (RelatedVariableIsEvented(o, u)) #>
+<#          { #>
+    action->AddOutputParameter(new ParameterRelated("<#=o.name#>", *iProperty<#=o.variable.name#>));
+<#          } #>
+<#          else #>
+<#          { #>
+<#              if (o.variable.values.Count > 0) #>
+<#              { #>
+    index = 0;
+    allowedValues = new TChar*[<#=o.variable.values.Count#>];
+<#                  foreach (string val in o.variable.values) #>
+<#                  { #>
+    allowedValues[index++] = (TChar*)"<#=val#>";
+<#                  } #>
+<#              } #>
+    action->AddOutputParameter(new <#=paramType[o.variable.type]#>("<#=o.name#>"<#=ParameterAllowedValues(o.variable)#>));
+<#              if (o.variable.values.Count > 0) #>
+<#              { #>
+    delete[] allowedValues;
+<#              } #>
+<#          } #>
+<#      } #>
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &<#=className#>::Do<#=a.name#>);
+    iService->AddAction(action, functor);
+}
+<#  } #>
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+<#          if (i.variable.type=="string" || i.variable.type=="bin.base64" || i.variable.type=="uri") #>
+<#          { #>
+    <#=inArgType[i.variable.type]#> <#=i.name#>;
+    aInvocation.<#=invReadType[i.variable.type]#>("<#=i.name#>", <#=i.name#>);
+<#          } #>
+<#          else #>
+<#          { #>
+    <#=inArgType[i.variable.type]#> <#=i.name#> = aInvocation.<#=invReadType[i.variable.type]#>("<#=i.name#>");
+<#          } #>
+<#      } #>
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+    <#=invRespType[o.variable.type]#> resp<#=o.name#>(aInvocation, "<#=o.name#>");
+<#      } #>
+    <#=a.name#>(resp, aVersion<#=ActionArgNames(a)#>);
+}
+<#  } #>
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+void <#=className#>::<#=a.name#>(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/<#=ActionArgTypesAndNames(a)#>)
+{
+    ASSERTS();
+}
+<#  } #>
+
+<#+
+Dictionary<string,string> paramType = new Dictionary<string,string>();
+Dictionary<string,string> inArgType = new Dictionary<string,string>();
+Dictionary<string,string> inArgParamType = new Dictionary<string,string>();
+Dictionary<string,string> invReadType = new Dictionary<string,string>();
+Dictionary<string,string> invRespType = new Dictionary<string,string>();
+Dictionary<string,string> invRespParamType = new Dictionary<string,string>();
+Dictionary<string,string> propertyType = new Dictionary<string,string>();
+Dictionary<string,string> propertySetter = new Dictionary<string,string>();
+
+void Initialise()
+{
+    paramType.Add("string", "ParameterString");
+    paramType.Add("ui1", "ParameterUint");
+    paramType.Add("ui2", "ParameterUint");
+    paramType.Add("ui4", "ParameterUint");
+    paramType.Add("boolean", "ParameterBool");
+    paramType.Add("i1", "ParameterInt");
+    paramType.Add("i2", "ParameterInt");
+    paramType.Add("i4", "ParameterInt");
+    paramType.Add("bin.base64", "ParameterBinary");
+    paramType.Add("uri", "ParameterString");
+
+    inArgType.Add("string", "Brhz");
+    inArgType.Add("ui1", "TUint");
+    inArgType.Add("ui2", "TUint");
+    inArgType.Add("ui4", "TUint");
+    inArgType.Add("boolean", "TBool");
+    inArgType.Add("i1", "TInt");
+    inArgType.Add("i2", "TInt");
+    inArgType.Add("i4", "TInt");
+    inArgType.Add("bin.base64", "Brh");
+    inArgType.Add("uri", "Brhz");
+
+    inArgParamType.Add("string", "const Brx&");
+    inArgParamType.Add("ui1", "TUint");
+    inArgParamType.Add("ui2", "TUint");
+    inArgParamType.Add("ui4", "TUint");
+    inArgParamType.Add("boolean", "TBool");
+    inArgParamType.Add("i1", "TInt");
+    inArgParamType.Add("i2", "TInt");
+    inArgParamType.Add("i4", "TInt");
+    inArgParamType.Add("bin.base64", "const Brx&");
+    inArgParamType.Add("uri", "const Brx&");
+
+    invReadType.Add("string", "InvocationReadString");
+    invReadType.Add("ui1", "InvocationReadUint");
+    invReadType.Add("ui2", "InvocationReadUint");
+    invReadType.Add("ui4", "InvocationReadUint");
+    invReadType.Add("boolean", "InvocationReadBool");
+    invReadType.Add("i1", "InvocationReadInt");
+    invReadType.Add("i2", "InvocationReadInt");
+    invReadType.Add("i4", "InvocationReadInt");
+    invReadType.Add("bin.base64", "InvocationReadBinary");
+    invReadType.Add("uri", "InvocationReadString");
+
+    invRespType.Add("string", "InvocationResponseString");
+    invRespType.Add("ui1", "InvocationResponseUint");
+    invRespType.Add("ui2", "InvocationResponseUint");
+    invRespType.Add("ui4", "InvocationResponseUint");
+    invRespType.Add("boolean", "InvocationResponseBool");
+    invRespType.Add("i1", "InvocationResponseInt");
+    invRespType.Add("i2", "InvocationResponseInt");
+    invRespType.Add("i4", "InvocationResponseInt");
+    invRespType.Add("bin.base64", "InvocationResponseBinary");
+    invRespType.Add("uri", "InvocationResponseString");
+
+    invRespParamType.Add("string", "IInvocationResponseString");
+    invRespParamType.Add("ui1", "IInvocationResponseUint");
+    invRespParamType.Add("ui2", "IInvocationResponseUint");
+    invRespParamType.Add("ui4", "IInvocationResponseUint");
+    invRespParamType.Add("boolean", "IInvocationResponseBool");
+    invRespParamType.Add("i1", "IInvocationResponseInt");
+    invRespParamType.Add("i2", "IInvocationResponseInt");
+    invRespParamType.Add("i4", "IInvocationResponseInt");
+    invRespParamType.Add("bin.base64", "IInvocationResponseBinary");
+    invRespParamType.Add("uri", "IInvocationResponseString");
+
+    propertyType.Add("string", "PropertyString");
+    propertyType.Add("ui1", "PropertyUint");
+    propertyType.Add("ui2", "PropertyUint");
+    propertyType.Add("ui4", "PropertyUint");
+    propertyType.Add("boolean", "PropertyBool");
+    propertyType.Add("i1", "PropertyInt");
+    propertyType.Add("i2", "PropertyInt");
+    propertyType.Add("i4", "PropertyInt");
+    propertyType.Add("bin.base64", "PropertyBinary");
+    propertyType.Add("uri", "PropertyString");
+
+    propertySetter.Add("string", "SetPropertyString");
+    propertySetter.Add("ui1", "SetPropertyUint");
+    propertySetter.Add("ui2", "SetPropertyUint");
+    propertySetter.Add("ui4", "SetPropertyUint");
+    propertySetter.Add("boolean", "SetPropertyBool");
+    propertySetter.Add("i1", "SetPropertyInt");
+    propertySetter.Add("i2", "SetPropertyInt");
+    propertySetter.Add("i4", "SetPropertyInt");
+    propertySetter.Add("bin.base64", "SetPropertyBinary");
+    propertySetter.Add("uri", "SetPropertyString");
+}
+
+string ActionArgNames(Method a)
+{
+    string result = "";
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += i.name;
+    }
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += "resp" + o.name;
+    }
+    if (result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return result;
+}
+
+string ActionArgTypesAndNames(Method a)
+{
+    string result = "";
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += inArgParamType[i.variable.type];
+        result += " ";
+        result += "/*a" + i.name + "*/";
+    }
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += invRespParamType[o.variable.type] + "&";
+        result += " ";
+        result += "/*a" + o.name + "*/";
+    }
+    if (result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return result;
+}
+
+string DeclareAllowedValues()
+{
+    return "\n    TChar** allowedValues;\n    TUint index;";
+}
+
+string DeclareAllowedValuesForProperties(Document u)
+{
+    foreach (Variable s in u.evented)
+    {
+        if (s.values.Count > 0)
+        {
+            return DeclareAllowedValues();
+        }
+    }
+    return "";
+}
+
+string DeclareAllowedValuesForMethod(Method a)
+{
+    foreach (Argument i in a.inargs)
+    {
+        if (i.variable.values.Count > 0 && !i.variable.evented)
+        {
+            return DeclareAllowedValues();
+        }
+    }
+    foreach (Argument o in a.outargs)
+    {
+        if (o.variable.values.Count > 0 && !o.variable.evented)
+        {
+            return DeclareAllowedValues();
+        }
+    }
+    return "";
+}
+
+string ParameterAllowedValues(Variable v)
+{
+    string result = "";
+    if (v.values.Count > 0)
+    {
+        result += ", allowedValues, ";
+        result += v.values.Count;
+    }
+    else if (v.minspecified)
+    {
+        result += ", ";
+        result += v.min;
+        result += ", ";
+        result += v.max;
+        if (v.stepspecified)
+        {
+            result += ", ";
+            result += v.step;
+        }
+    }
+    return(result);
+}
+
+bool RelatedVariableIsEvented(Argument arg, Document u)
+{
+    foreach (Variable v in u.evented)
+    {
+        if (v.name == arg.related)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+string TemplateArgument(string aName)
+{
+	string[] args =  System.Environment.GetCommandLineArgs();
+		
+	bool isarg = false;
+	
+	foreach (string arg in args)
+	{
+		if (isarg)
+		{
+			string[] parts = arg.Split(new char[] {':'});
+			
+			if (parts.Length == 2)
+			{
+				if (parts[0] == aName)
+				{
+					return (parts[1]);
+				}
+			}
+			
+			isarg = false;
+			continue;
+		}
+		
+		if (arg == "-a")
+		{
+			isarg = true;
+		}
+	}
+	
+	throw (new ArgumentException(aName + " not specified"));
+}
+#>
