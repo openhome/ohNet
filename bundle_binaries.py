@@ -33,7 +33,7 @@ def main():
     includedir = "Build/Include"
     outputdir = "Build/Bundles"
     t4dir = "Build/" + osname + "/Tools"
-    templateDir = "T4/Templates"
+    templateDir = "OpenHome/Net/T4/Templates"
     uisdkDir = "OpenHome/Net/Bindings/Js/ControlPoint"
 
     # we have Debug and Release dirs.  Choose the one with the later version of ohNet.net.dll
