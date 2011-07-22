@@ -222,7 +222,7 @@ class js_test():
 
 		# write dummy XML that gets re-written by real XML if browser connects to node properly
 
-		dummy_xml_read = open("public/js/dummyxml.xml", 'r')
+		dummy_xml_read = open("OpenHome/Net/Bindings/Js/ControlPoint/Tests/dummyxml.xml", 'r')
 		dummy_xml_write = open("xout/ProxyJsTest.xml", 'w')
 		dummy_xml_write.writelines(dummy_xml_read)
 		dummy_xml_write.close()
@@ -233,7 +233,7 @@ class js_test():
 
 		program_files = os.environ.get('ProgramFiles')
 		self.browser_location = os.path.join(program_files, 'Safari\Safari.exe')
-		self.test_dir = os.path.join(os.getcwd(), 'Build\Include\Js\Tests')
+		self.test_dir = os.path.join(os.getcwd(), 'Build\Include\OpenHome\Net\Private\Js\Tests')
 
 
 	def local_call(self):
