@@ -1,8 +1,8 @@
 #include "../Soundcard.h"
 #include "Driver/AudioDeviceInterface.h"
 
-#include <OhNetTypes.h>
-#include <OhNet.h>
+#include <OpenHome/OhNetTypes.h>
+#include <OpenHome/Net/Core/OhNet.h>
 
 #include "../../Ohm.h"
 #include "../../OhmSender.h"

@@ -1,0 +1,296 @@
+<#@ assembly name="UpnpServiceXml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="OpenHome.Net.Xml.UpnpServiceXml" #>
+<#@ template language="C#" #>
+<#
+    string domain = TemplateArgument("domain");
+    string type = TemplateArgument("type");
+
+    uint version = 1;
+
+    try
+    {
+	   version = Convert.ToUInt32(TemplateArgument("version"));
+	}
+	catch (FormatException)
+	{
+        throw (new ArgumentException("Invalid version number specified"));
+	}
+    catch (OverflowException)
+    {
+        throw (new ArgumentException("Invalid version number specified"));
+    }
+
+    string fileName = "";
+    char[] charSeparators = new char[] {'.'};
+    string[] res = domain.Split(charSeparators, StringSplitOptions.None);
+    foreach (string str in res)
+    {
+        fileName += str.Substring(0, 1).ToUpper();
+        if (str.Length > 1)
+        {
+            fileName += str.Substring(1, str.Length-1);
+        }
+    }
+    fileName += type;
+    fileName += version;
+    string className = "DvProvider" + fileName;
+    string callbackPrefix = "Callback" + type + version;
+
+    Initialise();
+
+	Document u = new Document(TemplateArgument("xml"));
+#>
+/**
+ * Provider for the <#=domain#>:<#=type#>:<#=version#> UPnP service
+ */
+#ifndef HEADER_DV<#=fileName.ToUpper()#>_C
+#define HEADER_DV<#=fileName.ToUpper()#>_C
+
+#include <OpenHome/OhNetDefines.h>
+#include <OpenHome/OsTypes.h>
+#include <OpenHome/Net/C/DvDevice.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @addtogroup <#=className#>
+ * @ingroup Providers
+ * @{
+ */
+
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+/**
+ * Callback which runs when the <#=a.name#> action is invoked
+ *
+ * @param[in]  aPtr      Opaque data passed to <#=className#>EnableAction<#=a.name#>
+ * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+ * @param[in]  a<#=i.name#>
+<#          if (i.variable.type == "bin.base64") #>
+<#          { #>
+ * @param[in]  a<#=i.name#>Len
+<#          } #>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+ * @param[out] a<#=o.name#>
+<#          if (o.variable.type == "bin.base64") #>
+<#          { #>
+ * @param[out] a<#=o.name#>Len
+<#          } #>
+<#      } #>
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
+typedef int32_t (STDCALL *<#=callbackPrefix#><#=a.name#>)(void* aPtr, uint32_t aVersion<#=ActionArgs(a)#>);
+<#  } #>
+
+/**
+ * Provider constructor
+ *
+ * @param[in] aDevice  Handle returned by DvDeviceCreate[NoResources]
+ *
+ * @return  Handle to this provider
+ */
+DllExport THandle STDCALL <#=className#>Create(DvDeviceC aDevice);
+
+/**
+ * Provider destructor
+ *
+ * @param[in] aProvider  Handle returned by <#=className#>Create
+ */
+DllExport void STDCALL <#=className#>Destroy(THandle aProvider);
+
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+/**
+ * Register a callback for the action <#=a.name#>
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by <#=className#>Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void STDCALL <#=className#>EnableAction<#=a.name#>(THandle aProvider, <#=callbackPrefix#><#=a.name#> aCallback, void* aPtr);
+<#  } #>
+
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+/**
+ * Set the value of the <#=s.name#> property
+ *
+ * @param[in]  aProvider  Handle returned by <#=className#>Create
+<#      if (s.type == "string" || s.type == "uri" || s.type == "bin.base64") #>
+<#      { #>
+ * @param[in]  aValue     New value for the property (will be copied)
+<#          if (s.type == "bin.base64") #>
+<#          { #>
+ * @param[in]  aValueLen  Size in bytes pointed to by aValue
+<#          } #>
+<#      } #>
+<#      else #>
+<#      { #>
+ * @param[in]  aValue     New value for the property
+<#      } #>
+ * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
+ *
+ * @return  0 if the property was successfully set; non-zero if there was an error (including
+ *          an attempt to set a property to a value not in its allowed range/set)
+ */
+DllExport int32_t STDCALL <#=className#>SetProperty<#=s.name#>(THandle aProvider, <#=PropertyInArgs(s)#>, uint32_t* aChanged);
+/**
+ * Get a copy of the value of the <#=s.name#> property
+ *
+ * @param[in]  aProvider  Handle returned by <#=className#>Create
+<#      if (s.type == "string" || s.type == "uri" || s.type == "bin.base64") #>
+<#      { #>
+ * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
+<#          if (s.type == "bin.base64") #>
+<#          { #>
+ * @param[out] aValueLen  Size in bytes pointed to by aValue
+<#          } #>
+<#      } #>
+<#      else #>
+<#      { #>
+ * @param[out] aValue     Value for the property
+<#      } #>
+ */
+DllExport void STDCALL <#=className#>GetProperty<#=s.name#>(THandle aProvider, <#=PropertyOutArgs(s)#>);
+<#  } #>
+
+/* @} */
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
+#endif // HEADER_DV<#=fileName.ToUpper()#>_C
+
+<#+
+Dictionary<string,string> inArgType = new Dictionary<string,string>();
+Dictionary<string,string> outArgType = new Dictionary<string,string>();
+
+void Initialise()
+{
+    inArgType.Add("ui1", "uint32_t");
+    inArgType.Add("ui2", "uint32_t");
+    inArgType.Add("ui4", "uint32_t");
+    inArgType.Add("boolean", "uint32_t");
+    inArgType.Add("i1", "int32_t");
+    inArgType.Add("i2", "int32_t");
+    inArgType.Add("i4", "int32_t");
+    inArgType.Add("string", "const char*");
+    inArgType.Add("bin.base64", "const char*");
+    inArgType.Add("uri", "const char*");
+
+    outArgType.Add("ui1", "uint32_t*");
+    outArgType.Add("ui2", "uint32_t*");
+    outArgType.Add("ui4", "uint32_t*");
+    outArgType.Add("boolean", "uint32_t*");
+    outArgType.Add("i1", "int32_t*");
+    outArgType.Add("i2", "int32_t*");
+    outArgType.Add("i4", "int32_t*");
+    outArgType.Add("string", "char**");
+    outArgType.Add("bin.base64", "char**");
+    outArgType.Add("uri", "char**");
+}
+
+string ActionArgs(Method a)
+{
+    string result = "";
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += inArgType[i.variable.type];
+        result += " ";
+        result += "a" + i.name;
+        if (i.variable.type == "bin.base64")
+        {
+            result += ", uint32_t a" + i.name + "Len";
+        }
+    }
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += outArgType[o.variable.type];
+        result += " ";
+        result += "a" + o.name;
+        if (o.variable.type == "bin.base64")
+        {
+            result += ", uint32_t* a" + o.name + "Len";
+        }
+    }
+    if (result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return result;
+}
+
+string PropertyInArgs(Variable s)
+{
+    string result = inArgType[s.type] + " aValue";
+    if (s.type == "bin.base64")
+    {
+        result += ", uint32_t aValueLen";
+    }
+    return result;
+}
+
+string PropertyOutArgs(Variable s)
+{
+    string result = outArgType[s.type] + " aValue";
+    if (s.type == "bin.base64")
+    {
+        result += ", uint32_t* aValueLen";
+    }
+    return result;
+}
+
+string TemplateArgument(string aName)
+{
+	string[] args =  System.Environment.GetCommandLineArgs();
+		
+	bool isarg = false;
+	
+	foreach (string arg in args)
+	{
+		if (isarg)
+		{
+			string[] parts = arg.Split(new char[] {':'});
+			
+			if (parts.Length == 2)
+			{
+				if (parts[0] == aName)
+				{
+					return (parts[1]);
+				}
+			}
+			
+			isarg = false;
+			continue;
+		}
+		
+		if (arg == "-a")
+		{
+			isarg = true;
+		}
+	}
+	
+	throw (new ArgumentException(aName + " not specified"));
+}
+#>

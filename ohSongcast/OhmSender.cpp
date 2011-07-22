@@ -1,9 +1,9 @@
 #include "OhmSender.h"
-#include <Core/DvAvOpenhomeOrgSender1.h>
-#include <Ascii.h>
-#include <Maths.h>
-#include <Arch.h>
-#include <Debug.h>
+#include <OpenHome/Net/Core/DvAvOpenhomeOrgSender1.h>
+#include <OpenHome/Private/Ascii.h>
+#include <OpenHome/Private/Maths.h>
+#include <OpenHome/Private/Arch.h>
+#include <OpenHome/Private/Debug.h>
 
 #include <stdio.h>
 

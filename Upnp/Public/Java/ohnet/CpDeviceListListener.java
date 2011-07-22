@@ -1,0 +1,20 @@
+package ohnet;
+
+import openhome.net.controlpoint.CpDevice;
+
+public class CpDeviceListListener implements IDeviceListListener
+{
+
+	public CpDeviceListListener() {}
+	
+	public void deviceAdded(CpDevice dev)
+	{
+		System.out.println("Device added: " + dev.getUdn());
+	}
+	
+	public void deviceRemoved(CpDevice dev)
+	{
+		System.out.println("Device removed: " + dev.getUdn());
+	}
+	
+}
