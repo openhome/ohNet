@@ -590,7 +590,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = OpenHome/OsTypes.h OpenHome/MimeTypes.h OpenHome/OhNetDefines.h OpenHome/Net/OhNet.h OpenHome/Net/ControlPoint/CpProxy.h OpenHome/Net/ControlPoint/FunctorCpDevice.h OpenHome/Net/Bindings/Cpp/ControlPoint OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies OpenHome/Net/Device/DvProvider.h OpenHome/Net/Device/DvResourceWriter.h OpenHome/Net/Device/DvServerUpnp.h OpenHome/Net/Bindings/Cpp/Device OpenHome/Net/Bindings/Cpp/Providers
+INPUT                  = OpenHome/OsTypes.h OpenHome/MimeTypes.h OpenHome/OhNetDefines.h OpenHome/Net/OhNet.h OpenHome/Net/FunctorAsync.h OpenHome/Net/ControlPoint/CpProxy.h OpenHome/Net/ControlPoint/FunctorCpDevice.h OpenHome/Net/Bindings/Cpp/ControlPoint OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies OpenHome/Net/Device/DvProvider.h OpenHome/Net/Device/DvResourceWriter.h OpenHome/Net/Device/DvServerUpnp.h OpenHome/Net/Bindings/Cpp/Device OpenHome/Net/Bindings/Cpp/Providers
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
