@@ -32,11 +32,7 @@ cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LI
 ohnetdir = ../Build/Obj/$(osdir)/$(build_dir)/
 objdir = Build/Obj/$(osdir)/$(build_dir)/
 inc_build = Build/Include/
-<<<<<<< HEAD
-includes = -I../Build/Include/
-=======
-includes = -I../Upnp/Build/Include/ -I../Upnp/Build/Include/Cpp/ $(platform_includes)
->>>>>>> e4cbb0e441db93f3a6b883f8b7956aff23980442
+includes = -I../Build/Include/ $(platform_includes)
 objext = o
 libprefix = lib
 libext = a
