@@ -590,9 +590,9 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = Public/Cs ControlPoint/Services/Cs Device/Services/Cs
+INPUT                  = OpenHome/Net/Bindings/Cs OpenHome/Net/Bindings/Cs/ControlPoint OpenHome/Net/Bindings/Cs/ControlPoint/Proxies OpenHome/Net/Bindings/Cs/Device OpenHome/Net/Bindings/Cs/Device/Providers
 
-# This tag can be used to specify the character encoding of the source files 
+# This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
 # also the default input encoding. Doxygen uses libiconv (or the iconv built 
 # into libc) for the transcoding. See http://www.gnu.org/software/libiconv for 
