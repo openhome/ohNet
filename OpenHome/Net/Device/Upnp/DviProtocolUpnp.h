@@ -1,5 +1,5 @@
-#ifndef HEADER_DVIDEVICEUPNP
-#define HEADER_DVIDEVICEUPNP
+#ifndef HEADER_DVIPROTOCOLUPNP
+#define HEADER_DVIPROTOCOLUPNP
 
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/OhNetTypes.h>
@@ -19,12 +19,12 @@ namespace OpenHome {
 namespace Net {
 
 class DeviceMsgScheduler;
-class DviDeviceUpnpXmlWriter;
+class DviProtocolUpnpXmlWriter;
 class BonjourWebPage;
 
-class DviDeviceUpnp : public IDvProtocol
+class DviProtocolUpnp : public IDvProtocol
 {
-    friend class DviDeviceUpnpXmlWriter;
+    friend class DviProtocolUpnpXmlWriter;
 public:
     static const Brn kProtocolName;
     static const Brn kDeviceXmlName;
@@ -32,8 +32,8 @@ public:
     static const Brn kControlUrlTail;
     static const Brn kEventUrlTail;
 public:
-    DviDeviceUpnp(DviDevice& aDevice);
-    ~DviDeviceUpnp();
+    DviProtocolUpnp(DviDevice& aDevice);
+    ~DviProtocolUpnp();
     Brn Domain() const;
     Brn Type() const;
     TUint Version() const;
@@ -72,9 +72,9 @@ private:
 private:
     class Nif : public ISsdpMsearchHandler, public INonCopyable
     {
-        friend class DviDeviceUpnp;
+        friend class DviProtocolUpnp;
     public:
-        Nif(DviDeviceUpnp& aDeviceUpnp, DviDevice& aDevice, const NetworkAdapter& aNif, Bwh& aUriBase, TUint aServerPort);
+        Nif(DviProtocolUpnp& aDeviceUpnp, DviDevice& aDevice, const NetworkAdapter& aNif, Bwh& aUriBase, TUint aServerPort);
         ~Nif();
         TIpAddress Interface() const;
         TIpAddress Subnet() const;
@@ -89,7 +89,7 @@ private:
         void BonjourRegister(const TChar* aName);
         void BonjourDeregister();
     private:
-		DviDeviceUpnp* Device();
+		DviProtocolUpnp* Device();
     private:
         void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx);
         void SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx);
@@ -97,7 +97,7 @@ private:
         void SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion);
         void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion);
     private:
-        DviDeviceUpnp* iDeviceUpnp;
+        DviProtocolUpnp* iDeviceUpnp;
         DviDevice& iDevice;
         SsdpListenerMulticast* iListener;
         TInt iId;
@@ -123,10 +123,10 @@ private:
     DviServerUpnp* iServer;
 };
 
-class DviDeviceUpnpXmlWriter : public IResourceWriter
+class DviProtocolUpnpXmlWriter : public IResourceWriter
 {
 public:
-    DviDeviceUpnpXmlWriter(DviDeviceUpnp& aDeviceUpnp);
+    DviProtocolUpnpXmlWriter(DviProtocolUpnp& aDeviceUpnp);
     void Write(TIpAddress aInterface);
     void TransferTo(Brh& aBuf);
 private:
@@ -142,7 +142,7 @@ private:
     void WriteResource(const TByte* aData, TUint aBytes);
     void WriteResourceEnd();
 private:
-    DviDeviceUpnp& iDeviceUpnp;
+    DviProtocolUpnp& iDeviceUpnp;
     WriterBwh iWriter;
 };
 
@@ -153,14 +153,14 @@ public:
     virtual ~DeviceMsgScheduler();
 	void Stop();
 protected:
-    DeviceMsgScheduler(DviDevice& aDevice, DviDeviceUpnp& aDeviceUpnp, TUint aEndTimeMs, TUint aTotalMsgs, Bwh& aUri);
+    DeviceMsgScheduler(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, TUint aEndTimeMs, TUint aTotalMsgs, Bwh& aUri);
     virtual void Next(TUint aIndex);
     void ScheduleNextTimer() const;
 private:
     void NextMsg();
 protected:
     DviDevice& iDevice;
-    DviDeviceUpnp& iDeviceUpnp;
+    DviProtocolUpnp& iDeviceUpnp;
     ISsdpNotify* iNotifier;
     Timer* iTimer;
     Brh iUri;
@@ -174,14 +174,14 @@ private:
 class DeviceMsgSchedulerMsearch : public DeviceMsgScheduler
 {
 protected:
-    DeviceMsgSchedulerMsearch(DviDevice& aDevice, DviDeviceUpnp& aDeviceUpnp, const Endpoint& aRemote,
+    DeviceMsgSchedulerMsearch(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, const Endpoint& aRemote,
                               TUint aMx, TUint aTotalMsgs, Bwh& aUri, TUint aConfigId);
 };
 
 class DeviceMsgSchedulerMsearchAll : public DeviceMsgSchedulerMsearch
 {
 public:
-    DeviceMsgSchedulerMsearchAll(DviDevice& aDevice, DviDeviceUpnp& aDeviceUpnp, const Endpoint& aRemote,
+    DeviceMsgSchedulerMsearchAll(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, const Endpoint& aRemote,
                                  TUint aMx, Bwh& aUri, TUint aConfigId);
     ~DeviceMsgSchedulerMsearchAll();
 };
@@ -189,7 +189,7 @@ public:
 class DeviceMsgSchedulerMsearchRoot : public DeviceMsgSchedulerMsearch
 {
 public:
-    DeviceMsgSchedulerMsearchRoot(DviDevice& aDevice, DviDeviceUpnp& aDeviceUpnp, const Endpoint& aRemote,
+    DeviceMsgSchedulerMsearchRoot(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, const Endpoint& aRemote,
                                   TUint aMx, Bwh& aUri, TUint aConfigId);
     ~DeviceMsgSchedulerMsearchRoot();
 private:
@@ -199,7 +199,7 @@ private:
 class DeviceMsgSchedulerMsearchUuid : public DeviceMsgSchedulerMsearch
 {
 public:
-    DeviceMsgSchedulerMsearchUuid(DviDevice& aDevice, DviDeviceUpnp& aDeviceUpnp, const Endpoint& aRemote,
+    DeviceMsgSchedulerMsearchUuid(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, const Endpoint& aRemote,
                                   TUint aMx, Bwh& aUri, TUint aConfigId);
     ~DeviceMsgSchedulerMsearchUuid();
 private:
@@ -209,7 +209,7 @@ private:
 class DeviceMsgSchedulerMsearchDeviceType : public DeviceMsgSchedulerMsearch
 {
 public:
-    DeviceMsgSchedulerMsearchDeviceType(DviDevice& aDevice, DviDeviceUpnp& aDeviceUpnp, const Endpoint& aRemote,
+    DeviceMsgSchedulerMsearchDeviceType(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, const Endpoint& aRemote,
                                         TUint aMx, Bwh& aUri, TUint aConfigId);
     ~DeviceMsgSchedulerMsearchDeviceType();
 private:
@@ -219,7 +219,7 @@ private:
 class DeviceMsgSchedulerMsearchServiceType : public DeviceMsgSchedulerMsearch
 {
 public:
-    DeviceMsgSchedulerMsearchServiceType(DviDevice& aDevice, DviDeviceUpnp& aDeviceUpnp, const Endpoint& aRemote, TUint aMx,
+    DeviceMsgSchedulerMsearchServiceType(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, const Endpoint& aRemote, TUint aMx,
                                          const OpenHome::Net::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId);
     ~DeviceMsgSchedulerMsearchServiceType();
 private:
@@ -231,7 +231,7 @@ private:
 class DeviceMsgSchedulerNotify : public DeviceMsgScheduler
 {
 protected:
-    DeviceMsgSchedulerNotify(DviDevice& aDevice, DviDeviceUpnp& aDeviceUpnp, TUint aIntervalMs, TUint aTotalMsgs,
+    DeviceMsgSchedulerNotify(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, TUint aIntervalMs, TUint aTotalMsgs,
                              TIpAddress aInterface, Bwh& aUri, TUint aConfigId);
 protected:
     SsdpNotifier iSsdpNotifier;
@@ -241,7 +241,7 @@ class DeviceMsgSchedulerNotifyAlive : public DeviceMsgSchedulerNotify
 {
     static const TUint kMsgIntervalMs = 40;
 public:
-    DeviceMsgSchedulerNotifyAlive(DviDevice& aDevice, DviDeviceUpnp& aDeviceUpnp,
+    DeviceMsgSchedulerNotifyAlive(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
                                   TIpAddress aInterface, Bwh& aUri, TUint aConfigId);
     ~DeviceMsgSchedulerNotifyAlive();
 };
@@ -250,7 +250,7 @@ class DeviceMsgSchedulerNotifyByeBye : public DeviceMsgSchedulerNotify
 {
     static const TUint kMsgIntervalMs = 10;
 public:
-    DeviceMsgSchedulerNotifyByeBye(DviDevice& aDevice, DviDeviceUpnp& aDeviceUpnp,
+    DeviceMsgSchedulerNotifyByeBye(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
                                    TIpAddress aInterface, Bwh& aUri, TUint aConfigId,
                                    Functor& aCompleted);
     ~DeviceMsgSchedulerNotifyByeBye();
@@ -262,7 +262,7 @@ class DeviceMsgSchedulerNotifyUpdate : public DeviceMsgSchedulerNotify
 {
     static const TUint kMsgIntervalMs = 20;
 public:
-    DeviceMsgSchedulerNotifyUpdate(DviDevice& aDevice, DviDeviceUpnp& aDeviceUpnp,
+    DeviceMsgSchedulerNotifyUpdate(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
                                    TIpAddress aInterface, Bwh& aUri, TUint aConfigId,
                                    Functor& aCompleted);
     ~DeviceMsgSchedulerNotifyUpdate();
@@ -273,4 +273,4 @@ private:
 } // namespace Net
 } // namespace OpenHome
 
-#endif // HEADER_DVIDEVICEUPNP
+#endif // HEADER_DVIPROTOCOLUPNP

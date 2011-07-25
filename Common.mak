@@ -46,7 +46,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)DvDeviceStd.$(objext) \
     		   $(objdir)DvDeviceC.$(objext) \
     		   $(objdir)DviDevice.$(objext) \
-    		   $(objdir)DviDeviceUpnp.$(objext) \
+    		   $(objdir)DviProtocolUpnp.$(objext) \
     		   $(objdir)DviServer.$(objext) \
     		   $(objdir)DviServerUpnp.$(objext) \
     		   $(objdir)DviServerWebSocket.$(objext) \
@@ -143,7 +143,7 @@ headers =   $(inc_build)/OpenHome/Buffer.h \
             $(inc_build)/OpenHome/Net/Private/DeviceXml.h \
             $(inc_build)/OpenHome/Net/Private/Discovery.h \
             $(inc_build)/OpenHome/Net/Private/DviDevice.h \
-            $(inc_build)/OpenHome/Net/Private/DviDeviceUpnp.h \
+            $(inc_build)/OpenHome/Net/Private/DviProtocolUpnp.h \
             $(inc_build)/OpenHome/Net/Private/DviServer.h \
             $(inc_build)/OpenHome/Net/Private/DviServerUpnp.h \
             $(inc_build)/OpenHome/Net/Private/DviServerWebSocket.h \
@@ -261,8 +261,8 @@ $(objdir)DvDeviceC.$(objext) : OpenHome/Net/Bindings/C/Device/DvDeviceC.cpp $(he
 	$(compiler)DvDeviceC.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/C/Device/DvDeviceC.cpp
 $(objdir)DviDevice.$(objext) : OpenHome/Net/Device/DviDevice.cpp $(headers)
 	$(compiler)DviDevice.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/DviDevice.cpp
-$(objdir)DviDeviceUpnp.$(objext) : OpenHome/Net/Device/Upnp/DviDeviceUpnp.cpp $(headers)
-	$(compiler)DviDeviceUpnp.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Upnp/DviDeviceUpnp.cpp
+$(objdir)DviProtocolUpnp.$(objext) : OpenHome/Net/Device/Upnp/DviProtocolUpnp.cpp $(headers)
+	$(compiler)DviProtocolUpnp.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/Upnp/DviProtocolUpnp.cpp
 $(objdir)DviServer.$(objext) : OpenHome/Net/Device/DviServer.cpp $(headers)
 	$(compiler)DviServer.$(objext) -c $(cflags) $(includes) OpenHome/Net/Device/DviServer.cpp
 $(objdir)DviServerUpnp.$(objext) : OpenHome/Net/Device/Upnp/DviServerUpnp.cpp $(headers)

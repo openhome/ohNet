@@ -63,7 +63,7 @@ void DviServer::AddServer(NetworkAdapter& aNif)
 
 void DviServer::SubnetListChanged()
 {
-    /* DviDeviceUpnp relies on servers being available on all appropriate interfaces.
+    /* DviProtocolUpnp relies on servers being available on all appropriate interfaces.
        We assume this happens through DviServer being created before any devices
        so registering for subnet change notification earlier.  Assuming NetworkAdapterList
        always runs its listeners in the order they registered, we'll have updated before
