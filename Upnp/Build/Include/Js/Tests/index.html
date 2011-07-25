@@ -1,0 +1,383 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="-1">        
+   <link rel="stylesheet" type="text/css" href="test/assets/skins/sam/skin.css" />
+    <script src="extern/xui-2.0.0.min.js" type="text/javascript"></script>
+    <script src="extern/ProxyCore.js" type="text/javascript"></script>
+    <script src="proxy/CpOpenhomeOrgTestBasic1.js" type="text/javascript"></script>
+    <script src="scripts/yui-min.js" type="text/javascript"></script>
+    <script src="scripts/io-base-min.js" type="text/javascript"></script>
+    <script src="scripts/querystring-stringify-simple-min.js" type="text/javascript"></script>
+    <script src="scripts/yuitest-min.js" type="text/javascript"></script>
+    <script src="scripts/loader-min.js" type="text/javascript"></script>
+    <script src="scripts/substitute-min.js" type="text/javascript"></script>
+    <script src="scripts/oop-min.js" type="text/javascript"></script>
+    <script src="scripts/dom-min.js" type="text/javascript"></script>
+    <script src="scripts/event-custom-base-min.js" type="text/javascript"></script>
+    <script src="scripts/event-base-min.js" type="text/javascript"></script>
+    <script src="scripts/pluginhost-min.js" type="text/javascript"></script>
+    <script src="scripts/node-min.js" type="text/javascript"></script>
+    <script src="scripts/event-delegate-min.js" type="text/javascript"></script>
+    <script src="scripts/json-min.js" type="text/javascript"></script>
+    <script src="scripts/event-simulate-min.js" type="text/javascript"></script>
+    <script src="scripts/test-min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var outputFile = false;
+        var kAsyncTimeoutMS = 15000; //300;
+        var _Y;
+         var proxy;
+        function pageLoad() {
+            YUI({ logInclude: { TestRunner: true} }).use('test', function (Y) {
+                _Y = Y;
+               
+                var testCase = new Y.Test.Case({
+
+                    name: "Test Proxy",
+
+                    //               _should: {
+                    //                    ignore: {
+                    //                        testAction_Increment1: true,
+                    //                        testAction_Increment2: true,
+                    //                        testAction_Increment3: true,
+                    //                        testAction_Decrement1: true,
+                    //                        testAction_Decrement2: true,
+                    //                        testAction_Decrement3: true,
+                    //                        testAction_InDecrement: true,
+                    //                        testAction_Toggle1: true,
+                    //                        testAction_Toggle2: true,
+                    //                        testAction_Toggle3: true,
+                    //                        testAction_ToggleTwice: true,
+                    //                        testAction_EchoString1: true,
+                    //                        testAction_EchoString2: true,
+                    //                        testAction_EchoBinary1: true,
+                    //                        testAction_EchoBinary2: true,
+                    //                    }
+                    //               },
+
+                    testSubscriptionManager: function () {
+                        _this = this;
+                        OhNet.SubscriptionManager.start(function () {
+                            proxy = new CpProxyOpenhomeOrgTestBasic1("device-ohNetTestBasic");
+                            proxy.subscribe(function () {
+                                _this.resume();
+                            });
+                            proxy2 = new CpProxyOpenhomeOrgTestBasic1("device-ohNetTestBasic");
+                            proxy2.subscribe();
+
+
+                            Y.Assert.isNotUndefined(proxy);
+                        }, 54321, true);
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testAction_Increment1: function () {
+                        _this = this;
+                        var i = 3;
+                        proxy.Increment(i, function (result) {
+                            Y.Assert.areEqual((i + 1), result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+
+                    },
+
+                    testAction_Increment2: function () {
+                        _this = this;
+                        var i = 100001;
+                        proxy.Increment(i, function (result) {
+                            Y.Assert.areEqual((i + 1), result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+
+                    },
+
+                    testAction_Increment3: function () {
+                        _this = this;
+                        var i = 1234;
+                        proxy.Increment(i, function (result) {
+                            Y.Assert.areEqual((i + 1), result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testAction_Decrement1: function () {
+                        _this = this;
+                        var i = 3
+                        proxy.Decrement(i, function (result) {
+                            Y.Assert.areEqual((i - 1), result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+
+                    },
+
+                    testAction_Decrement2: function () {
+                        _this = this;
+                        var i = 100001;
+                        proxy.Decrement(i, function (result) {
+                            Y.Assert.areEqual((i - 1), result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+
+                    },
+
+                    testAction_Decrement3: function () {
+                        _this = this;
+                        var i = 1234;
+                        proxy.Decrement(i, function (result) {
+                            Y.Assert.areEqual((i - 1), result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testAction_InDecrement: function () {
+                        _this = this;
+                        var i = 8080;
+                        proxy.Increment(i, function (result) {
+                            proxy.Decrement(result["Result"], function (result) {
+                                Y.Assert.areEqual(i, result["Result"]);
+                                _this.resume();
+                            });
+                            //
+
+                        });
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testAction_Toggle1: function () {
+                        _this = this;
+                        var i = false;
+                        proxy.Toggle(i, function (result) {
+                            Y.Assert.areEqual(!i, result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+
+                    },
+
+                    testAction_Toggle2: function () {
+                        _this = this;
+                        var i = false;
+                        proxy.Toggle(i, function (result) {
+                            Y.Assert.areEqual(!i, result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+
+                    },
+
+                    testAction_Toggle3: function () {
+                        _this = this;
+                        var i = false;
+                        proxy.Toggle(i, function (result) {
+                            Y.Assert.areEqual(!i, result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testAction_ToggleTwice: function () {
+                        _this = this;
+                        var i = false;
+                        proxy.Toggle(i, function (result) {
+                            proxy.Toggle(result["Result"], function (result) {
+                                Y.Assert.areEqual(i, result["Result"]);
+                                _this.resume();
+                            });
+                        });
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testAction_EchoString1: function () {
+                        _this = this;
+                        var i = "<&'tag\">";
+                        proxy.EchoString(i, function (result) {
+                            Y.Assert.areEqual(i, result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testAction_EchoString2: function () {
+                        _this = this;
+                        var i = "amp+/0123456789ltgtABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyw=";
+                        proxy.EchoString(i, function (result) {
+                            Y.Assert.areEqual(i, result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testAction_EchoBinary1: function () {
+                        _this = this;
+                        var i = "amp+/0123456789ltgtABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyw=";
+                        proxy.EchoBinary(i, function (result) {
+                            Y.Assert.areEqual(i, result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+
+                    testAction_EchoBinary2: function () {
+                        _this = this;
+                        var i = Math.random().toString(16).replace(".", "");
+                        proxy.EchoBinary(i, function (result) {
+                            Y.Assert.areEqual(i, result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+
+                    testAction_EchoBinary3: function () {
+                        _this = this;
+                        var i = ""; ;
+                        for (var c = 0; c < 256; c++) {
+                            i += String.fromCharCode(c);
+                        }
+
+                        proxy.EchoBinary(i, function (result) {
+                            Y.Assert.areEqual(i, result["Result"]);
+                            _this.resume();
+                        });
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testVarUint_Changed: function () {
+                        _this = this;
+                        proxy.GetUint(function (result) {
+                            proxy.VarUint_Changed(function (state) {
+                                Y.Assert.areEqual(state, result["ValueUint"] + 1);
+                                _this.resume();
+                            });
+                            proxy.SetUint(result["ValueUint"] + 1);
+                        });
+
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testVarInt_Changed: function () {
+                        _this = this;
+                        proxy.GetInt(function (result) {
+                            proxy.VarInt_Changed(function (state) {
+                                Y.Assert.areEqual(state, result["ValueInt"] + 1);
+                                _this.resume();
+                            });
+                            proxy.SetInt(result["ValueInt"] + 1);
+                        });
+
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testVarBool_Changed: function () {
+                        _this = this;
+                        proxy.GetBool(function (result) {
+                            proxy.VarBool_Changed(function (state) {
+                                Y.Assert.areEqual(state, !result["ValueBool"]);
+                                _this.resume();
+                            });
+                            proxy.SetBool(!result["ValueBool"]);
+                        });
+
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testVarString_Changed: function () {
+                        _this = this;
+                        proxy.GetString(function (result) {
+                            if (result["ValueStr"] == null)
+                                result["ValueStr"] = "";
+                            proxy.VarStr_Changed(function (state) {
+                                Y.Assert.areEqual(state, result["ValueStr"] + "<&'tag\">");
+                                _this.resume();
+                            });
+                            proxy.SetString(result["ValueStr"] + "<&'tag\">");
+                        });
+
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testVarBinary_Changed: function () {
+                        _this = this;
+                        var i = ""; ;
+                        for (var c = 0; c < 256; c++) {
+                            i += String.fromCharCode(c);
+
+                        }
+                        proxy.GetBinary(function (result) {
+                            if (result["ValueBin"] == null)
+                                result["ValueBin"] = "";
+                            proxy.VarBin_Changed(function (state) {
+                                Y.Assert.areEqual(state, result["ValueBin"] + i);
+                                _this.resume();
+                            });
+                            proxy.SetBinary(result["ValueBin"] + i);
+                        });
+
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                    testProxy2: function () {
+                        proxy.unsubscribe();
+                        _this = this;
+                        proxy2.GetString(function (result) {
+                            proxy2.VarStr_Changed(function (state) {
+                                Y.Assert.areEqual(state, result["ValueStr"]+"<&'tag\">");
+                                _this.resume();
+                            });
+                            // Value set by Proxy 1
+                            proxy.SetString(result["ValueStr"]+ "<&'tag\">");
+        
+                        });
+
+                        this.wait(kAsyncTimeoutMS);
+                    },
+
+                });
+
+
+                Y.Test.Runner.add(testCase);
+                Y.Test.Runner.subscribe(Y.Test.Runner.COMPLETE_EVENT, onComplete);
+
+                Y.Test.Runner.run();
+            });
+
+
+
+        }
+
+        function onComplete(results) {
+            var resultsXML = this.getResults(_Y.Test.Format.JUnitXML);
+            if(outputFile)
+            {
+                proxy.WriteFile(resultsXML,"xout\\ProxyJsTest.xml",
+                function () {
+               window.close();
+                },function() {
+                    window.close();
+                });
+                setTimeout(function() {   window.close();  },5000); // Close window after 5 seconds as a fall back
+            }
+            else
+            {
+                console.log(resultsXML);
+            }
+            
+           
+        } 
+      
+    </script>
+</head>
+<body onload="pageLoad()">
+    <div id="results">
+    </div>
+</body>
+</html>
