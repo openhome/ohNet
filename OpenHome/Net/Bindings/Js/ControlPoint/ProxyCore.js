@@ -27,7 +27,7 @@ OhNet.SubscriptionManager = (function () {
 
     // Constants 
     var VERSION = "1.0";
-    var DEFAULT_SUBSCRIPTION_TIMEOUT_SEC = 1800; // The default suggested timeout in seconds for each subscription.
+    var DEFAULT_SUBSCRIPTION_TIMEOUT_SEC = 30; // The default suggested timeout in seconds for each subscription.
     var RENEW_TRIGGER = 0.7; // The multiplier in which to send the renewal message. (Send renew message every RENEW_TRIGGER * DEFAULT_SUBSCRIPTION_TIMEOUT_SEC)
     var DEBUG = false; // A flag to enable debugging messages written to console
 
