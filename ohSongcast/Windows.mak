@@ -14,7 +14,7 @@ build_dir = Debug
 # Macros used by Common.mak
 
 ar = lib /nologo /out:$(objdir)
-cflags = $(debug_specific_cflags) /W4 /WX /EHsc /FR$(objdir) /Gd -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS -DDllExport=__declspec(dllexport) -DDllExportClass=
+cflags = $(debug_specific_cflags) /W4 /WX /EHsc /FR$(objdir) -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS 
 ohnetdir = ..\Build\Obj\Windows\$(build_dir)^\
 objdirbare = Build\Obj\Windows\$(build_dir)
 objdir = $(objdirbare)^\

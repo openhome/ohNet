@@ -9,127 +9,127 @@ using namespace OpenHome::Net;
 
 // C interface
 
-THandle SoundcardCreate(uint32_t aSubnet, uint32_t aChannel, uint32_t aTtl, uint32_t aMulticast, uint32_t aEnabled, uint32_t aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr)
+THandle STDCALL SoundcardCreate(uint32_t aSubnet, uint32_t aChannel, uint32_t aTtl, uint32_t aMulticast, uint32_t aEnabled, uint32_t aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr)
 {
 	return (Soundcard::Create(aSubnet, aChannel, aTtl, (aMulticast == 0) ? false : true, (aEnabled == 0) ? false : true, aPreset, aReceiverCallback, aReceiverPtr, aSubnetCallback, aSubnetPtr));
 }
 
-void SoundcardSetSubnet(THandle aSoundcard, uint32_t aValue)
+void STDCALL SoundcardSetSubnet(THandle aSoundcard, uint32_t aValue)
 {
 	((Soundcard*)aSoundcard)->SetSubnet(aValue);
 }
 
-void SoundcardSetChannel(THandle aSoundcard, uint32_t aValue)
+void STDCALL SoundcardSetChannel(THandle aSoundcard, uint32_t aValue)
 {
 	((Soundcard*)aSoundcard)->SetChannel(aValue);
 }
 
-void SoundcardSetTtl(THandle aSoundcard, uint32_t aValue)
+void STDCALL SoundcardSetTtl(THandle aSoundcard, uint32_t aValue)
 {
 	((Soundcard*)aSoundcard)->SetTtl(aValue);
 }
 
-void SoundcardSetMulticast(THandle aSoundcard, uint32_t aValue)
+void STDCALL SoundcardSetMulticast(THandle aSoundcard, uint32_t aValue)
 {
 	((Soundcard*)aSoundcard)->SetMulticast((aValue == 0) ? false : true);
 }
 
-void SoundcardSetEnabled(THandle aSoundcard, uint32_t aValue)
+void STDCALL SoundcardSetEnabled(THandle aSoundcard, uint32_t aValue)
 {
 	((Soundcard*)aSoundcard)->SetEnabled((aValue == 0) ? false : true);
 }
 
-void SoundcardSetPreset(THandle aSoundcard, uint32_t aValue)
+void STDCALL SoundcardSetPreset(THandle aSoundcard, uint32_t aValue)
 {
 	((Soundcard*)aSoundcard)->SetPreset(aValue);
 }
 
-void SoundcardSetTrack(THandle aSoundcard, const char* aUri, const char* aMetadata, uint64_t aSamplesTotal, uint64_t aSampleStart)
+void STDCALL SoundcardSetTrack(THandle aSoundcard, const char* aUri, const char* aMetadata, uint64_t aSamplesTotal, uint64_t aSampleStart)
 {
 	((Soundcard*)aSoundcard)->SetTrack(aUri, aMetadata, aSamplesTotal, aSampleStart);
 }
 
-void SoundcardSetMetatext(THandle aSoundcard, const char* aValue)
+void STDCALL SoundcardSetMetatext(THandle aSoundcard, const char* aValue)
 {
 	((Soundcard*)aSoundcard)->SetMetatext(aValue);
 }
 
-void SoundcardRefreshReceivers(THandle aSoundcard)
+void STDCALL SoundcardRefreshReceivers(THandle aSoundcard)
 {
 	((Soundcard*)aSoundcard)->RefreshReceivers();
 }
 
-void SoundcardDestroy(THandle aSoundcard)
+void STDCALL SoundcardDestroy(THandle aSoundcard)
 {
 	delete ((Soundcard*)aSoundcard);
 }
 
-const char* ReceiverUdn(THandle aReceiver)
+const char* STDCALL ReceiverUdn(THandle aReceiver)
 {
 	return (((Receiver*)aReceiver)->Udn());
 }
 
-const char* ReceiverRoom(THandle aReceiver)
+const char* STDCALL ReceiverRoom(THandle aReceiver)
 {
 	return (((Receiver*)aReceiver)->Room());
 }
 
-const char* ReceiverGroup(THandle aReceiver)
+const char* STDCALL ReceiverGroup(THandle aReceiver)
 {
 	return (((Receiver*)aReceiver)->Group());
 }
 
-const char* ReceiverName(THandle aReceiver)
+const char* STDCALL ReceiverName(THandle aReceiver)
 {
 	return (((Receiver*)aReceiver)->Name());
 }
 
-EReceiverStatus ReceiverStatus(THandle aReceiver)
+EReceiverStatus STDCALL ReceiverStatus(THandle aReceiver)
 {
 	return (((Receiver*)aReceiver)->Status());
 }
 
-void ReceiverPlay(THandle aReceiver)
+void STDCALL ReceiverPlay(THandle aReceiver)
 {
 	((Receiver*)aReceiver)->Play();
 }
 
-void ReceiverStop(THandle aReceiver)
+void STDCALL ReceiverStop(THandle aReceiver)
 {
 	((Receiver*)aReceiver)->Stop();
 }
 
-void ReceiverStandby(THandle aReceiver)
+void STDCALL ReceiverStandby(THandle aReceiver)
 {
 	((Receiver*)aReceiver)->Standby();
 }
 
-void ReceiverAddRef(THandle aReceiver)
+void STDCALL ReceiverAddRef(THandle aReceiver)
 {
 	((Receiver*)aReceiver)->AddRef();
 }
 
-void ReceiverRemoveRef(THandle aReceiver)
+void STDCALL ReceiverRemoveRef(THandle aReceiver)
 {
 	((Receiver*)aReceiver)->RemoveRef();
 }
 
-uint32_t SubnetAddress(THandle aSubnet)
+uint32_t STDCALL SubnetAddress(THandle aSubnet)
 {
 	return (((Subnet*)aSubnet)->Address());
 }
 
-const char* SubnetAdapterName(THandle aSubnet)
+const char* STDCALL SubnetAdapterName(THandle aSubnet)
 {
 	return (((Subnet*)aSubnet)->AdapterName());
 }
 
-void SubnetAddRef(THandle aSubnet)
+void STDCALL SubnetAddRef(THandle aSubnet)
 {
 	((Subnet*)aSubnet)->AddRef();
 }
 
-void SubnetRemoveRef(THandle aSubnet)
+void STDCALL SubnetRemoveRef(THandle aSubnet)
 {
 	((Subnet*)aSubnet)->RemoveRef();
 }

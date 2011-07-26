@@ -35,36 +35,36 @@ enum EReceiverStatus {
  * @param[in] aType     Type of change indicated
  * @param[in] aReceiver Receiver handle
  */
-typedef void (*ReceiverCallback)(void* aPtr, ECallbackType aType, THandle aReceiver);
-typedef void (*SubnetCallback)(void* aPtr, ECallbackType aType, THandle aSubnet);
+typedef void (STDCALL *ReceiverCallback)(void* aPtr, ECallbackType aType, THandle aReceiver);
+typedef void (STDCALL *SubnetCallback)(void* aPtr, ECallbackType aType, THandle aSubnet);
 
-DllExport THandle SoundcardCreate(uint32_t aSubnet, uint32_t aChannel, uint32_t aTtl, uint32_t aMulticast, uint32_t aEnabled, uint32_t aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr);
-DllExport void SoundcardSetSubnet(THandle aSoundcard, uint32_t aValue);
-DllExport void SoundcardSetChannel(THandle aSoundcard, uint32_t aValue);
-DllExport void SoundcardSetTtl(THandle aSoundcard, uint32_t aValue);
-DllExport void SoundcardSetMulticast(THandle aSoundcard, uint32_t aValue);
-DllExport void SoundcardSetEnabled(THandle aSoundcard, uint32_t aValue);
-DllExport void SoundcardSetPreset(THandle aSoundcard, uint32_t aValue);
-DllExport void SoundcardSetTrack(THandle aSoundcard, const char* aUri, const char* aMetadata, uint64_t aSamplesTotal, uint64_t aSampleStart);
-DllExport void SoundcardSetMetatext(THandle aSoundcard, const char* aValue);
-DllExport void SoundcardRefreshReceivers(THandle aSoundcard);
-DllExport void SoundcardDestroy(THandle aSoundcard);
+DllExport THandle STDCALL SoundcardCreate(uint32_t aSubnet, uint32_t aChannel, uint32_t aTtl, uint32_t aMulticast, uint32_t aEnabled, uint32_t aPreset, ReceiverCallback aReceiverCallback, void* aReceiverPtr, SubnetCallback aSubnetCallback, void* aSubnetPtr);
+DllExport void STDCALL SoundcardSetSubnet(THandle aSoundcard, uint32_t aValue);
+DllExport void STDCALL SoundcardSetChannel(THandle aSoundcard, uint32_t aValue);
+DllExport void STDCALL SoundcardSetTtl(THandle aSoundcard, uint32_t aValue);
+DllExport void STDCALL SoundcardSetMulticast(THandle aSoundcard, uint32_t aValue);
+DllExport void STDCALL SoundcardSetEnabled(THandle aSoundcard, uint32_t aValue);
+DllExport void STDCALL SoundcardSetPreset(THandle aSoundcard, uint32_t aValue);
+DllExport void STDCALL SoundcardSetTrack(THandle aSoundcard, const char* aUri, const char* aMetadata, uint64_t aSamplesTotal, uint64_t aSampleStart);
+DllExport void STDCALL SoundcardSetMetatext(THandle aSoundcard, const char* aValue);
+DllExport void STDCALL SoundcardRefreshReceivers(THandle aSoundcard);
+DllExport void STDCALL SoundcardDestroy(THandle aSoundcard);
 
-DllExport const char* ReceiverUdn(THandle aReceiver);
-DllExport const char* ReceiverRoom(THandle aReceiver);
-DllExport const char* ReceiverGroup(THandle aReceiver);
-DllExport const char* ReceiverName(THandle aReceiver);
-DllExport EReceiverStatus ReceiverStatus(THandle aReceiver);
-DllExport void ReceiverPlay(THandle aReceiver);
-DllExport void ReceiverStop(THandle aReceiver);
-DllExport void ReceiverStandby(THandle aReceiver);
-DllExport void ReceiverAddRef(THandle aReceiver);
-DllExport void ReceiverRemoveRef(THandle aReceiver);
+DllExport const char* STDCALL ReceiverUdn(THandle aReceiver);
+DllExport const char* STDCALL ReceiverRoom(THandle aReceiver);
+DllExport const char* STDCALL ReceiverGroup(THandle aReceiver);
+DllExport const char* STDCALL ReceiverName(THandle aReceiver);
+DllExport EReceiverStatus STDCALL ReceiverStatus(THandle aReceiver);
+DllExport void STDCALL ReceiverPlay(THandle aReceiver);
+DllExport void STDCALL ReceiverStop(THandle aReceiver);
+DllExport void STDCALL ReceiverStandby(THandle aReceiver);
+DllExport void STDCALL ReceiverAddRef(THandle aReceiver);
+DllExport void STDCALL ReceiverRemoveRef(THandle aReceiver);
 
-DllExport uint32_t SubnetAddress(THandle aSubnet);
-DllExport const char* SubnetAdapterName(THandle aSubnet);
-DllExport void SubnetAddRef(THandle aReceiver);
-DllExport void SubnetRemoveRef(THandle aReceiver);
+DllExport uint32_t STDCALL SubnetAddress(THandle aSubnet);
+DllExport const char* STDCALL SubnetAdapterName(THandle aSubnet);
+DllExport void STDCALL SubnetAddRef(THandle aReceiver);
+DllExport void STDCALL SubnetRemoveRef(THandle aReceiver);
 
 #ifdef __cplusplus
 } // extern "C"

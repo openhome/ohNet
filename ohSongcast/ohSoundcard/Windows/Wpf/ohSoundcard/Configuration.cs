@@ -31,20 +31,25 @@ namespace OpenHome.Soundcard
             {
                 return (New(path));
             }
-            else
+
+            FileInfo info = new FileInfo(path);
+
+            if (info.Length == 0)
             {
-                try
-                {
-                    TextReader reader = new StreamReader(path);
-                    Configuration configuration = (Configuration)xml.Deserialize(reader);
-                    configuration.SetPath(path);
-                    reader.Close();
-                    return (configuration);
-                }
-                catch (XmlException)
-                {
-                    return (New(path));
-                }
+                return (New(path));
+            }
+
+            try
+            {
+                TextReader reader = new StreamReader(path);
+                Configuration configuration = (Configuration)xml.Deserialize(reader);
+                configuration.SetPath(path);
+                reader.Close();
+                return (configuration);
+            }
+            catch (Exception)
+            {
+                return (New(path));
             }
         }
 

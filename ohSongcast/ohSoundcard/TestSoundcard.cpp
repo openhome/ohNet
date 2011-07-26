@@ -52,7 +52,7 @@ using namespace OpenHome;
 using namespace OpenHome::Net;
 using namespace OpenHome::TestFramework;
 
-void loggerReceiver(void* /* aPtr */, ECallbackType aType, THandle aReceiver)
+void STDCALL loggerReceiver(void* /* aPtr */, ECallbackType aType, THandle aReceiver)
 {
 	const char* room = ReceiverRoom(aReceiver);
 	const char* group = ReceiverGroup(aReceiver);
@@ -72,7 +72,7 @@ void loggerReceiver(void* /* aPtr */, ECallbackType aType, THandle aReceiver)
 	}
 }
 
-void loggerSubnet(void* /* aPtr */, ECallbackType aType, THandle aSubnet)
+void STDCALL loggerSubnet(void* /* aPtr */, ECallbackType aType, THandle aSubnet)
 {
 	TIpAddress address = SubnetAddress(aSubnet);
 	const char* name = SubnetAdapterName(aSubnet);
