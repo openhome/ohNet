@@ -291,7 +291,7 @@ void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aInterface, 
             if (service == NULL) {
                 THROW(ReaderError);
             }
-            WriteServiceXml(*service, aResourceWriter);
+            DviProtocolUpnpServiceXmlWriter::Write(*service, aResourceWriter);
         }
     }
 }
@@ -461,215 +461,9 @@ void DviProtocolUpnp::GetUriDeviceXml(Bwh& aUri, const Brx& aUriBase)
 
 void DviProtocolUpnp::GetDeviceXml(Brh& aXml, TIpAddress aInterface)
 {
-    DviProtocolUpnpXmlWriter writer(*this);
+    DviProtocolUpnpDeviceXmlWriter writer(*this);
     writer.Write(aInterface);
     writer.TransferTo(aXml);
-}
-
-void DviProtocolUpnp::WriteServiceXml(const DviService& aService, IResourceWriter& aResourceWriter)
-{
-    WriterBwh writer(1024);
-
-    writer.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-    writer.Write("<scpd xmlns=\"urn:schemas-upnp-org:service-1-0\">");
-    writer.Write("<specVersion>");
-    writer.Write("<major>1</major>");
-    writer.Write("<minor>1</minor>");
-    writer.Write("</specVersion>");
-    writer.Write("<actionList>");
-    DviService::VectorActions actions = aService.DvActions();
-    for (TUint i=0; i<actions.size(); i++) {
-        const Action* action = actions[i].Action();
-        writer.Write("<action>");
-        writer.Write("<name>");
-        writer.Write(action->Name());
-        writer.Write("</name>");
-        writer.Write("<argumentList>");
-        WriteServiceActionParams(writer, *action, true);
-        WriteServiceActionParams(writer, *action, false);
-        writer.Write("</argumentList>");
-        writer.Write("</action>");
-    }
-    writer.Write("</actionList>");
-    writer.Write("<serviceStateTable>");
-    const DviService::VectorProperties& properties = aService.Properties();
-    for (TUint i=0; i<properties.size(); i++) {
-        WriteStateVariable(writer, properties[i]->Parameter(), true, NULL);
-    }
-    for (TUint i=0; i<actions.size(); i++) {
-        const Action* action = actions[i].Action();
-        WriteTechnicalStateVariables(writer, action, action->InputParameters());
-        WriteTechnicalStateVariables(writer, action, action->OutputParameters());
-    }
-    writer.Write("</serviceStateTable>");
-    writer.Write("</scpd>");
-
-    Brh xml;
-    writer.TransferTo(xml);
-    aResourceWriter.WriteResourceBegin(xml.Bytes(), kOhNetMimeTypeXml);
-    aResourceWriter.WriteResource(xml.Ptr(), xml.Bytes());
-    aResourceWriter.WriteResourceEnd();
-}
-
-void DviProtocolUpnp::WriteServiceActionParams(WriterBwh& aWriter, const Action& aAction, TBool aIn)
-{
-    const Action::VectorParameters& params = (aIn? aAction.InputParameters() : aAction.OutputParameters());
-    for (TUint i=0; i<params.size(); i++) {
-        OpenHome::Net::Parameter* param = params[i];
-        aWriter.Write("<argument>");
-        aWriter.Write("<name>");
-        aWriter.Write(param->Name());
-        aWriter.Write("</name>");
-        aWriter.Write("<direction>");
-        aWriter.Write(aIn? "in" : "out");
-        aWriter.Write("</direction>");
-        aWriter.Write("<relatedStateVariable>");
-        if (param->Type() == OpenHome::Net::Parameter::eTypeRelated) {
-            const Brx& relatedVar = static_cast<ParameterRelated*>(param)->Related().Parameter().Name();
-            aWriter.Write(relatedVar);
-        }
-        else {
-            Bwh relatedVar;
-            GetRelatedVariableName(relatedVar, aAction.Name(), param->Name());
-            aWriter.Write(relatedVar);
-        }
-        aWriter.Write("</relatedStateVariable>");
-        aWriter.Write("</argument>");
-    }
-}
-
-void DviProtocolUpnp::GetRelatedVariableName(Bwh& aName, const Brx& aActionName, const Brx& aParameterName)
-{
-    static const Brn prefix("A_ARG_");
-    const TUint len = prefix.Bytes() + aActionName.Bytes() + 1 + aParameterName.Bytes();
-    aName.Grow(len);
-    aName.Append(prefix);
-    aName.Append(aActionName);
-    aName.Append('_');
-    aName.Append(aParameterName);
-}
-
-
-void DviProtocolUpnp::WriteStateVariable(IWriter& aWriter, const OpenHome::Net::Parameter& aParam, TBool aEvented, const Action* aAction)
-{
-    aWriter.Write(Brn("<stateVariable sendEvents="));
-    if (aEvented) {
-        aWriter.Write(Brn("\"yes\">"));
-    }
-    else {
-        aWriter.Write(Brn("\"no\">"));
-    }
-    aWriter.Write(Brn("<name>"));
-    if (aEvented) {
-        aWriter.Write(aParam.Name());
-    }
-    else {
-        Bwh name;
-        GetRelatedVariableName(name, aAction->Name(), aParam.Name());
-        aWriter.Write(name);
-    }
-    aWriter.Write(Brn("</name>"));
-    aWriter.Write(Brn("<dataType>"));
-    switch (aParam.Type())
-    {
-    case OpenHome::Net::Parameter::eTypeBool:
-        aWriter.Write(Brn("boolean"));
-        break;
-    case OpenHome::Net::Parameter::eTypeInt:
-        aWriter.Write(Brn("i4"));
-        break;
-    case OpenHome::Net::Parameter::eTypeUint:
-        aWriter.Write(Brn("ui4"));
-        break;
-    case OpenHome::Net::Parameter::eTypeString:
-        aWriter.Write(Brn("string"));
-        break;
-    case OpenHome::Net::Parameter::eTypeBinary:
-        aWriter.Write(Brn("bin.base64"));
-        break;
-    case OpenHome::Net::Parameter::eTypeRelated:
-        ASSERTS();
-        break;
-    }
-    aWriter.Write(Brn("</dataType>"));
-    switch (aParam.Type())
-    {
-    case OpenHome::Net::Parameter::eTypeBool:
-    case OpenHome::Net::Parameter::eTypeBinary:
-        break;
-    case OpenHome::Net::Parameter::eTypeInt:
-    {
-        const OpenHome::Net::ParameterInt& paramInt = static_cast<const OpenHome::Net::ParameterInt&>(aParam);
-        if (paramInt.MinValue() != ParameterInt::kValueMin ||
-            paramInt.MaxValue() != ParameterInt::kValueMax ||
-            paramInt.Step()     != ParameterInt::kStep) {
-            aWriter.Write(Brn("<allowedValueRange>"));
-            aWriter.Write(Brn("<minimum>"));
-            WriterAscii writerAscii(aWriter);
-            writerAscii.WriteInt(paramInt.MinValue());
-            aWriter.Write(Brn("</minimum>"));
-            aWriter.Write(Brn("<maximum>"));
-            writerAscii.WriteInt(paramInt.MaxValue());
-            aWriter.Write(Brn("</maximum>"));
-            aWriter.Write(Brn("<step>"));
-            writerAscii.WriteInt(paramInt.Step());
-            aWriter.Write(Brn("</step>"));
-            aWriter.Write(Brn("</allowedValueRange>"));
-            }
-    }
-        break;
-    case OpenHome::Net::Parameter::eTypeUint:
-    {
-        const OpenHome::Net::ParameterUint& paramUint = static_cast<const OpenHome::Net::ParameterUint&>(aParam);
-        if (paramUint.MinValue() != ParameterUint::kValueMin ||
-            paramUint.MaxValue() != ParameterUint::kValueMax ||
-            paramUint.Step()     != ParameterUint::kStep) {
-            aWriter.Write(Brn("<allowedValueRange>"));
-            aWriter.Write(Brn("<minimum>"));
-            WriterAscii writerAscii(aWriter);
-            writerAscii.WriteUint(paramUint.MinValue());
-            aWriter.Write(Brn("</minimum>"));
-            aWriter.Write(Brn("<maximum>"));
-            writerAscii.WriteUint(paramUint.MaxValue());
-            aWriter.Write(Brn("</maximum>"));
-            aWriter.Write(Brn("<step>"));
-            writerAscii.WriteUint(paramUint.Step());
-            aWriter.Write(Brn("</step>"));
-            aWriter.Write(Brn("</allowedValueRange>"));
-            }
-    }
-        break;
-    case OpenHome::Net::Parameter::eTypeString:
-    {
-        const OpenHome::Net::ParameterString& paramStr = static_cast<const OpenHome::Net::ParameterString&>(aParam);
-        const ParameterString::Map& allowedVals = paramStr.AllowedValues();
-        if (allowedVals.size() > 0) {
-            aWriter.Write(Brn("<allowedValueList>"));
-            ParameterString::Map::const_iterator it = allowedVals.begin();
-            while (it != allowedVals.end()) {
-                aWriter.Write(Brn("<allowedValue>"));
-                aWriter.Write(*(it->second));
-                aWriter.Write(Brn("</allowedValue>"));
-                it++;
-            }
-            aWriter.Write(Brn("</allowedValueList>"));
-        }
-    }
-        break;
-    case OpenHome::Net::Parameter::eTypeRelated:
-        ASSERTS();
-        break;
-    }
-    aWriter.Write(Brn("</stateVariable>"));
-}
-
-void DviProtocolUpnp::WriteTechnicalStateVariables(IWriter& aWriter, const Action* aAction, const Action::VectorParameters& aParams)
-{
-    for (TUint i=0; i<aParams.size(); i++) {
-        if (aParams[i]->Type() != OpenHome::Net::Parameter::eTypeRelated) {
-            WriteStateVariable(aWriter, *(aParams[i]), false, aAction);
-        }
-    }
 }
 
 void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aInterface)
@@ -914,15 +708,15 @@ void DviProtocolUpnp::Nif::SsdpSearchServiceType(const Endpoint& aEndpoint, TUin
 }
 
 
-// DviProtocolUpnpXmlWriter
+// DviProtocolUpnpDeviceXmlWriter
 
-DviProtocolUpnpXmlWriter::DviProtocolUpnpXmlWriter(DviProtocolUpnp& aDeviceUpnp)
+DviProtocolUpnpDeviceXmlWriter::DviProtocolUpnpDeviceXmlWriter(DviProtocolUpnp& aDeviceUpnp)
     : iDeviceUpnp(aDeviceUpnp)
     , iWriter(1024)
 {
 }
 
-void DviProtocolUpnpXmlWriter::Write(TIpAddress aInterface)
+void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aInterface)
 {
     if (iDeviceUpnp.iDevice.IsRoot()) { // root device header
         iWriter.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
@@ -1051,12 +845,12 @@ void DviProtocolUpnpXmlWriter::Write(TIpAddress aInterface)
     }
 }
 
-void DviProtocolUpnpXmlWriter::TransferTo(Brh& aBuf)
+void DviProtocolUpnpDeviceXmlWriter::TransferTo(Brh& aBuf)
 {
     iWriter.TransferTo(aBuf);
 }
 
-void DviProtocolUpnpXmlWriter::WriteTag(const TChar* aTagName, const TChar* aAttributeKey, ETagRequirementLevel aRequirementLevel)
+void DviProtocolUpnpDeviceXmlWriter::WriteTag(const TChar* aTagName, const TChar* aAttributeKey, ETagRequirementLevel aRequirementLevel)
 {
     const TChar* val;
     iDeviceUpnp.GetAttribute(aAttributeKey, &val);
@@ -1077,18 +871,230 @@ void DviProtocolUpnpXmlWriter::WriteTag(const TChar* aTagName, const TChar* aAtt
     }
 }
 
-void DviProtocolUpnpXmlWriter::WriteResourceBegin(TUint /*aTotalBytes*/, const TChar* /*aMimeType*/)
+void DviProtocolUpnpDeviceXmlWriter::WriteResourceBegin(TUint /*aTotalBytes*/, const TChar* /*aMimeType*/)
 {
 }
 
-void DviProtocolUpnpXmlWriter::WriteResource(const TByte* aData, TUint aBytes)
+void DviProtocolUpnpDeviceXmlWriter::WriteResource(const TByte* aData, TUint aBytes)
 {
     Brn buf(aData, aBytes);
     iWriter.Write(buf);
 }
 
-void DviProtocolUpnpXmlWriter::WriteResourceEnd()
+void DviProtocolUpnpDeviceXmlWriter::WriteResourceEnd()
 {
+}
+
+
+// DviProtocolUpnpServiceXmlWriter
+
+void DviProtocolUpnpServiceXmlWriter::Write(const DviService& aService, IResourceWriter& aResourceWriter)
+{
+    WriterBwh writer(1024);
+    WriteServiceXml(writer, aService);
+    Brh xml;
+    writer.TransferTo(xml);
+    aResourceWriter.WriteResourceBegin(xml.Bytes(), kOhNetMimeTypeXml);
+    aResourceWriter.WriteResource(xml.Ptr(), xml.Bytes());
+    aResourceWriter.WriteResourceEnd();
+}
+
+void DviProtocolUpnpServiceXmlWriter::WriteServiceXml(WriterBwh& aWriter, const DviService& aService)
+{
+    aWriter.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+    aWriter.Write("<scpd xmlns=\"urn:schemas-upnp-org:service-1-0\">");
+    aWriter.Write("<specVersion>");
+    aWriter.Write("<major>1</major>");
+    aWriter.Write("<minor>1</minor>");
+    aWriter.Write("</specVersion>");
+    aWriter.Write("<actionList>");
+    DviService::VectorActions actions = aService.DvActions();
+    for (TUint i=0; i<actions.size(); i++) {
+        const Action* action = actions[i].Action();
+        aWriter.Write("<action>");
+        aWriter.Write("<name>");
+        aWriter.Write(action->Name());
+        aWriter.Write("</name>");
+        aWriter.Write("<argumentList>");
+        WriteServiceActionParams(aWriter, *action, true);
+        WriteServiceActionParams(aWriter, *action, false);
+        aWriter.Write("</argumentList>");
+        aWriter.Write("</action>");
+    }
+    aWriter.Write("</actionList>");
+    aWriter.Write("<serviceStateTable>");
+    const DviService::VectorProperties& properties = aService.Properties();
+    for (TUint i=0; i<properties.size(); i++) {
+        WriteStateVariable(aWriter, properties[i]->Parameter(), true, NULL);
+    }
+    for (TUint i=0; i<actions.size(); i++) {
+        const Action* action = actions[i].Action();
+        WriteTechnicalStateVariables(aWriter, action, action->InputParameters());
+        WriteTechnicalStateVariables(aWriter, action, action->OutputParameters());
+    }
+    aWriter.Write("</serviceStateTable>");
+    aWriter.Write("</scpd>");
+}
+
+void DviProtocolUpnpServiceXmlWriter::WriteServiceActionParams(WriterBwh& aWriter, const Action& aAction, TBool aIn)
+{
+    const Action::VectorParameters& params = (aIn? aAction.InputParameters() : aAction.OutputParameters());
+    for (TUint i=0; i<params.size(); i++) {
+        OpenHome::Net::Parameter* param = params[i];
+        aWriter.Write("<argument>");
+        aWriter.Write("<name>");
+        aWriter.Write(param->Name());
+        aWriter.Write("</name>");
+        aWriter.Write("<direction>");
+        aWriter.Write(aIn? "in" : "out");
+        aWriter.Write("</direction>");
+        aWriter.Write("<relatedStateVariable>");
+        if (param->Type() == OpenHome::Net::Parameter::eTypeRelated) {
+            const Brx& relatedVar = static_cast<ParameterRelated*>(param)->Related().Parameter().Name();
+            aWriter.Write(relatedVar);
+        }
+        else {
+            Bwh relatedVar;
+            GetRelatedVariableName(relatedVar, aAction.Name(), param->Name());
+            aWriter.Write(relatedVar);
+        }
+        aWriter.Write("</relatedStateVariable>");
+        aWriter.Write("</argument>");
+    }
+}
+
+void DviProtocolUpnpServiceXmlWriter::GetRelatedVariableName(Bwh& aName, const Brx& aActionName, const Brx& aParameterName)
+{
+    static const Brn prefix("A_ARG_TYPE_");
+    const TUint len = prefix.Bytes() + aActionName.Bytes() + 1 + aParameterName.Bytes();
+    aName.Grow(len);
+    aName.Append(prefix);
+    aName.Append(aActionName);
+    aName.Append('_');
+    aName.Append(aParameterName);
+}
+
+
+void DviProtocolUpnpServiceXmlWriter::WriteStateVariable(IWriter& aWriter, const OpenHome::Net::Parameter& aParam, TBool aEvented, const Action* aAction)
+{
+    aWriter.Write(Brn("<stateVariable sendEvents="));
+    if (aEvented) {
+        aWriter.Write(Brn("\"yes\">"));
+    }
+    else {
+        aWriter.Write(Brn("\"no\">"));
+    }
+    aWriter.Write(Brn("<name>"));
+    if (aEvented) {
+        aWriter.Write(aParam.Name());
+    }
+    else {
+        Bwh name;
+        GetRelatedVariableName(name, aAction->Name(), aParam.Name());
+        aWriter.Write(name);
+    }
+    aWriter.Write(Brn("</name>"));
+    aWriter.Write(Brn("<dataType>"));
+    switch (aParam.Type())
+    {
+    case OpenHome::Net::Parameter::eTypeBool:
+        aWriter.Write(Brn("boolean"));
+        break;
+    case OpenHome::Net::Parameter::eTypeInt:
+        aWriter.Write(Brn("i4"));
+        break;
+    case OpenHome::Net::Parameter::eTypeUint:
+        aWriter.Write(Brn("ui4"));
+        break;
+    case OpenHome::Net::Parameter::eTypeString:
+        aWriter.Write(Brn("string"));
+        break;
+    case OpenHome::Net::Parameter::eTypeBinary:
+        aWriter.Write(Brn("bin.base64"));
+        break;
+    case OpenHome::Net::Parameter::eTypeRelated:
+        ASSERTS();
+        break;
+    }
+    aWriter.Write(Brn("</dataType>"));
+    switch (aParam.Type())
+    {
+    case OpenHome::Net::Parameter::eTypeBool:
+    case OpenHome::Net::Parameter::eTypeBinary:
+        break;
+    case OpenHome::Net::Parameter::eTypeInt:
+    {
+        const OpenHome::Net::ParameterInt& paramInt = static_cast<const OpenHome::Net::ParameterInt&>(aParam);
+        if (paramInt.MinValue() != ParameterInt::kValueMin ||
+            paramInt.MaxValue() != ParameterInt::kValueMax ||
+            paramInt.Step()     != ParameterInt::kStep) {
+            aWriter.Write(Brn("<allowedValueRange>"));
+            aWriter.Write(Brn("<minimum>"));
+            WriterAscii writerAscii(aWriter);
+            writerAscii.WriteInt(paramInt.MinValue());
+            aWriter.Write(Brn("</minimum>"));
+            aWriter.Write(Brn("<maximum>"));
+            writerAscii.WriteInt(paramInt.MaxValue());
+            aWriter.Write(Brn("</maximum>"));
+            aWriter.Write(Brn("<step>"));
+            writerAscii.WriteInt(paramInt.Step());
+            aWriter.Write(Brn("</step>"));
+            aWriter.Write(Brn("</allowedValueRange>"));
+            }
+    }
+        break;
+    case OpenHome::Net::Parameter::eTypeUint:
+    {
+        const OpenHome::Net::ParameterUint& paramUint = static_cast<const OpenHome::Net::ParameterUint&>(aParam);
+        if (paramUint.MinValue() != ParameterUint::kValueMin ||
+            paramUint.MaxValue() != ParameterUint::kValueMax ||
+            paramUint.Step()     != ParameterUint::kStep) {
+            aWriter.Write(Brn("<allowedValueRange>"));
+            aWriter.Write(Brn("<minimum>"));
+            WriterAscii writerAscii(aWriter);
+            writerAscii.WriteUint(paramUint.MinValue());
+            aWriter.Write(Brn("</minimum>"));
+            aWriter.Write(Brn("<maximum>"));
+            writerAscii.WriteUint(paramUint.MaxValue());
+            aWriter.Write(Brn("</maximum>"));
+            aWriter.Write(Brn("<step>"));
+            writerAscii.WriteUint(paramUint.Step());
+            aWriter.Write(Brn("</step>"));
+            aWriter.Write(Brn("</allowedValueRange>"));
+            }
+    }
+        break;
+    case OpenHome::Net::Parameter::eTypeString:
+    {
+        const OpenHome::Net::ParameterString& paramStr = static_cast<const OpenHome::Net::ParameterString&>(aParam);
+        const ParameterString::Map& allowedVals = paramStr.AllowedValues();
+        if (allowedVals.size() > 0) {
+            aWriter.Write(Brn("<allowedValueList>"));
+            ParameterString::Map::const_iterator it = allowedVals.begin();
+            while (it != allowedVals.end()) {
+                aWriter.Write(Brn("<allowedValue>"));
+                aWriter.Write(*(it->second));
+                aWriter.Write(Brn("</allowedValue>"));
+                it++;
+            }
+            aWriter.Write(Brn("</allowedValueList>"));
+        }
+    }
+        break;
+    case OpenHome::Net::Parameter::eTypeRelated:
+        ASSERTS();
+        break;
+    }
+    aWriter.Write(Brn("</stateVariable>"));
+}
+
+void DviProtocolUpnpServiceXmlWriter::WriteTechnicalStateVariables(IWriter& aWriter, const Action* aAction, const Action::VectorParameters& aParams)
+{
+    for (TUint i=0; i<aParams.size(); i++) {
+        if (aParams[i]->Type() != OpenHome::Net::Parameter::eTypeRelated) {
+            WriteStateVariable(aWriter, *(aParams[i]), false, aAction);
+        }
+    }
 }
 
 

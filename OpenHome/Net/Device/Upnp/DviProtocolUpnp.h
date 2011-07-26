@@ -19,12 +19,12 @@ namespace OpenHome {
 namespace Net {
 
 class DeviceMsgScheduler;
-class DviProtocolUpnpXmlWriter;
+class DviProtocolUpnpDeviceXmlWriter;
 class BonjourWebPage;
 
 class DviProtocolUpnp : public IDvProtocol
 {
-    friend class DviProtocolUpnpXmlWriter;
+    friend class DviProtocolUpnpDeviceXmlWriter;
 public:
     static const Brn kProtocolName;
     static const Brn kDeviceXmlName;
@@ -50,11 +50,6 @@ private:
     void SendUpdateNotifications();
     void GetUriDeviceXml(Bwh& aUri, const Brx& aUriBase);
     void GetDeviceXml(Brh& aXml, TIpAddress aInterface);
-    void WriteServiceXml(const DviService& aService, IResourceWriter& aResourceWriter);
-    void WriteServiceActionParams(WriterBwh& aWriter, const Action& aAction, TBool aIn);
-    void GetRelatedVariableName(Bwh& aName, const Brx& aActionName, const Brx& aParameterName);
-    void WriteStateVariable(IWriter& aWriter, const OpenHome::Net::Parameter& aParam, TBool aEvented, const Action* aAction);
-    void WriteTechnicalStateVariables(IWriter& aWriter, const Action* aAction, const Action::VectorParameters& aParams);
 public:
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
     const Brx& ProtocolName() const;
@@ -123,10 +118,10 @@ private:
     DviServerUpnp* iServer;
 };
 
-class DviProtocolUpnpXmlWriter : public IResourceWriter
+class DviProtocolUpnpDeviceXmlWriter : public IResourceWriter
 {
 public:
-    DviProtocolUpnpXmlWriter(DviProtocolUpnp& aDeviceUpnp);
+    DviProtocolUpnpDeviceXmlWriter(DviProtocolUpnp& aDeviceUpnp);
     void Write(TIpAddress aInterface);
     void TransferTo(Brh& aBuf);
 private:
@@ -144,6 +139,18 @@ private:
 private:
     DviProtocolUpnp& iDeviceUpnp;
     WriterBwh iWriter;
+};
+
+class DviProtocolUpnpServiceXmlWriter
+{
+public:
+    static void Write(const DviService& aService, IResourceWriter& aResourceWriter);
+private:
+    static void WriteServiceXml(WriterBwh& aWriter, const DviService& aService);
+    static void WriteServiceActionParams(WriterBwh& aWriter, const Action& aAction, TBool aIn);
+    static void GetRelatedVariableName(Bwh& aName, const Brx& aActionName, const Brx& aParameterName);
+    static void WriteStateVariable(IWriter& aWriter, const OpenHome::Net::Parameter& aParam, TBool aEvented, const Action* aAction);
+    static void WriteTechnicalStateVariables(IWriter& aWriter, const Action* aAction, const Action::VectorParameters& aParams);
 };
 
 class DeviceMsgScheduler : private INonCopyable
