@@ -52,8 +52,8 @@ DviProtocolUpnp::~DviProtocolUpnp()
     delete iAliveTimer;
     iLock.Wait();
     Stack::NetworkAdapterList().RemoveSubnetListChangeListener(iSubnetListChangeListenerId);
-    for (TUint i=0; i<iInterfaces.size(); i++) {
-        delete iInterfaces[i];
+    for (TUint i=0; i<iAdapters.size(); i++) {
+        delete iAdapters[i];
     }
     iSuppressScheduledEvents = true;
     iLock.Signal();
@@ -128,7 +128,7 @@ void DviProtocolUpnp::AddInterface(const NetworkAdapter& aNif)
     DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
     root->GetUriBase(uriBase, addr, port, *this);
     DviProtocolUpnp::Nif* nif = new DviProtocolUpnp::Nif(*this, iDevice, aNif, uriBase, port);
-    iInterfaces.push_back(nif);
+    iAdapters.push_back(nif);
 }
 
 void DviProtocolUpnp::SubnetListChanged()
@@ -146,17 +146,17 @@ void DviProtocolUpnp::SubnetListChanged()
     TUint i = 0;
     if (current != NULL) {
         // remove listeners whose interface is no longer available
-        while (i<iInterfaces.size()) {
-            if (iInterfaces[i]->Interface() == current->Address()) {
+        while (i<iAdapters.size()) {
+            if (iAdapters[i]->Interface() == current->Address()) {
 			    i++;
 		    }
 		    else {
-			    iInterfaces[i]->SetPendingDelete();
-			    pendingDelete.push_back(iInterfaces[i]);
-                iInterfaces.erase(iInterfaces.begin() + i);
+			    iAdapters[i]->SetPendingDelete();
+			    pendingDelete.push_back(iAdapters[i]);
+                iAdapters.erase(iAdapters.begin() + i);
             }
             // add listener if 'current' is a new subnet
-            if (iInterfaces.size() == 0) {
+            if (iAdapters.size() == 0) {
                 AddInterface(*current);
                 update = true;
             }
@@ -167,14 +167,14 @@ void DviProtocolUpnp::SubnetListChanged()
         std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
         const std::vector<NetworkAdapter*>& nifList = adapterList.List();
         // remove listeners whose interface is no longer available
-        while (i<iInterfaces.size()) {
-            if (FindInterface(iInterfaces[i]->Interface(), nifList) != -1) {
+        while (i<iAdapters.size()) {
+            if (FindInterface(iAdapters[i]->Interface(), nifList) != -1) {
 			    i++;
 		    }
 		    else {
-			    iInterfaces[i]->SetPendingDelete();
-			    pendingDelete.push_back(iInterfaces[i]);
-                iInterfaces.erase(iInterfaces.begin() + i);
+			    iAdapters[i]->SetPendingDelete();
+			    pendingDelete.push_back(iAdapters[i]);
+                iAdapters.erase(iAdapters.begin() + i);
             }
         }
 
@@ -220,8 +220,8 @@ TInt DviProtocolUpnp::FindInterface(TIpAddress aAdapter, const std::vector<Netwo
 
 TInt DviProtocolUpnp::FindListenerForSubnet(TIpAddress aSubnet)
 {
-    for (TUint i=0; i<iInterfaces.size(); i++) {
-        if (iInterfaces[i]->Subnet() == aSubnet) {
+    for (TUint i=0; i<iAdapters.size(); i++) {
+        if (iAdapters[i]->Subnet() == aSubnet) {
             return i;
         }
     }
@@ -230,8 +230,8 @@ TInt DviProtocolUpnp::FindListenerForSubnet(TIpAddress aSubnet)
 
 TInt DviProtocolUpnp::FindListenerForInterface(TIpAddress aAdapter)
 {
-    for (TUint i=0; i<iInterfaces.size(); i++) {
-        if (iInterfaces[i]->Interface() == aAdapter) {
+    for (TUint i=0; i<iAdapters.size(); i++) {
+        if (iAdapters[i]->Interface() == aAdapter) {
             return i;
         }
     }
@@ -249,7 +249,7 @@ void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aAdapter, st
             return;
         }
         if (iDevice.IsRoot()) {
-            const Brx& cachedXml = iInterfaces[index]->DeviceXml();
+            const Brx& cachedXml = iAdapters[index]->DeviceXml();
             if (cachedXml.Bytes() > 0) {
                 xmlBuf.Set(cachedXml);
             }
@@ -257,8 +257,8 @@ void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aAdapter, st
         if (xmlBuf.Bytes() == 0) {
             GetDeviceXml(xml, aAdapter);
             if (iDevice.IsRoot()) {
-                iInterfaces[index]->SetDeviceXml(xml);
-                xmlBuf.Set(iInterfaces[index]->DeviceXml());
+                iAdapters[index]->SetDeviceXml(xml);
+                xmlBuf.Set(iAdapters[index]->DeviceXml());
             }
             else {
                 xmlBuf.Set(xml);
@@ -310,8 +310,8 @@ void DviProtocolUpnp::Enable()
     ASSERT(Type().Bytes() > 0);
     ASSERT(Version() > 0);
     
-    for (TUint i=0; i<iInterfaces.size(); i++) {
-        DviProtocolUpnp::Nif* nif = iInterfaces[i];
+    for (TUint i=0; i<iAdapters.size(); i++) {
+        DviProtocolUpnp::Nif* nif = iAdapters[i];
         Bwh uriBase;
         DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
         nif->UpdateServerPort(*iServer);
@@ -349,16 +349,16 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
     for (i=0; i<iMsgSchedulers.size(); i++) {
         iMsgSchedulers[i]->Stop();
     }
-    iSubnetDisableCount = (TUint)iInterfaces.size();
+    iSubnetDisableCount = (TUint)iAdapters.size();
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetDisabled);
     for (i=0; i<iSubnetDisableCount; i++) {
         Bwh uri;
-        GetUriDeviceXml(uri, iInterfaces[i]->UriBase());
-        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyByeBye(iDevice, *this, iInterfaces[i]->Interface(),
+        GetUriDeviceXml(uri, iAdapters[i]->UriBase());
+        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyByeBye(iDevice, *this, iAdapters[i]->Interface(),
                                                                     uri, iDevice.ConfigId(), functor));
     }
-    for (TUint i=0; i<iInterfaces.size(); i++) {
-        iInterfaces[i]->BonjourDeregister();
+    for (TUint i=0; i<iAdapters.size(); i++) {
+        iAdapters[i]->BonjourDeregister();
     }
     const TChar* name = NULL;
     GetAttribute("MdnsHostName", &name);
@@ -425,10 +425,10 @@ void DviProtocolUpnp::SendAliveNotifications()
         return;
     }
     iLock.Wait();
-    for (TUint i=0; i<iInterfaces.size(); i++) {
+    for (TUint i=0; i<iAdapters.size(); i++) {
         Bwh uri;
-        GetUriDeviceXml(uri, iInterfaces[i]->UriBase());
-        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyAlive(iDevice, *this, iInterfaces[i]->Interface(),
+        GetUriDeviceXml(uri, iAdapters[i]->UriBase());
+        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyAlive(iDevice, *this, iAdapters[i]->Interface(),
                                                                    uri, iDevice.ConfigId()));
     }
     TUint maxUpdateTimeMs = Stack::InitParams().DvMaxUpdateTimeSecs() * 1000;
@@ -441,12 +441,12 @@ void DviProtocolUpnp::SendUpdateNotifications()
 {
     iLock.Wait();
     iAliveTimer->Cancel();
-    iUpdateCount = (TUint)iInterfaces.size();
+    iUpdateCount = (TUint)iAdapters.size();
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetUpdated);
-    for (TUint i=0; i<iInterfaces.size(); i++) {
+    for (TUint i=0; i<iAdapters.size(); i++) {
         Bwh uri;
-        GetUriDeviceXml(uri, iInterfaces[i]->UriBase());
-        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyUpdate(iDevice, *this, iInterfaces[i]->Interface(),
+        GetUriDeviceXml(uri, iAdapters[i]->UriBase());
+        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyUpdate(iDevice, *this, iAdapters[i]->Interface(),
                                                                     uri, iDevice.ConfigId(), functor));
     }
     iLock.Signal();
@@ -473,7 +473,7 @@ void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAdd
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
             Bwh uri;
-            GetUriDeviceXml(uri, iInterfaces[index]->UriBase());
+            GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchAll(iDevice, *this, aEndpoint, aMx,
                                                                       uri, iDevice.ConfigId()));
         }
@@ -488,7 +488,7 @@ void DviProtocolUpnp::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAd
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
             Bwh uri;
-            GetUriDeviceXml(uri, iInterfaces[index]->UriBase());
+            GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchRoot(iDevice, *this, aEndpoint, aMx,
                                                                        uri, iDevice.ConfigId()));
         }
@@ -503,7 +503,7 @@ void DviProtocolUpnp::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAd
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
             Bwh uri;
-            GetUriDeviceXml(uri, iInterfaces[index]->UriBase());
+            GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchUuid(iDevice, *this, aEndpoint, aMx,
                                                                        uri, iDevice.ConfigId()));
         }
@@ -518,7 +518,7 @@ void DviProtocolUpnp::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx,
         TInt index = FindListenerForInterface(aAdapter);
         if (index != -1) {
             Bwh uri;
-            GetUriDeviceXml(uri, iInterfaces[index]->UriBase());
+            GetUriDeviceXml(uri, iAdapters[index]->UriBase());
             iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchDeviceType(iDevice, *this, aEndpoint, aMx,
                                                                              uri, iDevice.ConfigId()));
         }
@@ -537,7 +537,7 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
                 TInt index = FindListenerForInterface(aAdapter);
                 if (index != -1) {
                     Bwh uri;
-                    GetUriDeviceXml(uri, iInterfaces[index]->UriBase());
+                    GetUriDeviceXml(uri, iAdapters[index]->UriBase());
                     iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchServiceType(iDevice, *this, aEndpoint, aMx, serviceType,
                                                                                       uri, iDevice.ConfigId()));
                 }
@@ -754,9 +754,9 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
         /* UPnP spec says to publish a relative url
            Intel device spy messes up resolution of this against the base
            (device xml) url so publish an absolute url instead */
-        for (TUint i=0; i<iDeviceUpnp.iInterfaces.size(); i++) {
-            if (iDeviceUpnp.iInterfaces[i]->Interface() == aAdapter) {
-                iWriter.Write(iDeviceUpnp.iInterfaces[i]->UriBase());
+        for (TUint i=0; i<iDeviceUpnp.iAdapters.size(); i++) {
+            if (iDeviceUpnp.iAdapters[i]->Interface() == aAdapter) {
+                iWriter.Write(iDeviceUpnp.iAdapters[i]->UriBase());
                 break;
             }
         }

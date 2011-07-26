@@ -107,7 +107,7 @@ private:
     DviDevice& iDevice;
     AttributeMap iAttributeMap;
     Mutex iLock;
-    std::vector<Nif*> iInterfaces;
+    std::vector<Nif*> iAdapters;
     TInt iSubnetListChangeListenerId;
     std::vector<DeviceMsgScheduler*> iMsgSchedulers;
     TUint iSubnetDisableCount;
