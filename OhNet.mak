@@ -98,6 +98,7 @@ copy_build_includes:
 	if not exist $(inc_build)\OpenHome\Net\Cpp mkdir $(inc_build)\OpenHome\Net\Cpp
 	if not exist $(inc_build)\OpenHome\Net\Private\Js mkdir $(inc_build)\OpenHome\Net\Private\Js
 	if not exist $(inc_build)\OpenHome\Net\Private\Js\Tests mkdir $(inc_build)\OpenHome\Net\Private\Js\Tests
+	if not exist $(inc_build)\OpenHome\Net\Private\Js\Tests\extern mkdir $(inc_build)\OpenHome\Net\Private\Js\Tests\extern
 	if not exist $(inc_build)\OpenHome\Net\Private\Js\Tests\proxy mkdir $(inc_build)\OpenHome\Net\Private\Js\Tests\proxy
 	copy OpenHome\*.h $(inc_build)\OpenHome\Private > nul
 	copy OpenHome\Buffer.inl $(inc_build)\OpenHome > nul
@@ -158,7 +159,7 @@ copy_build_includes:
 	copy OpenHome\Net\Bindings\Cpp\Device\*.h $(inc_build)\OpenHome\Net\Cpp > nul
 	copy OpenHome\Net\Bindings\Cpp\Device\Providers\*.h $(inc_build)\OpenHome\Net\Cpp > nul
     xcopy OpenHome\Net\Bindings\Js\ControlPoint\Tests\*.*/s $(inc_build)\OpenHome\Net\Private\Js\Tests /y > nul
-    copy OpenHome\Net\Bindings\Js\ControlPoint\*.js $(inc_build)\OpenHome\Net\Private\Js\Tests > nul
+    copy OpenHome\Net\Bindings\Js\ControlPoint\*.js $(inc_build)\OpenHome\Net\Private\Js\Tests\extern > nul
     copy OpenHome\Net\Bindings\Js\ControlPoint\Proxies\CpOpenhomeOrgTestBasic1.js $(inc_build)\OpenHome\Net\Private\Js\Tests\proxy > nul
 	copy Os\*.h $(inc_build)\OpenHome > nul
 	copy Os\*.inl $(inc_build)\OpenHome > nul

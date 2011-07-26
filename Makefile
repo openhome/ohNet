@@ -224,7 +224,7 @@ docs:
 	mkdir -p Build/Docs/Cs
 	doxygen DoxyfileCs
 	mkdir -p Build/Docs/Js
-	perl ./JsDoc/jsdoc.pl -d Build/Docs/Js ControlPoint/Services/Js Public/Js/WebUIsdk
+	perl ./JsDoc/jsdoc.pl -d Build/Docs/Js OpenHome/Net/Bindings/Js/ControlPoint OpenHome/Net/Bindings/Js/ControlPoint/Proxies
 
 bundle: tt
 	mkdir -p $(bundle_build)

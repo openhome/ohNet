@@ -216,57 +216,46 @@ gAllTests = [ TestCase('TestBuffer', [], True)
 
 class js_test():
 
-	def set_env(self):
-		if not os.path.exists("xout"):
-			os.mkdir("xout")
+    def write_dummy_results(self):
+        if not os.path.exists("xout"):
+            os.mkdir("xout")
+        # write dummy XML that gets re-written by real XML if browser connects to node properly
+        dummy_xml_read = open("OpenHome/Net/Bindings/Js/ControlPoint/Tests/dummyxml.xml", 'r')
+        dummy_xml_write = open("xout/ProxyJsTest.xml", 'w')
+        dummy_xml_write.writelines(dummy_xml_read)
+        dummy_xml_write.close()
 
-		# write dummy XML that gets re-written by real XML if browser connects to node properly
+    def get_env(self,objpath):
+        self.objpath = objpath
+        program_files = os.environ.get('ProgramFiles')
+        self.browser_location = os.path.join(program_files, 'Safari\Safari.exe')
+        self.test_dir = os.path.join(os.getcwd(), 'Build\Include\OpenHome\Net\Private\Js\Tests')
 
-		dummy_xml_read = open("OpenHome/Net/Bindings/Js/ControlPoint/Tests/dummyxml.xml", 'r')
-		dummy_xml_write = open("xout/ProxyJsTest.xml", 'w')
-		dummy_xml_write.writelines(dummy_xml_read)
-		dummy_xml_write.close()
+    def find_device(self):
+        self.test_testbasic = subprocess.Popen([os.path.join(self.objpath, 'TestDvTestBasic.exe'), '-l', '-c', self.test_dir])
+        time.sleep(5)
+        test_devfinder = subprocess.Popen([os.path.join(self.objpath, 'TestDeviceFinder.exe'), '-l', '-s', 'openhome.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.launch_url = test_devfinder.communicate()[1].rstrip()
+        print 'found device at ' + self.launch_url
+        
+    def run_browser(self):
+        subprocess.call(["%s" %(self.browser_location), "%s" %(self.launch_url)])
+        self.test_testbasic.terminate()
 
-	def get_env(self,objpath):
-
-		self.objpath = objpath
-
-		program_files = os.environ.get('ProgramFiles')
-		self.browser_location = os.path.join(program_files, 'Safari\Safari.exe')
-		self.test_dir = os.path.join(os.getcwd(), 'Build\Include\OpenHome\Net\Private\Js\Tests')
-
-
-	def local_call(self):
-
-		self.test_testbasic = subprocess.Popen([os.path.join(self.objpath, 'TestDvTestBasic.exe'), '-l', '-c', self.test_dir])
-		time.sleep(5)
-		test_devfinder = subprocess.Popen([os.path.join(self.objpath, 'TestDeviceFinder.exe'), '-l', '-s', 'openhome.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		self.launch_url = test_devfinder.communicate()[1].rstrip()
-		
-	def local_call_browser(self):
-		subprocess.call(["%s" %(self.browser_location), "%s" %(self.launch_url)])
-		self.test_testbasic.terminate()
-
-	def remote_call(self):
-
-		subprocess.call(["psexec", "-i", "2", "-u", "hudson-zapp", "-p", "temp123", "%s" %(self.browser_location), "%s" %(self.launch_url)])	
-		self.test_testbasic.terminate()
+    def run_browser_jenkins(self):
+        subprocess.call(["psexec", "-i", "2", "-u", "hudson-zapp", "-p", "temp123", "%s" %(self.browser_location), "%s" %(self.launch_url)])    
+        self.test_testbasic.terminate()
 
 def JsTests():
-
-	objpath = objPath()
-
-	do_jstest = js_test()
-	do_jstest.set_env()
-	do_jstest.get_env(objpath)
-	do_jstest.local_call()
-
-	if os.getenv('JENKINS_COOKIE') is None:
-		do_jstest.local_call_browser()
-	else:
-		do_jstest.remote_call()
-
-	
+    objpath = objPath()
+    do_jstest = js_test()
+    do_jstest.write_dummy_results()
+    do_jstest.get_env(objpath)
+    do_jstest.find_device()
+    if os.getenv('JENKINS_COOKIE') is None:
+        do_jstest.run_browser()
+    else:
+        do_jstest.run_browser_jenkins()
 
 
 if gTestsOnly == 0:
