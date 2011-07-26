@@ -34,10 +34,10 @@ DviProtocolUpnp::DviProtocolUpnp(DviDevice& aDevice)
 {
     iLock.Wait();
     iServer = &DviStack::ServerUpnp();
-    NetworkAdapterList& nifList = Stack::NetworkAdapterList();
+    NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
     Functor functor = MakeFunctor(*this, &DviProtocolUpnp::SubnetListChanged);
-    iSubnetListChangeListenerId = nifList.AddSubnetListChangeListener(functor);
-    std::vector<NetworkAdapter*>* subnetList = nifList.CreateSubnetList();
+    iSubnetListChangeListenerId = adapterList.AddSubnetListChangeListener(functor);
+    std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
     for (TUint i=0; i<subnetList->size(); i++) {
         NetworkAdapter* subnet = (*subnetList)[i];
         AddInterface(*subnet);
@@ -120,15 +120,15 @@ void DviProtocolUpnp::MsgSchedulerComplete(DeviceMsgScheduler* aScheduler)
     }
 }
 
-void DviProtocolUpnp::AddInterface(const NetworkAdapter& aNif)
+void DviProtocolUpnp::AddInterface(const NetworkAdapter& aAdapter)
 {
-    TIpAddress addr = aNif.Address();
+    TIpAddress addr = aAdapter.Address();
     Bwh uriBase;
     TUint port = iServer->Port(addr);
     DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
     root->GetUriBase(uriBase, addr, port, *this);
-    DviProtocolUpnp::Nif* nif = new DviProtocolUpnp::Nif(*this, iDevice, aNif, uriBase, port);
-    iAdapters.push_back(nif);
+    DviProtocolUpnpAdapterSpecificData* adapter = new DviProtocolUpnpAdapterSpecificData(*this, aAdapter, uriBase, port);
+    iAdapters.push_back(adapter);
 }
 
 void DviProtocolUpnp::SubnetListChanged()
@@ -139,7 +139,7 @@ void DviProtocolUpnp::SubnetListChanged()
     }
 
     TBool update = false;
-	std::vector<Nif*> pendingDelete;
+	std::vector<DviProtocolUpnpAdapterSpecificData*> pendingDelete;
     iLock.Wait();
     NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
     NetworkAdapter* current = adapterList.CurrentAdapter();
@@ -165,10 +165,10 @@ void DviProtocolUpnp::SubnetListChanged()
     }
     else {
         std::vector<NetworkAdapter*>* subnetList = adapterList.CreateSubnetList();
-        const std::vector<NetworkAdapter*>& nifList = adapterList.List();
+        const std::vector<NetworkAdapter*>& adapters = adapterList.List();
         // remove listeners whose interface is no longer available
         while (i<iAdapters.size()) {
-            if (FindInterface(iAdapters[i]->Interface(), nifList) != -1) {
+            if (FindAdapter(iAdapters[i]->Interface(), adapters) != -1) {
 			    i++;
 		    }
 		    else {
@@ -208,10 +208,10 @@ void DviProtocolUpnp::SubnetListChanged()
     }
 }
 
-TInt DviProtocolUpnp::FindInterface(TIpAddress aAdapter, const std::vector<NetworkAdapter*>& aNifList)
+TInt DviProtocolUpnp::FindAdapter(TIpAddress aAdapter, const std::vector<NetworkAdapter*>& aAdapterList)
 {
-    for (TUint i=0; i<aNifList.size(); i++) {
-        if (aNifList[i]->Address() == aAdapter) {
+    for (TUint i=0; i<aAdapterList.size(); i++) {
+        if (aAdapterList[i]->Address() == aAdapter) {
             return i;
         }
     }
@@ -311,17 +311,17 @@ void DviProtocolUpnp::Enable()
     ASSERT(Version() > 0);
     
     for (TUint i=0; i<iAdapters.size(); i++) {
-        DviProtocolUpnp::Nif* nif = iAdapters[i];
+        DviProtocolUpnpAdapterSpecificData* adapter = iAdapters[i];
         Bwh uriBase;
         DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
-        nif->UpdateServerPort(*iServer);
-        root->GetUriBase(uriBase, nif->Interface(), nif->ServerPort(), *this);
-        nif->UpdateUriBase(uriBase);
-        nif->ClearDeviceXml();
+        adapter->UpdateServerPort(*iServer);
+        root->GetUriBase(uriBase, adapter->Interface(), adapter->ServerPort(), *this);
+        adapter->UpdateUriBase(uriBase);
+        adapter->ClearDeviceXml();
         if (iDevice.ResourceManager() != NULL) {
             const TChar* name = NULL;
             GetAttribute("FriendlyName", &name);
-            nif->BonjourRegister(name);
+            adapter->BonjourRegister(name, iDevice.Udn(), kProtocolName, iDevice.kResourceDir);
             GetAttribute("MdnsHostName", &name);
             if (name != NULL) {
                 DviStack::MdnsProvider()->MdnsSetHostName(name);
@@ -549,86 +549,85 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
 }
 
 
-// DviProtocolUpnp::Nif
+// DviProtocolUpnpAdapterSpecificData
 
-DviProtocolUpnp::Nif::Nif(DviProtocolUpnp& aDeviceUpnp, DviDevice& aDevice, const NetworkAdapter& aNif, Bwh& aUriBase, TUint aServerPort)
-    : iDeviceUpnp(&aDeviceUpnp)
-    , iDevice(aDevice)
+DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwh& aUriBase, TUint aServerPort)
+    : iMsearchHandler(&aMsearchHandler)
     , iServerPort(aServerPort)
     , iBonjourWebPage(NULL)
 {
-    iListener = &Stack::MulticastListenerClaim(aNif.Address());
+    iListener = &Stack::MulticastListenerClaim(aAdapter.Address());
     iId = iListener->AddMsearchHandler(this);
-    iSubnet = aNif.Subnet();
-    iInterface = aNif.Address();
+    iSubnet = aAdapter.Subnet();
+    iAdapter = aAdapter.Address();
     aUriBase.TransferTo(iUriBase);
 }
 
-DviProtocolUpnp::Nif::~Nif()
+DviProtocolUpnpAdapterSpecificData::~DviProtocolUpnpAdapterSpecificData()
 {
     if (iBonjourWebPage != NULL) {
         iBonjourWebPage->SetDisabled();
         delete iBonjourWebPage;
     }
     iListener->RemoveMsearchHandler(iId);
-    Stack::MulticastListenerRelease(iInterface);
+    Stack::MulticastListenerRelease(iAdapter);
 }
 
-TIpAddress DviProtocolUpnp::Nif::Interface() const
+TIpAddress DviProtocolUpnpAdapterSpecificData::Interface() const
 {
     return iListener->Interface();
 }
 
-TIpAddress DviProtocolUpnp::Nif::Subnet() const
+TIpAddress DviProtocolUpnpAdapterSpecificData::Subnet() const
 {
     return iSubnet;
 }
 
-const Brx& DviProtocolUpnp::Nif::UriBase() const
+const Brx& DviProtocolUpnpAdapterSpecificData::UriBase() const
 {
     ASSERT(iUriBase.Bytes() > 0);
     return iUriBase;
 }
 
-void DviProtocolUpnp::Nif::UpdateServerPort(DviServerUpnp& aServer)
+void DviProtocolUpnpAdapterSpecificData::UpdateServerPort(DviServerUpnp& aServer)
 {
-    iServerPort = aServer.Port(iInterface);
+    iServerPort = aServer.Port(iAdapter);
 }
 
-void DviProtocolUpnp::Nif::UpdateUriBase(Bwh& aUriBase)
+void DviProtocolUpnpAdapterSpecificData::UpdateUriBase(Bwh& aUriBase)
 {
     aUriBase.TransferTo(iUriBase);
 }
 
-TUint DviProtocolUpnp::Nif::ServerPort() const
+TUint DviProtocolUpnpAdapterSpecificData::ServerPort() const
 {
     return iServerPort;
 }
 
-const Brx& DviProtocolUpnp::Nif::DeviceXml() const
+const Brx& DviProtocolUpnpAdapterSpecificData::DeviceXml() const
 {
     return iDeviceXml;
 }
 
-void DviProtocolUpnp::Nif::SetDeviceXml(Brh& aXml)
+void DviProtocolUpnpAdapterSpecificData::SetDeviceXml(Brh& aXml)
 {
     aXml.TransferTo(iDeviceXml);
 }
 
-void DviProtocolUpnp::Nif::ClearDeviceXml()
+void DviProtocolUpnpAdapterSpecificData::ClearDeviceXml()
 {
     Brh tmp;
     iDeviceXml.TransferTo(tmp);
 }
 
-void DviProtocolUpnp::Nif::SetPendingDelete()
+void DviProtocolUpnpAdapterSpecificData::SetPendingDelete()
 {
 	Stack::Mutex().Wait();
-	iDeviceUpnp = NULL;
+	iMsearchHandler = NULL;
 	Stack::Mutex().Signal();
 }
 
-void DviProtocolUpnp::Nif::BonjourRegister(const TChar* aName)
+void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* aName, const Brx& aUdn, const Brx& aProtocol, const Brx& aResourceDir)
 {
     if (aName != NULL) {
         if (iBonjourWebPage == NULL) {
@@ -638,72 +637,72 @@ void DviProtocolUpnp::Nif::BonjourRegister(const TChar* aName)
             }
         }
         if (iBonjourWebPage != NULL) {
-            Bwh path(iDevice.Udn().Bytes() + iDeviceUpnp->kProtocolName.Bytes() + iDevice.kResourceDir.Bytes() + 5);
+            Bwh path(aUdn.Bytes() + aProtocol.Bytes() + aResourceDir.Bytes() + 5);
             path.Append('/');
-            path.Append(iDevice.Udn());
+            path.Append(aUdn);
             path.Append('/');
-            path.Append(iDeviceUpnp->kProtocolName);
+            path.Append(aProtocol);
             path.Append('/');
-            path.Append(iDevice.kResourceDir);
+            path.Append(aResourceDir);
             path.Append('/');
             path.PtrZ();
-            iBonjourWebPage->SetEnabled(aName, iInterface, iServerPort, (const TChar*)path.Ptr());
+            iBonjourWebPage->SetEnabled(aName, iAdapter, iServerPort, (const TChar*)path.Ptr());
         }
     }
 }
 
-void DviProtocolUpnp::Nif::BonjourDeregister()
+void DviProtocolUpnpAdapterSpecificData::BonjourDeregister()
 {
     if (iBonjourWebPage != NULL) {
         iBonjourWebPage->SetDisabled();
     }
 }
 
-DviProtocolUpnp* DviProtocolUpnp::Nif::Device()
+IUpnpMsearchHandler* DviProtocolUpnpAdapterSpecificData::Handler()
 {
 	Stack::Mutex().Wait();
-	DviProtocolUpnp* device = iDeviceUpnp;
+	IUpnpMsearchHandler* device = iMsearchHandler;
 	Stack::Mutex().Signal();
 	return device;
 }
 
-void DviProtocolUpnp::Nif::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx)
+void DviProtocolUpnpAdapterSpecificData::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx)
 {
-	DviProtocolUpnp* device = Device();
-	if (device != NULL) {
-		device->SsdpSearchAll(aEndpoint, aMx, iListener->Interface());
+	IUpnpMsearchHandler* handler = Handler();
+	if (handler != NULL) {
+		handler->SsdpSearchAll(aEndpoint, aMx, iListener->Interface());
 	}
 }
 
-void DviProtocolUpnp::Nif::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx)
+void DviProtocolUpnpAdapterSpecificData::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx)
 {
-    DviProtocolUpnp* device = Device();
-	if (device != NULL) {
-		device->SsdpSearchRoot(aEndpoint, aMx, iListener->Interface());
+	IUpnpMsearchHandler* handler = Handler();
+	if (handler != NULL) {
+		handler->SsdpSearchRoot(aEndpoint, aMx, iListener->Interface());
 	}
 }
 
-void DviProtocolUpnp::Nif::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, const Brx& aUuid)
+void DviProtocolUpnpAdapterSpecificData::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, const Brx& aUuid)
 {
-    DviProtocolUpnp* device = Device();
-	if (device != NULL) {
-		device->SsdpSearchUuid(aEndpoint, aMx, iListener->Interface(), aUuid);
+	IUpnpMsearchHandler* handler = Handler();
+	if (handler != NULL) {
+		handler->SsdpSearchUuid(aEndpoint, aMx, iListener->Interface(), aUuid);
 	}
 }
 
-void DviProtocolUpnp::Nif::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
+void DviProtocolUpnpAdapterSpecificData::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
-    DviProtocolUpnp* device = Device();
-	if (device != NULL) {
-		device->SsdpSearchDeviceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
+	IUpnpMsearchHandler* handler = Handler();
+	if (handler != NULL) {
+		handler->SsdpSearchDeviceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
 	}
 }
 
-void DviProtocolUpnp::Nif::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
+void DviProtocolUpnpAdapterSpecificData::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
-    DviProtocolUpnp* device = Device();
-	if (device != NULL) {
-		device->SsdpSearchServiceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
+	IUpnpMsearchHandler* handler = Handler();
+	if (handler != NULL) {
+		handler->SsdpSearchServiceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
 	}
 }
 
