@@ -41,7 +41,7 @@ public:
 private:
     void AddInterface(const NetworkAdapter& aNif);
     void SubnetListChanged();
-    TInt FindInterface(TIpAddress aInterface, const std::vector<NetworkAdapter*>& aNifList);
+    TInt FindInterface(TIpAddress aAdapter, const std::vector<NetworkAdapter*>& aNifList);
     TInt FindListenerForSubnet(TIpAddress aSubnet);
     TInt FindListenerForInterface(TIpAddress aSubnet);
     void SubnetDisabled();
@@ -49,9 +49,9 @@ private:
     void SendAliveNotifications();
     void SendUpdateNotifications();
     void GetUriDeviceXml(Bwh& aUri, const Brx& aUriBase);
-    void GetDeviceXml(Brh& aXml, TIpAddress aInterface);
+    void GetDeviceXml(Brh& aXml, TIpAddress aAdapter);
 public:
-    void WriteResource(const Brx& aUriTail, TIpAddress aInterface, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
+    void WriteResource(const Brx& aUriTail, TIpAddress aAdapter, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
     const Brx& ProtocolName() const;
     void Enable();
     void Disable(Functor& aComplete);
@@ -59,11 +59,11 @@ public:
     void SetAttribute(const TChar* aKey, const TChar* aValue);
     void SetCustomData(const TChar* aTag, void* aData);
 private:
-    void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aInterface);
-    void SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAddress aInterface);
-    void SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAddress aInterface, const Brx& aUuid);
-    void SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aInterface, const Brx& aDomain, const Brx& aType, TUint aVersion);
-    void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aInterface, const Brx& aDomain, const Brx& aType, TUint aVersion);
+    void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter);
+    void SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter);
+    void SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aUuid);
+    void SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion);
+    void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
     class Nif : public ISsdpMsearchHandler, public INonCopyable
     {
@@ -122,7 +122,7 @@ class DviProtocolUpnpDeviceXmlWriter : public IResourceWriter
 {
 public:
     DviProtocolUpnpDeviceXmlWriter(DviProtocolUpnp& aDeviceUpnp);
-    void Write(TIpAddress aInterface);
+    void Write(TIpAddress aAdapter);
     void TransferTo(Brh& aBuf);
 private:
     enum ETagRequirementLevel
@@ -239,7 +239,7 @@ class DeviceMsgSchedulerNotify : public DeviceMsgScheduler
 {
 protected:
     DeviceMsgSchedulerNotify(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, TUint aIntervalMs, TUint aTotalMsgs,
-                             TIpAddress aInterface, Bwh& aUri, TUint aConfigId);
+                             TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
 protected:
     SsdpNotifier iSsdpNotifier;
 };
@@ -249,7 +249,7 @@ class DeviceMsgSchedulerNotifyAlive : public DeviceMsgSchedulerNotify
     static const TUint kMsgIntervalMs = 40;
 public:
     DeviceMsgSchedulerNotifyAlive(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                  TIpAddress aInterface, Bwh& aUri, TUint aConfigId);
+                                  TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
     ~DeviceMsgSchedulerNotifyAlive();
 };
 
@@ -258,7 +258,7 @@ class DeviceMsgSchedulerNotifyByeBye : public DeviceMsgSchedulerNotify
     static const TUint kMsgIntervalMs = 10;
 public:
     DeviceMsgSchedulerNotifyByeBye(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                   TIpAddress aInterface, Bwh& aUri, TUint aConfigId,
+                                   TIpAddress aAdapter, Bwh& aUri, TUint aConfigId,
                                    Functor& aCompleted);
     ~DeviceMsgSchedulerNotifyByeBye();
 private:
@@ -270,7 +270,7 @@ class DeviceMsgSchedulerNotifyUpdate : public DeviceMsgSchedulerNotify
     static const TUint kMsgIntervalMs = 20;
 public:
     DeviceMsgSchedulerNotifyUpdate(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                   TIpAddress aInterface, Bwh& aUri, TUint aConfigId,
+                                   TIpAddress aAdapter, Bwh& aUri, TUint aConfigId,
                                    Functor& aCompleted);
     ~DeviceMsgSchedulerNotifyUpdate();
 private:
