@@ -157,7 +157,7 @@ void DviProtocolUpnp::SubnetListChanged()
     NetworkAdapterList& adapterList = Stack::NetworkAdapterList();
     NetworkAdapter* current = adapterList.CurrentAdapter();
     TUint i = 0;
-    if (current != NULL) {
+    if (current != 0) {
         // remove listeners whose interface is no longer available
         while (i<iAdapters.size()) {
             if (iAdapters[i]->Interface() == current->Address()) {
@@ -287,12 +287,12 @@ void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aAdapter, st
         Brn rem = parser.Remaining();
         if (buf == DviDevice::kResourceDir) {
             IResourceManager* resMgr = iDevice.ResourceManager();
-            if (resMgr != NULL) {
+            if (resMgr != 0) {
                 resMgr->WriteResource(rem, aAdapter, aLanguageList, aResourceWriter);
             }
         }
         else if (rem == kServiceXmlName) {
-            DviService* service = NULL;
+            DviService* service = 0;
             const TUint count = iDevice.ServiceCount();
             for (TUint i=0; i<count; i++) {
                 DviService& s = iDevice.Service(i);
@@ -301,7 +301,7 @@ void DviProtocolUpnp::WriteResource(const Brx& aUriTail, TIpAddress aAdapter, st
                     break;
                 }
             }
-            if (service == NULL) {
+            if (service == 0) {
                 THROW(ReaderError);
             }
             DviProtocolUpnpServiceXmlWriter::Write(*service, aResourceWriter);
@@ -331,12 +331,12 @@ void DviProtocolUpnp::Enable()
         root->GetUriBase(uriBase, adapter->Interface(), adapter->ServerPort(), *this);
         adapter->UpdateUriBase(uriBase);
         adapter->ClearDeviceXml();
-        if (iDevice.ResourceManager() != NULL) {
-            const TChar* name = NULL;
+        if (iDevice.ResourceManager() != 0) {
+            const TChar* name = 0;
             GetAttribute("FriendlyName", &name);
             adapter->BonjourRegister(name, iDevice.Udn(), kProtocolName, iDevice.kResourceDir);
             GetAttribute("MdnsHostName", &name);
-            if (name != NULL) {
+            if (name != 0) {
                 DviStack::MdnsProvider()->MdnsSetHostName(name);
                 Bwh redirectedPath(iDevice.Udn().Bytes() + kProtocolName.Bytes() + iDevice.kResourceDir.Bytes() + 4);
                 redirectedPath.Append('/');
@@ -373,9 +373,9 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
     for (TUint i=0; i<iAdapters.size(); i++) {
         iAdapters[i]->BonjourDeregister();
     }
-    const TChar* name = NULL;
+    const TChar* name = 0;
     GetAttribute("MdnsHostName", &name);
-    if (name != NULL) {
+    if (name != 0) {
         DviStack::MdnsProvider()->MdnsSetHostName("");
     }
 
@@ -394,8 +394,8 @@ void DviProtocolUpnp::SetAttribute(const TChar* aKey, const TChar* aValue)
         return;
     }
     if (strcmp(aKey, "MdnsHostName") == 0) {
-        ASSERT(iDevice.ResourceManager() != NULL);
-        ASSERT(DviStack::MdnsProvider() != NULL);
+        ASSERT(iDevice.ResourceManager() != 0);
+        ASSERT(DviStack::MdnsProvider() != 0);
     }
 
     iAttributeMap.Set(aKey, aValue);
@@ -563,7 +563,7 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
 DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(IUpnpMsearchHandler& aMsearchHandler, const NetworkAdapter& aAdapter, Bwh& aUriBase, TUint aServerPort)
     : iMsearchHandler(&aMsearchHandler)
     , iServerPort(aServerPort)
-    , iBonjourWebPage(NULL)
+    , iBonjourWebPage(0)
 {
     iListener = &Stack::MulticastListenerClaim(aAdapter.Address());
     iId = iListener->AddMsearchHandler(this);
@@ -574,7 +574,7 @@ DviProtocolUpnpAdapterSpecificData::DviProtocolUpnpAdapterSpecificData(IUpnpMsea
 
 DviProtocolUpnpAdapterSpecificData::~DviProtocolUpnpAdapterSpecificData()
 {
-    if (iBonjourWebPage != NULL) {
+    if (iBonjourWebPage != 0) {
         iBonjourWebPage->SetDisabled();
         delete iBonjourWebPage;
     }
@@ -632,20 +632,20 @@ void DviProtocolUpnpAdapterSpecificData::ClearDeviceXml()
 void DviProtocolUpnpAdapterSpecificData::SetPendingDelete()
 {
 	Stack::Mutex().Wait();
-	iMsearchHandler = NULL;
+	iMsearchHandler = 0;
 	Stack::Mutex().Signal();
 }
 
 void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* aName, const Brx& aUdn, const Brx& aProtocol, const Brx& aResourceDir)
 {
-    if (aName != NULL) {
-        if (iBonjourWebPage == NULL) {
+    if (aName != 0) {
+        if (iBonjourWebPage == 0) {
             IMdnsProvider* mdnsProvider = DviStack::MdnsProvider();
-            if (mdnsProvider != NULL) {
+            if (mdnsProvider != 0) {
                 iBonjourWebPage = new BonjourWebPage(*mdnsProvider);
             }
         }
-        if (iBonjourWebPage != NULL) {
+        if (iBonjourWebPage != 0) {
             Bwh path(aUdn.Bytes() + aProtocol.Bytes() + aResourceDir.Bytes() + 5);
             path.Append('/');
             path.Append(aUdn);
@@ -662,7 +662,7 @@ void DviProtocolUpnpAdapterSpecificData::BonjourRegister(const TChar* aName, con
 
 void DviProtocolUpnpAdapterSpecificData::BonjourDeregister()
 {
-    if (iBonjourWebPage != NULL) {
+    if (iBonjourWebPage != 0) {
         iBonjourWebPage->SetDisabled();
     }
 }
@@ -678,7 +678,7 @@ IUpnpMsearchHandler* DviProtocolUpnpAdapterSpecificData::Handler()
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx)
 {
 	IUpnpMsearchHandler* handler = Handler();
-	if (handler != NULL) {
+	if (handler != 0) {
 		handler->SsdpSearchAll(aEndpoint, aMx, iListener->Interface());
 	}
 }
@@ -686,7 +686,7 @@ void DviProtocolUpnpAdapterSpecificData::SsdpSearchAll(const Endpoint& aEndpoint
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx)
 {
 	IUpnpMsearchHandler* handler = Handler();
-	if (handler != NULL) {
+	if (handler != 0) {
 		handler->SsdpSearchRoot(aEndpoint, aMx, iListener->Interface());
 	}
 }
@@ -694,7 +694,7 @@ void DviProtocolUpnpAdapterSpecificData::SsdpSearchRoot(const Endpoint& aEndpoin
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, const Brx& aUuid)
 {
 	IUpnpMsearchHandler* handler = Handler();
-	if (handler != NULL) {
+	if (handler != 0) {
 		handler->SsdpSearchUuid(aEndpoint, aMx, iListener->Interface(), aUuid);
 	}
 }
@@ -702,7 +702,7 @@ void DviProtocolUpnpAdapterSpecificData::SsdpSearchUuid(const Endpoint& aEndpoin
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
 	IUpnpMsearchHandler* handler = Handler();
-	if (handler != NULL) {
+	if (handler != 0) {
 		handler->SsdpSearchDeviceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
 	}
 }
@@ -710,7 +710,7 @@ void DviProtocolUpnpAdapterSpecificData::SsdpSearchDeviceType(const Endpoint& aE
 void DviProtocolUpnpAdapterSpecificData::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, const Brx& aDomain, const Brx& aType, TUint aVersion)
 {
 	IUpnpMsearchHandler* handler = Handler();
-	if (handler != NULL) {
+	if (handler != 0) {
 		handler->SsdpSearchServiceType(aEndpoint, aMx, iListener->Interface(), aDomain, aType, aVersion);
 	}
 }
@@ -755,7 +755,7 @@ void DviProtocolUpnpDeviceXmlWriter::Write(TIpAddress aAdapter)
         iWriter.Write(xmlExtension);
     }
 
-    if (iDeviceUpnp.iDevice.ResourceManager() != NULL) {
+    if (iDeviceUpnp.iDevice.ResourceManager() != 0) {
         iWriter.Write('<');
         iWriter.Write("presentationURL");
         iWriter.Write('>');
@@ -862,7 +862,7 @@ void DviProtocolUpnpDeviceXmlWriter::WriteTag(const TChar* aTagName, const TChar
 {
     const TChar* val;
     iDeviceUpnp.GetAttribute(aAttributeKey, &val);
-    if (val != NULL) {
+    if (val != 0) {
         iWriter.Write('<');
         iWriter.Write(aTagName);
         iWriter.Write('>');
@@ -933,7 +933,7 @@ void DviProtocolUpnpServiceXmlWriter::WriteServiceXml(WriterBwh& aWriter, const 
     aWriter.Write("<serviceStateTable>");
     const DviService::VectorProperties& properties = aService.Properties();
     for (TUint i=0; i<properties.size(); i++) {
-        WriteStateVariable(aWriter, properties[i]->Parameter(), true, NULL);
+        WriteStateVariable(aWriter, properties[i]->Parameter(), true, 0);
     }
     for (TUint i=0; i<actions.size(); i++) {
         const Action* action = actions[i].Action();
@@ -1439,7 +1439,7 @@ DviMsgNotify::DviMsgNotify(IUpnpAnnouncementData& aAnnouncementData,
 TUint DviMsgNotify::NextMsg()
 {
     TUint remaining = DviMsg::NextMsg();
-    if (remaining == 0 && iCompleted != NULL) {
+    if (remaining == 0 && iCompleted != 0) {
         iCompleted();
     }
     return remaining;
