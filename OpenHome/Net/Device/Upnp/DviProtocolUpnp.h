@@ -18,7 +18,7 @@
 namespace OpenHome {
 namespace Net {
 
-class DeviceMsgScheduler;
+class DviMsgScheduler;
 class DviProtocolUpnpDeviceXmlWriter;
 class BonjourWebPage;
 class DviProtocolUpnpAdapterSpecificData;
@@ -33,8 +33,26 @@ public:
     virtual void SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aDomain, const Brx& aType, TUint aVersion) = 0;
 };
 
+class IUpnpAnnouncementData
+{
+public:
+    virtual const Brx& Udn() const = 0;
+    virtual TBool IsRoot() const = 0;
+    virtual TUint ServiceCount() const = 0;
+    virtual DviService& Service(TUint aIndex) = 0;
+    virtual Brn Domain() const = 0;
+    virtual Brn Type() const = 0;
+    virtual TUint Version() const = 0;
+};
 
-class DviProtocolUpnp : public IDvProtocol, private IUpnpMsearchHandler
+class IUpnpMsgListener
+{
+public:
+    virtual void NotifyMsgSchedulerComplete(DviMsgScheduler* aScheduler) = 0;
+};
+
+
+class DviProtocolUpnp : public IDvProtocol, private IUpnpMsearchHandler, private IUpnpAnnouncementData, private IUpnpMsgListener
 {
     friend class DviProtocolUpnpDeviceXmlWriter;
 public:
@@ -46,10 +64,16 @@ public:
 public:
     DviProtocolUpnp(DviDevice& aDevice);
     ~DviProtocolUpnp();
+public: // from IUpnpAnnouncementData
+    const Brx& Udn() const;
+    TBool IsRoot() const;
+    TUint ServiceCount() const;
+    DviService& Service(TUint aIndex);
     Brn Domain() const;
     Brn Type() const;
     TUint Version() const;
-    void MsgSchedulerComplete(DeviceMsgScheduler* aScheduler);
+private: // from IUpnpMsgListener
+    void NotifyMsgSchedulerComplete(DviMsgScheduler* aScheduler);
 private:
     void AddInterface(const NetworkAdapter& aAdapter);
     void SubnetListChanged();
@@ -62,7 +86,7 @@ private:
     void SendUpdateNotifications();
     void GetUriDeviceXml(Bwh& aUri, const Brx& aUriBase);
     void GetDeviceXml(Brh& aXml, TIpAddress aAdapter);
-public: // IDvProtocol
+public: // from IDvProtocol
     void WriteResource(const Brx& aUriTail, TIpAddress aAdapter, std::vector<char*>& aLanguageList, IResourceWriter& aResourceWriter);
     const Brx& ProtocolName() const;
     void Enable();
@@ -70,7 +94,7 @@ public: // IDvProtocol
     void GetAttribute(const TChar* aKey, const TChar** aValue) const;
     void SetAttribute(const TChar* aKey, const TChar* aValue);
     void SetCustomData(const TChar* aTag, void* aData);
-private: // IUpnpMsearchHandler
+private: // from IUpnpMsearchHandler
     void SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter);
     void SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter);
     void SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAddress aAdapter, const Brx& aUuid);
@@ -82,7 +106,7 @@ private:
     Mutex iLock;
     std::vector<DviProtocolUpnpAdapterSpecificData*> iAdapters;
     TInt iSubnetListChangeListenerId;
-    std::vector<DeviceMsgScheduler*> iMsgSchedulers;
+    std::vector<DviMsgScheduler*> iMsgSchedulers;
     TUint iSubnetDisableCount;
     Functor iDisableComplete;
     Timer* iAliveTimer;
@@ -164,23 +188,59 @@ private:
     static void WriteTechnicalStateVariables(IWriter& aWriter, const Action* aAction, const Action::VectorParameters& aParams);
 };
 
-class DeviceMsgScheduler : private INonCopyable
+class DviMsg;
+
+class DviMsgScheduler : private INonCopyable
 {
-    static const TInt kMinTimerIntervalMs = 10;
+    static const TInt kMinTimerIntervalMs   = 10;
+    static const TUint kMsgIntervalMsAlive  = 40;
+    static const TUint kMsgIntervalMsByeBye = 10;
+    static const TUint kMsgIntervalMsUpdate = 20;
 public:
-    virtual ~DeviceMsgScheduler();
+    static DviMsgScheduler* NewMsearchAll(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                          const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId);
+    static DviMsgScheduler* NewMsearchRoot(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                           const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId);
+    static DviMsgScheduler* NewMsearchUuid(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                           const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId);
+    static DviMsgScheduler* NewMsearchDeviceType(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                                 const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId);
+    static DviMsgScheduler* NewMsearchServiceType(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener, const Endpoint& aRemote,
+                                                  TUint aMx, const OpenHome::Net::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId);
+    static DviMsgScheduler* NewNotifyAlive(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                           TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
+    static DviMsgScheduler* NewNotifyByeBye(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                            TIpAddress aAdapter, Bwh& aUri, TUint aConfigId, Functor& aCompleted);
+    static DviMsgScheduler* NewNotifyUpdate(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                            TIpAddress aAdapter, Bwh& aUri, TUint aConfigId, Functor& aCompleted);
+    ~DviMsgScheduler();
 	void Stop();
-protected:
-    DeviceMsgScheduler(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, TUint aEndTimeMs, TUint aTotalMsgs, Bwh& aUri);
-    virtual void Next(TUint aIndex);
-    void ScheduleNextTimer() const;
 private:
+    DviMsgScheduler(IUpnpMsgListener& aListener, TUint aMx);
+    DviMsgScheduler(IUpnpMsgListener& aListener);
+    void Construct();
+    void SetDuration(TUint aDuration);
     void NextMsg();
-protected:
-    DviDevice& iDevice;
-    DviProtocolUpnp& iDeviceUpnp;
-    ISsdpNotify* iNotifier;
+    void ScheduleNextTimer(TUint aRemainingMsgs) const;
+private:
+    DviMsg* iMsg;
     Timer* iTimer;
+    TUint iEndTimeMs;
+    IUpnpMsgListener& iListener;
+	TBool iStop;
+};
+
+class DviMsg : private INonCopyable
+{
+public:
+    virtual ~DviMsg();
+    virtual TUint TotalMsgCount() const;
+    virtual TUint NextMsg();
+protected:
+    DviMsg(IUpnpAnnouncementData& aAnnouncementData, Bwh& aUri);
+protected:
+    IUpnpAnnouncementData& iAnnouncementData;
+    ISsdpNotify* iNotifier;
     Brh iUri;
 private:
     TUint iTotal;
@@ -189,102 +249,83 @@ private:
 	TBool iStop;
 };
 
-class DeviceMsgSchedulerMsearch : public DeviceMsgScheduler
+class DviMsgMsearch : public DviMsg
 {
 protected:
-    DeviceMsgSchedulerMsearch(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, const Endpoint& aRemote,
-                              TUint aMx, TUint aTotalMsgs, Bwh& aUri, TUint aConfigId);
+    DviMsgMsearch(IUpnpAnnouncementData& aAnnouncementData,
+                  const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
 };
 
-class DeviceMsgSchedulerMsearchAll : public DeviceMsgSchedulerMsearch
+class DviMsgMsearchAll : public DviMsgMsearch
 {
-public:
-    DeviceMsgSchedulerMsearchAll(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, const Endpoint& aRemote,
-                                 TUint aMx, Bwh& aUri, TUint aConfigId);
-    ~DeviceMsgSchedulerMsearchAll();
-};
-
-class DeviceMsgSchedulerMsearchRoot : public DeviceMsgSchedulerMsearch
-{
-public:
-    DeviceMsgSchedulerMsearchRoot(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, const Endpoint& aRemote,
-                                  TUint aMx, Bwh& aUri, TUint aConfigId);
-    ~DeviceMsgSchedulerMsearchRoot();
 private:
-    void Next(TUint aIndex);
+    friend class DviMsgScheduler;
+    DviMsgMsearchAll(IUpnpAnnouncementData& aAnnouncementData,
+                     const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
 };
 
-class DeviceMsgSchedulerMsearchUuid : public DeviceMsgSchedulerMsearch
+class DviMsgMsearchRoot : public DviMsgMsearch
 {
-public:
-    DeviceMsgSchedulerMsearchUuid(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, const Endpoint& aRemote,
-                                  TUint aMx, Bwh& aUri, TUint aConfigId);
-    ~DeviceMsgSchedulerMsearchUuid();
 private:
-    void Next(TUint aIndex);
+    friend class DviMsgScheduler;
+    DviMsgMsearchRoot(IUpnpAnnouncementData& aAnnouncementData,
+                      const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
+private: // from DviMsg
+    TUint TotalMsgCount() const;
+    TUint NextMsg();
 };
 
-class DeviceMsgSchedulerMsearchDeviceType : public DeviceMsgSchedulerMsearch
+class DviMsgMsearchUuid : public DviMsgMsearch
 {
-public:
-    DeviceMsgSchedulerMsearchDeviceType(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, const Endpoint& aRemote,
-                                        TUint aMx, Bwh& aUri, TUint aConfigId);
-    ~DeviceMsgSchedulerMsearchDeviceType();
 private:
-    void Next(TUint aIndex);
+    friend class DviMsgScheduler;
+    DviMsgMsearchUuid(IUpnpAnnouncementData& aAnnouncementData,
+                      const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
+private: // from DviMsg
+    TUint TotalMsgCount() const;
+    TUint NextMsg();
 };
 
-class DeviceMsgSchedulerMsearchServiceType : public DeviceMsgSchedulerMsearch
+class DviMsgMsearchDeviceType : public DviMsgMsearch
 {
-public:
-    DeviceMsgSchedulerMsearchServiceType(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, const Endpoint& aRemote, TUint aMx,
-                                         const OpenHome::Net::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId);
-    ~DeviceMsgSchedulerMsearchServiceType();
 private:
-    void Next(TUint aIndex);
+    friend class DviMsgScheduler;
+    DviMsgMsearchDeviceType(IUpnpAnnouncementData& aAnnouncementData,
+                            const Endpoint& aRemote, Bwh& aUri, TUint aConfigId);
+private: // from DviMsg
+    TUint TotalMsgCount() const;
+    TUint NextMsg();
+};
+
+class DviMsgMsearchServiceType : public DviMsgMsearch
+{
+private:
+    friend class DviMsgScheduler;
+    DviMsgMsearchServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote,
+                             const OpenHome::Net::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId);
+private: // from DviMsg
+    TUint TotalMsgCount() const;
+    TUint NextMsg();
 private:
     const OpenHome::Net::ServiceType& iServiceType;
 };
 
-class DeviceMsgSchedulerNotify : public DeviceMsgScheduler
+class DviMsgNotify : public DviMsg
 {
-protected:
-    DeviceMsgSchedulerNotify(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, TUint aIntervalMs, TUint aTotalMsgs,
-                             TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
-protected:
-    SsdpNotifier iSsdpNotifier;
-};
-
-class DeviceMsgSchedulerNotifyAlive : public DeviceMsgSchedulerNotify
-{
-    static const TUint kMsgIntervalMs = 40;
-public:
-    DeviceMsgSchedulerNotifyAlive(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
+private:
+    friend class DviMsgScheduler;
+    static DviMsgNotify* NewAlive(IUpnpAnnouncementData& aAnnouncementData,
                                   TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
-    ~DeviceMsgSchedulerNotifyAlive();
-};
-
-class DeviceMsgSchedulerNotifyByeBye : public DeviceMsgSchedulerNotify
-{
-    static const TUint kMsgIntervalMs = 10;
-public:
-    DeviceMsgSchedulerNotifyByeBye(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                   TIpAddress aAdapter, Bwh& aUri, TUint aConfigId,
-                                   Functor& aCompleted);
-    ~DeviceMsgSchedulerNotifyByeBye();
+    static DviMsgNotify* NewByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
+                                   Bwh& aUri, TUint aConfigId, Functor& aCompleted);
+    static DviMsgNotify* NewUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
+                                   Bwh& aUri, TUint aConfigId, Functor& aCompleted);
+    DviMsgNotify(IUpnpAnnouncementData& aAnnouncementData,
+                 TIpAddress aAdapter, Bwh& aUri, TUint aConfigId);
+private: // from DviMsg
+    TUint NextMsg();
 private:
-    Functor iCompleted;
-};
-
-class DeviceMsgSchedulerNotifyUpdate : public DeviceMsgSchedulerNotify
-{
-    static const TUint kMsgIntervalMs = 20;
-public:
-    DeviceMsgSchedulerNotifyUpdate(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                   TIpAddress aAdapter, Bwh& aUri, TUint aConfigId,
-                                   Functor& aCompleted);
-    ~DeviceMsgSchedulerNotifyUpdate();
-private:
+    SsdpNotifier iSsdpNotifier;
     Functor iCompleted;
 };
 

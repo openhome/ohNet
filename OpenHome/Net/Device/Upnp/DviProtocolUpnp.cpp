@@ -62,6 +62,26 @@ DviProtocolUpnp::~DviProtocolUpnp()
     }
 }
 
+const Brx& DviProtocolUpnp::Udn() const
+{
+    return iDevice.Udn();
+}
+
+TBool DviProtocolUpnp::IsRoot() const
+{
+    return iDevice.IsRoot();
+}
+
+TUint DviProtocolUpnp::ServiceCount() const
+{
+    return iDevice.ServiceCount();
+}
+
+DviService& DviProtocolUpnp::Service(TUint aIndex)
+{
+    return iDevice.Service(aIndex);
+}
+
 Brn DviProtocolUpnp::Domain() const
 {
     const TChar* ptr;
@@ -86,22 +106,15 @@ TUint DviProtocolUpnp::Version() const
     return Ascii::Uint(verBuf);
 }
 
-void DviProtocolUpnp::MsgSchedulerComplete(DeviceMsgScheduler* aScheduler)
+void DviProtocolUpnp::NotifyMsgSchedulerComplete(DviMsgScheduler* aScheduler)
 {
     iLock.Wait();
-    // FIXME: iSuppressScheduledEvents hack
-    // I've added iSuppressScheduledEvents to fix the race condition
-    // where the destructor is attempting to delete the schedulers at
-    // the same time as the schedulers are still running and can call
-    // this method to try to delete themselves. I consider it a hack
-    // and I would recommend that we review this code and try to fix
-    // it in a cleaner manner. --AW
     bool shouldDelete = false;
     if (!iSuppressScheduledEvents)
     {
         shouldDelete = true;
         for (TUint i=0; i<iMsgSchedulers.size(); i++) {
-            DeviceMsgScheduler* scheduler = iMsgSchedulers[i];
+            DviMsgScheduler* scheduler = iMsgSchedulers[i];
             if (scheduler == aScheduler) {
                 iMsgSchedulers.erase(iMsgSchedulers.begin() + i);
                 break;
@@ -354,8 +367,8 @@ void DviProtocolUpnp::Disable(Functor& aComplete)
     for (i=0; i<iSubnetDisableCount; i++) {
         Bwh uri;
         GetUriDeviceXml(uri, iAdapters[i]->UriBase());
-        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyByeBye(iDevice, *this, iAdapters[i]->Interface(),
-                                                                    uri, iDevice.ConfigId(), functor));
+        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyByeBye(*this, *this, iAdapters[i]->Interface(),
+                                                                  uri, iDevice.ConfigId(), functor));
     }
     for (TUint i=0; i<iAdapters.size(); i++) {
         iAdapters[i]->BonjourDeregister();
@@ -428,8 +441,8 @@ void DviProtocolUpnp::SendAliveNotifications()
     for (TUint i=0; i<iAdapters.size(); i++) {
         Bwh uri;
         GetUriDeviceXml(uri, iAdapters[i]->UriBase());
-        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyAlive(iDevice, *this, iAdapters[i]->Interface(),
-                                                                   uri, iDevice.ConfigId()));
+        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyAlive(*this, *this, iAdapters[i]->Interface(),
+                                                                 uri, iDevice.ConfigId()));
     }
     TUint maxUpdateTimeMs = Stack::InitParams().DvMaxUpdateTimeSecs() * 1000;
     TUint updateTimeMs = Random((2*maxUpdateTimeMs)/3, maxUpdateTimeMs/3);
@@ -446,8 +459,8 @@ void DviProtocolUpnp::SendUpdateNotifications()
     for (TUint i=0; i<iAdapters.size(); i++) {
         Bwh uri;
         GetUriDeviceXml(uri, iAdapters[i]->UriBase());
-        iMsgSchedulers.push_back(new DeviceMsgSchedulerNotifyUpdate(iDevice, *this, iAdapters[i]->Interface(),
-                                                                    uri, iDevice.ConfigId(), functor));
+        iMsgSchedulers.push_back(DviMsgScheduler::NewNotifyUpdate(*this, *this, iAdapters[i]->Interface(),
+                                                                  uri, iDevice.ConfigId(), functor));
     }
     iLock.Signal();
 }
@@ -474,8 +487,7 @@ void DviProtocolUpnp::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx, TIpAdd
         if (index != -1) {
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-            iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchAll(iDevice, *this, aEndpoint, aMx,
-                                                                      uri, iDevice.ConfigId()));
+            iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchAll(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
         }
         iLock.Signal();
     }
@@ -489,8 +501,7 @@ void DviProtocolUpnp::SsdpSearchRoot(const Endpoint& aEndpoint, TUint aMx, TIpAd
         if (index != -1) {
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-            iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchRoot(iDevice, *this, aEndpoint, aMx,
-                                                                       uri, iDevice.ConfigId()));
+            iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchRoot(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
         }
         iLock.Signal();
     }
@@ -504,8 +515,7 @@ void DviProtocolUpnp::SsdpSearchUuid(const Endpoint& aEndpoint, TUint aMx, TIpAd
         if (index != -1) {
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-            iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchUuid(iDevice, *this, aEndpoint, aMx,
-                                                                       uri, iDevice.ConfigId()));
+            iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchUuid(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
         }
         iLock.Signal();
     }
@@ -519,8 +529,7 @@ void DviProtocolUpnp::SsdpSearchDeviceType(const Endpoint& aEndpoint, TUint aMx,
         if (index != -1) {
             Bwh uri;
             GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-            iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchDeviceType(iDevice, *this, aEndpoint, aMx,
-                                                                             uri, iDevice.ConfigId()));
+            iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchDeviceType(*this, *this, aEndpoint, aMx, uri, iDevice.ConfigId()));
         }
         iLock.Signal();
     }
@@ -538,8 +547,8 @@ void DviProtocolUpnp::SsdpSearchServiceType(const Endpoint& aEndpoint, TUint aMx
                 if (index != -1) {
                     Bwh uri;
                     GetUriDeviceXml(uri, iAdapters[index]->UriBase());
-                    iMsgSchedulers.push_back(new DeviceMsgSchedulerMsearchServiceType(iDevice, *this, aEndpoint, aMx, serviceType,
-                                                                                      uri, iDevice.ConfigId()));
+                    iMsgSchedulers.push_back(DviMsgScheduler::NewMsearchServiceType(*this, *this, aEndpoint, aMx, serviceType,
+                                                                                    uri, iDevice.ConfigId()));
                 }
                 break;
             }
@@ -1097,17 +1106,94 @@ void DviProtocolUpnpServiceXmlWriter::WriteTechnicalStateVariables(IWriter& aWri
 }
 
 
-// DeviceMsgScheduler
+// DviMsgScheduler
 
-DeviceMsgScheduler::~DeviceMsgScheduler()
+DviMsgScheduler* DviMsgScheduler::NewMsearchAll(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                                const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId)
 {
-    /* timer is deleted by all client-instantiated sub-classes to ensure that timer
-       callbacks can't run after the most derived class dtor completes (clearing the
-       v-table which gets used by the callback) */
-    delete iNotifier;
+    DviMsgScheduler* self = new DviMsgScheduler(aListener, aMx);
+    self->iMsg = new DviMsgMsearchAll(aAnnouncementData, aRemote, aUri, aConfigId);
+    self->ScheduleNextTimer(self->iMsg->TotalMsgCount());
+    return self;
 }
 
-void DeviceMsgScheduler::Stop()
+DviMsgScheduler* DviMsgScheduler::NewMsearchRoot(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                                 const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId)
+{
+    DviMsgScheduler* self = new DviMsgScheduler(aListener, aMx);
+    self->iMsg = new DviMsgMsearchRoot(aAnnouncementData, aRemote, aUri, aConfigId);
+    self->ScheduleNextTimer(self->iMsg->TotalMsgCount());
+    return self;
+}
+
+DviMsgScheduler* DviMsgScheduler::NewMsearchUuid(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                                 const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId)
+{
+    DviMsgScheduler* self = new DviMsgScheduler(aListener, aMx);
+    self->iMsg = new DviMsgMsearchUuid(aAnnouncementData, aRemote, aUri, aConfigId);
+    self->ScheduleNextTimer(self->iMsg->TotalMsgCount());
+    return self;
+}
+
+DviMsgScheduler* DviMsgScheduler::NewMsearchDeviceType(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                                       const Endpoint& aRemote, TUint aMx, Bwh& aUri, TUint aConfigId)
+{
+    DviMsgScheduler* self = new DviMsgScheduler(aListener, aMx);
+    self->iMsg = new DviMsgMsearchDeviceType(aAnnouncementData, aRemote, aUri, aConfigId);
+    self->ScheduleNextTimer(self->iMsg->TotalMsgCount());
+    return self;
+}
+
+DviMsgScheduler* DviMsgScheduler::NewMsearchServiceType(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                                        const Endpoint& aRemote, TUint aMx,
+                                                        const OpenHome::Net::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId)
+{
+    DviMsgScheduler* self = new DviMsgScheduler(aListener, aMx);
+    self->iMsg = new DviMsgMsearchServiceType(aAnnouncementData, aRemote, aServiceType, aUri, aConfigId);
+    self->ScheduleNextTimer(self->iMsg->TotalMsgCount());
+    return self;
+}
+
+DviMsgScheduler* DviMsgScheduler::NewNotifyAlive(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                                 TIpAddress aAdapter, Bwh& aUri, TUint aConfigId)
+{
+    DviMsgScheduler* self = new DviMsgScheduler(aListener);
+    self->iMsg = DviMsgNotify::NewAlive(aAnnouncementData, aAdapter, aUri, aConfigId);
+    TUint msgCount = self->iMsg->TotalMsgCount();
+    self->SetDuration(msgCount * kMsgIntervalMsAlive);
+    self->ScheduleNextTimer(msgCount);
+    return self;
+}
+
+DviMsgScheduler* DviMsgScheduler::NewNotifyByeBye(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                                  TIpAddress aAdapter, Bwh& aUri, TUint aConfigId, Functor& aCompleted)
+{
+    DviMsgScheduler* self = new DviMsgScheduler(aListener);
+    self->iMsg = DviMsgNotify::NewByeBye(aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
+    TUint msgCount = self->iMsg->TotalMsgCount();
+    self->SetDuration(msgCount * kMsgIntervalMsByeBye);
+    self->ScheduleNextTimer(msgCount);
+    return self;
+}
+
+DviMsgScheduler* DviMsgScheduler::NewNotifyUpdate(IUpnpAnnouncementData& aAnnouncementData, IUpnpMsgListener& aListener,
+                                                  TIpAddress aAdapter, Bwh& aUri, TUint aConfigId, Functor& aCompleted)
+{
+    DviMsgScheduler* self = new DviMsgScheduler(aListener);
+    self->iMsg = DviMsgNotify::NewUpdate(aAnnouncementData, aAdapter, aUri, aConfigId, aCompleted);
+    TUint msgCount = self->iMsg->TotalMsgCount();
+    self->SetDuration(msgCount * kMsgIntervalMsUpdate);
+    self->ScheduleNextTimer(msgCount);
+    return self;
+}
+
+DviMsgScheduler::~DviMsgScheduler()
+{
+    delete iTimer;
+    delete iMsg;
+}
+
+void DviMsgScheduler::Stop()
 {
 	/* No use of mutex for iStop.  Its a signal for a scheduler to exit early and it
 	   doesn't really matter if we just miss the stop signal in NextMsg - we'll either
@@ -1115,68 +1201,49 @@ void DeviceMsgScheduler::Stop()
 	iStop = true;
 }
 
-DeviceMsgScheduler::DeviceMsgScheduler(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, TUint aEndTimeMs, TUint aTotalMsgs, Bwh& aUri)
-    : iDevice(aDevice)
-    , iDeviceUpnp(aDeviceUpnp)
-    , iTotal(aTotalMsgs)
-    , iIndex(0)
-    , iEndTimeMs(aEndTimeMs)
-	, iStop(false)
+DviMsgScheduler::DviMsgScheduler(IUpnpMsgListener& aListener, TUint aMx)
+    : iEndTimeMs(Os::TimeInMs() + (900 * aMx))
+    , iListener(aListener)
 {
-    ASSERT(iTotal > 0);
-    aUri.TransferTo(iUri);
-    Functor functor = MakeFunctor(*this, &DeviceMsgScheduler::NextMsg);
+    Construct();
+}
+
+DviMsgScheduler::DviMsgScheduler(IUpnpMsgListener& aListener)
+    : iEndTimeMs(0)
+    , iListener(aListener)
+{
+    Construct();
+}
+
+void DviMsgScheduler::Construct()
+{
+    iStop = false;
+    Functor functor = MakeFunctor(*this, &DviMsgScheduler::NextMsg);
     iTimer = new Timer(functor);
 }
 
-void DeviceMsgScheduler::Next(TUint aIndex)
+void DviMsgScheduler::SetDuration(TUint aDuration)
 {
-    if (!iDevice.IsRoot()) {
-        aIndex++; // skip the root device announcement for embedded devices
-    }
-
-    switch (aIndex)
-    {
-    case 0:
-        iNotifier->SsdpNotifyRoot(iDevice.Udn(), iUri);
-        break;
-    case 1:
-        iNotifier->SsdpNotifyUuid(iDevice.Udn(), iUri);
-        break;
-    case 2:
-        iNotifier->SsdpNotifyDeviceType(iDeviceUpnp.Domain(), iDeviceUpnp.Type(), iDeviceUpnp.Version(), iDevice.Udn(), iUri);
-        break;
-    default:
-        DviService& service = iDevice.Service(aIndex - 3);
-        const OpenHome::Net::ServiceType& serviceType = service.ServiceType();
-        iNotifier->SsdpNotifyServiceType(serviceType.Domain(), serviceType.Name(), serviceType.Version(), iDevice.Udn(), iUri);
-        break;
-    }
+    iEndTimeMs = Os::TimeInMs() + aDuration;
 }
 
-void DeviceMsgScheduler::NextMsg()
+void DviMsgScheduler::NextMsg()
 {
-	if (iStop) {
-		iTotal = iIndex;
-	}
-	else {
-		Next(iIndex);
-		iIndex++;
-	}
-    if (iTotal == iIndex) {
-        iDeviceUpnp.MsgSchedulerComplete(this);
+	TUint remaining;
+    if (iStop || (remaining = iMsg->NextMsg()) == 0) {
+        iListener.NotifyMsgSchedulerComplete(this);
         return;
     }
     else {
-        ScheduleNextTimer();
+        ScheduleNextTimer(remaining);
     }
 }
 
-void DeviceMsgScheduler::ScheduleNextTimer() const
+void DviMsgScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
 {
     TUint interval;
     TInt remaining = iEndTimeMs - Os::TimeInMs();
-    TInt maxInterval = (remaining / (TInt)(iTotal - iIndex));
+    TInt maxInterval = remaining / aRemainingMsgs;
     if (maxInterval < kMinTimerIntervalMs) {
         // we're running behind.  Schedule another timer to run immediately
         interval = 0;
@@ -1188,191 +1255,192 @@ void DeviceMsgScheduler::ScheduleNextTimer() const
 }
 
 
-// DeviceMsgSchedulerMsearch
+// DviMsg
 
-DeviceMsgSchedulerMsearch::DeviceMsgSchedulerMsearch(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp, const Endpoint& aRemote,
-                                                     TUint aMx, TUint aTotalMsgs,
-                                                     Bwh& aUri, TUint aConfigId)
-    : DeviceMsgScheduler(aDevice, aDeviceUpnp, Os::TimeInMs() + (aMx * 900), aTotalMsgs, aUri)
+DviMsg::~DviMsg()
+{
+    delete iNotifier;
+}
+
+TUint DviMsg::TotalMsgCount() const
+{
+    return (3 + iAnnouncementData.ServiceCount());
+}
+
+TUint DviMsg::NextMsg()
+{
+    switch (iIndex)
+    {
+    case 0:
+        iNotifier->SsdpNotifyRoot(iAnnouncementData.Udn(), iUri);
+        break;
+    case 1:
+        iNotifier->SsdpNotifyUuid(iAnnouncementData.Udn(), iUri);
+        break;
+    case 2:
+        iNotifier->SsdpNotifyDeviceType(iAnnouncementData.Domain(), iAnnouncementData.Type(), iAnnouncementData.Version(), iAnnouncementData.Udn(), iUri);
+        break;
+    default:
+        DviService& service = iAnnouncementData.Service(iIndex - 3);
+        const OpenHome::Net::ServiceType& serviceType = service.ServiceType();
+        iNotifier->SsdpNotifyServiceType(serviceType.Domain(), serviceType.Name(), serviceType.Version(), iAnnouncementData.Udn(), iUri);
+        break;
+    }
+    iIndex++;
+    return (TotalMsgCount() - iIndex);
+}
+
+DviMsg::DviMsg(IUpnpAnnouncementData& aAnnouncementData, Bwh& aUri)
+    : iAnnouncementData(aAnnouncementData)
+	, iStop(false)
+{
+    iIndex = (iAnnouncementData.IsRoot()? 0 : 1);
+    aUri.TransferTo(iUri);
+}
+
+
+// DviMsgMsearch
+
+DviMsgMsearch::DviMsgMsearch(IUpnpAnnouncementData& aAnnouncementData,
+                             const Endpoint& aRemote, Bwh& aUri, TUint aConfigId)
+    : DviMsg(aAnnouncementData, aUri)
 {
     SsdpMsearchResponder* responder = new SsdpMsearchResponder(aConfigId);
     responder->SetRemote(aRemote);
     iNotifier = responder;
-    ScheduleNextTimer();
 }
 
 
-// DeviceMsgSchedulerMsearchAll
+// DviMsgMsearchAll
 
-DeviceMsgSchedulerMsearchAll::DeviceMsgSchedulerMsearchAll(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                                           const Endpoint& aRemote, TUint aMx,
-                                                           Bwh& aUri, TUint aConfigId)
-    : DeviceMsgSchedulerMsearch(aDevice, aDeviceUpnp, aRemote, aMx,
-                                aDevice.ServiceCount() + (aDevice.IsRoot()? 3 : 2),
-                                aUri, aConfigId)
+DviMsgMsearchAll::DviMsgMsearchAll(IUpnpAnnouncementData& aAnnouncementData,
+                                   const Endpoint& aRemote, Bwh& aUri, TUint aConfigId)
+    : DviMsgMsearch(aAnnouncementData, aRemote, aUri, aConfigId)
 {
 }
 
-DeviceMsgSchedulerMsearchAll::~DeviceMsgSchedulerMsearchAll()
+
+// DviMsgMsearchRoot
+
+DviMsgMsearchRoot::DviMsgMsearchRoot(IUpnpAnnouncementData& aAnnouncementData,
+                                     const Endpoint& aRemote, Bwh& aUri, TUint aConfigId)
+    : DviMsgMsearch(aAnnouncementData, aRemote, aUri, aConfigId)
 {
-    delete iTimer;
+    ASSERT(aAnnouncementData.IsRoot());
+}
+
+TUint DviMsgMsearchRoot::TotalMsgCount() const
+{
+    return 1;
+}
+
+TUint DviMsgMsearchRoot::NextMsg()
+{
+    iNotifier->SsdpNotifyRoot(iAnnouncementData.Udn(), iUri);
+    return 0;
 }
 
 
-// DeviceMsgSchedulerMsearchRoot
+// DviMsgMsearchUuid
 
-DeviceMsgSchedulerMsearchRoot::DeviceMsgSchedulerMsearchRoot(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                                             const Endpoint& aRemote, TUint aMx,
-                                                             Bwh& aUri, TUint aConfigId)
-    : DeviceMsgSchedulerMsearch(aDevice, aDeviceUpnp, aRemote, aMx, 1, aUri, aConfigId)
+DviMsgMsearchUuid::DviMsgMsearchUuid(IUpnpAnnouncementData& aAnnouncementData,
+                                     const Endpoint& aRemote, Bwh& aUri, TUint aConfigId)
+    : DviMsgMsearch(aAnnouncementData, aRemote, aUri, aConfigId)
 {
 }
 
-DeviceMsgSchedulerMsearchRoot::~DeviceMsgSchedulerMsearchRoot()
+TUint DviMsgMsearchUuid::TotalMsgCount() const
 {
-    delete iTimer;
+    return 1;
 }
 
-void DeviceMsgSchedulerMsearchRoot::Next(TUint aIndex)
+TUint DviMsgMsearchUuid::NextMsg()
 {
-    ASSERT(iDevice.IsRoot());
-    ASSERT(aIndex == 0);
-    iNotifier->SsdpNotifyRoot(iDevice.Udn(), iUri);
-}
-
-
-// DeviceMsgSchedulerMsearchUuid
-
-DeviceMsgSchedulerMsearchUuid::DeviceMsgSchedulerMsearchUuid(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                                             const Endpoint& aRemote, TUint aMx,
-                                                             Bwh& aUri, TUint aConfigId)
-    : DeviceMsgSchedulerMsearch(aDevice, aDeviceUpnp, aRemote, aMx, 1, aUri, aConfigId)
-{
-}
-
-DeviceMsgSchedulerMsearchUuid::~DeviceMsgSchedulerMsearchUuid()
-{
-    delete iTimer;
-}
-
-void DeviceMsgSchedulerMsearchUuid::Next(TUint aIndex)
-{
-    ASSERT(aIndex == 0);
-    iNotifier->SsdpNotifyUuid(iDevice.Udn(), iUri);
+    iNotifier->SsdpNotifyUuid(iAnnouncementData.Udn(), iUri);
+    return 0;
 }
 
 
-// DeviceMsgSchedulerMsearchDeviceType
+// DviMsgMsearchDeviceType
 
-DeviceMsgSchedulerMsearchDeviceType::DeviceMsgSchedulerMsearchDeviceType(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                                                         const Endpoint& aRemote, TUint aMx,
-                                                                         Bwh& aUri, TUint aConfigId)
-    : DeviceMsgSchedulerMsearch(aDevice, aDeviceUpnp, aRemote, aMx, 1, aUri, aConfigId)
+DviMsgMsearchDeviceType::DviMsgMsearchDeviceType(IUpnpAnnouncementData& aAnnouncementData,
+                                                 const Endpoint& aRemote, Bwh& aUri, TUint aConfigId)
+    : DviMsgMsearch(aAnnouncementData, aRemote, aUri, aConfigId)
 {
 }
 
-DeviceMsgSchedulerMsearchDeviceType::~DeviceMsgSchedulerMsearchDeviceType()
+TUint DviMsgMsearchDeviceType::TotalMsgCount() const
 {
-    delete iTimer;
+    return 1;
 }
 
-void DeviceMsgSchedulerMsearchDeviceType::Next(TUint aIndex)
+TUint DviMsgMsearchDeviceType::NextMsg()
 {
-    ASSERT(aIndex == 0);
-    iNotifier->SsdpNotifyDeviceType(iDeviceUpnp.Domain(), iDeviceUpnp.Type(), iDeviceUpnp.Version(), iDevice.Udn(), iUri);
+    iNotifier->SsdpNotifyDeviceType(iAnnouncementData.Domain(), iAnnouncementData.Type(), iAnnouncementData.Version(), iAnnouncementData.Udn(), iUri);
+    return 0;
 }
 
 
-// DeviceMsgSchedulerMsearchServiceType
+// DviMsgMsearchServiceType
 
-DeviceMsgSchedulerMsearchServiceType::DeviceMsgSchedulerMsearchServiceType(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                                                           const Endpoint& aRemote, TUint aMx,
-                                                                           const OpenHome::Net::ServiceType& aServiceType,
-                                                                           Bwh& aUri, TUint aConfigId)
-    : DeviceMsgSchedulerMsearch(aDevice, aDeviceUpnp, aRemote, aMx, 1, aUri, aConfigId)
+DviMsgMsearchServiceType::DviMsgMsearchServiceType(IUpnpAnnouncementData& aAnnouncementData, const Endpoint& aRemote,
+                                                   const OpenHome::Net::ServiceType& aServiceType, Bwh& aUri, TUint aConfigId)
+    : DviMsgMsearch(aAnnouncementData, aRemote, aUri, aConfigId)
     , iServiceType(aServiceType)
 {
 }
 
-DeviceMsgSchedulerMsearchServiceType::~DeviceMsgSchedulerMsearchServiceType()
+TUint DviMsgMsearchServiceType::TotalMsgCount() const
 {
-    delete iTimer;
+    return 1;
 }
 
-void DeviceMsgSchedulerMsearchServiceType::Next(TUint aIndex)
+TUint DviMsgMsearchServiceType::NextMsg()
 {
-    ASSERT(aIndex == 0);
-    iNotifier->SsdpNotifyServiceType(iServiceType.Domain(), iServiceType.Name(), iServiceType.Version(), iDevice.Udn(), iUri);
+    iNotifier->SsdpNotifyServiceType(iServiceType.Domain(), iServiceType.Name(), iServiceType.Version(), iAnnouncementData.Udn(), iUri);
+    return 0;
 }
 
 
-// DeviceMsgSchedulerNotify
+// DviMsgNotify
 
-DeviceMsgSchedulerNotify::DeviceMsgSchedulerNotify(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                                   TUint aIntervalMs, TUint aTotalMsgs,
-                                                   TIpAddress aAdapter, Bwh& aUri, TUint aConfigId)
-    : DeviceMsgScheduler(aDevice, aDeviceUpnp, Os::TimeInMs() + (aIntervalMs * aTotalMsgs), aTotalMsgs, aUri)
+DviMsgNotify* DviMsgNotify::NewAlive(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter, Bwh& aUri, TUint aConfigId)
+{
+    DviMsgNotify* self = new DviMsgNotify(aAnnouncementData, aAdapter, aUri, aConfigId);
+    self->iNotifier = new SsdpNotifierAlive(self->iSsdpNotifier);
+    return self;
+}
+
+DviMsgNotify* DviMsgNotify::NewByeBye(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
+                                      Bwh& aUri, TUint aConfigId, Functor& aCompleted)
+{
+    DviMsgNotify* self = new DviMsgNotify(aAnnouncementData, aAdapter, aUri, aConfigId);
+    self->iNotifier = new SsdpNotifierByeBye(self->iSsdpNotifier);
+    self->iCompleted = aCompleted;
+    return self;
+}
+
+DviMsgNotify* DviMsgNotify::NewUpdate(IUpnpAnnouncementData& aAnnouncementData, TIpAddress aAdapter,
+                                      Bwh& aUri, TUint aConfigId, Functor& aCompleted)
+{
+    DviMsgNotify* self = new DviMsgNotify(aAnnouncementData, aAdapter, aUri, aConfigId);
+    self->iNotifier = new SsdpNotifierUpdate(self->iSsdpNotifier);
+    self->iCompleted = aCompleted;
+    return self;
+}
+
+DviMsgNotify::DviMsgNotify(IUpnpAnnouncementData& aAnnouncementData,
+                           TIpAddress aAdapter, Bwh& aUri, TUint aConfigId)
+    : DviMsg(aAnnouncementData, aUri)
     , iSsdpNotifier(aAdapter, aConfigId)
 {
 }
 
-
-// DeviceMsgSchedulerNotifyAlive
-
-DeviceMsgSchedulerNotifyAlive::DeviceMsgSchedulerNotifyAlive(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                                             TIpAddress aAdapter, Bwh& aUri, TUint aConfigId)
-    : DeviceMsgSchedulerNotify(aDevice, aDeviceUpnp, kMsgIntervalMs,
-                               aDevice.ServiceCount() + (aDevice.IsRoot()? 3 : 2),
-                               aAdapter, aUri, aConfigId)
+TUint DviMsgNotify::NextMsg()
 {
-    iNotifier = new SsdpNotifierAlive(iSsdpNotifier);
-    ScheduleNextTimer();
-}
-
-DeviceMsgSchedulerNotifyAlive::~DeviceMsgSchedulerNotifyAlive()
-{
-    delete iTimer;
-}
-
-
-// DeviceMsgSchedulerNotifyByeBye
-
-DeviceMsgSchedulerNotifyByeBye::DeviceMsgSchedulerNotifyByeBye(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                                               TIpAddress aAdapter, Bwh& aUri, TUint aConfigId,
-                                                               Functor& aCompleted)
-    : DeviceMsgSchedulerNotify(aDevice, aDeviceUpnp, kMsgIntervalMs,
-                               aDevice.ServiceCount() + (aDevice.IsRoot()? 3 : 2),
-                               aAdapter, aUri, aConfigId)
-    , iCompleted(aCompleted)
-{
-    iNotifier = new SsdpNotifierByeBye(iSsdpNotifier);
-    ScheduleNextTimer();
-}
-
-DeviceMsgSchedulerNotifyByeBye::~DeviceMsgSchedulerNotifyByeBye()
-{
-    iCompleted();
-    delete iTimer;
-}
-
-
-// DeviceMsgSchedulerNotifyUpdate
-
-DeviceMsgSchedulerNotifyUpdate::DeviceMsgSchedulerNotifyUpdate(DviDevice& aDevice, DviProtocolUpnp& aDeviceUpnp,
-                                                               TIpAddress aAdapter, Bwh& aUri, TUint aConfigId,
-                                                               Functor& aCompleted)
-    : DeviceMsgSchedulerNotify(aDevice, aDeviceUpnp, kMsgIntervalMs,
-                               aDevice.ServiceCount() + (aDevice.IsRoot()? 3 : 2),
-                               aAdapter, aUri, aConfigId)
-    , iCompleted(aCompleted)
-{
-    iNotifier = new SsdpNotifierUpdate(iSsdpNotifier);
-    ScheduleNextTimer();
-}
-
-
-DeviceMsgSchedulerNotifyUpdate::~DeviceMsgSchedulerNotifyUpdate()
-{
-    iCompleted();
-    delete iTimer;
+    TUint remaining = DviMsg::NextMsg();
+    if (remaining == 0 && iCompleted != NULL) {
+        iCompleted();
+    }
+    return remaining;
 }
