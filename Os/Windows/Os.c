@@ -433,12 +433,16 @@ int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
     int32_t bytes = 0;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     if (SocketInterrupted(handle)) {
+        fprintf(stderr, "--OsNetworkSend: error, SocketInterrupted\n");
         return -1;
     }
     do {
         bytes = send(handle->iSocket, (const char*)aBuffer, aBytes, 0);
         if (bytes != -1) {
             sent += bytes;
+        }
+        else {
+            fprintf(stderr, "--OsNetworkSend: error from send - %d\n", WSAGetLastError());
         }
     } while(bytes != -1 && sent < (int32_t)aBytes);    
     return sent;
