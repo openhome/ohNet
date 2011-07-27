@@ -562,6 +562,7 @@ void DviSessionWebSocket::Read()
     }
     data.Set(data.Split(1, data.Bytes()-1));
     AutoMutex a(iInterruptLock);
+    Interrupt(false);
 
     Brn doc = XmlParserBasic::Find(WebSocket::kTagRoot, data);
     Brn method = XmlParserBasic::Find(WebSocket::kTagMethod, doc);

@@ -4,7 +4,7 @@
 #include <OpenHome/Exception.h>
 #include <OpenHome/Private/Parser.h>
 #include <OpenHome/Private/Printer.h>
-#include <OpenHome/Net/Private/DviDeviceUpnp.h> // for DviDeviceUpnp ctor only
+#include <OpenHome/Net/Private/DviProtocolUpnp.h> // for DviProtocolUpnp ctor only
 #include <OpenHome/Net/Private/DviStack.h>
 
 using namespace OpenHome;
@@ -453,7 +453,7 @@ DviDeviceStandard::DviDeviceStandard(const Brx& aUdn, IResourceManager& aResourc
 
 void DviDeviceStandard::Construct()
 {
-    AddProtocol(new DviDeviceUpnp(*this));
+    AddProtocol(new DviProtocolUpnp(*this));
 }
 
 
