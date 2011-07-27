@@ -332,7 +332,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
     aInitParams->SetDvNumWebSocketThreads(5);
     aInitParams->SetDvWebSocketPort(54321);
     UpnpLibrary::Initialise(aInitParams);
-    Debug::SetLevel(Debug::kDvWebSocket | Debug::kError);
+    //Debug::SetLevel(Debug::kDvWebSocket | Debug::kError);
     UpnpLibrary::StartDv();
 
     Print("TestDvTestBasic - starting ('q' to quit)\n");
