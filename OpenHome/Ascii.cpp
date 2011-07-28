@@ -1,4 +1,5 @@
 #include <OpenHome/Private/Ascii.h>
+#include <stdlib.h>
 
 using namespace OpenHome;
 
@@ -179,13 +180,12 @@ TUint Ascii::AppendDec(Bwx& aBuffer, TInt aValue)
     TUint extra = 0;
 
     if (aValue < 0) {
-        aValue = 0 - aValue;
         aBuffer.Append('-');
         extra++;
     }
 
-    while(aValue > 0) {
-        reversed.Append((TChar)('0' + aValue % 10));
+    while(aValue != 0) {
+        reversed.Append((TChar)('0' + abs(aValue % 10)));
         aValue = aValue / 10;
     }
 
@@ -235,13 +235,12 @@ TUint Ascii::AppendDec(Bwx& aBuffer, TInt64 aValue)
     TUint extra = 0;
 
     if (aValue < 0) {
-        aValue = 0 - aValue;
         aBuffer.Append('-');
         extra++;
     }
 
-    while(aValue > 0) {
-        reversed.Append((TChar)('0' + aValue % 10));
+    while(aValue != 0) {
+        reversed.Append((TChar)('0' + labs(aValue % 10)));
         aValue = aValue / 10;
     }
 
