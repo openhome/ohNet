@@ -149,12 +149,7 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
 CpiSubscription::~CpiSubscription()
 {
     iTimer->Cancel();
-    Stack::Mutex().Wait();
-    bool subscribed = (iSid.Bytes() > 0);
-    Stack::Mutex().Signal();
-    if (subscribed) {
-        DoUnsubscribe();
-    }
+    ASSERT(iSid.Bytes() == 0);
     iDevice.RemoveRef();
     delete iTimer;
     Stack::RemoveObject(this, "CpiSubscription");
