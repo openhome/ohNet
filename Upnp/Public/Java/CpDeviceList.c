@@ -2,19 +2,16 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include "CpDeviceList.h"
+#include "JniCallbackList.h"
+#include "OhNetDefines.h"
 #include "C/CpDevice.h"
 #include "C/CpDeviceUpnp.h"
 
-typedef struct{
-	JavaVM *vm;
-	jweak callbackObj;
-} jniObjRef;
+static JniCallbackList *iList = NULL;
 
-jniObjRef *ref = NULL;
+static void STDCALL deviceAddedCallback(void* aPtr, CpDeviceC aDevice) {
 
-void deviceAddedCallback(void* aPtr, CpDeviceC aDevice) {
-
-	jniObjRef* ref = (jniObjRef*) aPtr;
+	JniObjRef* ref = (JniObjRef*) aPtr;
 	JNIEnv *env;
 	jclass cls;
 	jmethodID mid;
@@ -22,24 +19,22 @@ void deviceAddedCallback(void* aPtr, CpDeviceC aDevice) {
 
 	ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **) &env, NULL);
 	if (ret < 0)
-		printf("Unable to attach thread to JVM.\n");
+		printf("CpDeviceListJNI: Unable to attach thread to JVM.\n");
 	
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "deviceAdded", "(J)V");
 	if (mid == 0) {
-		printf("Method ID not found.\n");
+		printf("CpDeviceListJNI: Method ID \"deviceAdded()\" not found.\n");
+		fflush(stdout);
 		return;
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid, aDevice);
-	
 	(*(ref->vm))->DetachCurrentThread(ref->vm);
-	
-	//printf("Device added native test.\n");
 }
 
-void deviceRemovedCallback(void* aPtr, CpDeviceC aDevice) {
+static void STDCALL deviceRemovedCallback(void* aPtr, CpDeviceC aDevice) {
 
-	jniObjRef* ref = (jniObjRef*) aPtr;
+	JniObjRef* ref = (JniObjRef*) aPtr;
 	JNIEnv *env;
 	jclass cls;
 	jmethodID mid;
@@ -47,66 +42,71 @@ void deviceRemovedCallback(void* aPtr, CpDeviceC aDevice) {
 
 	ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **) &env, NULL);
 	if (ret < 0)
-		printf("Unable to attach thread to JVM.\n");
+		printf("CpDeviceListJNI: Unable to attach thread to JVM.\n");
 	
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "deviceRemoved", "(J)V");
 	if (mid == 0) {
-		printf("Method ID not found.\n");
+		printf("CpDeviceListJNI: Method ID \"deviceRemoved()\" not found.\n");
+		fflush(stdout);
 		return;
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid, aDevice);
-	
 	(*(ref->vm))->DetachCurrentThread(ref->vm);
-	
-	//printf("Device removed native test.\n");
+}
+
+static void InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRef **aRef)
+{
+	jint ret;
+
+	if (!iList)
+	{
+		iList = JniCallbackListCreate();
+	}
+	*aRef = (JniObjRef*) malloc(sizeof(JniObjRef));
+	ret = (*aEnv)->GetJavaVM(aEnv, &(*aRef)->vm);
+	if (ret < 0) {
+		printf("CpDeviceListJNI: Unable to get reference to the current Java VM.\n");
+		fflush(stdout);
+	}
+	(*aRef)->callbackObj = (*aEnv)->NewWeakGlobalRef(aEnv, aObject);
+	if ((*aRef)->callbackObj == NULL) {
+		printf("CpDeviceListJNI: Callback object not stored.\n");
+		fflush(stdout);
+	}
+	JniCallbackListAddElement(&iList, *aRef);
 }
 
 JNIEXPORT void JNICALL Java_ohnet_CpDeviceList_CpDeviceListDestroy
   (JNIEnv *env, jobject obj, jlong ptr)
 {
-	(*env)->DeleteGlobalRef(env, ref->callbackObj);
-	free(ref);
+	HandleCpDeviceList list = (HandleCpDeviceList) (size_t)ptr;
+	obj = obj;
 	
-	CpDeviceListDestroy((HandleCpDeviceList) ptr);
+	JniCallbackListDestroy(env, &iList);
+	iList = NULL;
+	CpDeviceListDestroy(list);
 }
 
 JNIEXPORT void JNICALL Java_ohnet_CpDeviceList_CpDeviceListRefresh
   (JNIEnv *env, jobject obj, jlong ptr)
 {
-	CpDeviceListRefresh((HandleCpDeviceList) ptr);
-}
-
-void initialiseReferences(JNIEnv *env, jobject obj)
-{
-	jint vmCount;
-	jint ret;
-
-	/*ret = (*env)->GetJavaVM(env, &(ref->vm));
-	if (ret < 0) {
-		printf("Unable to get reference to the current Java VM.\n");
-	}*/
-	ref = (jniObjRef*) malloc(sizeof(jniObjRef));
-
-	ret = JNI_GetCreatedJavaVMs(&(ref->vm), 1, &vmCount);
-//	printf("Number of virtual machines found: %d\n", vmCount);
-	ref->callbackObj = (*env)->NewWeakGlobalRef(env, obj);
-	/*if (callbackObj == NULL) {
-		printf("Callback object not stored.\n");
-	} else {
-		printf("Callback object successfully stored.\n");
-	}*/
+	HandleCpDeviceList list = (HandleCpDeviceList) (size_t)ptr;
+	env = env;
+	obj = obj;
+	
+	CpDeviceListRefresh(list);
 }
 
 JNIEXPORT jlong JNICALL Java_ohnet_CpDeviceList_CpDeviceListCreateUpnpAll
   (JNIEnv *env, jobject obj)
 {
 	HandleCpDeviceList devList;
-	OhNetCallbackDevice callbackAdded = &deviceAddedCallback;
-	OhNetCallbackDevice callbackRemoved = &deviceRemovedCallback;
-	//jniObjRef* ref = (jniObjRef*) malloc(sizeof(jniObjRef));
+	OhNetCallbackDevice callbackAdded = (OhNetCallbackDevice) &deviceAddedCallback;
+	OhNetCallbackDevice callbackRemoved = (OhNetCallbackDevice) &deviceRemovedCallback;
+	JniObjRef* ref = (JniObjRef*) malloc(sizeof(JniObjRef));
 
-	initialiseReferences(env, obj);
+	InitialiseReferences(env, obj, &ref);
 									  
 	devList = CpDeviceListCreateUpnpAll(callbackAdded, ref, callbackRemoved, ref);
 	
@@ -117,10 +117,11 @@ JNIEXPORT jlong JNICALL Java_ohnet_CpDeviceList_CpDeviceListCreateUpnpRoot
   (JNIEnv *env, jobject obj)
 {
 	HandleCpDeviceList devList;
-	OhNetCallbackDevice callbackAdded = &deviceAddedCallback;
-	OhNetCallbackDevice callbackRemoved = &deviceRemovedCallback;
+	OhNetCallbackDevice callbackAdded = (OhNetCallbackDevice) &deviceAddedCallback;
+	OhNetCallbackDevice callbackRemoved = (OhNetCallbackDevice) &deviceRemovedCallback;
+	JniObjRef* ref = (JniObjRef*) malloc(sizeof(JniObjRef));
 
-	initialiseReferences(env, obj);
+	InitialiseReferences(env, obj, &ref);
 									  
 	devList = CpDeviceListCreateUpnpRoot(callbackAdded, ref, callbackRemoved, ref);
 	
@@ -131,12 +132,12 @@ JNIEXPORT jlong JNICALL Java_ohnet_CpDeviceList_CpDeviceListCreateUpnpUuid
   (JNIEnv *env, jobject obj, jstring uuid)
 {
 	HandleCpDeviceList devList;
-	OhNetCallbackDevice callbackAdded = &deviceAddedCallback;
-	OhNetCallbackDevice callbackRemoved = &deviceRemovedCallback;
-	
+	OhNetCallbackDevice callbackAdded = (OhNetCallbackDevice) &deviceAddedCallback;
+	OhNetCallbackDevice callbackRemoved = (OhNetCallbackDevice) &deviceRemovedCallback;
+	JniObjRef* ref = (JniObjRef*) malloc(sizeof(JniObjRef));
 	const char* nativeUuid = (*env)->GetStringUTFChars(env, uuid, NULL);
 
-	initialiseReferences(env, obj);
+	InitialiseReferences(env, obj, &ref);
 	
 	devList = CpDeviceListCreateUpnpUuid(nativeUuid, callbackAdded, ref, callbackRemoved, ref);
 	
@@ -149,13 +150,13 @@ JNIEXPORT jlong JNICALL Java_ohnet_CpDeviceList_CpDeviceListCreateUpnpDeviceType
   (JNIEnv *env, jobject obj, jstring dom, jstring dev, jint version)
 {
 	HandleCpDeviceList devList;
-	OhNetCallbackDevice callbackAdded = &deviceAddedCallback;
-	OhNetCallbackDevice callbackRemoved = &deviceRemovedCallback;
-
+	OhNetCallbackDevice callbackAdded = (OhNetCallbackDevice) &deviceAddedCallback;
+	OhNetCallbackDevice callbackRemoved = (OhNetCallbackDevice) &deviceRemovedCallback;
+	JniObjRef* ref = (JniObjRef*) malloc(sizeof(JniObjRef));
 	const char* domName = (*env)->GetStringUTFChars(env, dom, NULL);
 	const char* devType = (*env)->GetStringUTFChars(env, dev, NULL);
 
-	initialiseReferences(env, obj);
+	InitialiseReferences(env, obj, &ref);
 	
 	devList = CpDeviceListCreateUpnpDeviceType(domName, devType, version, callbackAdded, ref, callbackRemoved, ref);
 	
@@ -169,13 +170,13 @@ JNIEXPORT jlong JNICALL Java_ohnet_CpDeviceList_CpDeviceListCreateUpnpServiceTyp
   (JNIEnv *env, jobject obj, jstring dom, jstring service, jint version)
 {
 	HandleCpDeviceList devList;
-	OhNetCallbackDevice callbackAdded = &deviceAddedCallback;
-	OhNetCallbackDevice callbackRemoved = &deviceRemovedCallback;
-
+	OhNetCallbackDevice callbackAdded = (OhNetCallbackDevice) &deviceAddedCallback;
+	OhNetCallbackDevice callbackRemoved = (OhNetCallbackDevice) &deviceRemovedCallback;
+	JniObjRef* ref = (JniObjRef*) malloc(sizeof(JniObjRef));
 	const char* domName = (*env)->GetStringUTFChars(env, dom, NULL);
 	const char* serviceType = (*env)->GetStringUTFChars(env, service, NULL);
 
-	initialiseReferences(env, obj);
+	InitialiseReferences(env, obj, &ref);
 	
 	devList = CpDeviceListCreateUpnpServiceType(domName, serviceType, version, callbackAdded, ref, callbackRemoved, ref);
 	

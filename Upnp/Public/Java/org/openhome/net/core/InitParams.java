@@ -1,4 +1,4 @@
-package openhome.net.core;
+package org.openhome.net.core;
 
 public class InitParams
 {
@@ -6,27 +6,29 @@ public class InitParams
 	private long iHandle = 0;
 	
 	// Initialisation and destruction functions.
-	private native long OhNetInitParamsCreate();
-	private native void OhNetInitParamsDestroy(long ptr);
-	
-	// Setter functions.
+	private static native long OhNetInitParamsCreate();
+	private static native void OhNetInitParamsDestroy(long aParams);
 
 	// Getter functions.
-	private native int OhNetInitParamsTcpConnectTimeoutMs(long ptr);
-	private native int OhNetInitParamsMsearchTimeSecs(long ptr);
-	private native int OhNetInitParamsMsearchTtl(long ptr);
-	private native int OhNetInitParamsNumEventSessionThreads(long ptr);
-	private native int OhNetInitParamsNumXmlFetcherThreads(long ptr);
-	private native int OhNetInitParamsNumActionInvokerThreads(long ptr);
-	private native int OhNetInitParamsNumInvocations(long ptr);
-	private native int OhNetInitParamsNumSubscriberThreads(long ptr);
-	private native int OhNetInitParamsPendingSubscriptionTimeoutMs(long ptr);
-	private native int OhNetInitParamsDvMaxUpdateTimeSecs(long ptr);
-	private native int OhNetInitParamsDvNumServerThreads(long ptr);
-	private native int OhNetInitParamsDvNumPublisherThreads(long ptr);
-	private native int OhNetInitParamsDvNumWebSocketThreads(long ptr);
-	private native int OhNetInitParamsDvWebSocketPort(long ptr);
-	private native int OhNetInitParamsDvIsBonjourEnabled(long ptr);
+	private static native int OhNetInitParamsTcpConnectTimeoutMs(long aParams);
+	private static native int OhNetInitParamsMsearchTimeSecs(long aParams);
+	private static native int OhNetInitParamsMsearchTtl(long aParams);
+	private static native int OhNetInitParamsNumEventSessionThreads(long aParams);
+	private static native int OhNetInitParamsNumXmlFetcherThreads(long aParams);
+	private static native int OhNetInitParamsNumActionInvokerThreads(long aParams);
+	private static native int OhNetInitParamsNumInvocations(long aParams);
+	private static native int OhNetInitParamsNumSubscriberThreads(long aParams);
+	private static native int OhNetInitParamsPendingSubscriptionTimeoutMs(long aParams);
+	private static native int OhNetInitParamsDvMaxUpdateTimeSecs(long aParams);
+	private static native int OhNetInitParamsDvNumServerThreads(long aParams);
+	private static native int OhNetInitParamsDvNumPublisherThreads(long aParams);
+	private static native int OhNetInitParamsDvNumWebSocketThreads(long aParams);
+	private static native int OhNetInitParamsDvWebSocketPort(long aParams);
+	private static native int OhNetInitParamsDvIsBonjourEnabled(long aParams);
+	
+	// Setter functions.
+	private static native void OhNetInitParamsSetMsearchTime(long aParams, int aSecs);
+	private static native void OhNetInitParamsSetUseLoopbackNetworkAdapter(long aParams);
 
 	static
     {
@@ -39,7 +41,7 @@ public class InitParams
 		iHandle = OhNetInitParamsCreate();
 	}
 	
-	public void finalize()
+	public void destroy()
 	{
 		OhNetInitParamsDestroy(iHandle);
 	}
@@ -87,6 +89,25 @@ public class InitParams
 	public int getNumSubscriberThreads()
 	{
 		return OhNetInitParamsNumSubscriberThreads(iHandle);
+	}
+	
+	/**
+	 * Set a custom time that msearch responses should be spread out over.
+	 * 
+	 * @param aSecs	time in seconds.  Must be between 1 and 5 (inclusive).
+	 */
+	public void setMsearchTimeSecs(int aSecs)
+	{
+		OhNetInitParamsSetMsearchTime(iHandle, aSecs);
+	}
+	
+	/**
+	 * Limit the library to using only the loopback network interface.
+	 * Useful for testing but not expected to be used in production code.
+	 */
+	public void setUseLoopbackNetworkAdapter()
+	{
+		OhNetInitParamsSetUseLoopbackNetworkAdapter(iHandle);
 	}
 	
 	public static void main(String[] args)

@@ -1,79 +1,190 @@
 #include <jni.h>
+#include <stddef.h>
 #include "InitParams.h"
 #include "C/OhNet.h"
 
-JNIEXPORT jlong JNICALL Java_openhome_net_core_InitParams_OhNetInitParamsCreate
-  (JNIEnv *env, jobject obj)
+#ifdef __cplusplus
+extern "C" {
+#endif
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsCreate
+ * Signature: ()J
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsCreate
+  (JNIEnv *aEnv, jclass aClass)
 {
+	aEnv = aEnv;
+	aClass = aClass;
+	
 	return (jlong) OhNetInitParamsCreate();
 }
 
-JNIEXPORT void JNICALL Java_openhome_net_core_InitParams_OhNetInitParamsDestroy
-  (JNIEnv *env, jobject obj, jlong ptr)
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsDestroy
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsDestroy
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
 {
-	OhNetInitParamsDestroy((OhNetHandleInitParams) ptr);
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
+	
+	OhNetInitParamsDestroy(params);
 }
 
-JNIEXPORT jint JNICALL Java_openhome_net_core_InitParams_OhNetInitParamsTcpConnectTimeoutMs
-  (JNIEnv *env, jobject obj, jlong ptr)
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsTcpConnectTimeoutMs
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsTcpConnectTimeoutMs
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
 {
-	int timeout = OhNetInitParamsTcpConnectTimeoutMs((OhNetHandleInitParams) ptr);
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return (jint) timeout;
+	return OhNetInitParamsTcpConnectTimeoutMs(params);
 }
 
-JNIEXPORT jint JNICALL Java_openhome_net_core_InitParams_OhNetInitParamsMsearchTimeSecs
-  (JNIEnv *env, jobject obj, jlong ptr)
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsMsearchTimeSecs
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsMsearchTimeSecs
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
 {
-	int searchTime = OhNetInitParamsMsearchTimeSecs((OhNetHandleInitParams) ptr);
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return (jint) searchTime;
+	return OhNetInitParamsMsearchTimeSecs(params);
 }
 
-JNIEXPORT jint JNICALL Java_openhome_net_core_InitParams_OhNetInitParamsMsearchTtl
-  (JNIEnv *env, jobject obj, jlong ptr)
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsMsearchTtl
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsMsearchTtl
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
 {
-	int searchTime = OhNetInitParamsMsearchTtl((OhNetHandleInitParams) ptr);
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return (jint) searchTime;
+	return OhNetInitParamsMsearchTtl(params);
 }
 
-JNIEXPORT jint JNICALL Java_openhome_net_core_InitParams_OhNetInitParamsNumEventSessionThreads
-  (JNIEnv *env, jobject obj, jlong ptr)
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsNumEventSessionThreads
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsNumEventSessionThreads
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
 {
-	int numThreads = OhNetInitParamsNumEventSessionThreads((OhNetHandleInitParams) ptr);
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return (jint) numThreads;
+	return OhNetInitParamsNumEventSessionThreads(params);
 }
 
-JNIEXPORT jint JNICALL Java_openhome_net_core_InitParams_OhNetInitParamsNumXmlFetcherThreads
-  (JNIEnv *env, jobject obj, jlong ptr)
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsNumXmlFetcherThreads
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsNumXmlFetcherThreads
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
 {
-	int numThreads = OhNetInitParamsNumXmlFetcherThreads((OhNetHandleInitParams) ptr);
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return (jint) numThreads;
+	return OhNetInitParamsNumXmlFetcherThreads(params);
 }
 
-JNIEXPORT jint JNICALL Java_openhome_net_core_InitParams_OhNetInitParamsNumActionInvokerThreads
-  (JNIEnv *env, jobject obj, jlong ptr)
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsNumActionInvokerThreads
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsNumActionInvokerThreads
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
 {
-	int numThreads = OhNetInitParamsNumActionInvokerThreads((OhNetHandleInitParams) ptr);
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return (jint) numThreads;
+	return OhNetInitParamsNumActionInvokerThreads(params);
 }
 
-JNIEXPORT jint JNICALL Java_openhome_net_core_InitParams_OhNetInitParamsNumInvocations
-  (JNIEnv *env, jobject obj, jlong ptr)
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsNumInvocations
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsNumInvocations
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
 {
-	int numInvocations = OhNetInitParamsNumInvocations((OhNetHandleInitParams) ptr);
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return (jint) numInvocations;
+	return OhNetInitParamsNumInvocations(params);
 }
 
-JNIEXPORT jint JNICALL Java_openhome_net_core_InitParams_OhNetInitParamsNumSubscriberThreads
-  (JNIEnv *env, jobject obj, jlong ptr)
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsNumSubscriberThreads
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsNumSubscriberThreads
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
 {
-	int numThreads = OhNetInitParamsNumSubscriberThreads((OhNetHandleInitParams) ptr);
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return (jint) numThreads;
+	return OhNetInitParamsNumSubscriberThreads(params);
 }
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetMsearchTime
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetMsearchTime
+  (JNIEnv *aEnv, jclass aClass, jlong aParams, jint aSecs)
+{
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
+	
+	OhNetInitParamsSetMsearchTime(params, aSecs);
+}
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetUseLoopbackNetworkAdapter
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetUseLoopbackNetworkAdapter
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
+{
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
+	
+	OhNetInitParamsSetUseLoopbackNetworkAdapter(params);
+}
+
+#ifdef __cplusplus
+}
+#endif

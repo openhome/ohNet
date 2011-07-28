@@ -10,112 +10,116 @@ extern "C" {
  * Method:    OhNetLibraryInitialise
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_core_Library_OhNetLibraryInitialise
-  (JNIEnv *env, jobject obj, jlong paramPtr)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetLibraryInitialise
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
 {
-	OhNetHandleInitParams param = (OhNetHandleInitParams) paramPtr;
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-    return (jlong) OhNetLibraryInitialise(param);
+    return (jlong) OhNetLibraryInitialise(params);
 }
 
 /*
- * Class:     openhome_net_core_Library
- * Method:    OhNetSubnetListCreate
- * Signature: ()J
+ * Class:     org_openhome_net_core_Library
+ * Method:    OhNetLibraryInitialiseMinimal
+ * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_core_Library_OhNetSubnetListCreate
-  (JNIEnv *env, jobject obj)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetLibraryInitialiseMinimal
+  (JNIEnv *aEnv, jclass aClass, jlong aParams)
 {
-    return (jlong) OhNetSubnetListCreate();
-}
-
-/*
- * Class:     openhome_net_core_Library
- * Method:    OhNetSubnetAt
- * Signature: (JI)I
- */
-JNIEXPORT jint JNICALL Java_openhome_net_core_Library_OhNetSubnetAt
-  (JNIEnv *env, jobject obj, jlong listPtr, jint index)
-{
-    OhNetHandleNetworkAdapterList list = (OhNetHandleNetworkAdapterList) listPtr;
-    
-    return (jlong) OhNetSubnetAt(list, index);
-}
-
-/*
- * Class:     openhome_net_core_Library
- * Method:    OhNetNetworkAdapterAddress
- * Signature: (J)I
- */
-JNIEXPORT jint JNICALL Java_openhome_net_core_Library_OhNetNetworkAdapterAddress
-  (JNIEnv *env,  jobject obj, jlong netAdptrPtr)
-{
-	OhNetHandleNetworkAdapter netAdapter = (OhNetHandleNetworkAdapter) netAdptrPtr;
-    TIpAddress ipAddr;
-
-    ipAddr = OhNetNetworkAdapterAddress(netAdapter);
-    
-    return (jint) ipAddr;
-}
-
-/*
- * Class:     openhome_net_core_Library
- * Method:    OhNetNetworkAdapterSubnet
- * Signature: (J)I
- */
-JNIEXPORT jint JNICALL Java_openhome_net_core_Library_OhNetNetworkAdapterSubnet
-  (JNIEnv *env, jobject obj, jlong netAdptrPtr)
-{
-	OhNetHandleNetworkAdapter netAdapter = (OhNetHandleNetworkAdapter) netAdptrPtr;
-    TIpAddress ipAddr;
-
-    ipAddr = OhNetNetworkAdapterSubnet(netAdapter);
+	OhNetHandleInitParams params = (OhNetHandleInitParams) (size_t)aParams;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return (jint) ipAddr;
-}
-/*
- * Class:     openhome_net_core_Library
- * Method:    OhNetCurrentSubnetAdapter
- * Signature: ()J
- */
-JNIEXPORT jlong JNICALL Java_openhome_net_core_Library_OhNetCurrentSubnetAdapter
-  (JNIEnv *env, jobject obj)
-{
-	return (jlong) OhNetCurrentSubnetAdapter();
-}
-/*
- * Class:     openhome_net_core_Library
- * Method:    OhNetSubnetListDestroy
- * Signature: (J)V
- */
-JNIEXPORT void JNICALL Java_openhome_net_core_Library_OhNetSubnetListDestroy
-  (JNIEnv *env,  jobject obj, jlong listPtr)
-{
-    OhNetHandleNetworkAdapterList list = (OhNetHandleNetworkAdapterList) listPtr;
-    
-    OhNetSubnetListDestroy(list);
+	return (jlong) OhNetLibraryInitialiseMinimal(params);
 }
 
 /*
- * Class:     openhome_net_core_Library
+ * Class:     org_openhome_net_core_Library
  * Method:    OhNetLibraryStartCp
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_core_Library_OhNetLibraryStartCp
-  (JNIEnv *env, jobject obj, jint ipAddr)
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCp
+  (JNIEnv *aEnv, jclass aClass, jint aSubnet)
 {
-	OhNetLibraryStartCp((TIpAddress) ipAddr);
+	TIpAddress subnet = (TIpAddress) aSubnet;
+	aEnv = aEnv;
+	aClass = aClass;
+	
+	OhNetLibraryStartCp(subnet);
 }
 
 /*
- * Class:     openhome_net_core_Library
+ * Class:     org_openhome_net_core_Library
+ * Method:    OhNetLibraryStartDv
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartDv
+  (JNIEnv *aEnv, jclass aClass)
+{
+	aEnv = aEnv;
+	aClass = aClass;
+
+	OhNetLibraryStartDv();
+}
+
+/*
+ * Class:     org_openhome_net_core_Library
+ * Method:    OhNetLibraryStartCombined
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCombined
+  (JNIEnv *aEnv, jclass aClass, jint aSubnet)
+{
+	TIpAddress subnet = (TIpAddress) aSubnet;
+	aEnv = aEnv;
+	aClass = aClass;
+	
+	OhNetLibraryStartCombined(subnet);
+}
+
+/*
+ * Class:     org_openhome_net_core_Library
  * Method:    OhNetLibraryClose
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_openhome_net_core_Library_OhNetLibraryClose
-  (JNIEnv *env, jobject obj)
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryClose
+  (JNIEnv *aEnv, jclass aClass)
 {
+	aEnv = aEnv;
+	aClass = aClass;
+
 	OhNetLibraryClose();
+}
+
+/*
+ * Class:     org_openhome_net_core_Library
+ * Method:    OhNetSetCurrentSubnet
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetSetCurrentSubnet
+  (JNIEnv *aEnv, jclass aClass, jlong aSubnet)
+{
+	OhNetHandleNetworkAdapter subnet = (OhNetHandleNetworkAdapter) (size_t)aSubnet;
+	aEnv = aEnv;
+	aClass = aClass;
+	
+	OhNetSetCurrentSubnet(subnet);
+}
+
+/*
+ * Class:     org_openhome_net_core_Library
+ * Method:    OhNetCurrentSubnetAdapter
+ * Signature: ()J
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetCurrentSubnetAdapter
+  (JNIEnv *aEnv, jclass aClass)
+{
+	aEnv = aEnv;
+	aClass = aClass;
+
+	return (jlong) OhNetCurrentSubnetAdapter();
 }
 
 #ifdef __cplusplus

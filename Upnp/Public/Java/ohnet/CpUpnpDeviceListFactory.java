@@ -14,34 +14,34 @@ public class CpUpnpDeviceListFactory implements ICpUpnpDeviceListFactory
 //		}
 //	}
 
-	public ICpDeviceList createListAll(IDeviceListListener added,
-			IDeviceListListener removed)
+	public ICpDeviceList createListAll(ICpDeviceListListener added,
+			ICpDeviceListListener removed)
 	{
 		return new CpDeviceListUpnpAll(added, removed);
 	}
 
-	public ICpDeviceList createListRoot(IDeviceListListener added,
-			IDeviceListListener removed)
+	public ICpDeviceList createListRoot(ICpDeviceListListener added,
+			ICpDeviceListListener removed)
 	{
 		return new CpDeviceListUpnpRoot(added, removed);
 	}
 
-	public ICpDeviceList createListUuid(String uuid, IDeviceListListener added,
-			IDeviceListListener removed)
+	public ICpDeviceList createListUuid(String uuid, ICpDeviceListListener added,
+			ICpDeviceListListener removed)
 	{
 		return new CpDeviceListUpnpUuid(uuid, added, removed);
 	}
 
 	public ICpDeviceList createListDeviceType(String domain, String deviceType,
-			int version, IDeviceListListener added, IDeviceListListener removed)
+			int version, ICpDeviceListListener added, ICpDeviceListListener removed)
 	{
 		return new CpDeviceListUpnpDeviceType(domain, deviceType, version,
 				added, removed);
 	}
 
 	public ICpDeviceList createListServiceType(String domain,
-			String serviceType, int version, IDeviceListListener added,
-			IDeviceListListener removed)
+			String serviceType, int version, ICpDeviceListListener added,
+			ICpDeviceListListener removed)
 	{
 		return new CpDeviceListUpnpServiceType(domain, serviceType, version, added, removed);
 	}

@@ -2,18 +2,68 @@
 #include "NetworkAdapterList.h"
 #include "C/OhNet.h"
 
-JNIEXPORT jint JNICALL Java_ohnet_NetworkAdapterList_OhNetSubnetListSize
-  (JNIEnv *env, jobject obj, jlong ptr)
+#ifdef __cplusplus
+extern "C" {
+#endif
+/*
+ * Class:     org_openhome_net_core_NetworkAdapterList
+ * Method:    OhNetSubnetListCreate
+ * Signature: ()J
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_NetworkAdapterList_OhNetSubnetListCreate
+  (JNIEnv *aEnv, jclass aClass)
 {
-	OhNetHandleNetworkAdapterList list = (OhNetHandleNetworkAdapterList) ptr;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return (jint) OhNetSubnetListSize(list);
+	return (jlong) OhNetSubnetListCreate();
 }
 
-JNIEXPORT jint JNICALL Java_ohnet_NetworkAdapterList_OhNetSubnetAt
-  (JNIEnv *env, jobject obj, jlong ptr, jint i)
+/*
+ * Class:     org_openhome_net_core_NetworkAdapterList
+ * Method:    OhNetSubnetListSize
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapterList_OhNetSubnetListSize
+  (JNIEnv *aEnv, jclass aClass, jlong aList)
 {
-	OhNetHandleNetworkAdapterList list = (OhNetHandleNetworkAdapterList) ptr;
-    
-    return (jint) OhNetSubnetAt(list, i);
+	OhNetHandleNetworkAdapterList list = (OhNetHandleNetworkAdapterList) (size_t)aList;
+	aEnv = aEnv;
+	aClass = aClass;
+	
+	return (jlong) OhNetSubnetListSize(list);
 }
+
+/*
+ * Class:     org_openhome_net_core_NetworkAdapterList
+ * Method:    OhNetSubnetAt
+ * Signature: (JI)I
+ */
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_NetworkAdapterList_OhNetSubnetAt
+  (JNIEnv *aEnv, jclass aClass, jlong aList, jint aIndex)
+{
+	OhNetHandleNetworkAdapterList list = (OhNetHandleNetworkAdapterList) (size_t)aList;
+	aEnv = aEnv;
+	aClass = aClass;
+    
+    return (jlong) OhNetSubnetAt(list, aIndex);
+}
+
+/*
+ * Class:     org_openhome_net_core_NetworkAdapterList
+ * Method:    OhNetSubnetListDestroy
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_NetworkAdapterList_OhNetSubnetListDestroy
+  (JNIEnv *aEnv, jclass aClass, jlong aList)
+{
+	OhNetHandleNetworkAdapterList list = (OhNetHandleNetworkAdapterList) (size_t)aList;
+	aEnv = aEnv;
+	aClass = aClass;
+    
+	OhNetSubnetListDestroy(list);
+}
+
+#ifdef __cplusplus
+}
+#endif

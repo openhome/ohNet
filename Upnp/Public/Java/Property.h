@@ -170,10 +170,10 @@ JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertySetValueString
 /*
  * Class:     ohnet_Property
  * Method:    ServicePropertySetValueBinary
- * Signature: (J[BJ)I
+ * Signature: (J[BI)I
  */
 JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertySetValueBinary
-  (JNIEnv *, jobject, jlong, jbyteArray, jlong);
+  (JNIEnv *, jobject, jlong, jbyteArray, jint);
 
 #ifdef __cplusplus
 }

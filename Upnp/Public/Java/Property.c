@@ -2,21 +2,15 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include "Property.h"
+#include "JniCallbackList.h"
 #include "C/Ohnet.h"
 #include "C/Service.h"
 
-typedef struct{
-	JavaVM *vm;
-	jweak callbackObj;
-} jniObjRef;
+JniCallbackList *iList = NULL;
 
-//jniObjRef *ref = NULL; // If not using this must destroy local references somewhere!
+static void STDCALL changeCallback(void* aPtr) {
 
-//typedef jlong (*PropertyCreate)(const char* aName, OhNetCallback aCallback, void* aPtr);
-
-void changeCallback(void* aPtr) {
-
-	jniObjRef* ref = (jniObjRef*) aPtr;
+	JniObjRef* ref = (JniObjRef*) aPtr;
 	JNIEnv *env;
 	jclass cls;
 	jmethodID mid;
@@ -24,12 +18,15 @@ void changeCallback(void* aPtr) {
 	
 	ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **) &env, NULL);
 	if (ret < 0)
-		printf("Unable to attach thread to JVM.\n");
-	
+	{
+		printf("PropertyJNI: Unable to attach thread to JVM.\n");
+		fflush(stdout);
+		return;
+	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "changed", "()V");
 	if (mid == 0) {
-		printf("Method ID changed() not found.\n");
+		printf("PropertyJNI: Method ID changed() not found.\n");
 		return;
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid);
@@ -37,41 +34,28 @@ void changeCallback(void* aPtr) {
 	(*(ref->vm))->DetachCurrentThread(ref->vm);
 }
 
-void initialiseReferences(JNIEnv *env, jobject obj, jniObjRef **ref)
+static void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRef **aRef)
 {
-	jint vmCount;
 	jint ret;
 
-	/*ret = (*env)->GetJavaVM(env, &(ref->vm));
+	*aRef = (JniObjRef*) malloc(sizeof(JniObjRef));
+	if (!iList)
+	{
+		iList = JniCallbackListCreate();
+	}
+
+	ret = (*aEnv)->GetJavaVM(aEnv, &(*aRef)->vm);
 	if (ret < 0) {
-		printf("Unable to get reference to the current Java VM.\n");
-	}*/
-	*ref = (jniObjRef*) malloc(sizeof(jniObjRef));
-
-	ret = JNI_GetCreatedJavaVMs(&((*ref)->vm), 1, &vmCount);
-//	printf("Number of virtual machines found: %d\n", vmCount);
-	(*ref)->callbackObj = (*env)->NewWeakGlobalRef(env, obj);
-	/*if (callbackObj == NULL) {
-		printf("Callback object not stored.\n");
-	} else {
-		printf("Callback object successfully stored.\n");
-	}*/
+		printf("PropertyJNI: Unable to get reference to the current Java VM.\n");
+		fflush(stdout);
+	}
+	(*aRef)->callbackObj = (*aEnv)->NewWeakGlobalRef(aEnv, aObject);
+	if ((*aRef)->callbackObj == NULL) {
+		printf("PropertyJNI: Callback object not stored.\n");
+		fflush(stdout);
+	}
+	JniCallbackListAddElement(&iList, *aRef);
 }
-
-/*jlong ServicePropertyCreateCp(JNIEnv *env, jobject obj, jstring name, PropertyCreate funcPtr)
-{
-	OhNetCallback callback = &changeCallback;
-	const char* nativeName = (*env)->GetStringUTFChars(env, name, NULL);
-	ServiceProperty property;
-
-	initialiseReferences(env, obj);
-
-	property = funcPtr(nativeName, callback, ref);
-	
-	(*env)->ReleaseStringUTFChars(env, name, nativeName);
-	
-	return (jlong) property;
-}*/
 
 /*
  * Class:     ohnet_Property
@@ -81,10 +65,12 @@ void initialiseReferences(JNIEnv *env, jobject obj, jniObjRef **ref)
 JNIEXPORT void JNICALL Java_ohnet_Property_ServicePropertyDestroy
   (JNIEnv *env, jobject obj, jlong propertyPtr)
 {
-	ServiceProperty property = (ServiceProperty) propertyPtr;
+	ServiceProperty property = (ServiceProperty) (size_t)propertyPtr;
+	obj = obj;
 	
+	JniCallbackListDestroy(env, &iList);
+	iList = NULL;
 	ServicePropertyDestroy(property);
-//	free(ref);
 }
 
 /*
@@ -95,12 +81,12 @@ JNIEXPORT void JNICALL Java_ohnet_Property_ServicePropertyDestroy
 JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateIntCp
   (JNIEnv *env, jobject obj, jstring name)
 {
-	OhNetCallback callback = &changeCallback;
+	OhNetCallback callback = (OhNetCallback) &changeCallback;
 	const char* nativeName = (*env)->GetStringUTFChars(env, name, NULL);
 	ServiceProperty property;
-	jniObjRef *ref;
+	JniObjRef *ref;
 
-	initialiseReferences(env, obj, &ref);
+	InitialiseReferences(env, obj, &ref);
 
 	property = ServicePropertyCreateIntCp(nativeName, callback, ref);
 	
@@ -117,9 +103,10 @@ JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateIntCp
 JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateIntDv
   (JNIEnv *env, jobject obj, jlong parameterPtr)
 {
-	ServiceParameter param = (ServiceParameter) parameterPtr;
-	
+	ServiceParameter param = (ServiceParameter) (size_t)parameterPtr;
 	ServiceProperty property = ServicePropertyCreateIntDv(param);
+	env = env;
+	obj = obj;
 	
 	return (jlong) property;
 }
@@ -132,12 +119,12 @@ JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateIntDv
 JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateUintCp
   (JNIEnv *env, jobject obj, jstring name)
 {
-	OhNetCallback callback = &changeCallback;
+	OhNetCallback callback = (OhNetCallback) &changeCallback;
 	const char* nativeName = (*env)->GetStringUTFChars(env, name, NULL);
 	ServiceProperty property;
-	jniObjRef *ref;
+	JniObjRef *ref;
 
-	initialiseReferences(env, obj, &ref);
+	InitialiseReferences(env, obj, &ref);
 
 	property = ServicePropertyCreateUintCp(nativeName, callback, ref);
 	
@@ -154,9 +141,10 @@ JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateUintCp
 JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateUintDv
   (JNIEnv *env, jobject obj, jlong parameterPtr)
 {
-	ServiceParameter param = (ServiceParameter) parameterPtr;
-	
+	ServiceParameter param = (ServiceParameter) (size_t)parameterPtr;
 	ServiceProperty property = ServicePropertyCreateUintDv(param);
+	env = env;
+	obj = obj;
 	
 	return (jlong) property;
 }
@@ -169,12 +157,12 @@ JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateUintDv
 JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateBoolCp
   (JNIEnv *env, jobject obj, jstring name)
 {
-	OhNetCallback callback = &changeCallback;
+	OhNetCallback callback = (OhNetCallback) &changeCallback;
 	const char* nativeName = (*env)->GetStringUTFChars(env, name, NULL);
 	ServiceProperty property;
-	jniObjRef *ref;
+	JniObjRef *ref;
 
-	initialiseReferences(env, obj, &ref);
+	InitialiseReferences(env, obj, &ref);
 
 	property = ServicePropertyCreateBoolCp(nativeName, callback, ref);
 	
@@ -191,9 +179,10 @@ JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateBoolCp
 JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateBoolDv
   (JNIEnv *env, jobject obj, jlong parameterPtr)
 {
-	ServiceParameter param = (ServiceParameter) parameterPtr;
-	
+	ServiceParameter param = (ServiceParameter) (size_t)parameterPtr;
 	ServiceProperty property = ServicePropertyCreateBoolDv(param);
+	env = env;
+	obj = obj;
 	
 	return (jlong) property;
 }
@@ -206,12 +195,12 @@ JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateBoolDv
 JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateStringCp
   (JNIEnv *env, jobject obj, jstring name)
 {
-	OhNetCallback callback = &changeCallback;
+	OhNetCallback callback = (OhNetCallback) &changeCallback;
 	const char* nativeName = (*env)->GetStringUTFChars(env, name, NULL);
 	ServiceProperty property;
-	jniObjRef *ref;
+	JniObjRef *ref;
 
-	initialiseReferences(env, obj, &ref);
+	InitialiseReferences(env, obj, &ref);
 
 	property = ServicePropertyCreateStringCp(nativeName, callback, ref);
 	
@@ -228,9 +217,10 @@ JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateStringCp
 JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateStringDv
   (JNIEnv *env, jobject obj, jlong parameterPtr)
 {
-	ServiceParameter param = (ServiceParameter) parameterPtr;
-	
+	ServiceParameter param = (ServiceParameter) (size_t)parameterPtr;
 	ServiceProperty property = ServicePropertyCreateStringDv(param);
+	env = env;
+	obj = obj;
 	
 	return (jlong) property;
 }
@@ -243,12 +233,12 @@ JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateStringDv
 JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateBinaryCp
   (JNIEnv *env, jobject obj, jstring name)
 {
-	OhNetCallback callback = &changeCallback;
+	OhNetCallback callback = (OhNetCallback) &changeCallback;
 	const char* nativeName = (*env)->GetStringUTFChars(env, name, NULL);
 	ServiceProperty property;
-	jniObjRef *ref;
+	JniObjRef *ref;
 
-	initialiseReferences(env, obj, &ref);
+	InitialiseReferences(env, obj, &ref);
 
 	property = ServicePropertyCreateBinaryCp(nativeName, callback, ref);
 	
@@ -265,9 +255,10 @@ JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateBinaryCp
 JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateBinaryDv
   (JNIEnv *env, jobject obj, jlong parameterPtr)
 {
-	ServiceParameter param = (ServiceParameter) parameterPtr;
-	
+	ServiceParameter param = (ServiceParameter) (size_t)parameterPtr;
 	ServiceProperty property = ServicePropertyCreateBinaryDv(param);
+	env = env;
+	obj = obj;
 	
 	return (jlong) property;
 }
@@ -280,7 +271,9 @@ JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyCreateBinaryDv
 JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertyValueInt
   (JNIEnv *env, jobject obj, jlong parameterPtr)
 {
-	ServiceParameter param = (ServiceParameter) parameterPtr;
+	ServiceParameter param = (ServiceParameter) (size_t)parameterPtr;
+	env = env;
+	obj = obj;
 	
 	return (jint) ServicePropertyValueInt(param);
 }
@@ -293,7 +286,9 @@ JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertyValueInt
 JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyValueUint
   (JNIEnv *env, jobject obj, jlong parameterPtr)
 {
-	ServiceParameter param = (ServiceParameter) parameterPtr;
+	ServiceParameter param = (ServiceParameter) (size_t)parameterPtr;
+	env = env;
+	obj = obj;
 	
 	return (jlong) ServicePropertyValueUint(param);
 }
@@ -306,7 +301,9 @@ JNIEXPORT jlong JNICALL Java_ohnet_Property_ServicePropertyValueUint
 JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertyValueBool
   (JNIEnv *env, jobject obj, jlong parameterPtr)
 {
-	ServiceParameter param = (ServiceParameter) parameterPtr;
+	ServiceParameter param = (ServiceParameter) (size_t)parameterPtr;
+	env = env;
+	obj = obj;
 	
 	return (jint) ServicePropertyValueBool(param);
 }
@@ -319,9 +316,10 @@ JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertyValueBool
 JNIEXPORT jstring JNICALL Java_ohnet_Property_ServicePropertyValueString
   (JNIEnv *env, jobject obj, jlong parameterPtr)
 {
-	ServiceParameter param = (ServiceParameter) parameterPtr;
-	
+	ServiceParameter param = (ServiceParameter) (size_t)parameterPtr;
 	const char* value = ServicePropertyValueString(param);
+	env = env;
+	obj = obj;
 	
 	return ((*env)->NewStringUTF(env, value));
 }
@@ -334,10 +332,11 @@ JNIEXPORT jstring JNICALL Java_ohnet_Property_ServicePropertyValueString
 JNIEXPORT jbyteArray JNICALL Java_ohnet_Property_ServicePropertyGetValueBinary
   (JNIEnv *env, jobject obj, jlong parameterPtr)
 {
-	ServiceParameter param = (ServiceParameter) parameterPtr;
+	ServiceParameter param = (ServiceParameter) (size_t)parameterPtr;
 	const uint8_t* data;
 	uint32_t len;
 	jbyteArray array;
+	obj = obj;
 	
 	ServicePropertyGetValueBinary(param, &data, &len);
 	
@@ -355,7 +354,9 @@ JNIEXPORT jbyteArray JNICALL Java_ohnet_Property_ServicePropertyGetValueBinary
 JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertySetValueInt
   (JNIEnv *env, jobject obj, jlong propertyPtr, jint value)
 {
-	ServiceProperty property = (ServiceProperty) propertyPtr;
+	ServiceProperty property = (ServiceProperty) (size_t)propertyPtr;
+	env = env;
+	obj = obj;
 	
 	return (jint) ServicePropertySetValueInt(property, value);
 }
@@ -368,9 +369,11 @@ JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertySetValueInt
 JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertySetValueUint
   (JNIEnv *env, jobject obj, jlong propertyPtr, jlong value)
 {
-	ServiceProperty property = (ServiceProperty) propertyPtr;
+	ServiceProperty property = (ServiceProperty) (size_t)propertyPtr;
+	env = env;
+	obj = obj;
 	
-	return (jint) ServicePropertySetValueUint(property, value);
+	return (jint) ServicePropertySetValueUint(property, (uint32_t)value);
 }
 
 /*
@@ -381,9 +384,11 @@ JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertySetValueUint
 JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertySetValueBool
   (JNIEnv *env, jobject obj, jlong propertyPtr, jlong value)
 {
-	ServiceProperty property = (ServiceProperty) propertyPtr;
+	ServiceProperty property = (ServiceProperty) (size_t)propertyPtr;
+	env = env;
+	obj = obj;
 	
-	return (jint) ServicePropertySetValueBool(property, value);
+	return (jint) ServicePropertySetValueBool(property, (uint32_t)value);
 }
 
 /*
@@ -395,8 +400,9 @@ JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertySetValueString
   (JNIEnv *env, jobject obj, jlong propertyPtr, jstring value)
 {
 	const char* nativeValue = (*env)->GetStringUTFChars(env, value, NULL);
-	ServiceProperty property = (ServiceProperty) propertyPtr;
+	ServiceProperty property = (ServiceProperty) (size_t)propertyPtr;
 	jint result;
+	obj = obj;
 	
 	result = ServicePropertySetValueString(property, nativeValue);
 	
@@ -411,11 +417,12 @@ JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertySetValueString
  * Signature: (JBJ)I
  */
 JNIEXPORT jint JNICALL Java_ohnet_Property_ServicePropertySetValueBinary
-  (JNIEnv *env, jobject obj, jlong propertyPtr, jbyteArray array, jlong len)
+  (JNIEnv *env, jobject obj, jlong propertyPtr, jbyteArray array, jint len)
 {
-	ServiceProperty property = (ServiceProperty) propertyPtr;
+	ServiceProperty property = (ServiceProperty) (size_t)propertyPtr;
 	uint8_t *data;
 	jint result;
+	obj = obj;
 	
 	(*env)->GetByteArrayRegion(env, array, 0, len, (jbyte *) &data);
 	

@@ -7,32 +7,31 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+
+import org.openhome.net.controlpoint.ICpProxyListener;
+import org.openhome.net.controlpoint.ProxyError;
+import org.openhome.net.controlpoint.proxies.CpProxyUpnpOrgConnectionManager1;
+import org.openhome.net.controlpoint.proxies.CpProxyUpnpOrgConnectionManager1.GetProtocolInfo;
+import org.openhome.net.core.InitParams;
+import org.openhome.net.core.Library;
+import org.openhome.net.core.NetworkAdapterList;
 
 
 import ohnet.CpDeviceListUpnpServiceType;
-import ohnet.IDeviceListListener;
+import ohnet.ICpDeviceListListener;
 import ohnet.IPropertyChangeListener;
 import ohnet.NetworkAdapter;
-import ohnet.NetworkAdapterList;
 import openhome.net.controlpoint.CpDevice;
-import openhome.net.controlpoint.ICpProxyListener;
-import openhome.net.controlpoint.ProxyError;
-import openhome.net.controlpoint.proxies.CpProxyUpnpOrgConnectionManager1;
-import openhome.net.controlpoint.proxies.CpProxyUpnpOrgConnectionManager1.GetProtocolInfo;
-import openhome.net.core.InitParams;
-import openhome.net.core.Library;
 
-public class TestProxy implements IDeviceListListener, ICpProxyListener, IPropertyChangeListener
+public class TestProxy implements ICpDeviceListListener, ICpProxyListener, IPropertyChangeListener
 {
 	
 	private class PollInvocationTask extends TimerTask
 	{
 		public void run()
 		{
-			synchronized (iActionPollStop)
-			{
-				iActionPollStop.notify();
-			}
+			iActionPollStop.release();
 		}
 	}
 
@@ -54,12 +53,10 @@ public class TestProxy implements IDeviceListListener, ICpProxyListener, IProper
 		
 		CpDeviceListUpnpServiceType list = new CpDeviceListUpnpServiceType("upnp.org", "ConnectionManager", 1, this, this);
         
+		Semaphore sem = new Semaphore(1);
+    	sem.acquireUninterruptibly();
         try {
-        	Semaphore sem = new Semaphore(1);
-        	synchronized (sem)
-        	{
-        		sem.wait(aMsearchTimeSecs * 1000);
-        	}
+        	sem.tryAcquire(aMsearchTimeSecs * 1000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
@@ -83,7 +80,6 @@ public class TestProxy implements IDeviceListListener, ICpProxyListener, IProper
         }
         double secs = (endTime.getTime() - startTime.getTime())/1000.0;
         System.out.print("\n" + iActionCount + " actions invoked on " + count + " devices (avg " + avgActions + ") in " + secs + " seconds\n\n");
-        
         
         System.out.print("\n\n");
         startTime = new Date();
@@ -121,7 +117,6 @@ public class TestProxy implements IDeviceListListener, ICpProxyListener, IProper
         CpDevice device = iDeviceList.get(0);
         System.out.println("\n\nSync call to device " + device.getUdn());
         
-
         CpProxyUpnpOrgConnectionManager1 connMgr = new CpProxyUpnpOrgConnectionManager1(device);
         GetProtocolInfo points = connMgr.syncGetProtocolInfo();
         System.out.println("source is " + points.getSource() + "\nsink is " + points.getSink());
@@ -131,6 +126,7 @@ public class TestProxy implements IDeviceListListener, ICpProxyListener, IProper
 	private void pollInvoke()
     {
         iActionPollStop = new Semaphore(1);
+        iActionPollStop.acquireUninterruptibly();
         Timer timer = new Timer();
         for (int i = 0; i < iDeviceList.size(); i++)
         {
@@ -144,14 +140,7 @@ public class TestProxy implements IDeviceListListener, ICpProxyListener, IProper
             {
                 iConnMgr.beginGetProtocolInfo(this);
             }
-            try {
-            	synchronized (iActionPollStop)
-            	{
-            		iActionPollStop.wait();
-            	}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+            iActionPollStop.acquireUninterruptibly();
             System.out.println("    " + (iActionCount - countBefore));
             iConnMgr.dispose();
             synchronized (this)
@@ -159,11 +148,13 @@ public class TestProxy implements IDeviceListListener, ICpProxyListener, IProper
                 iExpectedSink = null;
             }
         }
+        timer.cancel();
     }
 	
 	private void pollSubscribe()
     {
         iSubscriptionSem = new Semaphore(1);
+        iSubscriptionSem.acquireUninterruptibly();
         for (int i = 0; i < iDeviceList.size(); i++)
         {
             CpDevice device = iDeviceList.get(i);
@@ -180,11 +171,7 @@ public class TestProxy implements IDeviceListListener, ICpProxyListener, IProper
             {
                 connMgr.subscribe();
                 try {
-                	synchronized(iSubscriptionSem)
-                	{
-                		iSubscriptionSem.wait((int)(2 * kDevicePollMs));
-//                		iSubscriptionSem.wait();
-                	}
+                	iSubscriptionSem.tryAcquire((int)(2 * kDevicePollMs), TimeUnit.MILLISECONDS);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -243,14 +230,11 @@ public class TestProxy implements IDeviceListListener, ICpProxyListener, IProper
 
 	public void callbackActionComplete(long aPtr, long aAsyncHandle) {}
 	public void callback(long aPtr) {}
-	
+
 	public void notifyChange() {
-		synchronized (iSubscriptionSem)
-		{
-			iSubscriptionSem.notify();
-		}
+		iSubscriptionSem.release();
 	}
-	
+
 	public void deviceAdded(CpDevice aDevice)
 	{
 		synchronized (this)
@@ -306,13 +290,12 @@ public class TestProxy implements IDeviceListListener, ICpProxyListener, IProper
 		Library lib = new Library();
 		lib.initialise(initParams);
 		NetworkAdapterList subnetList = lib.subnetListCreate();
-		NetworkAdapter nif = subnetList.subnetAt(0);
+		NetworkAdapter nif = subnetList.getSubnet(0);
 		Inet4Address subnet = nif.getSubnet();
-		lib.subnetListDestroy(subnetList.getHandle());
+		subnetList.destroy();
 		lib.startCp(subnet);
 		new TestProxy(initParams.getMsearchTimeSecs());
 		lib.close();
-		System.exit(0);
 	}
 	
 }

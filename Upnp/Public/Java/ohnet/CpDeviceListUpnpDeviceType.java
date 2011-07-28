@@ -4,7 +4,7 @@ public class CpDeviceListUpnpDeviceType extends CpDeviceList
 {
 	
 	public CpDeviceListUpnpDeviceType(String domain, String deviceType,
-		int version, IDeviceListListener added, IDeviceListListener removed)
+		int version, ICpDeviceListListener added, ICpDeviceListListener removed)
 	{
 		
 		super();

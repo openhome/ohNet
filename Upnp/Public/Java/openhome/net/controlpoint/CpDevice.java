@@ -3,13 +3,14 @@
  */
 package openhome.net.controlpoint;
 
+import org.openhome.net.core.InitParams;
+import org.openhome.net.core.Library;
+import org.openhome.net.core.NetworkAdapterList;
+
 import ohnet.CpDeviceListListener;
 import ohnet.CpUpnpDeviceListFactory;
 import ohnet.ICpDeviceList;
 import ohnet.NetworkAdapter;
-import ohnet.NetworkAdapterList;
-import openhome.net.core.InitParams;
-import openhome.net.core.Library;
 
 public class CpDevice
 {
@@ -79,7 +80,7 @@ public class CpDevice
         
         on.initialise(params);
         NetworkAdapterList netList = on.subnetListCreate();
-        NetworkAdapter netAdptr = on.getSubnet((int) netList.iHandle, 0);
+        NetworkAdapter netAdptr = netList.getSubnet(0);
         System.out.println("First adapter address in subnet list:");
         System.out.println(netAdptr.getAddress().getHostAddress());
         System.out.println("First adapter subnet in subnet list:");
@@ -117,7 +118,7 @@ public class CpDevice
 ////        cd.destroyDeviceList(devListPtr);
         
         devList.destroy();
-        on.subnetListDestroy((int) netList.iHandle);
+        netList.destroy();
         on.close();
 
         

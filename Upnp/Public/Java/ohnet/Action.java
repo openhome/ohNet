@@ -36,8 +36,15 @@ public class Action
 	
 	public void destroy()
 	{
+		synchronized(this)
+		{
+			if (iHandle == 0)
+			{
+				return;
+			}
+			iHandle = 0;
+		}
 		ServiceActionDestroy(iHandle);
-		iHandle = 0;
 	}
 	
 	public void addInputParameter(Parameter aParameter)

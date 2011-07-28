@@ -3,6 +3,8 @@ package openhome.net.controlpoint;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.openhome.net.controlpoint.ICpProxyListener;
+
 import ohnet.Action;
 
 public class CpService

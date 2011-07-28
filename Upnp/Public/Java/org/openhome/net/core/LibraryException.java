@@ -1,9 +1,9 @@
-package openhome.net.core;
+package org.openhome.net.core;
 
 /**
  * Class representing an exception in the OhNet library.
  */
-public class LibraryException extends Exception {
+public class LibraryException extends RuntimeException {
 	
 	/**
 	 * Create a default library exception.

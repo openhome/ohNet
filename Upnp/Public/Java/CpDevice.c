@@ -15,9 +15,10 @@ extern "C" {
 JNIEXPORT jstring JNICALL Java_openhome_net_controlpoint_CpDevice_CpDeviceCUdn
   (JNIEnv *env, jobject obj, jlong devPtr)
 {
-	CpDeviceC device = (CpDeviceC) devPtr;
+	CpDeviceC device = (CpDeviceC) (size_t)devPtr;
 	const char* devUdn = CpDeviceCUdn(device);
-
+	obj = obj;
+	
 	return ((*env)->NewStringUTF(env, devUdn));
 }
 
@@ -29,7 +30,9 @@ JNIEXPORT jstring JNICALL Java_openhome_net_controlpoint_CpDevice_CpDeviceCUdn
 JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpDevice_CpDeviceCAddRef
   (JNIEnv *env, jobject obj, jlong devPtr)
 {
-	CpDeviceC device = (CpDeviceC) devPtr;
+	CpDeviceC device = (CpDeviceC) (size_t)devPtr;
+	env = env;
+	obj = obj;
 
 	CpDeviceCAddRef(device);
 }
@@ -42,7 +45,9 @@ JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpDevice_CpDeviceCAddRef
 JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpDevice_CpDeviceCRemoveRef
   (JNIEnv *env, jobject obj, jlong devPtr)
 {
-	CpDeviceC device = (CpDeviceC) devPtr;
+	CpDeviceC device = (CpDeviceC) (size_t)devPtr;
+	env = env;
+	obj = obj;
 	
 	CpDeviceCRemoveRef(device);
 }
@@ -55,11 +60,11 @@ JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpDevice_CpDeviceCRemoveRe
 JNIEXPORT jint JNICALL Java_openhome_net_controlpoint_CpDevice_CpDeviceCGetAttribute
   (JNIEnv *env, jobject obj, jlong devPtr, jstring key, jobjectArray value)
 {
-	CpDeviceC device = (CpDeviceC) devPtr;
+	CpDeviceC device = (CpDeviceC) (size_t)devPtr;
 	int result;
 	char* nativeValue;
-
 	const char* nativeKey = (*env)->GetStringUTFChars(env, key, NULL);
+	obj = obj;
 	
 	result = CpDeviceCGetAttribute(device, nativeKey, &nativeValue);
 	

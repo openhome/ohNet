@@ -28,7 +28,7 @@ public class Property
 	private native int ServicePropertySetValueUint(long propPtr, long aValue);
 	private native int ServicePropertySetValueBool(long propPtr, long aValue);
 	private native int ServicePropertySetValueString(long propPtr, String aValue);
-	private native int ServicePropertySetValueBinary(long propPtr, byte[] aValue, long aLen);
+	private native int ServicePropertySetValueBinary(long propPtr, byte[] aValue, int aLen);
 	
 	static
     {

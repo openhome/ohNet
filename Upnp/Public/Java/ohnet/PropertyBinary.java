@@ -9,6 +9,12 @@ public class PropertyBinary extends Property
 		initialiseServicePropertyBinaryCp(aName, aListener);
 	}
 	
+	public PropertyBinary(Parameter aParameter)
+	{
+		initialiseServicePropertyBinaryDv(aParameter, false);
+	}
+	
+	
 	public PropertyBinary(Parameter aParameter, boolean aOwnsNativeProperty)
 	{
 		initialiseServicePropertyBinaryDv(aParameter, aOwnsNativeProperty);

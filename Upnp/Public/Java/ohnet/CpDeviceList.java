@@ -23,8 +23,8 @@ public class CpDeviceList implements ICpDeviceList
     }
 	
 	private long listPtr = 0;
-	protected List<IDeviceListListener> addedListeners = null;
-	protected List<IDeviceListListener> removedListeners = null;
+	protected List<ICpDeviceListListener> addedListeners = null;
+	protected List<ICpDeviceListListener> removedListeners = null;
 	
 	/**
 	 * Default initialiser.
@@ -40,8 +40,8 @@ public class CpDeviceList implements ICpDeviceList
 	protected CpDeviceList()
 	{
 		listPtr = 0;
-		addedListeners = new LinkedList<IDeviceListListener>();
-		removedListeners = new LinkedList<IDeviceListListener>();
+		addedListeners = new LinkedList<ICpDeviceListListener>();
+		removedListeners = new LinkedList<ICpDeviceListListener>();
 	}
 	
 	/**
@@ -81,12 +81,12 @@ public class CpDeviceList implements ICpDeviceList
 		}
 	}
 	
-	public void addDeviceAddedListener(IDeviceListListener l)
+	public void addDeviceAddedListener(ICpDeviceListListener l)
 	{
 		addedListeners.add(l);
 	}
 	
-	public void addDeviceRemovedListener(IDeviceListListener l)
+	public void addDeviceRemovedListener(ICpDeviceListListener l)
 	{
 		removedListeners.add(l);
 	}
@@ -101,7 +101,7 @@ public class CpDeviceList implements ICpDeviceList
     {
     	CpDevice dev = new CpDevice(devPtr);
     	
-    	for (IDeviceListListener l : addedListeners)
+    	for (ICpDeviceListListener l : addedListeners)
     	{
     		l.deviceAdded(dev);
     	}
@@ -117,7 +117,7 @@ public class CpDeviceList implements ICpDeviceList
     {
     	CpDevice dev = new CpDevice(devPtr);
     	
-    	for (IDeviceListListener l : removedListeners)
+    	for (ICpDeviceListListener l : removedListeners)
     	{
     		l.deviceRemoved(dev);
     	}

@@ -1,4 +1,4 @@
-package openhome.net.controlpoint;
+package org.openhome.net.controlpoint;
 
 public interface ICpProxyListener
 {

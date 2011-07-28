@@ -2,7 +2,7 @@ package ohnet;
 
 import openhome.net.controlpoint.CpDevice;
 
-public interface IDeviceListListener
+public interface ICpDeviceListListener
 {
 	public void deviceAdded(CpDevice dev);
 	public void deviceRemoved(CpDevice dev);

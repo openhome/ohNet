@@ -6,12 +6,17 @@ public class PropertyUint extends Property
 	
 	public PropertyUint(String aName, IPropertyChangeListener aListener)
 	{
-		initialiseServicePropertyBinaryCp(aName, aListener);
+		initialiseServicePropertyUintCp(aName, aListener);
+	}
+	
+	public PropertyUint(Parameter aParameter)
+	{
+		initialiseServicePropertyUintDv(aParameter, false);
 	}
 	
 	public PropertyUint(Parameter aParameter, boolean aOwnsNativeProperty)
 	{
-		initialiseServicePropertyBinaryDv(aParameter, aOwnsNativeProperty);
+		initialiseServicePropertyUintDv(aParameter, aOwnsNativeProperty);
 	}
 	
 	public long getValue()

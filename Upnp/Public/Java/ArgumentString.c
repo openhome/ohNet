@@ -13,9 +13,10 @@ extern "C" {
 JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentString_ActionArgumentCreateStringInput
   (JNIEnv *env, jobject obj, jlong paramPtr, jstring val)
 {
-	ServiceParameter param = (ServiceParameter) paramPtr;
+	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
 	ActionArgument arg;
 	const char* nativeValue = (*env)->GetStringUTFChars(env, val, NULL);
+	obj = obj;
 	
 	arg = ActionArgumentCreateStringInput(param, nativeValue);
 	
@@ -32,7 +33,9 @@ JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentString_ActionArgu
 JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentString_ActionArgumentCreateStringOutput
   (JNIEnv *env, jobject obj, jlong paramPtr)
 {
-	ServiceParameter param = (ServiceParameter) paramPtr;
+	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
+	env = env;
+	obj = obj;
 	
 	return (jlong) ActionArgumentCreateStringOutput(param);
 }
@@ -45,9 +48,9 @@ JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentString_ActionArgu
 JNIEXPORT jstring JNICALL Java_openhome_net_controlpoint_ArgumentString_ActionArgumentValueString
   (JNIEnv *env, jobject obj, jlong argPtr)
 {
-	ActionArgument arg = (ActionArgument) argPtr;
-	
+	ActionArgument arg = (ActionArgument) (size_t)argPtr;
 	const char* val = ActionArgumentValueString(arg);
+	obj = obj;
 	
 	return ((*env)->NewStringUTF(env, val));
 }

@@ -3,8 +3,8 @@ package ohnet;
 public class CpDeviceListUpnpAll extends CpDeviceList
 {
 	
-	public CpDeviceListUpnpAll(IDeviceListListener added, 
-			IDeviceListListener removed) 
+	public CpDeviceListUpnpAll(ICpDeviceListListener added, 
+			ICpDeviceListListener removed) 
 	{
 		
 		super();

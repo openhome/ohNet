@@ -6,12 +6,17 @@ public class PropertyBool extends Property
 	
 	public PropertyBool(String aName, IPropertyChangeListener aListener)
 	{
-		initialiseServicePropertyBinaryCp(aName, aListener);
+		initialiseServicePropertyBoolCp(aName, aListener);
+	}
+	
+	public PropertyBool(Parameter aParameter)
+	{
+		initialiseServicePropertyBoolDv(aParameter, false);
 	}
 	
 	public PropertyBool(Parameter aParameter, boolean aOwnsNativeProperty)
 	{
-		initialiseServicePropertyBinaryDv(aParameter, aOwnsNativeProperty);
+		initialiseServicePropertyBoolDv(aParameter, aOwnsNativeProperty);
 	}
 	
 	public boolean getValue()

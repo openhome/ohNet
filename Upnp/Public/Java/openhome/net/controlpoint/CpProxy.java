@@ -1,5 +1,7 @@
 package openhome.net.controlpoint;
 
+import org.openhome.net.controlpoint.ICpProxy;
+
 import ohnet.IPropertyChangeListener;
 import ohnet.Property;
 

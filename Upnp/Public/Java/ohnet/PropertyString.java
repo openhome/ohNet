@@ -9,6 +9,11 @@ public class PropertyString extends Property
 		initialiseServicePropertyStringCp(aName, aListener);
 	}
 	
+	public PropertyString(Parameter aParameter)
+	{
+		initialiseServicePropertyStringDv(aParameter, false);
+	}
+	
 	public PropertyString(Parameter aParameter, boolean aOwnsNativeProperty)
 	{
 		initialiseServicePropertyStringDv(aParameter, aOwnsNativeProperty);

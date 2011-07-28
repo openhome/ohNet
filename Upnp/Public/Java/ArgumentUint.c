@@ -8,14 +8,16 @@ extern "C" {
 /*
  * Class:     openhome_net_controlpoint_ArgumentUint
  * Method:    ActionArgumentCreateUintInput
- * Signature: (JI)J
+ * Signature: (JJ)J
  */
 JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentUint_ActionArgumentCreateUintInput
-  (JNIEnv *env, jobject obj, jlong paramPtr, jint val)
+  (JNIEnv *env, jobject obj, jlong paramPtr, jlong val)
 {
-	ServiceParameter param = (ServiceParameter) paramPtr;
+	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
+	env = env;
+	obj = obj;
 	
-	return (jlong) ActionArgumentCreateUintInput(param, val);
+	return (jlong) ActionArgumentCreateUintInput(param, (uint32_t)val);
 }
 
 /*
@@ -26,7 +28,9 @@ JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentUint_ActionArgume
 JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentUint_ActionArgumentCreateUintOutput
   (JNIEnv *env, jobject obj, jlong paramPtr)
 {
-	ServiceParameter param = (ServiceParameter) paramPtr;
+	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
+	env = env;
+	obj = obj;
 	
 	return (jlong) ActionArgumentCreateUintOutput(param);
 }
@@ -39,7 +43,9 @@ JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentUint_ActionArgume
 JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentUint_ActionArgumentValueUint
   (JNIEnv *env, jobject obj, jlong argPtr)
 {
-	ActionArgument arg = (ActionArgument) argPtr;
+	ActionArgument arg = (ActionArgument) (size_t)argPtr;
+	env = env;
+	obj = obj;
 	
 	return ActionArgumentValueUint(arg);
 }

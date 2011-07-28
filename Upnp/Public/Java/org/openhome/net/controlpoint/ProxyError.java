@@ -1,3 +1,3 @@
-package openhome.net.controlpoint;
+package org.openhome.net.controlpoint;
 
 public class ProxyError extends RuntimeException {}

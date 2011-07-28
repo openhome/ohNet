@@ -2,22 +2,17 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include "Invocation.h"
+#include "JniCallbackList.h"
+#include "OhNetDefines.h"
 #include "C/CpService.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct{
-	JavaVM *vm;
-	jweak callbackObj;
-} jniObjRef;
+void STDCALL AsyncComplete(void* aPtr, OhNetHandleAsync aAsync) {
 
-//jniObjRef *ref = NULL;
-
-void AsyncComplete(void* aPtr, OhNetHandleAsync aAsync) {
-
-	jniObjRef* ref = (jniObjRef*) aPtr;
+	JniObjRef* ref = (JniObjRef*) aPtr;
 	JNIEnv *env;
 	jclass cls;
 	jmethodID mid;
@@ -41,32 +36,27 @@ void AsyncComplete(void* aPtr, OhNetHandleAsync aAsync) {
 	}
 	
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong) NULL, (jlong) aAsync);
-	
+	(*env)->DeleteWeakGlobalRef(env, ref->callbackObj);
 	(*(ref->vm))->DetachCurrentThread(ref->vm);
 	
 	free(ref);
 }
 
-void InitialiseReferences(JNIEnv *env, jobject obj, jniObjRef **ref)
+static void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRef **ref)
 {
-	jint vmCount;
 	jint ret;
+	*ref = (JniObjRef *)malloc(sizeof(JniObjRef));
 
-	/*ret = (*env)->GetJavaVM(env, &(ref->vm));
+	ret = (*aEnv)->GetJavaVM(aEnv, &(*ref)->vm);
 	if (ret < 0) {
-		printf("Unable to get reference to the current Java VM.\n");
-	}*/
-	*ref = (jniObjRef*) malloc(sizeof(jniObjRef));
-
-	ret = JNI_GetCreatedJavaVMs(&((*ref)->vm), 1, &vmCount);
-//	printf("Number of virtual machines found: %d\n", vmCount);
-	(*ref)->callbackObj = (*env)->NewWeakGlobalRef(env, obj);
-
-	/*if (callbackObj == NULL) {
-		printf("Callback object not stored.\n");
-	} else {
-		printf("Callback object successfully stored.\n");
-	}*/
+		printf("InvocationJNI: Unable to get reference to the current Java VM.\n");
+		fflush(stdout);
+	}
+	(*ref)->callbackObj = (*aEnv)->NewWeakGlobalRef(aEnv, aObject);
+	if ((*ref)->callbackObj == NULL) {
+		printf("InvocationJNI: Callback object not stored.\n");
+		fflush(stdout);
+	}
 }
 
 /*
@@ -77,15 +67,11 @@ void InitialiseReferences(JNIEnv *env, jobject obj, jniObjRef **ref)
 JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_Invocation_CpServiceInvocation
   (JNIEnv *env, jobject obj, jlong servicePtr, jlong actionPtr)
 {
-	CpService service = (CpService) servicePtr;
-	ServiceAction action = (ServiceAction) actionPtr;
+	CpService service = (CpService) (size_t)servicePtr;
+	ServiceAction action = (ServiceAction) (size_t)actionPtr;
 	OhNetCallbackAsync callback = &AsyncComplete;
-	
-	jniObjRef *ref;
-	jclass cls;
-	jmethodID mid;
-	jint ret;
-	
+	JniObjRef *ref;
+
 	InitialiseReferences(env, obj, &ref);
 	
 	return (jlong) CpServiceInvocation(service, action, callback, ref);
@@ -99,8 +85,10 @@ JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_Invocation_CpServiceInvoc
 JNIEXPORT void JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationAddInput
   (JNIEnv *env, jobject obj, jlong invocationPtr, jlong argPtr)
 {
-	CpInvocationC invocation = (CpInvocationC) invocationPtr;
-	ActionArgument arg = (ActionArgument) argPtr;
+	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
+	ActionArgument arg = (ActionArgument) (size_t)argPtr;
+	env = env;
+	obj = obj;
 	
 	CpInvocationAddInput(invocation, arg);
 }
@@ -113,8 +101,10 @@ JNIEXPORT void JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationAdd
 JNIEXPORT void JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationAddOutput
   (JNIEnv *env, jobject obj, jlong invocationPtr, jlong argPtr)
 {
-	CpInvocationC invocation = (CpInvocationC) invocationPtr;
-	ActionArgument arg = (ActionArgument) argPtr;
+	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
+	ActionArgument arg = (ActionArgument) (size_t)argPtr;
+	env = env;
+	obj = obj;
 	
 	CpInvocationAddOutput(invocation, arg);
 }
@@ -127,7 +117,9 @@ JNIEXPORT void JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationAdd
 JNIEXPORT jint JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationError
   (JNIEnv *env, jclass cls, jlong invocationPtr)
 {
-	CpInvocationC invocation = (CpInvocationC) invocationPtr;
+	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
+	env = env;
+	cls = cls;
 	
 	return CpInvocationError(invocation);
 }
@@ -140,7 +132,9 @@ JNIEXPORT jint JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationErr
 JNIEXPORT jint JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationOutputInt
   (JNIEnv *env, jclass cls, jlong invocationPtr, jint index)
 {
-	CpInvocationC invocation = (CpInvocationC) invocationPtr;
+	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
+	env = env;
+	cls = cls;
 	
 	return CpInvocationOutputInt(invocation, index);
 }
@@ -153,7 +147,9 @@ JNIEXPORT jint JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationOut
 JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationOutputUint
   (JNIEnv *env, jclass cls, jlong invocationPtr, jint index)
 {
-	CpInvocationC invocation = (CpInvocationC) invocationPtr;
+	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
+	env = env;
+	cls = cls;
 	
 	return CpInvocationOutputUint(invocation, index);
 }
@@ -166,7 +162,9 @@ JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationOu
 JNIEXPORT jint JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationOutputBool
   (JNIEnv *env, jclass cls, jlong invocationPtr, jint index)
 {
-	CpInvocationC invocation = (CpInvocationC) invocationPtr;
+	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
+	env = env;
+	cls = cls;
 	
 	return CpInvocationOutputBool(invocation, index);
 }
@@ -179,8 +177,9 @@ JNIEXPORT jint JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationOut
 JNIEXPORT jstring JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationOutputString
   (JNIEnv *env, jclass cls, jlong invocationPtr, jint index)
 {
-	CpInvocationC invocation = (CpInvocationC) invocationPtr;
+	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
 	char *output = CpInvocationOutputString(invocation, index);
+	cls = cls;
 	
 	return (*env)->NewStringUTF(env, output);
 }
@@ -193,10 +192,11 @@ JNIEXPORT jstring JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocation
 JNIEXPORT jbyteArray JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationGetOutputBinary
   (JNIEnv *env, jclass cls, jlong invocationPtr, jint index)
 {
-	CpInvocationC invocation = (CpInvocationC) invocationPtr;
-	uint8_t* data;
+	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
+	char* data;
 	uint32_t len;
 	jbyteArray array;
+	cls = cls;
 	
 	CpInvocationGetOutputBinary(invocation, index, &data, &len);
 	

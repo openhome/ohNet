@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     openhome_net_controlpoint_ArgumentUint
  * Method:    ActionArgumentCreateUintInput
- * Signature: (JI)J
+ * Signature: (JJ)J
  */
 JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentUint_ActionArgumentCreateUintInput
-  (JNIEnv *, jobject, jlong, jint);
+  (JNIEnv *, jobject, jlong, jlong);
 
 /*
  * Class:     openhome_net_controlpoint_ArgumentUint

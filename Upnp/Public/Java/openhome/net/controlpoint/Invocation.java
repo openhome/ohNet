@@ -3,6 +3,9 @@ package openhome.net.controlpoint;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.openhome.net.controlpoint.ICpProxyListener;
+import org.openhome.net.controlpoint.ProxyError;
+
 import ohnet.Action;
 
 public class Invocation
@@ -60,7 +63,6 @@ public class Invocation
 	public static boolean error(long aHandle)
     {
         int err = CpInvocationError(aHandle);
-        
         return (err != 0);
     }
 	

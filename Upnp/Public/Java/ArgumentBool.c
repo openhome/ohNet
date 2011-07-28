@@ -13,7 +13,9 @@ extern "C" {
 JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentBool_ActionArgumentCreateBoolInput
   (JNIEnv *env, jobject obj, jlong paramPtr, jint val)
 {
-	ServiceParameter param = (ServiceParameter) paramPtr;
+	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
+	env = env;
+	obj = obj;
 	
 	return (jlong) ActionArgumentCreateBoolInput(param, val);
 }
@@ -26,7 +28,9 @@ JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentBool_ActionArgume
 JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentBool_ActionArgumentCreateBoolOutput
   (JNIEnv *env, jobject obj, jlong paramPtr)
 {
-	ServiceParameter param = (ServiceParameter) paramPtr;
+	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
+	env = env;
+	obj = obj;
 	
 	return (jlong) ActionArgumentCreateBoolOutput(param);
 }
@@ -39,7 +43,9 @@ JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentBool_ActionArgume
 JNIEXPORT jint JNICALL Java_openhome_net_controlpoint_ArgumentBool_ActionArgumentValueBool
   (JNIEnv *env, jobject obj, jlong argPtr)
 {
-	ActionArgument arg = (ActionArgument) argPtr;
+	ActionArgument arg = (ActionArgument) (size_t)argPtr;
+	env = env;
+	obj = obj;
 	
 	return ActionArgumentValueBool(arg);
 }

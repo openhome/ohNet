@@ -14,11 +14,11 @@ extern "C" {
 JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_CpService_CpServiceCreate
   (JNIEnv *env, jobject obj, jstring domain, jstring name, jint version, jlong devPtr)
 {
-	CpDeviceC device = (CpDeviceC) devPtr;
+	CpDeviceC device = (CpDeviceC) (size_t)devPtr;
 	CpService service;
-	
 	const char* nativeDomain = (*env)->GetStringUTFChars(env, domain, NULL);
 	const char* nativeName = (*env)->GetStringUTFChars(env, name, NULL);
+	obj = obj;
 	
 	service = CpServiceCreate(nativeDomain, nativeName, version, device);
 	
@@ -36,7 +36,9 @@ JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_CpService_CpServiceCreate
 JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpService_CpServiceDestroy
   (JNIEnv *env, jobject obj, jlong servicePtr)
 {
-	CpService service = (CpService) servicePtr;
+	CpService service = (CpService) (size_t)servicePtr;
+	env = env;
+	obj = obj;
 
 	CpServiceDestroy(service);
 }
@@ -49,8 +51,10 @@ JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpService_CpServiceDestroy
 JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpService_CpServiceInvokeAction
   (JNIEnv *env, jobject obj, jlong servicePtr, jlong invocationPtr)
 {
-	CpService service = (CpService) servicePtr;
-	CpInvocationC invocation = (CpInvocationC) invocationPtr;
+	CpService service = (CpService) (size_t)servicePtr;
+	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
+	env = env;
+	obj = obj;
 	
 	CpServiceInvokeAction(service, invocation);
 }

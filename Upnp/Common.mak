@@ -762,10 +762,17 @@ objects_jni = $(objdir)JniAction.$(objext) \
 			  $(objdir)JniArgumentInt.$(objext) \
 			  $(objdir)JniArgumentString.$(objext) \
 			  $(objdir)JniArgumentUint.$(objext) \
+			  $(objdir)JniCallbackList.$(objext) \
 			  $(objdir)JniCpDevice.$(objext) \
+			  $(objdir)JniCpDeviceDv.$(objext) \
               $(objdir)JniCpDeviceList.$(objext) \
 			  $(objdir)JniCpProxy.$(objext) \
 			  $(objdir)JniCpService.$(objext) \
+			  $(objdir)JniDvDevice.$(objext) \
+			  $(objdir)JniDvDeviceStandard.$(objext) \
+			  $(objdir)JniDvInvocation.$(objext) \
+			  $(objdir)JniDvProvider.$(objext) \
+			  $(objdir)JniDvServerUpnp.$(objext) \
 			  $(objdir)JniInitParams.$(objext) \
 			  $(objdir)JniInvocation.$(objext) \
 			  $(objdir)JniLibrary.$(objext) \
@@ -773,6 +780,7 @@ objects_jni = $(objdir)JniAction.$(objext) \
 			  $(objdir)JniNetworkAdapterList.$(objext) \
 			  $(objdir)JniParameter.$(objext) \
 			  $(objdir)JniProperty.$(objext) \
+			  $(objdir)JniResourceWriter.$(objext) \
 		
 ohNetJni : $(objdir)ohNetJni.dll 
 $(objdir)ohNetJni.dll : ohNetDll $(objects_jni)
@@ -789,14 +797,28 @@ $(objdir)JniArgumentString.$(objext) : $(publicjavadir)ArgumentString.c $(header
 	$(compiler)JniArgumentString.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ArgumentString.c
 $(objdir)JniArgumentUint.$(objext) : $(publicjavadir)ArgumentUint.c $(headers)
 	$(compiler)JniArgumentUint.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ArgumentUint.c
+$(objdir)JniCallbackList.$(objext) : $(publicjavadir)JniCallbackList.c $(headers)
+	$(compiler)JniCallbackList.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)JniCallbackList.c
 $(objdir)JniCpDevice.$(objext) : $(publicjavadir)CpDevice.c $(headers)
 	$(compiler)JniCpDevice.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDevice.c
+$(objdir)JniCpDeviceDv.$(objext) : $(publicjavadir)CpDeviceDv.c $(headers)
+	$(compiler)JniCpDeviceDv.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceDv.c
 $(objdir)JniCpDeviceList.$(objext) : $(publicjavadir)CpDeviceList.c $(headers)
 	$(compiler)JniCpDeviceList.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceList.c
 $(objdir)JniCpProxy.$(objext) : $(publicjavadir)CpProxy.c $(headers)
 	$(compiler)JniCpProxy.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpProxy.c
 $(objdir)JniCpService.$(objext) : $(publicjavadir)CpService.c $(headers)
 	$(compiler)JniCpService.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpService.c
+$(objdir)JniDvDevice.$(objext) : $(publicjavadir)DvDevice.c $(headers)
+	$(compiler)JniDvDevice.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)DvDevice.c
+$(objdir)JniDvDeviceStandard.$(objext) : $(publicjavadir)DvDeviceStandard.c $(headers)
+	$(compiler)JniDvDeviceStandard.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)DvDeviceStandard.c
+$(objdir)JniDvInvocation.$(objext) : $(publicjavadir)DvInvocation.c $(headers)
+	$(compiler)JniDvInvocation.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)DvInvocation.c
+$(objdir)JniDvProvider.$(objext) : $(publicjavadir)DvProvider.c $(headers)
+	$(compiler)JniDvProvider.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)DvProvider.c
+$(objdir)JniDvServerUpnp.$(objext) : $(publicjavadir)DvServerUpnp.c $(headers)
+	$(compiler)JniDvServerUpnp.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)DvServerUpnp.c
 $(objdir)JniInitParams.$(objext) : $(publicjavadir)InitParams.c $(headers)
 	$(compiler)JniInitParams.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)InitParams.c
 $(objdir)JniInvocation.$(objext) : $(publicjavadir)Invocation.c $(headers)
@@ -811,6 +833,8 @@ $(objdir)JniParameter.$(objext) : $(publicjavadir)Parameter.c $(headers)
 	$(compiler)JniParameter.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Parameter.c
 $(objdir)JniProperty.$(objext) : $(publicjavadir)Property.c $(headers)
 	$(compiler)JniProperty.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Property.c
+$(objdir)JniResourceWriter.$(objext) : $(publicjavadir)ResourceWriter.c $(headers)
+	$(compiler)JniResourceWriter.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ResourceWriter.c
 
 java_classes = $(objdir)ohnet/Action.class \
 			   $(objdir)ohnet/CpAttribute.class \
