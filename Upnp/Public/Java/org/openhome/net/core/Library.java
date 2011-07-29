@@ -3,7 +3,6 @@ package org.openhome.net.core;
 import java.net.Inet4Address;
 
 
-import ohnet.NetworkAdapter;
 
 public class Library
 {
@@ -176,44 +175,5 @@ public class Library
         }
         
         return ipv4Addr;
-    }
-    
-    public static void main(String[] args) {
-        Library lib = new Library();
-        InitParams params = new InitParams();
-        lib.initialise(params);
-        
-        System.out.println("Params TCP timeout:\t\t\t" + params.getTcpConnectTimeoutMs() + " ms");
-        System.out.println("Params search time:\t\t\t" + params.getMsearchTimeSecs() + " secs");
-        
-        NetworkAdapterList netList = lib.subnetListCreate();
-        //NetworkAdapter netAdptr = on.getSubnet((int) netList.listPtr, 0);
-        NetworkAdapter netAdptr = netList.getSubnet(0);
-        
-        System.out.println("Size of network adapter list: " + netList.size());
-        
-//        NetworkAdapter adptr = on.getCurrentSubnetAdapter();
-//        if (adptr == null) {
-//        	System.out.println("No adapter currently selected.");
-//        } else {
-//        	System.out.println(on.getCurrentSubnetAdapter());
-//        }
-        
-        System.out.println("Current subnet adapter name:\t\t" + netAdptr.getName());
-        System.out.println("Current subnet adapter full name:\t" + netAdptr.getFullName());
-        System.out.println("Current subnet adapter address:\t\t" + netAdptr.getAddress().getHostAddress());
-        System.out.println("Current subnet adapter hostname:\t" + netAdptr.getAddress().getHostName());
-        System.out.println("Current subnet adapter subnet:\t\t" + netAdptr.getSubnet().getHostAddress());
-        
-        System.out.println("First adapter address in subnet list:");
-        System.out.println(netAdptr.getAddress().getHostAddress());
-        
-        System.out.println("First adapter subnet in subnet list:");
-        System.out.println(netAdptr.getSubnet().getHostAddress());
-//        on.getSubnet(1);
-//        System.out.println("Second subnet in subnet list:");
-//        System.out.println(on.getNetworkInterfaceAddress());
-        netList.destroy();
-        lib.close();
     }
 }
