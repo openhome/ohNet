@@ -1,58 +1,58 @@
 #include <jni.h>
 #include "ArgumentString.h"
-#include "C/CpService.h"
+#include "OpenHome/Net/C/CpService.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*
- * Class:     openhome_net_controlpoint_ArgumentString
+ * Class:     org_openhome_net_controlpoint_ArgumentString
  * Method:    ActionArgumentCreateStringInput
  * Signature: (JLjava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentString_ActionArgumentCreateStringInput
-  (JNIEnv *env, jobject obj, jlong paramPtr, jstring val)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentString_ActionArgumentCreateStringInput
+  (JNIEnv *aEnv, jclass aClass, jlong aParameter, jstring aValue)
 {
-	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
+	ServiceParameter param = (ServiceParameter) (size_t)aParameter;
 	ActionArgument arg;
-	const char* nativeValue = (*env)->GetStringUTFChars(env, val, NULL);
-	obj = obj;
+	const char* value = (*aEnv)->GetStringUTFChars(aEnv, aValue, NULL);
+	aClass = aClass;
 	
-	arg = ActionArgumentCreateStringInput(param, nativeValue);
+	arg = ActionArgumentCreateStringInput(param, value);
 	
-	(*env)->ReleaseStringUTFChars(env, val, nativeValue);
+	(*aEnv)->ReleaseStringUTFChars(aEnv, aValue, value);
 	
 	return (jlong) arg;
 }
 
 /*
- * Class:     openhome_net_controlpoint_ArgumentString
+ * Class:     org_openhome_net_controlpoint_ArgumentString
  * Method:    ActionArgumentCreateStringOutput
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentString_ActionArgumentCreateStringOutput
-  (JNIEnv *env, jobject obj, jlong paramPtr)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentString_ActionArgumentCreateStringOutput
+  (JNIEnv *aEnv, jclass aClass, jlong aParameter)
 {
-	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
-	env = env;
-	obj = obj;
+	ServiceParameter param = (ServiceParameter) (size_t)aParameter;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	return (jlong) ActionArgumentCreateStringOutput(param);
 }
 
 /*
- * Class:     openhome_net_controlpoint_ArgumentString
+ * Class:     org_openhome_net_controlpoint_ArgumentString
  * Method:    ActionArgumentValueString
  * Signature: (J)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_openhome_net_controlpoint_ArgumentString_ActionArgumentValueString
-  (JNIEnv *env, jobject obj, jlong argPtr)
+JNIEXPORT jstring JNICALL Java_org_openhome_net_controlpoint_ArgumentString_ActionArgumentValueString
+  (JNIEnv *aEnv, jclass aClass, jlong aArgument)
 {
-	ActionArgument arg = (ActionArgument) (size_t)argPtr;
+	ActionArgument arg = (ActionArgument) (size_t)aArgument;
 	const char* val = ActionArgumentValueString(arg);
-	obj = obj;
+	aClass = aClass;
 	
-	return ((*env)->NewStringUTF(env, val));
+	return ((*aEnv)->NewStringUTF(aEnv, val));
 }
 
 #ifdef __cplusplus

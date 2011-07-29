@@ -1,6 +1,6 @@
 #include <jni.h>
 #include "CpDeviceDv.h"
-#include "C/CpDeviceDv.h"
+#include "OpenHome/Net/C/CpDeviceDv.h"
 
 #ifdef __cplusplus
 extern "C" {

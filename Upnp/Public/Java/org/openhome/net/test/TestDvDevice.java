@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import org.openhome.net.controlpoint.CpDevice;
 import org.openhome.net.core.InitParams;
 import org.openhome.net.core.Library;
 import org.openhome.net.core.NetworkAdapterList;
@@ -13,7 +14,6 @@ import org.openhome.net.core.NetworkAdapterList;
 import ohnet.CpDeviceListUpnpServiceType;
 import ohnet.ICpDeviceListListener;
 import ohnet.NetworkAdapter;
-import openhome.net.controlpoint.CpDevice;
 
 public class TestDvDevice implements ICpDeviceListListener
 {

@@ -2,7 +2,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include "DvInvocation.h"
-#include "C/DvProvider.h"
+#include "OpenHome/Net/C/DvProvider.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -3,10 +3,10 @@ package org.openhome.net.test;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
+import org.openhome.net.controlpoint.CpDevice;
+import org.openhome.net.controlpoint.IPropertyChangeListener;
 import org.openhome.net.controlpoint.proxies.CpProxyOpenhomeOrgTestBasic1;
 
-import ohnet.IPropertyChangeListener;
-import openhome.net.controlpoint.CpDevice;
 
 public class TestBasicCp implements IPropertyChangeListener
 {

@@ -1,7 +1,5 @@
 package org.openhome.net.controlpoint;
 
-import openhome.net.controlpoint.CpProxy;
-import ohnet.IPropertyChangeListener;
 
 /**
  * Base interface for all proxies.
@@ -24,6 +22,8 @@ public interface ICpProxy
 	/**
 	 * Register a {@link IPropertyChangeListener} which will run after each
 	 * group of 1..n changes to state variable is processed.
+	 * 
+	 * @param aPropertyChanged	the property change listener to be called.
 	 */
 	public void setPropertyChanged(IPropertyChangeListener aPropertyChanged);
 	

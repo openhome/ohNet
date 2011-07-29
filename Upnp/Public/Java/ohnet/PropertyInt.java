@@ -1,5 +1,7 @@
 package ohnet;
 
+import org.openhome.net.controlpoint.IPropertyChangeListener;
+
 
 public class PropertyInt extends Property
 {

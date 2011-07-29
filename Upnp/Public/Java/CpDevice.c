@@ -1,75 +1,75 @@
 #include <jni.h>
 #include <stdlib.h>
-#include "C/CpDevice.h"
-#include "C/CpDeviceUpnp.h"
 #include "CpDevice.h"
+#include "OpenHome/Net/C/CpDevice.h"
+#include "OpenHome/Net/C/CpDeviceUpnp.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*
- * Class:     openhome_net_controlpoint_CpDevice
+ * Class:     org_openhome_net_controlpoint_CpDevice
  * Method:    CpDeviceCUdn
  * Signature: (J)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_openhome_net_controlpoint_CpDevice_CpDeviceCUdn
-  (JNIEnv *env, jobject obj, jlong devPtr)
+JNIEXPORT jstring JNICALL Java_org_openhome_net_controlpoint_CpDevice_CpDeviceCUdn
+  (JNIEnv *aEnv, jclass aClass, jlong aDevice)
 {
-	CpDeviceC device = (CpDeviceC) (size_t)devPtr;
+	CpDeviceC device = (CpDeviceC) (size_t)aDevice;
 	const char* devUdn = CpDeviceCUdn(device);
-	obj = obj;
+	aClass = aClass;
 	
-	return ((*env)->NewStringUTF(env, devUdn));
+	return ((*aEnv)->NewStringUTF(aEnv, devUdn));
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpDevice
+ * Class:     org_openhome_net_controlpoint_CpDevice
  * Method:    CpDeviceCAddRef
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpDevice_CpDeviceCAddRef
-  (JNIEnv *env, jobject obj, jlong devPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpDevice_CpDeviceCAddRef
+  (JNIEnv *aEnv, jclass aClass, jlong aDevice)
 {
-	CpDeviceC device = (CpDeviceC) (size_t)devPtr;
-	env = env;
-	obj = obj;
+	CpDeviceC device = (CpDeviceC) (size_t)aDevice;
+	aEnv = aEnv;
+	aClass = aClass;
 
 	CpDeviceCAddRef(device);
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpDevice
+ * Class:     org_openhome_net_controlpoint_CpDevice
  * Method:    CpDeviceCRemoveRef
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpDevice_CpDeviceCRemoveRef
-  (JNIEnv *env, jobject obj, jlong devPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpDevice_CpDeviceCRemoveRef
+  (JNIEnv *aEnv, jclass aClass, jlong aDevice)
 {
-	CpDeviceC device = (CpDeviceC) (size_t)devPtr;
-	env = env;
-	obj = obj;
+	CpDeviceC device = (CpDeviceC) (size_t)aDevice;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	CpDeviceCRemoveRef(device);
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpDevice
+ * Class:     org_openhome_net_controlpoint_CpDevice
  * Method:    CpDeviceCGetAttribute
  * Signature: (JLjava/lang/String;[Ljava/lang/String;)I
  */
-JNIEXPORT jint JNICALL Java_openhome_net_controlpoint_CpDevice_CpDeviceCGetAttribute
-  (JNIEnv *env, jobject obj, jlong devPtr, jstring key, jobjectArray value)
+JNIEXPORT jint JNICALL Java_org_openhome_net_controlpoint_CpDevice_CpDeviceCGetAttribute
+  (JNIEnv *aEnv, jclass aClass, jlong aDevice, jstring aKey, jobjectArray aValue)
 {
-	CpDeviceC device = (CpDeviceC) (size_t)devPtr;
+	CpDeviceC device = (CpDeviceC) (size_t)aDevice;
 	int result;
-	char* nativeValue;
-	const char* nativeKey = (*env)->GetStringUTFChars(env, key, NULL);
-	obj = obj;
+	char* value;
+	const char* key = (*aEnv)->GetStringUTFChars(aEnv, aKey, NULL);
+	aClass = aClass;
 	
-	result = CpDeviceCGetAttribute(device, nativeKey, &nativeValue);
+	result = CpDeviceCGetAttribute(device, key, &value);
 	
-	(*env)->ReleaseStringUTFChars(env, key, nativeKey);
-	(*env)->SetObjectArrayElement(env, value, 0, (*env)->NewStringUTF(env, nativeValue));
+	(*aEnv)->ReleaseStringUTFChars(aEnv, aKey, key);
+	(*aEnv)->SetObjectArrayElement(aEnv, aValue, 0, (*aEnv)->NewStringUTF(aEnv,value));
 	
 	return result;
 }

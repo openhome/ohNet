@@ -1,6 +1,6 @@
 package ohnet;
 
-import openhome.net.controlpoint.CpDevice;
+import org.openhome.net.controlpoint.CpDevice;
 
 public interface ICpDeviceListListener
 {

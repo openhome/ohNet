@@ -1,60 +1,60 @@
 #include <jni.h>
 #include "CpService.h"
-#include "C/CpDevice.h"
-#include "C/CpService.h"
+#include "OpenHome/Net/C/CpDevice.h"
+#include "OpenHome/Net/C/CpService.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*
- * Class:     openhome_net_controlpoint_CpService
+ * Class:     org_openhome_net_controlpoint_CpService
  * Method:    CpServiceCreate
  * Signature: (Ljava/lang/String;Ljava/lang/String;IJ)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_CpService_CpServiceCreate
-  (JNIEnv *env, jobject obj, jstring domain, jstring name, jint version, jlong devPtr)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpService_CpServiceCreate
+  (JNIEnv *aEnv, jclass aClass, jstring aDomain, jstring aName, jint aVersion, jlong aDevice)
 {
-	CpDeviceC device = (CpDeviceC) (size_t)devPtr;
+	CpDeviceC device = (CpDeviceC) (size_t)aDevice;
 	CpService service;
-	const char* nativeDomain = (*env)->GetStringUTFChars(env, domain, NULL);
-	const char* nativeName = (*env)->GetStringUTFChars(env, name, NULL);
-	obj = obj;
+	const char* domain = (*aEnv)->GetStringUTFChars(aEnv, aDomain, NULL);
+	const char* name = (*aEnv)->GetStringUTFChars(aEnv, aName, NULL);
+	aClass = aClass;
 	
-	service = CpServiceCreate(nativeDomain, nativeName, version, device);
+	service = CpServiceCreate(domain, name, aVersion, device);
 	
-	(*env)->ReleaseStringUTFChars(env, domain, nativeDomain);
-	(*env)->ReleaseStringUTFChars(env, name, nativeName);
+	(*aEnv)->ReleaseStringUTFChars(aEnv, aDomain, domain);
+	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	
 	return (jlong) service;
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpService
+ * Class:     org_openhome_net_controlpoint_CpService
  * Method:    CpServiceDestroy
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpService_CpServiceDestroy
-  (JNIEnv *env, jobject obj, jlong servicePtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpService_CpServiceDestroy
+  (JNIEnv *aEnv, jclass aClass, jlong aService)
 {
-	CpService service = (CpService) (size_t)servicePtr;
-	env = env;
-	obj = obj;
+	CpService service = (CpService) (size_t)aService;
+	aEnv = aEnv;
+	aClass = aClass;
 
 	CpServiceDestroy(service);
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpService
+ * Class:     org_openhome_net_controlpoint_CpService
  * Method:    CpServiceInvokeAction
  * Signature: (JJ)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpService_CpServiceInvokeAction
-  (JNIEnv *env, jobject obj, jlong servicePtr, jlong invocationPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpService_CpServiceInvokeAction
+  (JNIEnv *aEnv, jclass aClass, jlong aService, jlong aInvocation)
 {
-	CpService service = (CpService) (size_t)servicePtr;
-	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
-	env = env;
-	obj = obj;
+	CpService service = (CpService) (size_t)aService;
+	CpInvocationC invocation = (CpInvocationC) (size_t)aInvocation;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	CpServiceInvokeAction(service, invocation);
 }

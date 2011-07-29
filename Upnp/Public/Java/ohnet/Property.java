@@ -3,6 +3,8 @@ package ohnet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.openhome.net.controlpoint.IPropertyChangeListener;
+
 
 public class Property
 {

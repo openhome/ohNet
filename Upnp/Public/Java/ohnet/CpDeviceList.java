@@ -3,7 +3,8 @@ package ohnet;
 import java.util.LinkedList;
 import java.util.List;
 
-import openhome.net.controlpoint.CpDevice;
+import org.openhome.net.controlpoint.CpDevice;
+
 
 
 public class CpDeviceList implements ICpDeviceList

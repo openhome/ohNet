@@ -1,51 +1,51 @@
 #include <jni.h>
 #include "ArgumentBool.h"
-#include "C/CpService.h"
+#include "OpenHome/Net/C/CpService.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*
- * Class:     openhome_net_controlpoint_ArgumentBool
+ * Class:     org_openhome_net_controlpoint_ArgumentBool
  * Method:    ActionArgumentCreateBoolInput
  * Signature: (JI)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentBool_ActionArgumentCreateBoolInput
-  (JNIEnv *env, jobject obj, jlong paramPtr, jint val)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentBool_ActionArgumentCreateBoolInput
+  (JNIEnv *aEnv, jclass aClass, jlong aParameter, jint aValue)
 {
-	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
-	env = env;
-	obj = obj;
+	ServiceParameter param = (ServiceParameter) (size_t)aParameter;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return (jlong) ActionArgumentCreateBoolInput(param, val);
+	return (jlong) ActionArgumentCreateBoolInput(param, aValue);
 }
 
 /*
- * Class:     openhome_net_controlpoint_ArgumentBool
+ * Class:     org_openhome_net_controlpoint_ArgumentBool
  * Method:    ActionArgumentCreateBoolOutput
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentBool_ActionArgumentCreateBoolOutput
-  (JNIEnv *env, jobject obj, jlong paramPtr)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentBool_ActionArgumentCreateBoolOutput
+  (JNIEnv *aEnv, jclass aClass, jlong aParameter)
 {
-	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
-	env = env;
-	obj = obj;
+	ServiceParameter param = (ServiceParameter) (size_t)aParameter;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	return (jlong) ActionArgumentCreateBoolOutput(param);
 }
 
 /*
- * Class:     openhome_net_controlpoint_ArgumentBool
+ * Class:     org_openhome_net_controlpoint_ArgumentBool
  * Method:    ActionArgumentValueBool
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_openhome_net_controlpoint_ArgumentBool_ActionArgumentValueBool
-  (JNIEnv *env, jobject obj, jlong argPtr)
+JNIEXPORT jint JNICALL Java_org_openhome_net_controlpoint_ArgumentBool_ActionArgumentValueBool
+  (JNIEnv *aEnv, jclass aClass, jlong aArgument)
 {
-	ActionArgument arg = (ActionArgument) (size_t)argPtr;
-	env = env;
-	obj = obj;
+	ActionArgument arg = (ActionArgument) (size_t)aArgument;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	return ActionArgumentValueBool(arg);
 }

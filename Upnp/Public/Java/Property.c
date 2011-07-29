@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include "Property.h"
 #include "JniCallbackList.h"
-#include "C/Ohnet.h"
-#include "C/Service.h"
+#include "OpenHome/Net/C/Ohnet.h"
+#include "OpenHome/Net/C/Service.h"
 
 JniCallbackList *iList = NULL;
 
