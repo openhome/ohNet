@@ -2,7 +2,6 @@ package org.openhome.net.controlpoint;
 
 import org.openhome.net.device.DvDevice;
 
-import openhome.net.controlpoint.CpDevice;
 
 /**
  * Control point device which communicates directly with a device stack's device.

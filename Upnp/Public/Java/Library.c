@@ -1,6 +1,6 @@
 #include <jni.h>
 #include "Library.h"
-#include "C/OhNet.h"
+#include "OpenHome/Net/C/OhNet.h"
 
 #ifdef __cplusplus
 extern "C" {

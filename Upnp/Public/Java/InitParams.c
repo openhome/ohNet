@@ -1,7 +1,7 @@
 #include <jni.h>
 #include <stddef.h>
 #include "InitParams.h"
-#include "C/OhNet.h"
+#include "OpenHome/Net/C/OhNet.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "DvDeviceStandard.h"
 #include "JniCallbackList.h"
-#include "C/DvDevice.h"
+#include "OpenHome/Net/C/DvDevice.h"
 
 #ifdef __cplusplus
 extern "C" {

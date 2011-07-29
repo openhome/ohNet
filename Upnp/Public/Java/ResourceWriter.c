@@ -1,6 +1,6 @@
 #include <jni.h>
 #include "ResourceWriter.h"
-#include "C/DvDevice.h"
+#include "OpenHome/Net/C/DvDevice.h"
 
 #ifdef __cplusplus
 extern "C" {

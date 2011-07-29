@@ -1,4 +1,5 @@
-package ohnet;
+package org.openhome.net.controlpoint;
+
 
 public class PropertyChangeListener implements IPropertyChangeListener {
 

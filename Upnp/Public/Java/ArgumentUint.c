@@ -1,51 +1,51 @@
 #include <jni.h>
 #include "ArgumentUint.h"
-#include "C/CpService.h"
+#include "OpenHome/Net/C/CpService.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*
- * Class:     openhome_net_controlpoint_ArgumentUint
+ * Class:     org_openhome_net_controlpoint_ArgumentUint
  * Method:    ActionArgumentCreateUintInput
  * Signature: (JJ)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentUint_ActionArgumentCreateUintInput
-  (JNIEnv *env, jobject obj, jlong paramPtr, jlong val)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentUint_ActionArgumentCreateUintInput
+  (JNIEnv *aEnv, jclass aClass, jlong aParameter, jlong aValue)
 {
-	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
-	env = env;
-	obj = obj;
+	ServiceParameter param = (ServiceParameter) (size_t)aParameter;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return (jlong) ActionArgumentCreateUintInput(param, (uint32_t)val);
+	return (jlong) ActionArgumentCreateUintInput(param, (uint32_t)aValue);
 }
 
 /*
- * Class:     openhome_net_controlpoint_ArgumentUint
+ * Class:     org_openhome_net_controlpoint_ArgumentUint
  * Method:    ActionArgumentCreateUintOutput
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentUint_ActionArgumentCreateUintOutput
-  (JNIEnv *env, jobject obj, jlong paramPtr)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentUint_ActionArgumentCreateUintOutput
+  (JNIEnv *aEnv, jclass aClass, jlong aParameter)
 {
-	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
-	env = env;
-	obj = obj;
+	ServiceParameter param = (ServiceParameter) (size_t)aParameter;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	return (jlong) ActionArgumentCreateUintOutput(param);
 }
 
 /*
- * Class:     openhome_net_controlpoint_ArgumentUint
+ * Class:     org_openhome_net_controlpoint_ArgumentUint
  * Method:    ActionArgumentValueUint
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_ArgumentUint_ActionArgumentValueUint
-  (JNIEnv *env, jobject obj, jlong argPtr)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentUint_ActionArgumentValueUint
+  (JNIEnv *aEnv, jclass aClass, jlong aArgument)
 {
-	ActionArgument arg = (ActionArgument) (size_t)argPtr;
-	env = env;
-	obj = obj;
+	ActionArgument arg = (ActionArgument) (size_t)aArgument;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	return ActionArgumentValueUint(arg);
 }

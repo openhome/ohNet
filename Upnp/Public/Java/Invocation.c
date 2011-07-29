@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include "Invocation.h"
 #include "JniCallbackList.h"
-#include "OhNetDefines.h"
-#include "C/CpService.h"
+#include "OpenHome/OhNetDefines.h"
+#include "OpenHome/Net/C/CpService.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,148 +60,148 @@ static void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRe
 }
 
 /*
- * Class:     openhome_net_controlpoint_Invocation
+ * Class:     org_openhome_net_controlpoint_Invocation
  * Method:    CpServiceInvocation
  * Signature: (JJ)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_Invocation_CpServiceInvocation
-  (JNIEnv *env, jobject obj, jlong servicePtr, jlong actionPtr)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_Invocation_CpServiceInvocation
+  (JNIEnv *aEnv, jobject aObject, jlong aService, jlong aAction)
 {
-	CpService service = (CpService) (size_t)servicePtr;
-	ServiceAction action = (ServiceAction) (size_t)actionPtr;
+	CpService service = (CpService) (size_t)aService;
+	ServiceAction action = (ServiceAction) (size_t)aAction;
 	OhNetCallbackAsync callback = &AsyncComplete;
 	JniObjRef *ref;
 
-	InitialiseReferences(env, obj, &ref);
+	InitialiseReferences(aEnv, aObject, &ref);
 	
 	return (jlong) CpServiceInvocation(service, action, callback, ref);
 }
 
 /*
- * Class:     openhome_net_controlpoint_Invocation
+ * Class:     org_openhome_net_controlpoint_Invocation
  * Method:    CpInvocationAddInput
  * Signature: (JJ)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationAddInput
-  (JNIEnv *env, jobject obj, jlong invocationPtr, jlong argPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocationAddInput
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation, jlong aArgument)
 {
-	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
-	ActionArgument arg = (ActionArgument) (size_t)argPtr;
-	env = env;
-	obj = obj;
+	CpInvocationC invocation = (CpInvocationC) (size_t)aInvocation;
+	ActionArgument arg = (ActionArgument) (size_t)aArgument;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	CpInvocationAddInput(invocation, arg);
 }
 
 /*
- * Class:     openhome_net_controlpoint_Invocation
+ * Class:     org_openhome_net_controlpoint_Invocation
  * Method:    CpInvocationAddOutput
  * Signature: (JJ)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationAddOutput
-  (JNIEnv *env, jobject obj, jlong invocationPtr, jlong argPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocationAddOutput
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation, jlong aArgument)
 {
-	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
-	ActionArgument arg = (ActionArgument) (size_t)argPtr;
-	env = env;
-	obj = obj;
+	CpInvocationC invocation = (CpInvocationC) (size_t)aInvocation;
+	ActionArgument arg = (ActionArgument) (size_t)aArgument;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	CpInvocationAddOutput(invocation, arg);
 }
 
 /*
- * Class:     openhome_net_controlpoint_Invocation
+ * Class:     org_openhome_net_controlpoint_Invocation
  * Method:    CpInvocationError
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationError
-  (JNIEnv *env, jclass cls, jlong invocationPtr)
+JNIEXPORT jint JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocationError
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation)
 {
-	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
-	env = env;
-	cls = cls;
+	CpInvocationC invocation = (CpInvocationC) (size_t)aInvocation;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	return CpInvocationError(invocation);
 }
 
 /*
- * Class:     openhome_net_controlpoint_Invocation
+ * Class:     org_openhome_net_controlpoint_Invocation
  * Method:    CpInvocationOutputInt
  * Signature: (JI)I
  */
-JNIEXPORT jint JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationOutputInt
-  (JNIEnv *env, jclass cls, jlong invocationPtr, jint index)
+JNIEXPORT jint JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocationOutputInt
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation, jint aIndex)
 {
-	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
-	env = env;
-	cls = cls;
+	CpInvocationC invocation = (CpInvocationC) (size_t)aInvocation;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return CpInvocationOutputInt(invocation, index);
+	return CpInvocationOutputInt(invocation, aIndex);
 }
 
 /*
- * Class:     openhome_net_controlpoint_Invocation
+ * Class:     org_openhome_net_controlpoint_Invocation
  * Method:    CpInvocationOutputUint
  * Signature: (JI)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationOutputUint
-  (JNIEnv *env, jclass cls, jlong invocationPtr, jint index)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocationOutputUint
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation, jint aIndex)
 {
-	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
-	env = env;
-	cls = cls;
+	CpInvocationC invocation = (CpInvocationC) (size_t)aInvocation;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return CpInvocationOutputUint(invocation, index);
+	return CpInvocationOutputUint(invocation, aIndex);
 }
 
 /*
- * Class:     openhome_net_controlpoint_Invocation
+ * Class:     org_openhome_net_controlpoint_Invocation
  * Method:    CpInvocationOutputBool
  * Signature: (JI)I
  */
-JNIEXPORT jint JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationOutputBool
-  (JNIEnv *env, jclass cls, jlong invocationPtr, jint index)
+JNIEXPORT jint JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocationOutputBool
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation, jint aIndex)
 {
-	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
-	env = env;
-	cls = cls;
+	CpInvocationC invocation = (CpInvocationC) (size_t)aInvocation;
+	aEnv = aEnv;
+	aClass = aClass;
 	
-	return CpInvocationOutputBool(invocation, index);
+	return CpInvocationOutputBool(invocation, aIndex);
 }
 
 /*
- * Class:     openhome_net_controlpoint_Invocation
+ * Class:     org_openhome_net_controlpoint_Invocation
  * Method:    CpInvocationOutputString
  * Signature: (JI)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationOutputString
-  (JNIEnv *env, jclass cls, jlong invocationPtr, jint index)
+JNIEXPORT jstring JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocationOutputString
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation, jint aIndex)
 {
-	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
-	char *output = CpInvocationOutputString(invocation, index);
-	cls = cls;
+	CpInvocationC invocation = (CpInvocationC) (size_t)aInvocation;
+	char *output = CpInvocationOutputString(invocation, aIndex);
+	aClass = aClass;
 	
-	return (*env)->NewStringUTF(env, output);
+	return (*aEnv)->NewStringUTF(aEnv, output);
 }
 
 /*
- * Class:     openhome_net_controlpoint_Invocation
+ * Class:     org_openhome_net_controlpoint_Invocation
  * Method:    CpInvocationGetOutputBinary
  * Signature: (JI)[B
  */
-JNIEXPORT jbyteArray JNICALL Java_openhome_net_controlpoint_Invocation_CpInvocationGetOutputBinary
-  (JNIEnv *env, jclass cls, jlong invocationPtr, jint index)
+JNIEXPORT jbyteArray JNICALL Java_org_openhome_net_controlpoint_Invocation_CpInvocationGetOutputBinary
+  (JNIEnv *aEnv, jclass aClass, jlong aInvocation, jint aIndex)
 {
-	CpInvocationC invocation = (CpInvocationC) (size_t)invocationPtr;
+	CpInvocationC invocation = (CpInvocationC) (size_t)aInvocation;
 	char* data;
 	uint32_t len;
 	jbyteArray array;
-	cls = cls;
+	aClass = aClass;
 	
-	CpInvocationGetOutputBinary(invocation, index, &data, &len);
+	CpInvocationGetOutputBinary(invocation, aIndex, &data, &len);
 	
-	array = (*env)->NewByteArray(env, len);
-	(*env)->SetByteArrayRegion(env, array, 0, len, (jbyte *) data);
+	array = (*aEnv)->NewByteArray(aEnv, len);
+	(*aEnv)->SetByteArrayRegion(aEnv, array, 0, len, (jbyte *) data);
 	
 	return array;
 }

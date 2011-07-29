@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "CpProxy.h"
 #include "JniCallbackList.h"
-#include "C/CpProxy.h"
+#include "OpenHome/Net/C/CpProxy.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -80,164 +80,164 @@ static void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRe
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpProxy
+ * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxyCreate
  * Signature: (Ljava/lang/String;Ljava/lang/String;IJ)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_CpProxy_CpProxyCreate
-  (JNIEnv *env, jobject obj, jstring domain, jstring name, jint version, jlong devPtr)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyCreate
+  (JNIEnv *aEnv, jclass aClass, jstring aDomain, jstring aName, jint aVersion, jlong aDevice)
 {
-	CpDeviceC device = (CpDeviceC) (size_t)devPtr;
-	const char* nativeDomain = (*env)->GetStringUTFChars(env, domain, NULL);
-	const char* nativeName = (*env)->GetStringUTFChars(env, name, NULL);
-	THandle proxy = CpProxyCreate(nativeDomain, nativeName, version, device);
-	obj = obj;
+	CpDeviceC device = (CpDeviceC) (size_t)aDevice;
+	const char* domain = (*aEnv)->GetStringUTFChars(aEnv, aDomain, NULL);
+	const char* name = (*aEnv)->GetStringUTFChars(aEnv, aName, NULL);
+	THandle proxy = CpProxyCreate(domain, name, aVersion, device);
+	aClass = aClass;
 	
-	(*env)->ReleaseStringUTFChars(env, domain, nativeName);
-	(*env)->ReleaseStringUTFChars(env, name, nativeName);
+	(*aEnv)->ReleaseStringUTFChars(aEnv, aDomain, domain);
+	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	
 	return (jlong) proxy;
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpProxy
+ * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxyDestroy
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpProxy_CpProxyDestroy
-  (JNIEnv *env, jobject obj, jlong proxyPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyDestroy
+  (JNIEnv *aEnv, jclass aClass, jlong aProxy)
 {
-	THandle proxy = (THandle) (size_t)proxyPtr;
-	obj = obj;
+	THandle proxy = (THandle) (size_t)aProxy;
+	aClass = aClass;
 	
-	JniCallbackListDestroy(env, &iList);
+	JniCallbackListDestroy(aEnv, &iList);
 	iList = NULL;
 	CpProxyDestroy(proxy);
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpProxy
+ * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxyService
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_openhome_net_controlpoint_CpProxy_CpProxyService
-  (JNIEnv *env, jobject obj, jlong proxyPtr)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyService
+  (JNIEnv *aEnv, jclass aClass, jlong aProxy)
 {
-	THandle proxy = (THandle) (size_t)proxyPtr;
-	env = env;
-	obj = obj;
+	THandle proxy = (THandle) (size_t)aProxy;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	return (jlong) CpProxyService(proxy);
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpProxy
+ * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxySubscribe
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpProxy_CpProxySubscribe
-  (JNIEnv *env, jobject obj, jlong proxyPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySubscribe
+  (JNIEnv *aEnv, jclass aClass, jlong aProxy)
 {
-	THandle proxy = (THandle) (size_t)proxyPtr;
-	env = env;
-	obj = obj;
+	THandle proxy = (THandle) (size_t)aProxy;
+	aEnv = aEnv;
+	aClass = aClass;
 
 	CpProxySubscribe(proxy);
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpProxy
+ * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxyUnsubscribe
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpProxy_CpProxyUnsubscribe
-  (JNIEnv *env, jobject obj, jlong proxyPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyUnsubscribe
+  (JNIEnv *aEnv, jclass aClass, jlong aProxy)
 {
-	THandle proxy = (THandle) (size_t)proxyPtr;
-	env = env;
-	obj = obj;
+	THandle proxy = (THandle) (size_t)aProxy;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	CpProxyUnsubscribe(proxy);
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpProxy
+ * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxySetPropertyChanged
- * Signature: (JLohnet/IPropertyChangeListener;)V
+ * Signature: (JLorg/openhome/net/controlpoint/IPropertyChangeListener;)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpProxy_CpProxySetPropertyChanged
-  (JNIEnv *env, jobject obj, jlong proxyPtr, jobject callbackObj)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPropertyChanged
+  (JNIEnv *aEnv, jclass aClass, jlong aProxy, jobject aCallback)
 {
-	THandle proxy = (THandle) (size_t)proxyPtr;
+	THandle proxy = (THandle) (size_t)aProxy;
 	OhNetCallback callback = &CallbackChange;
 	JniObjRef *ref;
-	obj = obj;
+	aClass = aClass;
 	
-	InitialiseReferences(env, callbackObj, &ref);
+	InitialiseReferences(aEnv, aCallback, &ref);
 	
 	CpProxySetPropertyChanged(proxy, callback, ref);
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpProxy
+ * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxySetPropertyInitialEvent
- * Signature: (JLohnet/IPropertyChangeListener;)V
+ * Signature: (JLorg/openhome/net/controlpoint/IPropertyChangeListener;)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpProxy_CpProxySetPropertyInitialEvent
-  (JNIEnv *env, jobject obj, jlong proxyPtr, jobject callbackObj)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPropertyInitialEvent
+  (JNIEnv *aEnv, jclass aClass, jlong aProxy, jobject aCallback)
 {
-	THandle proxy = (THandle) (size_t)proxyPtr;
+	THandle proxy = (THandle) (size_t)aProxy;
 	OhNetCallback callback = (OhNetCallback) &CallbackInitial;
 	JniObjRef *ref;
-	obj = obj;
+	aClass = aClass;
 	
-	InitialiseReferences(env, callbackObj, &ref);
+	InitialiseReferences(aEnv, aCallback, &ref);
 	
 	CpProxySetPropertyChanged(proxy, callback, NULL);
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpProxy
+ * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxyPropertyReadLock
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpProxy_CpProxyPropertyReadLock
-  (JNIEnv *env, jobject obj, jlong proxyPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyPropertyReadLock
+  (JNIEnv *aEnv, jclass aClass, jlong aProxy)
 {
-	THandle proxy = (THandle) (size_t)proxyPtr;
-	env = env;
-	obj = obj;
+	THandle proxy = (THandle) (size_t)aProxy;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	CpProxyPropertyReadLock(proxy);
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpProxy
+ * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxyPropertyReadUnlock
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpProxy_CpProxyPropertyReadUnlock
-  (JNIEnv *env, jobject obj, jlong proxyPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyPropertyReadUnlock
+  (JNIEnv *aEnv, jclass aClass, jlong aProxy)
 {
-	THandle proxy = (THandle) (size_t)proxyPtr;
-	env = env;
-	obj = obj;
+	THandle proxy = (THandle) (size_t)aProxy;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	CpProxyPropertyReadUnlock(proxy);
 }
 
 /*
- * Class:     openhome_net_controlpoint_CpProxy
+ * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxyAddProperty
  * Signature: (JJ)V
  */
-JNIEXPORT void JNICALL Java_openhome_net_controlpoint_CpProxy_CpProxyAddProperty
-  (JNIEnv *env, jobject obj, jlong proxyPtr, jlong propertyPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyAddProperty
+  (JNIEnv *aEnv, jclass aClass, jlong aProxy, jlong aProperty)
 {
-	THandle proxy = (THandle) (size_t)proxyPtr;
-	ServiceProperty property = (ServiceProperty) (size_t)propertyPtr;
-	env = env;
-	obj = obj;
+	THandle proxy = (THandle) (size_t)aProxy;
+	ServiceProperty property = (ServiceProperty) (size_t)aProperty;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	CpProxyAddProperty(proxy, property);
 }

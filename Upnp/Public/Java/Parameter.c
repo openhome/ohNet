@@ -2,7 +2,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include "Parameter.h"
-#include "C/Service.h"
+#include "OpenHome/Net/C/Service.h"
 
 /*
  * Class:     ohnet_Parameter

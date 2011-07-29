@@ -1,6 +1,6 @@
 #include <jni.h>
 #include "DvServerUpnp.h"
-#include "C/DvServerUpnp.h"
+#include "OpenHome/Net/C/DvServerUpnp.h"
 
 #ifdef __cplusplus
 extern "C" {

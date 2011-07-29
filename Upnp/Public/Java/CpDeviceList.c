@@ -3,9 +3,9 @@
 #include <malloc.h>
 #include "CpDeviceList.h"
 #include "JniCallbackList.h"
-#include "OhNetDefines.h"
-#include "C/CpDevice.h"
-#include "C/CpDeviceUpnp.h"
+#include "OpenHome/OhNetDefines.h"
+#include "OpenHome/Net/C/CpDevice.h"
+#include "OpenHome/Net/C/CpDeviceUpnp.h"
 
 static JniCallbackList *iList = NULL;
 

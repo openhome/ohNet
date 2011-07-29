@@ -1,6 +1,6 @@
 #include <jni.h>
 #include "Action.h"
-#include "C/Service.h"
+#include "OpenHome/Net/C/Service.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,6 +1,6 @@
 #include <jni.h>
 #include "NetworkAdapter.h"
-#include "C/OhNet.h"
+#include "OpenHome/Net/C/OhNet.h"
 
 JNIEXPORT jint JNICALL Java_ohnet_NetworkAdapter_OhNetNetworkAdapterAddress
   (JNIEnv *env, jobject obj, jlong ptr)

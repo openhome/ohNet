@@ -1,8 +1,6 @@
-package openhome.net.controlpoint;
+package org.openhome.net.controlpoint;
 
-import org.openhome.net.controlpoint.ICpProxy;
 
-import ohnet.IPropertyChangeListener;
 import ohnet.Property;
 
 /**
@@ -20,16 +18,16 @@ public class CpProxy implements ICpProxy
         E_SUBSCRIBED
     }
 	
-	private native long CpProxyCreate(String aDomain, String aName, int aVersion, long aDevice);
-	private native void CpProxyDestroy(long aProxy);
-	private native long CpProxyService(long aProxy);
-	private native void CpProxySubscribe(long aHandle);
-	private native void CpProxyUnsubscribe(long aHandle);
-	private native void CpProxySetPropertyChanged(long aHandle, IPropertyChangeListener aCallback);
-	private native void CpProxySetPropertyInitialEvent(long aHandle, IPropertyChangeListener aCallback);
-	private native void CpProxyPropertyReadLock(long aHandle);
-	private native void CpProxyPropertyReadUnlock(long aHandle);
-	private native void CpProxyAddProperty(long aHandle, long aProperty);
+	private static native long CpProxyCreate(String aDomain, String aName, int aVersion, long aDevice);
+	private static native void CpProxyDestroy(long aProxy);
+	private static native long CpProxyService(long aProxy);
+	private static native void CpProxySubscribe(long aHandle);
+	private static native void CpProxyUnsubscribe(long aHandle);
+	private static native void CpProxySetPropertyChanged(long aHandle, IPropertyChangeListener aCallback);
+	private static native void CpProxySetPropertyInitialEvent(long aHandle, IPropertyChangeListener aCallback);
+	private static native void CpProxyPropertyReadLock(long aHandle);
+	private static native void CpProxyPropertyReadUnlock(long aHandle);
+	private static native void CpProxyAddProperty(long aHandle, long aProperty);
 	
 	static
     {
@@ -37,12 +35,12 @@ public class CpProxy implements ICpProxy
         System.loadLibrary("ohNetJni");
     }
 	
-	protected long iHandle = 0;
-	protected CpService iService = null;
-	private IPropertyChangeListener iCallbackPropertyChanged = null;
-	private IPropertyChangeListener iCallbackInitialEvent = null;
+	protected long iHandle;
+	protected CpService iService;
+	private IPropertyChangeListener iCallbackPropertyChanged;
+	private IPropertyChangeListener iCallbackInitialEvent;
 	private SubscriptionStatus iSubscriptionStatus = SubscriptionStatus.E_NOT_SUBSCRIBED;
-	private Object iSubscriptionStatusLock = null;
+	private Object iSubscriptionStatusLock;
 	
 	/**
 	 * Create a proxy that will be manually populated with actions/properties.
@@ -73,11 +71,14 @@ public class CpProxy implements ICpProxy
         }
         if (unsubscribe)
             unsubscribe();
-//        System.out.println("About to call CpProxyDestroy...");
         CpProxyDestroy(iHandle);
-//        System.out.println("Returned from CpProxyDestroy function...");
     }
 	
+	/**
+	 * Subscribe to notification of changes in state variables.
+	 * Use {@link CpProxy#setPropertyChanged} to register a callback which runs
+	 * after each group of 1..n changes is processed.
+	 */
 	public void subscribe()
     {
         synchronized (iSubscriptionStatusLock)
@@ -87,6 +88,10 @@ public class CpProxy implements ICpProxy
         CpProxySubscribe(iHandle);
     }
 	
+	/**
+	 * Unsubscribe to notification of changes in state variables.
+	 * No further notifications will be published until Subscribe() is called again.
+	 */
 	public void unsubscribe()
     {
         synchronized (iSubscriptionStatusLock)
@@ -96,12 +101,24 @@ public class CpProxy implements ICpProxy
         CpProxyUnsubscribe(iHandle);
     }
 	
+	/**
+	 * Register a {@link IPropertyChangeListener} which will run after each
+	 * group of 1..n changes to state variable is processed.
+	 * 
+	 * @param aPropertyChanged	the property change listener to be called.
+	 */
 	public void setPropertyChanged(IPropertyChangeListener aPropertyChanged)
     {
         iCallbackPropertyChanged = aPropertyChanged;
         CpProxySetPropertyChanged(iHandle, iCallbackPropertyChanged);
     }
 
+	/**
+	 * Register a {@link IPropertyChangeListener} which will run after an
+	 * initial event for a state variable.
+	 * 
+	 * @param aPropertyChanged	the property change listener to be called.
+	 */
     public void setPropertyInitialEvent(IPropertyChangeListener aInitialEvent)
     {
         iCallbackInitialEvent = aInitialEvent;
@@ -126,7 +143,10 @@ public class CpProxy implements ICpProxy
         CpProxyPropertyReadUnlock(iHandle);
     }
     
-    
+    /**
+     * Report an even to a property change listener.
+     * @param aCallback	the property change listener to notify.
+     */
     protected void reportEvent(IPropertyChangeListener aCallback)
     {
         synchronized (iSubscriptionStatusLock)
