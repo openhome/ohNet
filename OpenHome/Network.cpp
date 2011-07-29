@@ -305,6 +305,9 @@ void Socket::Bind(const Endpoint& aEndpoint)
     TInt err = OpenHome::Os::NetworkBind(iHandle, aEndpoint);
     if(err != 0) {
         LOG2F(kNetwork, kError, "Socket::Bind H = %d, RETURN VALUE = %d\n", iHandle, err);
+        if (err == -2) {
+            THROW(NetworkAddressInUse);
+        }
         THROW(NetworkError);
     }
 }

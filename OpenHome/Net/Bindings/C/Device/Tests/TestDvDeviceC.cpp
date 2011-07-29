@@ -118,7 +118,7 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
     OhNetHandleNetworkAdapter nif = OhNetSubnetAt(subnetList, 0);
     TIpAddress subnet = OhNetNetworkAdapterSubnet(nif);
     OhNetSubnetListDestroy(subnetList);
-    OhNetLibraryStartCombined(subnet);
+    (void)OhNetLibraryStartCombined(subnet);
 //    Debug::SetLevel(Debug::kService);
 
     Semaphore* sem = new Semaphore("SEM1", 0);

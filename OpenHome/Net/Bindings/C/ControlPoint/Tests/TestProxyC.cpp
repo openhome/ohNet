@@ -242,7 +242,7 @@ extern "C" void OhNetTestRunner(OhNetHandleInitParams aInitParams)
     OhNetHandleNetworkAdapter nif = OhNetSubnetAt(subnetList, 0);
     TIpAddress subnet = OhNetNetworkAdapterSubnet(nif);
     OhNetSubnetListDestroy(subnetList);
-    OhNetLibraryStartCp(subnet);
+    (void)OhNetLibraryStartCp(subnet);
 //    Debug::SetLevel(Debug::kService);
 
     DeviceList* deviceList = new DeviceList;
