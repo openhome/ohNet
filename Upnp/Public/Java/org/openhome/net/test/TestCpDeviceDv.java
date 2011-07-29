@@ -2,11 +2,11 @@ package org.openhome.net.test;
 
 import java.net.Inet4Address;
 
-import ohnet.NetworkAdapter;
 
 import org.openhome.net.controlpoint.CpDeviceDv;
 import org.openhome.net.core.InitParams;
 import org.openhome.net.core.Library;
+import org.openhome.net.core.NetworkAdapter;
 import org.openhome.net.core.NetworkAdapterList;
 
 public class TestCpDeviceDv

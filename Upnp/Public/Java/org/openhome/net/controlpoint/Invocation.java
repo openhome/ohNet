@@ -3,8 +3,9 @@ package org.openhome.net.controlpoint;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.openhome.net.core.Action;
 
-import ohnet.Action;
+
 
 /**
  * Utility class used to execute a single action. Only intended for use by

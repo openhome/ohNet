@@ -17,12 +17,12 @@ import org.openhome.net.controlpoint.proxies.CpProxyUpnpOrgConnectionManager1;
 import org.openhome.net.controlpoint.proxies.CpProxyUpnpOrgConnectionManager1.GetProtocolInfo;
 import org.openhome.net.core.InitParams;
 import org.openhome.net.core.Library;
+import org.openhome.net.core.NetworkAdapter;
 import org.openhome.net.core.NetworkAdapterList;
 
 
 import ohnet.CpDeviceListUpnpServiceType;
 import ohnet.ICpDeviceListListener;
-import ohnet.NetworkAdapter;
 
 public class TestProxy implements ICpDeviceListListener, ICpProxyListener, IPropertyChangeListener
 {

@@ -1,15 +1,18 @@
-package ohnet;
+package org.openhome.net.core;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+/**
+ * Class representing a network adapter.
+ */
 public class NetworkAdapter
 {
-	private static native int OhNetNetworkAdapterAddress(long ptr);
-	private static native int OhNetNetworkAdapterSubnet(long ptr);
-	private static native String OhNetNetworkAdapterName(long ptr);
-	private static native String OhNetNetworkAdapterFullName(long ptr);
+	private static native int OhNetNetworkAdapterAddress(long aNif);
+	private static native int OhNetNetworkAdapterSubnet(long aNif);
+	private static native String OhNetNetworkAdapterName(long aNif);
+	private static native String OhNetNetworkAdapterFullName(long aNif);
 	
 	static
     {
@@ -40,11 +43,17 @@ public class NetworkAdapter
 	 * 
 	 * @return	handle to the underlying network adapter.
 	 */
-	public long getHandle()
+	protected long getHandle()
 	{
 		return iHandle;
 	}
 	
+	/**
+	 * Convert an IPv4 address in integer format to a byte array.
+	 * 
+	 * @param ipv4	network order integer representation of an IPv4 address.
+	 * @return		IPv4 address contained within a byte array.
+	 */
 	private byte[] ipv4IntToByteArray(int ipv4)
 	{
 		byte[] addr = new byte[4];
@@ -116,10 +125,4 @@ public class NetworkAdapter
 	{
 		return OhNetNetworkAdapterFullName(iHandle);
 	}
-	
-	public String toString()
-	{
-		return getName();
-	}
-
 }

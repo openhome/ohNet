@@ -3,7 +3,8 @@ package org.openhome.net.device;
 import java.util.LinkedList;
 import java.util.List;
 
-import ohnet.Action;
+import org.openhome.net.core.Action;
+
 import ohnet.Property;
 import ohnet.PropertyBinary;
 import ohnet.PropertyBool;
