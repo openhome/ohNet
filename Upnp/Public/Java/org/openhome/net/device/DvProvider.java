@@ -3,13 +3,14 @@ package org.openhome.net.device;
 import java.util.LinkedList;
 import java.util.List;
 
-import ohnet.Action;
-import ohnet.Property;
-import ohnet.PropertyBinary;
-import ohnet.PropertyBool;
-import ohnet.PropertyInt;
-import ohnet.PropertyString;
-import ohnet.PropertyUint;
+import org.openhome.net.core.Action;
+import org.openhome.net.core.Property;
+import org.openhome.net.core.PropertyBinary;
+import org.openhome.net.core.PropertyBool;
+import org.openhome.net.core.PropertyInt;
+import org.openhome.net.core.PropertyString;
+import org.openhome.net.core.PropertyUint;
+
 
 public class DvProvider
 {

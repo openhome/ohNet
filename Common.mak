@@ -782,7 +782,12 @@ objects_jni = $(objdir)JniAction.$(objext) \
 			  $(objdir)JniCallbackList.$(objext) \
 			  $(objdir)JniCpDevice.$(objext) \
 			  $(objdir)JniCpDeviceDv.$(objext) \
-              $(objdir)JniCpDeviceList.$(objext) \
+              $(objdir)JniCpDeviceListUpnpAll.$(objext) \
+			  $(objdir)JniCpDeviceListUpnpDeviceType.$(objext) \
+			  $(objdir)JniCpDeviceListUpnpRoot.$(objext) \
+			  $(objdir)JniCpDeviceListUpnpServiceType.$(objext) \
+			  $(objdir)JniCpDeviceListUpnpUuid.$(objext) \
+			  $(objdir)JniCpDeviceList.$(objext) \
 			  $(objdir)JniCpProxy.$(objext) \
 			  $(objdir)JniCpService.$(objext) \
 			  $(objdir)JniDvDevice.$(objext) \
@@ -795,8 +800,18 @@ objects_jni = $(objdir)JniAction.$(objext) \
 			  $(objdir)JniLibrary.$(objext) \
 			  $(objdir)JniNetworkAdapter.$(objext) \
 			  $(objdir)JniNetworkAdapterList.$(objext) \
-			  $(objdir)JniParameter.$(objext) \
+			  $(objdir)JniParameterBinary.$(objext) \
+			  $(objdir)JniParameterBool.$(objext) \
+			  $(objdir)JniParameterInt.$(objext) \
+			  $(objdir)JniParameterRelated.$(objext) \
+			  $(objdir)JniParameterString.$(objext) \
+			  $(objdir)JniParameterUint.$(objext) \
 			  $(objdir)JniProperty.$(objext) \
+			  $(objdir)JniPropertyBinary.$(objext) \
+			  $(objdir)JniPropertyBool.$(objext) \
+			  $(objdir)JniPropertyInt.$(objext) \
+			  $(objdir)JniPropertyString.$(objext) \
+			  $(objdir)JniPropertyUint.$(objext) \
 			  $(objdir)JniResourceWriter.$(objext) \
 		
 ohNetJni : $(objdir)ohNetJni.dll 
@@ -822,6 +837,16 @@ $(objdir)JniCpDeviceDv.$(objext) : $(publicjavadir)CpDeviceDv.c $(headers)
 	$(compiler)JniCpDeviceDv.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceDv.c
 $(objdir)JniCpDeviceList.$(objext) : $(publicjavadir)CpDeviceList.c $(headers)
 	$(compiler)JniCpDeviceList.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceList.c
+$(objdir)JniCpDeviceListUpnpAll.$(objext) : $(publicjavadir)CpDeviceListUpnpAll.c $(headers)
+	$(compiler)JniCpDeviceListUpnpAll.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceListUpnpAll.c
+$(objdir)JniCpDeviceListUpnpDeviceType.$(objext) : $(publicjavadir)CpDeviceListUpnpDeviceType.c $(headers)
+	$(compiler)JniCpDeviceListUpnpDeviceType.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceListUpnpDeviceType.c
+$(objdir)JniCpDeviceListUpnpRoot.$(objext) : $(publicjavadir)CpDeviceListUpnpRoot.c $(headers)
+	$(compiler)JniCpDeviceListUpnpRoot.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceListUpnpRoot.c
+$(objdir)JniCpDeviceListUpnpServiceType.$(objext) : $(publicjavadir)CpDeviceListUpnpServiceType.c $(headers)
+	$(compiler)JniCpDeviceListUpnpServiceType.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceListUpnpServiceType.c
+$(objdir)JniCpDeviceListUpnpUuid.$(objext) : $(publicjavadir)CpDeviceListUpnpUuid.c $(headers)
+	$(compiler)JniCpDeviceListUpnpUuid.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceListUpnpUuid.c
 $(objdir)JniCpProxy.$(objext) : $(publicjavadir)CpProxy.c $(headers)
 	$(compiler)JniCpProxy.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpProxy.c
 $(objdir)JniCpService.$(objext) : $(publicjavadir)CpService.c $(headers)
@@ -846,10 +871,30 @@ $(objdir)JniNetworkAdapter.$(objext) : $(publicjavadir)NetworkAdapter.c $(header
 	$(compiler)JniNetworkAdapter.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)NetworkAdapter.c
 $(objdir)JniNetworkAdapterList.$(objext) : $(publicjavadir)NetworkAdapterList.c $(headers)
 	$(compiler)JniNetworkAdapterList.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)NetworkAdapterList.c
-$(objdir)JniParameter.$(objext) : $(publicjavadir)Parameter.c $(headers)
-	$(compiler)JniParameter.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Parameter.c
+$(objdir)JniParameterBinary.$(objext) : $(publicjavadir)ParameterBinary.c $(headers)
+	$(compiler)JniParameterBinary.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ParameterBinary.c
+$(objdir)JniParameterBool.$(objext) : $(publicjavadir)ParameterBool.c $(headers)
+	$(compiler)JniParameterBool.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ParameterBool.c
+$(objdir)JniParameterInt.$(objext) : $(publicjavadir)ParameterInt.c $(headers)
+	$(compiler)JniParameterInt.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ParameterInt.c
+$(objdir)JniParameterRelated.$(objext) : $(publicjavadir)ParameterRelated.c $(headers)
+	$(compiler)JniParameterRelated.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ParameterRelated.c
+$(objdir)JniParameterString.$(objext) : $(publicjavadir)ParameterString.c $(headers)
+	$(compiler)JniParameterString.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ParameterString.c
+$(objdir)JniParameterUint.$(objext) : $(publicjavadir)ParameterUint.c $(headers)
+	$(compiler)JniParameterUint.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ParameterUint.c
 $(objdir)JniProperty.$(objext) : $(publicjavadir)Property.c $(headers)
 	$(compiler)JniProperty.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Property.c
+$(objdir)JniPropertyBinary.$(objext) : $(publicjavadir)PropertyBinary.c $(headers)
+	$(compiler)JniPropertyBinary.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)PropertyBinary.c
+$(objdir)JniPropertyBool.$(objext) : $(publicjavadir)PropertyBool.c $(headers)
+	$(compiler)JniPropertyBool.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)PropertyBool.c
+$(objdir)JniPropertyInt.$(objext) : $(publicjavadir)PropertyInt.c $(headers)
+	$(compiler)JniPropertyInt.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)PropertyInt.c
+$(objdir)JniPropertyString.$(objext) : $(publicjavadir)PropertyString.c $(headers)
+	$(compiler)JniPropertyString.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)PropertyString.c
+$(objdir)JniPropertyUint.$(objext) : $(publicjavadir)PropertyUint.c $(headers)
+	$(compiler)JniPropertyUint.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)PropertyUint.c
 $(objdir)JniResourceWriter.$(objext) : $(publicjavadir)ResourceWriter.c $(headers)
 	$(compiler)JniResourceWriter.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ResourceWriter.c
 

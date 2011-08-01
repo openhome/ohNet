@@ -6,82 +6,82 @@
 extern "C" {
 #endif
 /*
- * Class:     ohnet_Action
+ * Class:     org_openhome_net_core_Action
  * Method:    ServiceActionCreate
  * Signature: (Ljava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_ohnet_Action_ServiceActionCreate
-  (JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Action_ServiceActionCreate
+  (JNIEnv *aEnv, jclass aClass, jstring aName)
 {
-	const char* nativeName = (*env)->GetStringUTFChars(env, name, NULL);
-	ServiceAction action = ServiceActionCreate(nativeName);
-	obj = obj;
+	const char* name = (*aEnv)->GetStringUTFChars(aEnv, aName, NULL);
+	ServiceAction action = ServiceActionCreate(name);
+	aClass = aClass;
 	
-	(*env)->ReleaseStringUTFChars(env, name, nativeName);
+	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	
 	return (jlong) action;
 }
 
 /*
- * Class:     ohnet_Action
+ * Class:     org_openhome_net_core_Action
  * Method:    ServiceActionDestroy
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_ohnet_Action_ServiceActionDestroy
-  (JNIEnv *env, jobject obj, jlong actionPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Action_ServiceActionDestroy
+  (JNIEnv *aEnv, jclass aClass, jlong aAction)
 {
-	ServiceAction action = (ServiceAction) (size_t)actionPtr;
-	env = env;
-	obj = obj;
+	ServiceAction action = (ServiceAction) (size_t)aAction;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	ServiceActionDestroy(action);
 }
 
 /*
- * Class:     ohnet_Action
+ * Class:     org_openhome_net_core_Action
  * Method:    ServiceActionAddInputParameter
  * Signature: (JJ)V
  */
-JNIEXPORT void JNICALL Java_ohnet_Action_ServiceActionAddInputParameter
-  (JNIEnv *env, jobject obj, jlong actionPtr, jlong paramPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Action_ServiceActionAddInputParameter
+  (JNIEnv *aEnv, jclass aClass, jlong aAction, jlong aParameter)
 {
-	ServiceAction action = (ServiceAction) (size_t)actionPtr;
-	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
-	env = env;
-	obj = obj;
+	ServiceAction action = (ServiceAction) (size_t)aAction;
+	ServiceParameter param = (ServiceParameter) (size_t)aParameter;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	ServiceActionAddInputParameter(action, param);
 }
 
 /*
- * Class:     ohnet_Action
+ * Class:     org_openhome_net_core_Action
  * Method:    ServiceActionAddOutputParameter
  * Signature: (JJ)V
  */
-JNIEXPORT void JNICALL Java_ohnet_Action_ServiceActionAddOutputParameter
-  (JNIEnv *env, jobject obj, jlong actionPtr, jlong paramPtr)
+JNIEXPORT void JNICALL Java_org_openhome_net_core_Action_ServiceActionAddOutputParameter
+  (JNIEnv *aEnv, jclass aClass, jlong aAction, jlong aParameter)
 {
-	ServiceAction action = (ServiceAction) (size_t)actionPtr;
-	ServiceParameter param = (ServiceParameter) (size_t)paramPtr;
-	env = env;
-	obj = obj;
+	ServiceAction action = (ServiceAction) (size_t)aAction;
+	ServiceParameter param = (ServiceParameter) (size_t)aParameter;
+	aEnv = aEnv;
+	aClass = aClass;
 	
 	ServiceActionAddOutputParameter(action, param);
 }
 
 /*
- * Class:     ohnet_Action
+ * Class:     org_openhome_net_core_Action
  * Method:    ServiceActionName
  * Signature: (J)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_ohnet_Action_ServiceActionName
-  (JNIEnv *env, jobject obj, jlong actionPtr)
+JNIEXPORT jstring JNICALL Java_org_openhome_net_core_Action_ServiceActionName
+  (JNIEnv *aEnv, jclass aClass, jlong aAction)
 {
-	ServiceAction action = (ServiceAction) (size_t)actionPtr;
-	const char* nativeName = ServiceActionName(action);
-	obj = obj;
+	ServiceAction action = (ServiceAction) (size_t)aAction;
+	const char* name = ServiceActionName(action);
+	aClass = aClass;
 	
-	return (*env)->NewStringUTF(env, nativeName);
+	return (*aEnv)->NewStringUTF(aEnv, name);
 }
 
 #ifdef __cplusplus

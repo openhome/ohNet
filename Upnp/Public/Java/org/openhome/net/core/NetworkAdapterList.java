@@ -1,6 +1,5 @@
 package org.openhome.net.core;
 
-import ohnet.NetworkAdapter;
 
 public class NetworkAdapterList
 {
