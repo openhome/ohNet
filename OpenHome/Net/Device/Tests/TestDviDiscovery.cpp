@@ -722,7 +722,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
 
     //Debug::SetLevel(Debug::kNetwork);
     Runner runner("SSDP discovery\n");
-    runner.Add(new SuiteAlive());
+    //runner.Add(new SuiteAlive());
     runner.Add(new SuiteMsearch());
     runner.Run();
 
