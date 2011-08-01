@@ -782,7 +782,12 @@ objects_jni = $(objdir)JniAction.$(objext) \
 			  $(objdir)JniCallbackList.$(objext) \
 			  $(objdir)JniCpDevice.$(objext) \
 			  $(objdir)JniCpDeviceDv.$(objext) \
-              $(objdir)JniCpDeviceList.$(objext) \
+              $(objdir)JniCpDeviceListUpnpAll.$(objext) \
+			  $(objdir)JniCpDeviceListUpnpDeviceType.$(objext) \
+			  $(objdir)JniCpDeviceListUpnpRoot.$(objext) \
+			  $(objdir)JniCpDeviceListUpnpServiceType.$(objext) \
+			  $(objdir)JniCpDeviceListUpnpUuid.$(objext) \
+			  $(objdir)JniCpDeviceList.$(objext) \
 			  $(objdir)JniCpProxy.$(objext) \
 			  $(objdir)JniCpService.$(objext) \
 			  $(objdir)JniDvDevice.$(objext) \
@@ -832,6 +837,16 @@ $(objdir)JniCpDeviceDv.$(objext) : $(publicjavadir)CpDeviceDv.c $(headers)
 	$(compiler)JniCpDeviceDv.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceDv.c
 $(objdir)JniCpDeviceList.$(objext) : $(publicjavadir)CpDeviceList.c $(headers)
 	$(compiler)JniCpDeviceList.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceList.c
+$(objdir)JniCpDeviceListUpnpAll.$(objext) : $(publicjavadir)CpDeviceListUpnpAll.c $(headers)
+	$(compiler)JniCpDeviceListUpnpAll.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceListUpnpAll.c
+$(objdir)JniCpDeviceListUpnpDeviceType.$(objext) : $(publicjavadir)CpDeviceListUpnpDeviceType.c $(headers)
+	$(compiler)JniCpDeviceListUpnpDeviceType.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceListUpnpDeviceType.c
+$(objdir)JniCpDeviceListUpnpRoot.$(objext) : $(publicjavadir)CpDeviceListUpnpRoot.c $(headers)
+	$(compiler)JniCpDeviceListUpnpRoot.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceListUpnpRoot.c
+$(objdir)JniCpDeviceListUpnpServiceType.$(objext) : $(publicjavadir)CpDeviceListUpnpServiceType.c $(headers)
+	$(compiler)JniCpDeviceListUpnpServiceType.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceListUpnpServiceType.c
+$(objdir)JniCpDeviceListUpnpUuid.$(objext) : $(publicjavadir)CpDeviceListUpnpUuid.c $(headers)
+	$(compiler)JniCpDeviceListUpnpUuid.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpDeviceListUpnpUuid.c
 $(objdir)JniCpProxy.$(objext) : $(publicjavadir)CpProxy.c $(headers)
 	$(compiler)JniCpProxy.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)CpProxy.c
 $(objdir)JniCpService.$(objext) : $(publicjavadir)CpService.c $(headers)
