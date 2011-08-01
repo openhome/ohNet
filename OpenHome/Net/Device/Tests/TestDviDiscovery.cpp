@@ -490,7 +490,7 @@ void SuiteMsearch::Test()
     device->SetAttribute("Upnp.Type", "test1");
     device->SetAttribute("Upnp.Version", "1");
     device->AddService(new DviService("upnp.org", "service1", 1));
-    device->AddService(new DviService("linn.co.uk", "service2", 3));
+    device->AddService(new DviService("openhome.org", "service2", 3));
     device->AddService(new DviService("upnp.org", "service3", 1));
     DviService* service = new DviService("upnp.org", "service1", 1);
     TEST_THROWS(device->AddService(service), AssertionFailed);
@@ -502,21 +502,21 @@ void SuiteMsearch::Test()
 
     device = new DviDeviceStandard(gNameDevice2);
     iDevices[1] = device;
-    device->SetAttribute("Upnp.Domain", "linn.co.uk");
+    device->SetAttribute("Upnp.Domain", "openhome.org");
     device->SetAttribute("Upnp.Type", "test2");
     device->SetAttribute("Upnp.Version", "2");
-    device->AddService(new DviService("linn.co.uk", "service4", 2));
-    device->AddService(new DviService("linn.co.uk", "service5", 1));
+    device->AddService(new DviService("openhome.org", "service4", 2));
+    device->AddService(new DviService("openhome.org", "service5", 1));
 
     device = new DviDeviceStandard(gNameDevice2Embedded1);
     iDevices[1]->AddDevice(device);
-    device->SetAttribute("Upnp.Domain", "linn.co.uk");
+    device->SetAttribute("Upnp.Domain", "openhome.org");
     device->SetAttribute("Upnp.Type", "test3");
     device->SetAttribute("Upnp.Version", "1");
     device->AddService(new DviService("upnp.org", "service1", 1));
-    device->AddService(new DviService("linn.co.uk", "service6", 1));
-    device->AddService(new DviService("linn.co.uk", "service2", 3));
-    service = new DviService("linn.co.uk", "service5", 1);
+    device->AddService(new DviService("openhome.org", "service6", 1));
+    device->AddService(new DviService("openhome.org", "service2", 3));
+    service = new DviService("openhome.org", "service5", 1);
     TEST_THROWS(device->AddService(service), AssertionFailed);
     service->RemoveRef();
     iDevices[1]->SetEnabled();
@@ -554,14 +554,14 @@ void SuiteMsearch::TestMsearchAll()
     }
     TEST(iListener->TotalMessages() == 16);
     TEST(DeviceTypeMatches(iListener->Dev1Type(), "upnp.org:test1:1"));
-    TEST(DeviceTypeMatches(iListener->Dev2Type(), "linn.co.uk:test2:2"));
-    TEST(DeviceTypeMatches(iListener->Dev21Type(), "linn.co.uk:test3:1"));
+    TEST(DeviceTypeMatches(iListener->Dev2Type(), "openhome.org:test2:2"));
+    TEST(DeviceTypeMatches(iListener->Dev21Type(), "openhome.org:test3:1"));
     TEST(ServiceVectorContainsType(iListener->Services(), "upnp.org:service1:1"));
-    TEST(ServiceVectorContainsType(iListener->Services(), "linn.co.uk:service2:3"));
+    TEST(ServiceVectorContainsType(iListener->Services(), "openhome.org:service2:3"));
     TEST(ServiceVectorContainsType(iListener->Services(), "upnp.org:service3:1"));
-    TEST(ServiceVectorContainsType(iListener->Services(), "linn.co.uk:service4:2"));
-    TEST(ServiceVectorContainsType(iListener->Services(), "linn.co.uk:service5:1"));
-    TEST(ServiceVectorContainsType(iListener->Services(), "linn.co.uk:service6:1"));
+    TEST(ServiceVectorContainsType(iListener->Services(), "openhome.org:service4:2"));
+    TEST(ServiceVectorContainsType(iListener->Services(), "openhome.org:service5:1"));
+    TEST(ServiceVectorContainsType(iListener->Services(), "openhome.org:service6:1"));
 }
 
 void SuiteMsearch::TestMsearchRoot()
@@ -629,28 +629,28 @@ void SuiteMsearch::TestMsearchDeviceType()
     TEST(DeviceTypeMatches(iListener->Dev1Type(), "upnp.org:test1:1"));
 
     iListener->Reset();
-    iListenerUnicast->MsearchDeviceType(Brn("linn.co.uk"), Brn("test2"), 2);
+    iListenerUnicast->MsearchDeviceType(Brn("openhome.org"), Brn("test2"), 2);
     Wait();
     TEST(iListener->RootDeviceCount() == 0);
     TEST(iListener->DeviceCount() == 1);
     TEST(iListener->ServiceCount() == 0);
     TEST(iListener->Udns() == 2);
     TEST(iListener->TotalMessages() == 1);
-    TEST(DeviceTypeMatches(iListener->Dev2Type(), "linn.co.uk:test2:2"));
+    TEST(DeviceTypeMatches(iListener->Dev2Type(), "openhome.org:test2:2"));
 
     iListener->Reset();
-    iListenerUnicast->MsearchDeviceType(Brn("linn.co.uk"), Brn("test3"), 1);
+    iListenerUnicast->MsearchDeviceType(Brn("openhome.org"), Brn("test3"), 1);
     Wait();
     TEST(iListener->RootDeviceCount() == 0);
     TEST(iListener->DeviceCount() == 1);
     TEST(iListener->ServiceCount() == 0);
     TEST(iListener->Udns() == 4);
     TEST(iListener->TotalMessages() == 1);
-    TEST(DeviceTypeMatches(iListener->Dev21Type(), "linn.co.uk:test3:1"));
+    TEST(DeviceTypeMatches(iListener->Dev21Type(), "openhome.org:test3:1"));
 
     iListener->Reset();
     iListenerUnicast->MsearchDeviceType(Brn("upnp.org"), Brn("test1"), 1);
-    iListenerUnicast->MsearchDeviceType(Brn("linn.co.uk"), Brn("test3"), 1);
+    iListenerUnicast->MsearchDeviceType(Brn("openhome.org"), Brn("test3"), 1);
     Wait();
     TEST(iListener->RootDeviceCount() == 0);
     TEST(iListener->DeviceCount() == 2);
@@ -658,7 +658,7 @@ void SuiteMsearch::TestMsearchDeviceType()
     TEST(iListener->Udns() == 5);
     TEST(iListener->TotalMessages() == 2);
     TEST(DeviceTypeMatches(iListener->Dev1Type(), "upnp.org:test1:1"));
-    TEST(DeviceTypeMatches(iListener->Dev21Type(), "linn.co.uk:test3:1"));
+    TEST(DeviceTypeMatches(iListener->Dev21Type(), "openhome.org:test3:1"));
 }
 
 void SuiteMsearch::TestMsearchServiceType()
@@ -676,7 +676,7 @@ void SuiteMsearch::TestMsearchServiceType()
     TEST(0 == strcmp(iListener->Services()[1], "upnp.org:service1:1"));
 
     iListener->Reset();
-    iListenerUnicast->MsearchServiceType(Brn("linn.co.uk"), Brn("service2"), 3);
+    iListenerUnicast->MsearchServiceType(Brn("openhome.org"), Brn("service2"), 3);
     Wait();
     TEST(iListener->RootDeviceCount() == 0);
     TEST(iListener->DeviceCount() == 0);
@@ -684,11 +684,11 @@ void SuiteMsearch::TestMsearchServiceType()
     TEST(iListener->Udns() == 5);
     TEST(iListener->TotalMessages() == 2);
     TEST(iListener->Services().size() == 2);
-    TEST(0 == strcmp(iListener->Services()[0], "linn.co.uk:service2:3"));
-    TEST(0 == strcmp(iListener->Services()[1], "linn.co.uk:service2:3"));
+    TEST(0 == strcmp(iListener->Services()[0], "openhome.org:service2:3"));
+    TEST(0 == strcmp(iListener->Services()[1], "openhome.org:service2:3"));
 
     iListener->Reset();
-    iListenerUnicast->MsearchServiceType(Brn("linn.co.uk"), Brn("service5"), 1);
+    iListenerUnicast->MsearchServiceType(Brn("openhome.org"), Brn("service5"), 1);
     Wait();
     TEST(iListener->RootDeviceCount() == 0);
     TEST(iListener->DeviceCount() == 0);
@@ -696,7 +696,7 @@ void SuiteMsearch::TestMsearchServiceType()
     TEST(iListener->Udns() == 2);
     TEST(iListener->TotalMessages() == 1);
     TEST(iListener->Services().size() == 1);
-    TEST(0 == strcmp(iListener->Services()[0], "linn.co.uk:service5:1"));
+    TEST(0 == strcmp(iListener->Services()[0], "openhome.org:service5:1"));
 }
 
 
