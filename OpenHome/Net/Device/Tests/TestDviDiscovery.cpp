@@ -352,8 +352,7 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
         Print("Discarding advertisement from ");
         Print(aUuid);
         Endpoint::EndpointBuf buf;
-        endpt.GetEndpoint(buf);
-        TIpAddress addr = endpt.Address();
+        endpt.AppendEndpoint(buf);
         Print(" at %s\n", buf.Ptr());
 #endif
         return false;
@@ -369,6 +368,13 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
         iUdnsReceived |= 4;
     }
     else {
+#if 0
+        Print("Didn't match advertisement from ");
+        Print(aUuid);
+        Endpoint::EndpointBuf buf;
+        endpt.AppendEndpoint(buf);
+        Print(" at %s\n", buf.Ptr());
+#endif
         return false;
     }
     iTotal++;
@@ -524,6 +530,7 @@ void SuiteMsearch::Test()
     device = new DviDeviceStandard(kNameDummy);
     TEST_THROWS(iDevices[1]->AddDevice(device), AssertionFailed);
     device->Destroy();
+    //Wait(); // allow time for initial annoucements to be delivered
 
     TestMsearchAll();
     TestMsearchRoot();
@@ -712,7 +719,6 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
         aInitParams->SetUseLoopbackNetworkAdapter();
     }
     aInitParams->SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
-    //aInitParams->SetUseLoopbackNetworkAdapter();
     UpnpLibrary::Initialise(aInitParams);
     std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
@@ -722,7 +728,7 @@ void OpenHome::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialis
 
     //Debug::SetLevel(Debug::kNetwork);
     Runner runner("SSDP discovery\n");
-    //runner.Add(new SuiteAlive());
+    runner.Add(new SuiteAlive());
     runner.Add(new SuiteMsearch());
     runner.Run();
 
