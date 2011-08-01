@@ -23,7 +23,7 @@ public class CpDeviceList implements ICpDeviceList
         System.loadLibrary("ohNetJni");
     }
 	
-	private long listPtr = 0;
+	private long iHandle;
 	protected List<ICpDeviceListListener> addedListeners = null;
 	protected List<ICpDeviceListListener> removedListeners = null;
 	
@@ -40,7 +40,7 @@ public class CpDeviceList implements ICpDeviceList
 	 */
 	protected CpDeviceList()
 	{
-		listPtr = 0;
+		iHandle = 0;
 		addedListeners = new LinkedList<ICpDeviceListListener>();
 		removedListeners = new LinkedList<ICpDeviceListListener>();
 	}
@@ -50,10 +50,10 @@ public class CpDeviceList implements ICpDeviceList
 	 */
 	public void destroy()
 	{
-		if (listPtr != 0)
+		if (iHandle != 0)
 		{
-			CpDeviceListDestroy(listPtr);
-			listPtr = 0;
+			CpDeviceListDestroy(iHandle);
+			iHandle = 0;
 		}
 	}
 	
@@ -64,9 +64,9 @@ public class CpDeviceList implements ICpDeviceList
 	 */
 	public void finalize()
 	{
-		if (listPtr != 0)
+		if (iHandle != 0)
 		{
-			CpDeviceListDestroy(listPtr);
+			CpDeviceListDestroy(iHandle);
 		}
 	}
 	
@@ -76,9 +76,9 @@ public class CpDeviceList implements ICpDeviceList
 	 */
 	public void refresh()
 	{
-		if (listPtr != 0)
+		if (iHandle != 0)
 		{
-			CpDeviceListRefresh(listPtr);
+			CpDeviceListRefresh(iHandle);
 		}
 	}
 	
@@ -126,22 +126,22 @@ public class CpDeviceList implements ICpDeviceList
     
     protected void initialiseDeviceListUpnpAll()
     {
-    	listPtr = CpDeviceListCreateUpnpAll();
+    	iHandle = CpDeviceListCreateUpnpAll();
     }
     
     protected void initialiseDeviceListUpnpRoot()
     {
-    	listPtr = CpDeviceListCreateUpnpRoot();
+    	iHandle = CpDeviceListCreateUpnpRoot();
     }
     
     protected void initialiseDeviceListUpnpUuid(String uuid)
     {
-    	listPtr = CpDeviceListCreateUpnpUuid(uuid);
+    	iHandle = CpDeviceListCreateUpnpUuid(uuid);
     }
 
     protected void initialiseDeviceListUpnpDeviceType(String domName, String devType, int version)
     {
-    	listPtr = CpDeviceListCreateUpnpDeviceType(domName, devType, version);
+    	iHandle = CpDeviceListCreateUpnpDeviceType(domName, devType, version);
     }
 
     /**
@@ -154,6 +154,6 @@ public class CpDeviceList implements ICpDeviceList
      */
     protected void initialiseDeviceListUpnpServiceType(String domName, String servType, int version)
     {
-    	listPtr = CpDeviceListCreateUpnpServiceType(domName, servType, version);
+    	iHandle = CpDeviceListCreateUpnpServiceType(domName, servType, version);
     }
 }

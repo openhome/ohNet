@@ -797,6 +797,11 @@ objects_jni = $(objdir)JniAction.$(objext) \
 			  $(objdir)JniNetworkAdapterList.$(objext) \
 			  $(objdir)JniParameter.$(objext) \
 			  $(objdir)JniProperty.$(objext) \
+			  $(objdir)JniPropertyBinary.$(objext) \
+			  $(objdir)JniPropertyBool.$(objext) \
+			  $(objdir)JniPropertyInt.$(objext) \
+			  $(objdir)JniPropertyString.$(objext) \
+			  $(objdir)JniPropertyUint.$(objext) \
 			  $(objdir)JniResourceWriter.$(objext) \
 		
 ohNetJni : $(objdir)ohNetJni.dll 
@@ -850,6 +855,16 @@ $(objdir)JniParameter.$(objext) : $(publicjavadir)Parameter.c $(headers)
 	$(compiler)JniParameter.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Parameter.c
 $(objdir)JniProperty.$(objext) : $(publicjavadir)Property.c $(headers)
 	$(compiler)JniProperty.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Property.c
+$(objdir)JniPropertyBinary.$(objext) : $(publicjavadir)PropertyBinary.c $(headers)
+	$(compiler)JniPropertyBinary.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)PropertyBinary.c
+$(objdir)JniPropertyBool.$(objext) : $(publicjavadir)PropertyBool.c $(headers)
+	$(compiler)JniPropertyBool.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)PropertyBool.c
+$(objdir)JniPropertyInt.$(objext) : $(publicjavadir)PropertyInt.c $(headers)
+	$(compiler)JniPropertyInt.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)PropertyInt.c
+$(objdir)JniPropertyString.$(objext) : $(publicjavadir)PropertyString.c $(headers)
+	$(compiler)JniPropertyString.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)PropertyString.c
+$(objdir)JniPropertyUint.$(objext) : $(publicjavadir)PropertyUint.c $(headers)
+	$(compiler)JniPropertyUint.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)PropertyUint.c
 $(objdir)JniResourceWriter.$(objext) : $(publicjavadir)ResourceWriter.c $(headers)
 	$(compiler)JniResourceWriter.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ResourceWriter.c
 

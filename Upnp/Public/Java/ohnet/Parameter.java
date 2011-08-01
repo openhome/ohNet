@@ -2,6 +2,8 @@ package ohnet;
 
 import java.util.List;
 
+import org.openhome.net.core.Property;
+
 
 public class Parameter
 {

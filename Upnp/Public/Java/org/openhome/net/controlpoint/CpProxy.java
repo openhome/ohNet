@@ -1,7 +1,7 @@
 package org.openhome.net.controlpoint;
 
 
-import ohnet.Property;
+import org.openhome.net.core.Property;
 
 /**
  * Base class for all proxies

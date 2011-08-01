@@ -1,5 +1,7 @@
 package ohnet;
 
+import org.openhome.net.core.Property;
+
 
 public class ParameterRelated extends Parameter
 {
