@@ -1,7 +1,7 @@
 package org.openhome.net.controlpoint;
 
 
-import ohnet.ParameterString;
+import org.openhome.net.core.ParameterString;
 
 /**
  * String type argument.  Only intended for use by auto-generated proxies.

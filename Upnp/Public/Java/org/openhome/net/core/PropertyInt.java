@@ -1,6 +1,5 @@
 package org.openhome.net.core;
 
-import ohnet.Parameter;
 
 import org.openhome.net.controlpoint.IPropertyChangeListener;
 
@@ -9,11 +8,17 @@ import org.openhome.net.controlpoint.IPropertyChangeListener;
  */
 public class PropertyInt extends Property
 {
-	
 	private static native long ServicePropertyCreateIntCp(String aName, IPropertyChangeListener aListener);
 	private static native long ServicePropertyCreateIntDv(long aParameter);
 	private static native int ServicePropertyValueInt(long aProperty);
 	private static native int ServicePropertySetValueInt(long aProperty, int aValue);
+	
+	static
+    {
+        System.loadLibrary("ohNet");
+        System.loadLibrary("ohNetJni");
+    }
+
 	
 	/**
 	 * Constructor suitable for use by clients of the control point stack.

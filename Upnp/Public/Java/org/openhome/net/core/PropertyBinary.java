@@ -1,6 +1,5 @@
 package org.openhome.net.core;
 
-import ohnet.Parameter;
 
 import org.openhome.net.controlpoint.IPropertyChangeListener;
 
@@ -13,6 +12,13 @@ public class PropertyBinary extends Property
 	private static native long ServicePropertyCreateBinaryDv(long aParameter);
 	private static native byte[] ServicePropertyGetValueBinary(long aProperty);
 	private static native int ServicePropertySetValueBinary(long aProperty, byte[] aValue, int aLen);
+	
+	static
+    {
+        System.loadLibrary("ohNet");
+        System.loadLibrary("ohNetJni");
+    }
+
 	
 	/**
 	 * Constructor suitable for use by clients of the control point stack.

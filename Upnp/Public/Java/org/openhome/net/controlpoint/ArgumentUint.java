@@ -1,7 +1,7 @@
 package org.openhome.net.controlpoint;
 
 
-import ohnet.ParameterUint;
+import org.openhome.net.core.ParameterUint;
 
 /**
  * Unsigned integer type argument.  Only intended for use by auto-generated proxies.

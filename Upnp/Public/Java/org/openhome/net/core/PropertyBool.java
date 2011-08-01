@@ -1,6 +1,5 @@
 package org.openhome.net.core;
 
-import ohnet.Parameter;
 
 import org.openhome.net.controlpoint.IPropertyChangeListener;
 
@@ -13,6 +12,13 @@ public class PropertyBool extends Property
 	private static native long ServicePropertyCreateBoolDv(long aParameter);
 	private static native int ServicePropertyValueBool(long aProperty);
 	private static native int ServicePropertySetValueBool(long aProperty, int aValue);
+	
+	static
+    {
+        System.loadLibrary("ohNet");
+        System.loadLibrary("ohNetJni");
+    }
+
 
 	/**
 	 * Constructor suitable for use by clients of the control point stack.

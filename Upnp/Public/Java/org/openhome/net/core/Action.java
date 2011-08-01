@@ -3,7 +3,6 @@ package org.openhome.net.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import ohnet.Parameter;
 
 /**
  * (Service) Action.

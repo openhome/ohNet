@@ -1,7 +1,7 @@
 package org.openhome.net.controlpoint;
 
 
-import ohnet.ParameterBool;
+import org.openhome.net.core.ParameterBool;
 
 /**
  * Boolean type argument.  Only intended for use by auto-generated proxies.

@@ -795,7 +795,12 @@ objects_jni = $(objdir)JniAction.$(objext) \
 			  $(objdir)JniLibrary.$(objext) \
 			  $(objdir)JniNetworkAdapter.$(objext) \
 			  $(objdir)JniNetworkAdapterList.$(objext) \
-			  $(objdir)JniParameter.$(objext) \
+			  $(objdir)JniParameterBinary.$(objext) \
+			  $(objdir)JniParameterBool.$(objext) \
+			  $(objdir)JniParameterInt.$(objext) \
+			  $(objdir)JniParameterRelated.$(objext) \
+			  $(objdir)JniParameterString.$(objext) \
+			  $(objdir)JniParameterUint.$(objext) \
 			  $(objdir)JniProperty.$(objext) \
 			  $(objdir)JniPropertyBinary.$(objext) \
 			  $(objdir)JniPropertyBool.$(objext) \
@@ -851,8 +856,18 @@ $(objdir)JniNetworkAdapter.$(objext) : $(publicjavadir)NetworkAdapter.c $(header
 	$(compiler)JniNetworkAdapter.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)NetworkAdapter.c
 $(objdir)JniNetworkAdapterList.$(objext) : $(publicjavadir)NetworkAdapterList.c $(headers)
 	$(compiler)JniNetworkAdapterList.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)NetworkAdapterList.c
-$(objdir)JniParameter.$(objext) : $(publicjavadir)Parameter.c $(headers)
-	$(compiler)JniParameter.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Parameter.c
+$(objdir)JniParameterBinary.$(objext) : $(publicjavadir)ParameterBinary.c $(headers)
+	$(compiler)JniParameterBinary.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ParameterBinary.c
+$(objdir)JniParameterBool.$(objext) : $(publicjavadir)ParameterBool.c $(headers)
+	$(compiler)JniParameterBool.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ParameterBool.c
+$(objdir)JniParameterInt.$(objext) : $(publicjavadir)ParameterInt.c $(headers)
+	$(compiler)JniParameterInt.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ParameterInt.c
+$(objdir)JniParameterRelated.$(objext) : $(publicjavadir)ParameterRelated.c $(headers)
+	$(compiler)JniParameterRelated.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ParameterRelated.c
+$(objdir)JniParameterString.$(objext) : $(publicjavadir)ParameterString.c $(headers)
+	$(compiler)JniParameterString.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ParameterString.c
+$(objdir)JniParameterUint.$(objext) : $(publicjavadir)ParameterUint.c $(headers)
+	$(compiler)JniParameterUint.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ParameterUint.c
 $(objdir)JniProperty.$(objext) : $(publicjavadir)Property.c $(headers)
 	$(compiler)JniProperty.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Property.c
 $(objdir)JniPropertyBinary.$(objext) : $(publicjavadir)PropertyBinary.c $(headers)

@@ -1,7 +1,7 @@
 package org.openhome.net.controlpoint;
 
 
-import ohnet.ParameterBinary;
+import org.openhome.net.core.ParameterBinary;
 
 /**
  * Binary type argument.  Only intended for use by auto-generated proxies.
