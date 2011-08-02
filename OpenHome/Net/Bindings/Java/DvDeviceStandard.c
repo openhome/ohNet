@@ -9,8 +9,6 @@
 extern "C" {
 #endif
 
-static JniCallbackList *iList = NULL;
-
 void CallbackResourceManager(void* aUserData, const char* aUriTail, TIpAddress aInterface, THandle aLanguageList, void* aWriterData,
 	                         OhNetCallbackWriteResourceBegin aWriteBegin,
                              OhNetCallbackWriteResource aWriteResource,
@@ -67,50 +65,70 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDeviceSt
 /*
  * Class:     org_openhome_net_device_DvDeviceStandard
  * Method:    DvDeviceStandardCreate
- * Signature: (Ljava/lang/String;Ljava/lang/String;)J
+ * Signature: (Ljava/lang/String;)Lorg/openhome/net/device/DvDeviceStandard/DvDeviceStandardInitialised;
  */
-JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDeviceStandardCreate
+JNIEXPORT jobject JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDeviceStandardCreate
   (JNIEnv *aEnv, jobject aObject, jstring aUdn)
 {
 	const char* udn = (*aEnv)->GetStringUTFChars(aEnv, aUdn, NULL);
 	OhNetCallbackResourceManager callback = (OhNetCallbackResourceManager) &CallbackResourceManager;
 	JniObjRef *ref = (JniObjRef*) malloc(sizeof(JniObjRef));
+	DvDeviceC device;
 	int ret;
+	jclass statusClass;
+	jmethodID cid;
+	jobject devInit;
 
-	if (!iList)
-	{
-		iList = JniCallbackListCreate();
-	}
 	ret = (*aEnv)->GetJavaVM(aEnv, &ref->vm);
 	if (ret < 0) {
 		printf("Unable to get reference to the current Java VM.\n");
 	}
 	ref->callbackObj = (*aEnv)->NewWeakGlobalRef(aEnv, aObject);
-	(*aEnv)->ReleaseStringUTFChars(aEnv, aUdn, udn);
-	JniCallbackListAddElement(&iList, ref);
 	
-	return (jlong) DvDeviceStandardCreate(udn, callback, &ref);
+	statusClass = (*aEnv)->FindClass(aEnv, "org/openhome/net/device/DvDeviceStandard$DvDeviceStandardInitialised");
+	if (statusClass == NULL)
+	{
+		printf("Unable to find class org/openhome/net/device/DvDeviceStandard$DvDeviceStandardInitialised\n");
+		return NULL;
+	}
+	cid = (*aEnv)->GetMethodID(aEnv, statusClass, "<init>", "(Lorg/openhome/net/device/DvDeviceStandard;JJ)V");
+	if (cid == NULL)
+	{
+		printf("Unable to find constructor for class org/openhome/net/device/DvDeviceStandard$DvDeviceStandardInitialised\n");
+        return NULL;
+	}
+	
+	device = DvDeviceStandardCreate(udn, callback, &ref);
+	devInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)device, (jlong)ref);
+	
+	(*aEnv)->ReleaseStringUTFChars(aEnv, aUdn, udn);
+	
+	return devInit;
 }
 
 /*
  * Class:     org_openhome_net_device_DvDeviceStandard
  * Method:    DvDeviceDestroy
- * Signature: (JJ)V
+ * Signature: (JJJ)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDeviceDestroy
-  (JNIEnv *aEnv, jclass aClass, jlong aDevice, jlong aUserData)
+  (JNIEnv *aEnv, jclass aClass, jlong aDevice, jlong aUserData, jlong aCallback)
 {
 	void* userData = (void*) (size_t)aUserData;
+	JniObjRef *ref = (JniObjRef*) (size_t)aCallback;
 	DvDeviceC device = (DvDeviceC) (size_t)aDevice;
 	aEnv = aEnv;
 	aClass = aClass;
-	
+
 	if (userData != NULL)
 	{
 		free(userData);
 	}
-	JniCallbackListDestroy(aEnv, &iList);
-	iList = NULL;
+	if (ref != NULL)
+	{
+		(*aEnv)->DeleteWeakGlobalRef(aEnv, ref->callbackObj);
+		free(ref);
+	}
 	DvDeviceDestroy(device);
 }
 

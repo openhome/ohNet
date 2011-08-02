@@ -9,7 +9,7 @@ import org.openhome.net.controlpoint.IPropertyChangeListener;
  */
 public class Property
 {
-	private static native void ServicePropertyDestroy(long aProperty);
+	private static native void ServicePropertyDestroy(long aProperty, long aCallback);
 	
 	static
     {
@@ -17,7 +17,28 @@ public class Property
         System.loadLibrary("ohNetJni");
     }
 	
+	protected class PropertyInitialised
+	{
+		private long iHandle;
+		private long iCallback;
+		
+		public PropertyInitialised(long aHandle, long aCallback)
+		{
+			iHandle = aHandle;
+			iCallback = aCallback;
+		}
+		public long getHandle()
+		{
+			return iHandle;
+		}
+		public long getCallback()
+		{
+			return iCallback;
+		}
+	}
+	
 	protected long iHandle;
+	protected long iCallback;
 	private boolean iOwnsNativeProperty;
 	private IPropertyChangeListener iValueChanged;
 	
@@ -45,7 +66,7 @@ public class Property
 	{
 		if (iOwnsNativeProperty)
 		{
-			ServicePropertyDestroy(iHandle);
+			ServicePropertyDestroy(iHandle, iCallback);
 		}
 	}
 }

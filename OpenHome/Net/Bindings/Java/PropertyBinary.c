@@ -10,24 +10,39 @@ extern "C" {
 /*
  * Class:     org_openhome_net_core_PropertyBinary
  * Method:    ServicePropertyCreateBinaryCp
- * Signature: (Ljava/lang/String;Lorg/openhome/net/controlpoint/IPropertyChangeListener;)J
+ * Signature: (Ljava/lang/String;Lorg/openhome/net/controlpoint/IPropertyChangeListener;)Lorg/openhome/net/core/Property/PropertyInitialised;
  */
-JNIEXPORT jlong JNICALL Java_org_openhome_net_core_PropertyBinary_ServicePropertyCreateBinaryCp
-  (JNIEnv *aEnv, jclass aClass, jstring aName, jobject aListener)
+JNIEXPORT jobject JNICALL Java_org_openhome_net_core_PropertyBinary_ServicePropertyCreateBinaryCp
+  (JNIEnv *aEnv, jobject aObject, jstring aName, jobject aListener)
 {
 	OhNetCallback callback = &ChangeCallback;
 	const char* name = (*aEnv)->GetStringUTFChars(aEnv, aName, NULL);
 	ServiceProperty property;
 	JniObjRef *ref;
-	aClass = aClass;
+	jclass statusClass;
+	jmethodID cid;
+	jobject propertyInit;
 
 	InitialiseReferences(aEnv, aListener, &ref);
 
+	statusClass = (*aEnv)->FindClass(aEnv, "org/openhome/net/core/Property$PropertyInitialised");
+	if (statusClass == NULL)
+	{
+		printf("Unable to find class org/openhome/net/core/Property$PropertyInitialised\n");
+		return NULL;
+	}
+	cid = (*aEnv)->GetMethodID(aEnv, statusClass, "<init>", "(Lorg/openhome/net/core/Property;JJ)V");
+	if (cid == NULL) {
+		printf("Unable to find constructor for class org/openhome/net/core/Property$PropertyInitialised\n");
+        return NULL;
+	}
+	
 	property = ServicePropertyCreateBinaryCp(name, callback, ref);
+	propertyInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)property, (jlong)ref);
 	
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	
-	return (jlong) property;
+	return propertyInit;
 }
 
 /*

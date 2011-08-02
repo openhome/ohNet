@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     org_openhome_net_controlpoint_CpDeviceList
  * Method:    CpDeviceListDestroy
- * Signature: (J)V
+ * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpDeviceList_CpDeviceListDestroy
-  (JNIEnv *, jclass, jlong);
+  (JNIEnv *, jclass, jlong, jlong);
 
 /*
  * Class:     org_openhome_net_controlpoint_CpDeviceList
@@ -23,6 +23,17 @@ JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpDeviceList_CpDeviceL
 JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpDeviceList_CpDeviceListRefresh
   (JNIEnv *, jclass, jlong);
 
+#ifdef __cplusplus
+}
+#endif
+#endif
+/* Header for class org_openhome_net_controlpoint_CpDeviceList_CpDeviceListInitialised */
+
+#ifndef _Included_org_openhome_net_controlpoint_CpDeviceList_CpDeviceListInitialised
+#define _Included_org_openhome_net_controlpoint_CpDeviceList_CpDeviceListInitialised
+#ifdef __cplusplus
+extern "C" {
+#endif
 #ifdef __cplusplus
 }
 #endif

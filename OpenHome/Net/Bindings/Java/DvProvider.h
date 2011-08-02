@@ -18,17 +18,17 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvProvider_DvProviderCreate
 /*
  * Class:     org_openhome_net_device_DvProvider
  * Method:    DvProviderDestroy
- * Signature: (J)V
+ * Signature: (J[JI)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_device_DvProvider_DvProviderDestroy
-  (JNIEnv *, jclass, jlong);
+  (JNIEnv *, jclass, jlong, jlongArray, jint);
 
 /*
  * Class:     org_openhome_net_device_DvProvider
  * Method:    DvProviderAddAction
- * Signature: (JJLorg/openhome/net/device/IDvInvocationListener;)V
+ * Signature: (JJLorg/openhome/net/device/IDvInvocationListener;)J
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_device_DvProvider_DvProviderAddAction
+JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvProvider_DvProviderAddAction
   (JNIEnv *, jclass, jlong, jlong, jobject);
 
 /*

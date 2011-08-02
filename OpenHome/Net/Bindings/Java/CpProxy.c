@@ -9,8 +9,6 @@
 extern "C" {
 #endif
 
-static JniCallbackList *iList = NULL;
-
 static void STDCALL CallbackChange(void* aPtr)
 {
 	JniObjRef* ref = (JniObjRef*) aPtr;
@@ -61,10 +59,6 @@ static void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRe
 {
 	jint ret;
 	*aRef = (JniObjRef *)malloc(sizeof(JniObjRef));
-	if (iList == NULL)
-	{
-		iList = JniCallbackListCreate();
-	}
 
 	ret = (*aEnv)->GetJavaVM(aEnv, &(*aRef)->vm);
 	if (ret < 0) {
@@ -76,7 +70,6 @@ static void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRe
 		printf("CpProxyJNI: Callback object not stored.\n");
 		fflush(stdout);
 	}
-	JniCallbackListAddElement(&iList, *aRef);
 }
 
 /*
@@ -102,16 +95,26 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyCreate
 /*
  * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxyDestroy
- * Signature: (J)V
+ * Signature: (JJJ)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyDestroy
-  (JNIEnv *aEnv, jclass aClass, jlong aProxy)
+  (JNIEnv *aEnv, jclass aClass, jlong aProxy, jlong aCallbackPropertyChanged, jlong aCallbackInitialEvent)
 {
 	THandle proxy = (THandle) (size_t)aProxy;
+	JniObjRef *refPropChanged = (JniObjRef*) (size_t)aCallbackPropertyChanged;
+	JniObjRef *refInitialEvent = (JniObjRef*) (size_t)aCallbackInitialEvent;
 	aClass = aClass;
 	
-	JniCallbackListDestroy(aEnv, &iList);
-	iList = NULL;
+	if (refPropChanged != NULL)
+	{
+		(*aEnv)->DeleteWeakGlobalRef(aEnv, refPropChanged->callbackObj);
+		free(refPropChanged);
+	}
+	if (refInitialEvent != NULL)
+	{
+		(*aEnv)->DeleteWeakGlobalRef(aEnv, refInitialEvent->callbackObj);
+		free(refInitialEvent);
+	}
 	CpProxyDestroy(proxy);
 }
 
@@ -163,9 +166,9 @@ JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyUnsubsc
 /*
  * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxySetPropertyChanged
- * Signature: (JLorg/openhome/net/controlpoint/IPropertyChangeListener;)V
+ * Signature: (JLorg/openhome/net/controlpoint/IPropertyChangeListener;)J
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPropertyChanged
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPropertyChanged
   (JNIEnv *aEnv, jclass aClass, jlong aProxy, jobject aCallback)
 {
 	THandle proxy = (THandle) (size_t)aProxy;
@@ -176,14 +179,16 @@ JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetProp
 	InitialiseReferences(aEnv, aCallback, &ref);
 	
 	CpProxySetPropertyChanged(proxy, callback, ref);
+	
+	return (jlong) ref;
 }
 
 /*
  * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxySetPropertyInitialEvent
- * Signature: (JLorg/openhome/net/controlpoint/IPropertyChangeListener;)V
+ * Signature: (JLorg/openhome/net/controlpoint/IPropertyChangeListener;)J
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPropertyInitialEvent
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPropertyInitialEvent
   (JNIEnv *aEnv, jclass aClass, jlong aProxy, jobject aCallback)
 {
 	THandle proxy = (THandle) (size_t)aProxy;
@@ -194,6 +199,8 @@ JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetProp
 	InitialiseReferences(aEnv, aCallback, &ref);
 	
 	CpProxySetPropertyChanged(proxy, callback, NULL);
+	
+	return (jlong) ref;
 }
 
 /*

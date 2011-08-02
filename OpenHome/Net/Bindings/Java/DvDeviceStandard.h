@@ -18,18 +18,18 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDeviceSt
 /*
  * Class:     org_openhome_net_device_DvDeviceStandard
  * Method:    DvDeviceStandardCreate
- * Signature: (Ljava/lang/String;)J
+ * Signature: (Ljava/lang/String;)Lorg/openhome/net/device/DvDeviceStandard/DvDeviceStandardInitialised;
  */
-JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDeviceStandardCreate
+JNIEXPORT jobject JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDeviceStandardCreate
   (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     org_openhome_net_device_DvDeviceStandard
  * Method:    DvDeviceDestroy
- * Signature: (JJ)V
+ * Signature: (JJJ)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDeviceDestroy
-  (JNIEnv *, jclass, jlong, jlong);
+  (JNIEnv *, jclass, jlong, jlong, jlong);
 
 /*
  * Class:     org_openhome_net_device_DvDeviceStandard
@@ -47,6 +47,17 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvResourceW
 JNIEXPORT jstring JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvResourceWriterLanguage
   (JNIEnv *, jclass, jlong, jint);
 
+#ifdef __cplusplus
+}
+#endif
+#endif
+/* Header for class org_openhome_net_device_DvDeviceStandard_DvDeviceStandardInitialised */
+
+#ifndef _Included_org_openhome_net_device_DvDeviceStandard_DvDeviceStandardInitialised
+#define _Included_org_openhome_net_device_DvDeviceStandard_DvDeviceStandardInitialised
+#ifdef __cplusplus
+extern "C" {
+#endif
 #ifdef __cplusplus
 }
 #endif

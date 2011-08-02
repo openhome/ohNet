@@ -10,11 +10,22 @@ extern "C" {
 /*
  * Class:     org_openhome_net_core_Property
  * Method:    ServicePropertyDestroy
- * Signature: (J)V
+ * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_core_Property_ServicePropertyDestroy
-  (JNIEnv *, jclass, jlong);
+  (JNIEnv *, jclass, jlong, jlong);
 
+#ifdef __cplusplus
+}
+#endif
+#endif
+/* Header for class org_openhome_net_core_Property_PropertyInitialised */
+
+#ifndef _Included_org_openhome_net_core_Property_PropertyInitialised
+#define _Included_org_openhome_net_core_Property_PropertyInitialised
+#ifdef __cplusplus
+extern "C" {
+#endif
 #ifdef __cplusplus
 }
 #endif

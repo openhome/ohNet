@@ -6,7 +6,7 @@ package org.openhome.net.controlpoint;
  */
 public class CpDeviceListUpnpAll extends CpDeviceList
 {
-	private native long CpDeviceListCreateUpnpAll();
+	private native CpDeviceListInitialised CpDeviceListCreateUpnpAll();
 	
 	static
     {
@@ -35,6 +35,8 @@ public class CpDeviceListUpnpAll extends CpDeviceList
 	{
 		iAdded = aAdded;
 		iRemoved = aRemoved;
-		iHandle = CpDeviceListCreateUpnpAll();
+		CpDeviceListInitialised init = CpDeviceListCreateUpnpAll();
+		iHandle = init.getHandle();
+		iCallback = init.getCallback();
 	}
 }

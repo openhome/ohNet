@@ -9,8 +9,6 @@
 extern "C" {
 #endif
 
-static JniCallbackList *iList = NULL;
-
 static void STDCALL CallbackDvInvocation(void* aPtr, DvInvocationC aInvocation, uint32_t aVersion)
 {
 	JniObjRef *ref = (JniObjRef*) aPtr;
@@ -59,26 +57,35 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvProvider_DvProviderCreate
 /*
  * Class:     org_openhome_net_device_DvProvider
  * Method:    DvProviderDestroy
- * Signature: (J)V
+ * Signature: (J[JI)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_device_DvProvider_DvProviderDestroy
-  (JNIEnv *aEnv, jclass aClass, jlong aProvider)
+  (JNIEnv *aEnv, jclass aClass, jlong aProvider, jlongArray aCallbacks, jint aLen)
 {
 	DvProviderC provider = (DvProviderC) (size_t)aProvider;
+	jlong *callbacks;
+	int i;
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	JniCallbackListDestroy(aEnv, &iList);
-	iList = NULL;
+	callbacks = (*aEnv)->GetLongArrayElements(aEnv, aCallbacks, NULL);
+	for (i = 0; i < aLen; i++)
+	{
+		JniObjRef *ref = (JniObjRef*) (size_t)callbacks[i];
+		(*aEnv)->DeleteWeakGlobalRef(aEnv, ref->callbackObj);
+		free(ref);
+	}
+	(*aEnv)->ReleaseLongArrayElements(aEnv, aCallbacks, callbacks, 0);
+	
 	DvProviderDestroy(provider);
 }
 
 /*
  * Class:     org_openhome_net_device_DvProvider
  * Method:    DvProviderAddAction
- * Signature: (JJLorg/openhome/net/device/IDvDeviceListener;)V
+ * Signature: (JJLorg/openhome/net/device/IDvInvocationListener;)J
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_device_DvProvider_DvProviderAddAction
+JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvProvider_DvProviderAddAction
   (JNIEnv *aEnv, jclass aClass, jlong aProvider, jlong aAction, jobject aCallback)
 {
 	DvProviderC provider = (DvProviderC) (size_t)aProvider;
@@ -88,23 +95,22 @@ JNIEXPORT void JNICALL Java_org_openhome_net_device_DvProvider_DvProviderAddActi
 	int ret;
 	aClass = aClass;
 
-	if (!iList)
-	{
-		iList = JniCallbackListCreate();
-	}
 	ret = (*aEnv)->GetJavaVM(aEnv, &ref->vm);
-	if (ret < 0) {
-		printf("CpDeviceListJNI: Unable to get reference to the current Java VM.\n");
+	if (ret < 0)
+	{
+		printf("DvProviderJNI: Unable to get reference to the current Java VM.\n");
 		fflush(stdout);
 	}
 	ref->callbackObj = (*aEnv)->NewWeakGlobalRef(aEnv, aCallback);
-	if (ref->callbackObj == NULL) {
-		printf("CpDeviceListJNI: Callback object not stored.\n");
+	if (ref->callbackObj == NULL)
+	{
+		printf("DvProviderJNI: Callback object not stored.\n");
 		fflush(stdout);
 	}
-	JniCallbackListAddElement(&iList, ref);
 
 	DvProviderAddAction(provider, action, callback, ref);
+	
+	return (jlong) ref;
 }
 
 /*

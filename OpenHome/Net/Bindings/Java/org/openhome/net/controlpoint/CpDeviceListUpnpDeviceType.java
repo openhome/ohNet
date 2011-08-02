@@ -6,7 +6,7 @@ package org.openhome.net.controlpoint;
  */
 public class CpDeviceListUpnpDeviceType extends CpDeviceList
 {
-	private native long CpDeviceListCreateUpnpDeviceType(String aDomainName, String aDeviceType, int aVersion);
+	private native CpDeviceListInitialised CpDeviceListCreateUpnpDeviceType(String aDomainName, String aDeviceType, int aVersion);
 	
 	static
     {
@@ -39,6 +39,8 @@ public class CpDeviceListUpnpDeviceType extends CpDeviceList
 		
 		iAdded = aAdded;
 		iRemoved = aRemoved;
-		iHandle = CpDeviceListCreateUpnpDeviceType(aDomainName, aDeviceType, aVersion);
+		CpDeviceListInitialised init = CpDeviceListCreateUpnpDeviceType(aDomainName, aDeviceType, aVersion);
+		iHandle = init.getHandle();
+		iCallback = init.getCallback();
 	}
 }

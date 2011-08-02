@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     org_openhome_net_core_PropertyUint
  * Method:    ServicePropertyCreateUintCp
- * Signature: (Ljava/lang/String;Lorg/openhome/net/controlpoint/IPropertyChangeListener;)J
+ * Signature: (Ljava/lang/String;Lorg/openhome/net/controlpoint/IPropertyChangeListener;)Lorg/openhome/net/core/Property/PropertyInitialised;
  */
-JNIEXPORT jlong JNICALL Java_org_openhome_net_core_PropertyUint_ServicePropertyCreateUintCp
-  (JNIEnv *, jclass, jstring, jobject);
+JNIEXPORT jobject JNICALL Java_org_openhome_net_core_PropertyUint_ServicePropertyCreateUintCp
+  (JNIEnv *, jobject, jstring, jobject);
 
 /*
  * Class:     org_openhome_net_core_PropertyUint

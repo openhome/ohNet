@@ -1,6 +1,5 @@
 package org.openhome.net.core;
 
-
 import org.openhome.net.controlpoint.IPropertyChangeListener;
 
 /**
@@ -8,7 +7,7 @@ import org.openhome.net.controlpoint.IPropertyChangeListener;
  */
 public class PropertyBinary extends Property
 {
-	private static native long ServicePropertyCreateBinaryCp(String aName, IPropertyChangeListener aListener);
+	private native PropertyInitialised ServicePropertyCreateBinaryCp(String aName, IPropertyChangeListener aListener);
 	private static native long ServicePropertyCreateBinaryDv(long aParameter);
 	private static native byte[] ServicePropertyGetValueBinary(long aProperty);
 	private static native int ServicePropertySetValueBinary(long aProperty, byte[] aValue, int aLen);
@@ -29,7 +28,9 @@ public class PropertyBinary extends Property
 	public PropertyBinary(String aName, IPropertyChangeListener aListener)
 	{
 		super(aListener);
-		iHandle = ServicePropertyCreateBinaryCp(aName, aListener);
+		PropertyInitialised init = ServicePropertyCreateBinaryCp(aName, aListener);
+		iHandle = init.getHandle();
+		iCallback = init.getCallback();
 	}
 	
 	/**

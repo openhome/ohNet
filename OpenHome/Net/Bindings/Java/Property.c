@@ -11,11 +11,8 @@
 extern "C" {
 #endif
 
-JniCallbackList *iList = NULL;
-
 void STDCALL ChangeCallback(void* aPtr)
 {
-
 	JniObjRef* ref = (JniObjRef*) aPtr;
 	JNIEnv *env;
 	jclass cls;
@@ -45,10 +42,6 @@ void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRef **aRe
 	jint ret;
 
 	*aRef = (JniObjRef*) malloc(sizeof(JniObjRef));
-	if (!iList)
-	{
-		iList = JniCallbackListCreate();
-	}
 
 	ret = (*aEnv)->GetJavaVM(aEnv, &(*aRef)->vm);
 	if (ret < 0) {
@@ -60,22 +53,22 @@ void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRef **aRe
 		printf("PropertyJNI: Callback object not stored.\n");
 		fflush(stdout);
 	}
-	JniCallbackListAddElement(&iList, *aRef);
 }
 
 /*
  * Class:     org_openhome_net_core_Property
  * Method:    ServicePropertyDestroy
- * Signature: (J)V
+ * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_core_Property_ServicePropertyDestroy
-  (JNIEnv *aEnv, jclass aClass, jlong aProperty)
+  (JNIEnv *aEnv, jclass aClass, jlong aProperty, jlong aCallback)
 {
 	ServiceProperty property = (ServiceProperty) (size_t)aProperty;
+	JniObjRef *ref = (JniObjRef*) (size_t)aCallback;
 	aClass = aClass;
 	
-	JniCallbackListDestroy(aEnv, &iList);
-	iList = NULL;
+	(*aEnv)->DeleteWeakGlobalRef(aEnv, ref->callbackObj);
+	free(ref);
 	ServicePropertyDestroy(property);
 }
 

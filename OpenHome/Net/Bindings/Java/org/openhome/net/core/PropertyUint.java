@@ -1,6 +1,5 @@
 package org.openhome.net.core;
 
-
 import org.openhome.net.controlpoint.IPropertyChangeListener;
 
 /**
@@ -8,7 +7,7 @@ import org.openhome.net.controlpoint.IPropertyChangeListener;
  */
 public class PropertyUint extends Property
 {
-	private static native long ServicePropertyCreateUintCp(String aName, IPropertyChangeListener aListener);
+	private native PropertyInitialised ServicePropertyCreateUintCp(String aName, IPropertyChangeListener aListener);
 	private static native long ServicePropertyCreateUintDv(long aParameter);
 	private static native long ServicePropertyValueUint(long aProperty);
 	private static native int ServicePropertySetValueUint(long aProperty, long aValue);
@@ -28,7 +27,9 @@ public class PropertyUint extends Property
 	public PropertyUint(String aName, IPropertyChangeListener aListener)
 	{
 		super(aListener);
-		iHandle = ServicePropertyCreateUintCp(aName, aListener);
+		PropertyInitialised init = ServicePropertyCreateUintCp(aName, aListener);
+		iHandle = init.getHandle();
+		iCallback = init.getCallback();
 	}
 	
 	/**

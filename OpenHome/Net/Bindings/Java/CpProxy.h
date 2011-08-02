@@ -18,10 +18,10 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyCreate
 /*
  * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxyDestroy
- * Signature: (J)V
+ * Signature: (JJJ)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyDestroy
-  (JNIEnv *, jclass, jlong);
+  (JNIEnv *, jclass, jlong, jlong, jlong);
 
 /*
  * Class:     org_openhome_net_controlpoint_CpProxy
@@ -50,17 +50,17 @@ JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyUnsubsc
 /*
  * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxySetPropertyChanged
- * Signature: (JLorg/openhome/net/controlpoint/IPropertyChangeListener;)V
+ * Signature: (JLorg/openhome/net/controlpoint/IPropertyChangeListener;)J
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPropertyChanged
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPropertyChanged
   (JNIEnv *, jclass, jlong, jobject);
 
 /*
  * Class:     org_openhome_net_controlpoint_CpProxy
  * Method:    CpProxySetPropertyInitialEvent
- * Signature: (JLorg/openhome/net/controlpoint/IPropertyChangeListener;)V
+ * Signature: (JLorg/openhome/net/controlpoint/IPropertyChangeListener;)J
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPropertyInitialEvent
+JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPropertyInitialEvent
   (JNIEnv *, jclass, jlong, jobject);
 
 /*

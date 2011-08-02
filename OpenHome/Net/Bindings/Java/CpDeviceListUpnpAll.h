@@ -10,9 +10,9 @@ extern "C" {
 /*
  * Class:     org_openhome_net_controlpoint_CpDeviceListUpnpAll
  * Method:    CpDeviceListCreateUpnpAll
- * Signature: ()J
+ * Signature: ()Lorg/openhome/net/controlpoint/CpDeviceList/CpDeviceListInitialised;
  */
-JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpDeviceListUpnpAll_CpDeviceListCreateUpnpAll
+JNIEXPORT jobject JNICALL Java_org_openhome_net_controlpoint_CpDeviceListUpnpAll_CpDeviceListCreateUpnpAll
   (JNIEnv *, jobject);
 
 #ifdef __cplusplus

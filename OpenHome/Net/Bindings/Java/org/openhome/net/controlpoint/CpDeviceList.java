@@ -17,10 +17,31 @@ package org.openhome.net.controlpoint;
  */
 public class CpDeviceList implements ICpDeviceList
 {
-	private static native void CpDeviceListDestroy(long aListHandle);
+	private static native void CpDeviceListDestroy(long aListHandle, long aCallback);
 	private static native void CpDeviceListRefresh(long aListHandle);
+	
+	protected class CpDeviceListInitialised
+	{
+		private long iHandle;
+		private long iCallback;
+		
+		public CpDeviceListInitialised(long aHandle, long aCallback)
+		{
+			iHandle = aHandle;
+			iCallback = aCallback;
+		}
+		public long getHandle()
+		{
+			return iHandle;
+		}
+		public long getCallback()
+		{
+			return iCallback;
+		}
+	}
 
 	protected long iHandle;
+	protected long iCallback;
 	protected ICpDeviceListListener iAdded;
 	protected ICpDeviceListListener iRemoved;
 	
@@ -33,8 +54,9 @@ public class CpDeviceList implements ICpDeviceList
 	{
 		if (iHandle != 0)
 		{
-			CpDeviceListDestroy(iHandle);
+			CpDeviceListDestroy(iHandle, iCallback);
 			iHandle = 0;
+			iCallback = 0;
 		}
 	}
 	

@@ -10,9 +10,9 @@ extern "C" {
 /*
  * Class:     org_openhome_net_controlpoint_CpDeviceListUpnpServiceType
  * Method:    CpDeviceListCreateUpnpServiceType
- * Signature: (Ljava/lang/String;Ljava/lang/String;I)J
+ * Signature: (Ljava/lang/String;Ljava/lang/String;I)Lorg/openhome/net/controlpoint/CpDeviceList/CpDeviceListInitialised;
  */
-JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpDeviceListUpnpServiceType_CpDeviceListCreateUpnpServiceType
+JNIEXPORT jobject JNICALL Java_org_openhome_net_controlpoint_CpDeviceListUpnpServiceType_CpDeviceListCreateUpnpServiceType
   (JNIEnv *, jobject, jstring, jstring, jint);
 
 #ifdef __cplusplus

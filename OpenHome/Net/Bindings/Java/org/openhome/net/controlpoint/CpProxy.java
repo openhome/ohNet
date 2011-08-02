@@ -19,12 +19,12 @@ public class CpProxy implements ICpProxy
     }
 	
 	private static native long CpProxyCreate(String aDomain, String aName, int aVersion, long aDevice);
-	private static native void CpProxyDestroy(long aProxy);
+	private static native void CpProxyDestroy(long aProxy, long aCallbackPropertyChanged, long aCallbackInitialEvent);
 	private static native long CpProxyService(long aProxy);
 	private static native void CpProxySubscribe(long aHandle);
 	private static native void CpProxyUnsubscribe(long aHandle);
-	private static native void CpProxySetPropertyChanged(long aHandle, IPropertyChangeListener aCallback);
-	private static native void CpProxySetPropertyInitialEvent(long aHandle, IPropertyChangeListener aCallback);
+	private static native long CpProxySetPropertyChanged(long aHandle, IPropertyChangeListener aCallback);
+	private static native long CpProxySetPropertyInitialEvent(long aHandle, IPropertyChangeListener aCallback);
 	private static native void CpProxyPropertyReadLock(long aHandle);
 	private static native void CpProxyPropertyReadUnlock(long aHandle);
 	private static native void CpProxyAddProperty(long aHandle, long aProperty);
@@ -37,6 +37,8 @@ public class CpProxy implements ICpProxy
 	
 	protected long iHandle;
 	protected CpService iService;
+	private long iCallbackNativePropertyChanged;
+	private long iCallbackNativeInitialEvent;
 	private IPropertyChangeListener iCallbackPropertyChanged;
 	private IPropertyChangeListener iCallbackInitialEvent;
 	private SubscriptionStatus iSubscriptionStatus = SubscriptionStatus.E_NOT_SUBSCRIBED;
@@ -71,7 +73,7 @@ public class CpProxy implements ICpProxy
         }
         if (unsubscribe)
             unsubscribe();
-        CpProxyDestroy(iHandle);
+        CpProxyDestroy(iHandle, iCallbackNativePropertyChanged, iCallbackNativeInitialEvent);
     }
 	
 	/**
@@ -109,8 +111,11 @@ public class CpProxy implements ICpProxy
 	 */
 	public void setPropertyChanged(IPropertyChangeListener aPropertyChanged)
     {
-        iCallbackPropertyChanged = aPropertyChanged;
-        CpProxySetPropertyChanged(iHandle, iCallbackPropertyChanged);
+		if (iCallbackPropertyChanged == null)
+		{
+			iCallbackPropertyChanged = aPropertyChanged;
+			iCallbackNativePropertyChanged = CpProxySetPropertyChanged(iHandle, iCallbackPropertyChanged);
+		}
     }
 
 	/**
@@ -121,8 +126,11 @@ public class CpProxy implements ICpProxy
 	 */
     public void setPropertyInitialEvent(IPropertyChangeListener aInitialEvent)
     {
-        iCallbackInitialEvent = aInitialEvent;
-        CpProxySetPropertyInitialEvent(iHandle, iCallbackInitialEvent);
+    	if (iCallbackInitialEvent == null)
+    	{
+    		iCallbackInitialEvent = aInitialEvent;
+    		iCallbackNativeInitialEvent = CpProxySetPropertyInitialEvent(iHandle, iCallbackInitialEvent);
+    	}
     }
 	
     /**

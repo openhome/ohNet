@@ -1,5 +1,6 @@
 package org.openhome.net.device;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,8 +38,8 @@ public class DvProvider
 	}
 	
 	private static native long DvProviderCreate(long aDevice, String aDomain, String aType, int aVersion);
-	private static native void DvProviderDestroy(long aProvider);
-	private static native void DvProviderAddAction(long aProvider, long aAction, IDvInvocationListener aCallback);
+	private static native void DvProviderDestroy(long aProvider, long[] aCallbacks, int aLen);
+	private static native long DvProviderAddAction(long aProvider, long aAction, IDvInvocationListener aCallback);
 	private static native void DvProviderPropertiesLock(long aProvider);
 	private static native void DvProviderPropertiesUnlock(long aProvider);
 	private static native void DvProviderAddProperty(long aProvider, long aProperty);
@@ -55,6 +56,7 @@ public class DvProvider
     }
 	
 	protected long iHandle;
+	private List<Long> iCallbacks;
     private List<Action> iActions;
     private List<Property> iProperties;
     
@@ -69,6 +71,7 @@ public class DvProvider
     protected DvProvider(DvDevice aDevice, String aDomain, String aType, int aVersion)
     {
     	iHandle = DvProviderCreate(aDevice.getHandle(), aDomain, aType, aVersion);
+    	iCallbacks = new ArrayList<Long>();
     	iActions = new LinkedList<Action>();
     	iProperties = new LinkedList<Property>();
     }
@@ -83,7 +86,8 @@ public class DvProvider
     protected void enableAction(Action aAction, IDvInvocationListener aDelegate)
     {
         iActions.add(aAction);
-        DvProviderAddAction(iHandle, aAction.getHandle(), aDelegate);
+        long callback = DvProviderAddAction(iHandle, aAction.getHandle(), aDelegate);
+        iCallbacks.add(callback);
     }
     
     /**
@@ -232,7 +236,12 @@ public class DvProvider
      */
     protected void dispose()
     {
-        DvProviderDestroy(iHandle);
+    	long[] callbackArray = new long[iCallbacks.size()];
+    	for (int i = 0; i < callbackArray.length; i++)
+    	{
+    		callbackArray[i] = iCallbacks.get(i);
+    	}
+        DvProviderDestroy(iHandle, callbackArray, callbackArray.length);
         iHandle = 0;
         for (Action a : iActions)
         {

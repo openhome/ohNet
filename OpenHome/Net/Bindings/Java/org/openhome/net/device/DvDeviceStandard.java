@@ -6,8 +6,8 @@ import java.util.List;
 public class DvDeviceStandard extends DvDevice
 {
 	private static native long DvDeviceStandardCreateNoResources(String aUdn);
-	private native long DvDeviceStandardCreate(String aUdn);
-	private static native void DvDeviceDestroy(long aDevice, long aUserData);
+	private native DvDeviceStandardInitialised DvDeviceStandardCreate(String aUdn);
+	private static native void DvDeviceDestroy(long aDevice, long aUserData, long aCallback);
 	private static native int DvResourceWriterLanguageCount(long aLanguageList);
 	private static native String DvResourceWriterLanguage(long aLanguageList, int aIndex);
 	
@@ -17,7 +17,28 @@ public class DvDeviceStandard extends DvDevice
         System.loadLibrary("ohNetJni");
     }
 	
+	private class DvDeviceStandardInitialised
+	{
+		private long iHandle;
+		private long iCallback;
+		
+		public DvDeviceStandardInitialised(long aHandle, long aCallback)
+		{
+			iHandle = aHandle;
+			iCallback = aCallback;
+		}
+		public long getHandle()
+		{
+			return iHandle;
+		}
+		public long getCallback()
+		{
+			return iCallback;
+		}
+	}
+	
 	private IResourceManager iResourceManager;
+	private long iCallback;
 	private long iUserData;
 	
 	/**
@@ -31,6 +52,7 @@ public class DvDeviceStandard extends DvDevice
 	{
 		super();
 		iResourceManager = null;
+		iCallback = 0;
 		iUserData = 0;
 		iHandle = DvDeviceStandardCreateNoResources(aUdn);
 	}
@@ -48,7 +70,9 @@ public class DvDeviceStandard extends DvDevice
     {
         iResourceManager = aResourceManager;
         iUserData = 0;
-        iHandle = DvDeviceStandardCreate(aUdn);
+        DvDeviceStandardInitialised init = DvDeviceStandardCreate(aUdn);
+        iHandle = init.getHandle();
+        iCallback = init.getCallback();
     }
 	
 	/**
@@ -57,12 +81,7 @@ public class DvDeviceStandard extends DvDevice
 	 */
 	public void destroy()
 	{
-		if (iUserData != 0)
-		{
-			DvDeviceDestroy(iHandle, iUserData);
-		} else {
-			super.destroy();
-		}
+		DvDeviceDestroy(iHandle, iUserData, iCallback);
 	}
 	
 	

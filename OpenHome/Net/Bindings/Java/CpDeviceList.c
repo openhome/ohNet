@@ -12,8 +12,6 @@
 extern "C" {
 #endif
 
-static JniCallbackList *iList = NULL;
-
 void STDCALL deviceAddedCallback(void* aPtr, CpDeviceC aDevice) {
 
 	JniObjRef* ref = (JniObjRef*) aPtr;
@@ -64,10 +62,6 @@ void InitialiseCpDeviceListReferences(JNIEnv *aEnv, jobject aObject, JniObjRef *
 {
 	jint ret;
 
-	if (!iList)
-	{
-		iList = JniCallbackListCreate();
-	}
 	*aRef = (JniObjRef*) malloc(sizeof(JniObjRef));
 	ret = (*aEnv)->GetJavaVM(aEnv, &(*aRef)->vm);
 	if (ret < 0) {
@@ -79,22 +73,22 @@ void InitialiseCpDeviceListReferences(JNIEnv *aEnv, jobject aObject, JniObjRef *
 		printf("CpDeviceListJNI: Callback object not stored.\n");
 		fflush(stdout);
 	}
-	JniCallbackListAddElement(&iList, *aRef);
 }
 
 /*
  * Class:     org_openhome_net_controlpoint_CpDeviceList
  * Method:    CpDeviceListDestroy
- * Signature: (J)V
+ * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpDeviceList_CpDeviceListDestroy
-  (JNIEnv *aEnv, jclass aClass, jlong aList)
+  (JNIEnv *aEnv, jclass aClass, jlong aList, jlong aCallback)
 {
 	HandleCpDeviceList list = (HandleCpDeviceList) (size_t)aList;
+	JniObjRef *ref = (JniObjRef*) (size_t)aCallback;
 	aClass = aClass;
-	
-	JniCallbackListDestroy(aEnv, &iList);
-	iList = NULL;
+
+	(*aEnv)->DeleteWeakGlobalRef(aEnv, ref->callbackObj);
+	free(ref);
 	CpDeviceListDestroy(list);
 }
 
@@ -109,7 +103,7 @@ JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpDeviceList_CpDeviceL
 	HandleCpDeviceList list = (HandleCpDeviceList) (size_t)aList;
 	aEnv = aEnv;
 	aClass = aClass;
-	
+
 	CpDeviceListRefresh(list);
 }
 
