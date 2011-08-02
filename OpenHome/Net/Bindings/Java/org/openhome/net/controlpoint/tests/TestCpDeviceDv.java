@@ -1,4 +1,4 @@
-package org.openhome.net.test;
+package org.openhome.net.controlpoint.tests;
 
 import java.net.Inet4Address;
 
@@ -8,6 +8,7 @@ import org.openhome.net.core.InitParams;
 import org.openhome.net.core.Library;
 import org.openhome.net.core.NetworkAdapter;
 import org.openhome.net.core.NetworkAdapterList;
+import org.openhome.net.device.tests.DeviceBasic;
 
 public class TestCpDeviceDv
 {
