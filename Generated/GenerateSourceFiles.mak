@@ -720,3 +720,74 @@ $(deviceCs)DvOpenhomeOrgTestLights1.cs : $(tt) OpenHome/Net/T4/Templates/DvUpnpC
 	echo DvOpenhomeOrgTestLights1.cs
 	$(ohNetGen) --language=cs --stack=dv "--xml=OpenHome/Net/Service/Upnp/OpenHome/Test/TestLights1.xml" --output=$(deviceCs) --domain=openhome.org --type=TestLights --version=1
 
+DvJava:   $(deviceJava)DvProviderUpnpOrgAVTransport1.java $(deviceJava)DvProviderUpnpOrgAVTransport2.java $(deviceJava)DvProviderUpnpOrgConnectionManager1.java $(deviceJava)DvProviderUpnpOrgConnectionManager2.java $(deviceJava)DvProviderUpnpOrgContentDirectory1.java $(deviceJava)DvProviderUpnpOrgContentDirectory2.java $(deviceJava)DvProviderUpnpOrgContentDirectory3.java $(deviceJava)DvProviderUpnpOrgRenderingControl1.java $(deviceJava)DvProviderUpnpOrgRenderingControl2.java $(deviceJava)DvProviderUpnpOrgScheduledRecording1.java $(deviceJava)DvProviderUpnpOrgScheduledRecording2.java $(deviceJava)DvProviderUpnpOrgSwitchPower1.java $(deviceJava)DvProviderUpnpOrgDimming1.java $(deviceJava)DvProviderAvOpenhomeOrgInfo1.java $(deviceJava)DvProviderAvOpenhomeOrgTime1.java $(deviceJava)DvProviderAvOpenhomeOrgPlaylist1.java $(deviceJava)DvProviderAvOpenhomeOrgVolume1.java $(deviceJava)DvProviderAvOpenhomeOrgProduct1.java $(deviceJava)DvProviderAvOpenhomeOrgRadio1.java $(deviceJava)DvProviderAvOpenhomeOrgReceiver1.java $(deviceJava)DvProviderAvOpenhomeOrgSender1.java $(deviceJava)DvProviderOpenhomeOrgTestBasic1.java $(deviceJava)DvProviderOpenhomeOrgTestLights1.java
+$(deviceJava)DvProviderUpnpOrgAVTransport1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/AVTransport1.xml
+	echo DvProviderUpnpOrgAVTransport1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/AVTransport1.xml" --output=$(deviceJava) --domain=upnp.org --type=AVTransport --version=1
+$(deviceJava)DvProviderUpnpOrgAVTransport2.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/AVTransport2.xml
+	echo DvProviderUpnpOrgAVTransport2.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/AVTransport2.xml" --output=$(deviceJava) --domain=upnp.org --type=AVTransport --version=2
+$(deviceJava)DvProviderUpnpOrgConnectionManager1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ConnectionManager1.xml
+	echo DvProviderUpnpOrgConnectionManager1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ConnectionManager1.xml" --output=$(deviceJava) --domain=upnp.org --type=ConnectionManager --version=1
+$(deviceJava)DvProviderUpnpOrgConnectionManager2.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ConnectionManager2.xml
+	echo DvProviderUpnpOrgConnectionManager2.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ConnectionManager2.xml" --output=$(deviceJava) --domain=upnp.org --type=ConnectionManager --version=2
+$(deviceJava)DvProviderUpnpOrgContentDirectory1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ContentDirectory1.xml
+	echo DvProviderUpnpOrgContentDirectory1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ContentDirectory1.xml" --output=$(deviceJava) --domain=upnp.org --type=ContentDirectory --version=1
+$(deviceJava)DvProviderUpnpOrgContentDirectory2.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ContentDirectory2.xml
+	echo DvProviderUpnpOrgContentDirectory2.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ContentDirectory2.xml" --output=$(deviceJava) --domain=upnp.org --type=ContentDirectory --version=2
+$(deviceJava)DvProviderUpnpOrgContentDirectory3.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ContentDirectory3.xml
+	echo DvProviderUpnpOrgContentDirectory3.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ContentDirectory3.xml" --output=$(deviceJava) --domain=upnp.org --type=ContentDirectory --version=3
+$(deviceJava)DvProviderUpnpOrgRenderingControl1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/RenderingControl1.xml
+	echo DvProviderUpnpOrgRenderingControl1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/RenderingControl1.xml" --output=$(deviceJava) --domain=upnp.org --type=RenderingControl --version=1
+$(deviceJava)DvProviderUpnpOrgRenderingControl2.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/RenderingControl2.xml
+	echo DvProviderUpnpOrgRenderingControl2.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/RenderingControl2.xml" --output=$(deviceJava) --domain=upnp.org --type=RenderingControl --version=2
+$(deviceJava)DvProviderUpnpOrgScheduledRecording1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ScheduledRecording1.xml
+	echo DvProviderUpnpOrgScheduledRecording1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ScheduledRecording1.xml" --output=$(deviceJava) --domain=upnp.org --type=ScheduledRecording --version=1
+$(deviceJava)DvProviderUpnpOrgScheduledRecording2.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ScheduledRecording2.xml
+	echo DvProviderUpnpOrgScheduledRecording2.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/Upnp/MediaServer_3/ScheduledRecording2.xml" --output=$(deviceJava) --domain=upnp.org --type=ScheduledRecording --version=2
+$(deviceJava)DvProviderUpnpOrgSwitchPower1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/LightingControls_1/SwitchPower1.xml
+	echo DvProviderUpnpOrgSwitchPower1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/Upnp/LightingControls_1/SwitchPower1.xml" --output=$(deviceJava) --domain=upnp.org --type=SwitchPower --version=1
+$(deviceJava)DvProviderUpnpOrgDimming1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/Upnp/LightingControls_1/Dimming1.xml
+	echo DvProviderUpnpOrgDimming1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/Upnp/LightingControls_1/Dimming1.xml" --output=$(deviceJava) --domain=upnp.org --type=Dimming --version=1
+$(deviceJava)DvProviderAvOpenhomeOrgInfo1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Info1.xml
+	echo DvProviderAvOpenhomeOrgInfo1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/OpenHome/Info1.xml" --output=$(deviceJava) --domain=av.openhome.org --type=Info --version=1
+$(deviceJava)DvProviderAvOpenhomeOrgTime1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Time1.xml
+	echo DvProviderAvOpenhomeOrgTime1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/OpenHome/Time1.xml" --output=$(deviceJava) --domain=av.openhome.org --type=Time --version=1
+$(deviceJava)DvProviderAvOpenhomeOrgPlaylist1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Playlist1.xml
+	echo DvProviderAvOpenhomeOrgPlaylist1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/OpenHome/Playlist1.xml" --output=$(deviceJava) --domain=av.openhome.org --type=Playlist --version=1
+$(deviceJava)DvProviderAvOpenhomeOrgVolume1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Volume1.xml
+	echo DvProviderAvOpenhomeOrgVolume1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/OpenHome/Volume1.xml" --output=$(deviceJava) --domain=av.openhome.org --type=Volume --version=1
+$(deviceJava)DvProviderAvOpenhomeOrgProduct1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Product1.xml
+	echo DvProviderAvOpenhomeOrgProduct1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/OpenHome/Product1.xml" --output=$(deviceJava) --domain=av.openhome.org --type=Product --version=1
+$(deviceJava)DvProviderAvOpenhomeOrgRadio1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Radio1.xml
+	echo DvProviderAvOpenhomeOrgRadio1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/OpenHome/Radio1.xml" --output=$(deviceJava) --domain=av.openhome.org --type=Radio --version=1
+$(deviceJava)DvProviderAvOpenhomeOrgReceiver1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Receiver1.xml
+	echo DvProviderAvOpenhomeOrgReceiver1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/OpenHome/Receiver1.xml" --output=$(deviceJava) --domain=av.openhome.org --type=Receiver --version=1
+$(deviceJava)DvProviderAvOpenhomeOrgSender1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Sender1.xml
+	echo DvProviderAvOpenhomeOrgSender1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/OpenHome/Sender1.xml" --output=$(deviceJava) --domain=av.openhome.org --type=Sender --version=1
+$(deviceJava)DvProviderOpenhomeOrgTestBasic1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Test/TestBasic1.xml
+	echo DvProviderOpenhomeOrgTestBasic1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/OpenHome/Test/TestBasic1.xml" --output=$(deviceJava) --domain=openhome.org --type=TestBasic --version=1
+$(deviceJava)DvProviderOpenhomeOrgTestLights1.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt OpenHome/Net/Service/Upnp/OpenHome/Test/TestLights1.xml
+	echo DvProviderOpenhomeOrgTestLights1.java
+	$(ohNetGen) --language=java --stack=dv "--xml=OpenHome/Net/Service/Upnp/OpenHome/Test/TestLights1.xml" --output=$(deviceJava) --domain=openhome.org --type=TestLights --version=1
+

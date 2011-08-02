@@ -3,8 +3,9 @@ package org.openhome.net.controlpoint;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.openhome.net.core.Action;
 
-import ohnet.Action;
+
 
 /**
  * Used by CpProxy to represent a service offered by a remote device.

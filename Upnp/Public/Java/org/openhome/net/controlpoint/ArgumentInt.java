@@ -1,7 +1,7 @@
 package org.openhome.net.controlpoint;
 
 
-import ohnet.ParameterInt;
+import org.openhome.net.core.ParameterInt;
 
 /**
  * Integer type argument.  Only intended for use by auto-generated proxies.
@@ -25,7 +25,7 @@ public class ArgumentInt extends Argument
 	 * <p>Intended to be write only (its value is written on construction and not be later read).
 	 * 
 	 * @param aParameter 	defines the name plus any bounds to the value for the argument.
-	 * Must have been previously added to the action using {@link ohnet.Action#addInputParameter}.
+	 * Must have been previously added to the action using {@link org.openhome.net.core.Action#addInputParameter}.
 	 * @param aValue 		value for the argument.
 	 */
 	public ArgumentInt(ParameterInt aParameter, int aValue)

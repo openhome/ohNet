@@ -572,3 +572,4 @@ $(proxyjavadir)CpProxyOpenhomeOrgTestBasic1.class : $(objdir)ohnet.jar $(proxyJa
 $(proxyjavadir)CpProxyOpenhomeOrgTestLights1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyOpenhomeOrgTestLights1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyOpenhomeOrgTestLights1.java
 
+

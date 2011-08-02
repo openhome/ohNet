@@ -1243,7 +1243,7 @@ void DviMsgScheduler::ScheduleNextTimer(TUint aRemainingMsgs) const
 {
     TUint interval;
     TInt remaining = iEndTimeMs - Os::TimeInMs();
-    TInt maxInterval = remaining / aRemainingMsgs;
+    TInt maxInterval = remaining / (TInt)aRemainingMsgs;
     if (maxInterval < kMinTimerIntervalMs) {
         // we're running behind.  Schedule another timer to run immediately
         interval = 0;

@@ -101,6 +101,7 @@ $(proxyjavadir)CpProxy<#=FilePrefixTypeAndVersion(s)#>.class : $(objdir)ohnet.ja
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxy<#=FilePrefixTypeAndVersion(s)#>.java
 <# } #>
 
+
 <#+
 string FilePrefixTypeAndVersion(Service s)
 {

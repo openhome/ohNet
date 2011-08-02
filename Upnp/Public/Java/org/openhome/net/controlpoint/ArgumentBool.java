@@ -1,7 +1,7 @@
 package org.openhome.net.controlpoint;
 
 
-import ohnet.ParameterBool;
+import org.openhome.net.core.ParameterBool;
 
 /**
  * Boolean type argument.  Only intended for use by auto-generated proxies.
@@ -25,7 +25,7 @@ public class ArgumentBool extends Argument
 	 * <p>Intended to be write only (its value is written on construction and not be later read).
 	 * 
 	 * @param aParameter 	defines the name plus any bounds to the value for the argument.
-	 * Must have been previously added to the action using {@link ohnet.Action#addInputParameter}.
+	 * Must have been previously added to the action using {@link org.openhome.net.core.Action#addInputParameter}.
 	 * @param aValue 		value for the argument.
 	 */
 	public ArgumentBool(ParameterBool aParameter, boolean aValue)
