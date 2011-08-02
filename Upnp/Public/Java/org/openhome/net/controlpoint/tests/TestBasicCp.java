@@ -1,4 +1,4 @@
-package org.openhome.net.test;
+package org.openhome.net.controlpoint.tests;
 
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;

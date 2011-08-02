@@ -1,4 +1,4 @@
-package org.openhome.net.test;
+package org.openhome.net.device.tests;
 
 import java.net.Inet4Address;
 import java.util.ArrayList;
@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.openhome.net.controlpoint.CpDevice;
 import org.openhome.net.controlpoint.CpDeviceListUpnpServiceType;
 import org.openhome.net.controlpoint.ICpDeviceListListener;
+import org.openhome.net.controlpoint.tests.TestBasicCp;
 import org.openhome.net.core.InitParams;
 import org.openhome.net.core.Library;
 import org.openhome.net.core.NetworkAdapter;
