@@ -276,7 +276,7 @@ void CpiSubscription::DoUnsubscribe()
     iTimer->Cancel();
     if (iSid.Bytes() == 0) {
         LOG(kEvent, "Skipped unsubscribing since sid is empty (we're not subscribed)\n");
-        return;
+		return;
     }
     CpiSubscriptionManager::Remove(*this);
     Brh sid;
