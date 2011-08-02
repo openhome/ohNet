@@ -223,6 +223,8 @@ docs:
 	doxygen DoxyfileCppStd
 	mkdir -p Build/Docs/Cs
 	doxygen DoxyfileCs
+	mkdir -p Build/Docs/Java
+	doxygen DoxyfileJava
 	mkdir -p Build/Docs/Js
 	perl ./JsDoc/jsdoc.pl -d Build/Docs/Js OpenHome/Net/Bindings/Js/ControlPoint OpenHome/Net/Bindings/Js/ControlPoint/Proxies
 
