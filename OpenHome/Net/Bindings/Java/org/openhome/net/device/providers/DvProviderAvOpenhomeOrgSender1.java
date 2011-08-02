@@ -322,7 +322,6 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      * <p>Must be implemented iff {@link #enableActionPresentationUrl} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected String presentationUrl(int aVersion)
     {
@@ -338,7 +337,6 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      * <p>Must be implemented iff {@link #enableActionMetadata} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected String metadata(int aVersion)
     {
@@ -354,7 +352,6 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      * <p>Must be implemented iff {@link #enableActionAudio} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected boolean audio(int aVersion)
     {
@@ -370,7 +367,6 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      * <p>Must be implemented iff {@link #enableActionStatus} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected String status(int aVersion)
     {
@@ -386,7 +382,6 @@ public class DvProviderAvOpenhomeOrgSender1 extends DvProvider implements IDvPro
      * <p>Must be implemented iff {@link #enableActionAttributes} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected String attributes(int aVersion)
     {

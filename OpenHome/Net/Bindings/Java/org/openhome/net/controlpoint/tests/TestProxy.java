@@ -242,7 +242,7 @@ public class TestProxy implements ICpDeviceListListener, ICpProxyListener, IProp
 			if (!iListFrozen)
 			{
 				printDeviceInfo("Added", aDevice);
-                aDevice.addReference();
+                aDevice.addRef();
 				iDeviceList.add(aDevice);
 			}
 		}

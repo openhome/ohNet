@@ -25,7 +25,7 @@ public class ArgumentInt extends Argument
 	 * <p>Intended to be write only (its value is written on construction and not be later read).
 	 * 
 	 * @param aParameter 	defines the name plus any bounds to the value for the argument.
-	 * Must have been previously added to the action using {@link org.openhome.net.core.Action#addInputParameter}.
+	 * Must have been previously added to the action using {@code Action.addInputParameter()}.
 	 * @param aValue 		value for the argument.
 	 */
 	public ArgumentInt(ParameterInt aParameter, int aValue)
@@ -40,7 +40,7 @@ public class ArgumentInt extends Argument
 	 * {@link CpService#invokeAction} is called but before the invocation's callback is run)
 	 * 
 	 * @param aParameter 	defines the name plus any bounds to the value for the argument.
-	 * Must have been previously added to the action using {@link Action#addOutputParameter}.
+	 * Must have been previously added to the action using {@code Action.addOutputParameter()}.
 	 */
 	public ArgumentInt(ParameterInt aParameter)
 	{

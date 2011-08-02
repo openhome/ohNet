@@ -2578,8 +2578,8 @@ public class CpProxyUpnpOrgAVTransport2 extends CpProxy implements ICpProxyUpnpO
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@link
-     * #openhome.net.core.library.close}.
+     * Must be called for each class instance.  Must be called before {@code
+     * Library.close()}.
      */
     public void dispose()
     {

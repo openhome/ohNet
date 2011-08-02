@@ -367,8 +367,6 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      * <p>Must be implemented iff {@link #enableActionSender} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aUri
-     * @param aMetadata
      */
     protected Sender sender(int aVersion)
     {
@@ -384,7 +382,6 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      * <p>Must be implemented iff {@link #enableActionProtocolInfo} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected String protocolInfo(int aVersion)
     {
@@ -400,7 +397,6 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      * <p>Must be implemented iff {@link #enableActionTransportState} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected String transportState(int aVersion)
     {

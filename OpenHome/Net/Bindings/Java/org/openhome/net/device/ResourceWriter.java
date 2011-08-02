@@ -44,7 +44,7 @@ public class ResourceWriter implements IResourceWriter
 	 * 
 	 * @param aManager			resource manager to control writing of resource.
 	 * @param aUriTail			file being requested
-	 * @param aIpAddress		network interface the file request was made on.
+	 * @param aInterface		network interface the file request was made on.
 	 * @param aLanguageList		prioritised list of the languages accepted in
 	 * 							the resources to be written. 
 	 */
@@ -66,7 +66,7 @@ public class ResourceWriter implements IResourceWriter
 	/**
 	 * Called to write a block of file data.
 	 * Will be called 0..n times after {@link #writeResourceBegin} and before
-	 * {@link #writeResourceEnd}.
+	 * {@code writeResourceEnd()}.
 	 * @param aData		file data to write.
 	 * @param aBytes	size in bytes of aData.
 	 */

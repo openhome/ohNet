@@ -119,7 +119,7 @@ public class NetworkAdapter
 	/**
 	 * Get the full name for a given network interface.
 	 * 
-	 * @return	{@link #String} in the form {@code a.b.c.d (name)}.
+	 * @return	{@code String} in the form {@code a.b.c.d (name)}.
 	 */
 	public String getFullName()
 	{

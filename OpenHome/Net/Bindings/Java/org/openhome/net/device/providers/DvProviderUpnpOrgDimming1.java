@@ -600,7 +600,6 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      * <p>Must be implemented iff {@link #enableActionGetLoadLevelTarget} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aGetLoadlevelTarget
      */
     protected long getLoadLevelTarget(int aVersion)
     {
@@ -616,7 +615,6 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      * <p>Must be implemented iff {@link #enableActionGetLoadLevelStatus} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aretLoadlevelStatus
      */
     protected long getLoadLevelStatus(int aVersion)
     {
@@ -664,8 +662,6 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      * <p>Must be implemented iff {@link #enableActionGetOnEffectParameters} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aretOnEffect
-     * @param aretOnEffectLevel
      */
     protected GetOnEffectParameters getOnEffectParameters(int aVersion)
     {
@@ -789,7 +785,6 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      * <p>Must be implemented iff {@link #enableActionGetStepDelta} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aretStepDelta
      */
     protected long getStepDelta(int aVersion)
     {
@@ -821,7 +816,6 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      * <p>Must be implemented iff {@link #enableActionGetRampRate} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aretRampRate
      */
     protected long getRampRate(int aVersion)
     {
@@ -867,7 +861,6 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      * <p>Must be implemented iff {@link #enableActionGetIsRamping} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aretIsRamping
      */
     protected boolean getIsRamping(int aVersion)
     {
@@ -883,7 +876,6 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      * <p>Must be implemented iff {@link #enableActionGetRampPaused} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aretRampPaused
      */
     protected boolean getRampPaused(int aVersion)
     {
@@ -899,7 +891,6 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      * <p>Must be implemented iff {@link #enableActionGetRampTime} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aretRampTime
      */
     protected long getRampTime(int aVersion)
     {

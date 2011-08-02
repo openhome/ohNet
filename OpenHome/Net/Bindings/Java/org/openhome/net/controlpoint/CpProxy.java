@@ -122,7 +122,7 @@ public class CpProxy implements ICpProxy
 	 * Register a {@link IPropertyChangeListener} which will run after an
 	 * initial event for a state variable.
 	 * 
-	 * @param aPropertyChanged	the property change listener to be called.
+	 * @param aInitialEvent	the initial event listener to be called.
 	 */
     public void setPropertyInitialEvent(IPropertyChangeListener aInitialEvent)
     {

@@ -608,8 +608,6 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      * <p>Must be implemented iff {@link #enableActionGetSortCapabilities} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aSortCaps
-     * @param aSortLevelCap
      */
     protected GetSortCapabilities getSortCapabilities(int aVersion)
     {
@@ -626,7 +624,6 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aDataTypeID
-     * @param aPropertyList
      */
     protected String getPropertyList(int aVersion, String aDataTypeID)
     {
@@ -644,7 +641,6 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aDataTypeID
      * @param aFilter
-     * @param aPropertyInfo
      */
     protected String getAllowedValues(int aVersion, String aDataTypeID, String aFilter)
     {
@@ -660,7 +656,6 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      * <p>Must be implemented iff {@link #enableActionGetStateUpdateID} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aId
      */
     protected long getStateUpdateID(int aVersion)
     {
@@ -680,10 +675,6 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      * @param aStartingIndex
      * @param aRequestedCount
      * @param aSortCriteria
-     * @param aResult
-     * @param aNumberReturned
-     * @param aTotalMatches
-     * @param aUpdateID
      */
     protected BrowseRecordSchedules browseRecordSchedules(int aVersion, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
     {
@@ -704,10 +695,6 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      * @param aStartingIndex
      * @param aRequestedCount
      * @param aSortCriteria
-     * @param aResult
-     * @param aNumberReturned
-     * @param aTotalMatches
-     * @param aUpdateID
      */
     protected BrowseRecordTasks browseRecordTasks(int aVersion, String aRecordScheduleID, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
     {
@@ -724,9 +711,6 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aElements
-     * @param aRecordScheduleID
-     * @param aResult
-     * @param aUpdateID
      */
     protected CreateRecordSchedule createRecordSchedule(int aVersion, String aElements)
     {
@@ -760,8 +744,6 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aRecordScheduleID
      * @param aFilter
-     * @param aResult
-     * @param aUpdateID
      */
     protected GetRecordSchedule getRecordSchedule(int aVersion, String aRecordScheduleID, String aFilter)
     {
@@ -827,8 +809,6 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aRecordTaskID
      * @param aFilter
-     * @param aResult
-     * @param aUpdateID
      */
     protected GetRecordTask getRecordTask(int aVersion, String aRecordTaskID, String aFilter)
     {
@@ -893,8 +873,6 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aRecordScheduleID
-     * @param aRecordScheduleConflictIDList
-     * @param aUpdateID
      */
     protected GetRecordScheduleConflicts getRecordScheduleConflicts(int aVersion, String aRecordScheduleID)
     {
@@ -911,8 +889,6 @@ public class DvProviderUpnpOrgScheduledRecording2 extends DvProvider implements 
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aRecordTaskID
-     * @param aRecordTaskConflictIDList
-     * @param aUpdateID
      */
     protected GetRecordTaskConflicts getRecordTaskConflicts(int aVersion, String aRecordTaskID)
     {

@@ -373,8 +373,6 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      * <p>Must be implemented iff {@link #enableActionGetProtocolInfo} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aSource
-     * @param aSink
      */
     protected GetProtocolInfo getProtocolInfo(int aVersion)
     {
@@ -394,9 +392,6 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      * @param aPeerConnectionManager
      * @param aPeerConnectionID
      * @param aDirection
-     * @param aConnectionID
-     * @param aAVTransportID
-     * @param aRcsID
      */
     protected PrepareForConnection prepareForConnection(int aVersion, String aRemoteProtocolInfo, String aPeerConnectionManager, int aPeerConnectionID, String aDirection)
     {
@@ -428,7 +423,6 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      * <p>Must be implemented iff {@link #enableActionGetCurrentConnectionIDs} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aConnectionIDs
      */
     protected String getCurrentConnectionIDs(int aVersion)
     {
@@ -445,13 +439,6 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aConnectionID
-     * @param aRcsID
-     * @param aAVTransportID
-     * @param aProtocolInfo
-     * @param aPeerConnectionManager
-     * @param aPeerConnectionID
-     * @param aDirection
-     * @param aStatus
      */
     protected GetCurrentConnectionInfo getCurrentConnectionInfo(int aVersion, int aConnectionID)
     {

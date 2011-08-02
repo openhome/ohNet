@@ -6,7 +6,7 @@ package org.openhome.net.controlpoint;
  * <p>Instance of this class are reference counted and are automatically deleted
  * when the reference count falls to zero.
  * All references to class instances must have been removed before
- * {@link org.openhome.net.core.Library#close()} is called.
+ * {@code Library.close()} is called.
  */
 public class CpDevice
 {
@@ -28,7 +28,7 @@ public class CpDevice
      * Constructor. Not intended for external use.
      * 
      * <p>Devices should be constructed via {@link #CpDevice} or
-     * {@link #CpDeviceList} subclasses.
+     * {@code CpDeviceList} subclasses.
      * 
      * @param aHandle	handle to the underlying native device.
      */
@@ -63,7 +63,7 @@ public class CpDevice
      * already held. Each call to {@link #addRef()} must later have exactly one
      * matching call to {@link #removeRef()}.
      */
-    public void addReference()
+    public void addRef()
     {
     	CpDeviceCAddRef(iHandle);
     }

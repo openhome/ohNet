@@ -698,7 +698,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * <p>Must be implemented iff {@link #enableActionGetSearchCapabilities} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aSearchCaps
      */
     protected String getSearchCapabilities(int aVersion)
     {
@@ -714,7 +713,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * <p>Must be implemented iff {@link #enableActionGetSortCapabilities} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aSortCaps
      */
     protected String getSortCapabilities(int aVersion)
     {
@@ -730,7 +728,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * <p>Must be implemented iff {@link #enableActionGetSortExtensionCapabilities} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aSortExtensionCaps
      */
     protected String getSortExtensionCapabilities(int aVersion)
     {
@@ -746,7 +743,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * <p>Must be implemented iff {@link #enableActionGetFeatureList} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aFeatureList
      */
     protected String getFeatureList(int aVersion)
     {
@@ -762,7 +758,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * <p>Must be implemented iff {@link #enableActionGetSystemUpdateID} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aId
      */
     protected long getSystemUpdateID(int aVersion)
     {
@@ -778,7 +773,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * <p>Must be implemented iff {@link #enableActionGetServiceResetToken} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aResetToken
      */
     protected String getServiceResetToken(int aVersion)
     {
@@ -800,10 +794,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * @param aStartingIndex
      * @param aRequestedCount
      * @param aSortCriteria
-     * @param aResult
-     * @param aNumberReturned
-     * @param aTotalMatches
-     * @param aUpdateID
      */
     protected Browse browse(int aVersion, String aObjectID, String aBrowseFlag, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
     {
@@ -825,10 +815,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * @param aStartingIndex
      * @param aRequestedCount
      * @param aSortCriteria
-     * @param aResult
-     * @param aNumberReturned
-     * @param aTotalMatches
-     * @param aUpdateID
      */
     protected Search search(int aVersion, String aContainerID, String aSearchCriteria, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria)
     {
@@ -846,8 +832,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aContainerID
      * @param aElements
-     * @param aObjectID
-     * @param aResult
      */
     protected CreateObject createObject(int aVersion, String aContainerID, String aElements)
     {
@@ -899,7 +883,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aObjectID
      * @param aNewParentID
-     * @param aNewObjectID
      */
     protected String moveObject(int aVersion, String aObjectID, String aNewParentID)
     {
@@ -917,7 +900,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aSourceURI
      * @param aDestinationURI
-     * @param aTransferID
      */
     protected long importResource(int aVersion, String aSourceURI, String aDestinationURI)
     {
@@ -935,7 +917,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aSourceURI
      * @param aDestinationURI
-     * @param aTransferID
      */
     protected long exportResource(int aVersion, String aSourceURI, String aDestinationURI)
     {
@@ -984,9 +965,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aTransferID
-     * @param aTransferStatus
-     * @param aTransferLength
-     * @param aTransferTotal
      */
     protected GetTransferProgress getTransferProgress(int aVersion, long aTransferID)
     {
@@ -1004,7 +982,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aContainerID
      * @param aObjectID
-     * @param aNewID
      */
     protected String createReference(int aVersion, String aContainerID, String aObjectID)
     {
@@ -1023,8 +1000,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * @param aContainerID
      * @param aCDSView
      * @param aQueryRequest
-     * @param aQueryResult
-     * @param aUpdateID
      */
     protected FreeFormQuery freeFormQuery(int aVersion, String aContainerID, long aCDSView, String aQueryRequest)
     {
@@ -1040,7 +1015,6 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * <p>Must be implemented iff {@link #enableActionGetFreeFormQueryCapabilities} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aFFQCapabilities
      */
     protected String getFreeFormQueryCapabilities(int aVersion)
     {

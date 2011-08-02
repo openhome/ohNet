@@ -20,7 +20,6 @@ public class NetworkAdapterList
 	 * Create a vector of the available subnets
 	 * 
 	 * <p>Caller must later call {@link #destroy}.
-	 * @param aList	handle to a subnet adapter list.
 	 */
 	public NetworkAdapterList()
 	{

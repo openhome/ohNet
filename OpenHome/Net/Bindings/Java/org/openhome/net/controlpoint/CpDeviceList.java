@@ -13,7 +13,7 @@ package org.openhome.net.controlpoint;
  * <p>This class can't be directly instantiated.  Clients should instead use
  * subclasses which will define policy on how to detect devices etc.
  * 
- * <p>{@link destroy} must be called before {@link org.openhome.net.core.Library#close}.
+ * <p>{@link #destroy} must be called before {@code Library.close()}.
  */
 public class CpDeviceList implements ICpDeviceList
 {

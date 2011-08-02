@@ -6,24 +6,8 @@ import java.util.List;
 import org.openhome.net.core.*;
 import org.openhome.net.device.*;
 
-interface IDvProviderAvOpenhomeOrgRadio1
+interface IDvProviderAvOpenhomeOrgPlaylistManager1
 {
-
-    /**
-     * Set the value of the Uri property
-     *
-     * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
-     *
-     */
-    public boolean setPropertyUri(String aValue);
-
-    /**
-     * Get a copy of the value of the Uri property
-     *
-     * @return value of the Uri property.
-     */
-    public String getPropertyUri();
 
     /**
      * Set the value of the Metadata property
@@ -42,36 +26,20 @@ interface IDvProviderAvOpenhomeOrgRadio1
     public String getPropertyMetadata();
 
     /**
-     * Set the value of the TransportState property
+     * Set the value of the ImagesXml property
      *
      * @param aValue	new value for the property.
      * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
      *
      */
-    public boolean setPropertyTransportState(String aValue);
+    public boolean setPropertyImagesXml(String aValue);
 
     /**
-     * Get a copy of the value of the TransportState property
+     * Get a copy of the value of the ImagesXml property
      *
-     * @return value of the TransportState property.
+     * @return value of the ImagesXml property.
      */
-    public String getPropertyTransportState();
-
-    /**
-     * Set the value of the Id property
-     *
-     * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
-     *
-     */
-    public boolean setPropertyId(long aValue);
-
-    /**
-     * Get a copy of the value of the Id property
-     *
-     * @return value of the Id property.
-     */
-    public long getPropertyId();
+    public String getPropertyImagesXml();
 
     /**
      * Set the value of the IdArray property
@@ -90,165 +58,166 @@ interface IDvProviderAvOpenhomeOrgRadio1
     public byte[] getPropertyIdArray();
 
     /**
-     * Set the value of the ChannelsMax property
+     * Set the value of the TokenArray property
      *
      * @param aValue	new value for the property.
      * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
      *
      */
-    public boolean setPropertyChannelsMax(long aValue);
+    public boolean setPropertyTokenArray(byte[] aValue);
 
     /**
-     * Get a copy of the value of the ChannelsMax property
+     * Get a copy of the value of the TokenArray property
      *
-     * @return value of the ChannelsMax property.
+     * @return value of the TokenArray property.
      */
-    public long getPropertyChannelsMax();
+    public byte[] getPropertyTokenArray();
 
     /**
-     * Set the value of the ProtocolInfo property
+     * Set the value of the PlaylistsMax property
      *
      * @param aValue	new value for the property.
      * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
      *
      */
-    public boolean setPropertyProtocolInfo(String aValue);
+    public boolean setPropertyPlaylistsMax(long aValue);
 
     /**
-     * Get a copy of the value of the ProtocolInfo property
+     * Get a copy of the value of the PlaylistsMax property
      *
-     * @return value of the ProtocolInfo property.
+     * @return value of the PlaylistsMax property.
      */
-    public String getPropertyProtocolInfo();
+    public long getPropertyPlaylistsMax();
+
+    /**
+     * Set the value of the TracksMax property
+     *
+     * @param aValue	new value for the property.
+     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     *
+     */
+    public boolean setPropertyTracksMax(long aValue);
+
+    /**
+     * Get a copy of the value of the TracksMax property
+     *
+     * @return value of the TracksMax property.
+     */
+    public long getPropertyTracksMax();
         
 }
 
 /**
- * Provider for the av.openhome.org:Radio:1 UPnP service.
+ * Provider for the av.openhome.org:PlaylistManager:1 UPnP service.
  */
-public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProviderAvOpenhomeOrgRadio1
+public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implements IDvProviderAvOpenhomeOrgPlaylistManager1
 {
 
-    public class Channel
+    public class PlaylistRead
     {
-        private String iUri;
-        private String iMetadata;
+        private String iName;
+        private String iDescription;
+        private long iImageId;
 
-        public Channel(
-            String aUri,
-            String aMetadata
+        public PlaylistRead(
+            String aName,
+            String aDescription,
+            long aImageId
         )
         {
-            iUri = aUri;
-            iMetadata = aMetadata;
+            iName = aName;
+            iDescription = aDescription;
+            iImageId = aImageId;
         }
-        public String getUri()
+        public String getName()
         {
-            return iUri;
+            return iName;
         }
-        public String getMetadata()
+        public String getDescription()
         {
-            return iMetadata;
+            return iDescription;
+        }
+        public long getImageId()
+        {
+            return iImageId;
         }
     }
 
-    public class IdArray
+    public class PlaylistArrays
     {
         private long iToken;
-        private byte[] iArray;
+        private byte[] iIdArray;
+        private byte[] iTokenArray;
 
-        public IdArray(
+        public PlaylistArrays(
             long aToken,
-            byte[] aArray
+            byte[] aIdArray,
+            byte[] aTokenArray
         )
         {
             iToken = aToken;
-            iArray = aArray;
+            iIdArray = aIdArray;
+            iTokenArray = aTokenArray;
         }
         public long getToken()
         {
             return iToken;
         }
-        public byte[] getArray()
+        public byte[] getIdArray()
         {
-            return iArray;
+            return iIdArray;
+        }
+        public byte[] getTokenArray()
+        {
+            return iTokenArray;
         }
     }
 
-    private IDvInvocationListener iDelegatePlay;
-    private IDvInvocationListener iDelegatePause;
-    private IDvInvocationListener iDelegateStop;
-    private IDvInvocationListener iDelegateSeekSecondAbsolute;
-    private IDvInvocationListener iDelegateSeekSecondRelative;
-    private IDvInvocationListener iDelegateChannel;
-    private IDvInvocationListener iDelegateSetChannel;
-    private IDvInvocationListener iDelegateTransportState;
-    private IDvInvocationListener iDelegateId;
-    private IDvInvocationListener iDelegateSetId;
+    private IDvInvocationListener iDelegateMetadata;
+    private IDvInvocationListener iDelegateImagesXml;
+    private IDvInvocationListener iDelegatePlaylistReadArray;
+    private IDvInvocationListener iDelegatePlaylistReadMetadata;
+    private IDvInvocationListener iDelegatePlaylistRead;
+    private IDvInvocationListener iDelegatePlaylistUpdate;
+    private IDvInvocationListener iDelegatePlaylistInsert;
+    private IDvInvocationListener iDelegatePlaylistDeleteId;
+    private IDvInvocationListener iDelegatePlaylistsMax;
+    private IDvInvocationListener iDelegateTracksMax;
+    private IDvInvocationListener iDelegatePlaylistArrays;
+    private IDvInvocationListener iDelegatePlaylistArraysChanged;
     private IDvInvocationListener iDelegateRead;
     private IDvInvocationListener iDelegateReadList;
-    private IDvInvocationListener iDelegateIdArray;
-    private IDvInvocationListener iDelegateIdArrayChanged;
-    private IDvInvocationListener iDelegateChannelsMax;
-    private IDvInvocationListener iDelegateProtocolInfo;
-    private PropertyString iPropertyUri;
+    private IDvInvocationListener iDelegateInsert;
+    private IDvInvocationListener iDelegateDeleteId;
+    private IDvInvocationListener iDelegateDeleteAll;
     private PropertyString iPropertyMetadata;
-    private PropertyString iPropertyTransportState;
-    private PropertyUint iPropertyId;
+    private PropertyString iPropertyImagesXml;
     private PropertyBinary iPropertyIdArray;
-    private PropertyUint iPropertyChannelsMax;
-    private PropertyString iPropertyProtocolInfo;
+    private PropertyBinary iPropertyTokenArray;
+    private PropertyUint iPropertyPlaylistsMax;
+    private PropertyUint iPropertyTracksMax;
 
     /**
      * Constructor
      *
      * @param aDevice	device which owns this provider.
      */
-    protected DvProviderAvOpenhomeOrgRadio1(DvDevice aDevice)
+    protected DvProviderAvOpenhomeOrgPlaylistManager1(DvDevice aDevice)
     {
-	    super(aDevice, "av.openhome.org", "Radio", 1);
+	    super(aDevice, "av.openhome.org", "PlaylistManager", 1);
         List<String> allowedValues = new LinkedList<String>();
-        iPropertyUri = new PropertyString(new ParameterString("Uri", allowedValues));
-        addProperty(iPropertyUri);
         iPropertyMetadata = new PropertyString(new ParameterString("Metadata", allowedValues));
         addProperty(iPropertyMetadata);
-        allowedValues.add("Stopped");
-        allowedValues.add("Playing");
-        allowedValues.add("Paused");
-        allowedValues.add("Buffering");
-        iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues));
-        addProperty(iPropertyTransportState);
-            allowedValues.clear();
-        iPropertyId = new PropertyUint(new ParameterUint("Id"));
-        addProperty(iPropertyId);
+        iPropertyImagesXml = new PropertyString(new ParameterString("ImagesXml", allowedValues));
+        addProperty(iPropertyImagesXml);
         iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
         addProperty(iPropertyIdArray);
-        iPropertyChannelsMax = new PropertyUint(new ParameterUint("ChannelsMax"));
-        addProperty(iPropertyChannelsMax);
-        iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo", allowedValues));
-        addProperty(iPropertyProtocolInfo);
-    }
-
-    /**
-     * Set the value of the Uri property
-     *
-     * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
-     */
-    public boolean setPropertyUri(String aValue)
-    {
-        return setPropertyString(iPropertyUri, aValue);
-    }
-
-    /**
-     * Get a copy of the value of the Uri property
-     *
-     * @return	value of the Uri property.
-     */
-    public String getPropertyUri()
-    {
-        return iPropertyUri.getValue();
+        iPropertyTokenArray = new PropertyBinary(new ParameterBinary("TokenArray"));
+        addProperty(iPropertyTokenArray);
+        iPropertyPlaylistsMax = new PropertyUint(new ParameterUint("PlaylistsMax"));
+        addProperty(iPropertyPlaylistsMax);
+        iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"));
+        addProperty(iPropertyTracksMax);
     }
 
     /**
@@ -274,47 +243,25 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     }
 
     /**
-     * Set the value of the TransportState property
+     * Set the value of the ImagesXml property
      *
      * @param aValue	new value for the property.
      * @return {@code true} if the value has been updated; {@code false}
      * if {@code aValue} was the same as the previous value.
      */
-    public boolean setPropertyTransportState(String aValue)
+    public boolean setPropertyImagesXml(String aValue)
     {
-        return setPropertyString(iPropertyTransportState, aValue);
+        return setPropertyString(iPropertyImagesXml, aValue);
     }
 
     /**
-     * Get a copy of the value of the TransportState property
+     * Get a copy of the value of the ImagesXml property
      *
-     * @return	value of the TransportState property.
+     * @return	value of the ImagesXml property.
      */
-    public String getPropertyTransportState()
+    public String getPropertyImagesXml()
     {
-        return iPropertyTransportState.getValue();
-    }
-
-    /**
-     * Set the value of the Id property
-     *
-     * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
-     */
-    public boolean setPropertyId(long aValue)
-    {
-        return setPropertyUint(iPropertyId, aValue);
-    }
-
-    /**
-     * Get a copy of the value of the Id property
-     *
-     * @return	value of the Id property.
-     */
-    public long getPropertyId()
-    {
-        return iPropertyId.getValue();
+        return iPropertyImagesXml.getValue();
     }
 
     /**
@@ -340,187 +287,252 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     }
 
     /**
-     * Set the value of the ChannelsMax property
+     * Set the value of the TokenArray property
      *
      * @param aValue	new value for the property.
      * @return {@code true} if the value has been updated; {@code false}
      * if {@code aValue} was the same as the previous value.
      */
-    public boolean setPropertyChannelsMax(long aValue)
+    public boolean setPropertyTokenArray(byte[] aValue)
     {
-        return setPropertyUint(iPropertyChannelsMax, aValue);
+        return setPropertyBinary(iPropertyTokenArray, aValue);
     }
 
     /**
-     * Get a copy of the value of the ChannelsMax property
+     * Get a copy of the value of the TokenArray property
      *
-     * @return	value of the ChannelsMax property.
+     * @return	value of the TokenArray property.
      */
-    public long getPropertyChannelsMax()
+    public byte[] getPropertyTokenArray()
     {
-        return iPropertyChannelsMax.getValue();
+        return iPropertyTokenArray.getValue();
     }
 
     /**
-     * Set the value of the ProtocolInfo property
+     * Set the value of the PlaylistsMax property
      *
      * @param aValue	new value for the property.
      * @return {@code true} if the value has been updated; {@code false}
      * if {@code aValue} was the same as the previous value.
      */
-    public boolean setPropertyProtocolInfo(String aValue)
+    public boolean setPropertyPlaylistsMax(long aValue)
     {
-        return setPropertyString(iPropertyProtocolInfo, aValue);
+        return setPropertyUint(iPropertyPlaylistsMax, aValue);
     }
 
     /**
-     * Get a copy of the value of the ProtocolInfo property
+     * Get a copy of the value of the PlaylistsMax property
      *
-     * @return	value of the ProtocolInfo property.
+     * @return	value of the PlaylistsMax property.
      */
-    public String getPropertyProtocolInfo()
+    public long getPropertyPlaylistsMax()
     {
-        return iPropertyProtocolInfo.getValue();
+        return iPropertyPlaylistsMax.getValue();
     }
 
     /**
-     * Signal that the action Play is supported.
+     * Set the value of the TracksMax property
      *
-     * <p>The action's availability will be published in the device's service.xml.
-     * Play must be overridden if this is called.
-     */		 
-    protected void enableActionPlay()
+     * @param aValue	new value for the property.
+     * @return {@code true} if the value has been updated; {@code false}
+     * if {@code aValue} was the same as the previous value.
+     */
+    public boolean setPropertyTracksMax(long aValue)
     {
-        Action action = new Action("Play");
-        iDelegatePlay = new DoPlay();
-        enableAction(action, iDelegatePlay);
+        return setPropertyUint(iPropertyTracksMax, aValue);
     }
 
     /**
-     * Signal that the action Pause is supported.
+     * Get a copy of the value of the TracksMax property
      *
-     * <p>The action's availability will be published in the device's service.xml.
-     * Pause must be overridden if this is called.
-     */		 
-    protected void enableActionPause()
+     * @return	value of the TracksMax property.
+     */
+    public long getPropertyTracksMax()
     {
-        Action action = new Action("Pause");
-        iDelegatePause = new DoPause();
-        enableAction(action, iDelegatePause);
+        return iPropertyTracksMax.getValue();
     }
 
     /**
-     * Signal that the action Stop is supported.
+     * Signal that the action Metadata is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
-     * Stop must be overridden if this is called.
+     * Metadata must be overridden if this is called.
      */		 
-    protected void enableActionStop()
+    protected void enableActionMetadata()
     {
-        Action action = new Action("Stop");
-        iDelegateStop = new DoStop();
-        enableAction(action, iDelegateStop);
-    }
-
-    /**
-     * Signal that the action SeekSecondAbsolute is supported.
-     *
-     * <p>The action's availability will be published in the device's service.xml.
-     * SeekSecondAbsolute must be overridden if this is called.
-     */		 
-    protected void enableActionSeekSecondAbsolute()
-    {
-        Action action = new Action("SeekSecondAbsolute");
-        action.addInputParameter(new ParameterUint("Value"));
-        iDelegateSeekSecondAbsolute = new DoSeekSecondAbsolute();
-        enableAction(action, iDelegateSeekSecondAbsolute);
-    }
-
-    /**
-     * Signal that the action SeekSecondRelative is supported.
-     *
-     * <p>The action's availability will be published in the device's service.xml.
-     * SeekSecondRelative must be overridden if this is called.
-     */		 
-    protected void enableActionSeekSecondRelative()
-    {
-        Action action = new Action("SeekSecondRelative");
-        action.addInputParameter(new ParameterInt("Value"));
-        iDelegateSeekSecondRelative = new DoSeekSecondRelative();
-        enableAction(action, iDelegateSeekSecondRelative);
-    }
-
-    /**
-     * Signal that the action Channel is supported.
-     *
-     * <p>The action's availability will be published in the device's service.xml.
-     * Channel must be overridden if this is called.
-     */		 
-    protected void enableActionChannel()
-    {
-        Action action = new Action("Channel");
-        action.addOutputParameter(new ParameterRelated("Uri", iPropertyUri));
+        Action action = new Action("Metadata");
         action.addOutputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
-        iDelegateChannel = new DoChannel();
-        enableAction(action, iDelegateChannel);
+        iDelegateMetadata = new DoMetadata();
+        enableAction(action, iDelegateMetadata);
     }
 
     /**
-     * Signal that the action SetChannel is supported.
+     * Signal that the action ImagesXml is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
-     * SetChannel must be overridden if this is called.
+     * ImagesXml must be overridden if this is called.
      */		 
-    protected void enableActionSetChannel()
+    protected void enableActionImagesXml()
     {
-        Action action = new Action("SetChannel");
-        action.addInputParameter(new ParameterRelated("Uri", iPropertyUri));
-        action.addInputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
-        iDelegateSetChannel = new DoSetChannel();
-        enableAction(action, iDelegateSetChannel);
+        Action action = new Action("ImagesXml");
+        action.addOutputParameter(new ParameterRelated("ImagesXml", iPropertyImagesXml));
+        iDelegateImagesXml = new DoImagesXml();
+        enableAction(action, iDelegateImagesXml);
     }
 
     /**
-     * Signal that the action TransportState is supported.
+     * Signal that the action PlaylistReadArray is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
-     * TransportState must be overridden if this is called.
+     * PlaylistReadArray must be overridden if this is called.
      */		 
-    protected void enableActionTransportState()
+    protected void enableActionPlaylistReadArray()
     {
-        Action action = new Action("TransportState");
-        action.addOutputParameter(new ParameterRelated("Value", iPropertyTransportState));
-        iDelegateTransportState = new DoTransportState();
-        enableAction(action, iDelegateTransportState);
+        Action action = new Action("PlaylistReadArray");
+        action.addInputParameter(new ParameterUint("Id"));
+        action.addOutputParameter(new ParameterRelated("Array", iPropertyIdArray));
+        iDelegatePlaylistReadArray = new DoPlaylistReadArray();
+        enableAction(action, iDelegatePlaylistReadArray);
     }
 
     /**
-     * Signal that the action Id is supported.
+     * Signal that the action PlaylistReadMetadata is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
-     * Id must be overridden if this is called.
+     * PlaylistReadMetadata must be overridden if this is called.
      */		 
-    protected void enableActionId()
+    protected void enableActionPlaylistReadMetadata()
     {
-        Action action = new Action("Id");
-        action.addOutputParameter(new ParameterRelated("Value", iPropertyId));
-        iDelegateId = new DoId();
-        enableAction(action, iDelegateId);
+        Action action = new Action("PlaylistReadMetadata");        List<String> allowedValues = new LinkedList<String>();
+        action.addInputParameter(new ParameterString("IdList", allowedValues));
+        action.addOutputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
+        iDelegatePlaylistReadMetadata = new DoPlaylistReadMetadata();
+        enableAction(action, iDelegatePlaylistReadMetadata);
     }
 
     /**
-     * Signal that the action SetId is supported.
+     * Signal that the action PlaylistRead is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
-     * SetId must be overridden if this is called.
+     * PlaylistRead must be overridden if this is called.
      */		 
-    protected void enableActionSetId()
+    protected void enableActionPlaylistRead()
     {
-        Action action = new Action("SetId");
-        action.addInputParameter(new ParameterRelated("Value", iPropertyId));
-        action.addInputParameter(new ParameterRelated("Uri", iPropertyUri));
-        iDelegateSetId = new DoSetId();
-        enableAction(action, iDelegateSetId);
+        Action action = new Action("PlaylistRead");        List<String> allowedValues = new LinkedList<String>();
+        action.addInputParameter(new ParameterUint("Id"));
+        action.addOutputParameter(new ParameterString("Name", allowedValues));
+        action.addOutputParameter(new ParameterString("Description", allowedValues));
+        action.addOutputParameter(new ParameterUint("ImageId"));
+        iDelegatePlaylistRead = new DoPlaylistRead();
+        enableAction(action, iDelegatePlaylistRead);
+    }
+
+    /**
+     * Signal that the action PlaylistUpdate is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * PlaylistUpdate must be overridden if this is called.
+     */		 
+    protected void enableActionPlaylistUpdate()
+    {
+        Action action = new Action("PlaylistUpdate");        List<String> allowedValues = new LinkedList<String>();
+        action.addInputParameter(new ParameterUint("Id"));
+        action.addInputParameter(new ParameterString("Name", allowedValues));
+        action.addInputParameter(new ParameterString("Description", allowedValues));
+        action.addInputParameter(new ParameterUint("ImageId"));
+        iDelegatePlaylistUpdate = new DoPlaylistUpdate();
+        enableAction(action, iDelegatePlaylistUpdate);
+    }
+
+    /**
+     * Signal that the action PlaylistInsert is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * PlaylistInsert must be overridden if this is called.
+     */		 
+    protected void enableActionPlaylistInsert()
+    {
+        Action action = new Action("PlaylistInsert");        List<String> allowedValues = new LinkedList<String>();
+        action.addInputParameter(new ParameterUint("AfterId"));
+        action.addInputParameter(new ParameterString("Name", allowedValues));
+        action.addInputParameter(new ParameterString("Description", allowedValues));
+        action.addInputParameter(new ParameterUint("ImageId"));
+        action.addOutputParameter(new ParameterUint("NewId"));
+        iDelegatePlaylistInsert = new DoPlaylistInsert();
+        enableAction(action, iDelegatePlaylistInsert);
+    }
+
+    /**
+     * Signal that the action PlaylistDeleteId is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * PlaylistDeleteId must be overridden if this is called.
+     */		 
+    protected void enableActionPlaylistDeleteId()
+    {
+        Action action = new Action("PlaylistDeleteId");
+        action.addInputParameter(new ParameterUint("Value"));
+        iDelegatePlaylistDeleteId = new DoPlaylistDeleteId();
+        enableAction(action, iDelegatePlaylistDeleteId);
+    }
+
+    /**
+     * Signal that the action PlaylistsMax is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * PlaylistsMax must be overridden if this is called.
+     */		 
+    protected void enableActionPlaylistsMax()
+    {
+        Action action = new Action("PlaylistsMax");
+        action.addOutputParameter(new ParameterRelated("Value", iPropertyPlaylistsMax));
+        iDelegatePlaylistsMax = new DoPlaylistsMax();
+        enableAction(action, iDelegatePlaylistsMax);
+    }
+
+    /**
+     * Signal that the action TracksMax is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * TracksMax must be overridden if this is called.
+     */		 
+    protected void enableActionTracksMax()
+    {
+        Action action = new Action("TracksMax");
+        action.addOutputParameter(new ParameterRelated("Value", iPropertyTracksMax));
+        iDelegateTracksMax = new DoTracksMax();
+        enableAction(action, iDelegateTracksMax);
+    }
+
+    /**
+     * Signal that the action PlaylistArrays is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * PlaylistArrays must be overridden if this is called.
+     */		 
+    protected void enableActionPlaylistArrays()
+    {
+        Action action = new Action("PlaylistArrays");
+        action.addOutputParameter(new ParameterUint("Token"));
+        action.addOutputParameter(new ParameterRelated("IdArray", iPropertyIdArray));
+        action.addOutputParameter(new ParameterRelated("TokenArray", iPropertyTokenArray));
+        iDelegatePlaylistArrays = new DoPlaylistArrays();
+        enableAction(action, iDelegatePlaylistArrays);
+    }
+
+    /**
+     * Signal that the action PlaylistArraysChanged is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * PlaylistArraysChanged must be overridden if this is called.
+     */		 
+    protected void enableActionPlaylistArraysChanged()
+    {
+        Action action = new Action("PlaylistArraysChanged");
+        action.addInputParameter(new ParameterUint("Token"));
+        action.addOutputParameter(new ParameterBool("Value"));
+        iDelegatePlaylistArraysChanged = new DoPlaylistArraysChanged();
+        enableAction(action, iDelegatePlaylistArraysChanged);
     }
 
     /**
@@ -532,7 +544,8 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     protected void enableActionRead()
     {
         Action action = new Action("Read");
-        action.addInputParameter(new ParameterRelated("Id", iPropertyId));
+        action.addInputParameter(new ParameterUint("Id"));
+        action.addInputParameter(new ParameterUint("TrackId"));
         action.addOutputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
         iDelegateRead = new DoRead();
         enableAction(action, iDelegateRead);
@@ -547,222 +560,249 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     protected void enableActionReadList()
     {
         Action action = new Action("ReadList");        List<String> allowedValues = new LinkedList<String>();
-        action.addInputParameter(new ParameterString("IdList", allowedValues));
-        action.addOutputParameter(new ParameterString("ChannelList", allowedValues));
+        action.addInputParameter(new ParameterUint("Id"));
+        action.addInputParameter(new ParameterString("TrackIdList", allowedValues));
+        action.addOutputParameter(new ParameterString("TrackList", allowedValues));
         iDelegateReadList = new DoReadList();
         enableAction(action, iDelegateReadList);
     }
 
     /**
-     * Signal that the action IdArray is supported.
+     * Signal that the action Insert is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
-     * IdArray must be overridden if this is called.
+     * Insert must be overridden if this is called.
      */		 
-    protected void enableActionIdArray()
+    protected void enableActionInsert()
     {
-        Action action = new Action("IdArray");
-        action.addOutputParameter(new ParameterUint("Token"));
-        action.addOutputParameter(new ParameterRelated("Array", iPropertyIdArray));
-        iDelegateIdArray = new DoIdArray();
-        enableAction(action, iDelegateIdArray);
+        Action action = new Action("Insert");        List<String> allowedValues = new LinkedList<String>();
+        action.addInputParameter(new ParameterUint("Id"));
+        action.addInputParameter(new ParameterUint("AfterTrackId"));
+        action.addInputParameter(new ParameterString("Udn", allowedValues));
+        action.addInputParameter(new ParameterString("MetadataId", allowedValues));
+        action.addOutputParameter(new ParameterUint("NewTrackId"));
+        iDelegateInsert = new DoInsert();
+        enableAction(action, iDelegateInsert);
     }
 
     /**
-     * Signal that the action IdArrayChanged is supported.
+     * Signal that the action DeleteId is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
-     * IdArrayChanged must be overridden if this is called.
+     * DeleteId must be overridden if this is called.
      */		 
-    protected void enableActionIdArrayChanged()
+    protected void enableActionDeleteId()
     {
-        Action action = new Action("IdArrayChanged");
-        action.addInputParameter(new ParameterUint("Token"));
-        action.addOutputParameter(new ParameterBool("Value"));
-        iDelegateIdArrayChanged = new DoIdArrayChanged();
-        enableAction(action, iDelegateIdArrayChanged);
+        Action action = new Action("DeleteId");
+        action.addInputParameter(new ParameterUint("TrackId"));
+        action.addInputParameter(new ParameterUint("Value"));
+        iDelegateDeleteId = new DoDeleteId();
+        enableAction(action, iDelegateDeleteId);
     }
 
     /**
-     * Signal that the action ChannelsMax is supported.
+     * Signal that the action DeleteAll is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
-     * ChannelsMax must be overridden if this is called.
+     * DeleteAll must be overridden if this is called.
      */		 
-    protected void enableActionChannelsMax()
+    protected void enableActionDeleteAll()
     {
-        Action action = new Action("ChannelsMax");
-        action.addOutputParameter(new ParameterRelated("Value", iPropertyChannelsMax));
-        iDelegateChannelsMax = new DoChannelsMax();
-        enableAction(action, iDelegateChannelsMax);
+        Action action = new Action("DeleteAll");
+        action.addInputParameter(new ParameterUint("TrackId"));
+        iDelegateDeleteAll = new DoDeleteAll();
+        enableAction(action, iDelegateDeleteAll);
     }
 
     /**
-     * Signal that the action ProtocolInfo is supported.
-     *
-     * <p>The action's availability will be published in the device's service.xml.
-     * ProtocolInfo must be overridden if this is called.
-     */		 
-    protected void enableActionProtocolInfo()
-    {
-        Action action = new Action("ProtocolInfo");
-        action.addOutputParameter(new ParameterRelated("Value", iPropertyProtocolInfo));
-        iDelegateProtocolInfo = new DoProtocolInfo();
-        enableAction(action, iDelegateProtocolInfo);
-    }
-
-    /**
-     * Play action.
+     * Metadata action.
      *
      * <p>Will be called when the device stack receives an invocation of the
-     * Play action for the owning device.
+     * Metadata action for the owning device.
      *
-     * <p>Must be implemented iff {@link #enableActionPlay} was called.</remarks>
+     * <p>Must be implemented iff {@link #enableActionMetadata} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      */
-    protected void play(int aVersion)
+    protected String metadata(int aVersion)
     {
         throw (new ActionDisabledError());
     }
 
     /**
-     * Pause action.
+     * ImagesXml action.
      *
      * <p>Will be called when the device stack receives an invocation of the
-     * Pause action for the owning device.
+     * ImagesXml action for the owning device.
      *
-     * <p>Must be implemented iff {@link #enableActionPause} was called.</remarks>
+     * <p>Must be implemented iff {@link #enableActionImagesXml} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      */
-    protected void pause(int aVersion)
+    protected String imagesXml(int aVersion)
     {
         throw (new ActionDisabledError());
     }
 
     /**
-     * Stop action.
+     * PlaylistReadArray action.
      *
      * <p>Will be called when the device stack receives an invocation of the
-     * Stop action for the owning device.
+     * PlaylistReadArray action for the owning device.
      *
-     * <p>Must be implemented iff {@link #enableActionStop} was called.</remarks>
+     * <p>Must be implemented iff {@link #enableActionPlaylistReadArray} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aId
      */
-    protected void stop(int aVersion)
+    protected byte[] playlistReadArray(int aVersion, long aId)
     {
         throw (new ActionDisabledError());
     }
 
     /**
-     * SeekSecondAbsolute action.
+     * PlaylistReadMetadata action.
      *
      * <p>Will be called when the device stack receives an invocation of the
-     * SeekSecondAbsolute action for the owning device.
+     * PlaylistReadMetadata action for the owning device.
      *
-     * <p>Must be implemented iff {@link #enableActionSeekSecondAbsolute} was called.</remarks>
+     * <p>Must be implemented iff {@link #enableActionPlaylistReadMetadata} was called.</remarks>
+     *
+     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aIdList
+     */
+    protected String playlistReadMetadata(int aVersion, String aIdList)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
+     * PlaylistRead action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * PlaylistRead action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionPlaylistRead} was called.</remarks>
+     *
+     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aId
+     */
+    protected PlaylistRead playlistRead(int aVersion, long aId)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
+     * PlaylistUpdate action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * PlaylistUpdate action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionPlaylistUpdate} was called.</remarks>
+     *
+     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aId
+     * @param aName
+     * @param aDescription
+     * @param aImageId
+     */
+    protected void playlistUpdate(int aVersion, long aId, String aName, String aDescription, long aImageId)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
+     * PlaylistInsert action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * PlaylistInsert action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionPlaylistInsert} was called.</remarks>
+     *
+     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aAfterId
+     * @param aName
+     * @param aDescription
+     * @param aImageId
+     */
+    protected long playlistInsert(int aVersion, long aAfterId, String aName, String aDescription, long aImageId)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
+     * PlaylistDeleteId action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * PlaylistDeleteId action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionPlaylistDeleteId} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aValue
      */
-    protected void seekSecondAbsolute(int aVersion, long aValue)
+    protected void playlistDeleteId(int aVersion, long aValue)
     {
         throw (new ActionDisabledError());
     }
 
     /**
-     * SeekSecondRelative action.
+     * PlaylistsMax action.
      *
      * <p>Will be called when the device stack receives an invocation of the
-     * SeekSecondRelative action for the owning device.
+     * PlaylistsMax action for the owning device.
      *
-     * <p>Must be implemented iff {@link #enableActionSeekSecondRelative} was called.</remarks>
+     * <p>Must be implemented iff {@link #enableActionPlaylistsMax} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
-    protected void seekSecondRelative(int aVersion, int aValue)
+    protected long playlistsMax(int aVersion)
     {
         throw (new ActionDisabledError());
     }
 
     /**
-     * Channel action.
+     * TracksMax action.
      *
      * <p>Will be called when the device stack receives an invocation of the
-     * Channel action for the owning device.
+     * TracksMax action for the owning device.
      *
-     * <p>Must be implemented iff {@link #enableActionChannel} was called.</remarks>
+     * <p>Must be implemented iff {@link #enableActionTracksMax} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      */
-    protected Channel channel(int aVersion)
+    protected long tracksMax(int aVersion)
     {
         throw (new ActionDisabledError());
     }
 
     /**
-     * SetChannel action.
+     * PlaylistArrays action.
      *
      * <p>Will be called when the device stack receives an invocation of the
-     * SetChannel action for the owning device.
+     * PlaylistArrays action for the owning device.
      *
-     * <p>Must be implemented iff {@link #enableActionSetChannel} was called.</remarks>
+     * <p>Must be implemented iff {@link #enableActionPlaylistArrays} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aUri
-     * @param aMetadata
      */
-    protected void setChannel(int aVersion, String aUri, String aMetadata)
+    protected PlaylistArrays playlistArrays(int aVersion)
     {
         throw (new ActionDisabledError());
     }
 
     /**
-     * TransportState action.
+     * PlaylistArraysChanged action.
      *
      * <p>Will be called when the device stack receives an invocation of the
-     * TransportState action for the owning device.
+     * PlaylistArraysChanged action for the owning device.
      *
-     * <p>Must be implemented iff {@link #enableActionTransportState} was called.</remarks>
-     *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     */
-    protected String transportState(int aVersion)
-    {
-        throw (new ActionDisabledError());
-    }
-
-    /**
-     * Id action.
-     *
-     * <p>Will be called when the device stack receives an invocation of the
-     * Id action for the owning device.
-     *
-     * <p>Must be implemented iff {@link #enableActionId} was called.</remarks>
+     * <p>Must be implemented iff {@link #enableActionPlaylistArraysChanged} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aToken
      */
-    protected long id(int aVersion)
-    {
-        throw (new ActionDisabledError());
-    }
-
-    /**
-     * SetId action.
-     *
-     * <p>Will be called when the device stack receives an invocation of the
-     * SetId action for the owning device.
-     *
-     * <p>Must be implemented iff {@link #enableActionSetId} was called.</remarks>
-     *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
-     * @param aUri
-     */
-    protected void setId(int aVersion, long aValue, String aUri)
+    protected boolean playlistArraysChanged(int aVersion, long aToken)
     {
         throw (new ActionDisabledError());
     }
@@ -777,8 +817,9 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aId
+     * @param aTrackId
      */
-    protected String read(int aVersion, long aId)
+    protected String read(int aVersion, long aId, long aTrackId)
     {
         throw (new ActionDisabledError());
     }
@@ -792,70 +833,62 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
      * <p>Must be implemented iff {@link #enableActionReadList} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aIdList
+     * @param aId
+     * @param aTrackIdList
      */
-    protected String readList(int aVersion, String aIdList)
+    protected String readList(int aVersion, long aId, String aTrackIdList)
     {
         throw (new ActionDisabledError());
     }
 
     /**
-     * IdArray action.
+     * Insert action.
      *
      * <p>Will be called when the device stack receives an invocation of the
-     * IdArray action for the owning device.
+     * Insert action for the owning device.
      *
-     * <p>Must be implemented iff {@link #enableActionIdArray} was called.</remarks>
+     * <p>Must be implemented iff {@link #enableActionInsert} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aId
+     * @param aAfterTrackId
+     * @param aUdn
+     * @param aMetadataId
      */
-    protected IdArray idArray(int aVersion)
+    protected long insert(int aVersion, long aId, long aAfterTrackId, String aUdn, String aMetadataId)
     {
         throw (new ActionDisabledError());
     }
 
     /**
-     * IdArrayChanged action.
+     * DeleteId action.
      *
      * <p>Will be called when the device stack receives an invocation of the
-     * IdArrayChanged action for the owning device.
+     * DeleteId action for the owning device.
      *
-     * <p>Must be implemented iff {@link #enableActionIdArrayChanged} was called.</remarks>
+     * <p>Must be implemented iff {@link #enableActionDeleteId} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aToken
+     * @param aTrackId
+     * @param aValue
      */
-    protected boolean idArrayChanged(int aVersion, long aToken)
+    protected void deleteId(int aVersion, long aTrackId, long aValue)
     {
         throw (new ActionDisabledError());
     }
 
     /**
-     * ChannelsMax action.
+     * DeleteAll action.
      *
      * <p>Will be called when the device stack receives an invocation of the
-     * ChannelsMax action for the owning device.
+     * DeleteAll action for the owning device.
      *
-     * <p>Must be implemented iff {@link #enableActionChannelsMax} was called.</remarks>
-     *
-     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     */
-    protected long channelsMax(int aVersion)
-    {
-        throw (new ActionDisabledError());
-    }
-
-    /**
-     * ProtocolInfo action.
-     *
-     * <p>Will be called when the device stack receives an invocation of the
-     * ProtocolInfo action for the owning device.
-     *
-     * <p>Must be implemented iff {@link #enableActionProtocolInfo} was called.</remarks>
+     * <p>Must be implemented iff {@link #enableActionDeleteAll} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aTrackId
      */
-    protected String protocolInfo(int aVersion)
+    protected void deleteAll(int aVersion, long aTrackId)
     {
         throw (new ActionDisabledError());
     }
@@ -877,255 +910,17 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
     }
 
 
-    private class DoPlay implements IDvInvocationListener
+    private class DoMetadata implements IDvInvocationListener
     {
         public void actionInvoked(long aInvocation, int aVersion)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try
-            {
-                invocation.readStart();
-                invocation.readEnd();
-                play(aVersion);
-            }
-            catch (ActionError ae)
-            {
-                invocation.reportError(501, "Invalid XML");
-                return;
-            }
-            catch (PropertyUpdateError pue)
-            {
-                invocation.reportError(501, "Invalid XML");
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("WARNING: unexpected exception: " + e.getMessage());
-                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
-                e.printStackTrace();
-                return;
-            }
-            try
-            {
-                invocation.writeStart();
-                invocation.writeEnd();
-            }
-            catch (ActionError ae)
-            {
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("ERROR: unexpected exception: " + e.getMessage());
-                System.out.println("       Only ActionError can be thrown by action response writer");
-                e.printStackTrace();
-            }
-        }
-	}
-
-    private class DoPause implements IDvInvocationListener
-    {
-        public void actionInvoked(long aInvocation, int aVersion)
-        {
-            DvInvocation invocation = new DvInvocation(aInvocation);
-            try
-            {
-                invocation.readStart();
-                invocation.readEnd();
-                pause(aVersion);
-            }
-            catch (ActionError ae)
-            {
-                invocation.reportError(501, "Invalid XML");
-                return;
-            }
-            catch (PropertyUpdateError pue)
-            {
-                invocation.reportError(501, "Invalid XML");
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("WARNING: unexpected exception: " + e.getMessage());
-                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
-                e.printStackTrace();
-                return;
-            }
-            try
-            {
-                invocation.writeStart();
-                invocation.writeEnd();
-            }
-            catch (ActionError ae)
-            {
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("ERROR: unexpected exception: " + e.getMessage());
-                System.out.println("       Only ActionError can be thrown by action response writer");
-                e.printStackTrace();
-            }
-        }
-	}
-
-    private class DoStop implements IDvInvocationListener
-    {
-        public void actionInvoked(long aInvocation, int aVersion)
-        {
-            DvInvocation invocation = new DvInvocation(aInvocation);
-            try
-            {
-                invocation.readStart();
-                invocation.readEnd();
-                stop(aVersion);
-            }
-            catch (ActionError ae)
-            {
-                invocation.reportError(501, "Invalid XML");
-                return;
-            }
-            catch (PropertyUpdateError pue)
-            {
-                invocation.reportError(501, "Invalid XML");
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("WARNING: unexpected exception: " + e.getMessage());
-                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
-                e.printStackTrace();
-                return;
-            }
-            try
-            {
-                invocation.writeStart();
-                invocation.writeEnd();
-            }
-            catch (ActionError ae)
-            {
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("ERROR: unexpected exception: " + e.getMessage());
-                System.out.println("       Only ActionError can be thrown by action response writer");
-                e.printStackTrace();
-            }
-        }
-	}
-
-    private class DoSeekSecondAbsolute implements IDvInvocationListener
-    {
-        public void actionInvoked(long aInvocation, int aVersion)
-        {
-            DvInvocation invocation = new DvInvocation(aInvocation);
-            long value;
-            try
-            {
-                invocation.readStart();
-                value = invocation.readUint("Value");
-                invocation.readEnd();
-                seekSecondAbsolute(aVersion, value);
-            }
-            catch (ActionError ae)
-            {
-                invocation.reportError(501, "Invalid XML");
-                return;
-            }
-            catch (PropertyUpdateError pue)
-            {
-                invocation.reportError(501, "Invalid XML");
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("WARNING: unexpected exception: " + e.getMessage());
-                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
-                e.printStackTrace();
-                return;
-            }
-            try
-            {
-                invocation.writeStart();
-                invocation.writeEnd();
-            }
-            catch (ActionError ae)
-            {
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("ERROR: unexpected exception: " + e.getMessage());
-                System.out.println("       Only ActionError can be thrown by action response writer");
-                e.printStackTrace();
-            }
-        }
-	}
-
-    private class DoSeekSecondRelative implements IDvInvocationListener
-    {
-        public void actionInvoked(long aInvocation, int aVersion)
-        {
-            DvInvocation invocation = new DvInvocation(aInvocation);
-            int value;
-            try
-            {
-                invocation.readStart();
-                value = invocation.readInt("Value");
-                invocation.readEnd();
-                seekSecondRelative(aVersion, value);
-            }
-            catch (ActionError ae)
-            {
-                invocation.reportError(501, "Invalid XML");
-                return;
-            }
-            catch (PropertyUpdateError pue)
-            {
-                invocation.reportError(501, "Invalid XML");
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("WARNING: unexpected exception: " + e.getMessage());
-                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
-                e.printStackTrace();
-                return;
-            }
-            try
-            {
-                invocation.writeStart();
-                invocation.writeEnd();
-            }
-            catch (ActionError ae)
-            {
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("ERROR: unexpected exception: " + e.getMessage());
-                System.out.println("       Only ActionError can be thrown by action response writer");
-                e.printStackTrace();
-            }
-        }
-	}
-
-    private class DoChannel implements IDvInvocationListener
-    {
-        public void actionInvoked(long aInvocation, int aVersion)
-        {
-            DvInvocation invocation = new DvInvocation(aInvocation);
-            String uri;
             String metadata;
             try
             {
                 invocation.readStart();
                 invocation.readEnd();
-
-            Channel outArgs = channel(aVersion);
-            uri = outArgs.getUri();
-            metadata = outArgs.getMetadata();
+                 metadata = metadata(aVersion);
             }
             catch (ActionError ae)
             {
@@ -1147,7 +942,6 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             try
             {
                 invocation.writeStart();
-                invocation.writeString("Uri", uri);
                 invocation.writeString("Metadata", metadata);
                 invocation.writeEnd();
             }
@@ -1164,20 +958,117 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
         }
 	}
 
-    private class DoSetChannel implements IDvInvocationListener
+    private class DoImagesXml implements IDvInvocationListener
     {
         public void actionInvoked(long aInvocation, int aVersion)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
-            String uri;
+            String imagesXml;
+            try
+            {
+                invocation.readStart();
+                invocation.readEnd();
+                 imagesXml = imagesXml(aVersion);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeString("ImagesXml", imagesXml);
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+	}
+
+    private class DoPlaylistReadArray implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation, int aVersion)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long id;
+            byte[] array;
+            try
+            {
+                invocation.readStart();
+                id = invocation.readUint("Id");
+                invocation.readEnd();
+                 array = playlistReadArray(aVersion, id);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeBinary("Array", array);
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+	}
+
+    private class DoPlaylistReadMetadata implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation, int aVersion)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            String idList;
             String metadata;
             try
             {
                 invocation.readStart();
-                uri = invocation.readString("Uri");
-                metadata = invocation.readString("Metadata");
+                idList = invocation.readString("IdList");
                 invocation.readEnd();
-                setChannel(aVersion, uri, metadata);
+                 metadata = playlistReadMetadata(aVersion, idList);
             }
             catch (ActionError ae)
             {
@@ -1199,6 +1090,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             try
             {
                 invocation.writeStart();
+                invocation.writeString("Metadata", metadata);
                 invocation.writeEnd();
             }
             catch (ActionError ae)
@@ -1214,17 +1106,25 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
         }
 	}
 
-    private class DoTransportState implements IDvInvocationListener
+    private class DoPlaylistRead implements IDvInvocationListener
     {
         public void actionInvoked(long aInvocation, int aVersion)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
-            String value;
+            long id;
+            String name;
+            String description;
+            long imageId;
             try
             {
                 invocation.readStart();
+                id = invocation.readUint("Id");
                 invocation.readEnd();
-                 value = transportState(aVersion);
+
+            PlaylistRead outArgs = playlistRead(aVersion, id);
+            name = outArgs.getName();
+            description = outArgs.getDescription();
+            imageId = outArgs.getImageId();
             }
             catch (ActionError ae)
             {
@@ -1246,7 +1146,9 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             try
             {
                 invocation.writeStart();
-                invocation.writeString("Value", value);
+                invocation.writeString("Name", name);
+                invocation.writeString("Description", description);
+                invocation.writeUint("ImageId", imageId);
                 invocation.writeEnd();
             }
             catch (ActionError ae)
@@ -1262,7 +1164,165 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
         }
 	}
 
-    private class DoId implements IDvInvocationListener
+    private class DoPlaylistUpdate implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation, int aVersion)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long id;
+            String name;
+            String description;
+            long imageId;
+            try
+            {
+                invocation.readStart();
+                id = invocation.readUint("Id");
+                name = invocation.readString("Name");
+                description = invocation.readString("Description");
+                imageId = invocation.readUint("ImageId");
+                invocation.readEnd();
+                playlistUpdate(aVersion, id, name, description, imageId);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+	}
+
+    private class DoPlaylistInsert implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation, int aVersion)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long afterId;
+            String name;
+            String description;
+            long imageId;
+            long newId;
+            try
+            {
+                invocation.readStart();
+                afterId = invocation.readUint("AfterId");
+                name = invocation.readString("Name");
+                description = invocation.readString("Description");
+                imageId = invocation.readUint("ImageId");
+                invocation.readEnd();
+                 newId = playlistInsert(aVersion, afterId, name, description, imageId);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeUint("NewId", newId);
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+	}
+
+    private class DoPlaylistDeleteId implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation, int aVersion)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long value;
+            try
+            {
+                invocation.readStart();
+                value = invocation.readUint("Value");
+                invocation.readEnd();
+                playlistDeleteId(aVersion, value);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+	}
+
+    private class DoPlaylistsMax implements IDvInvocationListener
     {
         public void actionInvoked(long aInvocation, int aVersion)
         {
@@ -1272,7 +1332,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             {
                 invocation.readStart();
                 invocation.readEnd();
-                 value = id(aVersion);
+                 value = playlistsMax(aVersion);
             }
             catch (ActionError ae)
             {
@@ -1310,20 +1370,17 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
         }
 	}
 
-    private class DoSetId implements IDvInvocationListener
+    private class DoTracksMax implements IDvInvocationListener
     {
         public void actionInvoked(long aInvocation, int aVersion)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long value;
-            String uri;
             try
             {
                 invocation.readStart();
-                value = invocation.readUint("Value");
-                uri = invocation.readString("Uri");
                 invocation.readEnd();
-                setId(aVersion, value, uri);
+                 value = tracksMax(aVersion);
             }
             catch (ActionError ae)
             {
@@ -1345,6 +1402,113 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             try
             {
                 invocation.writeStart();
+                invocation.writeUint("Value", value);
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+	}
+
+    private class DoPlaylistArrays implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation, int aVersion)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long token;
+            byte[] idArray;
+            byte[] tokenArray;
+            try
+            {
+                invocation.readStart();
+                invocation.readEnd();
+
+            PlaylistArrays outArgs = playlistArrays(aVersion);
+            token = outArgs.getToken();
+            idArray = outArgs.getIdArray();
+            tokenArray = outArgs.getTokenArray();
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeUint("Token", token);
+                invocation.writeBinary("IdArray", idArray);
+                invocation.writeBinary("TokenArray", tokenArray);
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+	}
+
+    private class DoPlaylistArraysChanged implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation, int aVersion)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long token;
+            boolean value;
+            try
+            {
+                invocation.readStart();
+                token = invocation.readUint("Token");
+                invocation.readEnd();
+                 value = playlistArraysChanged(aVersion, token);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeBool("Value", value);
                 invocation.writeEnd();
             }
             catch (ActionError ae)
@@ -1366,13 +1530,15 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
+            long trackId;
             String metadata;
             try
             {
                 invocation.readStart();
                 id = invocation.readUint("Id");
+                trackId = invocation.readUint("TrackId");
                 invocation.readEnd();
-                 metadata = read(aVersion, id);
+                 metadata = read(aVersion, id, trackId);
             }
             catch (ActionError ae)
             {
@@ -1415,14 +1581,16 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
         public void actionInvoked(long aInvocation, int aVersion)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
-            String idList;
-            String channelList;
+            long id;
+            String trackIdList;
+            String trackList;
             try
             {
                 invocation.readStart();
-                idList = invocation.readString("IdList");
+                id = invocation.readUint("Id");
+                trackIdList = invocation.readString("TrackIdList");
                 invocation.readEnd();
-                 channelList = readList(aVersion, idList);
+                 trackList = readList(aVersion, id, trackIdList);
             }
             catch (ActionError ae)
             {
@@ -1444,7 +1612,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             try
             {
                 invocation.writeStart();
-                invocation.writeString("ChannelList", channelList);
+                invocation.writeString("TrackList", trackList);
                 invocation.writeEnd();
             }
             catch (ActionError ae)
@@ -1460,21 +1628,25 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
         }
 	}
 
-    private class DoIdArray implements IDvInvocationListener
+    private class DoInsert implements IDvInvocationListener
     {
         public void actionInvoked(long aInvocation, int aVersion)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
-            long token;
-            byte[] array;
+            long id;
+            long afterTrackId;
+            String udn;
+            String metadataId;
+            long newTrackId;
             try
             {
                 invocation.readStart();
+                id = invocation.readUint("Id");
+                afterTrackId = invocation.readUint("AfterTrackId");
+                udn = invocation.readString("Udn");
+                metadataId = invocation.readString("MetadataId");
                 invocation.readEnd();
-
-            IdArray outArgs = idArray(aVersion);
-            token = outArgs.getToken();
-            array = outArgs.getArray();
+                 newTrackId = insert(aVersion, id, afterTrackId, udn, metadataId);
             }
             catch (ActionError ae)
             {
@@ -1496,8 +1668,7 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             try
             {
                 invocation.writeStart();
-                invocation.writeUint("Token", token);
-                invocation.writeBinary("Array", array);
+                invocation.writeUint("NewTrackId", newTrackId);
                 invocation.writeEnd();
             }
             catch (ActionError ae)
@@ -1513,67 +1684,20 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
         }
 	}
 
-    private class DoIdArrayChanged implements IDvInvocationListener
+    private class DoDeleteId implements IDvInvocationListener
     {
         public void actionInvoked(long aInvocation, int aVersion)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
-            long token;
-            boolean value;
-            try
-            {
-                invocation.readStart();
-                token = invocation.readUint("Token");
-                invocation.readEnd();
-                 value = idArrayChanged(aVersion, token);
-            }
-            catch (ActionError ae)
-            {
-                invocation.reportError(501, "Invalid XML");
-                return;
-            }
-            catch (PropertyUpdateError pue)
-            {
-                invocation.reportError(501, "Invalid XML");
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("WARNING: unexpected exception: " + e.getMessage());
-                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
-                e.printStackTrace();
-                return;
-            }
-            try
-            {
-                invocation.writeStart();
-                invocation.writeBool("Value", value);
-                invocation.writeEnd();
-            }
-            catch (ActionError ae)
-            {
-                return;
-            }
-            catch (Exception e)
-            {
-                System.out.println("ERROR: unexpected exception: " + e.getMessage());
-                System.out.println("       Only ActionError can be thrown by action response writer");
-                e.printStackTrace();
-            }
-        }
-	}
-
-    private class DoChannelsMax implements IDvInvocationListener
-    {
-        public void actionInvoked(long aInvocation, int aVersion)
-        {
-            DvInvocation invocation = new DvInvocation(aInvocation);
+            long trackId;
             long value;
             try
             {
                 invocation.readStart();
+                trackId = invocation.readUint("TrackId");
+                value = invocation.readUint("Value");
                 invocation.readEnd();
-                 value = channelsMax(aVersion);
+                deleteId(aVersion, trackId, value);
             }
             catch (ActionError ae)
             {
@@ -1595,7 +1719,6 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             try
             {
                 invocation.writeStart();
-                invocation.writeUint("Value", value);
                 invocation.writeEnd();
             }
             catch (ActionError ae)
@@ -1611,17 +1734,18 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
         }
 	}
 
-    private class DoProtocolInfo implements IDvInvocationListener
+    private class DoDeleteAll implements IDvInvocationListener
     {
         public void actionInvoked(long aInvocation, int aVersion)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
-            String value;
+            long trackId;
             try
             {
                 invocation.readStart();
+                trackId = invocation.readUint("TrackId");
                 invocation.readEnd();
-                 value = protocolInfo(aVersion);
+                deleteAll(aVersion, trackId);
             }
             catch (ActionError ae)
             {
@@ -1643,7 +1767,6 @@ public class DvProviderAvOpenhomeOrgRadio1 extends DvProvider implements IDvProv
             try
             {
                 invocation.writeStart();
-                invocation.writeString("Value", value);
                 invocation.writeEnd();
             }
             catch (ActionError ae)

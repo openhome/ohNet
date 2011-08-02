@@ -125,7 +125,7 @@ public class DvInvocation
 	/**
 	 * Create a DvInvocation.
 	 * 
-	 * @param aHandle	{@code aInvocation} argument passed to {@link #IDvDeviceListener}.
+	 * @param aHandle	{@code aInvocation} argument passed to {@code IDvDeviceListener}.
 	 */
 	public DvInvocation(long aHandle)
 	{

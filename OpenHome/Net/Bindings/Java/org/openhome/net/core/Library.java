@@ -141,7 +141,7 @@ public class Library
      * <p>Device lists and subscriptions will be automatically updated.
      * No other subnet will be selected if aSubnet is not available.
      * 
-     * @param aSubnet	handle returned by {@link #NetworkAdapterList.subnetAt}.
+     * @param aSubnet	handle returned by {@code NetworkAdapterList.subnetAt()}.
      */
     public void setCurrentSubnet(NetworkAdapter aSubnet)
     {

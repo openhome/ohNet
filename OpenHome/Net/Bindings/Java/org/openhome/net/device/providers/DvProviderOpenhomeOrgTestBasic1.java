@@ -535,7 +535,6 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aValue
-     * @param aResult
      */
     protected long increment(int aVersion, long aValue)
     {
@@ -552,7 +551,6 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aValue
-     * @param aResult
      */
     protected int decrement(int aVersion, int aValue)
     {
@@ -569,7 +567,6 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aValue
-     * @param aResult
      */
     protected boolean toggle(int aVersion, boolean aValue)
     {
@@ -586,7 +583,6 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aValue
-     * @param aResult
      */
     protected String echoString(int aVersion, String aValue)
     {
@@ -603,7 +599,6 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aValue
-     * @param aResult
      */
     protected byte[] echoBinary(int aVersion, byte[] aValue)
     {
@@ -635,7 +630,6 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionGetUint} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValueUint
      */
     protected long getUint(int aVersion)
     {
@@ -667,7 +661,6 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionGetInt} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValueInt
      */
     protected int getInt(int aVersion)
     {
@@ -699,7 +692,6 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionGetBool} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValueBool
      */
     protected boolean getBool(int aVersion)
     {
@@ -749,7 +741,6 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionGetString} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValueStr
      */
     protected String getString(int aVersion)
     {
@@ -781,7 +772,6 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionGetBinary} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValueBin
      */
     protected byte[] getBinary(int aVersion)
     {

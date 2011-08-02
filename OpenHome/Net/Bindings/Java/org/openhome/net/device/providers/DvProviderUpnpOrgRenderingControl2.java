@@ -730,7 +730,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentPresetNameList
      */
     protected String listPresets(int aVersion, long aInstanceID)
     {
@@ -764,7 +763,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentBrightness
      */
     protected long getBrightness(int aVersion, long aInstanceID)
     {
@@ -798,7 +796,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentContrast
      */
     protected long getContrast(int aVersion, long aInstanceID)
     {
@@ -832,7 +829,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentSharpness
      */
     protected long getSharpness(int aVersion, long aInstanceID)
     {
@@ -866,7 +862,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentRedVideoGain
      */
     protected long getRedVideoGain(int aVersion, long aInstanceID)
     {
@@ -900,7 +895,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentGreenVideoGain
      */
     protected long getGreenVideoGain(int aVersion, long aInstanceID)
     {
@@ -934,7 +928,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentBlueVideoGain
      */
     protected long getBlueVideoGain(int aVersion, long aInstanceID)
     {
@@ -968,7 +961,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentRedVideoBlackLevel
      */
     protected long getRedVideoBlackLevel(int aVersion, long aInstanceID)
     {
@@ -1002,7 +994,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentGreenVideoBlackLevel
      */
     protected long getGreenVideoBlackLevel(int aVersion, long aInstanceID)
     {
@@ -1036,7 +1027,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentBlueVideoBlackLevel
      */
     protected long getBlueVideoBlackLevel(int aVersion, long aInstanceID)
     {
@@ -1070,7 +1060,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentColorTemperature
      */
     protected long getColorTemperature(int aVersion, long aInstanceID)
     {
@@ -1104,7 +1093,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentHorizontalKeystone
      */
     protected int getHorizontalKeystone(int aVersion, long aInstanceID)
     {
@@ -1138,7 +1126,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentVerticalKeystone
      */
     protected int getVerticalKeystone(int aVersion, long aInstanceID)
     {
@@ -1173,7 +1160,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
      * @param aChannel
-     * @param aCurrentMute
      */
     protected boolean getMute(int aVersion, long aInstanceID, String aChannel)
     {
@@ -1209,7 +1195,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
      * @param aChannel
-     * @param aCurrentVolume
      */
     protected long getVolume(int aVersion, long aInstanceID, String aChannel)
     {
@@ -1245,7 +1230,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
      * @param aChannel
-     * @param aCurrentVolume
      */
     protected int getVolumeDB(int aVersion, long aInstanceID, String aChannel)
     {
@@ -1281,8 +1265,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
      * @param aChannel
-     * @param aMinValue
-     * @param aMaxValue
      */
     protected GetVolumeDBRange getVolumeDBRange(int aVersion, long aInstanceID, String aChannel)
     {
@@ -1300,7 +1282,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
      * @param aChannel
-     * @param aCurrentLoudness
      */
     protected boolean getLoudness(int aVersion, long aInstanceID, String aChannel)
     {
@@ -1336,7 +1317,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
      * @param aStateVariableList
-     * @param aStateVariableValuePairs
      */
     protected String getStateVariables(int aVersion, long aInstanceID, String aStateVariableList)
     {
@@ -1357,7 +1337,6 @@ public class DvProviderUpnpOrgRenderingControl2 extends DvProvider implements ID
      * @param aServiceType
      * @param aServiceId
      * @param aStateVariableValuePairs
-     * @param aStateVariableList
      */
     protected String setStateVariables(int aVersion, long aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs)
     {

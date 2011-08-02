@@ -221,7 +221,6 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      * <p>Must be implemented iff {@link #enableActionGetCount} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aCount
      */
     protected long getCount(int aVersion)
     {
@@ -238,7 +237,6 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aIndex
-     * @param aRoomName
      */
     protected String getRoom(int aVersion, long aIndex)
     {
@@ -255,7 +253,6 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aIndex
-     * @param aFriendlyName
      */
     protected String getName(int aVersion, long aIndex)
     {
@@ -272,9 +269,6 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aIndex
-     * @param aX
-     * @param aY
-     * @param aZ
      */
     protected GetPosition getPosition(int aVersion, long aIndex)
     {
@@ -308,7 +302,6 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aIndex
-     * @param aColor
      */
     protected long getColor(int aVersion, long aIndex)
     {
@@ -325,10 +318,6 @@ public class DvProviderOpenhomeOrgTestLights1 extends DvProvider implements IDvP
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aColor
-     * @param aBrightness
-     * @param aRed
-     * @param aGreen
-     * @param aBlue
      */
     protected GetColorComponents getColorComponents(int aVersion, long aColor)
     {

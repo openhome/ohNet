@@ -37,7 +37,7 @@ public class Invocation
 	private List<Argument> iOutputArgs;
 	
 	/**
-	 * Constructor.  Not intended for external use (use {@link #CpService.Invocation}
+	 * Constructor.  Not intended for external use (use {@code CpService.getInvocation()}
 	 * instead).
 	 *
 	 * @param aService		service the action is being invoked on.
@@ -105,7 +105,7 @@ public class Invocation
 	 * 
 	 * @param aHandle	invocation handle.
 	 * @param aIndex	zero-based index into array of output arguments.
-	 * 					Must refer to an {@link #ArgumentInt}.
+	 * 					Must refer to an {@code ArgumentInt}.
 	 * @return			value of the integer output argument.
 	 */
 	public static int getOutputInt(long aHandle, int aIndex)
@@ -118,7 +118,7 @@ public class Invocation
 	 * 
 	 * @param aHandle	invocation handle.
 	 * @param aIndex	zero-based index into array of output arguments.
-	 * 					Must refer to an {@link #ArgumentUint}.
+	 * 					Must refer to an {@code ArgumentUint}.
 	 * @return			value of the unsigned integer output argument.
 	 */
 	public static long getOutputUint(long aHandle, int aIndex)
@@ -131,7 +131,7 @@ public class Invocation
 	 * 
 	 * @param aHandle	invocation handle.
 	 * @param aIndex	zero-based index into array of output arguments.
-	 * 					Must refer to an {@link #ArgumentBool}.
+	 * 					Must refer to an {@code ArgumentBool}.
 	 * @return			value of the boolean output argument.
 	 */
 	public static boolean getOutputBool(long aHandle, int aIndex)
@@ -150,7 +150,7 @@ public class Invocation
 	 *
 	 * @param aHandle	invocation handle.
 	 * @param aIndex	zero-based index into array of output arguments.
-	 * 					Must refer to an {@link #ArgumentString}.
+	 * 					Must refer to an {@code ArgumentString}.
 	 * @return			value of the string output argument.
 	 */
 	public static String getOutputString(long aHandle, int aIndex)
@@ -167,7 +167,7 @@ public class Invocation
 	 * 
 	 * @param aHandle	invocation handle.
 	 * @param aIndex	zero-based index into array of output arguments.
-	 * 					Must refer to an {@link #ArgumentBinary}.
+	 * 					Must refer to an {@code ArgumentBinary}.
 	 * @return			value of the string output argument.
 	 */
 	public static byte[] getOutputBinary(long aHandle, int aIndex)

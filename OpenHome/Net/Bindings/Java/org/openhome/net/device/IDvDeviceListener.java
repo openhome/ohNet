@@ -1,14 +1,14 @@
 package org.openhome.net.device;
 
 /**
- * Listener interface to receive notification of when a {@link #DvDevice} has
+ * Listener interface to receive notification of when a {@code DvDevice} has
  * been disabled.
  *
  */
 public interface IDvDeviceListener
 {
 	/**
-	 * Receive notification after a {@link #DvDevice} has been disabled.
+	 * Receive notification after a {@code DvDevice} has been disabled.
 	 */
 	public void deviceDisabled();
 }

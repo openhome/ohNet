@@ -26,10 +26,10 @@ public class DvDeviceFactory implements IDvDeviceFactory
 
 	/**
 	 * Creates a device without support for any protocol but capable of adding
-	 * services or attributes. This should only be used with {@link #CpDeviceDv}.
+	 * services or attributes. This should only be used with {@code CpDeviceDv}.
 	 * 
 	 * @param aUdn	universally unique identifier.
-	 * @return		a {@link #DvDevice}.
+	 * @return		a {@code DvDevice}.
 	 */
 	public DvDevice createDevice(String aUdn)
 	{
@@ -41,7 +41,7 @@ public class DvDeviceFactory implements IDvDeviceFactory
 	 * stack supports as standard but with no services or attributes as yet.
 	 * 
 	 * @param aUdn	universally unique identifier.
-	 * @return		a {@link #DvDevice}.
+	 * @return		a {@code DvDevice}.
 	 */
 	public DvDevice createDeviceStandard(String aUdn)
 	{
@@ -55,7 +55,7 @@ public class DvDeviceFactory implements IDvDeviceFactory
 	 * 
 	 * @param aUdn				universally unique identifier.
 	 * @param aResourceManager	allows the owner of a device to serve UI files.
-	 * @return					a {@link #DvDevice}.
+	 * @return					a {@code DvDevice}.
 	 */
 	public DvDevice createDeviceStandard(String aUdn,
 			IResourceManager aResourceManager)

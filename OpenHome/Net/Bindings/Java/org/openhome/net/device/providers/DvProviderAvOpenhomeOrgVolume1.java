@@ -779,12 +779,6 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * <p>Must be implemented iff {@link #enableActionCharacteristics} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aVolumeMax
-     * @param aVolumeUnity
-     * @param aVolumeSteps
-     * @param aVolumeMilliDbPerStep
-     * @param aBalanceMax
-     * @param aFadeMax
      */
     protected Characteristics characteristics(int aVersion)
     {
@@ -846,7 +840,6 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * <p>Must be implemented iff {@link #enableActionVolume} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected long volume(int aVersion)
     {
@@ -908,7 +901,6 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * <p>Must be implemented iff {@link #enableActionBalance} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected int balance(int aVersion)
     {
@@ -970,7 +962,6 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * <p>Must be implemented iff {@link #enableActionFade} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected int fade(int aVersion)
     {
@@ -1002,7 +993,6 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * <p>Must be implemented iff {@link #enableActionMute} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected boolean mute(int aVersion)
     {
@@ -1018,7 +1008,6 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * <p>Must be implemented iff {@link #enableActionVolumeLimit} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected long volumeLimit(int aVersion)
     {

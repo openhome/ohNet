@@ -140,7 +140,6 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
      * <p>Must be implemented iff {@link #enableActionGetTarget} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aRetTargetValue
      */
     protected boolean getTarget(int aVersion)
     {
@@ -156,7 +155,6 @@ public class DvProviderUpnpOrgSwitchPower1 extends DvProvider implements IDvProv
      * <p>Must be implemented iff {@link #enableActionGetStatus} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aResultStatus
      */
     protected boolean getStatus(int aVersion)
     {

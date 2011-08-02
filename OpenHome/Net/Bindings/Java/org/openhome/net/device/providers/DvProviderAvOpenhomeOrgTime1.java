@@ -208,9 +208,6 @@ public class DvProviderAvOpenhomeOrgTime1 extends DvProvider implements IDvProvi
      * <p>Must be implemented iff {@link #enableActionTime} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aTrackCount
-     * @param aDuration
-     * @param aSeconds
      */
     protected Time time(int aVersion)
     {

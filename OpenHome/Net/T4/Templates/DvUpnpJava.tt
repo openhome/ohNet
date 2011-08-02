@@ -255,10 +255,6 @@ public class <#=className#> extends DvProvider implements I<#=className#>
 <#      { #>
      * @param a<#=i.name#>
 <#      } #>
-<#      foreach (Argument o in a.outargs) #>
-<#      { #>
-     * @param a<#=o.name#>
-<#      } #>
      */
     protected <#=ReturnType(a)#> <#=ArgNameLocal(a.name)#>(int aVersion<#=ArgsFull(a)#>)
     {

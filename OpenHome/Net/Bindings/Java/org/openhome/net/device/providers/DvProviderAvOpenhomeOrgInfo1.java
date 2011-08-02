@@ -702,9 +702,6 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * <p>Must be implemented iff {@link #enableActionCounters} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aTrackCount
-     * @param aDetailsCount
-     * @param aMetatextCount
      */
     protected Counters counters(int aVersion)
     {
@@ -720,8 +717,6 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * <p>Must be implemented iff {@link #enableActionTrack} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aUri
-     * @param aMetadata
      */
     protected Track track(int aVersion)
     {
@@ -737,12 +732,6 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * <p>Must be implemented iff {@link #enableActionDetails} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aDuration
-     * @param aBitRate
-     * @param aBitDepth
-     * @param aSampleRate
-     * @param aLossless
-     * @param aCodecName
      */
     protected Details details(int aVersion)
     {
@@ -758,7 +747,6 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * <p>Must be implemented iff {@link #enableActionMetatext} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected String metatext(int aVersion)
     {

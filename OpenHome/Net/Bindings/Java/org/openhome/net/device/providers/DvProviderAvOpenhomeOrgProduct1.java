@@ -1140,10 +1140,6 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionManufacturer} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aName
-     * @param aInfo
-     * @param aUrl
-     * @param aImageUri
      */
     protected Manufacturer manufacturer(int aVersion)
     {
@@ -1159,10 +1155,6 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionModel} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aName
-     * @param aInfo
-     * @param aUrl
-     * @param aImageUri
      */
     protected Model model(int aVersion)
     {
@@ -1178,11 +1170,6 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionProduct} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aRoom
-     * @param aName
-     * @param aInfo
-     * @param aUrl
-     * @param aImageUri
      */
     protected Product product(int aVersion)
     {
@@ -1198,7 +1185,6 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionStandby} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected boolean standby(int aVersion)
     {
@@ -1230,7 +1216,6 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionSourceCount} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected long sourceCount(int aVersion)
     {
@@ -1246,7 +1231,6 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionSourceXml} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected String sourceXml(int aVersion)
     {
@@ -1262,7 +1246,6 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionSourceIndex} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected long sourceIndex(int aVersion)
     {
@@ -1311,10 +1294,6 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aIndex
-     * @param aSystemName
-     * @param aType
-     * @param aName
-     * @param aVisible
      */
     protected Source source(int aVersion, long aIndex)
     {
@@ -1330,7 +1309,6 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionAttributes} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected String attributes(int aVersion)
     {
@@ -1346,7 +1324,6 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * <p>Must be implemented iff {@link #enableActionSourceXmlChangeCount} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected long sourceXmlChangeCount(int aVersion)
     {

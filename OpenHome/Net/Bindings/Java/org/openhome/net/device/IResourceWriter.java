@@ -17,7 +17,7 @@ public interface IResourceWriter
 	/**
 	 * Called to write a block of file data.
 	 * Will be called 0..n times after {@link #writeResourceBegin} and before
-	 * {@link #writeResourceEnd}.
+	 * {@code writeResourceEnd()}.
 	 * @param aData		file data to write.
 	 * @param aBytes	size in bytes of aData.
 	 */

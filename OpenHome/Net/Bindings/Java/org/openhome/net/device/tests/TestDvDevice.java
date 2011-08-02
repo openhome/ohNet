@@ -60,7 +60,7 @@ public class TestDvDevice implements ICpDeviceListListener
 		{
 			if (aDevice.getUdn().equals(iDevice.getUdn()))
 			{
-                aDevice.addReference();
+                aDevice.addRef();
 				iDeviceList.add(aDevice);
 			}
 		}

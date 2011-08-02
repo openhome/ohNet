@@ -642,15 +642,6 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aNrTracks
-     * @param aMediaDuration
-     * @param aCurrentURI
-     * @param aCurrentURIMetaData
-     * @param aNextURI
-     * @param aNextURIMetaData
-     * @param aPlayMedium
-     * @param aRecordMedium
-     * @param aWriteStatus
      */
     protected GetMediaInfo getMediaInfo(int aVersion, long aInstanceID)
     {
@@ -667,9 +658,6 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aCurrentTransportState
-     * @param aCurrentTransportStatus
-     * @param aCurrentSpeed
      */
     protected GetTransportInfo getTransportInfo(int aVersion, long aInstanceID)
     {
@@ -686,14 +674,6 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aTrack
-     * @param aTrackDuration
-     * @param aTrackMetaData
-     * @param aTrackURI
-     * @param aRelTime
-     * @param aAbsTime
-     * @param aRelCount
-     * @param aAbsCount
      */
     protected GetPositionInfo getPositionInfo(int aVersion, long aInstanceID)
     {
@@ -710,9 +690,6 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aPlayMedia
-     * @param aRecMedia
-     * @param aRecQualityModes
      */
     protected GetDeviceCapabilities getDeviceCapabilities(int aVersion, long aInstanceID)
     {
@@ -729,8 +706,6 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aPlayMode
-     * @param aRecQualityMode
      */
     protected GetTransportSettings getTransportSettings(int aVersion, long aInstanceID)
     {
@@ -896,7 +871,6 @@ public class DvProviderUpnpOrgAVTransport1 extends DvProvider implements IDvProv
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aInstanceID
-     * @param aActions
      */
     protected String getCurrentTransportActions(int aVersion, long aInstanceID)
     {

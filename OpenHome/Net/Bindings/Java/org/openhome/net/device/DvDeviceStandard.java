@@ -77,7 +77,7 @@ public class DvDeviceStandard extends DvDevice
 	
 	/**
 	 * Destroy the underlying native instance. Must be called for each class instance.
-	 * Must be called before {@link #openhome.core.Library.close}.
+	 * Must be called before {@code Library.close()}.
 	 */
 	public void destroy()
 	{

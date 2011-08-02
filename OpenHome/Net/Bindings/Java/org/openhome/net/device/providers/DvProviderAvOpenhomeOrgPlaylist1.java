@@ -829,7 +829,6 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * <p>Must be implemented iff {@link #enableActionRepeat} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected boolean repeat(int aVersion)
     {
@@ -861,7 +860,6 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * <p>Must be implemented iff {@link #enableActionShuffle} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected boolean shuffle(int aVersion)
     {
@@ -941,7 +939,6 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * <p>Must be implemented iff {@link #enableActionTransportState} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected String transportState(int aVersion)
     {
@@ -957,7 +954,6 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * <p>Must be implemented iff {@link #enableActionId} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected long id(int aVersion)
     {
@@ -974,8 +970,6 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aId
-     * @param aUri
-     * @param aMetadata
      */
     protected Read read(int aVersion, long aId)
     {
@@ -992,7 +986,6 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aIdList
-     * @param aTrackList
      */
     protected String readList(int aVersion, String aIdList)
     {
@@ -1011,7 +1004,6 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * @param aAfterId
      * @param aUri
      * @param aMetadata
-     * @param aNewId
      */
     protected long insert(int aVersion, long aAfterId, String aUri, String aMetadata)
     {
@@ -1058,7 +1050,6 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * <p>Must be implemented iff {@link #enableActionTracksMax} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected long tracksMax(int aVersion)
     {
@@ -1074,8 +1065,6 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * <p>Must be implemented iff {@link #enableActionIdArray} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aToken
-     * @param aArray
      */
     protected IdArray idArray(int aVersion)
     {
@@ -1092,7 +1081,6 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aToken
-     * @param aValue
      */
     protected boolean idArrayChanged(int aVersion, long aToken)
     {
@@ -1108,7 +1096,6 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * <p>Must be implemented iff {@link #enableActionProtocolInfo} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aValue
      */
     protected String protocolInfo(int aVersion)
     {
