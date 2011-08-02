@@ -67,6 +67,9 @@ objects_proxies = \
                   $(objdir)CpAvOpenhomeOrgSender1.$(objext) \
                   $(objdir)CpAvOpenhomeOrgSender1C.$(objext) \
                   $(objdir)CpAvOpenhomeOrgSender1Std.$(objext) \
+                  $(objdir)CpAvOpenhomeOrgPlaylistManager1.$(objext) \
+                  $(objdir)CpAvOpenhomeOrgPlaylistManager1C.$(objext) \
+                  $(objdir)CpAvOpenhomeOrgPlaylistManager1Std.$(objext) \
                   $(objdir)CpOpenhomeOrgTestBasic1.$(objext) \
                   $(objdir)CpOpenhomeOrgTestBasic1C.$(objext) \
                   $(objdir)CpOpenhomeOrgTestBasic1Std.$(objext) \
@@ -109,6 +112,7 @@ proxy_dotnet_assemblies = \
         CpAvOpenhomeOrgRadio1.net.dll \
         CpAvOpenhomeOrgReceiver1.net.dll \
         CpAvOpenhomeOrgSender1.net.dll \
+        CpAvOpenhomeOrgPlaylistManager1.net.dll \
         CpOpenhomeOrgTestBasic1.net.dll \
         CpOpenhomeOrgTestLights1.net.dll \
 
@@ -134,6 +138,7 @@ proxy_dotnet_assemblies_with_path = \
         $(objdir)CpAvOpenhomeOrgRadio1.net.dll \
         $(objdir)CpAvOpenhomeOrgReceiver1.net.dll \
         $(objdir)CpAvOpenhomeOrgSender1.net.dll \
+        $(objdir)CpAvOpenhomeOrgPlaylistManager1.net.dll \
         $(objdir)CpOpenhomeOrgTestBasic1.net.dll \
         $(objdir)CpOpenhomeOrgTestLights1.net.dll \
 
@@ -159,6 +164,7 @@ proxy_java_classes_with_path = \
         $(proxyjavadir)CpProxyAvOpenhomeOrgRadio1.class \
         $(proxyjavadir)CpProxyAvOpenhomeOrgReceiver1.class \
         $(proxyjavadir)CpProxyAvOpenhomeOrgSender1.class \
+        $(proxyjavadir)CpProxyAvOpenhomeOrgPlaylistManager1.class \
         $(proxyjavadir)CpProxyOpenhomeOrgTestBasic1.class \
         $(proxyjavadir)CpProxyOpenhomeOrgTestLights1.class \
 
@@ -291,6 +297,12 @@ $(objdir)CpAvOpenhomeOrgSender1C.$(objext) : $(proxyC)CpAvOpenhomeOrgSender1C.cp
 	$(compiler)CpAvOpenhomeOrgSender1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgSender1C.cpp
 $(objdir)CpAvOpenhomeOrgSender1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgSender1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpAvOpenhomeOrgSender1.h
 	$(compiler)CpAvOpenhomeOrgSender1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgSender1Std.cpp
+$(objdir)CpAvOpenhomeOrgPlaylistManager1.$(objext) : $(proxyCppCore)CpAvOpenhomeOrgPlaylistManager1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpAvOpenhomeOrgPlaylistManager1.h
+	$(compiler)CpAvOpenhomeOrgPlaylistManager1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpAvOpenhomeOrgPlaylistManager1.cpp
+$(objdir)CpAvOpenhomeOrgPlaylistManager1C.$(objext) : $(proxyC)CpAvOpenhomeOrgPlaylistManager1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpAvOpenhomeOrgPlaylistManager1.h
+	$(compiler)CpAvOpenhomeOrgPlaylistManager1C.$(objext) -c $(cflags) $(includes) $(proxyC)CpAvOpenhomeOrgPlaylistManager1C.cpp
+$(objdir)CpAvOpenhomeOrgPlaylistManager1Std.$(objext) : $(proxyCppStd)CpAvOpenhomeOrgPlaylistManager1Std.cpp $(headers_proxy) OpenHome/Net/Bindings/Cpp/ControlPoint/Proxies/CpAvOpenhomeOrgPlaylistManager1.h
+	$(compiler)CpAvOpenhomeOrgPlaylistManager1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpAvOpenhomeOrgPlaylistManager1Std.cpp
 $(objdir)CpOpenhomeOrgTestBasic1.$(objext) : $(proxyCppCore)CpOpenhomeOrgTestBasic1.cpp $(headers_proxy) OpenHome/Net/ControlPoint/Proxies/CpOpenhomeOrgTestBasic1.h
 	$(compiler)CpOpenhomeOrgTestBasic1.$(objext) -c $(cflags) $(includes) $(proxyCppCore)CpOpenhomeOrgTestBasic1.cpp
 $(objdir)CpOpenhomeOrgTestBasic1C.$(objext) : $(proxyC)CpOpenhomeOrgTestBasic1C.cpp $(headers_proxy) OpenHome/Net/Bindings/C/ControlPoint/Proxies/CpOpenhomeOrgTestBasic1.h
@@ -326,6 +338,7 @@ proxy_dlls = \
              CpAvOpenhomeOrgRadio1Dll \
              CpAvOpenhomeOrgReceiver1Dll \
              CpAvOpenhomeOrgSender1Dll \
+             CpAvOpenhomeOrgPlaylistManager1Dll \
              CpOpenhomeOrgTestBasic1Dll \
              CpOpenhomeOrgTestLights1Dll \
 
@@ -394,6 +407,9 @@ $(objdir)$(dllprefix)CpAvOpenhomeOrgReceiver1.$(dllext) : ZappUpnpDll $(objdir)C
 CpAvOpenhomeOrgSender1Dll: $(objdir)$(dllprefix)CpAvOpenhomeOrgSender1.$(dllext)
 $(objdir)$(dllprefix)CpAvOpenhomeOrgSender1.$(dllext) : ZappUpnpDll $(objdir)CpAvOpenhomeOrgSender1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpAvOpenhomeOrgSender1.$(dllext) $(objdir)CpAvOpenhomeOrgSender1.$(objext)
+CpAvOpenhomeOrgPlaylistManager1Dll: $(objdir)$(dllprefix)CpAvOpenhomeOrgPlaylistManager1.$(dllext)
+$(objdir)$(dllprefix)CpAvOpenhomeOrgPlaylistManager1.$(dllext) : ZappUpnpDll $(objdir)CpAvOpenhomeOrgPlaylistManager1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpAvOpenhomeOrgPlaylistManager1.$(dllext) $(objdir)CpAvOpenhomeOrgPlaylistManager1.$(objext)
 CpOpenhomeOrgTestBasic1Dll: $(objdir)$(dllprefix)CpOpenhomeOrgTestBasic1.$(dllext)
 $(objdir)$(dllprefix)CpOpenhomeOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)CpOpenhomeOrgTestBasic1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpOpenhomeOrgTestBasic1.$(dllext) $(objdir)CpOpenhomeOrgTestBasic1.$(objext)
@@ -510,6 +526,11 @@ $(objdir)CpAvOpenhomeOrgSender1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOp
 		/out:$(objdir)CpAvOpenhomeOrgSender1.net.dll \
 		/reference:$(objdir)ohNet.net.dll \
 		$(proxyCs)CpAvOpenhomeOrgSender1.cs
+$(objdir)CpAvOpenhomeOrgPlaylistManager1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpAvOpenhomeOrgPlaylistManager1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpAvOpenhomeOrgPlaylistManager1.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
+		$(proxyCs)CpAvOpenhomeOrgPlaylistManager1.cs
 $(objdir)CpOpenhomeOrgTestBasic1.net.dll: $(objdir)ohNet.net.dll $(proxyCs)CpOpenhomeOrgTestBasic1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpOpenhomeOrgTestBasic1.net.dll \
@@ -567,6 +588,8 @@ $(proxyjavadir)CpProxyAvOpenhomeOrgReceiver1.class : $(objdir)ohnet.jar $(proxyJ
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyAvOpenhomeOrgReceiver1.java
 $(proxyjavadir)CpProxyAvOpenhomeOrgSender1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgSender1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyAvOpenhomeOrgSender1.java
+$(proxyjavadir)CpProxyAvOpenhomeOrgPlaylistManager1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyAvOpenhomeOrgPlaylistManager1.java
+	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyAvOpenhomeOrgPlaylistManager1.java
 $(proxyjavadir)CpProxyOpenhomeOrgTestBasic1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyOpenhomeOrgTestBasic1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(proxyJava)CpProxyOpenhomeOrgTestBasic1.java
 $(proxyjavadir)CpProxyOpenhomeOrgTestLights1.class : $(objdir)ohnet.jar $(proxyJava)CpProxyOpenhomeOrgTestLights1.java
