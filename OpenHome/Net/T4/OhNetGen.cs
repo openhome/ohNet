@@ -266,7 +266,7 @@ namespace OpenHome.Net
                 String prefix = "Dv";
                 if (language == ETargetLanguage.eJava)
                 {
-                    prefix += "Proxy";
+                    prefix += "Provider";
                 }
                 outputFileName = prefix + outputFileName;
             }
