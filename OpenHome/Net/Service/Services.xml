@@ -148,6 +148,13 @@
   </service>
   <service>
     <publisher>OpenHome</publisher>
+    <dcpdir></dcpdir>
+    <domain>av.openhome.org</domain>
+    <type>PlaylistManager</type>
+    <version>1</version>
+  </service>
+  <service>
+    <publisher>OpenHome</publisher>
     <dcpdir>Test</dcpdir>
     <domain>openhome.org</domain>
     <type>TestBasic</type>
