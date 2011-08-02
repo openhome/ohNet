@@ -67,6 +67,9 @@ objects_devices = \
                   $(objdir)DvAvOpenhomeOrgSender1.$(objext) \
                   $(objdir)DvAvOpenhomeOrgSender1Std.$(objext) \
                   $(objdir)DvAvOpenhomeOrgSender1C.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgPlaylistManager1.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgPlaylistManager1Std.$(objext) \
+                  $(objdir)DvAvOpenhomeOrgPlaylistManager1C.$(objext) \
                   $(objdir)DvOpenhomeOrgTestBasic1.$(objext) \
                   $(objdir)DvOpenhomeOrgTestBasic1Std.$(objext) \
                   $(objdir)DvOpenhomeOrgTestBasic1C.$(objext) \
@@ -103,6 +106,7 @@ device_dotnet_assemblies = \
         DvAvOpenhomeOrgRadio1.net.dll \
         DvAvOpenhomeOrgReceiver1.net.dll \
         DvAvOpenhomeOrgSender1.net.dll \
+        DvAvOpenhomeOrgPlaylistManager1.net.dll \
         DvOpenhomeOrgTestBasic1.net.dll \
         DvOpenhomeOrgTestLights1.net.dll \
 
@@ -128,6 +132,7 @@ device_dotnet_assemblies_with_path = \
         $(objdir)DvAvOpenhomeOrgRadio1.net.dll \
         $(objdir)DvAvOpenhomeOrgReceiver1.net.dll \
         $(objdir)DvAvOpenhomeOrgSender1.net.dll \
+        $(objdir)DvAvOpenhomeOrgPlaylistManager1.net.dll \
         $(objdir)DvOpenhomeOrgTestBasic1.net.dll \
         $(objdir)DvOpenhomeOrgTestLights1.net.dll \
 
@@ -153,6 +158,7 @@ device_java_classes_with_path = \
         $(devicejavadir)DvProviderAvOpenhomeOrgRadio1.class \
         $(devicejavadir)DvProviderAvOpenhomeOrgReceiver1.class \
         $(devicejavadir)DvProviderAvOpenhomeOrgSender1.class \
+        $(devicejavadir)DvProviderAvOpenhomeOrgPlaylistManager1.class \
         $(devicejavadir)DvProviderOpenhomeOrgTestBasic1.class \
         $(devicejavadir)DvProviderOpenhomeOrgTestLights1.class \
 
@@ -284,6 +290,12 @@ $(objdir)DvAvOpenhomeOrgSender1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgSen
 	$(compiler)DvAvOpenhomeOrgSender1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgSender1Std.cpp
 $(objdir)DvAvOpenhomeOrgSender1C.$(objext) : $(deviceC)DvAvOpenhomeOrgSender1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgSender1.h
 	$(compiler)DvAvOpenhomeOrgSender1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgSender1C.cpp
+$(objdir)DvAvOpenhomeOrgPlaylistManager1.$(objext) : $(deviceCppCore)DvAvOpenhomeOrgPlaylistManager1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvAvOpenhomeOrgPlaylistManager1.h
+	$(compiler)DvAvOpenhomeOrgPlaylistManager1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvAvOpenhomeOrgPlaylistManager1.cpp
+$(objdir)DvAvOpenhomeOrgPlaylistManager1Std.$(objext) : $(deviceCppStd)DvAvOpenhomeOrgPlaylistManager1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvAvOpenhomeOrgPlaylistManager1.h
+	$(compiler)DvAvOpenhomeOrgPlaylistManager1Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)DvAvOpenhomeOrgPlaylistManager1Std.cpp
+$(objdir)DvAvOpenhomeOrgPlaylistManager1C.$(objext) : $(deviceC)DvAvOpenhomeOrgPlaylistManager1C.cpp $(headers_device) OpenHome/Net/Bindings/C/Device/Providers/DvAvOpenhomeOrgPlaylistManager1.h
+	$(compiler)DvAvOpenhomeOrgPlaylistManager1C.$(objext) -c $(cflags) $(includes) $(deviceC)DvAvOpenhomeOrgPlaylistManager1C.cpp
 $(objdir)DvOpenhomeOrgTestBasic1.$(objext) : $(deviceCppCore)DvOpenhomeOrgTestBasic1.cpp $(headers_device) OpenHome/Net/Device/Providers/DvOpenhomeOrgTestBasic1.h
 	$(compiler)DvOpenhomeOrgTestBasic1.$(objext) -c $(cflags) $(includes) $(deviceCppCore)DvOpenhomeOrgTestBasic1.cpp
 $(objdir)DvOpenhomeOrgTestBasic1Std.$(objext) : $(deviceCppStd)DvOpenhomeOrgTestBasic1Std.cpp $(headers_device) OpenHome/Net/Bindings/Cpp/Device/Providers/DvOpenhomeOrgTestBasic1.h
@@ -319,6 +331,7 @@ device_dlls = \
              DvAvOpenhomeOrgRadio1Dll \
              DvAvOpenhomeOrgReceiver1Dll \
              DvAvOpenhomeOrgSender1Dll \
+             DvAvOpenhomeOrgPlaylistManager1Dll \
              DvOpenhomeOrgTestBasic1Dll \
              DvOpenhomeOrgTestLights1Dll \
 
@@ -386,6 +399,9 @@ $(objdir)$(dllprefix)DvAvOpenhomeOrgReceiver1.$(dllext) : ZappUpnpDll $(objdir)D
 DvAvOpenhomeOrgSender1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgSender1.$(dllext) 
 $(objdir)$(dllprefix)DvAvOpenhomeOrgSender1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgSender1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgSender1.$(dllext) $(objdir)DvAvOpenhomeOrgSender1.$(objext)
+DvAvOpenhomeOrgPlaylistManager1Dll: $(objdir)$(dllprefix)DvAvOpenhomeOrgPlaylistManager1.$(dllext) 
+$(objdir)$(dllprefix)DvAvOpenhomeOrgPlaylistManager1.$(dllext) : ZappUpnpDll $(objdir)DvAvOpenhomeOrgPlaylistManager1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvAvOpenhomeOrgPlaylistManager1.$(dllext) $(objdir)DvAvOpenhomeOrgPlaylistManager1.$(objext)
 DvOpenhomeOrgTestBasic1Dll: $(objdir)$(dllprefix)DvOpenhomeOrgTestBasic1.$(dllext) 
 $(objdir)$(dllprefix)DvOpenhomeOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)DvOpenhomeOrgTestBasic1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvOpenhomeOrgTestBasic1.$(dllext) $(objdir)DvOpenhomeOrgTestBasic1.$(objext)
@@ -503,6 +519,11 @@ $(objdir)DvAvOpenhomeOrgSender1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvO
 		/out:$(objdir)DvAvOpenhomeOrgSender1.net.dll \
 		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)DvAvOpenhomeOrgSender1.cs
+$(objdir)DvAvOpenhomeOrgPlaylistManager1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvAvOpenhomeOrgPlaylistManager1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvAvOpenhomeOrgPlaylistManager1.net.dll \
+		/reference:$(objdir)ohNet.net.dll \
+		$(deviceCs)DvAvOpenhomeOrgPlaylistManager1.cs
 $(objdir)DvOpenhomeOrgTestBasic1.net.dll: $(objdir)ohNet.net.dll $(deviceCs)DvOpenhomeOrgTestBasic1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)DvOpenhomeOrgTestBasic1.net.dll \
@@ -560,6 +581,8 @@ $(devicejavadir)DvProviderAvOpenhomeOrgReceiver1.class : $(objdir)ohnet.jar $(de
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgReceiver1.java
 $(devicejavadir)DvProviderAvOpenhomeOrgSender1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgSender1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgSender1.java
+$(devicejavadir)DvProviderAvOpenhomeOrgPlaylistManager1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderAvOpenhomeOrgPlaylistManager1.java
+	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderAvOpenhomeOrgPlaylistManager1.java
 $(devicejavadir)DvProviderOpenhomeOrgTestBasic1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderOpenhomeOrgTestBasic1.java
 	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProviderOpenhomeOrgTestBasic1.java
 $(devicejavadir)DvProviderOpenhomeOrgTestLights1.class : $(objdir)ohnet.jar $(deviceJava)DvProviderOpenhomeOrgTestLights1.java
