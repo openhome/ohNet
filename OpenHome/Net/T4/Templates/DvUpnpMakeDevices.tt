@@ -38,6 +38,12 @@ device_dotnet_assemblies_with_path = \
         $(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
 <#  } #>
 
+device_java_classes_with_path = \
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+        $(devicejavadir)DvProvider<#=FilePrefixTypeAndVersion(s)#>.class \
+<#  } #>
+
 devices : ohNetCore $(objects_devices)
 	$(ar)$(libprefix)ohNetDevices.$(libext) $(objects_devices)
 <#  foreach (Service s in u.iServices) #>
@@ -76,6 +82,16 @@ $(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll: $(objdir)ohNet.net.dll $(de
 		/out:$(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
 		/reference:$(objdir)ohNet.net.dll \
 		$(deviceCs)Dv<#=FilePrefixTypeAndVersion(s)#>.cs
+<# } #>
+
+# Device classes for Java:
+
+DvDeviceJavaClasses: $(device_java_classes_with_path)
+
+<# foreach (Service s in u.iServices) #>
+<# { #>
+$(devicejavadir)DvProvider<#=FilePrefixTypeAndVersion(s)#>.class : $(objdir)ohnet.jar $(deviceJava)DvProvider<#=FilePrefixTypeAndVersion(s)#>.java
+	$(javac) -classpath $(objdir)ohnet.jar -d $(objdir) $(deviceJava)DvProvider<#=FilePrefixTypeAndVersion(s)#>.java
 <# } #>
 
 

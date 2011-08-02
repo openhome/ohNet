@@ -108,6 +108,15 @@ $(deviceCs)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs : $(tt) OpenHome/N
 	$(ohNetGen) --language=cs --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceCs) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
 <#  } #>
 
+DvJava:  <# foreach (Service s in u.iServices) { #> $(deviceJava)DvProvider<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.java<# } #>
+
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+$(deviceJava)DvProvider<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.java : $(tt) OpenHome/Net/T4/Templates/DvUpnpJava.tt <#=ServiceXmlPath(s)#>
+	echo DvProvider<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.java
+	$(ohNetGen) --language=java --stack=dv "--xml=<#=ServiceXmlPath(s)#>" --output=$(deviceJava) --domain=<#=s.iDomain#> --type=<#=s.iType#> --version=<#=s.iVersion#>
+<#  } #>
+
 <#+
 string FilePrefix(Service s)
 {

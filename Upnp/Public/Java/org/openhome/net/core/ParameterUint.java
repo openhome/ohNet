@@ -40,16 +40,16 @@ public class ParameterUint extends Parameter
 		iHandle = ServiceParameterCreateUint(aName, aMinValue, aMaxValue, UINT_DEFAULT_STEP);
 	}
 
-//	/**
-//	 * Constructor.
-//	 *
-//	 * @param aName		parameter name.
-//	 * @param aMinValue	minimum allowed value.
-//	 * @param aMaxValue	maximum allowed value.
-//	 * @param aStep		gap between allowed values
-//	 */
-//	public ParameterUint(String aName, long aMinValue, long aMaxValue, long aStep)
-//	{
-//		iHandle = ServiceParameterCreateUint(aName, aMinValue, aMaxValue, aStep);
-//	}
+	/**
+	 * Constructor.
+	 *
+	 * @param aName		parameter name.
+	 * @param aMinValue	minimum allowed value.
+	 * @param aMaxValue	maximum allowed value.
+	 * @param aStep		gap between allowed values
+	 */
+	public ParameterUint(String aName, long aMinValue, long aMaxValue, long aStep)
+	{
+		iHandle = ServiceParameterCreateUint(aName, aMinValue, aMaxValue, aStep);
+	}
 }

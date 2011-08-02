@@ -28,6 +28,19 @@ public class ParameterInt extends Parameter
 	}
 	
 	/**
+	 * Constructor. Constructs a parameter with the given range and default
+	 * gap between values.
+	 * 
+	 * @param aName		parameter name.
+	 * @param aMinValue	minimum allowed value.
+	 * @param aMaxValue	maximum allowed value.
+	 */
+	public ParameterInt(String aName, int aMinValue, int aMaxValue)
+	{
+		iHandle = ServiceParameterCreateInt(aName, aMinValue, aMaxValue, INT_DEFAULT_STEP);
+	}
+	
+	/**
 	 * Constructor.
 	 * 
 	 * @param aName		parameter name.

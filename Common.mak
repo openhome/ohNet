@@ -9,6 +9,7 @@ deviceCppCore = OpenHome$(dirsep)Net$(dirsep)Device$(dirsep)Providers$(dirsep)
 deviceCppStd = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Cpp$(dirsep)Device$(dirsep)Providers$(dirsep)
 deviceC = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)C$(dirsep)Device$(dirsep)Providers$(dirsep)
 deviceCs = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Cs$(dirsep)Device$(dirsep)Providers$(dirsep)
+deviceJava = Device$(dirsep)Providers$(dirsep)Java$(dirsep)
 
 csShared = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Cs$(dirsep)
 csCp = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Cs$(dirsep)ControlPoint$(dirsep)
