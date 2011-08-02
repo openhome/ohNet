@@ -3,13 +3,13 @@ proxyCppCore = OpenHome$(dirsep)Net$(dirsep)ControlPoint$(dirsep)Proxies$(dirsep
 proxyC = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)C$(dirsep)ControlPoint$(dirsep)Proxies$(dirsep)
 proxyCppStd = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Cpp$(dirsep)ControlPoint$(dirsep)Proxies$(dirsep)
 proxyCs = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Cs$(dirsep)ControlPoint$(dirsep)Proxies$(dirsep)
-proxyJava = ControlPoint$(dirsep)Services$(dirsep)Java$(dirsep)
+proxyJava = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Java$(dirsep)org$(dirsep)openhome$(dirsep)net$(dirsep)controlpoint$(dirsep)proxies$(dirsep)
 proxyJs = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Js$(dirsep)ControlPoint$(dirsep)Proxies$(dirsep)
 deviceCppCore = OpenHome$(dirsep)Net$(dirsep)Device$(dirsep)Providers$(dirsep)
 deviceCppStd = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Cpp$(dirsep)Device$(dirsep)Providers$(dirsep)
 deviceC = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)C$(dirsep)Device$(dirsep)Providers$(dirsep)
 deviceCs = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Cs$(dirsep)Device$(dirsep)Providers$(dirsep)
-deviceJava = Device$(dirsep)Providers$(dirsep)Java$(dirsep)
+deviceJava = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Java$(dirsep)org$(dirsep)openhome$(dirsep)net$(dirsep)device$(dirsep)providers$(dirsep)
 
 csShared = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Cs$(dirsep)
 csCp = OpenHome$(dirsep)Net$(dirsep)Bindings$(dirsep)Cs$(dirsep)ControlPoint$(dirsep)
@@ -927,6 +927,9 @@ java_classes = $(objdir)org/openhome/net/controlpoint/Argument.class \
 			   $(objdir)org/openhome/net/controlpoint/PropertyChangeListener.class \
 			   $(objdir)org/openhome/net/controlpoint/ProxyError.class \
 			   $(objdir)org/openhome/net/controlpoint/SyncProxyAction.class \
+			   $(objdir)org/openhome/net/controlpoint/tests/TestBasicCp.class \
+			   $(objdir)org/openhome/net/controlpoint/tests/TestCpDeviceDv.class \
+			   $(objdir)org/openhome/net/controlpoint/tests/TestProxy.class \
 			   $(objdir)org/openhome/net/core/Action.class \
 			   $(objdir)org/openhome/net/core/CombinedStack.class \
 			   $(objdir)org/openhome/net/core/ControlPointStack.class \
@@ -964,11 +967,9 @@ java_classes = $(objdir)org/openhome/net/controlpoint/Argument.class \
 			   $(objdir)org/openhome/net/device/IResourceWriter.class \
 			   $(objdir)org/openhome/net/device/PropertyUpdateError.class \
 			   $(objdir)org/openhome/net/device/ResourceWriter.class \
-			   $(objdir)org/openhome/net/test/DeviceBasic.class \
-			   $(objdir)org/openhome/net/test/TestBasicCp.class \
-			   $(objdir)org/openhome/net/test/TestCpDeviceDv.class \
-			   $(objdir)org/openhome/net/test/TestDvDevice.class \
-			   $(objdir)org/openhome/net/test/TestProxy.class \
+			   $(objdir)org/openhome/net/device/tests/DeviceBasic.class \
+			   $(objdir)org/openhome/net/device/tests/TestBasicDv.class \
+			   $(objdir)org/openhome/net/device/tests/TestDvDevice.class \
 			   
 ohNetJava : make_obj_dir $(objdir)ohnet.jar
 $(objdir)ohnet.jar : $(java_classes)
@@ -1029,6 +1030,12 @@ $(objdir)org/openhome/net/controlpoint/ProxyError.class : $(publicjavadir)org/op
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/ProxyError.java
 $(objdir)org/openhome/net/controlpoint/SyncProxyAction.class : $(publicjavadir)org/openhome/net/controlpoint/SyncProxyAction.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/SyncProxyAction.java
+$(objdir)org/openhome/net/controlpoint/tests/TestBasicCp.class : $(publicjavadir)org/openhome/net/controlpoint/tests/TestBasicCp.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/tests/TestBasicCp.java
+$(objdir)org/openhome/net/controlpoint/tests/TestCpDeviceDv.class : $(publicjavadir)org/openhome/net/controlpoint/tests/TestCpDeviceDv.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/tests/TestCpDeviceDv.java
+$(objdir)org/openhome/net/controlpoint/tests/TestProxy.class : $(publicjavadir)org/openhome/net/controlpoint/tests/TestProxy.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/tests/TestProxy.java
 $(objdir)org/openhome/net/core/Action.class : $(publicjavadir)org/openhome/net/core/Action.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/Action.java
 $(objdir)org/openhome/net/core/CombinedStack.class : $(publicjavadir)org/openhome/net/core/CombinedStack.java
@@ -1103,16 +1110,12 @@ $(objdir)org/openhome/net/device/PropertyUpdateError.class : $(publicjavadir)org
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/device/PropertyUpdateError.java
 $(objdir)org/openhome/net/device/ResourceWriter.class : $(publicjavadir)org/openhome/net/device/ResourceWriter.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/device/ResourceWriter.java
-$(objdir)org/openhome/net/test/DeviceBasic.class : $(publicjavadir)org/openhome/net/test/DeviceBasic.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/test/DeviceBasic.java
-$(objdir)org/openhome/net/test/TestBasicCp.class : $(publicjavadir)org/openhome/net/test/TestBasicCp.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/test/TestBasicCp.java
-$(objdir)org/openhome/net/test/TestCpDeviceDv.class : $(publicjavadir)org/openhome/net/test/TestCpDeviceDv.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/test/TestCpDeviceDv.java
-$(objdir)org/openhome/net/test/TestDvDevice.class : $(publicjavadir)org/openhome/net/test/TestDvDevice.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/test/TestDvDevice.java
-$(objdir)org/openhome/net/test/TestProxy.class : $(publicjavadir)org/openhome/net/test/TestProxy.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/test/TestProxy.java
+$(objdir)org/openhome/net/device/tests/DeviceBasic.class : $(publicjavadir)org/openhome/net/device/tests/DeviceBasic.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/device/tests/DeviceBasic.java
+$(objdir)org/openhome/net/device/tests/TestBasicDv.class : $(publicjavadir)org/openhome/net/device/tests/TestBasicDv.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/device/tests/TestBasicDv.java
+$(objdir)org/openhome/net/device/tests/TestDvDevice.class : $(publicjavadir)org/openhome/net/device/tests/TestDvDevice.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/device/tests/TestDvDevice.java
 	
 ohNetJavaSrc : $(objdir)ohnet-src.jar
 $(objdir)ohnet-src.jar :
