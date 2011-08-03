@@ -8,9 +8,9 @@ public class Library
 {
     private static native long OhNetLibraryInitialise(long aInitParams); 
     private static native long OhNetLibraryInitialiseMinimal(long aInitParams);
-    private static native void OhNetLibraryStartCp(int aSubnet);
-    private static native void OhNetLibraryStartDv();
-    private static native void OhNetLibraryStartCombined(int aSubnet);
+    private static native int OhNetLibraryStartCp(int aSubnet);
+    private static native int OhNetLibraryStartDv();
+    private static native int OhNetLibraryStartCombined(int aSubnet);
     private static native void OhNetLibraryClose();
     private static native void OhNetSetCurrentSubnet(long aSubnet);
     private static native long OhNetCurrentSubnetAdapter();
@@ -32,7 +32,10 @@ public class Library
      * 						the library
      */
     public void initialise(InitParams aInitParams) {
-    	OhNetLibraryInitialise(aInitParams.getHandle());
+    	if (0 != OhNetLibraryInitialise(aInitParams.getHandle()))
+        {
+            throw new LibraryException();
+        }
     }
     
     /**
@@ -77,7 +80,8 @@ public class Library
     public ControlPointStack startCp(Inet4Address aSubnet)
     {
         int ipv4Addr = getIpv4Int(aSubnet);
-        OhNetLibraryStartCp(ipv4Addr);
+        int err = OhNetLibraryStartCp(ipv4Addr);
+        checkStartupError(err);
         return new ControlPointStack();
     }
     
@@ -92,7 +96,8 @@ public class Library
     public CombinedStack startCombined(Inet4Address aSubnet)
     {
     	int ipv4Addr = getIpv4Int(aSubnet);
-        OhNetLibraryStartCombined(ipv4Addr);
+        int err = OhNetLibraryStartCombined(ipv4Addr);
+        checkStartupError(err);
         return new CombinedStack();
     }
     
@@ -103,18 +108,25 @@ public class Library
      */
     public DeviceStack startDv()
     {
-    	OhNetLibraryStartDv();
+    	int err = OhNetLibraryStartDv();
+    	checkStartupError(err);
     	return new DeviceStack();
     }
     
-    public NetworkAdapter getCurrentSubnetAdapter() {
-    	long ptr = OhNetCurrentSubnetAdapter();
-    	
-    	if (ptr == 0) {
-    		return null;
-    	} else {
-    		return new NetworkAdapter(ptr);
-    	}
+    private void checkStartupError(int aError)
+    {
+        switch (aError)
+        {
+            case 0:
+            default:
+                break;
+            case 1:
+                throw new ErrorNoMemory();
+            case 2:
+                throw new ErrorGeneral();
+            case 3:
+                throw new ErrorNetworkAddressInUse();
+        }
     }
     
     /**

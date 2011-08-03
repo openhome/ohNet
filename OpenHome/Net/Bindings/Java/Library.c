@@ -38,45 +38,45 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetLibraryInitialis
 /*
  * Class:     org_openhome_net_core_Library
  * Method:    OhNetLibraryStartCp
- * Signature: (I)V
+ * Signature: (I)I
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCp
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCp
   (JNIEnv *aEnv, jclass aClass, jint aSubnet)
 {
 	TIpAddress subnet = (TIpAddress) aSubnet;
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	OhNetLibraryStartCp(subnet);
+	return (jint) OhNetLibraryStartCp(subnet);
 }
 
 /*
  * Class:     org_openhome_net_core_Library
  * Method:    OhNetLibraryStartDv
- * Signature: ()V
+ * Signature: ()I
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartDv
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartDv
   (JNIEnv *aEnv, jclass aClass)
 {
 	aEnv = aEnv;
 	aClass = aClass;
 
-	OhNetLibraryStartDv();
+	return (jint) OhNetLibraryStartDv();
 }
 
 /*
  * Class:     org_openhome_net_core_Library
  * Method:    OhNetLibraryStartCombined
- * Signature: (I)V
+ * Signature: (I)I
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCombined
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCombined
   (JNIEnv *aEnv, jclass aClass, jint aSubnet)
 {
 	TIpAddress subnet = (TIpAddress) aSubnet;
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	OhNetLibraryStartCombined(subnet);
+	return (jint) OhNetLibraryStartCombined(subnet);
 }
 
 /*

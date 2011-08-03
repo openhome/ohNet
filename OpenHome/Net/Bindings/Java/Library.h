@@ -26,25 +26,25 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetLibraryInitialis
 /*
  * Class:     org_openhome_net_core_Library
  * Method:    OhNetLibraryStartCp
- * Signature: (I)V
+ * Signature: (I)I
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCp
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCp
   (JNIEnv *, jclass, jint);
 
 /*
  * Class:     org_openhome_net_core_Library
  * Method:    OhNetLibraryStartDv
- * Signature: ()V
+ * Signature: ()I
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartDv
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartDv
   (JNIEnv *, jclass);
 
 /*
  * Class:     org_openhome_net_core_Library
  * Method:    OhNetLibraryStartCombined
- * Signature: (I)V
+ * Signature: (I)I
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCombined
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCombined
   (JNIEnv *, jclass, jint);
 
 /*
@@ -53,14 +53,6 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryStartCombi
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_core_Library_OhNetLibraryClose
-  (JNIEnv *, jclass);
-
-/*
- * Class:     org_openhome_net_core_Library
- * Method:    OhNetSubnetListCreate
- * Signature: ()J
- */
-JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Library_OhNetSubnetListCreate
   (JNIEnv *, jclass);
 
 /*

@@ -934,6 +934,9 @@ java_classes = $(objdir)org/openhome/net/controlpoint/Argument.class \
 			   $(objdir)org/openhome/net/core/CombinedStack.class \
 			   $(objdir)org/openhome/net/core/ControlPointStack.class \
 			   $(objdir)org/openhome/net/core/DeviceStack.class \
+			   $(objdir)org/openhome/net/core/ErrorGeneral.class \
+			   $(objdir)org/openhome/net/core/ErrorNetworkAddressInUse.class \
+			   $(objdir)org/openhome/net/core/ErrorNoMemory.class \
 			   $(objdir)org/openhome/net/core/InitParams.class \
 			   $(objdir)org/openhome/net/core/Library.class \
 			   $(objdir)org/openhome/net/core/LibraryException.class \
@@ -1044,6 +1047,12 @@ $(objdir)org/openhome/net/core/ControlPointStack.class : $(publicjavadir)org/ope
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/ControlPointStack.java
 $(objdir)org/openhome/net/core/DeviceStack.class : $(publicjavadir)org/openhome/net/core/DeviceStack.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/DeviceStack.java
+$(objdir)org/openhome/net/core/ErrorGeneral.class : $(publicjavadir)org/openhome/net/core/ErrorGeneral.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/ErrorGeneral.java
+$(objdir)org/openhome/net/core/ErrorNetworkAddressInUse.class : $(publicjavadir)org/openhome/net/core/ErrorNetworkAddressInUse.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/ErrorNetworkAddressInUse.java
+$(objdir)org/openhome/net/core/ErrorNoMemory.class : $(publicjavadir)org/openhome/net/core/ErrorNoMemory.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/ErrorNoMemory.java
 $(objdir)org/openhome/net/core/InitParams.class : $(publicjavadir)org/openhome/net/core/InitParams.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/InitParams.java
 $(objdir)org/openhome/net/core/Library.class : $(publicjavadir)org/openhome/net/core/Library.java
