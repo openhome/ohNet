@@ -252,10 +252,13 @@ def JsTests():
     do_jstest.write_dummy_results()
     do_jstest.get_env(objpath)
     do_jstest.find_device()
-    if os.getenv('JENKINS_COOKIE') is None:
-        do_jstest.run_browser()
-    else:
-        do_jstest.run_browser_jenkins()
+    # PsExec allows us to view JS tests under Jenkins
+    # ...it also seems to cause most of the problems around JS tests so try ignoring it for now
+    do_jstest.run_browser()
+    #if os.getenv('JENKINS_COOKIE') is None:
+    #    do_jstest.run_browser()
+    #else:
+    #    do_jstest.run_browser_jenkins()
 
 
 if gTestsOnly == 0:
