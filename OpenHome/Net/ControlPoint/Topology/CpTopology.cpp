@@ -193,12 +193,16 @@ private:
 CpTopology::CpTopology(IHouseHandler& aHandler)
     : iHandler(aHandler)
 {
+	LOG(kTopology, "CpTopology::CpTopology\n");
     iTopology = new CpTopology3(*this);
+	LOG(kTopology, "CpTopology::CpTopology created layer 3\n");
 }
 
 CpTopology::~CpTopology()
 {
     delete iTopology;
+
+	LOG(kTopology, "CpTopology::~CpTopology deleted layer 3\n");
 }
 
 void CpTopology::Refresh()

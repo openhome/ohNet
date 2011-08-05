@@ -295,7 +295,7 @@ THandle OsNetworkCreate(OsNetworkSocketType aSocketType);
  * @param[in] aAddress     IpV4 address (in network byte order)
  * @param[in] aPort        Port [0..65535].  If 0 is passed, this will be set to the port the OS selects
  *
- * @return  0 on success; -1 on failure
+ * @return  0 on success; -2 if the name is already in use; -1 on any other failure
  */
 int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort);
 

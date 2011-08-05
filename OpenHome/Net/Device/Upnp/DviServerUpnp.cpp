@@ -8,7 +8,7 @@
 #include <OpenHome/Net/Private/Stack.h>
 #include <OpenHome/Net/Private/DviStack.h>
 #include <OpenHome/Net/Private/DviDevice.h>
-#include <OpenHome/Net/Private/DviDeviceUpnp.h>
+#include <OpenHome/Net/Private/DviProtocolUpnp.h>
 #include <OpenHome/Private/Printer.h>
 #include <OpenHome/Net/Private/XmlParser.h>
 #include <OpenHome/Private/Converter.h>
@@ -537,7 +537,7 @@ void DviSessionUpnp::Post()
     iSoapRequest.Set(iReadBuffer->Read(iHeaderContentLength.ContentLength()));
 
     DviDevice* device;
-    ParseRequestUri(DviDeviceUpnp::kControlUrlTail, &device, &iInvocationService);
+    ParseRequestUri(DviProtocolUpnp::kControlUrlTail, &device, &iInvocationService);
     if (device != NULL && iInvocationService != NULL) {
         try {
             Invoke();
@@ -568,7 +568,7 @@ void DviSessionUpnp::Subscribe()
     }
     DviDevice* device;
     DviService* service;
-    ParseRequestUri(DviDeviceUpnp::kEventUrlTail, &device, &service);
+    ParseRequestUri(DviProtocolUpnp::kEventUrlTail, &device, &service);
     if (device == NULL || service == NULL) {
         Error(HttpStatus::kPreconditionFailed);
     }
@@ -622,7 +622,7 @@ void DviSessionUpnp::Unsubscribe()
 
     DviDevice* device;
     DviService* service;
-    ParseRequestUri(DviDeviceUpnp::kEventUrlTail, &device, &service);
+    ParseRequestUri(DviProtocolUpnp::kEventUrlTail, &device, &service);
     if (device == NULL || service == NULL) {
         LOG2(kDvEvent, kError, "Unsubscribe failed - device=%p, service=%p\n", device, service);
         Error(HttpStatus::kPreconditionFailed);
@@ -663,7 +663,7 @@ void DviSessionUpnp::Renew()
 
     DviDevice* device;
     DviService* service;
-    ParseRequestUri(DviDeviceUpnp::kEventUrlTail, &device, &service);
+    ParseRequestUri(DviProtocolUpnp::kEventUrlTail, &device, &service);
     if (device == NULL || service == NULL) {
         Error(HttpStatus::kPreconditionFailed);
     }

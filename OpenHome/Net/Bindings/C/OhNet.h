@@ -42,6 +42,14 @@ typedef void (STDCALL *OhNetCallbackFreeExternal)(void* aPtr);
  * @{
  */
 
+typedef enum EOhNetLibraryInitError
+{
+    eOhNetInitErrorNone
+   ,eOhNetInitErrorNoMemory
+   ,eOhNetInitErrorGeneral
+   ,eOhNetInitErrorNetworkAddressInUse
+} EOhNetLibraryInitError;
+
 /**
  * Initialise the UPnP library.
  *
@@ -73,14 +81,14 @@ DllExport int32_t STDCALL OhNetLibraryInitialiseMinimal(OhNetHandleInitParams aI
  *
  * @param aSubnet      Subnet address of the network adapter to use.
  */
-DllExport void STDCALL OhNetLibraryStartCp(TIpAddress aSubnet);
+DllExport EOhNetLibraryInitError STDCALL OhNetLibraryStartCp(TIpAddress aSubnet);
 
 /**
  * Start the library as a UPnP device stack
  *
  * Must be called after OhNetLibraryInitialise but before any function from other headers
  */
-DllExport void STDCALL OhNetLibraryStartDv();
+DllExport EOhNetLibraryInitError STDCALL OhNetLibraryStartDv();
 
 /**
  * Start the library as both UPnP control point and device stacks
@@ -90,7 +98,7 @@ DllExport void STDCALL OhNetLibraryStartDv();
  * @param aSubnet      Subnet address of the network adapter for the control point stack to use.
  *                     (The device stack operates on all adapters.)
  */
-DllExport void STDCALL OhNetLibraryStartCombined(TIpAddress aSubnet);
+DllExport EOhNetLibraryInitError STDCALL OhNetLibraryStartCombined(TIpAddress aSubnet);
 
 /**
  * Close the UPnP library.

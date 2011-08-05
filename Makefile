@@ -23,8 +23,8 @@ compiler = $(devroot)/usr/bin/llvm-gcc-4.2  -arch armv6 -isysroot /Developer/Pla
 ar = /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/ar rc $(objdir)
 
 else
-platform_cflags = -DPLATFORM_MACOSX_GNU -arch i386 -mmacosx-version-min=10.4
-platform_linkflags = -arch i386
+platform_cflags = -DPLATFORM_MACOSX_GNU -arch x86_64 -mmacosx-version-min=10.4
+platform_linkflags = -arch x86_64
 objdir = Build/Obj/Mac/$(build_dir)/
 compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
 link = ${CROSS_COMPILE}g++ -lpthread $(platform_linkflags)
@@ -223,6 +223,8 @@ docs:
 	doxygen DoxyfileCppStd
 	mkdir -p Build/Docs/Cs
 	doxygen DoxyfileCs
+	mkdir -p Build/Docs/Java
+	doxygen DoxyfileJava
 	mkdir -p Build/Docs/Js
 	perl ./JsDoc/jsdoc.pl -d Build/Docs/Js OpenHome/Net/Bindings/Js/ControlPoint OpenHome/Net/Bindings/Js/ControlPoint/Proxies
 

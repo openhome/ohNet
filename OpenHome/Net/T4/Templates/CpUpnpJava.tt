@@ -48,16 +48,14 @@
 
     Document u = new Document(TemplateArgument("xml"));
 #>
-package openhome.net.controlpoint.proxies;
+package org.openhome.net.controlpoint.proxies;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import ohnet.*;
-import openhome.net.controlpoint.*;
-import openhome.net.controlpoint.proxies.*;
-import openhome.net.controlpoint.proxies.<#=className#>.*;
-import openhome.net.core.*;
+import org.openhome.net.controlpoint.*;
+import org.openhome.net.controlpoint.proxies.<#=className#>.*;
+import org.openhome.net.core.*;
 
 <# /* #>
 final class EndPoints
@@ -530,8 +528,8 @@ public class <#=className#> extends CpProxy implements I<#=className#>
 <#  } #>
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@link
-     * #openhome.net.core.library.close}.
+     * Must be called for each class instance.  Must be called before {@code
+     * Library.close()}.
      */
     public void dispose()
     {

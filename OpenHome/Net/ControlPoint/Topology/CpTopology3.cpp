@@ -825,6 +825,7 @@ CpTopology3::~CpTopology3()
 {
 	LOG(kTopology, "CpTopology3::~CpTopology3\n");
 	delete (iTopology2);
+	LOG(kTopology, "CpTopology3::~CpTopology3 deleted layer 2\n");
 	ASSERT(iRoomList.size() == 0);
 }
     

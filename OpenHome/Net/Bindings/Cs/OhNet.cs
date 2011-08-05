@@ -4,6 +4,29 @@ using System.Runtime.InteropServices;
 namespace OpenHome.Net.Core
 {
     /// <summary>
+    /// Thrown when initialisation fails due to out of memory.
+    /// </summary>
+    public class ErrorNoMemory : Exception
+    {
+    }
+
+    /// <summary>
+    /// Thrown when initialisation fails due to an attempt to reuse a network address.
+    /// </summary>
+    /// <remarks>This may imply that another similarly configured instance of ohNet is already running.
+    /// On Windows, it could also mean that too many instances of ohNet have been recently launched.</remarks>
+    public class ErrorNetworkAddressInUse : Exception
+    {
+    }
+
+    /// <summary>
+    /// Thrown when initialisation fails due to any reason not covered by a more specific error above.
+    /// </summary>
+    public class ErrorGeneral : Exception
+    {
+    }
+
+    /// <summary>
     /// Initialisation options
     /// </summary>
     /// <remarks>Most options apply equally to Control Point and Device stacks.
@@ -391,11 +414,11 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern int OhNetLibraryInitialiseMinimal(IntPtr aInitParams);
         [DllImport ("ohNet")]
-        static extern void OhNetLibraryStartCp(uint aSubnet);
+        static extern uint OhNetLibraryStartCp(uint aSubnet);
         [DllImport ("ohNet")]
-        static extern void OhNetLibraryStartDv();
+        static extern uint OhNetLibraryStartDv();
         [DllImport ("ohNet")]
-        static extern void OhNetLibraryStartCombined(uint aSubnet);
+        static extern uint OhNetLibraryStartCombined(uint aSubnet);
         [DllImport ("ohNet")]
         static extern void OhNetLibraryClose();
         [DllImport("ohNet")]
@@ -473,7 +496,8 @@ namespace OpenHome.Net.Core
         /// </returns>
         public ControlPointStack StartCp(uint aSubnet)
         {
-            OhNetLibraryStartCp(aSubnet);
+            uint err = OhNetLibraryStartCp(aSubnet);
+            CheckStartupError(err);
             return new ControlPointStack();
         }
 
@@ -485,7 +509,8 @@ namespace OpenHome.Net.Core
         /// </returns>
         public DeviceStack StartDv()
         {
-            OhNetLibraryStartDv();
+            uint err = OhNetLibraryStartDv();
+            CheckStartupError(err);
             return new DeviceStack();
         }
 
@@ -494,8 +519,25 @@ namespace OpenHome.Net.Core
         /// </summary>
         public CombinedStack StartCombined(uint aSubnet)
         {
-            OhNetLibraryStartCombined(aSubnet);
+            uint err = OhNetLibraryStartCombined(aSubnet);
+            CheckStartupError(err);
             return new CombinedStack();
+        }
+
+        private void CheckStartupError(uint aError)
+        {
+            switch (aError)
+            {
+                case 0:
+                default:
+                    break;
+                case 1:
+                    throw new ErrorNoMemory();
+                case 2:
+                    throw new ErrorGeneral();
+                case 3:
+                    throw new ErrorNetworkAddressInUse();
+            }
         }
 
         /// <summary>

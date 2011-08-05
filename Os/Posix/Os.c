@@ -450,6 +450,9 @@ int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort)
     uint16_t port = (uint16_t)aPort;
     sockaddrFromEndpoint(&addr, aAddress, port);
     err = bind(handle->iSocket, (struct sockaddr*)&addr, sizeof(addr));
+    if (err == -1 && errno == EADDRINUSE) {
+        err = -2;
+    }
     return err;
 }
 
