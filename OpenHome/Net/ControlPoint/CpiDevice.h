@@ -87,13 +87,13 @@ public:
      * Claim a reference to a device.
      * Can only be called from code that can guarantee another reference is already held
      */
-    void AddRef();
+    void AddRef(const char* aFile, uint32_t aLine);
 
     /**
      * Remove a reference to a device.
      * Removing the final reference causes a device to be deleted.
      */
-    void RemoveRef();
+    void RemoveRef(const char* aFile, uint32_t aLine);
 
     virtual TBool GetAttribute(const char* aKey, Brh& aValue) const;
     virtual void InvokeAction(Invocation& aInvocation);

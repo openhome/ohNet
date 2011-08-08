@@ -48,18 +48,20 @@ void* CpiDevice::OwnerData()
     return iOwnerData;
 }
 
-void CpiDevice::AddRef()
+void CpiDevice::AddRef(const char* aFile, uint32_t aLine)
 {
     iLock.Wait();
     iRefCount++;
+    Log::Print("AddRef (%p): %u from %s:%u\n", this, iRefCount, aFile, aLine);
     iLock.Signal();
 }
 
-void CpiDevice::RemoveRef()
+void CpiDevice::RemoveRef(const char* aFile, uint32_t aLine)
 {
     TBool dead;
     iLock.Wait();
     dead = (--iRefCount <= 0);
+    Log::Print("RemoveRef (%p): %u from %s:%u\n", this, iRefCount, aFile, aLine);
     iLock.Signal();
     if (dead) {
         iObserver.Release();
@@ -147,7 +149,7 @@ CpiDevice* CpiDeviceList::RefDeviceLocked(const Brx& aUdn)
         return NULL;
     }
     CpiDevice* device = it->second;
-    device->AddRef();
+    device->AddRef(__FILE__, __LINE__);
     return device;
 }
 
@@ -190,7 +192,7 @@ void CpiDeviceList::Add(CpiDevice* aDevice)
     iLock.Wait();
     if (aDevice->HasExpired() || !iActive) {
         LOG(kDevice, "< CpiDeviceList::Add, device expired or list stopped\n");
-        aDevice->RemoveRef();
+        aDevice->RemoveRef(__FILE__, __LINE__);
         iLock.Signal();
         return;
     }
@@ -199,26 +201,26 @@ void CpiDeviceList::Add(CpiDevice* aDevice)
         Map::iterator it = iRefreshMap.find(udn);
         if (it == iRefreshMap.end()) {
             iRefreshMap.insert(std::pair<Brn,CpiDevice*>(udn, aDevice));
-            aDevice->AddRef(); // for refresh list
+            aDevice->AddRef(__FILE__, __LINE__); // for refresh list
         }
     }
     CpiDevice* tmp = RefDeviceLocked(aDevice->Udn());
     if (tmp != NULL) {
         // device is already in the list, ignore this call to Add()
         LOG(kDevice, "< CpiDeviceList::Add, device already in list\n");
-        tmp->RemoveRef();
-        aDevice->RemoveRef();
+        tmp->RemoveRef(__FILE__, __LINE__);
+        aDevice->RemoveRef(__FILE__, __LINE__);
         iLock.Signal();
         return;
     }
     Brn udn(aDevice->Udn());
     iMap.insert(std::pair<Brn,CpiDevice*>(udn, aDevice));
-    aDevice->AddRef(); // for observer
+    aDevice->AddRef(__FILE__, __LINE__); // for observer
     iLock.Signal();
     if (IsDeviceReady(*aDevice)) {
         SetDeviceReady(*aDevice);
     }
-    aDevice->RemoveRef(); // observer's ref
+    aDevice->RemoveRef(__FILE__, __LINE__); // observer's ref
 }
 
 void CpiDeviceList::Remove(const Brx& aUdn)
@@ -256,7 +258,7 @@ void CpiDeviceList::ClearMap(Map& aMap)
 {
     Map::iterator it = aMap.begin();
     while (it != aMap.end()) {
-        it->second->RemoveRef();
+        it->second->RemoveRef(__FILE__, __LINE__);
         it->second = NULL;
         it++;
     }
@@ -325,7 +327,7 @@ void CpiDeviceList::DoRemove(const Brx& aUdn)
     if (callObserver) {
         iRemoved(*device);
     }
-    device->RemoveRef();
+    device->RemoveRef(__FILE__, __LINE__);
 }
 
 void CpiDeviceList::NotifyRefreshed()
@@ -352,10 +354,10 @@ void CpiDeviceList::NotifyRefreshed()
                     it++;
                 }
                 else {    
-                    device->AddRef();
+                    device->AddRef(__FILE__, __LINE__);
                     iLock.Signal();
                     DoRemove(device->Udn());
-                    device->RemoveRef();
+                    device->RemoveRef(__FILE__, __LINE__);
                     iLock.Wait();
                     it = iMap.begin();
                 }    
@@ -447,12 +449,12 @@ CpiDeviceListUpdater::UpdateAdded::UpdateAdded(IDeviceListUpdater& aUpdater, Cpi
     : CpiDeviceListUpdater::UpdateBase(aUpdater)
     , iDevice(aDevice)
 {
-    iDevice.AddRef();
+    iDevice.AddRef(__FILE__, __LINE__);
 }
 
 CpiDeviceListUpdater::UpdateAdded::~UpdateAdded()
 {
-    iDevice.RemoveRef();
+    iDevice.RemoveRef(__FILE__, __LINE__);
 }
 
 void CpiDeviceListUpdater::UpdateAdded::Update()
