@@ -18,14 +18,14 @@ void STDCALL CpDeviceCAddRef(CpDeviceC aDevice)
 {
     CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
     ASSERT(device != NULL);
-    device->AddRef();
+    device->AddRef(__FILE__, __LINE__);
 }
 
 void STDCALL CpDeviceCRemoveRef(CpDeviceC aDevice)
 {
     CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
     ASSERT(device != NULL);
-    device->RemoveRef();
+    device->RemoveRef(__FILE__, __LINE__);
 }
 
 int32_t STDCALL CpDeviceCGetAttribute(CpDeviceC aDevice, const char* aKey, char** aValue)

@@ -72,7 +72,7 @@ void CpiDeviceUpnp::FetchXml(CpiDeviceListUpnp& aList)
     iList = &aList;
     iXmlFetch = XmlFetchManager::Fetch();
     Uri* uri = new Uri(iLocation);
-    iDevice->AddRef();
+    iDevice->AddRef(__FILE__, __LINE__);
     FunctorAsync functor = MakeFunctorAsync(*this, &CpiDeviceUpnp::XmlFetchCompleted);
     iXmlFetch->Set(uri, functor);
     XmlFetchManager::Fetch(iXmlFetch);
@@ -284,7 +284,7 @@ void CpiDeviceUpnp::XmlFetchCompleted(IAsync& aAsync)
     }
     iList->XmlFetchCompleted(*this, err);
     iList = NULL;
-    iDevice->RemoveRef();
+    iDevice->RemoveRef(__FILE__, __LINE__);
     iSemReady.Signal();
 }
 
@@ -382,7 +382,7 @@ TBool CpiDeviceListUpnp::Update(const Brx& aUdn, TUint aMaxAge)
     CpiDevice* device = RefDeviceLocked(aUdn);
     if (device != NULL) {
         reinterpret_cast<CpiDeviceUpnp*>(device->OwnerData())->UpdateMaxAge(aMaxAge);
-        device->RemoveRef();
+        device->RemoveRef(__FILE__, __LINE__);
         return !iRefreshing;
     }
     return false;

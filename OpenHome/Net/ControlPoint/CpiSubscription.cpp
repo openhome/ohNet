@@ -141,7 +141,7 @@ CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProc
     , iSubscribeCompleted("SUBS", 0)
 {
     iTimer = new Timer(MakeFunctor(*this, &CpiSubscription::Renew));
-    iDevice.AddRef();
+    iDevice.AddRef(__FILE__, __LINE__);
     Schedule(eSubscribe);
     Stack::AddObject(this, "CpiSubscription");
 }
@@ -150,7 +150,7 @@ CpiSubscription::~CpiSubscription()
 {
     iTimer->Cancel();
     ASSERT(iSid.Bytes() == 0);
-    iDevice.RemoveRef();
+    iDevice.RemoveRef(__FILE__, __LINE__);
     delete iTimer;
     Stack::RemoveObject(this, "CpiSubscription");
 }
