@@ -52,13 +52,6 @@ void DviDevice::AddProtocol(IDvProtocol* aProtocol)
 
 DviDevice::~DviDevice()
 {
-    TUint i = 0;
-    for (; i<(TUint)iProtocols.size(); i++) {
-        delete iProtocols[i];
-    }
-    for (i=0; i<iServices.size(); i++) {
-        iServices[i]->RemoveRef();
-    }
     Stack::RemoveObject(this, "DviDevice");
 }
 
@@ -76,6 +69,13 @@ void DviDevice::Destroy()
     }
     iLock.Signal();
     iShutdownSem.Wait();
+    TUint i = 0;
+    for (; i<(TUint)iProtocols.size(); i++) {
+        delete iProtocols[i];
+    }
+    for (i=0; i<iServices.size(); i++) {
+        iServices[i]->RemoveRef();
+    }
     RemoveWeakRef();
 }
 
