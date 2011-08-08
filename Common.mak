@@ -107,6 +107,7 @@ headers =   $(inc_build)/OpenHome/Buffer.h \
             $(inc_build)/OpenHome/Exception.h \
             $(inc_build)/OpenHome/Functor.h \
             $(inc_build)/OpenHome/FunctorMsg.h \
+            $(inc_build)/OpenHome/FunctorNetworkAdapter.h \
             $(inc_build)/OpenHome/MimeTypes.h \
             $(inc_build)/OpenHome/OhNetDefines.h \
             $(inc_build)/OpenHome/OhNetTypes.h \

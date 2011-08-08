@@ -34,6 +34,7 @@ namespace OpenHome.Net.Core
     public class InitParams
     {
         public delegate void OhNetCallback(IntPtr aPtr);
+        public delegate void OhNetCallbackNetworkAdapter(IntPtr aPtr, IntPtr aAdapter);
         public delegate void OhNetCallbackMsg(IntPtr aPtr, string aMsg);
         public delegate void OhNetCallbackAsync(IntPtr aPtr, IntPtr aAsyncHandle);
 
@@ -49,6 +50,9 @@ namespace OpenHome.Net.Core
         public OhNetCallbackAsync AsyncEndHandler { private get; set; }
         public OhNetCallbackAsync AsyncErrorHandler { private get; set; }
         public OhNetCallback SubnetListChangedListener { private get; set; }
+        public OhNetCallbackNetworkAdapter SubnetAddedListener { private get; set; }
+        public OhNetCallbackNetworkAdapter SubnetRemovedListener { private get; set; }
+        public OhNetCallbackNetworkAdapter NetworkAdapterChangedListener { private get; set; }
 
         /// <summary>
         /// A timeout for TCP connections in milliseconds. Must be >0
@@ -181,6 +185,12 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetSubnetListChangedListener(IntPtr aParams, OhNetCallback aCallback, IntPtr aPtr);
         [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetSubnetAddedListener(IntPtr aParams, OhNetCallbackNetworkAdapter aCallback, IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetSubnetRemovedListener(IntPtr aParams, OhNetCallbackNetworkAdapter aCallback, IntPtr aPtr);
+        [DllImport("ohNet")]
+        static extern void OhNetInitParamsSetNetworkAdapterChangedListener(IntPtr aParams, OhNetCallbackNetworkAdapter aCallback, IntPtr aPtr);
+        [DllImport("ohNet")]
         static extern void OhNetInitParamsSetTcpConnectTimeout(IntPtr aParams, uint aTimeoutMs);
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetMsearchTime(IntPtr aParams, uint aSecs);
@@ -253,6 +263,7 @@ namespace OpenHome.Net.Core
         // useful because it allows the user to write null to the property and have it
         // properly passed through to the library.
         private static readonly OhNetCallback DefaultCallback = aPtr => DefaultActionFunction();
+        private static readonly OhNetCallbackNetworkAdapter DefaultCallbackNetworkAdapter = (aPtr, aAdapter) => DefaultActionFunction();
         private static readonly OhNetCallbackMsg DefaultCallbackMsg = (aPtr, aMsg) => DefaultActionFunction();
         private static readonly OhNetCallbackAsync DefaultCallbackAsync = (aPtr, aAsyncHandle) => DefaultActionFunction();
 
@@ -266,6 +277,9 @@ namespace OpenHome.Net.Core
             AsyncEndHandler = DefaultCallbackAsync;
             AsyncErrorHandler = DefaultCallbackAsync;
             SubnetListChangedListener = DefaultCallback;
+            SubnetAddedListener = DefaultCallbackNetworkAdapter;
+            SubnetRemovedListener = DefaultCallbackNetworkAdapter;
+            NetworkAdapterChangedListener = DefaultCallbackNetworkAdapter;
             TcpConnectTimeoutMs = OhNetInitParamsTcpConnectTimeoutMs(defaultParams); 
             MsearchTimeSecs = OhNetInitParamsMsearchTimeSecs(defaultParams); 
             MsearchTtl = OhNetInitParamsMsearchTtl(defaultParams); 
@@ -279,7 +293,7 @@ namespace OpenHome.Net.Core
             DvNumServerThreads = OhNetInitParamsDvNumServerThreads(defaultParams); 
             DvNumPublisherThreads = OhNetInitParamsDvNumPublisherThreads(defaultParams);
             DvNumWebSocketThreads = OhNetInitParamsDvNumWebSocketThreads(defaultParams);
-            DvWebSocketPort = OhNetInitParamsDvWebSocketPort(defaultParams); 
+            DvWebSocketPort = OhNetInitParamsDvWebSocketPort(defaultParams);
             UseLoopbackNetworkAdapter = false; // FIXME: No getter?
             DvEnableBonjour = OhNetInitParamsDvIsBonjourEnabled(defaultParams) != 0; 
 
@@ -312,6 +326,18 @@ namespace OpenHome.Net.Core
             if (SubnetListChangedListener != DefaultCallback)
             {
                 OhNetInitParamsSetSubnetListChangedListener(nativeParams, SubnetListChangedListener, aCallbackPtr);
+            }
+            if (SubnetAddedListener != DefaultCallbackNetworkAdapter)
+            {
+                OhNetInitParamsSetSubnetAddedListener(nativeParams, SubnetAddedListener, aCallbackPtr);
+            }
+            if (SubnetRemovedListener != DefaultCallbackNetworkAdapter)
+            {
+                OhNetInitParamsSetSubnetRemovedListener(nativeParams, SubnetRemovedListener, aCallbackPtr);
+            }
+            if (NetworkAdapterChangedListener != DefaultCallbackNetworkAdapter)
+            {
+                OhNetInitParamsSetNetworkAdapterChangedListener(nativeParams, NetworkAdapterChangedListener, aCallbackPtr);
             }
             OhNetInitParamsSetTcpConnectTimeout(nativeParams, TcpConnectTimeoutMs);
             OhNetInitParamsSetMsearchTime(nativeParams, MsearchTimeSecs);
@@ -431,6 +457,10 @@ namespace OpenHome.Net.Core
         static extern IntPtr OhNetNetworkAdapterName(IntPtr aNif);
         [DllImport("ohNet")]
         static extern IntPtr OhNetNetworkAdapterFullName(IntPtr aNif);
+        [DllImport("ohNet")]
+        static extern void OhNetNetworkAdapterAddRef(IntPtr aNif);
+        [DllImport("ohNet")]
+        static extern void OhNetNetworkAdapterRemoveRef(IntPtr aNif);
         [DllImport("ohNet")]
         static extern IntPtr OhNetSubnetListCreate();
         [DllImport("ohNet")]
@@ -599,6 +629,25 @@ namespace OpenHome.Net.Core
             string name = Marshal.PtrToStringAnsi(cStr);
             OhNetFree(cStr);
             return name;
+        }
+
+        /// <summary>
+        /// Claim a reference to a network adapter.
+        /// </summary>
+        /// <remarks>Can only be called from code that can guarantee another reference is already held.
+        /// Each call to AddRef() must later have exactly one matching call to RemoveRef().</remarks>
+        public void AddRef(IntPtr aNif)
+        {
+            OhNetNetworkAdapterAddRef(aNif);
+        }
+
+        /// <summary>
+        /// Remove a reference to a network adapter.
+        /// </summary>
+        /// <remarks>Removing the final reference causes a network adapter to be deleted.</remarks>
+        public void RemoveRef(IntPtr aNif)
+        {
+            OhNetNetworkAdapterRemoveRef(aNif);
         }
 
         /// <summary>
