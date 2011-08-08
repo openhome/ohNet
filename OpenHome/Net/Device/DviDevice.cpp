@@ -67,8 +67,6 @@ void DviDevice::Destroy()
         Functor blank;
         SetDisabled(blank, true);
     }
-    iLock.Signal();
-    iShutdownSem.Wait();
     TUint i = 0;
     for (; i<(TUint)iProtocols.size(); i++) {
         delete iProtocols[i];
@@ -76,6 +74,8 @@ void DviDevice::Destroy()
     for (i=0; i<iServices.size(); i++) {
         iServices[i]->RemoveRef();
     }
+    iLock.Signal();
+    iShutdownSem.Wait();
     RemoveWeakRef();
 }
 
@@ -196,6 +196,24 @@ DviService& DviDevice::Service(TUint aIndex) const
 {
     ASSERT(aIndex < ServiceCount());
     return *(iServices[aIndex]);
+}
+
+DviService* DviDevice::ServiceReference(const ServiceType& aServiceType)
+{
+    DviService* service = NULL;
+    iLock.Wait();
+    const Brx& fullNameUpnp = aServiceType.FullNameUpnp();
+    const TUint count = (TUint)iServices.size();
+    for (TUint i=0; i<count; i++) {
+        DviService* s = iServices[i];
+        if (s->ServiceType().FullNameUpnp() == fullNameUpnp) {
+            s->AddRef();
+            service = s;
+            break;
+        }
+    }
+    iLock.Signal();
+    return service;
 }
 
 void DviDevice::AddDevice(DviDevice* aDevice)
