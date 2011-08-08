@@ -51,6 +51,7 @@ DviSubscription::DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWr
     , iSequenceNumber(0)
     , iExpired(false)
 {
+    iDevice.AddWeakRef();
     aSid.TransferTo(iSid);
     Functor functor = MakeFunctor(*this, &DviSubscription::Expired);
     iTimer = new Timer(functor);
@@ -196,6 +197,7 @@ TBool DviSubscription::HasExpired() const
 
 DviSubscription::~DviSubscription()
 {
+    iDevice.RemoveWeakRef();
     delete iTimer;
     if (iUserData != NULL) {
         iUserData->Release();
