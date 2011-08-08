@@ -20,10 +20,10 @@ namespace OpenHome.Net.Device
             };
             Library lib = new Library();
             lib.Initialise(initParams);
-            IntPtr subnetList = lib.SubnetListCreate();
-            IntPtr nif = lib.SubnetAt(subnetList, 0);
-            uint subnet = lib.NetworkAdapterSubnet(nif);
-            lib.SubnetListDestroy(subnetList);
+            SubnetList subnetList = new SubnetList();
+            NetworkAdapter nif = subnetList.SubnetAt(0);
+            uint subnet = nif.Subnet();
+            subnetList.Destroy();
             lib.StartCombined(subnet);
             new Runner();
             lib.Close();

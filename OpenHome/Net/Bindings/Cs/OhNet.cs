@@ -27,6 +27,103 @@ namespace OpenHome.Net.Core
     }
 
     /// <summary>
+    /// A network adapter.
+    /// </summary>
+    public class NetworkAdapter
+    {
+        [DllImport("ohNet")]
+        static extern uint OhNetNetworkAdapterAddress(IntPtr aNif);
+        [DllImport("ohNet")]
+        static extern uint OhNetNetworkAdapterSubnet(IntPtr aNif);
+        [DllImport("ohNet", CallingConvention = CallingConvention.StdCall, EntryPoint = "OhNetNetworkAdapterName", ExactSpelling = false)]
+        static extern IntPtr OhNetNetworkAdapterName(IntPtr aNif);
+        [DllImport("ohNet")]
+        static extern IntPtr OhNetNetworkAdapterFullName(IntPtr aNif);
+        [DllImport("ohNet")]
+        static extern void OhNetNetworkAdapterAddRef(IntPtr aNif);
+        [DllImport("ohNet")]
+        static extern void OhNetNetworkAdapterRemoveRef(IntPtr aNif);
+
+        private IntPtr iHandle;
+
+        /// <summary>
+        /// Constructor. Not intended for external use.
+        /// </summary>
+        /// <remarks>Network adapters should be constructed via the SubnetList classes.</remarks>
+        /// <param name="aHandle">Handle to the underlying native network adapter.</param>
+        public NetworkAdapter(IntPtr aHandle)
+        {
+            iHandle = aHandle;
+        }
+
+        internal IntPtr Handle()
+        {
+            return iHandle;
+        }
+
+        /// <summary>
+        /// Get the ip address for the network interface.
+        /// </summary>
+        /// <returns>IPv4 address in network byte order.</returns>
+        public uint Address()
+        {
+            return OhNetNetworkAdapterAddress(iHandle);
+        }
+
+        /// <summary>
+        /// Get the subnet address for the network interface.
+        /// </summary>
+        /// <returns>IPv4 subnet address in network byte order.</returns>
+        public uint Subnet()
+        {
+            return OhNetNetworkAdapterSubnet(iHandle);
+        }
+
+        /// <summary>
+        /// Get the name for a given network interface.
+        /// </summary>
+        /// <returns>String containing name of the adapter.</returns>
+        public string Name()
+        {
+            IntPtr cStr = OhNetNetworkAdapterName(iHandle);
+            string name = Marshal.PtrToStringAnsi(cStr);
+            Library.Free(cStr);
+            return name;
+        }
+
+        /// <summary>
+        /// Get the full name for a given network interface.
+        /// </summary>
+        /// <returns>String in the form a.b.c.d (name).</returns>
+        public string FullName()
+        {
+            IntPtr cStr = OhNetNetworkAdapterFullName(iHandle);
+            string name = Marshal.PtrToStringAnsi(cStr);
+            Library.Free(cStr);
+            return name;
+        }
+
+        /// <summary>
+        /// Claim a reference to the network adapter.
+        /// </summary>
+        /// <remarks>Can only be called from code that can guarantee another reference is already held.
+        /// Each call to AddRef() must later have exactly one matching call to RemoveRef().</remarks>
+        public void AddRef()
+        {
+            OhNetNetworkAdapterAddRef(iHandle);
+        }
+
+        /// <summary>
+        /// Remove a reference to the network adapter.
+        /// </summary>
+        /// <remarks>Removing the final reference causes the network adapter to be deleted.</remarks>
+        public void RemoveRef()
+        {
+            OhNetNetworkAdapterRemoveRef(iHandle);
+        }
+    }
+
+    /// <summary>
     /// Initialisation options
     /// </summary>
     /// <remarks>Most options apply equally to Control Point and Device stacks.
@@ -450,27 +547,7 @@ namespace OpenHome.Net.Core
         [DllImport("ohNet")]
         static extern void OhNetFree(IntPtr aPtr);
         [DllImport("ohNet")]
-        static extern uint OhNetNetworkAdapterAddress(IntPtr aNif);
-        [DllImport("ohNet")]
-        static extern uint OhNetNetworkAdapterSubnet(IntPtr aNif);
-        [DllImport("ohNet", CallingConvention = CallingConvention.StdCall, EntryPoint = "OhNetNetworkAdapterName", ExactSpelling = false)]
-        static extern IntPtr OhNetNetworkAdapterName(IntPtr aNif);
-        [DllImport("ohNet")]
-        static extern IntPtr OhNetNetworkAdapterFullName(IntPtr aNif);
-        [DllImport("ohNet")]
-        static extern void OhNetNetworkAdapterAddRef(IntPtr aNif);
-        [DllImport("ohNet")]
-        static extern void OhNetNetworkAdapterRemoveRef(IntPtr aNif);
-        [DllImport("ohNet")]
-        static extern IntPtr OhNetSubnetListCreate();
-        [DllImport("ohNet")]
-        static extern uint OhNetSubnetListSize(IntPtr aList);
-        [DllImport("ohNet")]
-        static extern IntPtr OhNetSubnetAt(IntPtr aList, uint aIndex);
-        [DllImport("ohNet")]
-        static extern void OhNetSubnetListDestroy(IntPtr aList);
-        [DllImport("ohNet")]
-        static extern void OhNetSetCurrentSubnet(uint aSubnet);
+        static extern void OhNetSetCurrentSubnet(IntPtr aSubnet);
         [DllImport("ohNet")]
         static extern void OhNetInitParamsSetFreeExternalCallback(IntPtr aParams, CallbackFreeMemory aCallback);
 
@@ -583,110 +660,9 @@ namespace OpenHome.Net.Core
         /// Free memory returned by native code
         /// </summary>
         /// <param name="aPtr">IntPtr returned by native code which is documented as requiring explicit destruction</param>
-        public void Free(IntPtr aPtr)
+        public static void Free(IntPtr aPtr)
         {
             OhNetFree(aPtr);
-        }
-
-        /// <summary>
-        /// Get the ip address for a given network interface
-        /// </summary>
-        /// <param name="aNif">Handle returned by SubnetAt()</param>
-        /// <returns>IPv4 address in network byte order</returns>
-        public uint NetworkAdapterAddress(IntPtr aNif)
-        {
-            return OhNetNetworkAdapterAddress(aNif);
-        }
-
-        /// <summary>
-        /// Get the subnet address for a given network interface
-        /// </summary>
-        /// <param name="aNif">Handle returned by SubnetAt()</param>
-        /// <returns>IPv4 address in network byte order</returns>
-        public uint NetworkAdapterSubnet(IntPtr aNif)
-        {
-            return OhNetNetworkAdapterSubnet(aNif);
-        }
-
-        /// <summary>
-        /// Get the name for a given network interface
-        /// </summary>
-        /// <param name="aNif">Handle returned by SubnetAt()</param>
-        /// <returns>Pointer to a nul-terminated character array.  Caller is responsible for Free()ing this</returns>
-        public IntPtr NetworkAdapterName(IntPtr aNif)
-        {
-            return OhNetNetworkAdapterName(aNif);
-        }
-
-        /// <summary>
-        /// Get the full name for a given network interface.
-        /// </summary>
-        /// <param name="aNif">Handle returned by SubnetAt().</param>
-        /// <returns>String in the form a.b.c.d (name).</returns>
-        public string NetworkAdapterFullName(IntPtr aNif)
-        {
-            IntPtr cStr = OhNetNetworkAdapterFullName(aNif);
-            string name = Marshal.PtrToStringAnsi(cStr);
-            OhNetFree(cStr);
-            return name;
-        }
-
-        /// <summary>
-        /// Claim a reference to a network adapter.
-        /// </summary>
-        /// <remarks>Can only be called from code that can guarantee another reference is already held.
-        /// Each call to AddRef() must later have exactly one matching call to RemoveRef().</remarks>
-        public void AddRef(IntPtr aNif)
-        {
-            OhNetNetworkAdapterAddRef(aNif);
-        }
-
-        /// <summary>
-        /// Remove a reference to a network adapter.
-        /// </summary>
-        /// <remarks>Removing the final reference causes a network adapter to be deleted.</remarks>
-        public void RemoveRef(IntPtr aNif)
-        {
-            OhNetNetworkAdapterRemoveRef(aNif);
-        }
-
-        /// <summary>
-        /// Create a vector of the available subnets
-        /// </summary>
-        /// <returns>Subnet list handle.  Caller must later call SubnetListDestroy()</returns>
-        public IntPtr SubnetListCreate()
-        {
-            return OhNetSubnetListCreate();
-        }
-
-        /// <summary>
-        /// Query the number of items in a subnet list
-        /// </summary>
-        /// <param name="aList">Subnet list handle returned by SubnetListCreate()</param>
-        /// <returns>The number of items in the subnet</returns>
-        public uint SubnetListSize(IntPtr aList)
-        {
-            return OhNetSubnetListSize(aList);
-        }
-
-        /// <summary>
-        /// Get a handle to a particular subnet from a subnet list
-        /// </summary>
-        /// <param name="aList">Subnet list handle returned by SubnetListCreate()</param>
-        /// <param name="aIndex">Index of the list item to get a handle to (0..SubnetListSize()-1)</param>
-        /// <returns>Handle to the subnet</returns>
-        public IntPtr SubnetAt(IntPtr aList, uint aIndex)
-        {
-            return OhNetSubnetAt(aList, aIndex);
-        }
-
-        /// <summary>
-        /// Destroy a subnet list
-        /// </summary>
-        /// <param name="aList">Subnet list handle returned by SubnetListCreate()</param>
-        public void SubnetListDestroy(IntPtr aList)
-        {
-            OhNetSubnetListDestroy(aList);
         }
 
         /// <summary>
@@ -696,9 +672,9 @@ namespace OpenHome.Net.Core
         /// 
         /// No other subnet will be selected if aSubnet is not available</remarks>
         /// <param name="aSubnet">Handle returned by SubnetAt()</param>
-        public void SetCurrentSubnet(uint aSubnet)
+        public void SetCurrentSubnet(NetworkAdapter aSubnet)
         {
-            OhNetSetCurrentSubnet(aSubnet);
+            OhNetSetCurrentSubnet(aSubnet.Handle());
         }
 
         private void FreeMemory(IntPtr aPtr)

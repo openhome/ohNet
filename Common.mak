@@ -658,6 +658,7 @@ $(objdir)ohNet.net.dll: \
 	$(csDv)DvProviderErrors.cs \
 	$(csDv)DvServerUpnp.cs \
 	$(csShared)OhNet.cs \
+	$(csShared)SubnetList.cs \
 	$(csCp)CpDeviceDv.cs
 	$(csharp) /unsafe /t:library /debug+ /warnaserror+\
 		/out:$(objdir)ohNet.net.dll \
@@ -671,6 +672,7 @@ $(objdir)ohNet.net.dll: \
 		$(csDv)DvServerUpnp.cs \
 		$(csShared)Service.cs \
 		$(csShared)OhNet.cs \
+		$(csShared)SubnetList.cs \
 		$(csCp)CpDeviceDv.cs
 
 TestProxyCs: $(objdir)TestProxyCs.exe
