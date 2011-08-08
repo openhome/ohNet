@@ -13,7 +13,7 @@ import org.openhome.net.controlpoint.tests.TestBasicCp;
 import org.openhome.net.core.InitParams;
 import org.openhome.net.core.Library;
 import org.openhome.net.core.NetworkAdapter;
-import org.openhome.net.core.NetworkAdapterList;
+import org.openhome.net.core.SubnetList;
 
 
 public class TestDvDevice implements ICpDeviceListListener
@@ -92,7 +92,7 @@ public class TestDvDevice implements ICpDeviceListListener
 		initParams.setUseLoopbackNetworkAdapter();
 		Library lib = new Library();
 		lib.initialise(initParams);
-		NetworkAdapterList subnetList = lib.subnetListCreate();
+		SubnetList subnetList = new SubnetList();
 		NetworkAdapter nif = subnetList.getSubnet(0);
 		Inet4Address subnet = nif.getSubnet();
 		subnetList.destroy();
