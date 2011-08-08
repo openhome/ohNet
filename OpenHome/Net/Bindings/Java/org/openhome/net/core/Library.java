@@ -179,13 +179,13 @@ public class Library
      */
     private int getIpv4Int(Inet4Address aAddress)
     {
-    	byte[] ipv4Bytes = aAddress.getAddress();
-        int ipv4Addr = ipv4Bytes[0];
-        
+        byte[] ipv4Bytes = aAddress.getAddress();
+        int ipv4Addr = ipv4Bytes[0] & 0xff;
+
         for (int i = 1; i < 4; i++) {
-            ipv4Addr +=  ipv4Bytes[i] << i*8;
+            ipv4Addr |= (ipv4Bytes[i] & 0xff) << i*8;
         }
-        
+
         return ipv4Addr;
     }
 }

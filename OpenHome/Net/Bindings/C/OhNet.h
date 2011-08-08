@@ -29,6 +29,14 @@ typedef void (STDCALL *OhNetCallbackMsg)(void* aPtr, const char* aMsg);
  */
 typedef void (STDCALL *OhNetCallback)(void* aPtr);
 /**
+ * Callback which runs when a network adapter is added or removed from a subnet list.
+ * @ingroup Callbacks
+ *
+ * @param[in] aPtr      Client-specified data
+ * @param[in] aAdapter  The network adapter that was added or removed.
+ */
+typedef void (STDCALL *OhNetCallbackNetworkAdapter)(void* aPtr, OhNetHandleNetworkAdapter aAdapter);
+/**
  * Callback pointing to function which can be used to free memory allocated by a client
  * @ingroup Callbacks
  *
@@ -194,6 +202,42 @@ DllExport void STDCALL OhNetInitParamsSetAsyncErrorHandler(OhNetHandleInitParams
  * @param[in] aPtr             Data which will be passed to aCallback
  */
 DllExport void STDCALL OhNetInitParamsSetSubnetListChangedListener(OhNetHandleInitParams aParams, OhNetCallback aCallback, void* aPtr);
+
+/**
+ * Set a listener for when subnets are added to a subnet list
+ *
+ * This will run if a subnet is added to the subnet list.
+ * Note that this can only be called before OhNetLibraryInitialise
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aCallback        Callback which will be run if a subnet is added to the subnet list
+ * @param[in] aPtr             Data which will be passed to aCallback
+ */
+DllExport void STDCALL OhNetInitParamsSetSubnetAddedListener(OhNetHandleInitParams aParams, OhNetCallbackNetworkAdapter aCallback, void* aPtr);
+
+/**
+ * Set a listener for when subnets are removed from a subnet list
+ *
+ * This will run if the a subnet is removed from the subnet list.
+ * Note that this can only be called before OhNetLibraryInitialise
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aCallback        Callback which will be run if a subnet is removed from the subnet list
+ * @param[in] aPtr             Data which will be passed to aCallback
+ */
+DllExport void STDCALL OhNetInitParamsSetSubnetRemovedListener(OhNetHandleInitParams aParams, OhNetCallbackNetworkAdapter aCallback, void* aPtr);
+
+/**
+ * Set a listener for changes in the adapter being used to access a subnet.
+ *
+ * This will run if the network adapter used to access any given subnet changes.
+ * Note that this can only be called before OhNetLibraryInitialise
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aCallback        Callback which will be run if the network adapter changes
+ * @param[in] aPtr             Data which will be passed to aCallback
+ */
+DllExport void STDCALL OhNetInitParamsSetNetworkAdapterChangedListener(OhNetHandleInitParams aParams, OhNetCallbackNetworkAdapter aCallback, void* aPtr);
 
 /**
  * Set a custom timeout for TCP connections.
@@ -540,6 +584,27 @@ DllExport const char* STDCALL OhNetNetworkAdapterName(OhNetHandleNetworkAdapter 
  *          The caller is responsible for freeing this by calling OhNetFree().
  */
 DllExport char* STDCALL OhNetNetworkAdapterFullName(OhNetHandleNetworkAdapter aNif);
+
+/**
+ * Claim a reference to a network adapter.
+ *
+ * NetworkAdapter passed to a subnet added listener cannot be used outside the callback
+ * unless the client claims a reference to it.
+ *
+ * @param[in]  aDevice       NetworkAdapter originally returned to a subnet added callback.
+ */
+DllExport void STDCALL OhNetNetworkAdapterAddRef(OhNetHandleNetworkAdapter aNif);
+
+/**
+ * Release a reference to a network adapter.
+ *
+ * The network adapter will be destroyed when the last reference is released.
+ * Each call to OhNetNetworkAdapterAddRef() must be matched by exactly one call to
+ * OhNetNetworkAdapterRemoveRef().
+ *
+ * @param[in]  aDevice       Device.  Probably passed to the 'removed' version of DeviceListChanged
+ */
+DllExport void STDCALL OhNetNetworkAdapterRemoveRef(OhNetHandleNetworkAdapter aNif);
 
 /**
  * Create a list of all available subnets

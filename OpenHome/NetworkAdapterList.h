@@ -4,6 +4,7 @@
 #include <OpenHome/OhNetTypes.h>
 #include <OpenHome/Net/Core/OhNet.h>
 #include <OpenHome/Functor.h>
+#include <OpenHome/FunctorNetworkAdapter.h>
 #include <OpenHome/Private/Thread.h>
 
 #include <vector>
@@ -27,16 +28,27 @@ public:
     void RemoveCurrentChangeListener(TUint aId);
     TUint AddSubnetListChangeListener(Functor aFunctor);
     void RemoveSubnetListChangeListener(TUint aId);
+    TUint AddSubnetAddedListener(FunctorNetworkAdapter aFunctor);
+    void RemoveSubnetAddedListener(TUint aId);
+    TUint AddSubnetRemovedListener(FunctorNetworkAdapter aFunctor);
+    void RemoveSubnetRemovedListener(TUint aId);
+    TUint AddNetworkAdapterChangeListener(FunctorNetworkAdapter aFunctor);
+    void RemoveNetworkAdapterChangeListener(TUint aId);
 private:
     typedef std::map<TUint,Functor> Map;
+    typedef std::map<TUint,FunctorNetworkAdapter> MapNetworkAdapter;
     std::vector<NetworkAdapter*>* CreateSubnetListLocked() const;
     TUint AddListener(Functor aFunctor, Map& aMap);
     void RemoveSubnetListChangeListener(TUint aId, Map& aMap);
+    TUint AddSubnetListener(FunctorNetworkAdapter aFunctor, MapNetworkAdapter& aMap);
+    void RemoveSubnetListener(TUint aId, MapNetworkAdapter& aMap);
     static void InterfaceListChanged(void* aPtr);
     static TInt FindSubnet(TIpAddress aSubnet, const std::vector<NetworkAdapter*>& aList);
     void UpdateCurrentAdapter();
     void HandleInterfaceListChanged();
     void RunCallbacks(Map& aMap);
+    void RunSubnetCallbacks(MapNetworkAdapter& aMap, NetworkAdapter& aAdapter);
+    static TBool CompareSubnets(NetworkAdapter* aI, NetworkAdapter* aJ);
 private:
     mutable Mutex iListLock;
     Mutex iListenerLock;
@@ -46,6 +58,9 @@ private:
     TIpAddress iDefaultSubnet;
     Map iListenersCurrent;
     Map iListenersSubnet;
+    MapNetworkAdapter iListenersAdded;
+    MapNetworkAdapter iListenersRemoved;
+    MapNetworkAdapter iListenersAdapterChanged;
     TUint iNextListenerId;
 };
 
