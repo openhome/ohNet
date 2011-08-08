@@ -92,22 +92,22 @@ TUint CpiDeviceDv::Renew(CpiSubscription& /*aSubscription*/)
     iSubscriptionDv->Renew(durationSecs);
     return durationSecs;
 }
-
+#define T Log::Print("  CpiDeviceDv.cpp: %u\n", __LINE__);
 void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
 {
     Log::Print("> CpiDeviceDv::Unsubscribe\n");
-    if (NULL == iSubscriptionDv)
+T    if (NULL == iSubscriptionDv)
     {
-        return;
+T        return;
     }
-    DviService* service = Service(aSubscription.ServiceType());
-    if (service != NULL) {
-        service->RemoveSubscription(aSid);
+T    DviService* service = Service(aSubscription.ServiceType());
+T    if (service != NULL) {
+T        service->RemoveSubscription(aSid);
     }
-    iSubscriptionDv->RemoveRef();
-    iSubscriptionDv = NULL;
-    iSubscriptionCp = NULL;
-    Log::Print("< CpiDeviceDv::Unsubscribe\n");
+T    iSubscriptionDv->RemoveRef();
+T    iSubscriptionDv = NULL;
+T    iSubscriptionCp = NULL;
+T    Log::Print("< CpiDeviceDv::Unsubscribe\n");
 }
 
 void CpiDeviceDv::NotifyRemovedBeforeReady()
