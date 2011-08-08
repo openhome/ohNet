@@ -413,7 +413,6 @@ void OpenHome::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], I
 {
     aInitParams->SetUseLoopbackNetworkAdapter();
     UpnpLibrary::Initialise(aInitParams);
-    Debug::SetLevel(Debug::kEvent | Debug::kDvEvent);
     std::vector<NetworkAdapter*>* subnetList = UpnpLibrary::CreateSubnetList();
     TIpAddress subnet = (*subnetList)[0]->Subnet();
     UpnpLibrary::DestroySubnetList(subnetList);

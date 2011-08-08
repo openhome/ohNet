@@ -9,7 +9,7 @@ CpDeviceDv* CpDeviceDv::New(DvDevice& aDevice)
 {
     CpiDeviceDv* device = new CpiDeviceDv(aDevice.Device());
     CpDeviceDv* self = new CpDeviceDv(*device);
-    self->Device().RemoveRef(__FILE__, __LINE__);
+    self->Device().RemoveRef();
     return self;
 }
 

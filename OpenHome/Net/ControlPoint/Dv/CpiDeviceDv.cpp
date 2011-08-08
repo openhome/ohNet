@@ -92,22 +92,20 @@ TUint CpiDeviceDv::Renew(CpiSubscription& /*aSubscription*/)
     iSubscriptionDv->Renew(durationSecs);
     return durationSecs;
 }
-#define T Log::Print("  CpiDeviceDv.cpp: %u\n", __LINE__);
+
 void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
 {
-    Log::Print("> CpiDeviceDv::Unsubscribe\n");
-T    if (NULL == iSubscriptionDv)
+    if (NULL == iSubscriptionDv)
     {
-T        return;
+        return;
     }
-T    DviService* service = Service(aSubscription.ServiceType());
-T    if (service != NULL) {
-T        service->RemoveSubscription(aSid);
+    DviService* service = Service(aSubscription.ServiceType());
+    if (service != NULL) {
+        service->RemoveSubscription(aSid);
     }
-T    iSubscriptionDv->RemoveRef();
-T    iSubscriptionDv = NULL;
-T    iSubscriptionCp = NULL;
-T    Log::Print("< CpiDeviceDv::Unsubscribe\n");
+    iSubscriptionDv->RemoveRef();
+    iSubscriptionDv = NULL;
+    iSubscriptionCp = NULL;
 }
 
 void CpiDeviceDv::NotifyRemovedBeforeReady()
@@ -116,7 +114,6 @@ void CpiDeviceDv::NotifyRemovedBeforeReady()
 
 void CpiDeviceDv::Release()
 {
-    Log::Print("---CpiDeviceDv::Release\n");
     iDeviceDv.RemoveWeakRef();
     iDeviceCp = NULL; // device will delete itself when this returns;
     delete this;

@@ -24,12 +24,12 @@ TBool CpDeviceCpp::operator!=(const CpDeviceCpp& aDevice) const
 void CpDeviceCpp::AddRef()
 {
     iRefCount++;
-    iDevice.AddRef(__FILE__, __LINE__);
+    iDevice.AddRef();
 }
 
 void CpDeviceCpp::RemoveRef()
 {
-    iDevice.RemoveRef(__FILE__, __LINE__);
+    iDevice.RemoveRef();
     if (--iRefCount == 0) {
         delete this;
     }
@@ -56,7 +56,7 @@ CpDeviceCpp::CpDeviceCpp(CpiDevice& aDevice)
     , iUdn((const char*)aDevice.Udn().Ptr(), aDevice.Udn().Bytes())
     , iRefCount(1)
 {
-    iDevice.AddRef(__FILE__, __LINE__);
+    iDevice.AddRef();
 }
 
 CpDeviceCpp::~CpDeviceCpp()
