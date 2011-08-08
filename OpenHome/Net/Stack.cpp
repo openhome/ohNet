@@ -80,7 +80,6 @@ Stack::~Stack()
     ASSERT(gStackInitCount == 1);
     gStackInitCount = 0;
     iPublicLock.Wait();
-    ASSERT(iMulticastListeners.size() == 0);
     iPublicLock.Signal();
     if (iTimerManager != NULL) {
         iTimerManager->Stop();
