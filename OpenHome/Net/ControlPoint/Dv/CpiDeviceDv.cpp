@@ -100,8 +100,9 @@ void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
         return;
     }
     DviService* service = Service(aSubscription.ServiceType());
-    ASSERT(service != NULL);
-    service->RemoveSubscription(aSid);
+    if (service != NULL) {
+        service->RemoveSubscription(aSid);
+    }
     iSubscriptionDv->RemoveRef();
     iSubscriptionDv = NULL;
     iSubscriptionCp = NULL;
