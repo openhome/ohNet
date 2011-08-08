@@ -95,6 +95,7 @@ TUint CpiDeviceDv::Renew(CpiSubscription& /*aSubscription*/)
 
 void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
 {
+    Log::Print("> CpiDeviceDv::Unsubscribe\n");
     if (NULL == iSubscriptionDv)
     {
         return;
@@ -106,6 +107,7 @@ void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
     iSubscriptionDv->RemoveRef();
     iSubscriptionDv = NULL;
     iSubscriptionCp = NULL;
+    Log::Print("< CpiDeviceDv::Unsubscribe\n");
 }
 
 void CpiDeviceDv::NotifyRemovedBeforeReady()

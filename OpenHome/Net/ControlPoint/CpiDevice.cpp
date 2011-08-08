@@ -91,7 +91,9 @@ TUint CpiDevice::Renew(CpiSubscription& aSubscription)
 
 void CpiDevice::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
 {
+    Log::Print("> CpiDevice::Unsubscribe\n");
     iProtocol.Unsubscribe(aSubscription, aSid);
+    Log::Print("< CpiDevice::Unsubscribe\n");
 }
 
 void CpiDevice::NotifyRemovedBeforeReady()
