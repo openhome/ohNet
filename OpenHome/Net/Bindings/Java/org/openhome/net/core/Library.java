@@ -138,16 +138,6 @@ public class Library
     }
     
     /**
-     * Create a vector of the available subnets.
-     * 
-     * @return	a list of the available subnets.
-     */
-    public NetworkAdapterList subnetListCreate()
-    {
-        return new NetworkAdapterList();
-    }
-    
-    /**
      * Set which subnet the library should use.
      * 
      * <p>Device lists and subscriptions will be automatically updated.

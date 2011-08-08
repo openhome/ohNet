@@ -1,16 +1,16 @@
 #include <jni.h>
-#include "NetworkAdapterList.h"
+#include "SubnetList.h"
 #include "OpenHome/Net/C/OhNet.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*
- * Class:     org_openhome_net_core_NetworkAdapterList
+ * Class:     org_openhome_net_core_SubnetList
  * Method:    OhNetSubnetListCreate
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_org_openhome_net_core_NetworkAdapterList_OhNetSubnetListCreate
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_SubnetList_OhNetSubnetListCreate
   (JNIEnv *aEnv, jclass aClass)
 {
 	aEnv = aEnv;
@@ -20,11 +20,11 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_NetworkAdapterList_OhNetSubne
 }
 
 /*
- * Class:     org_openhome_net_core_NetworkAdapterList
+ * Class:     org_openhome_net_core_SubnetList
  * Method:    OhNetSubnetListSize
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapterList_OhNetSubnetListSize
+JNIEXPORT jint JNICALL Java_org_openhome_net_core_SubnetList_OhNetSubnetListSize
   (JNIEnv *aEnv, jclass aClass, jlong aList)
 {
 	OhNetHandleNetworkAdapterList list = (OhNetHandleNetworkAdapterList) (size_t)aList;
@@ -35,11 +35,11 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_NetworkAdapterList_OhNetSubnet
 }
 
 /*
- * Class:     org_openhome_net_core_NetworkAdapterList
+ * Class:     org_openhome_net_core_SubnetList
  * Method:    OhNetSubnetAt
- * Signature: (JI)I
+ * Signature: (JI)J
  */
-JNIEXPORT jlong JNICALL Java_org_openhome_net_core_NetworkAdapterList_OhNetSubnetAt
+JNIEXPORT jlong JNICALL Java_org_openhome_net_core_SubnetList_OhNetSubnetAt
   (JNIEnv *aEnv, jclass aClass, jlong aList, jint aIndex)
 {
 	OhNetHandleNetworkAdapterList list = (OhNetHandleNetworkAdapterList) (size_t)aList;
@@ -50,11 +50,11 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_NetworkAdapterList_OhNetSubne
 }
 
 /*
- * Class:     org_openhome_net_core_NetworkAdapterList
+ * Class:     org_openhome_net_core_SubnetList
  * Method:    OhNetSubnetListDestroy
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_openhome_net_core_NetworkAdapterList_OhNetSubnetListDestroy
+JNIEXPORT void JNICALL Java_org_openhome_net_core_SubnetList_OhNetSubnetListDestroy
   (JNIEnv *aEnv, jclass aClass, jlong aList)
 {
 	OhNetHandleNetworkAdapterList list = (OhNetHandleNetworkAdapterList) (size_t)aList;

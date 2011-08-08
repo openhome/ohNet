@@ -658,6 +658,7 @@ $(objdir)ohNet.net.dll: \
 	$(csDv)DvProviderErrors.cs \
 	$(csDv)DvServerUpnp.cs \
 	$(csShared)OhNet.cs \
+	$(csShared)SubnetList.cs \
 	$(csCp)CpDeviceDv.cs
 	$(csharp) /unsafe /t:library /debug+ /warnaserror+\
 		/out:$(objdir)ohNet.net.dll \
@@ -671,6 +672,7 @@ $(objdir)ohNet.net.dll: \
 		$(csDv)DvServerUpnp.cs \
 		$(csShared)Service.cs \
 		$(csShared)OhNet.cs \
+		$(csShared)SubnetList.cs \
 		$(csCp)CpDeviceDv.cs
 
 TestProxyCs: $(objdir)TestProxyCs.exe
@@ -801,7 +803,6 @@ objects_jni = $(objdir)JniAction.$(objext) \
 			  $(objdir)JniInvocation.$(objext) \
 			  $(objdir)JniLibrary.$(objext) \
 			  $(objdir)JniNetworkAdapter.$(objext) \
-			  $(objdir)JniNetworkAdapterList.$(objext) \
 			  $(objdir)JniParameterBinary.$(objext) \
 			  $(objdir)JniParameterBool.$(objext) \
 			  $(objdir)JniParameterInt.$(objext) \
@@ -815,6 +816,7 @@ objects_jni = $(objdir)JniAction.$(objext) \
 			  $(objdir)JniPropertyString.$(objext) \
 			  $(objdir)JniPropertyUint.$(objext) \
 			  $(objdir)JniResourceWriter.$(objext) \
+			  $(objdir)JniSubnetList.$(objext) \
 		
 ohNetJni : $(objdir)ohNetJni.dll 
 $(objdir)ohNetJni.dll : ohNetDll $(objects_jni)
@@ -871,8 +873,6 @@ $(objdir)JniLibrary.$(objext) : $(publicjavadir)Library.c $(headers)
 	$(compiler)JniLibrary.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)Library.c
 $(objdir)JniNetworkAdapter.$(objext) : $(publicjavadir)NetworkAdapter.c $(headers)
 	$(compiler)JniNetworkAdapter.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)NetworkAdapter.c
-$(objdir)JniNetworkAdapterList.$(objext) : $(publicjavadir)NetworkAdapterList.c $(headers)
-	$(compiler)JniNetworkAdapterList.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)NetworkAdapterList.c
 $(objdir)JniParameterBinary.$(objext) : $(publicjavadir)ParameterBinary.c $(headers)
 	$(compiler)JniParameterBinary.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ParameterBinary.c
 $(objdir)JniParameterBool.$(objext) : $(publicjavadir)ParameterBool.c $(headers)
@@ -899,6 +899,8 @@ $(objdir)JniPropertyUint.$(objext) : $(publicjavadir)PropertyUint.c $(headers)
 	$(compiler)JniPropertyUint.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)PropertyUint.c
 $(objdir)JniResourceWriter.$(objext) : $(publicjavadir)ResourceWriter.c $(headers)
 	$(compiler)JniResourceWriter.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)ResourceWriter.c
+$(objdir)JniSubnetList.$(objext) : $(publicjavadir)SubnetList.c $(headers)
+	$(compiler)JniSubnetList.$(objext) -c $(cflags) $(includes) $(includes_jni) $(publicjavadir)SubnetList.c
 
 java_classes = $(objdir)org/openhome/net/controlpoint/Argument.class \
 			   $(objdir)org/openhome/net/controlpoint/ArgumentBinary.class \
@@ -942,7 +944,6 @@ java_classes = $(objdir)org/openhome/net/controlpoint/Argument.class \
 			   $(objdir)org/openhome/net/core/Library.class \
 			   $(objdir)org/openhome/net/core/LibraryException.class \
 			   $(objdir)org/openhome/net/core/NetworkAdapter.class \
-			   $(objdir)org/openhome/net/core/NetworkAdapterList.class \
 			   $(objdir)org/openhome/net/core/Parameter.class \
 			   $(objdir)org/openhome/net/core/ParameterBinary.class \
 			   $(objdir)org/openhome/net/core/ParameterBool.class \
@@ -956,6 +957,7 @@ java_classes = $(objdir)org/openhome/net/controlpoint/Argument.class \
 			   $(objdir)org/openhome/net/core/PropertyInt.class \
 			   $(objdir)org/openhome/net/core/PropertyString.class \
 			   $(objdir)org/openhome/net/core/PropertyUint.class \
+			   $(objdir)org/openhome/net/core/SubnetList.class \
 			   $(objdir)org/openhome/net/device/ActionDisabledError.class \
 			   $(objdir)org/openhome/net/device/ActionError.class \
 			   $(objdir)org/openhome/net/device/DvDevice.class \
@@ -1062,8 +1064,6 @@ $(objdir)org/openhome/net/core/LibraryException.class : $(publicjavadir)org/open
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/LibraryException.java
 $(objdir)org/openhome/net/core/NetworkAdapter.class : $(publicjavadir)org/openhome/net/core/NetworkAdapter.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/NetworkAdapter.java
-$(objdir)org/openhome/net/core/NetworkAdapterList.class : $(publicjavadir)org/openhome/net/core/NetworkAdapterList.java
-	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/NetworkAdapterList.java
 $(objdir)org/openhome/net/core/Parameter.class : $(publicjavadir)org/openhome/net/core/Parameter.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/Parameter.java
 $(objdir)org/openhome/net/core/ParameterBinary.class : $(publicjavadir)org/openhome/net/core/ParameterBinary.java
@@ -1090,6 +1090,8 @@ $(objdir)org/openhome/net/core/PropertyString.class : $(publicjavadir)org/openho
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/PropertyString.java
 $(objdir)org/openhome/net/core/PropertyUint.class : $(publicjavadir)org/openhome/net/core/PropertyUint.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/PropertyUint.java
+$(objdir)org/openhome/net/core/SubnetList.class : $(publicjavadir)org/openhome/net/core/SubnetList.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/core/SubnetList.java
 $(objdir)org/openhome/net/device/ActionDisabledError.class : $(publicjavadir)org/openhome/net/device/ActionDisabledError.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/device/ActionDisabledError.java
 $(objdir)org/openhome/net/device/ActionError.class : $(publicjavadir)org/openhome/net/device/ActionError.java

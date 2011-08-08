@@ -1,7 +1,7 @@
 package org.openhome.net.core;
 
 
-public class NetworkAdapterList
+public class SubnetList
 {
 	private static native long OhNetSubnetListCreate();
 	private static native int OhNetSubnetListSize(long aList);
@@ -21,7 +21,7 @@ public class NetworkAdapterList
 	 * 
 	 * <p>Caller must later call {@link #destroy}.
 	 */
-	public NetworkAdapterList()
+	public SubnetList()
 	{
 		iHandle = OhNetSubnetListCreate();
 	}
