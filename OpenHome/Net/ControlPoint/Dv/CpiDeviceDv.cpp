@@ -116,6 +116,7 @@ void CpiDeviceDv::NotifyRemovedBeforeReady()
 
 void CpiDeviceDv::Release()
 {
+    Log::Print("---CpiDeviceDv::Release\n");
     iDeviceDv.RemoveWeakRef();
     iDeviceCp = NULL; // device will delete itself when this returns;
     delete this;
