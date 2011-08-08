@@ -74,6 +74,7 @@ void DviDevice::Destroy()
     for (i=0; i<iServices.size(); i++) {
         iServices[i]->RemoveRef();
     }
+    iServices.clear();
     iLock.Signal();
     iShutdownSem.Wait();
     RemoveWeakRef();
