@@ -41,6 +41,7 @@ csharp = csc /nologo /platform:$(csplatform)
 publicjavadir = OpenHome\Net\Bindings\Java^\
 includes_jni = -I"$(JAVA_HOME)\include" -I"$(JAVA_HOME)\include\win32"
 link_jvm = "$(JAVA_HOME)\lib\jvm.lib"
+java_cflags = $(cflags)
 javac =  "$(JAVA_HOME)\bin\javac.exe"
 jar =  "$(JAVA_HOME)\bin\jar.exe"
 jarflags = cf

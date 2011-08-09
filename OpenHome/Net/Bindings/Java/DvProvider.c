@@ -29,7 +29,7 @@ static void STDCALL CallbackDvInvocation(void* aPtr, DvInvocationC aInvocation, 
 		printf("Method ID actionInvoked() not found.\n");
 		return;
 	}
-	(*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong) aInvocation, aVersion);
+	(*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong)(size_t)aInvocation, aVersion);
 	(*(ref->vm))->DetachCurrentThread(ref->vm);
 }
 
@@ -51,7 +51,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvProvider_DvProviderCreate
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aType, type);
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aDomain, domain);
 	
-	return (jlong) provider;
+	return (jlong) (size_t)provider;
 }
 
 /*
@@ -110,7 +110,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvProvider_DvProviderAddAct
 
 	DvProviderAddAction(provider, action, callback, ref);
 	
-	return (jlong) ref;
+	return (jlong) (size_t)ref;
 }
 
 /*

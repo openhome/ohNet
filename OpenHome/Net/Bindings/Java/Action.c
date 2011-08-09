@@ -19,7 +19,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_Action_ServiceActionCreate
 	
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	
-	return (jlong) action;
+	return (jlong) (size_t)action;
 }
 
 /*

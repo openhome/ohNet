@@ -16,7 +16,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_SubnetList_OhNetSubnetListCre
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jlong) OhNetSubnetListCreate();
+	return (jlong) (size_t)OhNetSubnetListCreate();
 }
 
 /*
@@ -46,7 +46,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_SubnetList_OhNetSubnetAt
 	aEnv = aEnv;
 	aClass = aClass;
     
-    return (jlong) OhNetSubnetAt(list, aIndex);
+    return (jlong) (size_t)OhNetSubnetAt(list, aIndex);
 }
 
 /*

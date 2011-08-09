@@ -16,7 +16,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvServerUpnp_DvServerUpnpCr
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jlong) DvServerUpnpCreate();
+	return (jlong) (size_t)DvServerUpnpCreate();
 }
 
 /*

@@ -19,7 +19,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_ParameterBinary_ServiceParame
 	
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	
-	return (jlong) param;
+	return (jlong) (size_t)param;
 }	
 
 #ifdef __cplusplus

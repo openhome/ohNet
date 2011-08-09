@@ -42,7 +42,7 @@ JNIEXPORT jobject JNICALL Java_org_openhome_net_controlpoint_CpDeviceListUpnpSer
 	}
 	
 	devList = CpDeviceListCreateUpnpServiceType(domainName, serviceType, aVersion, callbackAdded, ref, callbackRemoved, ref);
-	devListInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)devList, (jlong)ref);
+	devListInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)(size_t)devList, (jlong)(size_t)ref);
 	
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aDomainName, domainName);
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aServiceType, serviceType);

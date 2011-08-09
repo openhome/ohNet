@@ -17,7 +17,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentBool_ActionAr
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jlong) ActionArgumentCreateBoolInput(param, aValue);
+	return (jlong) (size_t)ActionArgumentCreateBoolInput(param, aValue);
 }
 
 /*
@@ -32,7 +32,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentBool_ActionAr
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jlong) ActionArgumentCreateBoolOutput(param);
+	return (jlong) (size_t)ActionArgumentCreateBoolOutput(param);
 }
 
 /*
