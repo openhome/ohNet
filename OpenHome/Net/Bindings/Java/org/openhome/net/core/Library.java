@@ -143,7 +143,7 @@ public class Library
      * <p>Device lists and subscriptions will be automatically updated.
      * No other subnet will be selected if aSubnet is not available.
      * 
-     * @param aSubnet	handle returned by {@code NetworkAdapterList.subnetAt()}.
+     * @param aSubnet	handle returned by <tt>NetworkAdapterList.subnetAt()</tt>.
      */
     public void setCurrentSubnet(NetworkAdapter aSubnet)
     {
@@ -161,7 +161,7 @@ public class Library
     }
     
     /**
-     * Convert an {@code Inet4Address} into an integer representation in
+     * Convert an <tt>Inet4Address</tt> into an integer representation in
      * network byte order.
      * 
      * @param aAddress	the IPv4 address object to convert.

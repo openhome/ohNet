@@ -47,7 +47,7 @@ public class DvServerUpnp
 	/**
 	 * Instruct a device to publish itself using (only) this server.
 	 * 
-	 * @param aDevice	the {@code DvDevice} to be published.
+	 * @param aDevice	the <tt>DvDevice</tt> to be published.
 	 */
 	public void addDevice(DvDevice aDevice)
 	{

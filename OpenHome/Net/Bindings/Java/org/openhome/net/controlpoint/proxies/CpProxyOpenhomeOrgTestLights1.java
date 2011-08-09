@@ -287,7 +287,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -377,6 +377,7 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	 * calling {@link #endGetCount}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetCount(ICpProxyListener aCallback)
 	{
@@ -434,7 +435,9 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetRoom}.
 	 * 
+	 * @param aIndex
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetRoom(long aIndex, ICpProxyListener aCallback)
 	{
@@ -494,7 +497,9 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetName}.
 	 * 
+	 * @param aIndex
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetName(long aIndex, ICpProxyListener aCallback)
 	{
@@ -558,7 +563,9 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetPosition}.
 	 * 
+	 * @param aIndex
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetPosition(long aIndex, ICpProxyListener aCallback)
 	{
@@ -622,7 +629,10 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetColor}.
 	 * 
+	 * @param aIndex
+	 * @param aColor
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetColor(long aIndex, long aColor, ICpProxyListener aCallback)
 	{
@@ -677,7 +687,9 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetColor}.
 	 * 
+	 * @param aIndex
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetColor(long aIndex, ICpProxyListener aCallback)
 	{
@@ -742,7 +754,9 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetColorComponents}.
 	 * 
+	 * @param aColor
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetColorComponents(long aColor, ICpProxyListener aCallback)
 	{
@@ -788,8 +802,8 @@ public class CpProxyOpenhomeOrgTestLights1 extends CpProxy implements ICpProxyOp
 
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

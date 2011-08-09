@@ -107,7 +107,7 @@ DllExport ServiceParameter STDCALL ServiceParameterCreateBinary(const char* aNam
  * @{
  */
 /**
- * Opaque handle to a property
+ * Opaque handle to a property. One property will exist for each property (state variable) of a service.
  */
 typedef THandle ServiceProperty;
 /* @} */
@@ -137,10 +137,6 @@ DllExport ServiceParameter STDCALL ServiceParameterCreateRelated(const char* aNa
  * @ingroup Service
  * @{
  */
-/**
- * Opaque handle to a property.  One property will exist for each property (state variable) of a service.
- */
-typedef THandle ServiceProperty;
 
 /**
  * Destroy a property instance, freeing all memory associated with it.

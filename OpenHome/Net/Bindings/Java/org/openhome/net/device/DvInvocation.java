@@ -125,7 +125,7 @@ public class DvInvocation
 	/**
 	 * Create a DvInvocation.
 	 * 
-	 * @param aHandle	{@code aInvocation} argument passed to {@code IDvDeviceListener}.
+	 * @param aHandle	<tt>aInvocation</tt> argument passed to <tt>IDvDeviceListener</tt>.
 	 */
 	public DvInvocation(long aHandle)
 	{
@@ -338,7 +338,7 @@ public class DvInvocation
 	 * Check if an error has been encountered during a read or write process.
 	 * 
 	 * @param aSuccess	the error status to be checked.
-	 * @throws {@link #ActionError} if {@code aSuccess} is non-zero.
+	 * @throws {@link #ActionError} if <tt>aSuccess</tt> is non-zero.
 	 */
 	private void checkError(boolean aSuccess)
 	{
@@ -352,7 +352,7 @@ public class DvInvocation
 	 * Check if an error has been encountered during a read or write process.
 	 * 
 	 * @param aError	the error status to be checked.
-	 * @throws {@link #ActionError} if {@code aError} is non-zero.
+	 * @throws {@link #ActionError} if <tt>aError</tt> is non-zero.
 	 */
 	private void checkError(int aError)
 	{

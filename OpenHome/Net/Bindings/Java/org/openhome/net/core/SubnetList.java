@@ -49,7 +49,7 @@ public class SubnetList
     /**
      * Get a handle to a particular subnet from a subnet list.
      *
-     * @param aIndex	index of the list item to get a handle to {@code (0..size()-1)}.
+     * @param aIndex	index of the list item to get a handle to <tt>(0..size()-1)</tt>.
      * @return			handle to the subnet.
      */
     public NetworkAdapter getSubnet(int aIndex)

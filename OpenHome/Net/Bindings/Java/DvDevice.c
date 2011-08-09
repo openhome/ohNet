@@ -50,7 +50,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvDevice_DvDeviceCreate
 
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aUdn, udn);
 	
-	return (jlong) device;
+	return (jlong) (size_t)device;
 }
 
 /*

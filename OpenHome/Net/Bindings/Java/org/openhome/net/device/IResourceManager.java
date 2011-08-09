@@ -14,7 +14,7 @@ public interface IResourceManager
 	 * @param aIpAddress		network interface the file request was made on.
 	 * @param aLanguageList		prioritised list of the languages accepted in
 	 * 							the resources to be written. 
-	 * @param aWriter			pointer to be passed to all 3 {@code writeResource} callbacks.
+	 * @param aWriter			pointer to be passed to all 3 <tt>writeResource</tt> callbacks.
 	 */
 	public void writeResource(String aUriTail, int aIpAddress, List<String> aLanguageList, IResourceWriter aWriter);
 }

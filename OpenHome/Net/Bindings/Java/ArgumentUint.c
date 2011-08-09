@@ -17,7 +17,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentUint_ActionAr
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jlong) ActionArgumentCreateUintInput(param, (uint32_t)aValue);
+	return (jlong) (size_t)ActionArgumentCreateUintInput(param, (uint32_t)aValue);
 }
 
 /*
@@ -32,7 +32,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentUint_ActionAr
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jlong) ActionArgumentCreateUintOutput(param);
+	return (jlong) (size_t)ActionArgumentCreateUintOutput(param);
 }
 
 /*

@@ -38,7 +38,7 @@ JNIEXPORT jobject JNICALL Java_org_openhome_net_controlpoint_CpDeviceListUpnpRoo
 	}
 	
 	devList = CpDeviceListCreateUpnpRoot(callbackAdded, ref, callbackRemoved, ref);
-	devListInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)devList, (jlong)ref);
+	devListInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)(size_t)devList, (jlong)(size_t)ref);
 	
 	return devListInit;
 }

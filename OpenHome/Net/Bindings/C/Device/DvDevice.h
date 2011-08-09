@@ -11,6 +11,7 @@
 
 #include <OpenHome/OhNetDefines.h>
 #include <OpenHome/OsTypes.h>
+#include <OpenHome/Net/C/OhNet.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,8 +27,6 @@ extern "C" {
  * Opaque handle to a device
  */
 typedef THandle DvDeviceC;
-
-typedef void (STDCALL *OhNetCallback)(void* aPtr);
 
 /**
  * Callback which is run before serving a file begins

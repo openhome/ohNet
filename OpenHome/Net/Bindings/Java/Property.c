@@ -4,7 +4,7 @@
 #include "Property.h"
 #include "PropertyCallback.h"
 #include "JniCallbackList.h"
-#include "OpenHome/Net/C/Ohnet.h"
+#include "OpenHome/Net/C/OhNet.h"
 #include "OpenHome/Net/C/Service.h"
 
 #ifdef __cplusplus

@@ -878,7 +878,7 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -1194,7 +1194,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endListPresets}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginListPresets(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1250,7 +1252,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSelectPreset}.
 	 * 
+	 * @param aInstanceID
+	 * @param aPresetName
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSelectPreset(long aInstanceID, String aPresetName, ICpProxyListener aCallback)
 	{
@@ -1305,7 +1310,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetBrightness}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetBrightness(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1361,7 +1368,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetBrightness}.
 	 * 
+	 * @param aInstanceID
+	 * @param aDesiredBrightness
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetBrightness(long aInstanceID, long aDesiredBrightness, ICpProxyListener aCallback)
 	{
@@ -1416,7 +1426,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetContrast}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetContrast(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1472,7 +1484,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetContrast}.
 	 * 
+	 * @param aInstanceID
+	 * @param aDesiredContrast
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetContrast(long aInstanceID, long aDesiredContrast, ICpProxyListener aCallback)
 	{
@@ -1527,7 +1542,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetSharpness}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetSharpness(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1583,7 +1600,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetSharpness}.
 	 * 
+	 * @param aInstanceID
+	 * @param aDesiredSharpness
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetSharpness(long aInstanceID, long aDesiredSharpness, ICpProxyListener aCallback)
 	{
@@ -1638,7 +1658,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetRedVideoGain}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetRedVideoGain(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1694,7 +1716,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetRedVideoGain}.
 	 * 
+	 * @param aInstanceID
+	 * @param aDesiredRedVideoGain
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetRedVideoGain(long aInstanceID, long aDesiredRedVideoGain, ICpProxyListener aCallback)
 	{
@@ -1749,7 +1774,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetGreenVideoGain}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetGreenVideoGain(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1805,7 +1832,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetGreenVideoGain}.
 	 * 
+	 * @param aInstanceID
+	 * @param aDesiredGreenVideoGain
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetGreenVideoGain(long aInstanceID, long aDesiredGreenVideoGain, ICpProxyListener aCallback)
 	{
@@ -1860,7 +1890,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetBlueVideoGain}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetBlueVideoGain(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1916,7 +1948,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetBlueVideoGain}.
 	 * 
+	 * @param aInstanceID
+	 * @param aDesiredBlueVideoGain
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetBlueVideoGain(long aInstanceID, long aDesiredBlueVideoGain, ICpProxyListener aCallback)
 	{
@@ -1971,7 +2006,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetRedVideoBlackLevel}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetRedVideoBlackLevel(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -2027,7 +2064,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetRedVideoBlackLevel}.
 	 * 
+	 * @param aInstanceID
+	 * @param aDesiredRedVideoBlackLevel
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetRedVideoBlackLevel(long aInstanceID, long aDesiredRedVideoBlackLevel, ICpProxyListener aCallback)
 	{
@@ -2082,7 +2122,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetGreenVideoBlackLevel}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetGreenVideoBlackLevel(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -2138,7 +2180,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetGreenVideoBlackLevel}.
 	 * 
+	 * @param aInstanceID
+	 * @param aDesiredGreenVideoBlackLevel
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetGreenVideoBlackLevel(long aInstanceID, long aDesiredGreenVideoBlackLevel, ICpProxyListener aCallback)
 	{
@@ -2193,7 +2238,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetBlueVideoBlackLevel}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetBlueVideoBlackLevel(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -2249,7 +2296,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetBlueVideoBlackLevel}.
 	 * 
+	 * @param aInstanceID
+	 * @param aDesiredBlueVideoBlackLevel
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetBlueVideoBlackLevel(long aInstanceID, long aDesiredBlueVideoBlackLevel, ICpProxyListener aCallback)
 	{
@@ -2304,7 +2354,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetColorTemperature}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetColorTemperature(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -2360,7 +2412,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetColorTemperature}.
 	 * 
+	 * @param aInstanceID
+	 * @param aDesiredColorTemperature
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetColorTemperature(long aInstanceID, long aDesiredColorTemperature, ICpProxyListener aCallback)
 	{
@@ -2415,7 +2470,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetHorizontalKeystone}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetHorizontalKeystone(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -2471,7 +2528,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetHorizontalKeystone}.
 	 * 
+	 * @param aInstanceID
+	 * @param aDesiredHorizontalKeystone
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetHorizontalKeystone(long aInstanceID, int aDesiredHorizontalKeystone, ICpProxyListener aCallback)
 	{
@@ -2526,7 +2586,9 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetVerticalKeystone}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetVerticalKeystone(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -2582,7 +2644,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetVerticalKeystone}.
 	 * 
+	 * @param aInstanceID
+	 * @param aDesiredVerticalKeystone
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetVerticalKeystone(long aInstanceID, int aDesiredVerticalKeystone, ICpProxyListener aCallback)
 	{
@@ -2637,7 +2702,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetMute}.
 	 * 
+	 * @param aInstanceID
+	 * @param aChannel
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetMute(long aInstanceID, String aChannel, ICpProxyListener aCallback)
 	{
@@ -2694,7 +2762,11 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetMute}.
 	 * 
+	 * @param aInstanceID
+	 * @param aChannel
+	 * @param aDesiredMute
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetMute(long aInstanceID, String aChannel, boolean aDesiredMute, ICpProxyListener aCallback)
 	{
@@ -2750,7 +2822,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetVolume}.
 	 * 
+	 * @param aInstanceID
+	 * @param aChannel
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetVolume(long aInstanceID, String aChannel, ICpProxyListener aCallback)
 	{
@@ -2807,7 +2882,11 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetVolume}.
 	 * 
+	 * @param aInstanceID
+	 * @param aChannel
+	 * @param aDesiredVolume
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetVolume(long aInstanceID, String aChannel, long aDesiredVolume, ICpProxyListener aCallback)
 	{
@@ -2863,7 +2942,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetVolumeDB}.
 	 * 
+	 * @param aInstanceID
+	 * @param aChannel
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetVolumeDB(long aInstanceID, String aChannel, ICpProxyListener aCallback)
 	{
@@ -2920,7 +3002,11 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetVolumeDB}.
 	 * 
+	 * @param aInstanceID
+	 * @param aChannel
+	 * @param aDesiredVolume
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetVolumeDB(long aInstanceID, String aChannel, int aDesiredVolume, ICpProxyListener aCallback)
 	{
@@ -2979,7 +3065,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetVolumeDBRange}.
 	 * 
+	 * @param aInstanceID
+	 * @param aChannel
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetVolumeDBRange(long aInstanceID, String aChannel, ICpProxyListener aCallback)
 	{
@@ -3045,7 +3134,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetLoudness}.
 	 * 
+	 * @param aInstanceID
+	 * @param aChannel
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetLoudness(long aInstanceID, String aChannel, ICpProxyListener aCallback)
 	{
@@ -3102,7 +3194,11 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetLoudness}.
 	 * 
+	 * @param aInstanceID
+	 * @param aChannel
+	 * @param aDesiredLoudness
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetLoudness(long aInstanceID, String aChannel, boolean aDesiredLoudness, ICpProxyListener aCallback)
 	{
@@ -3158,7 +3254,10 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetStateVariables}.
 	 * 
+	 * @param aInstanceID
+	 * @param aStateVariableList
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetStateVariables(long aInstanceID, String aStateVariableList, ICpProxyListener aCallback)
 	{
@@ -3219,7 +3318,13 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetStateVariables}.
 	 * 
+	 * @param aInstanceID
+	 * @param aRenderingControlUDN
+	 * @param aServiceType
+	 * @param aServiceId
+	 * @param aStateVariableValuePairs
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetStateVariables(long aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs, ICpProxyListener aCallback)
 	{
@@ -3297,8 +3402,8 @@ public class CpProxyUpnpOrgRenderingControl2 extends CpProxy implements ICpProxy
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

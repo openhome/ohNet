@@ -35,7 +35,7 @@ void STDCALL AsyncComplete(void* aPtr, OhNetHandleAsync aAsync) {
 		return;
 	}
 	
-	(*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong) NULL, (jlong) aAsync);
+	(*env)->CallVoidMethod(env, ref->callbackObj, mid, (jlong)(size_t)NULL, (jlong)(size_t)aAsync);
 	(*env)->DeleteWeakGlobalRef(env, ref->callbackObj);
 	(*(ref->vm))->DetachCurrentThread(ref->vm);
 	
@@ -74,7 +74,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_Invocation_CpServiceI
 
 	InitialiseReferences(aEnv, aObject, &ref);
 	
-	return (jlong) CpServiceInvocation(service, action, callback, ref);
+	return (jlong) (size_t)CpServiceInvocation(service, action, callback, ref);
 }
 
 /*

@@ -322,7 +322,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -436,6 +436,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
 	 * calling {@link #endCounters}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginCounters(ICpProxyListener aCallback)
 	{
@@ -505,6 +506,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
 	 * calling {@link #endTrack}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginTrack(ICpProxyListener aCallback)
 	{
@@ -575,6 +577,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
 	 * calling {@link #endDetails}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginDetails(ICpProxyListener aCallback)
 	{
@@ -650,6 +653,7 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
 	 * calling {@link #endMetatext}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginMetatext(ICpProxyListener aCallback)
 	{
@@ -1150,8 +1154,8 @@ public class CpProxyAvOpenhomeOrgInfo1 extends CpProxy implements ICpProxyAvOpen
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

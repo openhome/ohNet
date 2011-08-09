@@ -31,14 +31,14 @@ void CallbackResourceManager(void* aUserData, const char* aUriTail, TIpAddress a
 		return;
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid,
-			(jlong) aUserData,
+			(jlong) (size_t)aUserData,
 			(*env)->NewStringUTF(env, aUriTail),
 			(jint) aInterface,
-			(jlong) aLanguageList,
-			(jlong) aWriterData,
-			(jlong) aWriteBegin,
-			(jlong) aWriteResource,
-			(jlong) aWriteEnd);
+			(jlong) (size_t)aLanguageList,
+			(jlong) (size_t)aWriterData,
+			(jlong) (size_t)aWriteBegin,
+			(jlong) (size_t)aWriteResource,
+			(jlong) (size_t)aWriteEnd);
 	
 	(*(ref->vm))->DetachCurrentThread(ref->vm);
 }
@@ -59,7 +59,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDeviceSt
 	
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aUdn, udn);
 	
-	return (jlong) device;
+	return (jlong) (size_t)device;
 }
 
 /*
@@ -99,7 +99,7 @@ JNIEXPORT jobject JNICALL Java_org_openhome_net_device_DvDeviceStandard_DvDevice
 	}
 	
 	device = DvDeviceStandardCreate(udn, callback, &ref);
-	devInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)device, (jlong)ref);
+	devInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)(size_t)device, (jlong)(size_t)ref);
 	
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aUdn, udn);
 	

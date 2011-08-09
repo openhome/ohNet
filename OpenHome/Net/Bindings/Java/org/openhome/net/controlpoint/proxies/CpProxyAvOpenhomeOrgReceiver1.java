@@ -199,7 +199,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -278,6 +278,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 	 * calling {@link #endPlay}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPlay(ICpProxyListener aCallback)
 	{
@@ -326,6 +327,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 	 * calling {@link #endStop}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginStop(ICpProxyListener aCallback)
 	{
@@ -373,7 +375,10 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetSender}.
 	 * 
+	 * @param aUri
+	 * @param aMetadata
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetSender(String aUri, String aMetadata, ICpProxyListener aCallback)
 	{
@@ -432,6 +437,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 	 * calling {@link #endSender}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSender(ICpProxyListener aCallback)
 	{
@@ -495,6 +501,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 	 * calling {@link #endProtocolInfo}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginProtocolInfo(ICpProxyListener aCallback)
 	{
@@ -553,6 +560,7 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 	 * calling {@link #endTransportState}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginTransportState(ICpProxyListener aCallback)
 	{
@@ -741,8 +749,8 @@ public class CpProxyAvOpenhomeOrgReceiver1 extends CpProxy implements ICpProxyAv
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

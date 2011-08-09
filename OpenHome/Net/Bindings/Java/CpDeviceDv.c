@@ -17,7 +17,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpDeviceDv_CpDeviceDv
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jlong) CpDeviceDvCreate(device);
+	return (jlong) (size_t)CpDeviceDvCreate(device);
 }
 
 #ifdef __cplusplus

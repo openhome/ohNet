@@ -66,7 +66,7 @@ public class ResourceWriter implements IResourceWriter
 	/**
 	 * Called to write a block of file data.
 	 * Will be called 0..n times after {@link #writeResourceBegin} and before
-	 * {@code writeResourceEnd()}.
+	 * <tt>writeResourceEnd()</tt>.
 	 * @param aData		file data to write.
 	 * @param aBytes	size in bytes of aData.
 	 */
@@ -79,10 +79,10 @@ public class ResourceWriter implements IResourceWriter
 	 * Must only be called after a call to {@link #writeResourceBegin}.
 	 * 
 	 * An error writing the file can be inferred if {@link #writeResource} has
-	 * not been called or if {@code aTotalBytes} was non-zero in the
-	 * {@link #writeResourceBegin} callback and the sum of {@code aBytes}
+	 * not been called or if <tt>aTotalBytes</tt> was non-zero in the
+	 * {@link #writeResourceBegin} callback and the sum of <tt>aBytes</tt>
 	 * values in the {@link #writeResource} callbacks does not match
-	 * {@code aTotalBytes}.
+	 * <tt>aTotalBytes</tt>.
 	 */
 	public void writeResourceEnd() {
 		CallbackWriteResourceEnd(iWriteEnd, iWriterData);

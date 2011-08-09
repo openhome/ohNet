@@ -34,7 +34,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_ParameterString_ServiceParame
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	free(allowed);
 	
-	return (jlong) param;
+	return (jlong) (size_t)param;
 }
 
 #ifdef __cplusplus

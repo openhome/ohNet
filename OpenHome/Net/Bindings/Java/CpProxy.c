@@ -89,7 +89,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyCreate
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aDomain, domain);
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	
-	return (jlong) proxy;
+	return (jlong) (size_t)proxy;
 }
 
 /*
@@ -130,7 +130,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyServic
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jlong) CpProxyService(proxy);
+	return (jlong) (size_t)CpProxyService(proxy);
 }
 
 /*
@@ -180,7 +180,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPro
 	
 	CpProxySetPropertyChanged(proxy, callback, ref);
 	
-	return (jlong) ref;
+	return (jlong) (size_t)ref;
 }
 
 /*
@@ -200,7 +200,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPro
 	
 	CpProxySetPropertyChanged(proxy, callback, NULL);
 	
-	return (jlong) ref;
+	return (jlong) (size_t)ref;
 }
 
 /*

@@ -25,7 +25,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpService_CpServiceCr
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aDomain, domain);
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	
-	return (jlong) service;
+	return (jlong) (size_t)service;
 }
 
 /*
