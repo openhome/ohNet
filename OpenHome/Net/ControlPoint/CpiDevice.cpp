@@ -48,20 +48,18 @@ void* CpiDevice::OwnerData()
     return iOwnerData;
 }
 
-void CpiDevice::AddRef(const char* aFile, uint32_t aLine)
+void CpiDevice::AddRef()
 {
     iLock.Wait();
     iRefCount++;
-    Log::Print("AddRef (%p): %u from %s:%u\n", this, iRefCount, aFile, aLine);
     iLock.Signal();
 }
 
-void CpiDevice::RemoveRef(const char* aFile, uint32_t aLine)
+void CpiDevice::RemoveRef()
 {
     TBool dead;
     iLock.Wait();
     dead = (--iRefCount <= 0);
-    Log::Print("RemoveRef (%p): %u from %s:%u\n", this, iRefCount, aFile, aLine);
     iLock.Signal();
     if (dead) {
         iObserver.Release();
@@ -91,9 +89,7 @@ TUint CpiDevice::Renew(CpiSubscription& aSubscription)
 
 void CpiDevice::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
 {
-    Log::Print("> CpiDevice::Unsubscribe\n");
     iProtocol.Unsubscribe(aSubscription, aSid);
-    Log::Print("< CpiDevice::Unsubscribe\n");
 }
 
 void CpiDevice::NotifyRemovedBeforeReady()
@@ -151,7 +147,7 @@ CpiDevice* CpiDeviceList::RefDeviceLocked(const Brx& aUdn)
         return NULL;
     }
     CpiDevice* device = it->second;
-    device->AddRef(__FILE__, __LINE__);
+    device->AddRef();
     return device;
 }
 
@@ -194,7 +190,7 @@ void CpiDeviceList::Add(CpiDevice* aDevice)
     iLock.Wait();
     if (aDevice->HasExpired() || !iActive) {
         LOG(kDevice, "< CpiDeviceList::Add, device expired or list stopped\n");
-        aDevice->RemoveRef(__FILE__, __LINE__);
+        aDevice->RemoveRef();
         iLock.Signal();
         return;
     }
@@ -203,26 +199,26 @@ void CpiDeviceList::Add(CpiDevice* aDevice)
         Map::iterator it = iRefreshMap.find(udn);
         if (it == iRefreshMap.end()) {
             iRefreshMap.insert(std::pair<Brn,CpiDevice*>(udn, aDevice));
-            aDevice->AddRef(__FILE__, __LINE__); // for refresh list
+            aDevice->AddRef(); // for refresh list
         }
     }
     CpiDevice* tmp = RefDeviceLocked(aDevice->Udn());
     if (tmp != NULL) {
         // device is already in the list, ignore this call to Add()
         LOG(kDevice, "< CpiDeviceList::Add, device already in list\n");
-        tmp->RemoveRef(__FILE__, __LINE__);
-        aDevice->RemoveRef(__FILE__, __LINE__);
+        tmp->RemoveRef();
+        aDevice->RemoveRef();
         iLock.Signal();
         return;
     }
     Brn udn(aDevice->Udn());
     iMap.insert(std::pair<Brn,CpiDevice*>(udn, aDevice));
-    aDevice->AddRef(__FILE__, __LINE__); // for observer
+    aDevice->AddRef(); // for observer
     iLock.Signal();
     if (IsDeviceReady(*aDevice)) {
         SetDeviceReady(*aDevice);
     }
-    aDevice->RemoveRef(__FILE__, __LINE__); // observer's ref
+    aDevice->RemoveRef(); // observer's ref
 }
 
 void CpiDeviceList::Remove(const Brx& aUdn)
@@ -260,7 +256,7 @@ void CpiDeviceList::ClearMap(Map& aMap)
 {
     Map::iterator it = aMap.begin();
     while (it != aMap.end()) {
-        it->second->RemoveRef(__FILE__, __LINE__);
+        it->second->RemoveRef();
         it->second = NULL;
         it++;
     }
@@ -329,7 +325,7 @@ void CpiDeviceList::DoRemove(const Brx& aUdn)
     if (callObserver) {
         iRemoved(*device);
     }
-    device->RemoveRef(__FILE__, __LINE__);
+    device->RemoveRef();
 }
 
 void CpiDeviceList::NotifyRefreshed()
@@ -356,10 +352,10 @@ void CpiDeviceList::NotifyRefreshed()
                     it++;
                 }
                 else {    
-                    device->AddRef(__FILE__, __LINE__);
+                    device->AddRef();
                     iLock.Signal();
                     DoRemove(device->Udn());
-                    device->RemoveRef(__FILE__, __LINE__);
+                    device->RemoveRef();
                     iLock.Wait();
                     it = iMap.begin();
                 }    
@@ -451,12 +447,12 @@ CpiDeviceListUpdater::UpdateAdded::UpdateAdded(IDeviceListUpdater& aUpdater, Cpi
     : CpiDeviceListUpdater::UpdateBase(aUpdater)
     , iDevice(aDevice)
 {
-    iDevice.AddRef(__FILE__, __LINE__);
+    iDevice.AddRef();
 }
 
 CpiDeviceListUpdater::UpdateAdded::~UpdateAdded()
 {
-    iDevice.RemoveRef(__FILE__, __LINE__);
+    iDevice.RemoveRef();
 }
 
 void CpiDeviceListUpdater::UpdateAdded::Update()
