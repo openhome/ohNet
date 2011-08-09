@@ -13,7 +13,7 @@ interface IDvProviderUpnpOrgDimming1
      * Set the value of the LoadLevelStatus property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyLoadLevelStatus(long aValue);
@@ -29,7 +29,7 @@ interface IDvProviderUpnpOrgDimming1
      * Set the value of the StepDelta property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyStepDelta(long aValue);
@@ -45,7 +45,7 @@ interface IDvProviderUpnpOrgDimming1
      * Set the value of the RampRate property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyRampRate(long aValue);
@@ -61,7 +61,7 @@ interface IDvProviderUpnpOrgDimming1
      * Set the value of the IsRamping property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyIsRamping(boolean aValue);
@@ -77,7 +77,7 @@ interface IDvProviderUpnpOrgDimming1
      * Set the value of the RampPaused property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyRampPaused(boolean aValue);
@@ -172,8 +172,8 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      * Set the value of the LoadLevelStatus property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyLoadLevelStatus(long aValue)
     {
@@ -194,8 +194,8 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      * Set the value of the StepDelta property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyStepDelta(long aValue)
     {
@@ -216,8 +216,8 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      * Set the value of the RampRate property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyRampRate(long aValue)
     {
@@ -238,8 +238,8 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      * Set the value of the IsRamping property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyIsRamping(boolean aValue)
     {
@@ -260,8 +260,8 @@ public class DvProviderUpnpOrgDimming1 extends DvProvider implements IDvProvider
      * Set the value of the RampPaused property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyRampPaused(boolean aValue)
     {

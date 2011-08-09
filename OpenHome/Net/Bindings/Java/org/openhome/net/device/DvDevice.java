@@ -38,7 +38,7 @@ public class DvDevice
 	
 	/**
 	 * Destroy the underlying native instance. Must be called for each class instance.
-	 * Must be called before {@code Library.close()}.
+	 * Must be called before <tt>Library.close()</tt>.
 	 */
 	public void destroy()
 	{
@@ -68,7 +68,7 @@ public class DvDevice
 	/**
 	 * Query whether the device is enabled.
 	 * 
-	 * @return	{@code true} if the device is enabled; {@code false} otherwise.
+	 * @return	<tt>true</tt> if the device is enabled; <tt>false</tt> otherwise.
 	 */
 	public boolean enabled()
 	{
@@ -85,7 +85,7 @@ public class DvDevice
 	 * 
 	 * <p>When this returns, the device will be available for use using any of the
 	 * protocols the device stack supports. Services must not be added
-	 * ({@code DvProvider}-derived classes created using this device) and attributes
+	 * (<tt>DvProvider</tt>-derived classes created using this device) and attributes
 	 * must not be set while a device is enabled. If these need to change in
 	 * future, the device must first be disabled.
 	 */
@@ -102,7 +102,7 @@ public class DvDevice
 	 * is called again.
 	 * 
 	 * <p>This call is asynchronous so returns before the device is fully disabled.
-	 * Wait for the {@code aCompleted} callback before adding services or setting
+	 * Wait for the <tt>aCompleted</tt> callback before adding services or setting
 	 * attributes.
 	 * 
 	 * @param aCompleted	Listener which is called when the device is fully disabled. 
@@ -121,7 +121,7 @@ public class DvDevice
 	/**
 	 * Query the value of an atrribute.
 	 * 
-	 * @param aKey	string of the form {@code protocol_name.protocol_specific_key}.
+	 * @param aKey	string of the form <tt>protocol_name.protocol_specific_key</tt>.
 	 * @return		the attribute or null if the attribute has not been set.
 	 */
 	public String getAttribute(String aKey)
@@ -132,8 +132,8 @@ public class DvDevice
 	/**
 	 * Set the value of an attribute.
 	 * 
-	 * @param aKey		{@link String} of the form {@code protocol_name.protocol_specific_key}.
-	 * @param aValue	attribute will be set to a copy of this {@link String}.
+	 * @param aKey		<tt>String</tt> of the form <tt>protocol_name.protocol_specific_key</tt>.
+	 * @param aValue	attribute will be set to a copy of this <tt>String</tt>.
 	 */
 	public void setAttribute(String aKey, String aValue)
     {

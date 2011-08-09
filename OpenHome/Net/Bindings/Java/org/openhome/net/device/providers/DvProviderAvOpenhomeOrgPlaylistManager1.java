@@ -13,7 +13,7 @@ interface IDvProviderAvOpenhomeOrgPlaylistManager1
      * Set the value of the Metadata property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMetadata(String aValue);
@@ -29,7 +29,7 @@ interface IDvProviderAvOpenhomeOrgPlaylistManager1
      * Set the value of the ImagesXml property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyImagesXml(String aValue);
@@ -45,7 +45,7 @@ interface IDvProviderAvOpenhomeOrgPlaylistManager1
      * Set the value of the IdArray property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyIdArray(byte[] aValue);
@@ -61,7 +61,7 @@ interface IDvProviderAvOpenhomeOrgPlaylistManager1
      * Set the value of the TokenArray property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTokenArray(byte[] aValue);
@@ -77,7 +77,7 @@ interface IDvProviderAvOpenhomeOrgPlaylistManager1
      * Set the value of the PlaylistsMax property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyPlaylistsMax(long aValue);
@@ -93,7 +93,7 @@ interface IDvProviderAvOpenhomeOrgPlaylistManager1
      * Set the value of the TracksMax property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTracksMax(long aValue);
@@ -224,8 +224,8 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      * Set the value of the Metadata property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyMetadata(String aValue)
     {
@@ -246,8 +246,8 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      * Set the value of the ImagesXml property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyImagesXml(String aValue)
     {
@@ -268,8 +268,8 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      * Set the value of the IdArray property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyIdArray(byte[] aValue)
     {
@@ -290,8 +290,8 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      * Set the value of the TokenArray property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyTokenArray(byte[] aValue)
     {
@@ -312,8 +312,8 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      * Set the value of the PlaylistsMax property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyPlaylistsMax(long aValue)
     {
@@ -334,8 +334,8 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      * Set the value of the TracksMax property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyTracksMax(long aValue)
     {

@@ -13,7 +13,7 @@ interface IDvProviderOpenhomeOrgTestBasic1
      * Set the value of the VarUint property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVarUint(long aValue);
@@ -29,7 +29,7 @@ interface IDvProviderOpenhomeOrgTestBasic1
      * Set the value of the VarInt property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVarInt(int aValue);
@@ -45,7 +45,7 @@ interface IDvProviderOpenhomeOrgTestBasic1
      * Set the value of the VarBool property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVarBool(boolean aValue);
@@ -61,7 +61,7 @@ interface IDvProviderOpenhomeOrgTestBasic1
      * Set the value of the VarStr property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVarStr(String aValue);
@@ -77,7 +77,7 @@ interface IDvProviderOpenhomeOrgTestBasic1
      * Set the value of the VarBin property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVarBin(byte[] aValue);
@@ -147,8 +147,8 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      * Set the value of the VarUint property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyVarUint(long aValue)
     {
@@ -169,8 +169,8 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      * Set the value of the VarInt property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyVarInt(int aValue)
     {
@@ -191,8 +191,8 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      * Set the value of the VarBool property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyVarBool(boolean aValue)
     {
@@ -213,8 +213,8 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      * Set the value of the VarStr property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyVarStr(String aValue)
     {
@@ -235,8 +235,8 @@ public class DvProviderOpenhomeOrgTestBasic1 extends DvProvider implements IDvPr
      * Set the value of the VarBin property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyVarBin(byte[] aValue)
     {

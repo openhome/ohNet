@@ -10,7 +10,7 @@ public class CpDeviceListListener implements ICpDeviceListListener
 {
 	/**
 	 * Called when a device is added to a device list. Prints a line of the
-	 * form: {@code Device added: <device udn>}.
+	 * form: <tt>Device added: \<device udn\></tt>.
 	 */
 	public void deviceAdded(CpDevice aDevice)
 	{
@@ -19,7 +19,7 @@ public class CpDeviceListListener implements ICpDeviceListListener
 	
 	/**
 	 * Called when a device is removed from a device list. Prints a line of the
-	 * form: {@code Device removed: <device udn>}.
+	 * form: <tt>Device removed: \<device udn\></tt>.
 	 */
 	public void deviceRemoved(CpDevice aDevice)
 	{

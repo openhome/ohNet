@@ -13,7 +13,7 @@ interface IDvProviderAvOpenhomeOrgVolume1
      * Set the value of the Volume property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVolume(long aValue);
@@ -29,7 +29,7 @@ interface IDvProviderAvOpenhomeOrgVolume1
      * Set the value of the Mute property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMute(boolean aValue);
@@ -45,7 +45,7 @@ interface IDvProviderAvOpenhomeOrgVolume1
      * Set the value of the Balance property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyBalance(int aValue);
@@ -61,7 +61,7 @@ interface IDvProviderAvOpenhomeOrgVolume1
      * Set the value of the Fade property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyFade(int aValue);
@@ -77,7 +77,7 @@ interface IDvProviderAvOpenhomeOrgVolume1
      * Set the value of the VolumeLimit property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVolumeLimit(long aValue);
@@ -93,7 +93,7 @@ interface IDvProviderAvOpenhomeOrgVolume1
      * Set the value of the VolumeMax property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVolumeMax(long aValue);
@@ -109,7 +109,7 @@ interface IDvProviderAvOpenhomeOrgVolume1
      * Set the value of the VolumeUnity property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVolumeUnity(long aValue);
@@ -125,7 +125,7 @@ interface IDvProviderAvOpenhomeOrgVolume1
      * Set the value of the VolumeSteps property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVolumeSteps(long aValue);
@@ -141,7 +141,7 @@ interface IDvProviderAvOpenhomeOrgVolume1
      * Set the value of the VolumeMilliDbPerStep property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyVolumeMilliDbPerStep(long aValue);
@@ -157,7 +157,7 @@ interface IDvProviderAvOpenhomeOrgVolume1
      * Set the value of the BalanceMax property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyBalanceMax(long aValue);
@@ -173,7 +173,7 @@ interface IDvProviderAvOpenhomeOrgVolume1
      * Set the value of the FadeMax property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyFadeMax(long aValue);
@@ -309,8 +309,8 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * Set the value of the Volume property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyVolume(long aValue)
     {
@@ -331,8 +331,8 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * Set the value of the Mute property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyMute(boolean aValue)
     {
@@ -353,8 +353,8 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * Set the value of the Balance property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyBalance(int aValue)
     {
@@ -375,8 +375,8 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * Set the value of the Fade property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyFade(int aValue)
     {
@@ -397,8 +397,8 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * Set the value of the VolumeLimit property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyVolumeLimit(long aValue)
     {
@@ -419,8 +419,8 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * Set the value of the VolumeMax property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyVolumeMax(long aValue)
     {
@@ -441,8 +441,8 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * Set the value of the VolumeUnity property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyVolumeUnity(long aValue)
     {
@@ -463,8 +463,8 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * Set the value of the VolumeSteps property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyVolumeSteps(long aValue)
     {
@@ -485,8 +485,8 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * Set the value of the VolumeMilliDbPerStep property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyVolumeMilliDbPerStep(long aValue)
     {
@@ -507,8 +507,8 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * Set the value of the BalanceMax property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyBalanceMax(long aValue)
     {
@@ -529,8 +529,8 @@ public class DvProviderAvOpenhomeOrgVolume1 extends DvProvider implements IDvPro
      * Set the value of the FadeMax property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyFadeMax(long aValue)
     {

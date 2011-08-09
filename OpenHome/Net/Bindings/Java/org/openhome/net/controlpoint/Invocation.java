@@ -37,7 +37,7 @@ public class Invocation
 	private List<Argument> iOutputArgs;
 	
 	/**
-	 * Constructor.  Not intended for external use (use {@code CpService.getInvocation()}
+	 * Constructor.  Not intended for external use (use <tt>CpService.getInvocation()</tt>
 	 * instead).
 	 *
 	 * @param aService		service the action is being invoked on.
@@ -92,7 +92,7 @@ public class Invocation
 	 * <p>Only intended for use in the invocation complete callback.
 	 *
 	 * @param aHandle	invocation to check for errors.
-	 * @return			{@code true} if the invocation failed; {@code false} if it succeeded.
+	 * @return			<tt>true</tt> if the invocation failed; <tt>false</tt> if it succeeded.
 	 */
 	public static boolean error(long aHandle)
     {
@@ -105,7 +105,7 @@ public class Invocation
 	 * 
 	 * @param aHandle	invocation handle.
 	 * @param aIndex	zero-based index into array of output arguments.
-	 * 					Must refer to an {@code ArgumentInt}.
+	 * 					Must refer to an <tt>ArgumentInt</tt>.
 	 * @return			value of the integer output argument.
 	 */
 	public static int getOutputInt(long aHandle, int aIndex)
@@ -118,7 +118,7 @@ public class Invocation
 	 * 
 	 * @param aHandle	invocation handle.
 	 * @param aIndex	zero-based index into array of output arguments.
-	 * 					Must refer to an {@code ArgumentUint}.
+	 * 					Must refer to an <tt>ArgumentUint</tt>.
 	 * @return			value of the unsigned integer output argument.
 	 */
 	public static long getOutputUint(long aHandle, int aIndex)
@@ -131,7 +131,7 @@ public class Invocation
 	 * 
 	 * @param aHandle	invocation handle.
 	 * @param aIndex	zero-based index into array of output arguments.
-	 * 					Must refer to an {@code ArgumentBool}.
+	 * 					Must refer to an <tt>ArgumentBool</tt>.
 	 * @return			value of the boolean output argument.
 	 */
 	public static boolean getOutputBool(long aHandle, int aIndex)
@@ -150,7 +150,7 @@ public class Invocation
 	 *
 	 * @param aHandle	invocation handle.
 	 * @param aIndex	zero-based index into array of output arguments.
-	 * 					Must refer to an {@code ArgumentString}.
+	 * 					Must refer to an <tt>ArgumentString</tt>.
 	 * @return			value of the string output argument.
 	 */
 	public static String getOutputString(long aHandle, int aIndex)
@@ -167,7 +167,7 @@ public class Invocation
 	 * 
 	 * @param aHandle	invocation handle.
 	 * @param aIndex	zero-based index into array of output arguments.
-	 * 					Must refer to an {@code ArgumentBinary}.
+	 * 					Must refer to an <tt>ArgumentBinary</tt>.
 	 * @return			value of the string output argument.
 	 */
 	public static byte[] getOutputBinary(long aHandle, int aIndex)

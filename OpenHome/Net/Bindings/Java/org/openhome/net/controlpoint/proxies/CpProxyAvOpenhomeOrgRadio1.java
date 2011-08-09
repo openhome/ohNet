@@ -466,7 +466,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -602,6 +602,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * calling {@link #endPlay}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPlay(ICpProxyListener aCallback)
 	{
@@ -650,6 +651,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * calling {@link #endPause}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPause(ICpProxyListener aCallback)
 	{
@@ -698,6 +700,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * calling {@link #endStop}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginStop(ICpProxyListener aCallback)
 	{
@@ -745,7 +748,9 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSeekSecondAbsolute}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSeekSecondAbsolute(long aValue, ICpProxyListener aCallback)
 	{
@@ -795,7 +800,9 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSeekSecondRelative}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSeekSecondRelative(int aValue, ICpProxyListener aCallback)
 	{
@@ -853,6 +860,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * calling {@link #endChannel}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginChannel(ICpProxyListener aCallback)
 	{
@@ -911,7 +919,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetChannel}.
 	 * 
+	 * @param aUri
+	 * @param aMetadata
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetChannel(String aUri, String aMetadata, ICpProxyListener aCallback)
 	{
@@ -967,6 +978,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * calling {@link #endTransportState}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginTransportState(ICpProxyListener aCallback)
 	{
@@ -1025,6 +1037,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * calling {@link #endId}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginId(ICpProxyListener aCallback)
 	{
@@ -1078,7 +1091,10 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetId}.
 	 * 
+	 * @param aValue
+	 * @param aUri
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetId(long aValue, String aUri, ICpProxyListener aCallback)
 	{
@@ -1133,7 +1149,9 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endRead}.
 	 * 
+	 * @param aId
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginRead(long aId, ICpProxyListener aCallback)
 	{
@@ -1193,7 +1211,9 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endReadList}.
 	 * 
+	 * @param aIdList
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginReadList(String aIdList, ICpProxyListener aCallback)
 	{
@@ -1257,6 +1277,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * calling {@link #endIdArray}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginIdArray(ICpProxyListener aCallback)
 	{
@@ -1319,7 +1340,9 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endIdArrayChanged}.
 	 * 
+	 * @param aToken
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginIdArrayChanged(long aToken, ICpProxyListener aCallback)
 	{
@@ -1380,6 +1403,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * calling {@link #endChannelsMax}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginChannelsMax(ICpProxyListener aCallback)
 	{
@@ -1438,6 +1462,7 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	 * calling {@link #endProtocolInfo}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginProtocolInfo(ICpProxyListener aCallback)
 	{
@@ -1743,8 +1768,8 @@ public class CpProxyAvOpenhomeOrgRadio1 extends CpProxy implements ICpProxyAvOpe
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

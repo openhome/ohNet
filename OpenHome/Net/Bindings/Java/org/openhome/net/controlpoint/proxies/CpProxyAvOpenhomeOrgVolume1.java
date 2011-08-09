@@ -487,7 +487,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -631,6 +631,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endCharacteristics}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginCharacteristics(ICpProxyListener aCallback)
 	{
@@ -701,7 +702,9 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetVolume}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetVolume(long aValue, ICpProxyListener aCallback)
 	{
@@ -752,6 +755,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endVolumeInc}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginVolumeInc(ICpProxyListener aCallback)
 	{
@@ -800,6 +804,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endVolumeDec}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginVolumeDec(ICpProxyListener aCallback)
 	{
@@ -852,6 +857,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endVolume}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginVolume(ICpProxyListener aCallback)
 	{
@@ -905,7 +911,9 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetBalance}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetBalance(int aValue, ICpProxyListener aCallback)
 	{
@@ -956,6 +964,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endBalanceInc}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginBalanceInc(ICpProxyListener aCallback)
 	{
@@ -1004,6 +1013,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endBalanceDec}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginBalanceDec(ICpProxyListener aCallback)
 	{
@@ -1056,6 +1066,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endBalance}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginBalance(ICpProxyListener aCallback)
 	{
@@ -1109,7 +1120,9 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetFade}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetFade(int aValue, ICpProxyListener aCallback)
 	{
@@ -1160,6 +1173,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endFadeInc}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginFadeInc(ICpProxyListener aCallback)
 	{
@@ -1208,6 +1222,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endFadeDec}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginFadeDec(ICpProxyListener aCallback)
 	{
@@ -1260,6 +1275,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endFade}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginFade(ICpProxyListener aCallback)
 	{
@@ -1313,7 +1329,9 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetMute}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetMute(boolean aValue, ICpProxyListener aCallback)
 	{
@@ -1368,6 +1386,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endMute}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginMute(ICpProxyListener aCallback)
 	{
@@ -1426,6 +1445,7 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endVolumeLimit}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginVolumeLimit(ICpProxyListener aCallback)
 	{
@@ -1887,8 +1907,8 @@ public class CpProxyAvOpenhomeOrgVolume1 extends CpProxy implements ICpProxyAvOp
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

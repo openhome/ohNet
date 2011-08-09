@@ -13,7 +13,7 @@ package org.openhome.net.controlpoint;
  * <p>This class can't be directly instantiated.  Clients should instead use
  * subclasses which will define policy on how to detect devices etc.
  * 
- * <p>{@link #destroy} must be called before {@code Library.close()}.
+ * <p>{@link #destroy} must be called before <tt>Library.close()</tt>.
  */
 public class CpDeviceList implements ICpDeviceList
 {
@@ -68,7 +68,7 @@ public class CpDeviceList implements ICpDeviceList
 	 * 
 	 * <p>The 'added' callback may run any time after this is called to notify new devices.
 	 * Any removed devices will be notified by a burst of calls to the 'removed' callback
-	 * {@code org.openhome.net.core.InitParams.getMsearchTimeSecs()} seconds after this call is made.
+	 * <tt>org.openhome.net.core.InitParams.getMsearchTimeSecs()</tt> seconds after this call is made.
 	 * There is no notification that a refresh has completed. Existing CpDevice instances
 	 * can be used as normal throughout the refresh.
 	 */
