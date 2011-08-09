@@ -80,6 +80,7 @@ private:
     };
 private:
     mutable Mutex iLock;
+    Mutex iServiceLock;
     TUint iRefCount;
     Brhz iUdn;
     EEnableState iEnabled;
