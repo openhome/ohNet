@@ -79,7 +79,7 @@ Brn Srx::ReadUntil(TByte aSeparator)
             iBytes -= iOffset;
             current -= iOffset;
             if (iBytes) {
-                memcpy(ptr, ptr + iOffset, iBytes);
+                memmove(ptr, ptr + iOffset, iBytes);
             }
             iOffset = 0;
         }
