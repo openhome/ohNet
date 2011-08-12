@@ -591,7 +591,7 @@ DllExport char* STDCALL OhNetNetworkAdapterFullName(OhNetHandleNetworkAdapter aN
  * NetworkAdapter passed to a subnet added listener cannot be used outside the callback
  * unless the client claims a reference to it.
  *
- * @param[in]  aDevice       NetworkAdapter originally returned to a subnet added callback.
+ * @param[in]  aNif       NetworkAdapter originally returned to a subnet added callback.
  */
 DllExport void STDCALL OhNetNetworkAdapterAddRef(OhNetHandleNetworkAdapter aNif);
 
@@ -602,7 +602,7 @@ DllExport void STDCALL OhNetNetworkAdapterAddRef(OhNetHandleNetworkAdapter aNif)
  * Each call to OhNetNetworkAdapterAddRef() must be matched by exactly one call to
  * OhNetNetworkAdapterRemoveRef().
  *
- * @param[in]  aDevice       Device.  Probably passed to the 'removed' version of DeviceListChanged
+ * @param[in]  aNif       Network adapter to release the reference for.
  */
 DllExport void STDCALL OhNetNetworkAdapterRemoveRef(OhNetHandleNetworkAdapter aNif);
 
