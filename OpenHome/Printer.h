@@ -4,6 +4,7 @@
 #include <OpenHome/Private/Standard.h>
 #include <OpenHome/Buffer.h>
 #include <OpenHome/FunctorMsg.h>
+#include <stdarg.h>
 #include <stdio.h>
 
 namespace OpenHome {

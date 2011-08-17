@@ -1,4 +1,5 @@
 #include <jni.h>
+#include <stdio.h>
 #include "CpDeviceListUpnpUuid.h"
 #include "CpDeviceListCallback.h"
 #include "OpenHome/Net/C/CpDeviceUpnp.h"

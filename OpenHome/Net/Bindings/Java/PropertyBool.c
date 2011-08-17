@@ -1,4 +1,5 @@
 #include <jni.h>
+#include <stdio.h>
 #include "PropertyCallback.h"
 #include "PropertyBool.h"
 #include "OpenHome/Net/C/OhNet.h"

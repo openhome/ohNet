@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <malloc.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "CpDeviceListUpnpServiceType.h"
 #include "CpDeviceListCallback.h"

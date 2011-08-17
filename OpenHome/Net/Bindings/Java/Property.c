@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <malloc.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "Property.h"
 #include "PropertyCallback.h"
@@ -18,13 +19,22 @@ void STDCALL ChangeCallback(void* aPtr)
 	jclass cls;
 	jmethodID mid;
 	jint ret;
-	
-	ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **) &env, NULL);
-	if (ret < 0)
+	jint attached;
+
+	attached = (*(ref->vm))->GetEnv(ref->vm, (void **)&env, JNI_VERSION_1_4);
+	if (attached < 0)
 	{
-		printf("PropertyJNI: Unable to attach thread to JVM.\n");
-		fflush(stdout);
-		return;
+#ifdef __ANDROID__
+		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, &env, NULL);
+#else
+		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **)&env, NULL);
+#endif
+		if (ret < 0)
+		{
+			printf("PropertyJNI: Unable to attach thread to JVM.\n");
+			fflush(stdout);
+			return;
+		}
 	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "notifyChange", "()V");
@@ -34,7 +44,10 @@ void STDCALL ChangeCallback(void* aPtr)
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid);
 	
-	(*(ref->vm))->DetachCurrentThread(ref->vm);
+	if (attached < 0)
+	{
+		(*(ref->vm))->DetachCurrentThread(ref->vm);
+	}
 }
 
 void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRef **aRef)
@@ -48,7 +61,7 @@ void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRef **aRe
 		printf("PropertyJNI: Unable to get reference to the current Java VM.\n");
 		fflush(stdout);
 	}
-	(*aRef)->callbackObj = (*aEnv)->NewWeakGlobalRef(aEnv, aObject);
+	(*aRef)->callbackObj = (*aEnv)->NewGlobalRef(aEnv, aObject);
 	if ((*aRef)->callbackObj == NULL) {
 		printf("PropertyJNI: Callback object not stored.\n");
 		fflush(stdout);
@@ -67,7 +80,7 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_Property_ServicePropertyDestro
 	JniObjRef *ref = (JniObjRef*) (size_t)aCallback;
 	aClass = aClass;
 	
-	(*aEnv)->DeleteWeakGlobalRef(aEnv, ref->callbackObj);
+	(*aEnv)->DeleteGlobalRef(aEnv, ref->callbackObj);
 	free(ref);
 	ServicePropertyDestroy(property);
 }

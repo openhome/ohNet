@@ -1132,7 +1132,21 @@ $(objdir)org/openhome/net/device/tests/TestDvDevice.class : $(publicjavadir)org/
 ohNetJavaSrc : $(objdir)ohnet-src.jar
 $(objdir)ohnet-src.jar :
 	$(jar) $(jarflags) $(objdir)ohnet-src.jar -C $(publicjavadir) .
+    
+ohNetAndroidNative : make_obj_dir copy_build_includes ohNetJava
+	cp OpenHome/Net/Bindings/Android/jni/ifaddrs.h $(ANDROID_NDK_ROOT)/platforms/android-3/arch-arm/usr/include/
+	$(ANDROID_NDK_ROOT)/ndk-build -C OpenHome/Net/Bindings/Android/jni
+	mkdir -p $(objdir)Android/libs/armeabi
+	mv OpenHome/Net/Bindings/Android/libs/armeabi/libohNet.so $(objdir)Android/libs/armeabi/
+	mv OpenHome/Net/Bindings/Android/libs/armeabi/libohNetJni.so $(objdir)Android/libs/armeabi/
+	cp $(objdir)ohnet.jar $(objdir)Android/libs/
 
+ohNetAndroidClean:
+	$(ANDROID_NDK_ROOT)/ndk-build -C OpenHome/Net/Bindings/Android/jni clean
+	if [ -d OpenHome/Net/Bindings/Android/libs ]; then rm -rf OpenHome/Net/Bindings/Android/libs; fi
+	if [ -d OpenHome/Net/Bindings/Android/obj ]; then rm -rf OpenHome/Net/Bindings/Android/obj; fi
+	if [ -d OpenHome/Net/Bindings/Android/OpenHome ]; then rm -rf OpenHome/Net/Bindings/Android/OpenHome; fi
+	if [ -d OpenHome/Net/Bindings/Android/Os ]; then rm -rf OpenHome/Net/Bindings/Android/Os; fi
 
 Generated$(dirsep)GenerateSourceFiles.mak : $(tt) OpenHome$(dirsep)Net$(dirsep)Service$(dirsep)Services.xml OpenHome/Net/T4/Templates/UpnpMakeT4.tt
 	$(mkdir) Generated

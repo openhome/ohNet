@@ -247,8 +247,8 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     std::vector<NetworkAdapter*> removed;
     std::vector<NetworkAdapter*> adapterChanged;
 
-    sort(oldSubnets->begin(), oldSubnets->end(), CompareSubnets);
-    sort(newSubnets->begin(), newSubnets->end(), CompareSubnets);
+    std::sort(oldSubnets->begin(), oldSubnets->end(), CompareSubnets);
+    std::sort(newSubnets->begin(), newSubnets->end(), CompareSubnets);
 
     if (oldSubnets->size() == 0 && newSubnets->size() > 0) {
         for (TUint i=0; i < newSubnets->size(); i++) {

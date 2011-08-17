@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <malloc.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "DvInvocation.h"
 #include "OpenHome/Net/C/DvProvider.h"
