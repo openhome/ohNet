@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Creating your Device List</title>
+
+  <para>CpDeviceList is a protocol-independent base class. However, the
+  mechanism you use to discover remote devices necessarily depends on the
+  protocol being used. ohNet's UPnP implementation provides five CpDeviceList
+  sub-classes which implement the different types of searches defined by
+  UPnP.</para>
+
+  <para>Each of these classes represents a specific way to filter your
+  application's search for remote devices. The five classes are as
+  follows:</para>
+
+  <para>Choose which type of search you want to use in your application and
+  create your new Device List object. For example:</para>
+
+  <programlisting>CpDeviceListCppUpnpServiceType* list = new 
+    CpDeviceListCppUpnpServiceType(domainName, serviceType, ver, added, 
+        removed);</programlisting>
+
+  <note>
+    <para>The example used above specifies the domain, service type and
+    version of the service. These details are required for this particular
+    Device List and must be declared in the body of your Control Point
+    application code. See the API for the details of each Device Lists'
+    arguments.</para>
+  </note>
+
+  <para>You can now use the CpDevice objects to create Proxies to allow your
+  Control Point application to communicate with the remote device.</para>
+</section>
