@@ -99,7 +99,7 @@ public:
     DllExport TChar* Transfer();
 };
 
-class Bwx : public Brx
+class DllExportClass Bwx : public Brx
 {
 public:
     void Replace(const Brx& aBuf);
@@ -124,7 +124,7 @@ protected:
     TUint iMaxBytes;
 };
 
-class Bwn : public Bwx
+class DllExportClass Bwn : public Bwx
 {
 public:
     explicit Bwn();
@@ -144,7 +144,7 @@ private:
     Bwn& operator=(const Bwn&);
 };
 
-template <TUint S> class Bws : public Bwx
+template <TUint S> class DllExportClass Bws : public Bwx
 {
 public:
     inline Bws();
@@ -160,7 +160,7 @@ private:
     Bws<S>& operator=(const Bws<S>&);
 };
 
-class Bwh : public Bwx
+class DllExportClass Bwh : public Bwx
 {
 public:
     Bwh();
