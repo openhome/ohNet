@@ -724,7 +724,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -942,6 +942,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * calling {@link #endGetSearchCapabilities}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetSearchCapabilities(ICpProxyListener aCallback)
 	{
@@ -1000,6 +1001,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * calling {@link #endGetSortCapabilities}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetSortCapabilities(ICpProxyListener aCallback)
 	{
@@ -1058,6 +1060,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * calling {@link #endGetSortExtensionCapabilities}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetSortExtensionCapabilities(ICpProxyListener aCallback)
 	{
@@ -1116,6 +1119,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * calling {@link #endGetFeatureList}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetFeatureList(ICpProxyListener aCallback)
 	{
@@ -1174,6 +1178,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * calling {@link #endGetSystemUpdateID}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetSystemUpdateID(ICpProxyListener aCallback)
 	{
@@ -1232,6 +1237,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * calling {@link #endGetServiceResetToken}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetServiceResetToken(ICpProxyListener aCallback)
 	{
@@ -1294,7 +1300,14 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endBrowse}.
 	 * 
+	 * @param aObjectID
+	 * @param aBrowseFlag
+	 * @param aFilter
+	 * @param aStartingIndex
+	 * @param aRequestedCount
+	 * @param aSortCriteria
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginBrowse(String aObjectID, String aBrowseFlag, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria, ICpProxyListener aCallback)
 	{
@@ -1375,7 +1388,14 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSearch}.
 	 * 
+	 * @param aContainerID
+	 * @param aSearchCriteria
+	 * @param aFilter
+	 * @param aStartingIndex
+	 * @param aRequestedCount
+	 * @param aSortCriteria
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSearch(String aContainerID, String aSearchCriteria, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria, ICpProxyListener aCallback)
 	{
@@ -1454,7 +1474,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endCreateObject}.
 	 * 
+	 * @param aContainerID
+	 * @param aElements
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginCreateObject(String aContainerID, String aElements, ICpProxyListener aCallback)
 	{
@@ -1516,7 +1539,9 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endDestroyObject}.
 	 * 
+	 * @param aObjectID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginDestroyObject(String aObjectID, ICpProxyListener aCallback)
 	{
@@ -1566,7 +1591,11 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endUpdateObject}.
 	 * 
+	 * @param aObjectID
+	 * @param aCurrentTagValue
+	 * @param aNewTagValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginUpdateObject(String aObjectID, String aCurrentTagValue, String aNewTagValue, ICpProxyListener aCallback)
 	{
@@ -1622,7 +1651,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endMoveObject}.
 	 * 
+	 * @param aObjectID
+	 * @param aNewParentID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginMoveObject(String aObjectID, String aNewParentID, ICpProxyListener aCallback)
 	{
@@ -1683,7 +1715,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endImportResource}.
 	 * 
+	 * @param aSourceURI
+	 * @param aDestinationURI
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginImportResource(String aSourceURI, String aDestinationURI, ICpProxyListener aCallback)
 	{
@@ -1744,7 +1779,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endExportResource}.
 	 * 
+	 * @param aSourceURI
+	 * @param aDestinationURI
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginExportResource(String aSourceURI, String aDestinationURI, ICpProxyListener aCallback)
 	{
@@ -1801,7 +1839,9 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endDeleteResource}.
 	 * 
+	 * @param aResourceURI
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginDeleteResource(String aResourceURI, ICpProxyListener aCallback)
 	{
@@ -1851,7 +1891,9 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endStopTransferResource}.
 	 * 
+	 * @param aTransferID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginStopTransferResource(long aTransferID, ICpProxyListener aCallback)
 	{
@@ -1909,7 +1951,9 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetTransferProgress}.
 	 * 
+	 * @param aTransferID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetTransferProgress(long aTransferID, ICpProxyListener aCallback)
 	{
@@ -1977,7 +2021,10 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endCreateReference}.
 	 * 
+	 * @param aContainerID
+	 * @param aObjectID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginCreateReference(String aContainerID, String aObjectID, ICpProxyListener aCallback)
 	{
@@ -2041,7 +2088,11 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endFreeFormQuery}.
 	 * 
+	 * @param aContainerID
+	 * @param aCDSView
+	 * @param aQueryRequest
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginFreeFormQuery(String aContainerID, long aCDSView, String aQueryRequest, ICpProxyListener aCallback)
 	{
@@ -2109,6 +2160,7 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	 * calling {@link #endGetFreeFormQueryCapabilities}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetFreeFormQueryCapabilities(ICpProxyListener aCallback)
 	{
@@ -2297,8 +2349,8 @@ public class CpProxyUpnpOrgContentDirectory3 extends CpProxy implements ICpProxy
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

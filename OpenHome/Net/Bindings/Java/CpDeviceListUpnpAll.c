@@ -1,4 +1,5 @@
 #include <jni.h>
+#include <stdio.h>
 #include "CpDeviceListUpnpAll.h"
 #include "CpDeviceListCallback.h"
 #include "OpenHome/Net/C/CpDeviceUpnp.h"
@@ -38,7 +39,7 @@ JNIEXPORT jobject JNICALL Java_org_openhome_net_controlpoint_CpDeviceListUpnpAll
 	}
 	
 	devList = CpDeviceListCreateUpnpAll(callbackAdded, ref, callbackRemoved, ref);
-	devListInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)devList, (jlong)ref);
+	devListInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)(size_t)devList, (jlong)(size_t)ref);
 	
 	return devListInit;
 }

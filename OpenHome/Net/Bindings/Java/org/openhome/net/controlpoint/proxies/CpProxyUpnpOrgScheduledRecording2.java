@@ -731,7 +731,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -923,6 +923,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * calling {@link #endGetSortCapabilities}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetSortCapabilities(ICpProxyListener aCallback)
 	{
@@ -985,7 +986,9 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetPropertyList}.
 	 * 
+	 * @param aDataTypeID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetPropertyList(String aDataTypeID, ICpProxyListener aCallback)
 	{
@@ -1045,7 +1048,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetAllowedValues}.
 	 * 
+	 * @param aDataTypeID
+	 * @param aFilter
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetAllowedValues(String aDataTypeID, String aFilter, ICpProxyListener aCallback)
 	{
@@ -1107,6 +1113,7 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * calling {@link #endGetStateUpdateID}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetStateUpdateID(ICpProxyListener aCallback)
 	{
@@ -1169,7 +1176,12 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endBrowseRecordSchedules}.
 	 * 
+	 * @param aFilter
+	 * @param aStartingIndex
+	 * @param aRequestedCount
+	 * @param aSortCriteria
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginBrowseRecordSchedules(String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria, ICpProxyListener aCallback)
 	{
@@ -1248,7 +1260,13 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endBrowseRecordTasks}.
 	 * 
+	 * @param aRecordScheduleID
+	 * @param aFilter
+	 * @param aStartingIndex
+	 * @param aRequestedCount
+	 * @param aSortCriteria
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginBrowseRecordTasks(String aRecordScheduleID, String aFilter, long aStartingIndex, long aRequestedCount, String aSortCriteria, ICpProxyListener aCallback)
 	{
@@ -1327,7 +1345,9 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endCreateRecordSchedule}.
 	 * 
+	 * @param aElements
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginCreateRecordSchedule(String aElements, ICpProxyListener aCallback)
 	{
@@ -1391,7 +1411,9 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endDeleteRecordSchedule}.
 	 * 
+	 * @param aRecordScheduleID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginDeleteRecordSchedule(String aRecordScheduleID, ICpProxyListener aCallback)
 	{
@@ -1448,7 +1470,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetRecordSchedule}.
 	 * 
+	 * @param aRecordScheduleID
+	 * @param aFilter
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetRecordSchedule(String aRecordScheduleID, String aFilter, ICpProxyListener aCallback)
 	{
@@ -1510,7 +1535,9 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endEnableRecordSchedule}.
 	 * 
+	 * @param aRecordScheduleID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginEnableRecordSchedule(String aRecordScheduleID, ICpProxyListener aCallback)
 	{
@@ -1560,7 +1587,9 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endDisableRecordSchedule}.
 	 * 
+	 * @param aRecordScheduleID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginDisableRecordSchedule(String aRecordScheduleID, ICpProxyListener aCallback)
 	{
@@ -1610,7 +1639,9 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endDeleteRecordTask}.
 	 * 
+	 * @param aRecordTaskID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginDeleteRecordTask(String aRecordTaskID, ICpProxyListener aCallback)
 	{
@@ -1667,7 +1698,10 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetRecordTask}.
 	 * 
+	 * @param aRecordTaskID
+	 * @param aFilter
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetRecordTask(String aRecordTaskID, String aFilter, ICpProxyListener aCallback)
 	{
@@ -1729,7 +1763,9 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endEnableRecordTask}.
 	 * 
+	 * @param aRecordTaskID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginEnableRecordTask(String aRecordTaskID, ICpProxyListener aCallback)
 	{
@@ -1779,7 +1815,9 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endDisableRecordTask}.
 	 * 
+	 * @param aRecordTaskID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginDisableRecordTask(String aRecordTaskID, ICpProxyListener aCallback)
 	{
@@ -1829,7 +1867,9 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endResetRecordTask}.
 	 * 
+	 * @param aRecordTaskID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginResetRecordTask(String aRecordTaskID, ICpProxyListener aCallback)
 	{
@@ -1886,7 +1926,9 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetRecordScheduleConflicts}.
 	 * 
+	 * @param aRecordScheduleID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetRecordScheduleConflicts(String aRecordScheduleID, ICpProxyListener aCallback)
 	{
@@ -1954,7 +1996,9 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetRecordTaskConflicts}.
 	 * 
+	 * @param aRecordTaskID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetRecordTaskConflicts(String aRecordTaskID, ICpProxyListener aCallback)
 	{
@@ -2033,8 +2077,8 @@ public class CpProxyUpnpOrgScheduledRecording2 extends CpProxy implements ICpPro
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

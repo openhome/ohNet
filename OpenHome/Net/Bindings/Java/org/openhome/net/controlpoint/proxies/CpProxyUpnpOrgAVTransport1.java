@@ -725,7 +725,7 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -919,7 +919,11 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetAVTransportURI}.
 	 * 
+	 * @param aInstanceID
+	 * @param aCurrentURI
+	 * @param aCurrentURIMetaData
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetAVTransportURI(long aInstanceID, String aCurrentURI, String aCurrentURIMetaData, ICpProxyListener aCallback)
 	{
@@ -971,7 +975,11 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetNextAVTransportURI}.
 	 * 
+	 * @param aInstanceID
+	 * @param aNextURI
+	 * @param aNextURIMetaData
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetNextAVTransportURI(long aInstanceID, String aNextURI, String aNextURIMetaData, ICpProxyListener aCallback)
 	{
@@ -1037,7 +1045,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetMediaInfo}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetMediaInfo(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1127,7 +1137,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetTransportInfo}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetTransportInfo(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1204,7 +1216,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetPositionInfo}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetPositionInfo(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1291,7 +1305,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetDeviceCapabilities}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetDeviceCapabilities(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1362,7 +1378,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetTransportSettings}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetTransportSettings(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1423,7 +1441,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endStop}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginStop(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1473,7 +1493,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endPlay}.
 	 * 
+	 * @param aInstanceID
+	 * @param aSpeed
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPlay(long aInstanceID, String aSpeed, ICpProxyListener aCallback)
 	{
@@ -1524,7 +1547,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endPause}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPause(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1574,7 +1599,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endRecord}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginRecord(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1624,7 +1651,11 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSeek}.
 	 * 
+	 * @param aInstanceID
+	 * @param aUnit
+	 * @param aTarget
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSeek(long aInstanceID, String aUnit, String aTarget, ICpProxyListener aCallback)
 	{
@@ -1676,7 +1707,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endNext}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginNext(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1726,7 +1759,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endPrevious}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPrevious(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1776,7 +1811,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetPlayMode}.
 	 * 
+	 * @param aInstanceID
+	 * @param aNewPlayMode
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetPlayMode(long aInstanceID, String aNewPlayMode, ICpProxyListener aCallback)
 	{
@@ -1827,7 +1865,10 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetRecordQualityMode}.
 	 * 
+	 * @param aInstanceID
+	 * @param aNewRecordQualityMode
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetRecordQualityMode(long aInstanceID, String aNewRecordQualityMode, ICpProxyListener aCallback)
 	{
@@ -1882,7 +1923,9 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetCurrentTransportActions}.
 	 * 
+	 * @param aInstanceID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetCurrentTransportActions(long aInstanceID, ICpProxyListener aCallback)
 	{
@@ -1956,8 +1999,8 @@ public class CpProxyUpnpOrgAVTransport1 extends CpProxy implements ICpProxyUpnpO
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

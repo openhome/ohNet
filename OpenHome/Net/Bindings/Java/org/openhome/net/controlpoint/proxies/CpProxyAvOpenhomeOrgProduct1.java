@@ -634,7 +634,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -815,6 +815,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	 * calling {@link #endManufacturer}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginManufacturer(ICpProxyListener aCallback)
 	{
@@ -889,6 +890,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	 * calling {@link #endModel}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginModel(ICpProxyListener aCallback)
 	{
@@ -964,6 +966,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	 * calling {@link #endProduct}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginProduct(ICpProxyListener aCallback)
 	{
@@ -1036,6 +1039,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	 * calling {@link #endStandby}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginStandby(ICpProxyListener aCallback)
 	{
@@ -1089,7 +1093,9 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetStandby}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetStandby(boolean aValue, ICpProxyListener aCallback)
 	{
@@ -1144,6 +1150,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	 * calling {@link #endSourceCount}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSourceCount(ICpProxyListener aCallback)
 	{
@@ -1202,6 +1209,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	 * calling {@link #endSourceXml}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSourceXml(ICpProxyListener aCallback)
 	{
@@ -1260,6 +1268,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	 * calling {@link #endSourceIndex}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSourceIndex(ICpProxyListener aCallback)
 	{
@@ -1313,7 +1322,9 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetSourceIndex}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetSourceIndex(long aValue, ICpProxyListener aCallback)
 	{
@@ -1363,7 +1374,9 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetSourceIndexByName}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetSourceIndexByName(String aValue, ICpProxyListener aCallback)
 	{
@@ -1422,7 +1435,9 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSource}.
 	 * 
+	 * @param aIndex
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSource(long aIndex, ICpProxyListener aCallback)
 	{
@@ -1494,6 +1509,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	 * calling {@link #endAttributes}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginAttributes(ICpProxyListener aCallback)
 	{
@@ -1552,6 +1568,7 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	 * calling {@link #endSourceXmlChangeCount}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSourceXmlChangeCount(ICpProxyListener aCallback)
 	{
@@ -2286,8 +2303,8 @@ public class CpProxyAvOpenhomeOrgProduct1 extends CpProxy implements ICpProxyAvO
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

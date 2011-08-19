@@ -68,6 +68,18 @@ Stack::Stack(InitialisationParams* aInitParams)
     if (subnetListChangeListener) {
         iNetworkAdapterList->AddSubnetListChangeListener(subnetListChangeListener);
     }
+    FunctorNetworkAdapter &subnetAddedListener = iInitParams->SubnetAddedListener();
+    if (subnetAddedListener) {
+        iNetworkAdapterList->AddSubnetAddedListener(subnetAddedListener);
+    }
+    FunctorNetworkAdapter &subnetRemovedListener = iInitParams->SubnetRemovedListener();
+    if (subnetRemovedListener) {
+        iNetworkAdapterList->AddSubnetRemovedListener(subnetRemovedListener);
+    }
+    FunctorNetworkAdapter &networkAdapterChangeListener = iInitParams->NetworkAdapterChangedListener();
+    if (networkAdapterChangeListener) {
+        iNetworkAdapterList->AddNetworkAdapterChangeListener(networkAdapterChangeListener);
+    }
 }
 
 void Stack::Destroy()
@@ -80,7 +92,6 @@ Stack::~Stack()
     ASSERT(gStackInitCount == 1);
     gStackInitCount = 0;
     iPublicLock.Wait();
-    ASSERT(iMulticastListeners.size() == 0);
     iPublicLock.Signal();
     if (iTimerManager != NULL) {
         iTimerManager->Stop();

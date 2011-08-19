@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <malloc.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "DvDevice.h"
 #include "JniCallbackList.h"
@@ -16,12 +17,22 @@ void CallbackDeviceDisabled(void* aPtr)
 	JNIEnv *env;
 	jclass cls;
 	jmethodID mid;
-	
-	ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **) &env, NULL);
-	if (ret < 0)
+	jint attached;
+
+	attached = (*(ref->vm))->GetEnv(ref->vm, (void **)&env, JNI_VERSION_1_4);
+	if (attached < 0)
 	{
-		printf("Unable to attach thread to JVM.\n");
-		return;
+#ifdef __ANDROID__
+		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, &env, NULL);
+#else
+		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **)&env, NULL);
+#endif
+		if (ret < 0)
+		{
+			printf("DvDeviceJNI: Unable to attach thread to JVM.\n");
+			fflush(stdout);
+			return;
+		}
 	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "deviceDisabled", "()V");
@@ -31,8 +42,11 @@ void CallbackDeviceDisabled(void* aPtr)
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid);
 	
-	(*(ref->vm))->DetachCurrentThread(ref->vm);
-	(*env)->DeleteWeakGlobalRef(env, ref->callbackObj);
+	if(attached < 0)
+	{
+		(*(ref->vm))->DetachCurrentThread(ref->vm);
+	}
+	(*env)->DeleteGlobalRef(env, ref->callbackObj);
 	free(ref);
 }
 
@@ -50,7 +64,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_device_DvDevice_DvDeviceCreate
 
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aUdn, udn);
 	
-	return (jlong) device;
+	return (jlong) (size_t)device;
 }
 
 /*
@@ -131,7 +145,7 @@ JNIEXPORT void JNICALL Java_org_openhome_net_device_DvDevice_DvDeviceSetDisabled
 	if (ret < 0) {
 		printf("Unable to get reference to the current Java VM.\n");
 	}
-	ref->callbackObj = (*aEnv)->NewWeakGlobalRef(aEnv, aCompleted);
+	ref->callbackObj = (*aEnv)->NewGlobalRef(aEnv, aCompleted);
 	
 	DvDeviceSetDisabled(device, callback, &ref);
 }

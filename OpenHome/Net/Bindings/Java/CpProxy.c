@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <malloc.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "CpProxy.h"
 #include "JniCallbackList.h"
@@ -16,11 +17,23 @@ static void STDCALL CallbackChange(void* aPtr)
 	jclass cls;
 	jmethodID mid;
 	jint ret;
-	
-	ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **) &env, NULL);
-	if (ret < 0)
-		printf("Unable to attach thread to JVM.\n");
-	
+	jint attached;
+
+	attached = (*(ref->vm))->GetEnv(ref->vm, (void **)&env, JNI_VERSION_1_4);
+	if (attached < 0)
+	{
+#ifdef __ANDROID__
+		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, &env, NULL);
+#else
+		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **)&env, NULL);
+#endif
+		if (ret < 0)
+		{
+			printf("CpProxyJNI: Unable to attach thread to JVM.\n");
+			fflush(stdout);
+			return;
+		}
+	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "notifyChange", "()V");
 	if (mid == 0) {
@@ -29,7 +42,10 @@ static void STDCALL CallbackChange(void* aPtr)
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid);
 	
-	(*(ref->vm))->DetachCurrentThread(ref->vm);
+	if (attached < 0)
+	{
+		(*(ref->vm))->DetachCurrentThread(ref->vm);
+	}
 }
 
 static void STDCALL CallbackInitial(void* aPtr)
@@ -39,11 +55,23 @@ static void STDCALL CallbackInitial(void* aPtr)
 	jclass cls;
 	jmethodID mid;
 	jint ret;
+	jint attached;
 
-	ret = (*(ref)->vm)->AttachCurrentThread(ref->vm, (void **) &env, NULL);
-	if (ret < 0)
-		printf("Unable to attach thread to JVM.\n");
-	
+	attached = (*(ref->vm))->GetEnv(ref->vm, (void **)&env, JNI_VERSION_1_4);
+	if (attached < 0)
+	{
+#ifdef __ANDROID__
+		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, &env, NULL);
+#else
+		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **)&env, NULL);
+#endif
+		if (ret < 0)
+		{
+			printf("CpProxyJNI: Unable to attach thread to JVM.\n");
+			fflush(stdout);
+			return;
+		}
+	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "notifyChange", "()V");
 	if (mid == 0) {
@@ -52,7 +80,10 @@ static void STDCALL CallbackInitial(void* aPtr)
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid);
 	
-	(*(ref->vm))->DetachCurrentThread(ref->vm);
+	if (attached < 0)
+	{
+		(*(ref->vm))->DetachCurrentThread(ref->vm);
+	}
 }
 
 static void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRef **aRef)
@@ -65,7 +96,7 @@ static void STDCALL InitialiseReferences(JNIEnv *aEnv, jobject aObject, JniObjRe
 		printf("CpProxyJNI: Unable to get reference to the current Java VM.\n");
 		fflush(stdout);
 	}
-	(*aRef)->callbackObj = (*aEnv)->NewWeakGlobalRef(aEnv, aObject);
+	(*aRef)->callbackObj = (*aEnv)->NewGlobalRef(aEnv, aObject);
 	if ((*aRef)->callbackObj == NULL) {
 		printf("CpProxyJNI: Callback object not stored.\n");
 		fflush(stdout);
@@ -89,7 +120,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyCreate
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aDomain, domain);
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	
-	return (jlong) proxy;
+	return (jlong) (size_t)proxy;
 }
 
 /*
@@ -107,12 +138,12 @@ JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyDestroy
 	
 	if (refPropChanged != NULL)
 	{
-		(*aEnv)->DeleteWeakGlobalRef(aEnv, refPropChanged->callbackObj);
+		(*aEnv)->DeleteGlobalRef(aEnv, refPropChanged->callbackObj);
 		free(refPropChanged);
 	}
 	if (refInitialEvent != NULL)
 	{
-		(*aEnv)->DeleteWeakGlobalRef(aEnv, refInitialEvent->callbackObj);
+		(*aEnv)->DeleteGlobalRef(aEnv, refInitialEvent->callbackObj);
 		free(refInitialEvent);
 	}
 	CpProxyDestroy(proxy);
@@ -130,7 +161,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxyServic
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jlong) CpProxyService(proxy);
+	return (jlong) (size_t)CpProxyService(proxy);
 }
 
 /*
@@ -180,7 +211,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPro
 	
 	CpProxySetPropertyChanged(proxy, callback, ref);
 	
-	return (jlong) ref;
+	return (jlong) (size_t)ref;
 }
 
 /*
@@ -200,7 +231,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_CpProxy_CpProxySetPro
 	
 	CpProxySetPropertyChanged(proxy, callback, NULL);
 	
-	return (jlong) ref;
+	return (jlong) (size_t)ref;
 }
 
 /*

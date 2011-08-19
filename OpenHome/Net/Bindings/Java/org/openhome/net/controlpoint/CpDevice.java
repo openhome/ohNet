@@ -6,7 +6,7 @@ package org.openhome.net.controlpoint;
  * <p>Instance of this class are reference counted and are automatically deleted
  * when the reference count falls to zero.
  * All references to class instances must have been removed before
- * {@code Library.close()} is called.
+ * <tt>Library.close()</tt> is called.
  */
 public class CpDevice
 {
@@ -28,7 +28,7 @@ public class CpDevice
      * Constructor. Not intended for external use.
      * 
      * <p>Devices should be constructed via {@link #CpDevice} or
-     * {@code CpDeviceList} subclasses.
+     * <tt>CpDeviceList</tt> subclasses.
      * 
      * @param aHandle	handle to the underlying native device.
      */
@@ -85,8 +85,8 @@ public class CpDevice
      * 					attributes will be listed in a protocol-specific header.
      * @param aValue	empty String array of size 1.
      * 					First and only element will be replaced with attribute matching key.
-     * @return			{@code true} if the attribute was available on the device;
-     * 					{@code false} otherwise. {@code aValue} will not have been set if
+     * @return			<tt>true</tt> if the attribute was available on the device;
+     * 					<tt>false</tt> otherwise. <tt>aValue</tt> will not have been set if
      * 					false is returned
      */
     public boolean getAttribute(String aKey, String[] aValue) {

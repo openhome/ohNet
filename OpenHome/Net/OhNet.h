@@ -9,6 +9,7 @@
 #include <OpenHome/Functor.h>
 #include <OpenHome/Net/Core/FunctorAsync.h>
 #include <OpenHome/FunctorMsg.h>
+#include <OpenHome/FunctorNetworkAdapter.h>
 #include <OpenHome/Net/C/OhNet.h> // for OhNetCallbackFreeExternal only
 
 #include <vector>
@@ -128,6 +129,9 @@ public:
     void SetAsyncEndHandler(FunctorAsync aHandler);
     void SetAsyncErrorHandler(FunctorAsync aHandler);
     void SetSubnetListChangedListener(Functor aFunctor);
+    void SetSubnetAddedListener(FunctorNetworkAdapter aFunctor);
+    void SetSubnetRemovedListener(FunctorNetworkAdapter aFunctor);
+    void SetNetworkAdapterChangedListener(FunctorNetworkAdapter aFunctor);
     /**
      * Set a timeout for TCP connections.  Must be greater that zero
      */
@@ -241,6 +245,9 @@ public:
     FunctorAsync& AsyncEndHandler();
     FunctorAsync& AsyncErrorHandler();
     Functor& SubnetListChangedListener();
+    FunctorNetworkAdapter& SubnetAddedListener();
+    FunctorNetworkAdapter& SubnetRemovedListener();
+    FunctorNetworkAdapter& NetworkAdapterChangedListener();
     uint32_t TcpConnectTimeoutMs() const;
     uint32_t MsearchTimeSecs() const;
     uint32_t MsearchTtl() const;
@@ -270,6 +277,9 @@ private:
     FunctorAsync iAsyncErrorHandler;
     DefaultAsyncHandler* iDefaultAsyncHandler;
     Functor iSubnetListChangedListener;
+    FunctorNetworkAdapter iSubnetAddedListener;
+    FunctorNetworkAdapter iSubnetRemovedListener;
+    FunctorNetworkAdapter iNetworkAdapterChangedListener;
     uint32_t iTcpConnectTimeoutMs;
     uint32_t iMsearchTimeSecs;
     uint32_t iMsearchTtl;

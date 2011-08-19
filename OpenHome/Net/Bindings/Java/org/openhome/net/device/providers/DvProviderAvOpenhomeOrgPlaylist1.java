@@ -13,7 +13,7 @@ interface IDvProviderAvOpenhomeOrgPlaylist1
      * Set the value of the TransportState property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTransportState(String aValue);
@@ -29,7 +29,7 @@ interface IDvProviderAvOpenhomeOrgPlaylist1
      * Set the value of the Repeat property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyRepeat(boolean aValue);
@@ -45,7 +45,7 @@ interface IDvProviderAvOpenhomeOrgPlaylist1
      * Set the value of the Shuffle property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyShuffle(boolean aValue);
@@ -61,7 +61,7 @@ interface IDvProviderAvOpenhomeOrgPlaylist1
      * Set the value of the Id property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyId(long aValue);
@@ -77,7 +77,7 @@ interface IDvProviderAvOpenhomeOrgPlaylist1
      * Set the value of the IdArray property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyIdArray(byte[] aValue);
@@ -93,7 +93,7 @@ interface IDvProviderAvOpenhomeOrgPlaylist1
      * Set the value of the TracksMax property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTracksMax(long aValue);
@@ -109,7 +109,7 @@ interface IDvProviderAvOpenhomeOrgPlaylist1
      * Set the value of the ProtocolInfo property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProtocolInfo(String aValue);
@@ -241,8 +241,8 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * Set the value of the TransportState property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyTransportState(String aValue)
     {
@@ -263,8 +263,8 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * Set the value of the Repeat property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyRepeat(boolean aValue)
     {
@@ -285,8 +285,8 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * Set the value of the Shuffle property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyShuffle(boolean aValue)
     {
@@ -307,8 +307,8 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * Set the value of the Id property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyId(long aValue)
     {
@@ -329,8 +329,8 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * Set the value of the IdArray property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyIdArray(byte[] aValue)
     {
@@ -351,8 +351,8 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * Set the value of the TracksMax property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyTracksMax(long aValue)
     {
@@ -373,8 +373,8 @@ public class DvProviderAvOpenhomeOrgPlaylist1 extends DvProvider implements IDvP
      * Set the value of the ProtocolInfo property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyProtocolInfo(String aValue)
     {

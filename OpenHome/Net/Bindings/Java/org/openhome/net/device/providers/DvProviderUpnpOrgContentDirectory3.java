@@ -13,7 +13,7 @@ interface IDvProviderUpnpOrgContentDirectory3
      * Set the value of the SystemUpdateID property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySystemUpdateID(long aValue);
@@ -29,7 +29,7 @@ interface IDvProviderUpnpOrgContentDirectory3
      * Set the value of the ContainerUpdateIDs property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyContainerUpdateIDs(String aValue);
@@ -45,7 +45,7 @@ interface IDvProviderUpnpOrgContentDirectory3
      * Set the value of the LastChange property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyLastChange(String aValue);
@@ -61,7 +61,7 @@ interface IDvProviderUpnpOrgContentDirectory3
      * Set the value of the TransferIDs property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTransferIDs(String aValue);
@@ -279,8 +279,8 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * Set the value of the SystemUpdateID property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertySystemUpdateID(long aValue)
     {
@@ -301,8 +301,8 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * Set the value of the ContainerUpdateIDs property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyContainerUpdateIDs(String aValue)
     {
@@ -323,8 +323,8 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * Set the value of the LastChange property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyLastChange(String aValue)
     {
@@ -345,8 +345,8 @@ public class DvProviderUpnpOrgContentDirectory3 extends DvProvider implements ID
      * Set the value of the TransferIDs property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyTransferIDs(String aValue)
     {

@@ -518,7 +518,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -652,7 +652,9 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetLoadLevelTarget}.
 	 * 
+	 * @param aNewLoadlevelTarget
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetLoadLevelTarget(long aNewLoadlevelTarget, ICpProxyListener aCallback)
 	{
@@ -707,6 +709,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endGetLoadLevelTarget}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetLoadLevelTarget(ICpProxyListener aCallback)
 	{
@@ -765,6 +768,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endGetLoadLevelStatus}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetLoadLevelStatus(ICpProxyListener aCallback)
 	{
@@ -818,7 +822,9 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetOnEffectLevel}.
 	 * 
+	 * @param aNewOnEffectLevel
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetOnEffectLevel(long aNewOnEffectLevel, ICpProxyListener aCallback)
 	{
@@ -868,7 +874,9 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetOnEffect}.
 	 * 
+	 * @param aNewOnEffect
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetOnEffect(String aNewOnEffect, ICpProxyListener aCallback)
 	{
@@ -926,6 +934,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endGetOnEffectParameters}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetOnEffectParameters(ICpProxyListener aCallback)
 	{
@@ -985,6 +994,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endStepUp}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginStepUp(ICpProxyListener aCallback)
 	{
@@ -1033,6 +1043,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endStepDown}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginStepDown(ICpProxyListener aCallback)
 	{
@@ -1081,6 +1092,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endStartRampUp}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginStartRampUp(ICpProxyListener aCallback)
 	{
@@ -1129,6 +1141,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endStartRampDown}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginStartRampDown(ICpProxyListener aCallback)
 	{
@@ -1177,6 +1190,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endStopRamp}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginStopRamp(ICpProxyListener aCallback)
 	{
@@ -1224,7 +1238,10 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endStartRampToLevel}.
 	 * 
+	 * @param aNewLoadLevelTarget
+	 * @param aNewRampTime
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginStartRampToLevel(long aNewLoadLevelTarget, long aNewRampTime, ICpProxyListener aCallback)
 	{
@@ -1275,7 +1292,9 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetStepDelta}.
 	 * 
+	 * @param aNewStepDelta
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetStepDelta(long aNewStepDelta, ICpProxyListener aCallback)
 	{
@@ -1330,6 +1349,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endGetStepDelta}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetStepDelta(ICpProxyListener aCallback)
 	{
@@ -1383,7 +1403,9 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetRampRate}.
 	 * 
+	 * @param aNewRampRate
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetRampRate(long aNewRampRate, ICpProxyListener aCallback)
 	{
@@ -1438,6 +1460,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endGetRampRate}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetRampRate(ICpProxyListener aCallback)
 	{
@@ -1492,6 +1515,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endPauseRamp}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPauseRamp(ICpProxyListener aCallback)
 	{
@@ -1540,6 +1564,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endResumeRamp}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginResumeRamp(ICpProxyListener aCallback)
 	{
@@ -1592,6 +1617,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endGetIsRamping}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetIsRamping(ICpProxyListener aCallback)
 	{
@@ -1650,6 +1676,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endGetRampPaused}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetRampPaused(ICpProxyListener aCallback)
 	{
@@ -1708,6 +1735,7 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	 * calling {@link #endGetRampTime}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetRampTime(ICpProxyListener aCallback)
 	{
@@ -1935,8 +1963,8 @@ public class CpProxyUpnpOrgDimming1 extends CpProxy implements ICpProxyUpnpOrgDi
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

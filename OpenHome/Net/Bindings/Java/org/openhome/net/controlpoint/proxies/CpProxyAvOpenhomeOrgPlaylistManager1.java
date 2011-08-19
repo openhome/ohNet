@@ -531,7 +531,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -707,6 +707,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * calling {@link #endMetadata}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginMetadata(ICpProxyListener aCallback)
 	{
@@ -765,6 +766,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * calling {@link #endImagesXml}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginImagesXml(ICpProxyListener aCallback)
 	{
@@ -822,7 +824,9 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endPlaylistReadArray}.
 	 * 
+	 * @param aId
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPlaylistReadArray(long aId, ICpProxyListener aCallback)
 	{
@@ -882,7 +886,9 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endPlaylistReadMetadata}.
 	 * 
+	 * @param aIdList
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPlaylistReadMetadata(String aIdList, ICpProxyListener aCallback)
 	{
@@ -946,7 +952,9 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endPlaylistRead}.
 	 * 
+	 * @param aId
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPlaylistRead(long aId, ICpProxyListener aCallback)
 	{
@@ -1010,7 +1018,12 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endPlaylistUpdate}.
 	 * 
+	 * @param aId
+	 * @param aName
+	 * @param aDescription
+	 * @param aImageId
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPlaylistUpdate(long aId, String aName, String aDescription, long aImageId, ICpProxyListener aCallback)
 	{
@@ -1067,7 +1080,12 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endPlaylistInsert}.
 	 * 
+	 * @param aAfterId
+	 * @param aName
+	 * @param aDescription
+	 * @param aImageId
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPlaylistInsert(long aAfterId, String aName, String aDescription, long aImageId, ICpProxyListener aCallback)
 	{
@@ -1126,7 +1144,9 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endPlaylistDeleteId}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPlaylistDeleteId(long aValue, ICpProxyListener aCallback)
 	{
@@ -1181,6 +1201,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * calling {@link #endPlaylistsMax}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPlaylistsMax(ICpProxyListener aCallback)
 	{
@@ -1239,6 +1260,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * calling {@link #endTracksMax}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginTracksMax(ICpProxyListener aCallback)
 	{
@@ -1301,6 +1323,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * calling {@link #endPlaylistArrays}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPlaylistArrays(ICpProxyListener aCallback)
 	{
@@ -1366,7 +1389,9 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endPlaylistArraysChanged}.
 	 * 
+	 * @param aToken
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPlaylistArraysChanged(long aToken, ICpProxyListener aCallback)
 	{
@@ -1426,7 +1451,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endRead}.
 	 * 
+	 * @param aId
+	 * @param aTrackId
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginRead(long aId, long aTrackId, ICpProxyListener aCallback)
 	{
@@ -1487,7 +1515,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endReadList}.
 	 * 
+	 * @param aId
+	 * @param aTrackIdList
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginReadList(long aId, String aTrackIdList, ICpProxyListener aCallback)
 	{
@@ -1548,7 +1579,12 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endInsert}.
 	 * 
+	 * @param aId
+	 * @param aAfterTrackId
+	 * @param aUdn
+	 * @param aMetadataId
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginInsert(long aId, long aAfterTrackId, String aUdn, String aMetadataId, ICpProxyListener aCallback)
 	{
@@ -1607,7 +1643,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endDeleteId}.
 	 * 
+	 * @param aTrackId
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginDeleteId(long aTrackId, long aValue, ICpProxyListener aCallback)
 	{
@@ -1658,7 +1697,9 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endDeleteAll}.
 	 * 
+	 * @param aTrackId
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginDeleteAll(long aTrackId, ICpProxyListener aCallback)
 	{
@@ -1921,8 +1962,8 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

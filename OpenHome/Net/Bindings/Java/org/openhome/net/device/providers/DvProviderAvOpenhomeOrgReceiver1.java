@@ -13,7 +13,7 @@ interface IDvProviderAvOpenhomeOrgReceiver1
      * Set the value of the Uri property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyUri(String aValue);
@@ -29,7 +29,7 @@ interface IDvProviderAvOpenhomeOrgReceiver1
      * Set the value of the Metadata property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMetadata(String aValue);
@@ -45,7 +45,7 @@ interface IDvProviderAvOpenhomeOrgReceiver1
      * Set the value of the TransportState property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTransportState(String aValue);
@@ -61,7 +61,7 @@ interface IDvProviderAvOpenhomeOrgReceiver1
      * Set the value of the ProtocolInfo property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProtocolInfo(String aValue);
@@ -143,8 +143,8 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      * Set the value of the Uri property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyUri(String aValue)
     {
@@ -165,8 +165,8 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      * Set the value of the Metadata property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyMetadata(String aValue)
     {
@@ -187,8 +187,8 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      * Set the value of the TransportState property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyTransportState(String aValue)
     {
@@ -209,8 +209,8 @@ public class DvProviderAvOpenhomeOrgReceiver1 extends DvProvider implements IDvP
      * Set the value of the ProtocolInfo property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyProtocolInfo(String aValue)
     {

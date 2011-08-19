@@ -77,7 +77,7 @@ public class DvDeviceStandard extends DvDevice
 	
 	/**
 	 * Destroy the underlying native instance. Must be called for each class instance.
-	 * Must be called before {@code Library.close()}.
+	 * Must be called before <tt>Library.close()</tt>.
 	 */
 	public void destroy()
 	{
@@ -95,7 +95,7 @@ public class DvDeviceStandard extends DvDevice
 	 * @param aLanguageList		handle to a prioritised list of the languages
 	 * 							accepted in the resources to be written. This
 	 * 							should be passed to {@link #DvResourceWriterLanguage}.
-	 * @param aWriterData		pointer to be passed to all 3 {@code writeResource} callbacks.
+	 * @param aWriterData		pointer to be passed to all 3 <tt>writeResource</tt> callbacks.
 	 * @param aWriteBegin		callback to run at the start of serving the file.
 	 * 							Should not be run if the file cannot be supplied.
 	 * @param aWriteResource	callback to run to write file data. Must be called
@@ -104,7 +104,7 @@ public class DvDeviceStandard extends DvDevice
 	 * 							in chunks (avoiding the need to read a large file
 	 * 							fully into memory).
 	 * @param aWriteEnd			callback to be run at the end of serving a file.
-	 * 							Must be called if {@code aWriteBegin} is called.
+	 * 							Must be called if <tt>aWriteBegin</tt> is called.
 	 */
 	private void writeResource(long aUserData, String aUriTail, int aInterface, long aLanguageList, long aWriterData,
 			long aWriteBegin,

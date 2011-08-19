@@ -1,7 +1,8 @@
 #include <jni.h>
+#include <stdio.h>
 #include "PropertyCallback.h"
 #include "PropertyUint.h"
-#include "OpenHome/Net/C/Ohnet.h"
+#include "OpenHome/Net/C/OhNet.h"
 #include "OpenHome/Net/C/Service.h"
 
 #ifdef __cplusplus
@@ -38,7 +39,7 @@ JNIEXPORT jobject JNICALL Java_org_openhome_net_core_PropertyUint_ServicePropert
 	}
 	
 	property = ServicePropertyCreateUintCp(name, callback, ref);
-	propertyInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)property, (jlong)ref);
+	propertyInit = (*aEnv)->NewObject(aEnv, statusClass, cid, aObject, (jlong)(size_t)property, (jlong)(size_t)ref);
 	
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aName, name);
 	
@@ -58,7 +59,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_PropertyUint_ServicePropertyC
 	aEnv = aEnv;
 	aClass = aClass;
 
-	return (jlong) property;
+	return (jlong) (size_t)property;
 }
 
 /*

@@ -24,7 +24,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentBinary_Action
 	arg = ActionArgumentCreateBinaryInput(param, data, aLen);
 	free(data);
 	
-	return (jlong) arg;
+	return (jlong) (size_t)arg;
 }
 
 /*
@@ -39,7 +39,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentBinary_Action
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jlong) ActionArgumentCreateBinaryOutput(param);
+	return (jlong) (size_t)ActionArgumentCreateBinaryOutput(param);
 }
 
 /*

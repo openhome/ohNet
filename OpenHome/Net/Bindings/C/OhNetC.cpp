@@ -102,6 +102,27 @@ void STDCALL OhNetInitParamsSetSubnetListChangedListener(OhNetHandleInitParams a
     ip->SetSubnetListChangedListener(functor);
 }
 
+void STDCALL OhNetInitParamsSetSubnetAddedListener(OhNetHandleInitParams aParams, OhNetCallbackNetworkAdapter aCallback, void* aPtr)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    FunctorNetworkAdapter functor = MakeFunctorNetworkAdapter(aPtr, (OhNetFunctorNetworkAdapter)aCallback);
+    ip->SetSubnetAddedListener(functor);
+}
+
+void STDCALL OhNetInitParamsSetSubnetRemovedListener(OhNetHandleInitParams aParams, OhNetCallbackNetworkAdapter aCallback, void* aPtr)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    FunctorNetworkAdapter functor = MakeFunctorNetworkAdapter(aPtr, (OhNetFunctorNetworkAdapter)aCallback);
+    ip->SetSubnetRemovedListener(functor);
+}
+
+void STDCALL OhNetInitParamsSetNetworkAdapterChangedListener(OhNetHandleInitParams aParams, OhNetCallbackNetworkAdapter aCallback, void* aPtr)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    FunctorNetworkAdapter functor = MakeFunctorNetworkAdapter(aPtr, (OhNetFunctorNetworkAdapter)aCallback);
+    ip->SetNetworkAdapterChangedListener(functor);
+}
+
 void STDCALL OhNetInitParamsSetTcpConnectTimeout(OhNetHandleInitParams aParams, uint32_t aTimeoutMs)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
@@ -320,6 +341,20 @@ char* STDCALL OhNetNetworkAdapterFullName(OhNetHandleNetworkAdapter aNif)
     NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);
     ASSERT(nif != NULL);
     return nif->FullName();
+}
+
+void STDCALL OhNetNetworkAdapterAddRef(OhNetHandleNetworkAdapter aNif)
+{
+    NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);
+    ASSERT(nif != NULL);
+    return nif->AddRef();
+}
+
+void STDCALL OhNetNetworkAdapterRemoveRef(OhNetHandleNetworkAdapter aNif)
+{
+    NetworkAdapter* nif = reinterpret_cast<NetworkAdapter*>(aNif);
+    ASSERT(nif != NULL);
+    return nif->RemoveRef();
 }
 
 OhNetHandleNetworkAdapterList STDCALL OhNetSubnetListCreate()

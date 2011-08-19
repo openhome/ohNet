@@ -4,7 +4,7 @@ package org.openhome.net.controlpoint;
  * (Action) Argument.  Only intended for use by auto-generated proxies.
  * 
  * <p>One Argument will be created per [in/out]put Parameter for the Action.
- * Input parameters should construct arguments using the {@code (Parameter, Val)}
+ * Input parameters should construct arguments using the <tt>(Parameter, Val)</tt>
  * constructor.
  * Output parameters should construct arguments using only the parameter and should
  * read the value when the invocation completes.

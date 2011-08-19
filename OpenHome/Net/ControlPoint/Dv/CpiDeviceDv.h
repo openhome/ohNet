@@ -22,8 +22,6 @@ class CpiDeviceDv : private INonCopyable, private ICpiProtocol, private ICpiDevi
 public:
     CpiDeviceDv(DviDevice& aDevice);
     CpiDevice& Device();
-private:
-    DviService* Service(const ServiceType& aServiceType);
 private: // ICpiProtocol
     void InvokeAction(Invocation& aInvocation);
     TBool GetAttribute(const char* aKey, Brh& aValue) const;

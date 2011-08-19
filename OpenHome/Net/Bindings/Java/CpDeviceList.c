@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <malloc.h>
 #include "CpDeviceList.h"
 #include "CpDeviceListCallback.h"
@@ -13,17 +14,28 @@ extern "C" {
 #endif
 
 void STDCALL deviceAddedCallback(void* aPtr, CpDeviceC aDevice) {
-
 	JniObjRef* ref = (JniObjRef*) aPtr;
 	JNIEnv *env;
 	jclass cls;
 	jmethodID mid;
 	jint ret;
+	jint attached;
 
-	ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **) &env, NULL);
-	if (ret < 0)
-		printf("CpDeviceListJNI: Unable to attach thread to JVM.\n");
-	
+	attached = (*(ref->vm))->GetEnv(ref->vm, (void **)&env, JNI_VERSION_1_4);
+	if (attached < 0)
+	{
+#ifdef __ANDROID__
+		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, &env, NULL);
+#else
+		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **)&env, NULL);
+#endif
+		if (ret < 0)
+		{
+			printf("CpDeviceListJNI: Unable to attach thread to JVM.\n");
+			fflush(stdout);
+			return;
+		}
+	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "deviceAdded", "(J)V");
 	if (mid == 0) {
@@ -32,7 +44,10 @@ void STDCALL deviceAddedCallback(void* aPtr, CpDeviceC aDevice) {
 		return;
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid, aDevice);
-	(*(ref->vm))->DetachCurrentThread(ref->vm);
+	if (attached < 0)
+    {
+		(*(ref->vm))->DetachCurrentThread(ref->vm);
+	}
 }
 
 void STDCALL deviceRemovedCallback(void* aPtr, CpDeviceC aDevice) {
@@ -42,11 +57,23 @@ void STDCALL deviceRemovedCallback(void* aPtr, CpDeviceC aDevice) {
 	jclass cls;
 	jmethodID mid;
 	jint ret;
+	jint attached;
 
-	ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **) &env, NULL);
-	if (ret < 0)
-		printf("CpDeviceListJNI: Unable to attach thread to JVM.\n");
-	
+	attached = (*(ref->vm))->GetEnv(ref->vm, (void **)&env, JNI_VERSION_1_4);
+	if (attached < 0)
+	{
+#ifdef __ANDROID__
+		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, &env, NULL);
+#else
+		ret = (*(ref->vm))->AttachCurrentThread(ref->vm, (void **)&env, NULL);
+#endif
+		if (ret < 0)
+		{
+			printf("CpDeviceListJNI: Unable to attach thread to JVM.\n");
+			fflush(stdout);
+			return;
+		}
+	}
 	cls = (*env)->GetObjectClass(env, ref->callbackObj);
 	mid = (*env)->GetMethodID(env, cls, "deviceRemoved", "(J)V");
 	if (mid == 0) {
@@ -55,7 +82,10 @@ void STDCALL deviceRemovedCallback(void* aPtr, CpDeviceC aDevice) {
 		return;
 	}
 	(*env)->CallVoidMethod(env, ref->callbackObj, mid, aDevice);
-	(*(ref->vm))->DetachCurrentThread(ref->vm);
+	if (attached < 0)
+	{
+		(*(ref->vm))->DetachCurrentThread(ref->vm);
+	}
 }
 
 void InitialiseCpDeviceListReferences(JNIEnv *aEnv, jobject aObject, JniObjRef **aRef)
@@ -68,7 +98,7 @@ void InitialiseCpDeviceListReferences(JNIEnv *aEnv, jobject aObject, JniObjRef *
 		printf("CpDeviceListJNI: Unable to get reference to the current Java VM.\n");
 		fflush(stdout);
 	}
-	(*aRef)->callbackObj = (*aEnv)->NewWeakGlobalRef(aEnv, aObject);
+	(*aRef)->callbackObj = (*aEnv)->NewGlobalRef(aEnv, aObject);
 	if ((*aRef)->callbackObj == NULL) {
 		printf("CpDeviceListJNI: Callback object not stored.\n");
 		fflush(stdout);
@@ -87,7 +117,7 @@ JNIEXPORT void JNICALL Java_org_openhome_net_controlpoint_CpDeviceList_CpDeviceL
 	JniObjRef *ref = (JniObjRef*) (size_t)aCallback;
 	aClass = aClass;
 
-	(*aEnv)->DeleteWeakGlobalRef(aEnv, ref->callbackObj);
+	(*aEnv)->DeleteGlobalRef(aEnv, ref->callbackObj);
 	free(ref);
 	CpDeviceListDestroy(list);
 }

@@ -30,23 +30,10 @@ CpiDevice& CpiDeviceDv::Device()
     return *iDeviceCp;
 }
 
-DviService* CpiDeviceDv::Service(const ServiceType& aServiceType)
-{
-    const Brx& fullNameUpnp = aServiceType.FullNameUpnp();
-    const TUint count = iDeviceDv.ServiceCount();
-    for (TUint i=0; i<count; i++) {
-        DviService& service = iDeviceDv.Service(i);
-        if (service.ServiceType().FullNameUpnp() == fullNameUpnp) {
-            return &service;
-        }
-    }
-    return NULL;
-}
-
 void CpiDeviceDv::InvokeAction(Invocation& aInvocation)
 {
     const OpenHome::Net::ServiceType& serviceType = aInvocation.ServiceType();
-    DviService* service = Service(serviceType);
+    DviService* service = iDeviceDv.ServiceReference(serviceType);
     if (service == NULL) {
         const HttpStatus& err = HttpStatus::kNotFound;
         aInvocation.SetError(Error::eUpnp, err.Code(), err.Reason());
@@ -54,6 +41,7 @@ void CpiDeviceDv::InvokeAction(Invocation& aInvocation)
     else {
         InvocationDv stream(aInvocation, *service);
         stream.Start();
+        service->RemoveRef();
     }
     aInvocation.SignalCompleted();
 }
@@ -80,9 +68,10 @@ TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const OpenHome::Uri
     iSubscriptionDv = new DviSubscription(iDeviceDv, *this, NULL, sid, durationSecs);
     iSubscriptionDv->AddRef(); // guard against subscription expiring before client tries to renew or unsubscribe
     DviSubscriptionManager::AddSubscription(*iSubscriptionDv);
-    DviService* service = Service(aSubscription.ServiceType());
+    DviService* service = iDeviceDv.ServiceReference(aSubscription.ServiceType());
     ASSERT(service != NULL);
     service->AddSubscription(iSubscriptionDv);
+    service->RemoveRef();
     return durationSecs;
 }
 
@@ -99,9 +88,11 @@ void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
     {
         return;
     }
-    DviService* service = Service(aSubscription.ServiceType());
-    ASSERT(service != NULL);
-    service->RemoveSubscription(aSid);
+    DviService* service = iDeviceDv.ServiceReference(aSubscription.ServiceType());
+    if (service != NULL) {
+        service->RemoveSubscription(aSid);
+        service->RemoveRef();
+    }
     iSubscriptionDv->RemoveRef();
     iSubscriptionDv = NULL;
     iSubscriptionCp = NULL;

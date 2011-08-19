@@ -70,8 +70,8 @@ public class PropertyString extends Property
 	 * Set the value of the property.
 	 * 
 	 * @param aValue	new value for the property.
-	 * @return			{@code true} if the property's value was changed;
-	 * 					{@code false} otherwise.
+	 * @return			<tt>true</tt> if the property's value was changed;
+	 * 					<tt>false</tt> otherwise.
 	 */
 	public boolean setValue(String aValue)
 	{

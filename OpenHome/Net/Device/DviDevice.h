@@ -45,6 +45,7 @@ public:
     const Brx& XmlExtension() const;
     TUint ServiceCount() const;
     DviService& Service(TUint aIndex) const;
+    DviService* ServiceReference(const ServiceType& aServiceType);
     void AddService(DviService* aService);
     void AddDevice(DviDevice* aDevice); // embedded device
     TUint DeviceCount() const;
@@ -79,6 +80,7 @@ private:
     };
 private:
     mutable Mutex iLock;
+    Mutex iServiceLock;
     TUint iRefCount;
     Brhz iUdn;
     EEnableState iEnabled;

@@ -44,7 +44,7 @@ public class Library
      * 						the library
      * @return				the instantiated library.
      */
-    public static Library Create(InitParams aInitParams)
+    public static Library create(InitParams aInitParams)
     {
         Library instance = new Library();
         instance.initialise(aInitParams);
@@ -138,22 +138,12 @@ public class Library
     }
     
     /**
-     * Create a vector of the available subnets.
-     * 
-     * @return	a list of the available subnets.
-     */
-    public NetworkAdapterList subnetListCreate()
-    {
-        return new NetworkAdapterList();
-    }
-    
-    /**
      * Set which subnet the library should use.
      * 
      * <p>Device lists and subscriptions will be automatically updated.
      * No other subnet will be selected if aSubnet is not available.
      * 
-     * @param aSubnet	handle returned by {@code NetworkAdapterList.subnetAt()}.
+     * @param aSubnet	handle returned by <tt>NetworkAdapterList.subnetAt()</tt>.
      */
     public void setCurrentSubnet(NetworkAdapter aSubnet)
     {
@@ -171,7 +161,7 @@ public class Library
     }
     
     /**
-     * Convert an {@code Inet4Address} into an integer representation in
+     * Convert an <tt>Inet4Address</tt> into an integer representation in
      * network byte order.
      * 
      * @param aAddress	the IPv4 address object to convert.
@@ -179,13 +169,13 @@ public class Library
      */
     private int getIpv4Int(Inet4Address aAddress)
     {
-    	byte[] ipv4Bytes = aAddress.getAddress();
-        int ipv4Addr = ipv4Bytes[0];
-        
+        byte[] ipv4Bytes = aAddress.getAddress();
+        int ipv4Addr = ipv4Bytes[0] & 0xff;
+
         for (int i = 1; i < 4; i++) {
-            ipv4Addr +=  ipv4Bytes[i] << i*8;
+            ipv4Addr |= (ipv4Bytes[i] & 0xff) << i*8;
         }
-        
+
         return ipv4Addr;
     }
 }

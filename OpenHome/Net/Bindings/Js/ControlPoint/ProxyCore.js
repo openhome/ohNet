@@ -174,7 +174,7 @@ OhNet.SubscriptionManager = (function () {
 
 
     /**
-    * Calls SetValue of the property to notify listeners
+    * Calls SetValue of the property 
     * @method setPropertyUpdate
     * @param {Int} subscriptionId The subscription id of the service
     * @param {String} propertyName The property name to update
@@ -202,6 +202,39 @@ OhNet.SubscriptionManager = (function () {
         else {
             if (DEBUG) {
                 console.log("setPropertyUpdate/service: NULL");
+            }
+        }
+    };
+
+     /**
+    * Calls ReportChanged of the property to notify listeners
+    * @method setPropertyChanged
+    * @param {Int} subscriptionId The subscription id of the service
+    * @param {String} propertyName The property name to update
+    * @param {String} propertyValue The new value of the property
+    */
+    var setPropertyChanged = function (subscriptionId, propertyName, propertyValue) {
+
+        var service = services[subscriptionId];
+        if (service) {
+            var property = service.serviceProperties[propertyName];
+            if (property) {
+                property.reportChanged(propertyValue);
+                if (DEBUG) {
+                    console.log("setPropertyChanged/aSubscriptionId: " + subscriptionId);
+                    console.log("setPropertyChanged/propertyName: " + propertyName);
+                    console.log("setPropertyChanged/propertyValue: " + propertyValue);
+                }
+            }
+            else {
+                if (DEBUG) {
+                    console.log("setPropertyChanged/service: NULL");
+                }
+            }
+        }
+        else {
+            if (DEBUG) {
+                console.log("setPropertyChanged/service: NULL");
             }
         }
     };
@@ -286,10 +319,25 @@ OhNet.SubscriptionManager = (function () {
                 if (property) {
                     setPropertyUpdate(subscriptionId, property.tagName, property.textContent);
                     if (DEBUG) {
+                        console.log("setPropertyUpdate");
                         console.log("receivePropertyUpdate/subscriptionId: " + subscriptionId);
                         console.log("receivePropertyUpdate/property.tagName: " + property.tagName);
                         console.log("receivePropertyUpdate/property.textContent: " + property.textContent);
                     }
+                }
+                else {
+                    if (DEBUG) {
+                        console.log("receivePropertyUpdate/property: NULL");
+                    }
+                }
+            }
+
+            for (var i = 0, count = properties.length; i < count; i++) {
+                var property = properties[i].childNodes[0];
+                if (property) {
+                    setPropertyChanged(subscriptionId, property.tagName, property.textContent);
+                    if (DEBUG)
+                        console.log("setPropertyChanged");
                 }
                 else {
                     if (DEBUG) {
@@ -594,12 +642,12 @@ OhNet.ServiceProperty = function (name, type) {
 }
 
 /**
-* Notifies all listeners of its value change and calls the event handler
+* Sets the value of the property
 * @method setValue
 * @param {String | Int | Boolean} value The new value for the property
 */
 OhNet.ServiceProperty.prototype.setValue = function (value) {
-
+    console.log("setValue: ");
     if (this.value != value) {
 
         switch (this.type) {
@@ -630,13 +678,22 @@ OhNet.ServiceProperty.prototype.setValue = function (value) {
                 }
         }
 
-        for (var i = this.listeners.length - 1; i > -1; i--) {
-            try {
-                this.listeners[i].call(this, value);
+       
+    }
+}
 
-            } catch (e) {
-                console.log("setValue: " + e);
-            }
+/**
+* Notifies all listeners of its value change and calls the event handler
+* @method reportChanged
+* @param {String | Int | Boolean} value The new value for the property
+*/
+OhNet.ServiceProperty.prototype.reportChanged = function (value) {
+    for (var i = this.listeners.length - 1; i > -1; i--) {
+        try {
+            this.listeners[i].call(this, value);
+
+        } catch (e) {
+            console.log("reportChanged: " + e);
         }
     }
 }

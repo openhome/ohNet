@@ -16,6 +16,7 @@ const Brn DviDevice::kResourceDir("resource");
 
 DviDevice::DviDevice(const Brx& aUdn)
     : iLock("DDVM")
+    , iServiceLock("DVM2")
     , iResourceManager(NULL)
     , iShutdownSem("DVSD", 1)
 {
@@ -24,6 +25,7 @@ DviDevice::DviDevice(const Brx& aUdn)
 
 DviDevice::DviDevice(const Brx& aUdn, IResourceManager& aResourceManager)
     : iLock("DDVM")
+    , iServiceLock("DVM2")
     , iResourceManager(&aResourceManager)
     , iShutdownSem("DVSD", 1)
 {
@@ -52,13 +54,6 @@ void DviDevice::AddProtocol(IDvProtocol* aProtocol)
 
 DviDevice::~DviDevice()
 {
-    TUint i = 0;
-    for (; i<(TUint)iProtocols.size(); i++) {
-        delete iProtocols[i];
-    }
-    for (i=0; i<iServices.size(); i++) {
-        iServices[i]->RemoveRef();
-    }
     Stack::RemoveObject(this, "DviDevice");
 }
 
@@ -76,6 +71,16 @@ void DviDevice::Destroy()
     }
     iLock.Signal();
     iShutdownSem.Wait();
+    TUint i = 0;
+    for (; i<(TUint)iProtocols.size(); i++) {
+        delete iProtocols[i];
+    }
+    iServiceLock.Wait();
+    for (i=0; i<iServices.size(); i++) {
+        iServices[i]->RemoveRef();
+    }
+    iServices.clear();
+    iServiceLock.Signal();
     RemoveWeakRef();
 }
 
@@ -196,6 +201,24 @@ DviService& DviDevice::Service(TUint aIndex) const
 {
     ASSERT(aIndex < ServiceCount());
     return *(iServices[aIndex]);
+}
+
+DviService* DviDevice::ServiceReference(const ServiceType& aServiceType)
+{
+    DviService* service = NULL;
+    iServiceLock.Wait();
+    const Brx& fullNameUpnp = aServiceType.FullNameUpnp();
+    const TUint count = (TUint)iServices.size();
+    for (TUint i=0; i<count; i++) {
+        DviService* s = iServices[i];
+        if (s->ServiceType().FullNameUpnp() == fullNameUpnp) {
+            s->AddRef();
+            service = s;
+            break;
+        }
+    }
+    iServiceLock.Signal();
+    return service;
 }
 
 void DviDevice::AddDevice(DviDevice* aDevice)

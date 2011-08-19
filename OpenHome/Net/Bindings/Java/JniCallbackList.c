@@ -27,7 +27,7 @@ void JniCallbackListDestroy(JNIEnv *aEnv, JniCallbackList **aList)
 	{
 		JniCallback *curr = (*aList)->head;
 		(*aList)->head = (*aList)->head->next;
-		(*aEnv)->DeleteWeakGlobalRef(aEnv, curr->ref->callbackObj);
+		(*aEnv)->DeleteGlobalRef(aEnv, curr->ref->callbackObj);
 		free(curr->ref);
 		free(curr);
 	}

@@ -95,7 +95,7 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -147,7 +147,9 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetTarget}.
 	 * 
+	 * @param aNewTargetValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetTarget(boolean aNewTargetValue, ICpProxyListener aCallback)
 	{
@@ -202,6 +204,7 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
 	 * calling {@link #endGetTarget}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetTarget(ICpProxyListener aCallback)
 	{
@@ -260,6 +263,7 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
 	 * calling {@link #endGetStatus}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetStatus(ICpProxyListener aCallback)
 	{
@@ -331,8 +335,8 @@ public class CpProxyUpnpOrgSwitchPower1 extends CpProxy implements ICpProxyUpnpO
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

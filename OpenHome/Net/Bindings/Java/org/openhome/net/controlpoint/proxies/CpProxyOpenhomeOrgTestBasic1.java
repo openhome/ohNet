@@ -463,7 +463,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -607,7 +607,9 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endIncrement}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginIncrement(long aValue, ICpProxyListener aCallback)
 	{
@@ -667,7 +669,9 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endDecrement}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginDecrement(int aValue, ICpProxyListener aCallback)
 	{
@@ -727,7 +731,9 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endToggle}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginToggle(boolean aValue, ICpProxyListener aCallback)
 	{
@@ -787,7 +793,9 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endEchoString}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginEchoString(String aValue, ICpProxyListener aCallback)
 	{
@@ -847,7 +855,9 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endEchoBinary}.
 	 * 
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginEchoBinary(byte[] aValue, ICpProxyListener aCallback)
 	{
@@ -903,7 +913,9 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetUint}.
 	 * 
+	 * @param aValueUint
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetUint(long aValueUint, ICpProxyListener aCallback)
 	{
@@ -958,6 +970,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * calling {@link #endGetUint}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetUint(ICpProxyListener aCallback)
 	{
@@ -1011,7 +1024,9 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetInt}.
 	 * 
+	 * @param aValueInt
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetInt(int aValueInt, ICpProxyListener aCallback)
 	{
@@ -1066,6 +1081,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * calling {@link #endGetInt}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetInt(ICpProxyListener aCallback)
 	{
@@ -1119,7 +1135,9 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetBool}.
 	 * 
+	 * @param aValueBool
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetBool(boolean aValueBool, ICpProxyListener aCallback)
 	{
@@ -1174,6 +1192,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * calling {@link #endGetBool}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetBool(ICpProxyListener aCallback)
 	{
@@ -1227,7 +1246,11 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetMultiple}.
 	 * 
+	 * @param aValueUint
+	 * @param aValueInt
+	 * @param aValueBool
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetMultiple(long aValueUint, int aValueInt, boolean aValueBool, ICpProxyListener aCallback)
 	{
@@ -1279,7 +1302,9 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetString}.
 	 * 
+	 * @param aValueStr
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetString(String aValueStr, ICpProxyListener aCallback)
 	{
@@ -1334,6 +1359,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * calling {@link #endGetString}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetString(ICpProxyListener aCallback)
 	{
@@ -1387,7 +1413,9 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endSetBinary}.
 	 * 
+	 * @param aValueBin
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginSetBinary(byte[] aValueBin, ICpProxyListener aCallback)
 	{
@@ -1442,6 +1470,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * calling {@link #endGetBinary}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetBinary(ICpProxyListener aCallback)
 	{
@@ -1496,6 +1525,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * calling {@link #endToggleBool}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginToggleBool(ICpProxyListener aCallback)
 	{
@@ -1543,7 +1573,10 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endWriteFile}.
 	 * 
+	 * @param aData
+	 * @param aFileFullName
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginWriteFile(String aData, String aFileFullName, ICpProxyListener aCallback)
 	{
@@ -1595,6 +1628,7 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	 * calling {@link #endShutdown}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginShutdown(ICpProxyListener aCallback)
 	{
@@ -1816,8 +1850,8 @@ public class CpProxyOpenhomeOrgTestBasic1 extends CpProxy implements ICpProxyOpe
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

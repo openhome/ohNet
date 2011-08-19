@@ -318,7 +318,7 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -432,6 +432,7 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
 	 * calling {@link #endGetProtocolInfo}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetProtocolInfo(ICpProxyListener aCallback)
 	{
@@ -498,7 +499,12 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endPrepareForConnection}.
 	 * 
+	 * @param aRemoteProtocolInfo
+	 * @param aPeerConnectionManager
+	 * @param aPeerConnectionID
+	 * @param aDirection
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPrepareForConnection(String aRemoteProtocolInfo, String aPeerConnectionManager, int aPeerConnectionID, String aDirection, ICpProxyListener aCallback)
 	{
@@ -565,7 +571,9 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endConnectionComplete}.
 	 * 
+	 * @param aConnectionID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginConnectionComplete(int aConnectionID, ICpProxyListener aCallback)
 	{
@@ -620,6 +628,7 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
 	 * calling {@link #endGetCurrentConnectionIDs}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetCurrentConnectionIDs(ICpProxyListener aCallback)
 	{
@@ -685,7 +694,9 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endGetCurrentConnectionInfo}.
 	 * 
+	 * @param aConnectionID
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginGetCurrentConnectionInfo(int aConnectionID, ICpProxyListener aCallback)
 	{
@@ -857,8 +868,8 @@ public class CpProxyUpnpOrgConnectionManager1 extends CpProxy implements ICpProx
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

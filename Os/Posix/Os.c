@@ -51,13 +51,13 @@ static pthread_key_t gThreadArgKey;
 
 int32_t OsCreate()
 {
-    int errno;
+    int errnum;
     gettimeofday(&gStartTime, NULL);
     gMutex = OsMutexCreate("DNSM");
     if (gMutex == kHandleNull)
         return -1;
-    errno = pthread_key_create(&gThreadArgKey, NULL);
-    if (errno != 0)
+    errnum = pthread_key_create(&gThreadArgKey, NULL);
+    if (errnum != 0)
     {
         OsMutexDestroy(gMutex);
         gMutex = kHandleNull;
@@ -283,8 +283,10 @@ typedef struct
 
 static void* threadEntrypoint(void* aArg)
 {
+#ifndef __ANDROID__
     int oldState;
     int status;
+#endif
     ThreadData* data = (ThreadData*)aArg;
     assert(data != NULL);
 
@@ -307,8 +309,10 @@ static void* threadEntrypoint(void* aArg)
 
     // Disable cancellation - we're in a C++ environment, and
     // don't want to rely on pthreads to mess things up for us.
+#ifndef __ANDROID__
     status = pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &oldState);
     assert(status == 0);
+#endif
 
     //tlsThreadArg = data->iArg;
     pthread_setspecific(gThreadArgKey, data->iArg);
@@ -332,7 +336,9 @@ THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackByt
     pthread_attr_t attr;
     (void)pthread_attr_init(&attr);
     (void)pthread_attr_setstacksize(&attr, aStackBytes);
+#ifndef __ANDROID__
     (void)pthread_attr_setinheritsched(&attr, PTHREAD_INHERIT_SCHED);
+#endif
     (void)pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
     int status = pthread_create(&data->iThread, &attr, threadEntrypoint, data);
     if (status != 0) {

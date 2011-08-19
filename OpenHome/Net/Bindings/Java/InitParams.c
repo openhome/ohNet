@@ -17,7 +17,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsCre
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jlong) OhNetInitParamsCreate();
+	return (jlong) (size_t)OhNetInitParamsCreate();
 }
 
 /*

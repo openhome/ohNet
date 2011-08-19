@@ -13,7 +13,7 @@ interface IDvProviderUpnpOrgConnectionManager1
      * Set the value of the SourceProtocolInfo property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySourceProtocolInfo(String aValue);
@@ -29,7 +29,7 @@ interface IDvProviderUpnpOrgConnectionManager1
      * Set the value of the SinkProtocolInfo property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySinkProtocolInfo(String aValue);
@@ -45,7 +45,7 @@ interface IDvProviderUpnpOrgConnectionManager1
      * Set the value of the CurrentConnectionIDs property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyCurrentConnectionIDs(String aValue);
@@ -206,8 +206,8 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      * Set the value of the SourceProtocolInfo property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertySourceProtocolInfo(String aValue)
     {
@@ -228,8 +228,8 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      * Set the value of the SinkProtocolInfo property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertySinkProtocolInfo(String aValue)
     {
@@ -250,8 +250,8 @@ public class DvProviderUpnpOrgConnectionManager1 extends DvProvider implements I
      * Set the value of the CurrentConnectionIDs property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyCurrentConnectionIDs(String aValue)
     {

@@ -7,8 +7,8 @@ import java.util.List;
 /**
  * (Service) Action.
  * 
- * <p>Each service has 0..n of these.  Each action has {@code 0..n} input parameters and
- * {@code 0..m} output parameters.  Each parameter must be either input or output.
+ * <p>Each service has <tt>0..n</tt> of these.  Each action has <tt>0..n</tt> input parameters and
+ * <tt>0..m</tt> output parameters.  Each parameter must be either input or output.
  */
 public class Action
 {

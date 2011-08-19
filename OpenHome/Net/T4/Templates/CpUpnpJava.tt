@@ -293,7 +293,7 @@ public class <#=className#> extends CpProxy implements I<#=className#>
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -409,7 +409,12 @@ public class <#=className#> extends CpProxy implements I<#=className#>
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #end<#=a.name#>}.
 	 * 
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+	 * @param a<#=ArgName(i)#>
+<#      } #>
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void begin<#=a.name#>(<#=InArgsFull(a, true)#>ICpProxyListener aCallback)
 	{
@@ -528,8 +533,8 @@ public class <#=className#> extends CpProxy implements I<#=className#>
 <#  } #>
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

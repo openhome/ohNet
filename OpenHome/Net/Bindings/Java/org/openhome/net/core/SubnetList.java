@@ -1,7 +1,7 @@
 package org.openhome.net.core;
 
 
-public class NetworkAdapterList
+public class SubnetList
 {
 	private static native long OhNetSubnetListCreate();
 	private static native int OhNetSubnetListSize(long aList);
@@ -21,7 +21,7 @@ public class NetworkAdapterList
 	 * 
 	 * <p>Caller must later call {@link #destroy}.
 	 */
-	public NetworkAdapterList()
+	public SubnetList()
 	{
 		iHandle = OhNetSubnetListCreate();
 	}
@@ -49,7 +49,7 @@ public class NetworkAdapterList
     /**
      * Get a handle to a particular subnet from a subnet list.
      *
-     * @param aIndex	index of the list item to get a handle to {@code (0..size()-1)}.
+     * @param aIndex	index of the list item to get a handle to <tt>(0..size()-1)</tt>.
      * @return			handle to the subnet.
      */
     public NetworkAdapter getSubnet(int aIndex)

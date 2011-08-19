@@ -12,10 +12,10 @@ namespace OpenHome.Net
             Core.InitParams initParams = new Core.InitParams();
             Core.Library lib = new Core.Library();
             lib.Initialise(initParams);
-            IntPtr subnetList = lib.SubnetListCreate();
-            IntPtr nif = lib.SubnetAt(subnetList, 0);
-            uint subnet = lib.NetworkAdapterSubnet(nif);
-            lib.SubnetListDestroy(subnetList);
+            Core.SubnetList subnetList = new Core.SubnetList();
+            Core.NetworkAdapter nif = subnetList.SubnetAt(0);
+            uint subnet = nif.Subnet();
+            subnetList.Destroy();
             lib.StartCp(subnet);
             new Runner((int)initParams.MsearchTimeSecs);
             lib.Close();

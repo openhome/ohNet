@@ -13,7 +13,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the ManufacturerName property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyManufacturerName(String aValue);
@@ -29,7 +29,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the ManufacturerInfo property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyManufacturerInfo(String aValue);
@@ -45,7 +45,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the ManufacturerUrl property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyManufacturerUrl(String aValue);
@@ -61,7 +61,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the ManufacturerImageUri property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyManufacturerImageUri(String aValue);
@@ -77,7 +77,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the ModelName property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyModelName(String aValue);
@@ -93,7 +93,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the ModelInfo property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyModelInfo(String aValue);
@@ -109,7 +109,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the ModelUrl property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyModelUrl(String aValue);
@@ -125,7 +125,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the ModelImageUri property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyModelImageUri(String aValue);
@@ -141,7 +141,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the ProductRoom property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductRoom(String aValue);
@@ -157,7 +157,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the ProductName property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductName(String aValue);
@@ -173,7 +173,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the ProductInfo property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductInfo(String aValue);
@@ -189,7 +189,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the ProductUrl property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductUrl(String aValue);
@@ -205,7 +205,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the ProductImageUri property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyProductImageUri(String aValue);
@@ -221,7 +221,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the Standby property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyStandby(boolean aValue);
@@ -237,7 +237,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the SourceIndex property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySourceIndex(long aValue);
@@ -253,7 +253,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the SourceCount property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySourceCount(long aValue);
@@ -269,7 +269,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the SourceXml property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySourceXml(String aValue);
@@ -285,7 +285,7 @@ interface IDvProviderAvOpenhomeOrgProduct1
      * Set the value of the Attributes property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyAttributes(String aValue);
@@ -543,8 +543,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the ManufacturerName property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyManufacturerName(String aValue)
     {
@@ -565,8 +565,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the ManufacturerInfo property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyManufacturerInfo(String aValue)
     {
@@ -587,8 +587,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the ManufacturerUrl property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyManufacturerUrl(String aValue)
     {
@@ -609,8 +609,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the ManufacturerImageUri property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyManufacturerImageUri(String aValue)
     {
@@ -631,8 +631,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the ModelName property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyModelName(String aValue)
     {
@@ -653,8 +653,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the ModelInfo property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyModelInfo(String aValue)
     {
@@ -675,8 +675,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the ModelUrl property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyModelUrl(String aValue)
     {
@@ -697,8 +697,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the ModelImageUri property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyModelImageUri(String aValue)
     {
@@ -719,8 +719,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the ProductRoom property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyProductRoom(String aValue)
     {
@@ -741,8 +741,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the ProductName property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyProductName(String aValue)
     {
@@ -763,8 +763,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the ProductInfo property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyProductInfo(String aValue)
     {
@@ -785,8 +785,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the ProductUrl property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyProductUrl(String aValue)
     {
@@ -807,8 +807,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the ProductImageUri property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyProductImageUri(String aValue)
     {
@@ -829,8 +829,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the Standby property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyStandby(boolean aValue)
     {
@@ -851,8 +851,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the SourceIndex property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertySourceIndex(long aValue)
     {
@@ -873,8 +873,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the SourceCount property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertySourceCount(long aValue)
     {
@@ -895,8 +895,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the SourceXml property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertySourceXml(String aValue)
     {
@@ -917,8 +917,8 @@ public class DvProviderAvOpenhomeOrgProduct1 extends DvProvider implements IDvPr
      * Set the value of the Attributes property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyAttributes(String aValue)
     {

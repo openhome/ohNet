@@ -13,7 +13,7 @@ interface IDvProviderAvOpenhomeOrgInfo1
      * Set the value of the TrackCount property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyTrackCount(long aValue);
@@ -29,7 +29,7 @@ interface IDvProviderAvOpenhomeOrgInfo1
      * Set the value of the DetailsCount property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyDetailsCount(long aValue);
@@ -45,7 +45,7 @@ interface IDvProviderAvOpenhomeOrgInfo1
      * Set the value of the MetatextCount property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMetatextCount(long aValue);
@@ -61,7 +61,7 @@ interface IDvProviderAvOpenhomeOrgInfo1
      * Set the value of the Uri property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyUri(String aValue);
@@ -77,7 +77,7 @@ interface IDvProviderAvOpenhomeOrgInfo1
      * Set the value of the Metadata property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMetadata(String aValue);
@@ -93,7 +93,7 @@ interface IDvProviderAvOpenhomeOrgInfo1
      * Set the value of the Duration property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyDuration(long aValue);
@@ -109,7 +109,7 @@ interface IDvProviderAvOpenhomeOrgInfo1
      * Set the value of the BitRate property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyBitRate(long aValue);
@@ -125,7 +125,7 @@ interface IDvProviderAvOpenhomeOrgInfo1
      * Set the value of the BitDepth property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyBitDepth(long aValue);
@@ -141,7 +141,7 @@ interface IDvProviderAvOpenhomeOrgInfo1
      * Set the value of the SampleRate property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertySampleRate(long aValue);
@@ -157,7 +157,7 @@ interface IDvProviderAvOpenhomeOrgInfo1
      * Set the value of the Lossless property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyLossless(boolean aValue);
@@ -173,7 +173,7 @@ interface IDvProviderAvOpenhomeOrgInfo1
      * Set the value of the CodecName property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyCodecName(String aValue);
@@ -189,7 +189,7 @@ interface IDvProviderAvOpenhomeOrgInfo1
      * Set the value of the Metatext property
      *
      * @param aValue	new value for the property.
-     * @return 		{@code true} if the value has been updated; {@code false} if {@code aValue} was the same as the previous value.
+     * @return 		<tt>true</tt> if the value has been updated; <tt>false</tt> if <tt>aValue</tt> was the same as the previous value.
      *
      */
     public boolean setPropertyMetatext(String aValue);
@@ -369,8 +369,8 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * Set the value of the TrackCount property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyTrackCount(long aValue)
     {
@@ -391,8 +391,8 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * Set the value of the DetailsCount property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyDetailsCount(long aValue)
     {
@@ -413,8 +413,8 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * Set the value of the MetatextCount property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyMetatextCount(long aValue)
     {
@@ -435,8 +435,8 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * Set the value of the Uri property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyUri(String aValue)
     {
@@ -457,8 +457,8 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * Set the value of the Metadata property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyMetadata(String aValue)
     {
@@ -479,8 +479,8 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * Set the value of the Duration property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyDuration(long aValue)
     {
@@ -501,8 +501,8 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * Set the value of the BitRate property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyBitRate(long aValue)
     {
@@ -523,8 +523,8 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * Set the value of the BitDepth property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyBitDepth(long aValue)
     {
@@ -545,8 +545,8 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * Set the value of the SampleRate property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertySampleRate(long aValue)
     {
@@ -567,8 +567,8 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * Set the value of the Lossless property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyLossless(boolean aValue)
     {
@@ -589,8 +589,8 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * Set the value of the CodecName property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyCodecName(String aValue)
     {
@@ -611,8 +611,8 @@ public class DvProviderAvOpenhomeOrgInfo1 extends DvProvider implements IDvProvi
      * Set the value of the Metatext property
      *
      * @param aValue	new value for the property.
-     * @return {@code true} if the value has been updated; {@code false}
-     * if {@code aValue} was the same as the previous value.
+     * @return <tt>true</tt> if the value has been updated; <tt>false</tt>
+     * if <tt>aValue</tt> was the same as the previous value.
      */
     public boolean setPropertyMetatext(String aValue)
     {

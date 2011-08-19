@@ -3,6 +3,7 @@
 #include <OpenHome/OsWrapper.h>
 #include <OpenHome/Private/Thread.h>
 #include <OpenHome/Net/Private/Stack.h>
+#include <algorithm>
 
 using namespace OpenHome;
 
@@ -92,6 +93,36 @@ void NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId)
     RemoveSubnetListChangeListener(aId, iListenersSubnet);
 }
 
+TUint NetworkAdapterList::AddSubnetAddedListener(FunctorNetworkAdapter aFunctor)
+{
+    return AddSubnetListener(aFunctor, iListenersAdded);
+}
+
+void NetworkAdapterList::RemoveSubnetAddedListener(TUint aId)
+{
+    RemoveSubnetListener(aId, iListenersAdded);
+}
+
+TUint NetworkAdapterList::AddSubnetRemovedListener(FunctorNetworkAdapter aFunctor)
+{
+    return AddSubnetListener(aFunctor, iListenersRemoved);
+}
+
+void NetworkAdapterList::RemoveSubnetRemovedListener(TUint aId)
+{
+    RemoveSubnetListener(aId, iListenersRemoved);
+}
+
+TUint NetworkAdapterList::AddNetworkAdapterChangeListener(FunctorNetworkAdapter aFunctor)
+{
+    return AddSubnetListener(aFunctor, iListenersAdapterChanged);
+}
+
+void NetworkAdapterList::RemoveNetworkAdapterChangeListener(TUint aId)
+{
+    RemoveSubnetListener(aId, iListenersAdapterChanged);
+}
+
 std::vector<NetworkAdapter*>* NetworkAdapterList::CreateSubnetListLocked() const
 {
     std::vector<NetworkAdapter*>* list = new std::vector<NetworkAdapter*>;
@@ -120,6 +151,26 @@ void NetworkAdapterList::RemoveSubnetListChangeListener(TUint aId, Map& aMap)
 {
     iListenerLock.Wait();
     Map::iterator it = aMap.find(aId);
+    if (it != aMap.end()) {
+        aMap.erase(it);
+    }
+    iListenerLock.Signal();
+}
+
+TUint NetworkAdapterList::AddSubnetListener(FunctorNetworkAdapter aFunctor, MapNetworkAdapter& aMap)
+{
+    iListenerLock.Wait();
+    TUint id = iNextListenerId;
+    aMap.insert(std::pair<TUint,FunctorNetworkAdapter>(id, aFunctor));
+    iNextListenerId++;
+    iListenerLock.Signal();
+    return id;
+}
+
+void NetworkAdapterList::RemoveSubnetListener(TUint aId, MapNetworkAdapter& aMap)
+{
+    iListenerLock.Wait();
+    MapNetworkAdapter::iterator it = aMap.find(aId);
     if (it != aMap.end()) {
         aMap.erase(it);
     }
@@ -155,6 +206,11 @@ void NetworkAdapterList::UpdateCurrentAdapter()
     }
 }
 
+TBool NetworkAdapterList::CompareSubnets(NetworkAdapter* aI, NetworkAdapter* aJ)
+{
+    return (aI->Subnet() < aJ->Subnet());
+}
+
 void NetworkAdapterList::HandleInterfaceListChanged()
 {
     iListLock.Wait();
@@ -181,9 +237,66 @@ void NetworkAdapterList::HandleInterfaceListChanged()
             }
         }
     }
-    DestroySubnetList(iSubnets);
-    iSubnets = subnets;
-    iListLock.Signal();
+
+    // determine adds and/or removes from list
+    std::vector<NetworkAdapter*> oldSubnetsObj(iSubnets->begin(), iSubnets->end());
+    std::vector<NetworkAdapter*> newSubnetsObj(subnets->begin(), subnets->end());
+    std::vector<NetworkAdapter*>* oldSubnets = &oldSubnetsObj;
+    std::vector<NetworkAdapter*>* newSubnets = &newSubnetsObj;
+    std::vector<NetworkAdapter*> added;
+    std::vector<NetworkAdapter*> removed;
+    std::vector<NetworkAdapter*> adapterChanged;
+
+    std::sort(oldSubnets->begin(), oldSubnets->end(), CompareSubnets);
+    std::sort(newSubnets->begin(), newSubnets->end(), CompareSubnets);
+
+    if (oldSubnets->size() == 0 && newSubnets->size() > 0) {
+        for (TUint i=0; i < newSubnets->size(); i++) {
+            added.push_back((*newSubnets)[i]);
+        }
+    }
+    else if (oldSubnets->size() > 0 && newSubnets->size() == 0) {
+        for (TUint i=0; i < oldSubnets->size(); i++) {
+            removed.push_back((*oldSubnets)[i]);
+        }
+    }
+    else {
+        TUint j = 0;
+        for (TUint i=0; i < newSubnets->size(); i++) {
+            while (j < oldSubnets->size() && (*oldSubnets)[j]->Subnet() < (*newSubnets)[i]->Subnet()) {
+                removed.push_back((*oldSubnets)[j]);
+                j++;
+            }
+            if (j < oldSubnets->size() && (*oldSubnets)[j]->Subnet() == (*newSubnets)[i]->Subnet()) {
+                if ((*oldSubnets)[j]->Address() != (*newSubnets)[i]->Address()) {
+                    adapterChanged.push_back((*newSubnets)[i]);
+                }
+                j++;
+            }
+        }
+        if (j < oldSubnets->size()) {
+            while (j < oldSubnets->size()) {
+                removed.push_back((*oldSubnets)[j]);
+                j++;
+            }
+        }
+        j = 0;
+        for (TUint i=0; i < oldSubnets->size(); i++) {
+            while (j < newSubnets->size() && (*newSubnets)[j]->Subnet() < (*oldSubnets)[i]->Subnet()) {
+                added.push_back((*newSubnets)[j]);
+                j++;
+            }
+            if (j < newSubnets->size() && (*newSubnets)[j]->Subnet() == (*oldSubnets)[i]->Subnet()) {
+                j++;
+            }
+        }
+        if (j < newSubnets->size()) {
+            while (j < newSubnets->size()) {
+                added.push_back((*newSubnets)[j]);
+                j++;
+            }
+        }
+    }
 
     if (subnetsChanged) {
         RunCallbacks(iListenersSubnet);
@@ -191,6 +304,29 @@ void NetworkAdapterList::HandleInterfaceListChanged()
     else if (newAddress != oldAddress) {
         RunCallbacks(iListenersCurrent);
     }
+
+    // Notify added/removed callbacks.
+    if (removed.size() > 0) {
+        for (TUint i=0; i < removed.size(); i++) {
+            RunSubnetCallbacks(iListenersRemoved, *removed[i]);
+        }
+    }
+    if (added.size() > 0) {
+        for (TUint i=0; i < added.size(); i++) {
+            RunSubnetCallbacks(iListenersAdded, *added[i]);
+        }
+    }
+
+    // Notify network adapter changed callbacks.
+    if (adapterChanged.size() > 0) {
+        for (TUint i=0; i < adapterChanged.size(); i++) {
+            RunSubnetCallbacks(iListenersAdapterChanged, *adapterChanged[i]);
+        }
+    }
+
+    DestroySubnetList(iSubnets);
+    iSubnets = subnets;
+    iListLock.Signal();
 }
 
 void NetworkAdapterList::RunCallbacks(Map& aMap)
@@ -199,6 +335,17 @@ void NetworkAdapterList::RunCallbacks(Map& aMap)
     Map::iterator it = aMap.begin();
     while (it != aMap.end()) {
         it->second();
+        it++;
+    }
+    iListenerLock.Signal();
+}
+
+void NetworkAdapterList::RunSubnetCallbacks(MapNetworkAdapter& aMap, NetworkAdapter& aAdapter)
+{
+	iListenerLock.Wait();
+    MapNetworkAdapter::iterator it = aMap.begin();
+    while (it != aMap.end()) {
+        it->second(aAdapter);
         it++;
     }
     iListenerLock.Signal();

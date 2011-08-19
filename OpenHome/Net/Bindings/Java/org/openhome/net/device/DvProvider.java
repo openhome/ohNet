@@ -109,14 +109,14 @@ public class DvProvider
      * (Not intended for external use).
      * 
      * <p>If the property value has changed and the properties are not locked
-     * ({@code propertiesLock()} called more recently than {@code
+     * (<tt>propertiesLock()</tt> called more recently than {@code
      * propertiesUnlock()}), publication of an update is scheduled.
      * 
      * @param aProperty	property to be updated.
      * @param aValue	new value for the property.
-     * @return			{@code true} if the property's value has changed ({@code
+     * @return			<tt>true</tt> if the property's value has changed ({@code
      * 					aValue} was different to the previous value).
-     * @throws 			{@code PropertyUpdateError} if the property has a range
+     * @throws 			<tt>PropertyUpdateError</tt> if the property has a range
      * 					of allowed values and the new value is not in this range.
      */
     protected boolean setPropertyInt(PropertyInt aProperty, int aValue)
@@ -134,14 +134,14 @@ public class DvProvider
      * (Not intended for external use).
      * 
      * <p>If the property value has changed and the properties are not locked
-     * ({@code propertiesLock()} called more recently than {@code
+     * (<tt>propertiesLock()</tt> called more recently than {@code
      * propertiesUnlock()}), publication of an update is scheduled.
      * 
-     * @throws 			{@code PropertyUpdateError} if the property has a range
+     * @throws 			<tt>PropertyUpdateError</tt> if the property has a range
      * 					of allowed values and the new value is not in this range.
      * @param aProperty	property to be updated.
      * @param aValue	new value for the property.
-     * @return			{@code true} if the property's value has changed ({@code
+     * @return			<tt>true</tt> if the property's value has changed ({@code
      * 					aValue} was different to the previous value).
      */
     protected boolean setPropertyUint(PropertyUint aProperty, long aValue)
@@ -159,14 +159,14 @@ public class DvProvider
      * (Not intended for external use).
      * 
      * <p>If the property value has changed and the properties are not locked
-     * ({@code propertiesLock()} called more recently than {@code
+     * (<tt>propertiesLock()</tt> called more recently than {@code
      * propertiesUnlock()}), publication of an update is scheduled.
      * 
-     * @throws 			{@code PropertyUpdateError} if the property has a range
+     * @throws 			<tt>PropertyUpdateError</tt> if the property has a range
      * 					of allowed values and the new value is not in this range.
      * @param aProperty	property to be updated.
      * @param aValue	new value for the property.
-     * @return			{@code true} if the property's value has changed ({@code
+     * @return			<tt>true</tt> if the property's value has changed ({@code
      * 					aValue} was different to the previous value).
      */
     protected boolean setPropertyBool(PropertyBool aProperty, boolean aValue)
@@ -185,14 +185,14 @@ public class DvProvider
      * (Not intended for external use).
      * 
      * <p>If the property value has changed and the properties are not locked
-     * ({@code propertiesLock()} called more recently than {@code
+     * (<tt>propertiesLock()</tt> called more recently than {@code
      * propertiesUnlock()}), publication of an update is scheduled.
      * 
-     * @throws 			{@code PropertyUpdateError} if the property has a range
+     * @throws 			<tt>PropertyUpdateError</tt> if the property has a range
      * 					of allowed values and the new value is not in this range.
      * @param aProperty	property to be updated.
      * @param aValue	new value for the property
-     * @return			{@code true} if the property's value has changed ({@code
+     * @return			<tt>true</tt> if the property's value has changed ({@code
      * 					aValue} was different to the previous value)
      */
     protected boolean setPropertyString(PropertyString aProperty, String aValue)
@@ -210,15 +210,15 @@ public class DvProvider
      * (Not intended for external use).
      * 
      * <p>If the property value has changed and the properties are not locked
-     * ({@code propertiesLock()} called more recently than {@code
+     * (<tt>propertiesLock()</tt> called more recently than {@code
      *  propertiesUnlock()}),
      * publication of an update is scheduled.
      * 
-     * @throws 			{@code PropertyUpdateError} if the property has a range
+     * @throws 			<tt>PropertyUpdateError</tt> if the property has a range
      * 					of allowed values and the new value is not in this range.
      * @param aProperty	property to be updated.
      * @param aValue	new value for the property
-     * @return			{@code true} if the property's value has changed ({@code
+     * @return			<tt>true</tt> if the property's value has changed ({@code
      * 					aValue} was different to the previous value)
      */
     protected boolean setPropertyBinary(PropertyBinary aProperty, byte[] aValue)

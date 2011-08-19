@@ -167,7 +167,7 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
 
     /**
      * Constructor.
-     * Use {@code #subscribe}/{@code #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
+     * Use {@link #subscribe}/{@link #unsubscribe} to enable/disable querying of state variable and reporting of their changes.
      *
      * @param aDevice	the device to use.
      */
@@ -248,6 +248,7 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endPresentationUrl}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginPresentationUrl(ICpProxyListener aCallback)
 	{
@@ -306,6 +307,7 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endMetadata}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginMetadata(ICpProxyListener aCallback)
 	{
@@ -364,6 +366,7 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endAudio}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginAudio(ICpProxyListener aCallback)
 	{
@@ -422,6 +425,7 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endStatus}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginStatus(ICpProxyListener aCallback)
 	{
@@ -480,6 +484,7 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
 	 * calling {@link #endAttributes}.
 	 * 
 	 * @param aCallback	listener to call back when action completes.
+	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
 	public void beginAttributes(ICpProxyListener aCallback)
 	{
@@ -707,8 +712,8 @@ public class CpProxyAvOpenhomeOrgSender1 extends CpProxy implements ICpProxyAvOp
 	
     /**
      * Dispose of this control point proxy.
-     * Must be called for each class instance.  Must be called before {@code
-     * Library.close()}.
+     * Must be called for each class instance.
+     * Must be called before <tt>Library.close()</tt>.
      */
     public void dispose()
     {

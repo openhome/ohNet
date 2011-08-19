@@ -22,7 +22,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentString_Action
 	
 	(*aEnv)->ReleaseStringUTFChars(aEnv, aValue, value);
 	
-	return (jlong) arg;
+	return (jlong) (size_t)arg;
 }
 
 /*
@@ -37,7 +37,7 @@ JNIEXPORT jlong JNICALL Java_org_openhome_net_controlpoint_ArgumentString_Action
 	aEnv = aEnv;
 	aClass = aClass;
 	
-	return (jlong) ActionArgumentCreateStringOutput(param);
+	return (jlong) (size_t)ActionArgumentCreateStringOutput(param);
 }
 
 /*
