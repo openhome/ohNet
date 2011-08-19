@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glossary version="5.0" xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:xi="http://www.w3.org/2001/XInclude"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:m="http://www.w3.org/1998/Math/MathML"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <glossdiv>
+    <title>Glossary</title>
+
+    <glossentry>
+      <glossterm>ohApp</glossterm>
+
+      <glossdef>
+        <para>An application that runs inside ohOS</para>
+      </glossdef>
+    </glossentry>
+
+    <glossentry>
+      <glossterm>ohNet</glossterm>
+
+      <glossdef>
+        <para>The open source stack used by ohOS, including the UPnP
+        implementation.</para>
+      </glossdef>
+    </glossentry>
+
+    <glossentry>
+      <glossterm>ohOS</glossterm>
+
+      <glossdef>
+        <para>OpenHome Operating System. The operating system installed on
+        Nodes using the OpenHome software.</para>
+      </glossdef>
+    </glossentry>
+
+    <glossentry>
+      <glossterm>PDLP</glossterm>
+
+      <glossdef>
+        <para>Proxy Device List Provider. The pattern used to represent the
+        layers of UPnP in the OpenHome code. All layers except the
+        Presentation layer are represented in this pattern.</para>
+      </glossdef>
+    </glossentry>
+
+    <glossentry>
+      <glossterm>UPnP</glossterm>
+
+      <glossdef>
+        <para>Universal Plug and Play. The network protocols set out by the
+        UPnP Forum to allow networked devices to seamlessly establish
+        connections and services.</para>
+      </glossdef>
+    </glossentry>
+  </glossdiv>
+</glossary>
