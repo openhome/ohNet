@@ -44,7 +44,7 @@ public class Library
      * 						the library
      * @return				the instantiated library.
      */
-    public static Library Create(InitParams aInitParams)
+    public static Library create(InitParams aInitParams)
     {
         Library instance = new Library();
         instance.initialise(aInitParams);
