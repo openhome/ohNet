@@ -15,7 +15,7 @@ GenAll: AllCp AllDv
 
 AllCp: CpCppCore CpCppStd CpC CpCs CpJava CpJs
 
-AllDv: DvCppCore DvCppStd DvC DvCs
+AllDv: DvCppCore DvCppStd DvC DvCs DvJava
 
 
 CpCppCore:  <# foreach (Service s in u.iServices) { #> $(proxyCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp<# } #>
