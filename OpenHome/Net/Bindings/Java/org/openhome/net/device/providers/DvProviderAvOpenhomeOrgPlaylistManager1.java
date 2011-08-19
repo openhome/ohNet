@@ -176,11 +176,14 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     private IDvInvocationListener iDelegateMetadata;
     private IDvInvocationListener iDelegateImagesXml;
     private IDvInvocationListener iDelegatePlaylistReadArray;
-    private IDvInvocationListener iDelegatePlaylistReadMetadata;
+    private IDvInvocationListener iDelegatePlaylistReadList;
     private IDvInvocationListener iDelegatePlaylistRead;
-    private IDvInvocationListener iDelegatePlaylistUpdate;
+    private IDvInvocationListener iDelegatePlaylistSetName;
+    private IDvInvocationListener iDelegatePlaylistSetDescription;
+    private IDvInvocationListener iDelegatePlaylistSetImageId;
     private IDvInvocationListener iDelegatePlaylistInsert;
     private IDvInvocationListener iDelegatePlaylistDeleteId;
+    private IDvInvocationListener iDelegatePlaylistMove;
     private IDvInvocationListener iDelegatePlaylistsMax;
     private IDvInvocationListener iDelegateTracksMax;
     private IDvInvocationListener iDelegatePlaylistArrays;
@@ -396,18 +399,18 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     }
 
     /**
-     * Signal that the action PlaylistReadMetadata is supported.
+     * Signal that the action PlaylistReadList is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
-     * PlaylistReadMetadata must be overridden if this is called.
+     * PlaylistReadList must be overridden if this is called.
      */		 
-    protected void enableActionPlaylistReadMetadata()
+    protected void enableActionPlaylistReadList()
     {
-        Action action = new Action("PlaylistReadMetadata");        List<String> allowedValues = new LinkedList<String>();
+        Action action = new Action("PlaylistReadList");        List<String> allowedValues = new LinkedList<String>();
         action.addInputParameter(new ParameterString("IdList", allowedValues));
-        action.addOutputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
-        iDelegatePlaylistReadMetadata = new DoPlaylistReadMetadata();
-        enableAction(action, iDelegatePlaylistReadMetadata);
+        action.addOutputParameter(new ParameterString("PlaylistList", allowedValues));
+        iDelegatePlaylistReadList = new DoPlaylistReadList();
+        enableAction(action, iDelegatePlaylistReadList);
     }
 
     /**
@@ -428,20 +431,48 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     }
 
     /**
-     * Signal that the action PlaylistUpdate is supported.
+     * Signal that the action PlaylistSetName is supported.
      *
      * <p>The action's availability will be published in the device's service.xml.
-     * PlaylistUpdate must be overridden if this is called.
+     * PlaylistSetName must be overridden if this is called.
      */		 
-    protected void enableActionPlaylistUpdate()
+    protected void enableActionPlaylistSetName()
     {
-        Action action = new Action("PlaylistUpdate");        List<String> allowedValues = new LinkedList<String>();
+        Action action = new Action("PlaylistSetName");        List<String> allowedValues = new LinkedList<String>();
         action.addInputParameter(new ParameterUint("Id"));
         action.addInputParameter(new ParameterString("Name", allowedValues));
+        iDelegatePlaylistSetName = new DoPlaylistSetName();
+        enableAction(action, iDelegatePlaylistSetName);
+    }
+
+    /**
+     * Signal that the action PlaylistSetDescription is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * PlaylistSetDescription must be overridden if this is called.
+     */		 
+    protected void enableActionPlaylistSetDescription()
+    {
+        Action action = new Action("PlaylistSetDescription");        List<String> allowedValues = new LinkedList<String>();
+        action.addInputParameter(new ParameterUint("Id"));
         action.addInputParameter(new ParameterString("Description", allowedValues));
+        iDelegatePlaylistSetDescription = new DoPlaylistSetDescription();
+        enableAction(action, iDelegatePlaylistSetDescription);
+    }
+
+    /**
+     * Signal that the action PlaylistSetImageId is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * PlaylistSetImageId must be overridden if this is called.
+     */		 
+    protected void enableActionPlaylistSetImageId()
+    {
+        Action action = new Action("PlaylistSetImageId");
+        action.addInputParameter(new ParameterUint("Id"));
         action.addInputParameter(new ParameterUint("ImageId"));
-        iDelegatePlaylistUpdate = new DoPlaylistUpdate();
-        enableAction(action, iDelegatePlaylistUpdate);
+        iDelegatePlaylistSetImageId = new DoPlaylistSetImageId();
+        enableAction(action, iDelegatePlaylistSetImageId);
     }
 
     /**
@@ -474,6 +505,21 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
         action.addInputParameter(new ParameterUint("Value"));
         iDelegatePlaylistDeleteId = new DoPlaylistDeleteId();
         enableAction(action, iDelegatePlaylistDeleteId);
+    }
+
+    /**
+     * Signal that the action PlaylistMove is supported.
+     *
+     * <p>The action's availability will be published in the device's service.xml.
+     * PlaylistMove must be overridden if this is called.
+     */		 
+    protected void enableActionPlaylistMove()
+    {
+        Action action = new Action("PlaylistMove");
+        action.addInputParameter(new ParameterUint("Id"));
+        action.addInputParameter(new ParameterUint("AfterId"));
+        iDelegatePlaylistMove = new DoPlaylistMove();
+        enableAction(action, iDelegatePlaylistMove);
     }
 
     /**
@@ -594,8 +640,8 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     protected void enableActionDeleteId()
     {
         Action action = new Action("DeleteId");
+        action.addInputParameter(new ParameterUint("Id"));
         action.addInputParameter(new ParameterUint("TrackId"));
-        action.addInputParameter(new ParameterUint("Value"));
         iDelegateDeleteId = new DoDeleteId();
         enableAction(action, iDelegateDeleteId);
     }
@@ -609,7 +655,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     protected void enableActionDeleteAll()
     {
         Action action = new Action("DeleteAll");
-        action.addInputParameter(new ParameterUint("TrackId"));
+        action.addInputParameter(new ParameterUint("Id"));
         iDelegateDeleteAll = new DoDeleteAll();
         enableAction(action, iDelegateDeleteAll);
     }
@@ -661,17 +707,17 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     }
 
     /**
-     * PlaylistReadMetadata action.
+     * PlaylistReadList action.
      *
      * <p>Will be called when the device stack receives an invocation of the
-     * PlaylistReadMetadata action for the owning device.
+     * PlaylistReadList action for the owning device.
      *
-     * <p>Must be implemented iff {@link #enableActionPlaylistReadMetadata} was called.</remarks>
+     * <p>Must be implemented iff {@link #enableActionPlaylistReadList} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aIdList
      */
-    protected String playlistReadMetadata(int aVersion, String aIdList)
+    protected String playlistReadList(int aVersion, String aIdList)
     {
         throw (new ActionDisabledError());
     }
@@ -693,20 +739,52 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
     }
 
     /**
-     * PlaylistUpdate action.
+     * PlaylistSetName action.
      *
      * <p>Will be called when the device stack receives an invocation of the
-     * PlaylistUpdate action for the owning device.
+     * PlaylistSetName action for the owning device.
      *
-     * <p>Must be implemented iff {@link #enableActionPlaylistUpdate} was called.</remarks>
+     * <p>Must be implemented iff {@link #enableActionPlaylistSetName} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
      * @param aId
      * @param aName
+     */
+    protected void playlistSetName(int aVersion, long aId, String aName)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
+     * PlaylistSetDescription action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * PlaylistSetDescription action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionPlaylistSetDescription} was called.</remarks>
+     *
+     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aId
      * @param aDescription
+     */
+    protected void playlistSetDescription(int aVersion, long aId, String aDescription)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
+     * PlaylistSetImageId action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * PlaylistSetImageId action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionPlaylistSetImageId} was called.</remarks>
+     *
+     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aId
      * @param aImageId
      */
-    protected void playlistUpdate(int aVersion, long aId, String aName, String aDescription, long aImageId)
+    protected void playlistSetImageId(int aVersion, long aId, long aImageId)
     {
         throw (new ActionDisabledError());
     }
@@ -742,6 +820,23 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      * @param aValue
      */
     protected void playlistDeleteId(int aVersion, long aValue)
+    {
+        throw (new ActionDisabledError());
+    }
+
+    /**
+     * PlaylistMove action.
+     *
+     * <p>Will be called when the device stack receives an invocation of the
+     * PlaylistMove action for the owning device.
+     *
+     * <p>Must be implemented iff {@link #enableActionPlaylistMove} was called.</remarks>
+     *
+     * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aId
+     * @param aAfterId
+     */
+    protected void playlistMove(int aVersion, long aId, long aAfterId)
     {
         throw (new ActionDisabledError());
     }
@@ -869,10 +964,10 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      * <p>Must be implemented iff {@link #enableActionDeleteId} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
+     * @param aId
      * @param aTrackId
-     * @param aValue
      */
-    protected void deleteId(int aVersion, long aTrackId, long aValue)
+    protected void deleteId(int aVersion, long aId, long aTrackId)
     {
         throw (new ActionDisabledError());
     }
@@ -886,9 +981,9 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
      * <p>Must be implemented iff {@link #enableActionDeleteAll} was called.</remarks>
      *
      * @param aVersion	version of the service being requested (will be <= the version advertised)</param>
-     * @param aTrackId
+     * @param aId
      */
-    protected void deleteAll(int aVersion, long aTrackId)
+    protected void deleteAll(int aVersion, long aId)
     {
         throw (new ActionDisabledError());
     }
@@ -1056,19 +1151,19 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
         }
 	}
 
-    private class DoPlaylistReadMetadata implements IDvInvocationListener
+    private class DoPlaylistReadList implements IDvInvocationListener
     {
         public void actionInvoked(long aInvocation, int aVersion)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             String idList;
-            String metadata;
+            String playlistList;
             try
             {
                 invocation.readStart();
                 idList = invocation.readString("IdList");
                 invocation.readEnd();
-                 metadata = playlistReadMetadata(aVersion, idList);
+                 playlistList = playlistReadList(aVersion, idList);
             }
             catch (ActionError ae)
             {
@@ -1090,7 +1185,7 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
             try
             {
                 invocation.writeStart();
-                invocation.writeString("Metadata", metadata);
+                invocation.writeString("PlaylistList", playlistList);
                 invocation.writeEnd();
             }
             catch (ActionError ae)
@@ -1164,24 +1259,120 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
         }
 	}
 
-    private class DoPlaylistUpdate implements IDvInvocationListener
+    private class DoPlaylistSetName implements IDvInvocationListener
     {
         public void actionInvoked(long aInvocation, int aVersion)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
             long id;
             String name;
-            String description;
-            long imageId;
             try
             {
                 invocation.readStart();
                 id = invocation.readUint("Id");
                 name = invocation.readString("Name");
+                invocation.readEnd();
+                playlistSetName(aVersion, id, name);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+	}
+
+    private class DoPlaylistSetDescription implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation, int aVersion)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long id;
+            String description;
+            try
+            {
+                invocation.readStart();
+                id = invocation.readUint("Id");
                 description = invocation.readString("Description");
+                invocation.readEnd();
+                playlistSetDescription(aVersion, id, description);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+	}
+
+    private class DoPlaylistSetImageId implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation, int aVersion)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long id;
+            long imageId;
+            try
+            {
+                invocation.readStart();
+                id = invocation.readUint("Id");
                 imageId = invocation.readUint("ImageId");
                 invocation.readEnd();
-                playlistUpdate(aVersion, id, name, description, imageId);
+                playlistSetImageId(aVersion, id, imageId);
             }
             catch (ActionError ae)
             {
@@ -1286,6 +1477,56 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
                 value = invocation.readUint("Value");
                 invocation.readEnd();
                 playlistDeleteId(aVersion, value);
+            }
+            catch (ActionError ae)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (PropertyUpdateError pue)
+            {
+                invocation.reportError(501, "Invalid XML");
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("WARNING: unexpected exception: " + e.getMessage());
+                System.out.println("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                e.printStackTrace();
+                return;
+            }
+            try
+            {
+                invocation.writeStart();
+                invocation.writeEnd();
+            }
+            catch (ActionError ae)
+            {
+                return;
+            }
+            catch (Exception e)
+            {
+                System.out.println("ERROR: unexpected exception: " + e.getMessage());
+                System.out.println("       Only ActionError can be thrown by action response writer");
+                e.printStackTrace();
+            }
+        }
+	}
+
+    private class DoPlaylistMove implements IDvInvocationListener
+    {
+        public void actionInvoked(long aInvocation, int aVersion)
+        {
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            long id;
+            long afterId;
+            try
+            {
+                invocation.readStart();
+                id = invocation.readUint("Id");
+                afterId = invocation.readUint("AfterId");
+                invocation.readEnd();
+                playlistMove(aVersion, id, afterId);
             }
             catch (ActionError ae)
             {
@@ -1689,15 +1930,15 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
         public void actionInvoked(long aInvocation, int aVersion)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
+            long id;
             long trackId;
-            long value;
             try
             {
                 invocation.readStart();
+                id = invocation.readUint("Id");
                 trackId = invocation.readUint("TrackId");
-                value = invocation.readUint("Value");
                 invocation.readEnd();
-                deleteId(aVersion, trackId, value);
+                deleteId(aVersion, id, trackId);
             }
             catch (ActionError ae)
             {
@@ -1739,13 +1980,13 @@ public class DvProviderAvOpenhomeOrgPlaylistManager1 extends DvProvider implemen
         public void actionInvoked(long aInvocation, int aVersion)
         {
             DvInvocation invocation = new DvInvocation(aInvocation);
-            long trackId;
+            long id;
             try
             {
                 invocation.readStart();
-                trackId = invocation.readUint("TrackId");
+                id = invocation.readUint("Id");
                 invocation.readEnd();
-                deleteAll(aVersion, trackId);
+                deleteAll(aVersion, id);
             }
             catch (ActionError ae)
             {
