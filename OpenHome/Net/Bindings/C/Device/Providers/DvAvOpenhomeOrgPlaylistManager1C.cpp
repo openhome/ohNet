@@ -369,6 +369,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionRead(CallbackPlaylist
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Read");
     action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("TrackId"));
+    action->AddOutputParameter(new ParameterString("Udn"));
     action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1C::DoRead);
     iService->AddAction(action, functor);
@@ -732,14 +733,20 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoRead(IDviInvocation& aInvocatio
     TUint TrackId = aInvocation.InvocationReadUint("TrackId");
     aInvocation.InvocationReadEnd();
     InvocationResponse resp(aInvocation);
+    char* Udn;
     char* Metadata;
     ASSERT(iCallbackRead != NULL);
-    if (0 != iCallbackRead(iPtrRead, aVersion, Id, TrackId, &Metadata)) {
+    if (0 != iCallbackRead(iPtrRead, aVersion, Id, TrackId, &Udn, &Metadata)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
+    InvocationResponseString respUdn(aInvocation, "Udn");
     InvocationResponseString respMetadata(aInvocation, "Metadata");
     resp.Start();
+    Brhz bufUdn((const TChar*)Udn);
+    OhNetFreeExternal(Udn);
+    respUdn.Write(bufUdn);
+    respUdn.WriteFlush();
     Brhz bufMetadata((const TChar*)Metadata);
     OhNetFreeExternal(Metadata);
     respMetadata.Write(bufMetadata);

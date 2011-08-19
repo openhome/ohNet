@@ -82,9 +82,9 @@ public:
     void BeginPlaylistArraysChanged(TUint aToken, FunctorAsync& aFunctor);
     void EndPlaylistArraysChanged(IAsync& aAsync, TBool& aValue);
 
-    void SyncRead(TUint aId, TUint aTrackId, Brh& aMetadata);
+    void SyncRead(TUint aId, TUint aTrackId, Brh& aUdn, Brh& aMetadata);
     void BeginRead(TUint aId, TUint aTrackId, FunctorAsync& aFunctor);
-    void EndRead(IAsync& aAsync, Brh& aMetadata);
+    void EndRead(IAsync& aAsync, Brh& aUdn, Brh& aMetadata);
 
     void SyncReadList(TUint aId, const Brx& aTrackIdList, Brh& aTrackList);
     void BeginReadList(TUint aId, const Brx& aTrackIdList, FunctorAsync& aFunctor);
@@ -490,22 +490,24 @@ void SyncPlaylistArraysChangedAvOpenhomeOrgPlaylistManager1C::CompleteRequest(IA
 class SyncReadAvOpenhomeOrgPlaylistManager1C : public SyncProxyAction
 {
 public:
-    SyncReadAvOpenhomeOrgPlaylistManager1C(CpProxyAvOpenhomeOrgPlaylistManager1C& aProxy, Brh& aMetadata);
+    SyncReadAvOpenhomeOrgPlaylistManager1C(CpProxyAvOpenhomeOrgPlaylistManager1C& aProxy, Brh& aUdn, Brh& aMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1C& iService;
+    Brh& iUdn;
     Brh& iMetadata;
 };
 
-SyncReadAvOpenhomeOrgPlaylistManager1C::SyncReadAvOpenhomeOrgPlaylistManager1C(CpProxyAvOpenhomeOrgPlaylistManager1C& aProxy, Brh& aMetadata)
+SyncReadAvOpenhomeOrgPlaylistManager1C::SyncReadAvOpenhomeOrgPlaylistManager1C(CpProxyAvOpenhomeOrgPlaylistManager1C& aProxy, Brh& aUdn, Brh& aMetadata)
     : iService(aProxy)
+    , iUdn(aUdn)
     , iMetadata(aMetadata)
 {
 }
 
 void SyncReadAvOpenhomeOrgPlaylistManager1C::CompleteRequest(IAsync& aAsync)
 {
-    iService.EndRead(aAsync, iMetadata);
+    iService.EndRead(aAsync, iUdn, iMetadata);
 }
 
 
@@ -695,6 +697,8 @@ CpProxyAvOpenhomeOrgPlaylistManager1C::CpProxyAvOpenhomeOrgPlaylistManager1C(CpD
     iActionRead->AddInputParameter(param);
     param = new OpenHome::Net::ParameterUint("TrackId");
     iActionRead->AddInputParameter(param);
+    param = new OpenHome::Net::ParameterString("Udn");
+    iActionRead->AddOutputParameter(param);
     param = new OpenHome::Net::ParameterString("Metadata");
     iActionRead->AddOutputParameter(param);
 
@@ -1229,9 +1233,9 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndPlaylistArraysChanged(IAsync& aAs
     aValue = ((ArgumentBool*)invocation.OutputArguments()[index++])->Value();
 }
 
-void CpProxyAvOpenhomeOrgPlaylistManager1C::SyncRead(TUint aId, TUint aTrackId, Brh& aMetadata)
+void CpProxyAvOpenhomeOrgPlaylistManager1C::SyncRead(TUint aId, TUint aTrackId, Brh& aUdn, Brh& aMetadata)
 {
-    SyncReadAvOpenhomeOrgPlaylistManager1C sync(*this, aMetadata);
+    SyncReadAvOpenhomeOrgPlaylistManager1C sync(*this, aUdn, aMetadata);
     BeginRead(aId, aTrackId, sync.Functor());
     sync.Wait();
 }
@@ -1246,10 +1250,11 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::BeginRead(TUint aId, TUint aTrackId,
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionRead->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
+    invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     Invocable().InvokeAction(*invocation);
 }
 
-void CpProxyAvOpenhomeOrgPlaylistManager1C::EndRead(IAsync& aAsync, Brh& aMetadata)
+void CpProxyAvOpenhomeOrgPlaylistManager1C::EndRead(IAsync& aAsync, Brh& aUdn, Brh& aMetadata)
 {
     ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
     Invocation& invocation = (Invocation&)aAsync;
@@ -1259,6 +1264,7 @@ void CpProxyAvOpenhomeOrgPlaylistManager1C::EndRead(IAsync& aAsync, Brh& aMetada
         THROW(ProxyError);
     }
     TUint index = 0;
+    ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aUdn);
     ((ArgumentString*)invocation.OutputArguments()[index++])->TransferTo(aMetadata);
 }
 
@@ -2043,12 +2049,14 @@ int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndPlaylistArraysChanged(THa
     return err;
 }
 
-void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncRead(THandle aHandle, uint32_t aId, uint32_t aTrackId, char** aMetadata)
+void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1SyncRead(THandle aHandle, uint32_t aId, uint32_t aTrackId, char** aUdn, char** aMetadata)
 {
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
+    Brh buf_aUdn;
     Brh buf_aMetadata;
-    proxyC->SyncRead(aId, aTrackId, buf_aMetadata);
+    proxyC->SyncRead(aId, aTrackId, buf_aUdn, buf_aMetadata);
+    *aUdn = buf_aUdn.Extract();
     *aMetadata = buf_aMetadata.Extract();
 }
 
@@ -2060,17 +2068,20 @@ void STDCALL CpProxyAvOpenhomeOrgPlaylistManager1BeginRead(THandle aHandle, uint
     proxyC->BeginRead(aId, aTrackId, functor);
 }
 
-int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndRead(THandle aHandle, OhNetHandleAsync aAsync, char** aMetadata)
+int32_t STDCALL CpProxyAvOpenhomeOrgPlaylistManager1EndRead(THandle aHandle, OhNetHandleAsync aAsync, char** aUdn, char** aMetadata)
 {
     int32_t err = 0;
     CpProxyAvOpenhomeOrgPlaylistManager1C* proxyC = reinterpret_cast<CpProxyAvOpenhomeOrgPlaylistManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
+    Brh buf_aUdn;
+    *aUdn = NULL;
     Brh buf_aMetadata;
     *aMetadata = NULL;
     try {
-        proxyC->EndRead(*async, buf_aMetadata);
+        proxyC->EndRead(*async, buf_aUdn, buf_aMetadata);
+        *aUdn = buf_aUdn.Extract();
         *aMetadata = buf_aMetadata.Extract();
     }
     catch(...) {

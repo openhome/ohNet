@@ -341,7 +341,7 @@ private:
      * Read action for the owning device.
      * Must be implemented iff EnableActionRead was called.
      */
-    virtual void Read(uint32_t aVersion, uint32_t aId, uint32_t aTrackId, std::string& aMetadata);
+    virtual void Read(uint32_t aVersion, uint32_t aId, uint32_t aTrackId, std::string& aUdn, std::string& aMetadata);
     /**
      * ReadList action.
      *

@@ -482,8 +482,10 @@ namespace OpenHome.Net.Device.Providers
         protected void EnableActionRead()
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("Read");
+            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("Id"));
             action.AddInputParameter(new ParameterUint("TrackId"));
+            action.AddOutputParameter(new ParameterString("Udn", allowedValues));
             action.AddOutputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
             iDelegateRead = new ActionDelegate(DoRead);
             EnableAction(action, iDelegateRead, GCHandle.ToIntPtr(iGch));
@@ -786,8 +788,9 @@ namespace OpenHome.Net.Device.Providers
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aId"></param>
         /// <param name="aTrackId"></param>
+        /// <param name="aUdn"></param>
         /// <param name="aMetadata"></param>
-        protected virtual void Read(uint aVersion, uint aId, uint aTrackId, out string aMetadata)
+        protected virtual void Read(uint aVersion, uint aId, uint aTrackId, out string aUdn, out string aMetadata)
         {
             throw (new ActionDisabledError());
         }
@@ -1599,6 +1602,7 @@ namespace OpenHome.Net.Device.Providers
             DvInvocation invocation = new DvInvocation(aInvocation);
             uint id;
             uint trackId;
+            string udn;
             string metadata;
             try
             {
@@ -1606,7 +1610,7 @@ namespace OpenHome.Net.Device.Providers
                 id = invocation.ReadUint("Id");
                 trackId = invocation.ReadUint("TrackId");
                 invocation.ReadEnd();
-                self.Read(aVersion, id, trackId, out metadata);
+                self.Read(aVersion, id, trackId, out udn, out metadata);
             }
             catch (ActionError)
             {
@@ -1627,6 +1631,7 @@ namespace OpenHome.Net.Device.Providers
             try
             {
                 invocation.WriteStart();
+                invocation.WriteString("Udn", udn);
                 invocation.WriteString("Metadata", metadata);
                 invocation.WriteEnd();
             }

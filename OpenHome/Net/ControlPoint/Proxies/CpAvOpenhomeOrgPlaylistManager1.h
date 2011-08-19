@@ -472,9 +472,10 @@ public:
      *
      * @param[in]  aId
      * @param[in]  aTrackId
+     * @param[out] aUdn
      * @param[out] aMetadata
      */
-    void SyncRead(TUint aId, TUint aTrackId, Brh& aMetadata);
+    void SyncRead(TUint aId, TUint aTrackId, Brh& aUdn, Brh& aMetadata);
     /**
      * Invoke the action asynchronously.
      * Returns immediately and will run the client-specified callback when the action
@@ -492,9 +493,10 @@ public:
      * This may only be called from the callback set in the above Begin function.
      *
      * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     * @param[out] aUdn
      * @param[out] aMetadata
      */
-    void EndRead(IAsync& aAsync, Brh& aMetadata);
+    void EndRead(IAsync& aAsync, Brh& aUdn, Brh& aMetadata);
 
     /**
      * Invoke the action synchronously.  Blocks until the action has been processed

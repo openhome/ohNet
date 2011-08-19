@@ -190,17 +190,17 @@ CpProxyAvOpenhomeOrgPlaylistManager1.prototype.PlaylistReadArray = function(Id, 
 
 
 /**
-* A service action to PlaylistReadMetadata
-* @method PlaylistReadMetadata
+* A service action to PlaylistReadList
+* @method PlaylistReadList
 * @param {String} IdList An action parameter
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylistManager1.prototype.PlaylistReadMetadata = function(IdList, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("PlaylistReadMetadata", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylistManager1.prototype.PlaylistReadList = function(IdList, successFunction, errorFunction){	
+	var request = new OhNet.SoapRequest("PlaylistReadList", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("IdList", IdList);
     request.send(function(result){
-		result["Metadata"] = OhNet.SoapRequest.readStringParameter(result["Metadata"]);	
+		result["PlaylistList"] = OhNet.SoapRequest.readStringParameter(result["PlaylistList"]);	
 	
 		if (successFunction){
 			successFunction(result);
@@ -236,20 +236,62 @@ CpProxyAvOpenhomeOrgPlaylistManager1.prototype.PlaylistRead = function(Id, succe
 
 
 /**
-* A service action to PlaylistUpdate
-* @method PlaylistUpdate
+* A service action to PlaylistSetName
+* @method PlaylistSetName
 * @param {Int} Id An action parameter
 * @param {String} Name An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+CpProxyAvOpenhomeOrgPlaylistManager1.prototype.PlaylistSetName = function(Id, Name, successFunction, errorFunction){	
+	var request = new OhNet.SoapRequest("PlaylistSetName", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("Id", Id);
+    request.writeStringParameter("Name", Name);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to PlaylistSetDescription
+* @method PlaylistSetDescription
+* @param {Int} Id An action parameter
 * @param {String} Description An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+CpProxyAvOpenhomeOrgPlaylistManager1.prototype.PlaylistSetDescription = function(Id, Description, successFunction, errorFunction){	
+	var request = new OhNet.SoapRequest("PlaylistSetDescription", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("Id", Id);
+    request.writeStringParameter("Description", Description);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to PlaylistSetImageId
+* @method PlaylistSetImageId
+* @param {Int} Id An action parameter
 * @param {Int} ImageId An action parameter
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylistManager1.prototype.PlaylistUpdate = function(Id, Name, Description, ImageId, successFunction, errorFunction){	
-	var request = new OhNet.SoapRequest("PlaylistUpdate", this.url, this.domain, this.type, this.version);		
+CpProxyAvOpenhomeOrgPlaylistManager1.prototype.PlaylistSetImageId = function(Id, ImageId, successFunction, errorFunction){	
+	var request = new OhNet.SoapRequest("PlaylistSetImageId", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Id", Id);
-    request.writeStringParameter("Name", Name);
-    request.writeStringParameter("Description", Description);
     request.writeIntParameter("ImageId", ImageId);
     request.send(function(result){
 	
@@ -300,6 +342,29 @@ CpProxyAvOpenhomeOrgPlaylistManager1.prototype.PlaylistInsert = function(AfterId
 CpProxyAvOpenhomeOrgPlaylistManager1.prototype.PlaylistDeleteId = function(Value, successFunction, errorFunction){	
 	var request = new OhNet.SoapRequest("PlaylistDeleteId", this.url, this.domain, this.type, this.version);		
     request.writeIntParameter("Value", Value);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to PlaylistMove
+* @method PlaylistMove
+* @param {Int} Id An action parameter
+* @param {Int} AfterId An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+CpProxyAvOpenhomeOrgPlaylistManager1.prototype.PlaylistMove = function(Id, AfterId, successFunction, errorFunction){	
+	var request = new OhNet.SoapRequest("PlaylistMove", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("Id", Id);
+    request.writeIntParameter("AfterId", AfterId);
     request.send(function(result){
 	
 		if (successFunction){
@@ -408,6 +473,7 @@ CpProxyAvOpenhomeOrgPlaylistManager1.prototype.Read = function(Id, TrackId, succ
     request.writeIntParameter("Id", Id);
     request.writeIntParameter("TrackId", TrackId);
     request.send(function(result){
+		result["Udn"] = OhNet.SoapRequest.readStringParameter(result["Udn"]);	
 		result["Metadata"] = OhNet.SoapRequest.readStringParameter(result["Metadata"]);	
 	
 		if (successFunction){
@@ -474,15 +540,15 @@ CpProxyAvOpenhomeOrgPlaylistManager1.prototype.Insert = function(Id, AfterTrackI
 /**
 * A service action to DeleteId
 * @method DeleteId
+* @param {Int} Id An action parameter
 * @param {Int} TrackId An action parameter
-* @param {Int} Value An action parameter
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylistManager1.prototype.DeleteId = function(TrackId, Value, successFunction, errorFunction){	
+CpProxyAvOpenhomeOrgPlaylistManager1.prototype.DeleteId = function(Id, TrackId, successFunction, errorFunction){	
 	var request = new OhNet.SoapRequest("DeleteId", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("Id", Id);
     request.writeIntParameter("TrackId", TrackId);
-    request.writeIntParameter("Value", Value);
     request.send(function(result){
 	
 		if (successFunction){
@@ -497,13 +563,13 @@ CpProxyAvOpenhomeOrgPlaylistManager1.prototype.DeleteId = function(TrackId, Valu
 /**
 * A service action to DeleteAll
 * @method DeleteAll
-* @param {Int} TrackId An action parameter
+* @param {Int} Id An action parameter
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-CpProxyAvOpenhomeOrgPlaylistManager1.prototype.DeleteAll = function(TrackId, successFunction, errorFunction){	
+CpProxyAvOpenhomeOrgPlaylistManager1.prototype.DeleteAll = function(Id, successFunction, errorFunction){	
 	var request = new OhNet.SoapRequest("DeleteAll", this.url, this.domain, this.type, this.version);		
-    request.writeIntParameter("TrackId", TrackId);
+    request.writeIntParameter("Id", Id);
     request.send(function(result){
 	
 		if (successFunction){

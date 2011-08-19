@@ -194,11 +194,12 @@ typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistArraysChanged)(void* a
  * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
  * @param[in]  aId
  * @param[in]  aTrackId
+ * @param[out] aUdn
  * @param[out] aMetadata
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1Read)(void* aPtr, uint32_t aVersion, uint32_t aId, uint32_t aTrackId, char** aMetadata);
+typedef int32_t (STDCALL *CallbackPlaylistManager1Read)(void* aPtr, uint32_t aVersion, uint32_t aId, uint32_t aTrackId, char** aUdn, char** aMetadata);
 /**
  * Callback which runs when the ReadList action is invoked
  *
