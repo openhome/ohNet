@@ -78,25 +78,25 @@ void SyncPlaylistReadArrayAvOpenhomeOrgPlaylistManager1Cpp::CompleteRequest(IAsy
 }
 
 
-class SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
+class SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
 {
 public:
-    SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, std::string& aMetadata);
+    SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, std::string& aPlaylistList);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
-    std::string& iMetadata;
+    std::string& iPlaylistList;
 };
 
-SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, std::string& aMetadata)
+SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy, std::string& aPlaylistList)
     : iService(aProxy)
-    , iMetadata(aMetadata)
+    , iPlaylistList(aPlaylistList)
 {
 }
 
-void SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1Cpp::CompleteRequest(IAsync& aAsync)
+void SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1Cpp::CompleteRequest(IAsync& aAsync)
 {
-    iService.EndPlaylistReadMetadata(aAsync, iMetadata);
+    iService.EndPlaylistReadList(aAsync, iPlaylistList);
 }
 
 
@@ -126,23 +126,63 @@ void SyncPlaylistReadAvOpenhomeOrgPlaylistManager1Cpp::CompleteRequest(IAsync& a
 }
 
 
-class SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
+class SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
 {
 public:
-    SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy);
+    SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
 };
 
-SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy)
+SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy)
     : iService(aProxy)
 {
 }
 
-void SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1Cpp::CompleteRequest(IAsync& aAsync)
+void SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1Cpp::CompleteRequest(IAsync& aAsync)
 {
-    iService.EndPlaylistUpdate(aAsync);
+    iService.EndPlaylistSetName(aAsync);
+}
+
+
+class SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
+{
+public:
+    SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
+};
+
+SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy)
+    : iService(aProxy)
+{
+}
+
+void SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1Cpp::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndPlaylistSetDescription(aAsync);
+}
+
+
+class SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
+{
+public:
+    SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
+};
+
+SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy)
+    : iService(aProxy)
+{
+}
+
+void SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1Cpp::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndPlaylistSetImageId(aAsync);
 }
 
 
@@ -185,6 +225,26 @@ SyncPlaylistDeleteIdAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistDeleteIdAvOpen
 void SyncPlaylistDeleteIdAvOpenhomeOrgPlaylistManager1Cpp::CompleteRequest(IAsync& aAsync)
 {
     iService.EndPlaylistDeleteId(aAsync);
+}
+
+
+class SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1Cpp : public SyncProxyAction
+{
+public:
+    SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyAvOpenhomeOrgPlaylistManager1Cpp& iService;
+};
+
+SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1Cpp(CpProxyAvOpenhomeOrgPlaylistManager1Cpp& aProxy)
+    : iService(aProxy)
+{
+}
+
+void SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1Cpp::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndPlaylistMove(aAsync);
 }
 
 
@@ -405,11 +465,11 @@ CpProxyAvOpenhomeOrgPlaylistManager1Cpp::CpProxyAvOpenhomeOrgPlaylistManager1Cpp
     param = new OpenHome::Net::ParameterBinary("Array");
     iActionPlaylistReadArray->AddOutputParameter(param);
 
-    iActionPlaylistReadMetadata = new Action("PlaylistReadMetadata");
+    iActionPlaylistReadList = new Action("PlaylistReadList");
     param = new OpenHome::Net::ParameterString("IdList");
-    iActionPlaylistReadMetadata->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterString("Metadata");
-    iActionPlaylistReadMetadata->AddOutputParameter(param);
+    iActionPlaylistReadList->AddInputParameter(param);
+    param = new OpenHome::Net::ParameterString("PlaylistList");
+    iActionPlaylistReadList->AddOutputParameter(param);
 
     iActionPlaylistRead = new Action("PlaylistRead");
     param = new OpenHome::Net::ParameterUint("Id");
@@ -421,15 +481,23 @@ CpProxyAvOpenhomeOrgPlaylistManager1Cpp::CpProxyAvOpenhomeOrgPlaylistManager1Cpp
     param = new OpenHome::Net::ParameterUint("ImageId");
     iActionPlaylistRead->AddOutputParameter(param);
 
-    iActionPlaylistUpdate = new Action("PlaylistUpdate");
+    iActionPlaylistSetName = new Action("PlaylistSetName");
     param = new OpenHome::Net::ParameterUint("Id");
-    iActionPlaylistUpdate->AddInputParameter(param);
+    iActionPlaylistSetName->AddInputParameter(param);
     param = new OpenHome::Net::ParameterString("Name");
-    iActionPlaylistUpdate->AddInputParameter(param);
+    iActionPlaylistSetName->AddInputParameter(param);
+
+    iActionPlaylistSetDescription = new Action("PlaylistSetDescription");
+    param = new OpenHome::Net::ParameterUint("Id");
+    iActionPlaylistSetDescription->AddInputParameter(param);
     param = new OpenHome::Net::ParameterString("Description");
-    iActionPlaylistUpdate->AddInputParameter(param);
+    iActionPlaylistSetDescription->AddInputParameter(param);
+
+    iActionPlaylistSetImageId = new Action("PlaylistSetImageId");
+    param = new OpenHome::Net::ParameterUint("Id");
+    iActionPlaylistSetImageId->AddInputParameter(param);
     param = new OpenHome::Net::ParameterUint("ImageId");
-    iActionPlaylistUpdate->AddInputParameter(param);
+    iActionPlaylistSetImageId->AddInputParameter(param);
 
     iActionPlaylistInsert = new Action("PlaylistInsert");
     param = new OpenHome::Net::ParameterUint("AfterId");
@@ -446,6 +514,12 @@ CpProxyAvOpenhomeOrgPlaylistManager1Cpp::CpProxyAvOpenhomeOrgPlaylistManager1Cpp
     iActionPlaylistDeleteId = new Action("PlaylistDeleteId");
     param = new OpenHome::Net::ParameterUint("Value");
     iActionPlaylistDeleteId->AddInputParameter(param);
+
+    iActionPlaylistMove = new Action("PlaylistMove");
+    param = new OpenHome::Net::ParameterUint("Id");
+    iActionPlaylistMove->AddInputParameter(param);
+    param = new OpenHome::Net::ParameterUint("AfterId");
+    iActionPlaylistMove->AddInputParameter(param);
 
     iActionPlaylistsMax = new Action("PlaylistsMax");
     param = new OpenHome::Net::ParameterUint("Value");
@@ -498,13 +572,13 @@ CpProxyAvOpenhomeOrgPlaylistManager1Cpp::CpProxyAvOpenhomeOrgPlaylistManager1Cpp
     iActionInsert->AddOutputParameter(param);
 
     iActionDeleteId = new Action("DeleteId");
-    param = new OpenHome::Net::ParameterUint("TrackId");
+    param = new OpenHome::Net::ParameterUint("Id");
     iActionDeleteId->AddInputParameter(param);
-    param = new OpenHome::Net::ParameterUint("Value");
+    param = new OpenHome::Net::ParameterUint("TrackId");
     iActionDeleteId->AddInputParameter(param);
 
     iActionDeleteAll = new Action("DeleteAll");
-    param = new OpenHome::Net::ParameterUint("TrackId");
+    param = new OpenHome::Net::ParameterUint("Id");
     iActionDeleteAll->AddInputParameter(param);
 
     Functor functor;
@@ -534,11 +608,14 @@ CpProxyAvOpenhomeOrgPlaylistManager1Cpp::~CpProxyAvOpenhomeOrgPlaylistManager1Cp
     delete iActionMetadata;
     delete iActionImagesXml;
     delete iActionPlaylistReadArray;
-    delete iActionPlaylistReadMetadata;
+    delete iActionPlaylistReadList;
     delete iActionPlaylistRead;
-    delete iActionPlaylistUpdate;
+    delete iActionPlaylistSetName;
+    delete iActionPlaylistSetDescription;
+    delete iActionPlaylistSetImageId;
     delete iActionPlaylistInsert;
     delete iActionPlaylistDeleteId;
+    delete iActionPlaylistMove;
     delete iActionPlaylistsMax;
     delete iActionTracksMax;
     delete iActionPlaylistArrays;
@@ -649,33 +726,33 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistReadArray(IAsync& aAsyn
     }
 }
 
-void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistReadMetadata(const std::string& aIdList, std::string& aMetadata)
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistReadList(const std::string& aIdList, std::string& aPlaylistList)
 {
-    SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1Cpp sync(*this, aMetadata);
-    BeginPlaylistReadMetadata(aIdList, sync.Functor());
+    SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1Cpp sync(*this, aPlaylistList);
+    BeginPlaylistReadList(aIdList, sync.Functor());
     sync.Wait();
 }
 
-void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::BeginPlaylistReadMetadata(const std::string& aIdList, FunctorAsync& aFunctor)
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::BeginPlaylistReadList(const std::string& aIdList, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionPlaylistReadMetadata, aFunctor);
+    Invocation* invocation = iService->Invocation(*iActionPlaylistReadList, aFunctor);
     TUint inIndex = 0;
-    const Action::VectorParameters& inParams = iActionPlaylistReadMetadata->InputParameters();
+    const Action::VectorParameters& inParams = iActionPlaylistReadList->InputParameters();
     {
         Brn buf((const TByte*)aIdList.c_str(), (TUint)aIdList.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
-    const Action::VectorParameters& outParams = iActionPlaylistReadMetadata->OutputParameters();
+    const Action::VectorParameters& outParams = iActionPlaylistReadList->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     iInvocable.InvokeAction(*invocation);
 }
 
-void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistReadMetadata(IAsync& aAsync, std::string& aMetadata)
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistReadList(IAsync& aAsync, std::string& aPlaylistList)
 {
     ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
     Invocation& invocation = (Invocation&)aAsync;
-    ASSERT(invocation.Action().Name() == Brn("PlaylistReadMetadata"));
+    ASSERT(invocation.Action().Name() == Brn("PlaylistReadList"));
 
     if (invocation.Error()) {
         THROW(ProxyError);
@@ -683,7 +760,7 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistReadMetadata(IAsync& aA
     TUint index = 0;
     {
         const Brx& val = ((ArgumentString*)invocation.OutputArguments()[index++])->Value();
-        aMetadata.assign((const char*)val.Ptr(), val.Bytes());
+        aPlaylistList.assign((const char*)val.Ptr(), val.Bytes());
     }
 }
 
@@ -729,36 +806,90 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistRead(IAsync& aAsync, st
     aImageId = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
 }
 
-void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistUpdate(uint32_t aId, const std::string& aName, const std::string& aDescription, uint32_t aImageId)
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistSetName(uint32_t aId, const std::string& aName)
 {
-    SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1Cpp sync(*this);
-    BeginPlaylistUpdate(aId, aName, aDescription, aImageId, sync.Functor());
+    SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1Cpp sync(*this);
+    BeginPlaylistSetName(aId, aName, sync.Functor());
     sync.Wait();
 }
 
-void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::BeginPlaylistUpdate(uint32_t aId, const std::string& aName, const std::string& aDescription, uint32_t aImageId, FunctorAsync& aFunctor)
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::BeginPlaylistSetName(uint32_t aId, const std::string& aName, FunctorAsync& aFunctor)
 {
-    Invocation* invocation = iService->Invocation(*iActionPlaylistUpdate, aFunctor);
+    Invocation* invocation = iService->Invocation(*iActionPlaylistSetName, aFunctor);
     TUint inIndex = 0;
-    const Action::VectorParameters& inParams = iActionPlaylistUpdate->InputParameters();
+    const Action::VectorParameters& inParams = iActionPlaylistSetName->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aId));
     {
         Brn buf((const TByte*)aName.c_str(), (TUint)aName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
+    iInvocable.InvokeAction(*invocation);
+}
+
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistSetName(IAsync& aAsync)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("PlaylistSetName"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
+    }
+}
+
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistSetDescription(uint32_t aId, const std::string& aDescription)
+{
+    SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1Cpp sync(*this);
+    BeginPlaylistSetDescription(aId, aDescription, sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::BeginPlaylistSetDescription(uint32_t aId, const std::string& aDescription, FunctorAsync& aFunctor)
+{
+    Invocation* invocation = iService->Invocation(*iActionPlaylistSetDescription, aFunctor);
+    TUint inIndex = 0;
+    const Action::VectorParameters& inParams = iActionPlaylistSetDescription->InputParameters();
+    invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aId));
     {
         Brn buf((const TByte*)aDescription.c_str(), (TUint)aDescription.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
+    iInvocable.InvokeAction(*invocation);
+}
+
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistSetDescription(IAsync& aAsync)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("PlaylistSetDescription"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
+    }
+}
+
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistSetImageId(uint32_t aId, uint32_t aImageId)
+{
+    SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1Cpp sync(*this);
+    BeginPlaylistSetImageId(aId, aImageId, sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::BeginPlaylistSetImageId(uint32_t aId, uint32_t aImageId, FunctorAsync& aFunctor)
+{
+    Invocation* invocation = iService->Invocation(*iActionPlaylistSetImageId, aFunctor);
+    TUint inIndex = 0;
+    const Action::VectorParameters& inParams = iActionPlaylistSetImageId->InputParameters();
+    invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aId));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aImageId));
     iInvocable.InvokeAction(*invocation);
 }
 
-void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistUpdate(IAsync& aAsync)
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistSetImageId(IAsync& aAsync)
 {
     ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
     Invocation& invocation = (Invocation&)aAsync;
-    ASSERT(invocation.Action().Name() == Brn("PlaylistUpdate"));
+    ASSERT(invocation.Action().Name() == Brn("PlaylistSetImageId"));
 
     if (invocation.Error()) {
         THROW(ProxyError);
@@ -827,6 +958,34 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistDeleteId(IAsync& aAsync
     ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("PlaylistDeleteId"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
+    }
+}
+
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::SyncPlaylistMove(uint32_t aId, uint32_t aAfterId)
+{
+    SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1Cpp sync(*this);
+    BeginPlaylistMove(aId, aAfterId, sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::BeginPlaylistMove(uint32_t aId, uint32_t aAfterId, FunctorAsync& aFunctor)
+{
+    Invocation* invocation = iService->Invocation(*iActionPlaylistMove, aFunctor);
+    TUint inIndex = 0;
+    const Action::VectorParameters& inParams = iActionPlaylistMove->InputParameters();
+    invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aId));
+    invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aAfterId));
+    iInvocable.InvokeAction(*invocation);
+}
+
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndPlaylistMove(IAsync& aAsync)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("PlaylistMove"));
 
     if (invocation.Error()) {
         THROW(ProxyError);
@@ -1078,20 +1237,20 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndInsert(IAsync& aAsync, uint32_t
     aNewTrackId = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
 }
 
-void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::SyncDeleteId(uint32_t aTrackId, uint32_t aValue)
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::SyncDeleteId(uint32_t aId, uint32_t aTrackId)
 {
     SyncDeleteIdAvOpenhomeOrgPlaylistManager1Cpp sync(*this);
-    BeginDeleteId(aTrackId, aValue, sync.Functor());
+    BeginDeleteId(aId, aTrackId, sync.Functor());
     sync.Wait();
 }
 
-void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::BeginDeleteId(uint32_t aTrackId, uint32_t aValue, FunctorAsync& aFunctor)
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::BeginDeleteId(uint32_t aId, uint32_t aTrackId, FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionDeleteId, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDeleteId->InputParameters();
+    invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aId));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aTrackId));
-    invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aValue));
     iInvocable.InvokeAction(*invocation);
 }
 
@@ -1106,19 +1265,19 @@ void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::EndDeleteId(IAsync& aAsync)
     }
 }
 
-void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::SyncDeleteAll(uint32_t aTrackId)
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::SyncDeleteAll(uint32_t aId)
 {
     SyncDeleteAllAvOpenhomeOrgPlaylistManager1Cpp sync(*this);
-    BeginDeleteAll(aTrackId, sync.Functor());
+    BeginDeleteAll(aId, sync.Functor());
     sync.Wait();
 }
 
-void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::BeginDeleteAll(uint32_t aTrackId, FunctorAsync& aFunctor)
+void CpProxyAvOpenhomeOrgPlaylistManager1Cpp::BeginDeleteAll(uint32_t aId, FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionDeleteAll, aFunctor);
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDeleteAll->InputParameters();
-    invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aTrackId));
+    invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aId));
     iInvocable.InvokeAction(*invocation);
 }
 

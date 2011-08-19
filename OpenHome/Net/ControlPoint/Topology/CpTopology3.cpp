@@ -710,6 +710,7 @@ void CpTopology3Room::SetStandby(TBool aValue)
 	
 	while (it != iGroupList.end()) {
 		(*it)->Group().SetStandby(aValue);
+        it++;
 	}
 	
 	iMutex.Signal();	

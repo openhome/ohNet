@@ -129,28 +129,28 @@ public:
      * on the device and sets any output arguments.
      *
      * @param[in]  aIdList
-     * @param[out] aMetadata
+     * @param[out] aPlaylistList
      */
-    void SyncPlaylistReadMetadata(const Brx& aIdList, Brh& aMetadata);
+    void SyncPlaylistReadList(const Brx& aIdList, Brh& aPlaylistList);
     /**
      * Invoke the action asynchronously.
      * Returns immediately and will run the client-specified callback when the action
      * later completes.  Any output arguments can then be retrieved by calling
-     * EndPlaylistReadMetadata().
+     * EndPlaylistReadList().
      *
      * @param[in] aIdList
      * @param[in] aFunctor   Callback to run when the action completes.
      *                       This is guaranteed to be run but may indicate an error
      */
-    void BeginPlaylistReadMetadata(const Brx& aIdList, FunctorAsync& aFunctor);
+    void BeginPlaylistReadList(const Brx& aIdList, FunctorAsync& aFunctor);
     /**
      * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the above Begin function.
      *
      * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
-     * @param[out] aMetadata
+     * @param[out] aPlaylistList
      */
-    void EndPlaylistReadMetadata(IAsync& aAsync, Brh& aMetadata);
+    void EndPlaylistReadList(IAsync& aAsync, Brh& aPlaylistList);
 
     /**
      * Invoke the action synchronously.  Blocks until the action has been processed
@@ -190,31 +190,83 @@ public:
      *
      * @param[in]  aId
      * @param[in]  aName
-     * @param[in]  aDescription
-     * @param[in]  aImageId
      */
-    void SyncPlaylistUpdate(TUint aId, const Brx& aName, const Brx& aDescription, TUint aImageId);
+    void SyncPlaylistSetName(TUint aId, const Brx& aName);
     /**
      * Invoke the action asynchronously.
      * Returns immediately and will run the client-specified callback when the action
      * later completes.  Any output arguments can then be retrieved by calling
-     * EndPlaylistUpdate().
+     * EndPlaylistSetName().
      *
      * @param[in] aId
      * @param[in] aName
-     * @param[in] aDescription
-     * @param[in] aImageId
      * @param[in] aFunctor   Callback to run when the action completes.
      *                       This is guaranteed to be run but may indicate an error
      */
-    void BeginPlaylistUpdate(TUint aId, const Brx& aName, const Brx& aDescription, TUint aImageId, FunctorAsync& aFunctor);
+    void BeginPlaylistSetName(TUint aId, const Brx& aName, FunctorAsync& aFunctor);
     /**
      * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the above Begin function.
      *
      * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
      */
-    void EndPlaylistUpdate(IAsync& aAsync);
+    void EndPlaylistSetName(IAsync& aAsync);
+
+    /**
+     * Invoke the action synchronously.  Blocks until the action has been processed
+     * on the device and sets any output arguments.
+     *
+     * @param[in]  aId
+     * @param[in]  aDescription
+     */
+    void SyncPlaylistSetDescription(TUint aId, const Brx& aDescription);
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the action
+     * later completes.  Any output arguments can then be retrieved by calling
+     * EndPlaylistSetDescription().
+     *
+     * @param[in] aId
+     * @param[in] aDescription
+     * @param[in] aFunctor   Callback to run when the action completes.
+     *                       This is guaranteed to be run but may indicate an error
+     */
+    void BeginPlaylistSetDescription(TUint aId, const Brx& aDescription, FunctorAsync& aFunctor);
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the above Begin function.
+     *
+     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     */
+    void EndPlaylistSetDescription(IAsync& aAsync);
+
+    /**
+     * Invoke the action synchronously.  Blocks until the action has been processed
+     * on the device and sets any output arguments.
+     *
+     * @param[in]  aId
+     * @param[in]  aImageId
+     */
+    void SyncPlaylistSetImageId(TUint aId, TUint aImageId);
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the action
+     * later completes.  Any output arguments can then be retrieved by calling
+     * EndPlaylistSetImageId().
+     *
+     * @param[in] aId
+     * @param[in] aImageId
+     * @param[in] aFunctor   Callback to run when the action completes.
+     *                       This is guaranteed to be run but may indicate an error
+     */
+    void BeginPlaylistSetImageId(TUint aId, TUint aImageId, FunctorAsync& aFunctor);
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the above Begin function.
+     *
+     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     */
+    void EndPlaylistSetImageId(IAsync& aAsync);
 
     /**
      * Invoke the action synchronously.  Blocks until the action has been processed
@@ -275,6 +327,34 @@ public:
      * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
      */
     void EndPlaylistDeleteId(IAsync& aAsync);
+
+    /**
+     * Invoke the action synchronously.  Blocks until the action has been processed
+     * on the device and sets any output arguments.
+     *
+     * @param[in]  aId
+     * @param[in]  aAfterId
+     */
+    void SyncPlaylistMove(TUint aId, TUint aAfterId);
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the action
+     * later completes.  Any output arguments can then be retrieved by calling
+     * EndPlaylistMove().
+     *
+     * @param[in] aId
+     * @param[in] aAfterId
+     * @param[in] aFunctor   Callback to run when the action completes.
+     *                       This is guaranteed to be run but may indicate an error
+     */
+    void BeginPlaylistMove(TUint aId, TUint aAfterId, FunctorAsync& aFunctor);
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the above Begin function.
+     *
+     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     */
+    void EndPlaylistMove(IAsync& aAsync);
 
     /**
      * Invoke the action synchronously.  Blocks until the action has been processed
@@ -484,22 +564,22 @@ public:
      * Invoke the action synchronously.  Blocks until the action has been processed
      * on the device and sets any output arguments.
      *
+     * @param[in]  aId
      * @param[in]  aTrackId
-     * @param[in]  aValue
      */
-    void SyncDeleteId(TUint aTrackId, TUint aValue);
+    void SyncDeleteId(TUint aId, TUint aTrackId);
     /**
      * Invoke the action asynchronously.
      * Returns immediately and will run the client-specified callback when the action
      * later completes.  Any output arguments can then be retrieved by calling
      * EndDeleteId().
      *
+     * @param[in] aId
      * @param[in] aTrackId
-     * @param[in] aValue
      * @param[in] aFunctor   Callback to run when the action completes.
      *                       This is guaranteed to be run but may indicate an error
      */
-    void BeginDeleteId(TUint aTrackId, TUint aValue, FunctorAsync& aFunctor);
+    void BeginDeleteId(TUint aId, TUint aTrackId, FunctorAsync& aFunctor);
     /**
      * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the above Begin function.
@@ -512,20 +592,20 @@ public:
      * Invoke the action synchronously.  Blocks until the action has been processed
      * on the device and sets any output arguments.
      *
-     * @param[in]  aTrackId
+     * @param[in]  aId
      */
-    void SyncDeleteAll(TUint aTrackId);
+    void SyncDeleteAll(TUint aId);
     /**
      * Invoke the action asynchronously.
      * Returns immediately and will run the client-specified callback when the action
      * later completes.  Any output arguments can then be retrieved by calling
      * EndDeleteAll().
      *
-     * @param[in] aTrackId
+     * @param[in] aId
      * @param[in] aFunctor   Callback to run when the action completes.
      *                       This is guaranteed to be run but may indicate an error
      */
-    void BeginDeleteAll(TUint aTrackId, FunctorAsync& aFunctor);
+    void BeginDeleteAll(TUint aId, FunctorAsync& aFunctor);
     /**
      * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the above Begin function.
@@ -660,11 +740,14 @@ private:
     Action* iActionMetadata;
     Action* iActionImagesXml;
     Action* iActionPlaylistReadArray;
-    Action* iActionPlaylistReadMetadata;
+    Action* iActionPlaylistReadList;
     Action* iActionPlaylistRead;
-    Action* iActionPlaylistUpdate;
+    Action* iActionPlaylistSetName;
+    Action* iActionPlaylistSetDescription;
+    Action* iActionPlaylistSetImageId;
     Action* iActionPlaylistInsert;
     Action* iActionPlaylistDeleteId;
+    Action* iActionPlaylistMove;
     Action* iActionPlaylistsMax;
     Action* iActionTracksMax;
     Action* iActionPlaylistArrays;
