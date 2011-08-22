@@ -110,11 +110,11 @@ protected:
      */
     void EnableActionPlaylistReadArray();
     /**
-     * Signal that the action PlaylistReadMetadata is supported.
+     * Signal that the action PlaylistReadList is supported.
      * The action's availability will be published in the device's service.xml.
-     * PlaylistReadMetadata must be overridden if this is called.
+     * PlaylistReadList must be overridden if this is called.
      */
-    void EnableActionPlaylistReadMetadata();
+    void EnableActionPlaylistReadList();
     /**
      * Signal that the action PlaylistRead is supported.
      * The action's availability will be published in the device's service.xml.
@@ -122,11 +122,23 @@ protected:
      */
     void EnableActionPlaylistRead();
     /**
-     * Signal that the action PlaylistUpdate is supported.
+     * Signal that the action PlaylistSetName is supported.
      * The action's availability will be published in the device's service.xml.
-     * PlaylistUpdate must be overridden if this is called.
+     * PlaylistSetName must be overridden if this is called.
      */
-    void EnableActionPlaylistUpdate();
+    void EnableActionPlaylistSetName();
+    /**
+     * Signal that the action PlaylistSetDescription is supported.
+     * The action's availability will be published in the device's service.xml.
+     * PlaylistSetDescription must be overridden if this is called.
+     */
+    void EnableActionPlaylistSetDescription();
+    /**
+     * Signal that the action PlaylistSetImageId is supported.
+     * The action's availability will be published in the device's service.xml.
+     * PlaylistSetImageId must be overridden if this is called.
+     */
+    void EnableActionPlaylistSetImageId();
     /**
      * Signal that the action PlaylistInsert is supported.
      * The action's availability will be published in the device's service.xml.
@@ -139,6 +151,12 @@ protected:
      * PlaylistDeleteId must be overridden if this is called.
      */
     void EnableActionPlaylistDeleteId();
+    /**
+     * Signal that the action PlaylistMove is supported.
+     * The action's availability will be published in the device's service.xml.
+     * PlaylistMove must be overridden if this is called.
+     */
+    void EnableActionPlaylistMove();
     /**
      * Signal that the action PlaylistsMax is supported.
      * The action's availability will be published in the device's service.xml.
@@ -219,13 +237,13 @@ private:
      */
     virtual void PlaylistReadArray(IInvocationResponse& aResponse, TUint aVersion, TUint aId, IInvocationResponseBinary& aArray);
     /**
-     * PlaylistReadMetadata action.
+     * PlaylistReadList action.
      *
      * Will be called when the device stack receives an invocation of the
-     * PlaylistReadMetadata action for the owning device.
-     * Must be implemented iff EnableActionPlaylistReadMetadata was called.
+     * PlaylistReadList action for the owning device.
+     * Must be implemented iff EnableActionPlaylistReadList was called.
      */
-    virtual void PlaylistReadMetadata(IInvocationResponse& aResponse, TUint aVersion, const Brx& aIdList, IInvocationResponseString& aMetadata);
+    virtual void PlaylistReadList(IInvocationResponse& aResponse, TUint aVersion, const Brx& aIdList, IInvocationResponseString& aPlaylistList);
     /**
      * PlaylistRead action.
      *
@@ -235,13 +253,29 @@ private:
      */
     virtual void PlaylistRead(IInvocationResponse& aResponse, TUint aVersion, TUint aId, IInvocationResponseString& aName, IInvocationResponseString& aDescription, IInvocationResponseUint& aImageId);
     /**
-     * PlaylistUpdate action.
+     * PlaylistSetName action.
      *
      * Will be called when the device stack receives an invocation of the
-     * PlaylistUpdate action for the owning device.
-     * Must be implemented iff EnableActionPlaylistUpdate was called.
+     * PlaylistSetName action for the owning device.
+     * Must be implemented iff EnableActionPlaylistSetName was called.
      */
-    virtual void PlaylistUpdate(IInvocationResponse& aResponse, TUint aVersion, TUint aId, const Brx& aName, const Brx& aDescription, TUint aImageId);
+    virtual void PlaylistSetName(IInvocationResponse& aResponse, TUint aVersion, TUint aId, const Brx& aName);
+    /**
+     * PlaylistSetDescription action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * PlaylistSetDescription action for the owning device.
+     * Must be implemented iff EnableActionPlaylistSetDescription was called.
+     */
+    virtual void PlaylistSetDescription(IInvocationResponse& aResponse, TUint aVersion, TUint aId, const Brx& aDescription);
+    /**
+     * PlaylistSetImageId action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * PlaylistSetImageId action for the owning device.
+     * Must be implemented iff EnableActionPlaylistSetImageId was called.
+     */
+    virtual void PlaylistSetImageId(IInvocationResponse& aResponse, TUint aVersion, TUint aId, TUint aImageId);
     /**
      * PlaylistInsert action.
      *
@@ -258,6 +292,14 @@ private:
      * Must be implemented iff EnableActionPlaylistDeleteId was called.
      */
     virtual void PlaylistDeleteId(IInvocationResponse& aResponse, TUint aVersion, TUint aValue);
+    /**
+     * PlaylistMove action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * PlaylistMove action for the owning device.
+     * Must be implemented iff EnableActionPlaylistMove was called.
+     */
+    virtual void PlaylistMove(IInvocationResponse& aResponse, TUint aVersion, TUint aId, TUint aAfterId);
     /**
      * PlaylistsMax action.
      *
@@ -321,7 +363,7 @@ private:
      * DeleteId action for the owning device.
      * Must be implemented iff EnableActionDeleteId was called.
      */
-    virtual void DeleteId(IInvocationResponse& aResponse, TUint aVersion, TUint aTrackId, TUint aValue);
+    virtual void DeleteId(IInvocationResponse& aResponse, TUint aVersion, TUint aId, TUint aTrackId);
     /**
      * DeleteAll action.
      *
@@ -329,17 +371,20 @@ private:
      * DeleteAll action for the owning device.
      * Must be implemented iff EnableActionDeleteAll was called.
      */
-    virtual void DeleteAll(IInvocationResponse& aResponse, TUint aVersion, TUint aTrackId);
+    virtual void DeleteAll(IInvocationResponse& aResponse, TUint aVersion, TUint aId);
 private:
     DvProviderAvOpenhomeOrgPlaylistManager1();
     void DoMetadata(IDviInvocation& aInvocation, TUint aVersion);
     void DoImagesXml(IDviInvocation& aInvocation, TUint aVersion);
     void DoPlaylistReadArray(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistReadMetadata(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlaylistReadList(IDviInvocation& aInvocation, TUint aVersion);
     void DoPlaylistRead(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistUpdate(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlaylistSetName(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlaylistSetDescription(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlaylistSetImageId(IDviInvocation& aInvocation, TUint aVersion);
     void DoPlaylistInsert(IDviInvocation& aInvocation, TUint aVersion);
     void DoPlaylistDeleteId(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlaylistMove(IDviInvocation& aInvocation, TUint aVersion);
     void DoPlaylistsMax(IDviInvocation& aInvocation, TUint aVersion);
     void DoTracksMax(IDviInvocation& aInvocation, TUint aVersion);
     void DoPlaylistArrays(IDviInvocation& aInvocation, TUint aVersion);

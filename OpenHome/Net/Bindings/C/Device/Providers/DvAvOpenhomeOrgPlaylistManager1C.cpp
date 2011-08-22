@@ -31,11 +31,14 @@ public:
     void EnableActionMetadata(CallbackPlaylistManager1Metadata aCallback, void* aPtr);
     void EnableActionImagesXml(CallbackPlaylistManager1ImagesXml aCallback, void* aPtr);
     void EnableActionPlaylistReadArray(CallbackPlaylistManager1PlaylistReadArray aCallback, void* aPtr);
-    void EnableActionPlaylistReadMetadata(CallbackPlaylistManager1PlaylistReadMetadata aCallback, void* aPtr);
+    void EnableActionPlaylistReadList(CallbackPlaylistManager1PlaylistReadList aCallback, void* aPtr);
     void EnableActionPlaylistRead(CallbackPlaylistManager1PlaylistRead aCallback, void* aPtr);
-    void EnableActionPlaylistUpdate(CallbackPlaylistManager1PlaylistUpdate aCallback, void* aPtr);
+    void EnableActionPlaylistSetName(CallbackPlaylistManager1PlaylistSetName aCallback, void* aPtr);
+    void EnableActionPlaylistSetDescription(CallbackPlaylistManager1PlaylistSetDescription aCallback, void* aPtr);
+    void EnableActionPlaylistSetImageId(CallbackPlaylistManager1PlaylistSetImageId aCallback, void* aPtr);
     void EnableActionPlaylistInsert(CallbackPlaylistManager1PlaylistInsert aCallback, void* aPtr);
     void EnableActionPlaylistDeleteId(CallbackPlaylistManager1PlaylistDeleteId aCallback, void* aPtr);
+    void EnableActionPlaylistMove(CallbackPlaylistManager1PlaylistMove aCallback, void* aPtr);
     void EnableActionPlaylistsMax(CallbackPlaylistManager1PlaylistsMax aCallback, void* aPtr);
     void EnableActionTracksMax(CallbackPlaylistManager1TracksMax aCallback, void* aPtr);
     void EnableActionPlaylistArrays(CallbackPlaylistManager1PlaylistArrays aCallback, void* aPtr);
@@ -49,11 +52,14 @@ private:
     void DoMetadata(IDviInvocation& aInvocation, TUint aVersion);
     void DoImagesXml(IDviInvocation& aInvocation, TUint aVersion);
     void DoPlaylistReadArray(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistReadMetadata(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlaylistReadList(IDviInvocation& aInvocation, TUint aVersion);
     void DoPlaylistRead(IDviInvocation& aInvocation, TUint aVersion);
-    void DoPlaylistUpdate(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlaylistSetName(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlaylistSetDescription(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlaylistSetImageId(IDviInvocation& aInvocation, TUint aVersion);
     void DoPlaylistInsert(IDviInvocation& aInvocation, TUint aVersion);
     void DoPlaylistDeleteId(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlaylistMove(IDviInvocation& aInvocation, TUint aVersion);
     void DoPlaylistsMax(IDviInvocation& aInvocation, TUint aVersion);
     void DoTracksMax(IDviInvocation& aInvocation, TUint aVersion);
     void DoPlaylistArrays(IDviInvocation& aInvocation, TUint aVersion);
@@ -70,16 +76,22 @@ private:
     void* iPtrImagesXml;
     CallbackPlaylistManager1PlaylistReadArray iCallbackPlaylistReadArray;
     void* iPtrPlaylistReadArray;
-    CallbackPlaylistManager1PlaylistReadMetadata iCallbackPlaylistReadMetadata;
-    void* iPtrPlaylistReadMetadata;
+    CallbackPlaylistManager1PlaylistReadList iCallbackPlaylistReadList;
+    void* iPtrPlaylistReadList;
     CallbackPlaylistManager1PlaylistRead iCallbackPlaylistRead;
     void* iPtrPlaylistRead;
-    CallbackPlaylistManager1PlaylistUpdate iCallbackPlaylistUpdate;
-    void* iPtrPlaylistUpdate;
+    CallbackPlaylistManager1PlaylistSetName iCallbackPlaylistSetName;
+    void* iPtrPlaylistSetName;
+    CallbackPlaylistManager1PlaylistSetDescription iCallbackPlaylistSetDescription;
+    void* iPtrPlaylistSetDescription;
+    CallbackPlaylistManager1PlaylistSetImageId iCallbackPlaylistSetImageId;
+    void* iPtrPlaylistSetImageId;
     CallbackPlaylistManager1PlaylistInsert iCallbackPlaylistInsert;
     void* iPtrPlaylistInsert;
     CallbackPlaylistManager1PlaylistDeleteId iCallbackPlaylistDeleteId;
     void* iPtrPlaylistDeleteId;
+    CallbackPlaylistManager1PlaylistMove iCallbackPlaylistMove;
+    void* iPtrPlaylistMove;
     CallbackPlaylistManager1PlaylistsMax iCallbackPlaylistsMax;
     void* iPtrPlaylistsMax;
     CallbackPlaylistManager1TracksMax iCallbackTracksMax;
@@ -215,14 +227,14 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionPlaylistReadArray(Cal
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionPlaylistReadMetadata(CallbackPlaylistManager1PlaylistReadMetadata aCallback, void* aPtr)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionPlaylistReadList(CallbackPlaylistManager1PlaylistReadList aCallback, void* aPtr)
 {
-    iCallbackPlaylistReadMetadata = aCallback;
-    iPtrPlaylistReadMetadata = aPtr;
-    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistReadMetadata");
+    iCallbackPlaylistReadList = aCallback;
+    iPtrPlaylistReadList = aPtr;
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistReadList");
     action->AddInputParameter(new ParameterString("IdList"));
-    action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
-    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadMetadata);
+    action->AddOutputParameter(new ParameterString("PlaylistList"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadList);
     iService->AddAction(action, functor);
 }
 
@@ -239,16 +251,36 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionPlaylistRead(Callback
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionPlaylistUpdate(CallbackPlaylistManager1PlaylistUpdate aCallback, void* aPtr)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionPlaylistSetName(CallbackPlaylistManager1PlaylistSetName aCallback, void* aPtr)
 {
-    iCallbackPlaylistUpdate = aCallback;
-    iPtrPlaylistUpdate = aPtr;
-    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistUpdate");
+    iCallbackPlaylistSetName = aCallback;
+    iPtrPlaylistSetName = aPtr;
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistSetName");
     action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterString("Name"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetName);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionPlaylistSetDescription(CallbackPlaylistManager1PlaylistSetDescription aCallback, void* aPtr)
+{
+    iCallbackPlaylistSetDescription = aCallback;
+    iPtrPlaylistSetDescription = aPtr;
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistSetDescription");
+    action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterString("Description"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetDescription);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionPlaylistSetImageId(CallbackPlaylistManager1PlaylistSetImageId aCallback, void* aPtr)
+{
+    iCallbackPlaylistSetImageId = aCallback;
+    iPtrPlaylistSetImageId = aPtr;
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistSetImageId");
+    action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("ImageId"));
-    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistUpdate);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetImageId);
     iService->AddAction(action, functor);
 }
 
@@ -273,6 +305,17 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionPlaylistDeleteId(Call
     OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistDeleteId");
     action->AddInputParameter(new ParameterUint("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistDeleteId);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionPlaylistMove(CallbackPlaylistManager1PlaylistMove aCallback, void* aPtr)
+{
+    iCallbackPlaylistMove = aCallback;
+    iPtrPlaylistMove = aPtr;
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistMove");
+    action->AddInputParameter(new ParameterUint("Id"));
+    action->AddInputParameter(new ParameterUint("AfterId"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistMove);
     iService->AddAction(action, functor);
 }
 
@@ -362,8 +405,8 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionDeleteId(CallbackPlay
     iCallbackDeleteId = aCallback;
     iPtrDeleteId = aPtr;
     OpenHome::Net::Action* action = new OpenHome::Net::Action("DeleteId");
+    action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("TrackId"));
-    action->AddInputParameter(new ParameterUint("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteId);
     iService->AddAction(action, functor);
 }
@@ -373,7 +416,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::EnableActionDeleteAll(CallbackPla
     iCallbackDeleteAll = aCallback;
     iPtrDeleteAll = aPtr;
     OpenHome::Net::Action* action = new OpenHome::Net::Action("DeleteAll");
-    action->AddInputParameter(new ParameterUint("TrackId"));
+    action->AddInputParameter(new ParameterUint("Id"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteAll);
     iService->AddAction(action, functor);
 }
@@ -441,25 +484,25 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadArray(IDviInvocatio
     resp.End();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadMetadata(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistReadList(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz IdList;
     aInvocation.InvocationReadString("IdList", IdList);
     aInvocation.InvocationReadEnd();
     InvocationResponse resp(aInvocation);
-    char* Metadata;
-    ASSERT(iCallbackPlaylistReadMetadata != NULL);
-    if (0 != iCallbackPlaylistReadMetadata(iPtrPlaylistReadMetadata, aVersion, (const char*)IdList.Ptr(), &Metadata)) {
+    char* PlaylistList;
+    ASSERT(iCallbackPlaylistReadList != NULL);
+    if (0 != iCallbackPlaylistReadList(iPtrPlaylistReadList, aVersion, (const char*)IdList.Ptr(), &PlaylistList)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respMetadata(aInvocation, "Metadata");
+    InvocationResponseString respPlaylistList(aInvocation, "PlaylistList");
     resp.Start();
-    Brhz bufMetadata((const TChar*)Metadata);
-    OhNetFreeExternal(Metadata);
-    respMetadata.Write(bufMetadata);
-    respMetadata.WriteFlush();
+    Brhz bufPlaylistList((const TChar*)PlaylistList);
+    OhNetFreeExternal(PlaylistList);
+    respPlaylistList.Write(bufPlaylistList);
+    respPlaylistList.WriteFlush();
     resp.End();
 }
 
@@ -493,19 +536,49 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistRead(IDviInvocation& aI
     resp.End();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistUpdate(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     Brhz Name;
     aInvocation.InvocationReadString("Name", Name);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
+    ASSERT(iCallbackPlaylistSetName != NULL);
+    if (0 != iCallbackPlaylistSetName(iPtrPlaylistSetName, aVersion, Id, (const char*)Name.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
+        return;
+    }
+    resp.Start();
+    resp.End();
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetDescription(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    TUint Id = aInvocation.InvocationReadUint("Id");
     Brhz Description;
     aInvocation.InvocationReadString("Description", Description);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
+    ASSERT(iCallbackPlaylistSetDescription != NULL);
+    if (0 != iCallbackPlaylistSetDescription(iPtrPlaylistSetDescription, aVersion, Id, (const char*)Description.Ptr())) {
+        resp.Error(502, Brn("Action failed"));
+        return;
+    }
+    resp.Start();
+    resp.End();
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistSetImageId(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    TUint Id = aInvocation.InvocationReadUint("Id");
     TUint ImageId = aInvocation.InvocationReadUint("ImageId");
     aInvocation.InvocationReadEnd();
     InvocationResponse resp(aInvocation);
-    ASSERT(iCallbackPlaylistUpdate != NULL);
-    if (0 != iCallbackPlaylistUpdate(iPtrPlaylistUpdate, aVersion, Id, (const char*)Name.Ptr(), (const char*)Description.Ptr(), ImageId)) {
+    ASSERT(iCallbackPlaylistSetImageId != NULL);
+    if (0 != iCallbackPlaylistSetImageId(iPtrPlaylistSetImageId, aVersion, Id, ImageId)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
@@ -544,6 +617,22 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistDeleteId(IDviInvocation
     InvocationResponse resp(aInvocation);
     ASSERT(iCallbackPlaylistDeleteId != NULL);
     if (0 != iCallbackPlaylistDeleteId(iPtrPlaylistDeleteId, aVersion, Value)) {
+        resp.Error(502, Brn("Action failed"));
+        return;
+    }
+    resp.Start();
+    resp.End();
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1C::DoPlaylistMove(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    TUint Id = aInvocation.InvocationReadUint("Id");
+    TUint AfterId = aInvocation.InvocationReadUint("AfterId");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
+    ASSERT(iCallbackPlaylistMove != NULL);
+    if (0 != iCallbackPlaylistMove(iPtrPlaylistMove, aVersion, Id, AfterId)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
@@ -707,12 +796,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoInsert(IDviInvocation& aInvocat
 void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteId(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
+    TUint Id = aInvocation.InvocationReadUint("Id");
     TUint TrackId = aInvocation.InvocationReadUint("TrackId");
-    TUint Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
     InvocationResponse resp(aInvocation);
     ASSERT(iCallbackDeleteId != NULL);
-    if (0 != iCallbackDeleteId(iPtrDeleteId, aVersion, TrackId, Value)) {
+    if (0 != iCallbackDeleteId(iPtrDeleteId, aVersion, Id, TrackId)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
@@ -723,11 +812,11 @@ void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteId(IDviInvocation& aInvoc
 void DvProviderAvOpenhomeOrgPlaylistManager1C::DoDeleteAll(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
-    TUint TrackId = aInvocation.InvocationReadUint("TrackId");
+    TUint Id = aInvocation.InvocationReadUint("Id");
     aInvocation.InvocationReadEnd();
     InvocationResponse resp(aInvocation);
     ASSERT(iCallbackDeleteAll != NULL);
-    if (0 != iCallbackDeleteAll(iPtrDeleteAll, aVersion, TrackId)) {
+    if (0 != iCallbackDeleteAll(iPtrDeleteAll, aVersion, Id)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
@@ -762,9 +851,9 @@ void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistReadArra
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnableActionPlaylistReadArray(aCallback, aPtr);
 }
 
-void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistReadMetadata(THandle aProvider, CallbackPlaylistManager1PlaylistReadMetadata aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistReadList(THandle aProvider, CallbackPlaylistManager1PlaylistReadList aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnableActionPlaylistReadMetadata(aCallback, aPtr);
+    reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnableActionPlaylistReadList(aCallback, aPtr);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistRead(THandle aProvider, CallbackPlaylistManager1PlaylistRead aCallback, void* aPtr)
@@ -772,9 +861,19 @@ void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistRead(THa
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnableActionPlaylistRead(aCallback, aPtr);
 }
 
-void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistUpdate(THandle aProvider, CallbackPlaylistManager1PlaylistUpdate aCallback, void* aPtr)
+void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetName(THandle aProvider, CallbackPlaylistManager1PlaylistSetName aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnableActionPlaylistUpdate(aCallback, aPtr);
+    reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnableActionPlaylistSetName(aCallback, aPtr);
+}
+
+void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetDescription(THandle aProvider, CallbackPlaylistManager1PlaylistSetDescription aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnableActionPlaylistSetDescription(aCallback, aPtr);
+}
+
+void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetImageId(THandle aProvider, CallbackPlaylistManager1PlaylistSetImageId aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnableActionPlaylistSetImageId(aCallback, aPtr);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistInsert(THandle aProvider, CallbackPlaylistManager1PlaylistInsert aCallback, void* aPtr)
@@ -785,6 +884,11 @@ void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistInsert(T
 void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistDeleteId(THandle aProvider, CallbackPlaylistManager1PlaylistDeleteId aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnableActionPlaylistDeleteId(aCallback, aPtr);
+}
+
+void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistMove(THandle aProvider, CallbackPlaylistManager1PlaylistMove aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderAvOpenhomeOrgPlaylistManager1C*>(aProvider)->EnableActionPlaylistMove(aCallback, aPtr);
 }
 
 void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistsMax(THandle aProvider, CallbackPlaylistManager1PlaylistsMax aCallback, void* aPtr)

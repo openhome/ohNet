@@ -932,6 +932,7 @@ java_classes = $(objdir)org/openhome/net/controlpoint/Argument.class \
 			   $(objdir)org/openhome/net/controlpoint/SyncProxyAction.class \
 			   $(objdir)org/openhome/net/controlpoint/tests/TestBasicCp.class \
 			   $(objdir)org/openhome/net/controlpoint/tests/TestCpDeviceDv.class \
+			   $(objdir)org/openhome/net/controlpoint/tests/TestPerformanceCp.class \
 			   $(objdir)org/openhome/net/controlpoint/tests/TestProxy.class \
 			   $(objdir)org/openhome/net/core/Action.class \
 			   $(objdir)org/openhome/net/core/CombinedStack.class \
@@ -976,7 +977,8 @@ java_classes = $(objdir)org/openhome/net/controlpoint/Argument.class \
 			   $(objdir)org/openhome/net/device/tests/DeviceBasic.class \
 			   $(objdir)org/openhome/net/device/tests/TestBasicDv.class \
 			   $(objdir)org/openhome/net/device/tests/TestDvDevice.class \
-			   
+			   $(objdir)org/openhome/net/device/tests/TestPerformanceDv.class \
+
 ohNetJava : make_obj_dir $(objdir)ohnet.jar
 $(objdir)ohnet.jar : $(java_classes)
 	$(jar) $(jarflags) $(objdir)ohnet.jar -C $(objdir) org
@@ -1040,6 +1042,8 @@ $(objdir)org/openhome/net/controlpoint/tests/TestBasicCp.class : $(publicjavadir
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/tests/TestBasicCp.java
 $(objdir)org/openhome/net/controlpoint/tests/TestCpDeviceDv.class : $(publicjavadir)org/openhome/net/controlpoint/tests/TestCpDeviceDv.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/tests/TestCpDeviceDv.java
+$(objdir)org/openhome/net/controlpoint/tests/TestPerformanceCp.class : $(publicjavadir)org/openhome/net/controlpoint/tests/TestPerformanceCp.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/tests/TestPerformanceCp.java
 $(objdir)org/openhome/net/controlpoint/tests/TestProxy.class : $(publicjavadir)org/openhome/net/controlpoint/tests/TestProxy.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/controlpoint/tests/TestProxy.java
 $(objdir)org/openhome/net/core/Action.class : $(publicjavadir)org/openhome/net/core/Action.java
@@ -1128,7 +1132,9 @@ $(objdir)org/openhome/net/device/tests/TestBasicDv.class : $(publicjavadir)org/o
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/device/tests/TestBasicDv.java
 $(objdir)org/openhome/net/device/tests/TestDvDevice.class : $(publicjavadir)org/openhome/net/device/tests/TestDvDevice.java
 	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/device/tests/TestDvDevice.java
-	
+$(objdir)org/openhome/net/device/tests/TestPerformanceDv.class : $(publicjavadir)org/openhome/net/device/tests/TestPerformanceDv.java
+	$(javac) -classpath $(publicjavadir) -d $(objdir) $(publicjavadir)org/openhome/net/device/tests/TestPerformanceDv.java
+
 ohNetJavaSrc : $(objdir)ohnet-src.jar
 $(objdir)ohnet-src.jar :
 	$(jar) $(jarflags) $(objdir)ohnet-src.jar -C $(publicjavadir) .

@@ -19,21 +19,30 @@ namespace OpenHome.Net.ControlPoint.Proxies
         void SyncPlaylistReadArray(uint aId, out byte[] aArray);
         void BeginPlaylistReadArray(uint aId, CpProxy.CallbackAsyncComplete aCallback);
         void EndPlaylistReadArray(IntPtr aAsyncHandle, out byte[] aArray);
-        void SyncPlaylistReadMetadata(String aIdList, out String aMetadata);
-        void BeginPlaylistReadMetadata(String aIdList, CpProxy.CallbackAsyncComplete aCallback);
-        void EndPlaylistReadMetadata(IntPtr aAsyncHandle, out String aMetadata);
+        void SyncPlaylistReadList(String aIdList, out String aPlaylistList);
+        void BeginPlaylistReadList(String aIdList, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPlaylistReadList(IntPtr aAsyncHandle, out String aPlaylistList);
         void SyncPlaylistRead(uint aId, out String aName, out String aDescription, out uint aImageId);
         void BeginPlaylistRead(uint aId, CpProxy.CallbackAsyncComplete aCallback);
         void EndPlaylistRead(IntPtr aAsyncHandle, out String aName, out String aDescription, out uint aImageId);
-        void SyncPlaylistUpdate(uint aId, String aName, String aDescription, uint aImageId);
-        void BeginPlaylistUpdate(uint aId, String aName, String aDescription, uint aImageId, CpProxy.CallbackAsyncComplete aCallback);
-        void EndPlaylistUpdate(IntPtr aAsyncHandle);
+        void SyncPlaylistSetName(uint aId, String aName);
+        void BeginPlaylistSetName(uint aId, String aName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPlaylistSetName(IntPtr aAsyncHandle);
+        void SyncPlaylistSetDescription(uint aId, String aDescription);
+        void BeginPlaylistSetDescription(uint aId, String aDescription, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPlaylistSetDescription(IntPtr aAsyncHandle);
+        void SyncPlaylistSetImageId(uint aId, uint aImageId);
+        void BeginPlaylistSetImageId(uint aId, uint aImageId, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPlaylistSetImageId(IntPtr aAsyncHandle);
         void SyncPlaylistInsert(uint aAfterId, String aName, String aDescription, uint aImageId, out uint aNewId);
         void BeginPlaylistInsert(uint aAfterId, String aName, String aDescription, uint aImageId, CpProxy.CallbackAsyncComplete aCallback);
         void EndPlaylistInsert(IntPtr aAsyncHandle, out uint aNewId);
         void SyncPlaylistDeleteId(uint aValue);
         void BeginPlaylistDeleteId(uint aValue, CpProxy.CallbackAsyncComplete aCallback);
         void EndPlaylistDeleteId(IntPtr aAsyncHandle);
+        void SyncPlaylistMove(uint aId, uint aAfterId);
+        void BeginPlaylistMove(uint aId, uint aAfterId, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPlaylistMove(IntPtr aAsyncHandle);
         void SyncPlaylistsMax(out uint aValue);
         void BeginPlaylistsMax(CpProxy.CallbackAsyncComplete aCallback);
         void EndPlaylistsMax(IntPtr aAsyncHandle, out uint aValue);
@@ -55,11 +64,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         void SyncInsert(uint aId, uint aAfterTrackId, String aUdn, String aMetadataId, out uint aNewTrackId);
         void BeginInsert(uint aId, uint aAfterTrackId, String aUdn, String aMetadataId, CpProxy.CallbackAsyncComplete aCallback);
         void EndInsert(IntPtr aAsyncHandle, out uint aNewTrackId);
-        void SyncDeleteId(uint aTrackId, uint aValue);
-        void BeginDeleteId(uint aTrackId, uint aValue, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncDeleteId(uint aId, uint aTrackId);
+        void BeginDeleteId(uint aId, uint aTrackId, CpProxy.CallbackAsyncComplete aCallback);
         void EndDeleteId(IntPtr aAsyncHandle);
-        void SyncDeleteAll(uint aTrackId);
-        void BeginDeleteAll(uint aTrackId, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncDeleteAll(uint aId);
+        void BeginDeleteAll(uint aId, CpProxy.CallbackAsyncComplete aCallback);
         void EndDeleteAll(IntPtr aAsyncHandle);
         void SetPropertyMetadataChanged(System.Action aMetadataChanged);
         String PropertyMetadata();
@@ -132,22 +141,22 @@ namespace OpenHome.Net.ControlPoint.Proxies
         }
     };
 
-    internal class SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1 : SyncProxyAction
+    internal class SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1 : SyncProxyAction
     {
         private CpProxyAvOpenhomeOrgPlaylistManager1 iService;
-        private String iMetadata;
+        private String iPlaylistList;
 
-        public SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
+        public SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
         {
             iService = aProxy;
         }
-        public String Metadata()
+        public String PlaylistList()
         {
-            return iMetadata;
+            return iPlaylistList;
         }
         protected override void CompleteRequest(IntPtr aAsyncHandle)
         {
-            iService.EndPlaylistReadMetadata(aAsyncHandle, out iMetadata);
+            iService.EndPlaylistReadList(aAsyncHandle, out iPlaylistList);
         }
     };
 
@@ -180,17 +189,45 @@ namespace OpenHome.Net.ControlPoint.Proxies
         }
     };
 
-    internal class SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1 : SyncProxyAction
+    internal class SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1 : SyncProxyAction
     {
         private CpProxyAvOpenhomeOrgPlaylistManager1 iService;
 
-        public SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
+        public SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
         {
             iService = aProxy;
         }
         protected override void CompleteRequest(IntPtr aAsyncHandle)
         {
-            iService.EndPlaylistUpdate(aAsyncHandle);
+            iService.EndPlaylistSetName(aAsyncHandle);
+        }
+    };
+
+    internal class SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1 : SyncProxyAction
+    {
+        private CpProxyAvOpenhomeOrgPlaylistManager1 iService;
+
+        public SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndPlaylistSetDescription(aAsyncHandle);
+        }
+    };
+
+    internal class SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1 : SyncProxyAction
+    {
+        private CpProxyAvOpenhomeOrgPlaylistManager1 iService;
+
+        public SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndPlaylistSetImageId(aAsyncHandle);
         }
     };
 
@@ -224,6 +261,20 @@ namespace OpenHome.Net.ControlPoint.Proxies
         protected override void CompleteRequest(IntPtr aAsyncHandle)
         {
             iService.EndPlaylistDeleteId(aAsyncHandle);
+        }
+    };
+
+    internal class SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1 : SyncProxyAction
+    {
+        private CpProxyAvOpenhomeOrgPlaylistManager1 iService;
+
+        public SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndPlaylistMove(aAsyncHandle);
         }
     };
 
@@ -406,11 +457,14 @@ namespace OpenHome.Net.ControlPoint.Proxies
         private OpenHome.Net.Core.Action iActionMetadata;
         private OpenHome.Net.Core.Action iActionImagesXml;
         private OpenHome.Net.Core.Action iActionPlaylistReadArray;
-        private OpenHome.Net.Core.Action iActionPlaylistReadMetadata;
+        private OpenHome.Net.Core.Action iActionPlaylistReadList;
         private OpenHome.Net.Core.Action iActionPlaylistRead;
-        private OpenHome.Net.Core.Action iActionPlaylistUpdate;
+        private OpenHome.Net.Core.Action iActionPlaylistSetName;
+        private OpenHome.Net.Core.Action iActionPlaylistSetDescription;
+        private OpenHome.Net.Core.Action iActionPlaylistSetImageId;
         private OpenHome.Net.Core.Action iActionPlaylistInsert;
         private OpenHome.Net.Core.Action iActionPlaylistDeleteId;
+        private OpenHome.Net.Core.Action iActionPlaylistMove;
         private OpenHome.Net.Core.Action iActionPlaylistsMax;
         private OpenHome.Net.Core.Action iActionTracksMax;
         private OpenHome.Net.Core.Action iActionPlaylistArrays;
@@ -459,11 +513,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
             param = new ParameterBinary("Array");
             iActionPlaylistReadArray.AddOutputParameter(param);
 
-            iActionPlaylistReadMetadata = new OpenHome.Net.Core.Action("PlaylistReadMetadata");
+            iActionPlaylistReadList = new OpenHome.Net.Core.Action("PlaylistReadList");
             param = new ParameterString("IdList", allowedValues);
-            iActionPlaylistReadMetadata.AddInputParameter(param);
-            param = new ParameterString("Metadata", allowedValues);
-            iActionPlaylistReadMetadata.AddOutputParameter(param);
+            iActionPlaylistReadList.AddInputParameter(param);
+            param = new ParameterString("PlaylistList", allowedValues);
+            iActionPlaylistReadList.AddOutputParameter(param);
 
             iActionPlaylistRead = new OpenHome.Net.Core.Action("PlaylistRead");
             param = new ParameterUint("Id");
@@ -475,15 +529,23 @@ namespace OpenHome.Net.ControlPoint.Proxies
             param = new ParameterUint("ImageId");
             iActionPlaylistRead.AddOutputParameter(param);
 
-            iActionPlaylistUpdate = new OpenHome.Net.Core.Action("PlaylistUpdate");
+            iActionPlaylistSetName = new OpenHome.Net.Core.Action("PlaylistSetName");
             param = new ParameterUint("Id");
-            iActionPlaylistUpdate.AddInputParameter(param);
+            iActionPlaylistSetName.AddInputParameter(param);
             param = new ParameterString("Name", allowedValues);
-            iActionPlaylistUpdate.AddInputParameter(param);
+            iActionPlaylistSetName.AddInputParameter(param);
+
+            iActionPlaylistSetDescription = new OpenHome.Net.Core.Action("PlaylistSetDescription");
+            param = new ParameterUint("Id");
+            iActionPlaylistSetDescription.AddInputParameter(param);
             param = new ParameterString("Description", allowedValues);
-            iActionPlaylistUpdate.AddInputParameter(param);
+            iActionPlaylistSetDescription.AddInputParameter(param);
+
+            iActionPlaylistSetImageId = new OpenHome.Net.Core.Action("PlaylistSetImageId");
+            param = new ParameterUint("Id");
+            iActionPlaylistSetImageId.AddInputParameter(param);
             param = new ParameterUint("ImageId");
-            iActionPlaylistUpdate.AddInputParameter(param);
+            iActionPlaylistSetImageId.AddInputParameter(param);
 
             iActionPlaylistInsert = new OpenHome.Net.Core.Action("PlaylistInsert");
             param = new ParameterUint("AfterId");
@@ -500,6 +562,12 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionPlaylistDeleteId = new OpenHome.Net.Core.Action("PlaylistDeleteId");
             param = new ParameterUint("Value");
             iActionPlaylistDeleteId.AddInputParameter(param);
+
+            iActionPlaylistMove = new OpenHome.Net.Core.Action("PlaylistMove");
+            param = new ParameterUint("Id");
+            iActionPlaylistMove.AddInputParameter(param);
+            param = new ParameterUint("AfterId");
+            iActionPlaylistMove.AddInputParameter(param);
 
             iActionPlaylistsMax = new OpenHome.Net.Core.Action("PlaylistsMax");
             param = new ParameterUint("Value");
@@ -552,13 +620,13 @@ namespace OpenHome.Net.ControlPoint.Proxies
             iActionInsert.AddOutputParameter(param);
 
             iActionDeleteId = new OpenHome.Net.Core.Action("DeleteId");
-            param = new ParameterUint("TrackId");
+            param = new ParameterUint("Id");
             iActionDeleteId.AddInputParameter(param);
-            param = new ParameterUint("Value");
+            param = new ParameterUint("TrackId");
             iActionDeleteId.AddInputParameter(param);
 
             iActionDeleteAll = new OpenHome.Net.Core.Action("DeleteAll");
-            param = new ParameterUint("TrackId");
+            param = new ParameterUint("Id");
             iActionDeleteAll.AddInputParameter(param);
 
             iMetadata = new PropertyString("Metadata", MetadataPropertyChanged);
@@ -728,14 +796,14 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aIdList"></param>
-        /// <param name="aMetadata"></param>
-        public void SyncPlaylistReadMetadata(String aIdList, out String aMetadata)
+        /// <param name="aPlaylistList"></param>
+        public void SyncPlaylistReadList(String aIdList, out String aPlaylistList)
         {
-            SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1(this);
-            BeginPlaylistReadMetadata(aIdList, sync.AsyncComplete());
+            SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1(this);
+            BeginPlaylistReadList(aIdList, sync.AsyncComplete());
             sync.Wait();
             sync.ReportError();
-            aMetadata = sync.Metadata();
+            aPlaylistList = sync.PlaylistList();
         }
 
         /// <summary>
@@ -743,17 +811,17 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Returns immediately and will run the client-specified callback when the action
         /// later completes.  Any output arguments can then be retrieved by calling
-        /// EndPlaylistReadMetadata().</remarks>
+        /// EndPlaylistReadList().</remarks>
         /// <param name="aIdList"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginPlaylistReadMetadata(String aIdList, CallbackAsyncComplete aCallback)
+        public void BeginPlaylistReadList(String aIdList, CallbackAsyncComplete aCallback)
         {
-            Invocation invocation = iService.Invocation(iActionPlaylistReadMetadata, aCallback);
+            Invocation invocation = iService.Invocation(iActionPlaylistReadList, aCallback);
             int inIndex = 0;
-            invocation.AddInput(new ArgumentString((ParameterString)iActionPlaylistReadMetadata.InputParameter(inIndex++), aIdList));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionPlaylistReadList.InputParameter(inIndex++), aIdList));
             int outIndex = 0;
-            invocation.AddOutput(new ArgumentString((ParameterString)iActionPlaylistReadMetadata.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionPlaylistReadList.OutputParameter(outIndex++)));
             iService.InvokeAction(invocation);
         }
 
@@ -762,15 +830,15 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        /// <param name="aMetadata"></param>
-        public void EndPlaylistReadMetadata(IntPtr aAsyncHandle, out String aMetadata)
+        /// <param name="aPlaylistList"></param>
+        public void EndPlaylistReadList(IntPtr aAsyncHandle, out String aPlaylistList)
         {
             if (Invocation.Error(aAsyncHandle))
             {
                 throw new ProxyError();
             }
             uint index = 0;
-            aMetadata = Invocation.OutputString(aAsyncHandle, index++);
+            aPlaylistList = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -841,12 +909,10 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aId"></param>
         /// <param name="aName"></param>
-        /// <param name="aDescription"></param>
-        /// <param name="aImageId"></param>
-        public void SyncPlaylistUpdate(uint aId, String aName, String aDescription, uint aImageId)
+        public void SyncPlaylistSetName(uint aId, String aName)
         {
-            SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1(this);
-            BeginPlaylistUpdate(aId, aName, aDescription, aImageId, sync.AsyncComplete());
+            SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1(this);
+            BeginPlaylistSetName(aId, aName, sync.AsyncComplete());
             sync.Wait();
             sync.ReportError();
         }
@@ -856,21 +922,17 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Returns immediately and will run the client-specified callback when the action
         /// later completes.  Any output arguments can then be retrieved by calling
-        /// EndPlaylistUpdate().</remarks>
+        /// EndPlaylistSetName().</remarks>
         /// <param name="aId"></param>
         /// <param name="aName"></param>
-        /// <param name="aDescription"></param>
-        /// <param name="aImageId"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginPlaylistUpdate(uint aId, String aName, String aDescription, uint aImageId, CallbackAsyncComplete aCallback)
+        public void BeginPlaylistSetName(uint aId, String aName, CallbackAsyncComplete aCallback)
         {
-            Invocation invocation = iService.Invocation(iActionPlaylistUpdate, aCallback);
+            Invocation invocation = iService.Invocation(iActionPlaylistSetName, aCallback);
             int inIndex = 0;
-            invocation.AddInput(new ArgumentUint((ParameterUint)iActionPlaylistUpdate.InputParameter(inIndex++), aId));
-            invocation.AddInput(new ArgumentString((ParameterString)iActionPlaylistUpdate.InputParameter(inIndex++), aName));
-            invocation.AddInput(new ArgumentString((ParameterString)iActionPlaylistUpdate.InputParameter(inIndex++), aDescription));
-            invocation.AddInput(new ArgumentUint((ParameterUint)iActionPlaylistUpdate.InputParameter(inIndex++), aImageId));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionPlaylistSetName.InputParameter(inIndex++), aId));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionPlaylistSetName.InputParameter(inIndex++), aName));
             iService.InvokeAction(invocation);
         }
 
@@ -879,7 +941,101 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public void EndPlaylistUpdate(IntPtr aAsyncHandle)
+        public void EndPlaylistSetName(IntPtr aAsyncHandle)
+        {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
+        }
+
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aId"></param>
+        /// <param name="aDescription"></param>
+        public void SyncPlaylistSetDescription(uint aId, String aDescription)
+        {
+            SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1(this);
+            BeginPlaylistSetDescription(aId, aDescription, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+        }
+
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndPlaylistSetDescription().</remarks>
+        /// <param name="aId"></param>
+        /// <param name="aDescription"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
+        public void BeginPlaylistSetDescription(uint aId, String aDescription, CallbackAsyncComplete aCallback)
+        {
+            Invocation invocation = iService.Invocation(iActionPlaylistSetDescription, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionPlaylistSetDescription.InputParameter(inIndex++), aId));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionPlaylistSetDescription.InputParameter(inIndex++), aDescription));
+            iService.InvokeAction(invocation);
+        }
+
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        public void EndPlaylistSetDescription(IntPtr aAsyncHandle)
+        {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
+        }
+
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aId"></param>
+        /// <param name="aImageId"></param>
+        public void SyncPlaylistSetImageId(uint aId, uint aImageId)
+        {
+            SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1(this);
+            BeginPlaylistSetImageId(aId, aImageId, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+        }
+
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndPlaylistSetImageId().</remarks>
+        /// <param name="aId"></param>
+        /// <param name="aImageId"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
+        public void BeginPlaylistSetImageId(uint aId, uint aImageId, CallbackAsyncComplete aCallback)
+        {
+            Invocation invocation = iService.Invocation(iActionPlaylistSetImageId, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionPlaylistSetImageId.InputParameter(inIndex++), aId));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionPlaylistSetImageId.InputParameter(inIndex++), aImageId));
+            iService.InvokeAction(invocation);
+        }
+
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        public void EndPlaylistSetImageId(IntPtr aAsyncHandle)
         {
             if (Invocation.Error(aAsyncHandle))
             {
@@ -984,6 +1140,53 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public void EndPlaylistDeleteId(IntPtr aAsyncHandle)
+        {
+            if (Invocation.Error(aAsyncHandle))
+            {
+                throw new ProxyError();
+            }
+        }
+
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aId"></param>
+        /// <param name="aAfterId"></param>
+        public void SyncPlaylistMove(uint aId, uint aAfterId)
+        {
+            SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1(this);
+            BeginPlaylistMove(aId, aAfterId, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+        }
+
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndPlaylistMove().</remarks>
+        /// <param name="aId"></param>
+        /// <param name="aAfterId"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
+        public void BeginPlaylistMove(uint aId, uint aAfterId, CallbackAsyncComplete aCallback)
+        {
+            Invocation invocation = iService.Invocation(iActionPlaylistMove, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionPlaylistMove.InputParameter(inIndex++), aId));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionPlaylistMove.InputParameter(inIndex++), aAfterId));
+            iService.InvokeAction(invocation);
+        }
+
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        public void EndPlaylistMove(IntPtr aAsyncHandle)
         {
             if (Invocation.Error(aAsyncHandle))
             {
@@ -1366,12 +1569,12 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
+        /// <param name="aId"></param>
         /// <param name="aTrackId"></param>
-        /// <param name="aValue"></param>
-        public void SyncDeleteId(uint aTrackId, uint aValue)
+        public void SyncDeleteId(uint aId, uint aTrackId)
         {
             SyncDeleteIdAvOpenhomeOrgPlaylistManager1 sync = new SyncDeleteIdAvOpenhomeOrgPlaylistManager1(this);
-            BeginDeleteId(aTrackId, aValue, sync.AsyncComplete());
+            BeginDeleteId(aId, aTrackId, sync.AsyncComplete());
             sync.Wait();
             sync.ReportError();
         }
@@ -1382,16 +1585,16 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>Returns immediately and will run the client-specified callback when the action
         /// later completes.  Any output arguments can then be retrieved by calling
         /// EndDeleteId().</remarks>
+        /// <param name="aId"></param>
         /// <param name="aTrackId"></param>
-        /// <param name="aValue"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginDeleteId(uint aTrackId, uint aValue, CallbackAsyncComplete aCallback)
+        public void BeginDeleteId(uint aId, uint aTrackId, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionDeleteId, aCallback);
             int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionDeleteId.InputParameter(inIndex++), aId));
             invocation.AddInput(new ArgumentUint((ParameterUint)iActionDeleteId.InputParameter(inIndex++), aTrackId));
-            invocation.AddInput(new ArgumentUint((ParameterUint)iActionDeleteId.InputParameter(inIndex++), aValue));
             iService.InvokeAction(invocation);
         }
 
@@ -1413,11 +1616,11 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        /// <param name="aTrackId"></param>
-        public void SyncDeleteAll(uint aTrackId)
+        /// <param name="aId"></param>
+        public void SyncDeleteAll(uint aId)
         {
             SyncDeleteAllAvOpenhomeOrgPlaylistManager1 sync = new SyncDeleteAllAvOpenhomeOrgPlaylistManager1(this);
-            BeginDeleteAll(aTrackId, sync.AsyncComplete());
+            BeginDeleteAll(aId, sync.AsyncComplete());
             sync.Wait();
             sync.ReportError();
         }
@@ -1428,14 +1631,14 @@ namespace OpenHome.Net.ControlPoint.Proxies
         /// <remarks>Returns immediately and will run the client-specified callback when the action
         /// later completes.  Any output arguments can then be retrieved by calling
         /// EndDeleteAll().</remarks>
-        /// <param name="aTrackId"></param>
+        /// <param name="aId"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginDeleteAll(uint aTrackId, CallbackAsyncComplete aCallback)
+        public void BeginDeleteAll(uint aId, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionDeleteAll, aCallback);
             int inIndex = 0;
-            invocation.AddInput(new ArgumentUint((ParameterUint)iActionDeleteAll.InputParameter(inIndex++), aTrackId));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionDeleteAll.InputParameter(inIndex++), aId));
             iService.InvokeAction(invocation);
         }
 
@@ -1700,11 +1903,14 @@ namespace OpenHome.Net.ControlPoint.Proxies
                 iActionMetadata.Dispose();
                 iActionImagesXml.Dispose();
                 iActionPlaylistReadArray.Dispose();
-                iActionPlaylistReadMetadata.Dispose();
+                iActionPlaylistReadList.Dispose();
                 iActionPlaylistRead.Dispose();
-                iActionPlaylistUpdate.Dispose();
+                iActionPlaylistSetName.Dispose();
+                iActionPlaylistSetDescription.Dispose();
+                iActionPlaylistSetImageId.Dispose();
                 iActionPlaylistInsert.Dispose();
                 iActionPlaylistDeleteId.Dispose();
+                iActionPlaylistMove.Dispose();
                 iActionPlaylistsMax.Dispose();
                 iActionTracksMax.Dispose();
                 iActionPlaylistArrays.Dispose();

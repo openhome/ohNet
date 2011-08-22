@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Eventing any property</title>
+
+  <para>The <code>CpProxy</code> base class provides a callback to let your
+  Control Point application respond when any of the Proxy's properties are
+  updated. This callback does not discriminate between properties and will run
+  whenever one or more of the properties change their state.</para>
+
+  <para>This is especially useful if you do not need to know which specific
+  property has changed, or if your application executes the same code when
+  several different properties change.</para>
+
+  <para>You can update your Control Point application when any property
+  updates using the <code>SetPropertyChanged</code> function. </para>
+
+  <para>For example:</para>
+
+  <para><programlisting>Functor propertyChangedCallback = MakeFunctor(*this, 
+    &amp;MyClass::NonStaticMemberFunction); 
+proxy-&gt;SetPropertyChanged(propertyChangedCallback);</programlisting></para>
+</section>

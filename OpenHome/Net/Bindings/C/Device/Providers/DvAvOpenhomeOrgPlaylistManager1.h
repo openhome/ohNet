@@ -51,16 +51,16 @@ typedef int32_t (STDCALL *CallbackPlaylistManager1ImagesXml)(void* aPtr, uint32_
  */
 typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistReadArray)(void* aPtr, uint32_t aVersion, uint32_t aId, char** aArray, uint32_t* aArrayLen);
 /**
- * Callback which runs when the PlaylistReadMetadata action is invoked
+ * Callback which runs when the PlaylistReadList action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistReadMetadata
+ * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistReadList
  * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
  * @param[in]  aIdList
- * @param[out] aMetadata
+ * @param[out] aPlaylistList
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistReadMetadata)(void* aPtr, uint32_t aVersion, const char* aIdList, char** aMetadata);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistReadList)(void* aPtr, uint32_t aVersion, const char* aIdList, char** aPlaylistList);
 /**
  * Callback which runs when the PlaylistRead action is invoked
  *
@@ -75,18 +75,38 @@ typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistReadMetadata)(void* aP
  */
 typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistRead)(void* aPtr, uint32_t aVersion, uint32_t aId, char** aName, char** aDescription, uint32_t* aImageId);
 /**
- * Callback which runs when the PlaylistUpdate action is invoked
+ * Callback which runs when the PlaylistSetName action is invoked
  *
- * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistUpdate
+ * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetName
  * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
  * @param[in]  aId
  * @param[in]  aName
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistSetName)(void* aPtr, uint32_t aVersion, uint32_t aId, const char* aName);
+/**
+ * Callback which runs when the PlaylistSetDescription action is invoked
+ *
+ * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetDescription
+ * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aId
  * @param[in]  aDescription
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistSetDescription)(void* aPtr, uint32_t aVersion, uint32_t aId, const char* aDescription);
+/**
+ * Callback which runs when the PlaylistSetImageId action is invoked
+ *
+ * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetImageId
+ * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aId
  * @param[in]  aImageId
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistUpdate)(void* aPtr, uint32_t aVersion, uint32_t aId, const char* aName, const char* aDescription, uint32_t aImageId);
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistSetImageId)(void* aPtr, uint32_t aVersion, uint32_t aId, uint32_t aImageId);
 /**
  * Callback which runs when the PlaylistInsert action is invoked
  *
@@ -111,6 +131,17 @@ typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistInsert)(void* aPtr, ui
  * @return  0 if the action succeeded; non-zero if the action failed
  */
 typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistDeleteId)(void* aPtr, uint32_t aVersion, uint32_t aValue);
+/**
+ * Callback which runs when the PlaylistMove action is invoked
+ *
+ * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistMove
+ * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aId
+ * @param[in]  aAfterId
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
+typedef int32_t (STDCALL *CallbackPlaylistManager1PlaylistMove)(void* aPtr, uint32_t aVersion, uint32_t aId, uint32_t aAfterId);
 /**
  * Callback which runs when the PlaylistsMax action is invoked
  *
@@ -199,22 +230,22 @@ typedef int32_t (STDCALL *CallbackPlaylistManager1Insert)(void* aPtr, uint32_t a
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionDeleteId
  * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aId
  * @param[in]  aTrackId
- * @param[in]  aValue
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1DeleteId)(void* aPtr, uint32_t aVersion, uint32_t aTrackId, uint32_t aValue);
+typedef int32_t (STDCALL *CallbackPlaylistManager1DeleteId)(void* aPtr, uint32_t aVersion, uint32_t aId, uint32_t aTrackId);
 /**
  * Callback which runs when the DeleteAll action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderAvOpenhomeOrgPlaylistManager1EnableActionDeleteAll
  * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
- * @param[in]  aTrackId
+ * @param[in]  aId
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (STDCALL *CallbackPlaylistManager1DeleteAll)(void* aPtr, uint32_t aVersion, uint32_t aTrackId);
+typedef int32_t (STDCALL *CallbackPlaylistManager1DeleteAll)(void* aPtr, uint32_t aVersion, uint32_t aId);
 
 /**
  * Provider constructor
@@ -266,7 +297,7 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionImages
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistReadArray(THandle aProvider, CallbackPlaylistManager1PlaylistReadArray aCallback, void* aPtr);
 /**
- * Register a callback for the action PlaylistReadMetadata
+ * Register a callback for the action PlaylistReadList
  *
  * If this is called, the action's availability will be published in the device's service.xml.
  * If this is not called, any attempt to invoke the action on a control point will fail.
@@ -275,7 +306,7 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlayli
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistReadMetadata(THandle aProvider, CallbackPlaylistManager1PlaylistReadMetadata aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistReadList(THandle aProvider, CallbackPlaylistManager1PlaylistReadList aCallback, void* aPtr);
 /**
  * Register a callback for the action PlaylistRead
  *
@@ -288,7 +319,7 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlayli
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistRead(THandle aProvider, CallbackPlaylistManager1PlaylistRead aCallback, void* aPtr);
 /**
- * Register a callback for the action PlaylistUpdate
+ * Register a callback for the action PlaylistSetName
  *
  * If this is called, the action's availability will be published in the device's service.xml.
  * If this is not called, any attempt to invoke the action on a control point will fail.
@@ -297,7 +328,29 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlayli
  * @param[in] aCallback  Callback which will be run when the action is invoked
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
-DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistUpdate(THandle aProvider, CallbackPlaylistManager1PlaylistUpdate aCallback, void* aPtr);
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetName(THandle aProvider, CallbackPlaylistManager1PlaylistSetName aCallback, void* aPtr);
+/**
+ * Register a callback for the action PlaylistSetDescription
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetDescription(THandle aProvider, CallbackPlaylistManager1PlaylistSetDescription aCallback, void* aPtr);
+/**
+ * Register a callback for the action PlaylistSetImageId
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistSetImageId(THandle aProvider, CallbackPlaylistManager1PlaylistSetImageId aCallback, void* aPtr);
 /**
  * Register a callback for the action PlaylistInsert
  *
@@ -320,6 +373,17 @@ DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlayli
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
 DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistDeleteId(THandle aProvider, CallbackPlaylistManager1PlaylistDeleteId aCallback, void* aPtr);
+/**
+ * Register a callback for the action PlaylistMove
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by DvProviderAvOpenhomeOrgPlaylistManager1Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void STDCALL DvProviderAvOpenhomeOrgPlaylistManager1EnableActionPlaylistMove(THandle aProvider, CallbackPlaylistManager1PlaylistMove aCallback, void* aPtr);
 /**
  * Register a callback for the action PlaylistsMax
  *

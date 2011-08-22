@@ -97,11 +97,14 @@ namespace OpenHome.Net.Device.Providers
         private ActionDelegate iDelegateMetadata;
         private ActionDelegate iDelegateImagesXml;
         private ActionDelegate iDelegatePlaylistReadArray;
-        private ActionDelegate iDelegatePlaylistReadMetadata;
+        private ActionDelegate iDelegatePlaylistReadList;
         private ActionDelegate iDelegatePlaylistRead;
-        private ActionDelegate iDelegatePlaylistUpdate;
+        private ActionDelegate iDelegatePlaylistSetName;
+        private ActionDelegate iDelegatePlaylistSetDescription;
+        private ActionDelegate iDelegatePlaylistSetImageId;
         private ActionDelegate iDelegatePlaylistInsert;
         private ActionDelegate iDelegatePlaylistDeleteId;
+        private ActionDelegate iDelegatePlaylistMove;
         private ActionDelegate iDelegatePlaylistsMax;
         private ActionDelegate iDelegateTracksMax;
         private ActionDelegate iDelegatePlaylistArrays;
@@ -296,18 +299,18 @@ namespace OpenHome.Net.Device.Providers
         }
 
         /// <summary>
-        /// Signal that the action PlaylistReadMetadata is supported.
+        /// Signal that the action PlaylistReadList is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// PlaylistReadMetadata must be overridden if this is called.</remarks>
-        protected void EnableActionPlaylistReadMetadata()
+        /// PlaylistReadList must be overridden if this is called.</remarks>
+        protected void EnableActionPlaylistReadList()
         {
-            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("PlaylistReadMetadata");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("PlaylistReadList");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterString("IdList", allowedValues));
-            action.AddOutputParameter(new ParameterRelated("Metadata", iPropertyMetadata));
-            iDelegatePlaylistReadMetadata = new ActionDelegate(DoPlaylistReadMetadata);
-            EnableAction(action, iDelegatePlaylistReadMetadata, GCHandle.ToIntPtr(iGch));
+            action.AddOutputParameter(new ParameterString("PlaylistList", allowedValues));
+            iDelegatePlaylistReadList = new ActionDelegate(DoPlaylistReadList);
+            EnableAction(action, iDelegatePlaylistReadList, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -328,20 +331,47 @@ namespace OpenHome.Net.Device.Providers
         }
 
         /// <summary>
-        /// Signal that the action PlaylistUpdate is supported.
+        /// Signal that the action PlaylistSetName is supported.
         /// </summary>
         /// <remarks>The action's availability will be published in the device's service.xml.
-        /// PlaylistUpdate must be overridden if this is called.</remarks>
-        protected void EnableActionPlaylistUpdate()
+        /// PlaylistSetName must be overridden if this is called.</remarks>
+        protected void EnableActionPlaylistSetName()
         {
-            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("PlaylistUpdate");
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("PlaylistSetName");
             List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("Id"));
             action.AddInputParameter(new ParameterString("Name", allowedValues));
+            iDelegatePlaylistSetName = new ActionDelegate(DoPlaylistSetName);
+            EnableAction(action, iDelegatePlaylistSetName, GCHandle.ToIntPtr(iGch));
+        }
+
+        /// <summary>
+        /// Signal that the action PlaylistSetDescription is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// PlaylistSetDescription must be overridden if this is called.</remarks>
+        protected void EnableActionPlaylistSetDescription()
+        {
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("PlaylistSetDescription");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("Id"));
             action.AddInputParameter(new ParameterString("Description", allowedValues));
+            iDelegatePlaylistSetDescription = new ActionDelegate(DoPlaylistSetDescription);
+            EnableAction(action, iDelegatePlaylistSetDescription, GCHandle.ToIntPtr(iGch));
+        }
+
+        /// <summary>
+        /// Signal that the action PlaylistSetImageId is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// PlaylistSetImageId must be overridden if this is called.</remarks>
+        protected void EnableActionPlaylistSetImageId()
+        {
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("PlaylistSetImageId");
+            action.AddInputParameter(new ParameterUint("Id"));
             action.AddInputParameter(new ParameterUint("ImageId"));
-            iDelegatePlaylistUpdate = new ActionDelegate(DoPlaylistUpdate);
-            EnableAction(action, iDelegatePlaylistUpdate, GCHandle.ToIntPtr(iGch));
+            iDelegatePlaylistSetImageId = new ActionDelegate(DoPlaylistSetImageId);
+            EnableAction(action, iDelegatePlaylistSetImageId, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -373,6 +403,20 @@ namespace OpenHome.Net.Device.Providers
             action.AddInputParameter(new ParameterUint("Value"));
             iDelegatePlaylistDeleteId = new ActionDelegate(DoPlaylistDeleteId);
             EnableAction(action, iDelegatePlaylistDeleteId, GCHandle.ToIntPtr(iGch));
+        }
+
+        /// <summary>
+        /// Signal that the action PlaylistMove is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// PlaylistMove must be overridden if this is called.</remarks>
+        protected void EnableActionPlaylistMove()
+        {
+            OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("PlaylistMove");
+            action.AddInputParameter(new ParameterUint("Id"));
+            action.AddInputParameter(new ParameterUint("AfterId"));
+            iDelegatePlaylistMove = new ActionDelegate(DoPlaylistMove);
+            EnableAction(action, iDelegatePlaylistMove, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -487,8 +531,8 @@ namespace OpenHome.Net.Device.Providers
         protected void EnableActionDeleteId()
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("DeleteId");
+            action.AddInputParameter(new ParameterUint("Id"));
             action.AddInputParameter(new ParameterUint("TrackId"));
-            action.AddInputParameter(new ParameterUint("Value"));
             iDelegateDeleteId = new ActionDelegate(DoDeleteId);
             EnableAction(action, iDelegateDeleteId, GCHandle.ToIntPtr(iGch));
         }
@@ -501,7 +545,7 @@ namespace OpenHome.Net.Device.Providers
         protected void EnableActionDeleteAll()
         {
             OpenHome.Net.Core.Action action = new OpenHome.Net.Core.Action("DeleteAll");
-            action.AddInputParameter(new ParameterUint("TrackId"));
+            action.AddInputParameter(new ParameterUint("Id"));
             iDelegateDeleteAll = new ActionDelegate(DoDeleteAll);
             EnableAction(action, iDelegateDeleteAll, GCHandle.ToIntPtr(iGch));
         }
@@ -550,16 +594,16 @@ namespace OpenHome.Net.Device.Providers
         }
 
         /// <summary>
-        /// PlaylistReadMetadata action.
+        /// PlaylistReadList action.
         /// </summary>
         /// <remarks>Will be called when the device stack receives an invocation of the
-        /// PlaylistReadMetadata action for the owning device.
+        /// PlaylistReadList action for the owning device.
         ///
-        /// Must be implemented iff EnableActionPlaylistReadMetadata was called.</remarks>
+        /// Must be implemented iff EnableActionPlaylistReadList was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aIdList"></param>
-        /// <param name="aMetadata"></param>
-        protected virtual void PlaylistReadMetadata(uint aVersion, string aIdList, out string aMetadata)
+        /// <param name="aPlaylistList"></param>
+        protected virtual void PlaylistReadList(uint aVersion, string aIdList, out string aPlaylistList)
         {
             throw (new ActionDisabledError());
         }
@@ -582,18 +626,46 @@ namespace OpenHome.Net.Device.Providers
         }
 
         /// <summary>
-        /// PlaylistUpdate action.
+        /// PlaylistSetName action.
         /// </summary>
         /// <remarks>Will be called when the device stack receives an invocation of the
-        /// PlaylistUpdate action for the owning device.
+        /// PlaylistSetName action for the owning device.
         ///
-        /// Must be implemented iff EnableActionPlaylistUpdate was called.</remarks>
+        /// Must be implemented iff EnableActionPlaylistSetName was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aId"></param>
         /// <param name="aName"></param>
+        protected virtual void PlaylistSetName(uint aVersion, uint aId, string aName)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        /// <summary>
+        /// PlaylistSetDescription action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// PlaylistSetDescription action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPlaylistSetDescription was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aId"></param>
         /// <param name="aDescription"></param>
+        protected virtual void PlaylistSetDescription(uint aVersion, uint aId, string aDescription)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        /// <summary>
+        /// PlaylistSetImageId action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// PlaylistSetImageId action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPlaylistSetImageId was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aId"></param>
         /// <param name="aImageId"></param>
-        protected virtual void PlaylistUpdate(uint aVersion, uint aId, string aName, string aDescription, uint aImageId)
+        protected virtual void PlaylistSetImageId(uint aVersion, uint aId, uint aImageId)
         {
             throw (new ActionDisabledError());
         }
@@ -626,6 +698,21 @@ namespace OpenHome.Net.Device.Providers
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         /// <param name="aValue"></param>
         protected virtual void PlaylistDeleteId(uint aVersion, uint aValue)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        /// <summary>
+        /// PlaylistMove action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// PlaylistMove action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPlaylistMove was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aId"></param>
+        /// <param name="aAfterId"></param>
+        protected virtual void PlaylistMove(uint aVersion, uint aId, uint aAfterId)
         {
             throw (new ActionDisabledError());
         }
@@ -747,9 +834,9 @@ namespace OpenHome.Net.Device.Providers
         ///
         /// Must be implemented iff EnableActionDeleteId was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aId"></param>
         /// <param name="aTrackId"></param>
-        /// <param name="aValue"></param>
-        protected virtual void DeleteId(uint aVersion, uint aTrackId, uint aValue)
+        protected virtual void DeleteId(uint aVersion, uint aId, uint aTrackId)
         {
             throw (new ActionDisabledError());
         }
@@ -762,8 +849,8 @@ namespace OpenHome.Net.Device.Providers
         ///
         /// Must be implemented iff EnableActionDeleteAll was called.</remarks>
         /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
-        /// <param name="aTrackId"></param>
-        protected virtual void DeleteAll(uint aVersion, uint aTrackId)
+        /// <param name="aId"></param>
+        protected virtual void DeleteAll(uint aVersion, uint aId)
         {
             throw (new ActionDisabledError());
         }
@@ -911,19 +998,19 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistReadMetadata(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistReadList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
             string idList;
-            string metadata;
+            string playlistList;
             try
             {
                 invocation.ReadStart();
                 idList = invocation.ReadString("IdList");
                 invocation.ReadEnd();
-                self.PlaylistReadMetadata(aVersion, idList, out metadata);
+                self.PlaylistReadList(aVersion, idList, out playlistList);
             }
             catch (ActionError)
             {
@@ -944,7 +1031,7 @@ namespace OpenHome.Net.Device.Providers
             try
             {
                 invocation.WriteStart();
-                invocation.WriteString("Metadata", metadata);
+                invocation.WriteString("PlaylistList", playlistList);
                 invocation.WriteEnd();
             }
             catch (ActionError)
@@ -1013,24 +1100,118 @@ namespace OpenHome.Net.Device.Providers
             return 0;
         }
 
-        private static int DoPlaylistUpdate(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        private static int DoPlaylistSetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
             uint id;
             string name;
-            string description;
-            uint imageId;
             try
             {
                 invocation.ReadStart();
                 id = invocation.ReadUint("Id");
                 name = invocation.ReadString("Name");
+                invocation.ReadEnd();
+                self.PlaylistSetName(aVersion, id, name);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+            }
+            return 0;
+        }
+
+        private static int DoPlaylistSetDescription(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint id;
+            string description;
+            try
+            {
+                invocation.ReadStart();
+                id = invocation.ReadUint("Id");
                 description = invocation.ReadString("Description");
+                invocation.ReadEnd();
+                self.PlaylistSetDescription(aVersion, id, description);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+            }
+            return 0;
+        }
+
+        private static int DoPlaylistSetImageId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint id;
+            uint imageId;
+            try
+            {
+                invocation.ReadStart();
+                id = invocation.ReadUint("Id");
                 imageId = invocation.ReadUint("ImageId");
                 invocation.ReadEnd();
-                self.PlaylistUpdate(aVersion, id, name, description, imageId);
+                self.PlaylistSetImageId(aVersion, id, imageId);
             }
             catch (ActionError)
             {
@@ -1133,6 +1314,55 @@ namespace OpenHome.Net.Device.Providers
                 value = invocation.ReadUint("Value");
                 invocation.ReadEnd();
                 self.PlaylistDeleteId(aVersion, value);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML");
+                return -1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WARNING: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("         Only ActionError or PropertyUpdateError can be thrown by actions");
+                return -1;
+            }
+            try
+            {
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine("ERROR: unexpected exception {0}(\"{1}\") thrown by {2}", e.GetType(), e.Message, e.TargetSite.Name);
+                Console.WriteLine("       Only ActionError can be thrown by action response writer");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+            }
+            return 0;
+        }
+
+        private static int DoPlaylistMove(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint id;
+            uint afterId;
+            try
+            {
+                invocation.ReadStart();
+                id = invocation.ReadUint("Id");
+                afterId = invocation.ReadUint("AfterId");
+                invocation.ReadEnd();
+                self.PlaylistMove(aVersion, id, afterId);
             }
             catch (ActionError)
             {
@@ -1524,15 +1754,15 @@ namespace OpenHome.Net.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            uint id;
             uint trackId;
-            uint value;
             try
             {
                 invocation.ReadStart();
+                id = invocation.ReadUint("Id");
                 trackId = invocation.ReadUint("TrackId");
-                value = invocation.ReadUint("Value");
                 invocation.ReadEnd();
-                self.DeleteId(aVersion, trackId, value);
+                self.DeleteId(aVersion, id, trackId);
             }
             catch (ActionError)
             {
@@ -1573,13 +1803,13 @@ namespace OpenHome.Net.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderAvOpenhomeOrgPlaylistManager1 self = (DvProviderAvOpenhomeOrgPlaylistManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            uint trackId;
+            uint id;
             try
             {
                 invocation.ReadStart();
-                trackId = invocation.ReadUint("TrackId");
+                id = invocation.ReadUint("Id");
                 invocation.ReadEnd();
-                self.DeleteAll(aVersion, trackId);
+                self.DeleteAll(aVersion, id);
             }
             catch (ActionError)
             {

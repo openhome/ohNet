@@ -51,7 +51,7 @@ public class TestProxy implements ICpDeviceListListener, ICpProxyListener, IProp
 	{
 		iDeviceList = new LinkedList<CpDevice>();
 		
-		CpDeviceListUpnpServiceType list = new CpDeviceListUpnpServiceType("upnp.org", "ConnectionManager", 1, this, this);
+		CpDeviceListUpnpServiceType list = new CpDeviceListUpnpServiceType("upnp.org", "ConnectionManager", 1, this);
         
 		Semaphore sem = new Semaphore(1);
     	sem.acquireUninterruptibly();

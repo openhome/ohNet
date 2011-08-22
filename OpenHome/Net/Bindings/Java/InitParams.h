@@ -145,6 +145,14 @@ JNIEXPORT jint JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsDvIs
 
 /*
  * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetTcpConnectTimeout
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetTcpConnectTimeout
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetMsearchTime
  * Signature: (JI)V
  */
@@ -153,10 +161,114 @@ JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetM
 
 /*
  * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetMsearchTtl
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetMsearchTtl
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetNumEventSessionThreads
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetNumEventSessionThreads
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetNumXmlFetcherThreads
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetNumXmlFetcherThreads
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetNumActionInvokerThreads
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetNumActionInvokerThreads
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetNumInvocations
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetNumInvocations
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetNumSubscriberThreads
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetNumSubscriberThreads
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetPendingSubscriptionTimeout
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetPendingSubscriptionTimeout
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
  * Method:    OhNetInitParamsSetUseLoopbackNetworkAdapter
  * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetUseLoopbackNetworkAdapter
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetDvMaxUpdateTime
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvMaxUpdateTime
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetDvNumServerThreads
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvNumServerThreads
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetDvNumPublisherThreads
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvNumPublisherThreads
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetDvNumWebSocketThreads
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvNumWebSocketThreads
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetDvWebSocketPort
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvWebSocketPort
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     org_openhome_net_core_InitParams
+ * Method:    OhNetInitParamsSetDvEnableBonjour
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_org_openhome_net_core_InitParams_OhNetInitParamsSetDvEnableBonjour
   (JNIEnv *, jclass, jlong);
 
 #ifdef __cplusplus

@@ -5,7 +5,7 @@ using OpenHome.Net.Core;
 using OpenHome.Net.ControlPoint;
 using OpenHome.Net.ControlPoint.Proxies;
 
-namespace OpenHome.Net.Device
+namespace OpenHome.Net.ControlPoint
 {
     class Program
     {

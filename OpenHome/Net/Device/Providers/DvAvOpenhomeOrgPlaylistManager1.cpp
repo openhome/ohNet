@@ -110,12 +110,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionPlaylistReadArray()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionPlaylistReadMetadata()
+void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionPlaylistReadList()
 {
-    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistReadMetadata");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistReadList");
     action->AddInputParameter(new ParameterString("IdList"));
-    action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
-    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistReadMetadata);
+    action->AddOutputParameter(new ParameterString("PlaylistList"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistReadList);
     iService->AddAction(action, functor);
 }
 
@@ -130,14 +130,30 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionPlaylistRead()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionPlaylistUpdate()
+void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionPlaylistSetName()
 {
-    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistUpdate");
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistSetName");
     action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterString("Name"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistSetName);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionPlaylistSetDescription()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistSetDescription");
+    action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterString("Description"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistSetDescription);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionPlaylistSetImageId()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistSetImageId");
+    action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("ImageId"));
-    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistUpdate);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistSetImageId);
     iService->AddAction(action, functor);
 }
 
@@ -158,6 +174,15 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionPlaylistDeleteId()
     OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistDeleteId");
     action->AddInputParameter(new ParameterUint("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistDeleteId);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionPlaylistMove()
+{
+    OpenHome::Net::Action* action = new OpenHome::Net::Action("PlaylistMove");
+    action->AddInputParameter(new ParameterUint("Id"));
+    action->AddInputParameter(new ParameterUint("AfterId"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistMove);
     iService->AddAction(action, functor);
 }
 
@@ -231,8 +256,8 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionInsert()
 void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionDeleteId()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("DeleteId");
+    action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("TrackId"));
-    action->AddInputParameter(new ParameterUint("Value"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoDeleteId);
     iService->AddAction(action, functor);
 }
@@ -240,7 +265,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionDeleteId()
 void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionDeleteAll()
 {
     OpenHome::Net::Action* action = new OpenHome::Net::Action("DeleteAll");
-    action->AddInputParameter(new ParameterUint("TrackId"));
+    action->AddInputParameter(new ParameterUint("Id"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoDeleteAll);
     iService->AddAction(action, functor);
 }
@@ -273,15 +298,15 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistReadArray(IDviInvocation
     PlaylistReadArray(resp, aVersion, Id, respArray);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistReadMetadata(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistReadList(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz IdList;
     aInvocation.InvocationReadString("IdList", IdList);
     aInvocation.InvocationReadEnd();
     InvocationResponse resp(aInvocation);
-    InvocationResponseString respMetadata(aInvocation, "Metadata");
-    PlaylistReadMetadata(resp, aVersion, IdList, respMetadata);
+    InvocationResponseString respPlaylistList(aInvocation, "PlaylistList");
+    PlaylistReadList(resp, aVersion, IdList, respPlaylistList);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistRead(IDviInvocation& aInvocation, TUint aVersion)
@@ -296,18 +321,36 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistRead(IDviInvocation& aIn
     PlaylistRead(resp, aVersion, Id, respName, respDescription, respImageId);
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistUpdate(IDviInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistSetName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint Id = aInvocation.InvocationReadUint("Id");
     Brhz Name;
     aInvocation.InvocationReadString("Name", Name);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
+    PlaylistSetName(resp, aVersion, Id, Name);
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistSetDescription(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    TUint Id = aInvocation.InvocationReadUint("Id");
     Brhz Description;
     aInvocation.InvocationReadString("Description", Description);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
+    PlaylistSetDescription(resp, aVersion, Id, Description);
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistSetImageId(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    TUint Id = aInvocation.InvocationReadUint("Id");
     TUint ImageId = aInvocation.InvocationReadUint("ImageId");
     aInvocation.InvocationReadEnd();
     InvocationResponse resp(aInvocation);
-    PlaylistUpdate(resp, aVersion, Id, Name, Description, ImageId);
+    PlaylistSetImageId(resp, aVersion, Id, ImageId);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistInsert(IDviInvocation& aInvocation, TUint aVersion)
@@ -332,6 +375,16 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistDeleteId(IDviInvocation&
     aInvocation.InvocationReadEnd();
     InvocationResponse resp(aInvocation);
     PlaylistDeleteId(resp, aVersion, Value);
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistMove(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    TUint Id = aInvocation.InvocationReadUint("Id");
+    TUint AfterId = aInvocation.InvocationReadUint("AfterId");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
+    PlaylistMove(resp, aVersion, Id, AfterId);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1::DoPlaylistsMax(IDviInvocation& aInvocation, TUint aVersion)
@@ -414,20 +467,20 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::DoInsert(IDviInvocation& aInvocati
 void DvProviderAvOpenhomeOrgPlaylistManager1::DoDeleteId(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
+    TUint Id = aInvocation.InvocationReadUint("Id");
     TUint TrackId = aInvocation.InvocationReadUint("TrackId");
-    TUint Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
     InvocationResponse resp(aInvocation);
-    DeleteId(resp, aVersion, TrackId, Value);
+    DeleteId(resp, aVersion, Id, TrackId);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1::DoDeleteAll(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
-    TUint TrackId = aInvocation.InvocationReadUint("TrackId");
+    TUint Id = aInvocation.InvocationReadUint("Id");
     aInvocation.InvocationReadEnd();
     InvocationResponse resp(aInvocation);
-    DeleteAll(resp, aVersion, TrackId);
+    DeleteAll(resp, aVersion, Id);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1::Metadata(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aMetadata*/)
@@ -445,7 +498,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistReadArray(IInvocationRespo
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistReadMetadata(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aIdList*/, IInvocationResponseString& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistReadList(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aIdList*/, IInvocationResponseString& /*aPlaylistList*/)
 {
     ASSERTS();
 }
@@ -455,7 +508,17 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistRead(IInvocationResponse& 
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistUpdate(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, const Brx& /*aName*/, const Brx& /*aDescription*/, TUint /*aImageId*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistSetName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, const Brx& /*aName*/)
+{
+    ASSERTS();
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistSetDescription(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, const Brx& /*aDescription*/)
+{
+    ASSERTS();
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistSetImageId(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, TUint /*aImageId*/)
 {
     ASSERTS();
 }
@@ -466,6 +529,11 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistInsert(IInvocationResponse
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistDeleteId(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aValue*/)
+{
+    ASSERTS();
+}
+
+void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistMove(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, TUint /*aAfterId*/)
 {
     ASSERTS();
 }
@@ -505,12 +573,12 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::Insert(IInvocationResponse& /*aRes
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DeleteId(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aTrackId*/, TUint /*aValue*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DeleteId(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, TUint /*aTrackId*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::DeleteAll(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aTrackId*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::DeleteAll(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/)
 {
     ASSERTS();
 }

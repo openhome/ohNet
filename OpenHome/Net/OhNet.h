@@ -303,7 +303,7 @@ private:
  * Initialisation and finalisation of this library
  * @ingroup Core
  */
-class UpnpLibrary
+class DllExportClass UpnpLibrary
 {
 public:
     /**
