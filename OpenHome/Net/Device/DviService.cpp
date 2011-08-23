@@ -191,9 +191,9 @@ void DviInvocation::EndResponse()
 	iInvocation.InvocationWriteEnd();
 }
 
-TIpAddress DviInvocation::Adaptor() const
+TIpAddress DviInvocation::Adapter() const
 {
-    return iInvocation.Adaptor();
+    return iInvocation.Adapter();
 }
 
 const char* DviInvocation::ResourceUriPrefix() const

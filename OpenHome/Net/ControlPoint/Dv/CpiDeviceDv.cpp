@@ -153,7 +153,7 @@ TUint InvocationDv::Version() const
     return iInvocation.ServiceType().Version();
 }
 
-TIpAddress InvocationDv::Adaptor() const
+TIpAddress InvocationDv::Adapter() const
 {
     return 0;
 }

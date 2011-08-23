@@ -25,7 +25,7 @@ public:
     virtual void Invoke() = 0;
 
     virtual TUint Version() const = 0;
-    virtual TIpAddress Adaptor() const = 0;
+    virtual TIpAddress Adapter() const = 0;
     virtual const char* ResourceUriPrefix() const = 0;
 
     virtual void InvocationReadStart() = 0;
@@ -108,7 +108,7 @@ public:
 	virtual void Error(TInt aCode, const Brx& aReason);
 	virtual void StartResponse();
 	virtual void EndResponse();
-    virtual TIpAddress Adaptor() const;
+    virtual TIpAddress Adapter() const;
     virtual const char* ResourceUriPrefix() const;
 private:
 	IDviInvocation& iInvocation;

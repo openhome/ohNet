@@ -797,7 +797,7 @@ TUint DviSessionUpnp::Version() const
     return iHeaderSoapAction.Version();
 }
 
-TIpAddress DviSessionUpnp::Adaptor() const
+TIpAddress DviSessionUpnp::Adapter() const
 {
     return iInterface;
 }
