@@ -26,7 +26,7 @@ public class TestDvDevice implements ICpDeviceListListener
 		System.out.println("TestDvDeviceJava - starting");
 		iDevice = new DeviceBasic();
 		iDeviceList = new ArrayList<CpDevice>();
-		CpDeviceListUpnpServiceType list = new CpDeviceListUpnpServiceType("openhome.org", "TestBasic", 1, this, this);
+		CpDeviceListUpnpServiceType list = new CpDeviceListUpnpServiceType("openhome.org", "TestBasic", 1, this);
 		Semaphore sem = new Semaphore(1);
 		sem.acquireUninterruptibly();
 		try {

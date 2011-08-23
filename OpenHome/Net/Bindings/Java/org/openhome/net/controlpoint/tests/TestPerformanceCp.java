@@ -127,7 +127,7 @@ public class TestPerformanceCp implements ICpDeviceListListener
         iDevice = null;
         iSem = new Semaphore(1);
     	iSem.acquireUninterruptibly();
-        ICpDeviceList deviceList = deviceListFactory.createListServiceType("openhome.org", "TestBasic", 1, this, this);
+        ICpDeviceList deviceList = deviceListFactory.createListServiceType("openhome.org", "TestBasic", 1, this);
         iSem.acquireUninterruptibly();
         
         // actions

@@ -42,8 +42,7 @@ public class CpDeviceList implements ICpDeviceList
 
 	protected long iHandle;
 	protected long iCallback;
-	protected ICpDeviceListListener iAdded;
-	protected ICpDeviceListListener iRemoved;
+	protected ICpDeviceListListener iListener;
 	
 	
 	/**
@@ -86,7 +85,7 @@ public class CpDeviceList implements ICpDeviceList
     public void deviceAdded(long aDevice)
     {
     	CpDevice dev = new CpDevice(aDevice);
-    	iAdded.deviceAdded(dev);
+    	iListener.deviceAdded(dev);
     }
     
     /**
@@ -98,6 +97,6 @@ public class CpDeviceList implements ICpDeviceList
     public void deviceRemoved(long aDevice)
     {
     	CpDevice dev = new CpDevice(aDevice);
-    	iRemoved.deviceRemoved(dev);
+    	iListener.deviceRemoved(dev);
     }
 }

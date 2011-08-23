@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Subscribing</title>
+
+  <para>You can subscribe to a Proxy to receive updates to properties whose
+  values change. You must register the callbacks for the properties
+  first.</para>
+
+  <para>You call <code>Subscribe()</code> to subscribe to the Proxy: </para>
+
+  <programlisting>// callbacks all setup by this point
+proxy-&gt;Subscribe();</programlisting>
+
+  <para>The Proxy will notify your Control Point application when one or more
+  of the properties you have registered a callback for changes state on the
+  remote device. This means you don't have to regularly poll properties from
+  the Control Point application.</para>
+
+  <para>You can update your application however you want when you receive a
+  notification that a property has been updated. Typically you do this by
+  querying the new value of the property.</para>
+
+  <para>You can stop your application receiving updates to properties by
+  calling <code>Unsubscribe()</code>. </para>
+
+  <programlisting>proxy-&gt;Unsubscribe(); 
+// none of your callbacks will run until Subscribe() is called again </programlisting>
+
+  <note>
+    <para>You can safely delete a Proxy while it has an active subscription.
+    You do not have to call Unsubscribe() before deleting a Proxy.</para>
+  </note>
+</section>
