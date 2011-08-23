@@ -27,6 +27,8 @@ public:
     static const Brn kHeaderOrigin;
     static const Brn kHeaderResponseOrigin;
     static const Brn kHeaderLocation;
+    static const Brn kHeaderKey;
+    static const Brn kHeaderVersion;
     static const Brn kUpgradeWebSocket;
     static const Brn kTagRoot;
     static const Brn kTagMethod;
@@ -42,6 +44,7 @@ public:
     static const Brn kMethodRenew;
     static const Brn kMethodSubscriptionTimeout;
     static const Brn kMethodPropertyUpdate;
+    static const Brn kValueProtocol;
     static const Brn kValueNt;
     static const Brn kValuePropChange;
 };
@@ -105,6 +108,28 @@ private:
     Brh iOrigin;
 };
 
+class WsHeaderKey80 : public HttpHeader
+{
+public:
+    const Brx& Key() const;
+private:
+    TBool Recognise(const Brx& aHeader);
+    void Process(const Brx& aValue);
+private:
+    Brh iKey;
+};
+
+class WsHeaderVersion : public HttpHeader
+{
+public:
+    TUint Version() const;
+private:
+    TBool Recognise(const Brx& aHeader);
+    void Process(const Brx& aValue);
+private:
+    TUint iVersion;;
+};
+
 class SubscriptionDataWs : public IDviSubscriptionUserData
 {
 public:
@@ -133,6 +158,63 @@ private:
     WriterBwh iWriter;
 };
 
+class WsProtocol : private INonCopyable
+{
+public:
+    virtual void Read(Brn& aData, TBool& aClosed) = 0;
+    virtual void Write(const Brx& aData) = 0;
+    virtual void Close() = 0;
+protected:
+    WsProtocol(Srx& aReadBuffer, Swx& aWriteBuffer);
+protected:
+    Srx& iReadBuffer;
+    Swx& iWriteBuffer;
+};
+
+class WsProtocol76 : public WsProtocol
+{
+public:
+    WsProtocol76(Srx& aReadBuffer, Swx& aWriteBuffer);
+private:
+    void Read(Brn& aData, TBool& aClosed);
+    void Write(const Brx& aData);
+    void Close();
+private:
+    static const TByte kFrameMsgStart = (TByte)'\0';
+    static const TByte kMsgEnd = (TByte)'\xff';
+    static const TByte kFrameCloseStart = (TByte)'\xff';
+    static const TByte kMsgCloseEnd = (TByte)'\0';
+};
+
+class WsProtocol80 : public WsProtocol
+{
+public:
+    WsProtocol80(Srx& aReadBuffer, Swx& aWriteBuffer);
+private:
+    void Read(Brn& aData, TBool& aClosed);
+    void Write(const Brx& aData);
+    void Close();
+private:
+    enum WsOpcode
+    {
+        eContinuation = 0x0
+       ,eText = 0x1
+       ,eBinary = 0x2
+       ,eClose = 0x8
+       ,ePing = 0x9
+       ,ePong = 0xA
+    };
+    static const TUint16 kCloseNormal          = 1000;
+    static const TUint16 kCloseProtocolError   = 1002;
+    static const TUint16 kCloseUnsupportedData = 1003;
+    static const TUint16 kCloseMsgTooLong      = 1004;
+private:
+    void Write(WsOpcode aOpcode, const Brx& aData);
+    void Close(TUint16 aCode);
+private:
+    Bwh iMessage;
+};
+
 class DviService;
 
 class DviSessionWebSocket : public SocketTcpSession, private IPropertyWriterFactory
@@ -144,20 +226,21 @@ public:
 private:
     enum WsOpcode
     {
-        eContinuation
-       ,eClose
-       ,ePing
-       ,ePong
-       ,eText
-       ,eBinary
+        eContinuation = 0x0
+       ,eText = 0x1
+       ,eBinary = 0x2
+       ,eClose = 0x8
+       ,ePing = 0x9
+       ,ePong = 0xA
     };
 private:
     void Run();
     void Error(const HttpStatus& aStatus);
     void Handshake();
+    WsProtocol* Handshake76();
+    WsProtocol* Handshake80();
     void Read();
     void Write(WsOpcode aOpcode, const Brx& aData);
-    void WriteConnectionClose();
     void Subscribe(const Brx& aRequest);
     void Unsubscribe(const Brx& aRequest);
     void Renew(const Brx& aRequest);
@@ -179,14 +262,10 @@ private:
         Brh iSid;
         DviService& iService;
     };
-private:
+public:
     static const TUint kMaxRequestBytes = 4*1024;
     static const TUint kMaxWriteBytes = 4*1024;
     static const TUint kMaxPropertyUpdates = 20;
-    static const TByte kFrameMsgStart = (TByte)'\0';
-    static const TByte kMsgEnd = (TByte)'\xff';
-    static const TByte kFrameCloseStart = (TByte)'\xff';
-    static const TByte kMsgCloseEnd = (TByte)'\0';
 private:
     Endpoint iEndpoint;
     Srs<kMaxRequestBytes>* iReadBuffer;
@@ -200,8 +279,12 @@ private:
     WsHeaderKey2 iHeaderKey2;
     WsHeaderProtocol iHeaderProtocol;
     WsHeaderOrigin iHeaderOrigin;
+    WsHeaderKey80 iHeadverKeyV8;
+    WsHeaderVersion iHeaderVersion;
     const HttpStatus* iErrorStatus;
+    WsProtocol* iProtocol;
     TBool iExit;
+    Bwh iMessage; // for fragmented reads only
     typedef std::map<Brn,SubscriptionWrapper*,BufferCmp> Map;
     Map iMap;
     Mutex iInterruptLock;

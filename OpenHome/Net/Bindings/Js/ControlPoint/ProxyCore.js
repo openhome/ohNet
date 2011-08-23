@@ -501,7 +501,7 @@ OhNet.SubscriptionManager = (function () {
                 if (DEBUG) {
                     console.log("start/websocketServerLocation: " + websocketServerLocation);
                 }
-                websocket = new WebSocket(websocketServerLocation, "upnp:event"); // TODO : Needs to acquire the port
+                websocket = new WebSocket(websocketServerLocation, "upnpevent.openhome.org"); // TODO : Needs to acquire the port
                 websocketOpen = true;
 
                 websocket.onmessage = onSocketMessage;
