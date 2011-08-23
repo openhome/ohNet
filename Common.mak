@@ -81,7 +81,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)RefCounter.$(objext) \
     		   $(objdir)Service.$(objext) \
     		   $(objdir)ServiceC.$(objext) \
-    		   $(objdir)Sha1.$(objext) \
+    		   $(objdir)sha1.$(objext) \
     		   $(objdir)Ssdp.$(objext) \
     		   $(objdir)SsdpDv.$(objext) \
     		   $(objdir)Stack.$(objext) \
