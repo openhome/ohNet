@@ -284,7 +284,6 @@ private:
     const HttpStatus* iErrorStatus;
     WsProtocol* iProtocol;
     TBool iExit;
-    Bwh iMessage; // for fragmented reads only
     typedef std::map<Brn,SubscriptionWrapper*,BufferCmp> Map;
     Map iMap;
     Mutex iInterruptLock;
