@@ -293,16 +293,16 @@ void Initialise()
     invReadType.Add("bin.base64", "InvocationReadBinary");
     invReadType.Add("uri", "InvocationReadString");
 
-    invRespType.Add("string", "InvocationResponseString");
-    invRespType.Add("ui1", "InvocationResponseUint");
-    invRespType.Add("ui2", "InvocationResponseUint");
-    invRespType.Add("ui4", "InvocationResponseUint");
-    invRespType.Add("boolean", "InvocationResponseBool");
-    invRespType.Add("i1", "InvocationResponseInt");
-    invRespType.Add("i2", "InvocationResponseInt");
-    invRespType.Add("i4", "InvocationResponseInt");
-    invRespType.Add("bin.base64", "InvocationResponseBinary");
-    invRespType.Add("uri", "InvocationResponseString");
+    invRespType.Add("string", "DviInvocationResponseString");
+    invRespType.Add("ui1", "DviInvocationResponseUint");
+    invRespType.Add("ui2", "DviInvocationResponseUint");
+    invRespType.Add("ui4", "DviInvocationResponseUint");
+    invRespType.Add("boolean", "DviInvocationResponseBool");
+    invRespType.Add("i1", "DviInvocationResponseInt");
+    invRespType.Add("i2", "DviInvocationResponseInt");
+    invRespType.Add("i4", "DviInvocationResponseInt");
+    invRespType.Add("bin.base64", "DviInvocationResponseBinary");
+    invRespType.Add("uri", "DviInvocationResponseString");
 
     propertyType.Add("string", "PropertyString");
     propertyType.Add("ui1", "PropertyUint");

@@ -12,52 +12,52 @@ namespace Net {
  * @{
  */
 
-class IInvocationResponse
+class IDvInvocationResponse
 {
 public:
 	virtual void Error(TInt aCode, const Brx& aReason) = 0;
 	virtual void Start() = 0;
 	virtual void End() = 0;
-    virtual ~IInvocationResponse() {}
+    virtual ~IDvInvocationResponse() {}
 };
 
-class IInvocationResponseBool
+class IDvInvocationResponseBool
 {
 public:
 	virtual void Write(TBool aValue) = 0;
-    virtual ~IInvocationResponseBool() {}
+    virtual ~IDvInvocationResponseBool() {}
 };
 
-class IInvocationResponseUint
+class IDvInvocationResponseUint
 {
 public:
 	virtual void Write(TUint aValue) = 0;
-    virtual ~IInvocationResponseUint() {}
+    virtual ~IDvInvocationResponseUint() {}
 };
 
-class IInvocationResponseInt
+class IDvInvocationResponseInt
 {
 public:
 	virtual void Write(TInt aValue) = 0;
-    virtual ~IInvocationResponseInt() {}
+    virtual ~IDvInvocationResponseInt() {}
 };
 
-class IInvocationResponseBinary : public IWriter
+class IDvInvocationResponseBinary : public IWriter
 {
 public:
     virtual void Write(TByte aValue) = 0;
     virtual void Write(const Brx& aBuffer) = 0;
     virtual void WriteFlush() = 0;
-	virtual ~IInvocationResponseBinary() {}
+	virtual ~IDvInvocationResponseBinary() {}
 };
 
-class IInvocationResponseString : public IWriter
+class IDvInvocationResponseString : public IWriter
 {
 public:
     virtual void Write(TByte aValue) = 0;
     virtual void Write(const Brx& aBuffer) = 0;
     virtual void WriteFlush() = 0;
-	virtual ~IInvocationResponseString() {}
+	virtual ~IDvInvocationResponseString() {}
 };
 
 /* @} */

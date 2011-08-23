@@ -420,7 +420,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoListPresets(IDviInvocation& aInvoc
     std::string respCurrentPresetNameList;
     ListPresets(aVersion, InstanceID, respCurrentPresetNameList);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterCurrentPresetNameList(aInvocation, "CurrentPresetNameList");
+    DviInvocationResponseString respWriterCurrentPresetNameList(aInvocation, "CurrentPresetNameList");
     Brn buf_CurrentPresetNameList((const TByte*)respCurrentPresetNameList.c_str(), (TUint)respCurrentPresetNameList.length());
     respWriterCurrentPresetNameList.Write(buf_CurrentPresetNameList);
     aInvocation.InvocationWriteStringEnd("CurrentPresetNameList");
@@ -448,7 +448,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetBrightness(IDviInvocation& aInv
     uint32_t respCurrentBrightness;
     GetBrightness(aVersion, InstanceID, respCurrentBrightness);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterCurrentBrightness(aInvocation, "CurrentBrightness");
+    DviInvocationResponseUint respWriterCurrentBrightness(aInvocation, "CurrentBrightness");
     respWriterCurrentBrightness.Write(respCurrentBrightness);
 	aInvocation.InvocationWriteEnd();
 }
@@ -472,7 +472,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetContrast(IDviInvocation& aInvoc
     uint32_t respCurrentContrast;
     GetContrast(aVersion, InstanceID, respCurrentContrast);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterCurrentContrast(aInvocation, "CurrentContrast");
+    DviInvocationResponseUint respWriterCurrentContrast(aInvocation, "CurrentContrast");
     respWriterCurrentContrast.Write(respCurrentContrast);
 	aInvocation.InvocationWriteEnd();
 }
@@ -496,7 +496,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetSharpness(IDviInvocation& aInvo
     uint32_t respCurrentSharpness;
     GetSharpness(aVersion, InstanceID, respCurrentSharpness);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterCurrentSharpness(aInvocation, "CurrentSharpness");
+    DviInvocationResponseUint respWriterCurrentSharpness(aInvocation, "CurrentSharpness");
     respWriterCurrentSharpness.Write(respCurrentSharpness);
 	aInvocation.InvocationWriteEnd();
 }
@@ -520,7 +520,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetRedVideoGain(IDviInvocation& aI
     uint32_t respCurrentRedVideoGain;
     GetRedVideoGain(aVersion, InstanceID, respCurrentRedVideoGain);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterCurrentRedVideoGain(aInvocation, "CurrentRedVideoGain");
+    DviInvocationResponseUint respWriterCurrentRedVideoGain(aInvocation, "CurrentRedVideoGain");
     respWriterCurrentRedVideoGain.Write(respCurrentRedVideoGain);
 	aInvocation.InvocationWriteEnd();
 }
@@ -544,7 +544,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetGreenVideoGain(IDviInvocation& 
     uint32_t respCurrentGreenVideoGain;
     GetGreenVideoGain(aVersion, InstanceID, respCurrentGreenVideoGain);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterCurrentGreenVideoGain(aInvocation, "CurrentGreenVideoGain");
+    DviInvocationResponseUint respWriterCurrentGreenVideoGain(aInvocation, "CurrentGreenVideoGain");
     respWriterCurrentGreenVideoGain.Write(respCurrentGreenVideoGain);
 	aInvocation.InvocationWriteEnd();
 }
@@ -568,7 +568,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetBlueVideoGain(IDviInvocation& a
     uint32_t respCurrentBlueVideoGain;
     GetBlueVideoGain(aVersion, InstanceID, respCurrentBlueVideoGain);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterCurrentBlueVideoGain(aInvocation, "CurrentBlueVideoGain");
+    DviInvocationResponseUint respWriterCurrentBlueVideoGain(aInvocation, "CurrentBlueVideoGain");
     respWriterCurrentBlueVideoGain.Write(respCurrentBlueVideoGain);
 	aInvocation.InvocationWriteEnd();
 }
@@ -592,7 +592,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetRedVideoBlackLevel(IDviInvocati
     uint32_t respCurrentRedVideoBlackLevel;
     GetRedVideoBlackLevel(aVersion, InstanceID, respCurrentRedVideoBlackLevel);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterCurrentRedVideoBlackLevel(aInvocation, "CurrentRedVideoBlackLevel");
+    DviInvocationResponseUint respWriterCurrentRedVideoBlackLevel(aInvocation, "CurrentRedVideoBlackLevel");
     respWriterCurrentRedVideoBlackLevel.Write(respCurrentRedVideoBlackLevel);
 	aInvocation.InvocationWriteEnd();
 }
@@ -616,7 +616,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetGreenVideoBlackLevel(IDviInvoca
     uint32_t respCurrentGreenVideoBlackLevel;
     GetGreenVideoBlackLevel(aVersion, InstanceID, respCurrentGreenVideoBlackLevel);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterCurrentGreenVideoBlackLevel(aInvocation, "CurrentGreenVideoBlackLevel");
+    DviInvocationResponseUint respWriterCurrentGreenVideoBlackLevel(aInvocation, "CurrentGreenVideoBlackLevel");
     respWriterCurrentGreenVideoBlackLevel.Write(respCurrentGreenVideoBlackLevel);
 	aInvocation.InvocationWriteEnd();
 }
@@ -640,7 +640,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetBlueVideoBlackLevel(IDviInvocat
     uint32_t respCurrentBlueVideoBlackLevel;
     GetBlueVideoBlackLevel(aVersion, InstanceID, respCurrentBlueVideoBlackLevel);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterCurrentBlueVideoBlackLevel(aInvocation, "CurrentBlueVideoBlackLevel");
+    DviInvocationResponseUint respWriterCurrentBlueVideoBlackLevel(aInvocation, "CurrentBlueVideoBlackLevel");
     respWriterCurrentBlueVideoBlackLevel.Write(respCurrentBlueVideoBlackLevel);
 	aInvocation.InvocationWriteEnd();
 }
@@ -664,7 +664,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetColorTemperature(IDviInvocation
     uint32_t respCurrentColorTemperature;
     GetColorTemperature(aVersion, InstanceID, respCurrentColorTemperature);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterCurrentColorTemperature(aInvocation, "CurrentColorTemperature");
+    DviInvocationResponseUint respWriterCurrentColorTemperature(aInvocation, "CurrentColorTemperature");
     respWriterCurrentColorTemperature.Write(respCurrentColorTemperature);
 	aInvocation.InvocationWriteEnd();
 }
@@ -688,7 +688,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetHorizontalKeystone(IDviInvocati
     int32_t respCurrentHorizontalKeystone;
     GetHorizontalKeystone(aVersion, InstanceID, respCurrentHorizontalKeystone);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseInt respWriterCurrentHorizontalKeystone(aInvocation, "CurrentHorizontalKeystone");
+    DviInvocationResponseInt respWriterCurrentHorizontalKeystone(aInvocation, "CurrentHorizontalKeystone");
     respWriterCurrentHorizontalKeystone.Write(respCurrentHorizontalKeystone);
 	aInvocation.InvocationWriteEnd();
 }
@@ -712,7 +712,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetVerticalKeystone(IDviInvocation
     int32_t respCurrentVerticalKeystone;
     GetVerticalKeystone(aVersion, InstanceID, respCurrentVerticalKeystone);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseInt respWriterCurrentVerticalKeystone(aInvocation, "CurrentVerticalKeystone");
+    DviInvocationResponseInt respWriterCurrentVerticalKeystone(aInvocation, "CurrentVerticalKeystone");
     respWriterCurrentVerticalKeystone.Write(respCurrentVerticalKeystone);
 	aInvocation.InvocationWriteEnd();
 }
@@ -739,7 +739,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetMute(IDviInvocation& aInvocatio
     bool respCurrentMute;
     GetMute(aVersion, InstanceID, Channel, respCurrentMute);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterCurrentMute(aInvocation, "CurrentMute");
+    DviInvocationResponseBool respWriterCurrentMute(aInvocation, "CurrentMute");
     respWriterCurrentMute.Write(respCurrentMute);
 	aInvocation.InvocationWriteEnd();
 }
@@ -769,7 +769,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetVolume(IDviInvocation& aInvocat
     uint32_t respCurrentVolume;
     GetVolume(aVersion, InstanceID, Channel, respCurrentVolume);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterCurrentVolume(aInvocation, "CurrentVolume");
+    DviInvocationResponseUint respWriterCurrentVolume(aInvocation, "CurrentVolume");
     respWriterCurrentVolume.Write(respCurrentVolume);
 	aInvocation.InvocationWriteEnd();
 }
@@ -799,7 +799,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetVolumeDB(IDviInvocation& aInvoc
     int32_t respCurrentVolume;
     GetVolumeDB(aVersion, InstanceID, Channel, respCurrentVolume);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseInt respWriterCurrentVolume(aInvocation, "CurrentVolume");
+    DviInvocationResponseInt respWriterCurrentVolume(aInvocation, "CurrentVolume");
     respWriterCurrentVolume.Write(respCurrentVolume);
 	aInvocation.InvocationWriteEnd();
 }
@@ -830,9 +830,9 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetVolumeDBRange(IDviInvocation& a
     int32_t respMaxValue;
     GetVolumeDBRange(aVersion, InstanceID, Channel, respMinValue, respMaxValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseInt respWriterMinValue(aInvocation, "MinValue");
+    DviInvocationResponseInt respWriterMinValue(aInvocation, "MinValue");
     respWriterMinValue.Write(respMinValue);
-    InvocationResponseInt respWriterMaxValue(aInvocation, "MaxValue");
+    DviInvocationResponseInt respWriterMaxValue(aInvocation, "MaxValue");
     respWriterMaxValue.Write(respMaxValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -848,7 +848,7 @@ void DvProviderUpnpOrgRenderingControl1Cpp::DoGetLoudness(IDviInvocation& aInvoc
     bool respCurrentLoudness;
     GetLoudness(aVersion, InstanceID, Channel, respCurrentLoudness);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterCurrentLoudness(aInvocation, "CurrentLoudness");
+    DviInvocationResponseBool respWriterCurrentLoudness(aInvocation, "CurrentLoudness");
     respWriterCurrentLoudness.Write(respCurrentLoudness);
 	aInvocation.InvocationWriteEnd();
 }

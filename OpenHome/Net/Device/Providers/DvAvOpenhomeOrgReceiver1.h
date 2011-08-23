@@ -115,7 +115,7 @@ private:
      * Play action for the owning device.
      * Must be implemented iff EnableActionPlay was called.
      */
-    virtual void Play(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void Play(IDvInvocationResponse& aResponse, TUint aVersion);
     /**
      * Stop action.
      *
@@ -123,7 +123,7 @@ private:
      * Stop action for the owning device.
      * Must be implemented iff EnableActionStop was called.
      */
-    virtual void Stop(IInvocationResponse& aResponse, TUint aVersion);
+    virtual void Stop(IDvInvocationResponse& aResponse, TUint aVersion);
     /**
      * SetSender action.
      *
@@ -131,7 +131,7 @@ private:
      * SetSender action for the owning device.
      * Must be implemented iff EnableActionSetSender was called.
      */
-    virtual void SetSender(IInvocationResponse& aResponse, TUint aVersion, const Brx& aUri, const Brx& aMetadata);
+    virtual void SetSender(IDvInvocationResponse& aResponse, TUint aVersion, const Brx& aUri, const Brx& aMetadata);
     /**
      * Sender action.
      *
@@ -139,7 +139,7 @@ private:
      * Sender action for the owning device.
      * Must be implemented iff EnableActionSender was called.
      */
-    virtual void Sender(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aUri, IInvocationResponseString& aMetadata);
+    virtual void Sender(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata);
     /**
      * ProtocolInfo action.
      *
@@ -147,7 +147,7 @@ private:
      * ProtocolInfo action for the owning device.
      * Must be implemented iff EnableActionProtocolInfo was called.
      */
-    virtual void ProtocolInfo(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void ProtocolInfo(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
     /**
      * TransportState action.
      *
@@ -155,7 +155,7 @@ private:
      * TransportState action for the owning device.
      * Must be implemented iff EnableActionTransportState was called.
      */
-    virtual void TransportState(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void TransportState(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgReceiver1();
     void DoPlay(IDviInvocation& aInvocation, TUint aVersion);

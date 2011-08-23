@@ -164,82 +164,81 @@ void DviService::RemoveSubscription(const Brx& aSid)
 }
 
 
-// InvocationResponse
+// DviInvocationResponse
 
-InvocationResponse::InvocationResponse(IDviInvocation& aInvocation)
+DviInvocationResponse::DviInvocationResponse(IDviInvocation& aInvocation)
     : iInvocation(aInvocation)
 {
 }
 
-void InvocationResponse::Error(TInt aCode, const Brx& aReason)
+void DviInvocationResponse::Error(TInt aCode, const Brx& aReason)
 {
 	iInvocation.InvocationReportError(aCode, aReason);
 }
 
-void InvocationResponse::Start()
+void DviInvocationResponse::Start()
 {
 	iInvocation.InvocationWriteStart();
 }
 
-void InvocationResponse::End()
+void DviInvocationResponse::End()
 {
 	iInvocation.InvocationWriteEnd();
 }
 
 
-// InvocationResponseBool
+// DviInvocationResponseBool
 
-InvocationResponseBool::InvocationResponseBool(IDviInvocation& aInvocation, const TChar* aName)
+DviInvocationResponseBool::DviInvocationResponseBool(IDviInvocation& aInvocation, const TChar* aName)
     : iInvocation(aInvocation)
     , iName(aName)
 {
 }
 
-void InvocationResponseBool::Write(TBool aValue)
+void DviInvocationResponseBool::Write(TBool aValue)
 {
 	iInvocation.InvocationWriteBool(iName, aValue);
 }
 
 
-// InvocationResponseUint
+// DviInvocationResponseUint
 
-InvocationResponseUint::InvocationResponseUint(IDviInvocation& aInvocation, const TChar* aName)
+DviInvocationResponseUint::DviInvocationResponseUint(IDviInvocation& aInvocation, const TChar* aName)
     : iInvocation(aInvocation)
     , iName(aName)
 {
 }
 
-void InvocationResponseUint::Write(TUint aValue)
+void DviInvocationResponseUint::Write(TUint aValue)
 {
 	iInvocation.InvocationWriteUint(iName, aValue);
 }
 
 
-// InvocationResponseInt
+// DviInvocationResponseInt
 
-InvocationResponseInt::InvocationResponseInt(IDviInvocation& aInvocation, const TChar* aName)
+DviInvocationResponseInt::DviInvocationResponseInt(IDviInvocation& aInvocation, const TChar* aName)
     : iInvocation(aInvocation)
     , iName(aName)
 {
 }
 
-void InvocationResponseInt::Write(TInt aValue)
+void DviInvocationResponseInt::Write(TInt aValue)
 {
 	iInvocation.InvocationWriteInt(iName, aValue);
 }
 
 
-// InvocationResponseBinary
+// DviInvocationResponseBinary
 
-InvocationResponseBinary::InvocationResponseBinary(IDviInvocation& aInvocation, const TChar* aName)
+DviInvocationResponseBinary::DviInvocationResponseBinary(IDviInvocation& aInvocation, const TChar* aName)
     : iInvocation(aInvocation)
     , iName(aName)
     , iFirst(true)
 {
 }
 
-
-void InvocationResponseBinary::CheckFirst()
+void DviInvocationResponseBinary::CheckFirst()
 {
 	if (iFirst) {
 		iInvocation.InvocationWriteBinaryStart(iName);
@@ -247,36 +246,35 @@ void InvocationResponseBinary::CheckFirst()
 	}
 }
 
-void InvocationResponseBinary::Write(TByte aValue)
+void DviInvocationResponseBinary::Write(TByte aValue)
 {
 	CheckFirst();
 	iInvocation.InvocationWriteBinary(aValue);
 }
 
-void InvocationResponseBinary::Write(const Brx& aValue)
+void DviInvocationResponseBinary::Write(const Brx& aValue)
 {
 	CheckFirst();
 	iInvocation.InvocationWriteBinary(aValue);
 }
 
-void InvocationResponseBinary::WriteFlush()
+void DviInvocationResponseBinary::WriteFlush()
 {
 	CheckFirst();
 	iInvocation.InvocationWriteBinaryEnd(iName);
 }
 
 
-// InvocationResponseString
+// DviInvocationResponseString
 
-InvocationResponseString::InvocationResponseString(IDviInvocation& aInvocation, const TChar* aName)
+DviInvocationResponseString::DviInvocationResponseString(IDviInvocation& aInvocation, const TChar* aName)
     : iInvocation(aInvocation)
     , iName(aName)
     , iFirst(true)
 {
 }
 
-
-void InvocationResponseString::CheckFirst()
+void DviInvocationResponseString::CheckFirst()
 {
 	if (iFirst) {
 		iInvocation.InvocationWriteStringStart(iName);
@@ -284,19 +282,19 @@ void InvocationResponseString::CheckFirst()
 	}
 }
 
-void InvocationResponseString::Write(TByte aValue)
+void DviInvocationResponseString::Write(TByte aValue)
 {
 	CheckFirst();
 	iInvocation.InvocationWriteString(aValue);
 }
 
-void InvocationResponseString::Write(const Brx& aValue)
+void DviInvocationResponseString::Write(const Brx& aValue)
 {
 	CheckFirst();
 	iInvocation.InvocationWriteString(aValue);
 }
 
-void InvocationResponseString::WriteFlush()
+void DviInvocationResponseString::WriteFlush()
 {
 	CheckFirst();
 	iInvocation.InvocationWriteStringEnd(iName);

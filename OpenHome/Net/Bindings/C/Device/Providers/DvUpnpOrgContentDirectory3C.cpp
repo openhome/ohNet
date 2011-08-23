@@ -424,14 +424,14 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetSearchCapabilities(IDviInvocation
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* SearchCaps;
     ASSERT(iCallbackGetSearchCapabilities != NULL);
     if (0 != iCallbackGetSearchCapabilities(iPtrGetSearchCapabilities, aVersion, &SearchCaps)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respSearchCaps(aInvocation, "SearchCaps");
+    DviInvocationResponseString respSearchCaps(aInvocation, "SearchCaps");
     resp.Start();
     Brhz bufSearchCaps((const TChar*)SearchCaps);
     OhNetFreeExternal(SearchCaps);
@@ -444,14 +444,14 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetSortCapabilities(IDviInvocation& 
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* SortCaps;
     ASSERT(iCallbackGetSortCapabilities != NULL);
     if (0 != iCallbackGetSortCapabilities(iPtrGetSortCapabilities, aVersion, &SortCaps)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respSortCaps(aInvocation, "SortCaps");
+    DviInvocationResponseString respSortCaps(aInvocation, "SortCaps");
     resp.Start();
     Brhz bufSortCaps((const TChar*)SortCaps);
     OhNetFreeExternal(SortCaps);
@@ -464,14 +464,14 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetSortExtensionCapabilities(IDviInv
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* SortExtensionCaps;
     ASSERT(iCallbackGetSortExtensionCapabilities != NULL);
     if (0 != iCallbackGetSortExtensionCapabilities(iPtrGetSortExtensionCapabilities, aVersion, &SortExtensionCaps)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respSortExtensionCaps(aInvocation, "SortExtensionCaps");
+    DviInvocationResponseString respSortExtensionCaps(aInvocation, "SortExtensionCaps");
     resp.Start();
     Brhz bufSortExtensionCaps((const TChar*)SortExtensionCaps);
     OhNetFreeExternal(SortExtensionCaps);
@@ -484,14 +484,14 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetFeatureList(IDviInvocation& aInvo
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* FeatureList;
     ASSERT(iCallbackGetFeatureList != NULL);
     if (0 != iCallbackGetFeatureList(iPtrGetFeatureList, aVersion, &FeatureList)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respFeatureList(aInvocation, "FeatureList");
+    DviInvocationResponseString respFeatureList(aInvocation, "FeatureList");
     resp.Start();
     Brhz bufFeatureList((const TChar*)FeatureList);
     OhNetFreeExternal(FeatureList);
@@ -504,14 +504,14 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetSystemUpdateID(IDviInvocation& aI
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     uint32_t Id;
     ASSERT(iCallbackGetSystemUpdateID != NULL);
     if (0 != iCallbackGetSystemUpdateID(iPtrGetSystemUpdateID, aVersion, &Id)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respId(aInvocation, "Id");
+    DviInvocationResponseUint respId(aInvocation, "Id");
     resp.Start();
     respId.Write(Id);
     resp.End();
@@ -521,14 +521,14 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetServiceResetToken(IDviInvocation&
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* ResetToken;
     ASSERT(iCallbackGetServiceResetToken != NULL);
     if (0 != iCallbackGetServiceResetToken(iPtrGetServiceResetToken, aVersion, &ResetToken)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respResetToken(aInvocation, "ResetToken");
+    DviInvocationResponseString respResetToken(aInvocation, "ResetToken");
     resp.Start();
     Brhz bufResetToken((const TChar*)ResetToken);
     OhNetFreeExternal(ResetToken);
@@ -551,7 +551,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoBrowse(IDviInvocation& aInvocation, 
     Brhz SortCriteria;
     aInvocation.InvocationReadString("SortCriteria", SortCriteria);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* Result;
     uint32_t NumberReturned;
     uint32_t TotalMatches;
@@ -561,10 +561,10 @@ void DvProviderUpnpOrgContentDirectory3C::DoBrowse(IDviInvocation& aInvocation, 
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respResult(aInvocation, "Result");
-    InvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
-    InvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    DviInvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
+    DviInvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
     resp.Start();
     Brhz bufResult((const TChar*)Result);
     OhNetFreeExternal(Result);
@@ -590,7 +590,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoSearch(IDviInvocation& aInvocation, 
     Brhz SortCriteria;
     aInvocation.InvocationReadString("SortCriteria", SortCriteria);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* Result;
     uint32_t NumberReturned;
     uint32_t TotalMatches;
@@ -600,10 +600,10 @@ void DvProviderUpnpOrgContentDirectory3C::DoSearch(IDviInvocation& aInvocation, 
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respResult(aInvocation, "Result");
-    InvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
-    InvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    DviInvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
+    DviInvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
     resp.Start();
     Brhz bufResult((const TChar*)Result);
     OhNetFreeExternal(Result);
@@ -623,7 +623,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoCreateObject(IDviInvocation& aInvoca
     Brhz Elements;
     aInvocation.InvocationReadString("Elements", Elements);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* ObjectID;
     char* Result;
     ASSERT(iCallbackCreateObject != NULL);
@@ -631,8 +631,8 @@ void DvProviderUpnpOrgContentDirectory3C::DoCreateObject(IDviInvocation& aInvoca
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respObjectID(aInvocation, "ObjectID");
-    InvocationResponseString respResult(aInvocation, "Result");
+    DviInvocationResponseString respObjectID(aInvocation, "ObjectID");
+    DviInvocationResponseString respResult(aInvocation, "Result");
     resp.Start();
     Brhz bufObjectID((const TChar*)ObjectID);
     OhNetFreeExternal(ObjectID);
@@ -651,7 +651,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoDestroyObject(IDviInvocation& aInvoc
     Brhz ObjectID;
     aInvocation.InvocationReadString("ObjectID", ObjectID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     ASSERT(iCallbackDestroyObject != NULL);
     if (0 != iCallbackDestroyObject(iPtrDestroyObject, aVersion, (const char*)ObjectID.Ptr())) {
         resp.Error(502, Brn("Action failed"));
@@ -671,7 +671,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoUpdateObject(IDviInvocation& aInvoca
     Brhz NewTagValue;
     aInvocation.InvocationReadString("NewTagValue", NewTagValue);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     ASSERT(iCallbackUpdateObject != NULL);
     if (0 != iCallbackUpdateObject(iPtrUpdateObject, aVersion, (const char*)ObjectID.Ptr(), (const char*)CurrentTagValue.Ptr(), (const char*)NewTagValue.Ptr())) {
         resp.Error(502, Brn("Action failed"));
@@ -689,14 +689,14 @@ void DvProviderUpnpOrgContentDirectory3C::DoMoveObject(IDviInvocation& aInvocati
     Brhz NewParentID;
     aInvocation.InvocationReadString("NewParentID", NewParentID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* NewObjectID;
     ASSERT(iCallbackMoveObject != NULL);
     if (0 != iCallbackMoveObject(iPtrMoveObject, aVersion, (const char*)ObjectID.Ptr(), (const char*)NewParentID.Ptr(), &NewObjectID)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respNewObjectID(aInvocation, "NewObjectID");
+    DviInvocationResponseString respNewObjectID(aInvocation, "NewObjectID");
     resp.Start();
     Brhz bufNewObjectID((const TChar*)NewObjectID);
     OhNetFreeExternal(NewObjectID);
@@ -713,14 +713,14 @@ void DvProviderUpnpOrgContentDirectory3C::DoImportResource(IDviInvocation& aInvo
     Brhz DestinationURI;
     aInvocation.InvocationReadString("DestinationURI", DestinationURI);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     uint32_t TransferID;
     ASSERT(iCallbackImportResource != NULL);
     if (0 != iCallbackImportResource(iPtrImportResource, aVersion, (const char*)SourceURI.Ptr(), (const char*)DestinationURI.Ptr(), &TransferID)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respTransferID(aInvocation, "TransferID");
+    DviInvocationResponseUint respTransferID(aInvocation, "TransferID");
     resp.Start();
     respTransferID.Write(TransferID);
     resp.End();
@@ -734,14 +734,14 @@ void DvProviderUpnpOrgContentDirectory3C::DoExportResource(IDviInvocation& aInvo
     Brhz DestinationURI;
     aInvocation.InvocationReadString("DestinationURI", DestinationURI);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     uint32_t TransferID;
     ASSERT(iCallbackExportResource != NULL);
     if (0 != iCallbackExportResource(iPtrExportResource, aVersion, (const char*)SourceURI.Ptr(), (const char*)DestinationURI.Ptr(), &TransferID)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respTransferID(aInvocation, "TransferID");
+    DviInvocationResponseUint respTransferID(aInvocation, "TransferID");
     resp.Start();
     respTransferID.Write(TransferID);
     resp.End();
@@ -753,7 +753,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoDeleteResource(IDviInvocation& aInvo
     Brhz ResourceURI;
     aInvocation.InvocationReadString("ResourceURI", ResourceURI);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     ASSERT(iCallbackDeleteResource != NULL);
     if (0 != iCallbackDeleteResource(iPtrDeleteResource, aVersion, (const char*)ResourceURI.Ptr())) {
         resp.Error(502, Brn("Action failed"));
@@ -768,7 +768,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoStopTransferResource(IDviInvocation&
     aInvocation.InvocationReadStart();
     TUint TransferID = aInvocation.InvocationReadUint("TransferID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     ASSERT(iCallbackStopTransferResource != NULL);
     if (0 != iCallbackStopTransferResource(iPtrStopTransferResource, aVersion, TransferID)) {
         resp.Error(502, Brn("Action failed"));
@@ -783,7 +783,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetTransferProgress(IDviInvocation& 
     aInvocation.InvocationReadStart();
     TUint TransferID = aInvocation.InvocationReadUint("TransferID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* TransferStatus;
     char* TransferLength;
     char* TransferTotal;
@@ -792,9 +792,9 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetTransferProgress(IDviInvocation& 
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respTransferStatus(aInvocation, "TransferStatus");
-    InvocationResponseString respTransferLength(aInvocation, "TransferLength");
-    InvocationResponseString respTransferTotal(aInvocation, "TransferTotal");
+    DviInvocationResponseString respTransferStatus(aInvocation, "TransferStatus");
+    DviInvocationResponseString respTransferLength(aInvocation, "TransferLength");
+    DviInvocationResponseString respTransferTotal(aInvocation, "TransferTotal");
     resp.Start();
     Brhz bufTransferStatus((const TChar*)TransferStatus);
     OhNetFreeExternal(TransferStatus);
@@ -819,14 +819,14 @@ void DvProviderUpnpOrgContentDirectory3C::DoCreateReference(IDviInvocation& aInv
     Brhz ObjectID;
     aInvocation.InvocationReadString("ObjectID", ObjectID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* NewID;
     ASSERT(iCallbackCreateReference != NULL);
     if (0 != iCallbackCreateReference(iPtrCreateReference, aVersion, (const char*)ContainerID.Ptr(), (const char*)ObjectID.Ptr(), &NewID)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respNewID(aInvocation, "NewID");
+    DviInvocationResponseString respNewID(aInvocation, "NewID");
     resp.Start();
     Brhz bufNewID((const TChar*)NewID);
     OhNetFreeExternal(NewID);
@@ -844,7 +844,7 @@ void DvProviderUpnpOrgContentDirectory3C::DoFreeFormQuery(IDviInvocation& aInvoc
     Brhz QueryRequest;
     aInvocation.InvocationReadString("QueryRequest", QueryRequest);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* QueryResult;
     uint32_t UpdateID;
     ASSERT(iCallbackFreeFormQuery != NULL);
@@ -852,8 +852,8 @@ void DvProviderUpnpOrgContentDirectory3C::DoFreeFormQuery(IDviInvocation& aInvoc
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respQueryResult(aInvocation, "QueryResult");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    DviInvocationResponseString respQueryResult(aInvocation, "QueryResult");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
     resp.Start();
     Brhz bufQueryResult((const TChar*)QueryResult);
     OhNetFreeExternal(QueryResult);
@@ -867,14 +867,14 @@ void DvProviderUpnpOrgContentDirectory3C::DoGetFreeFormQueryCapabilities(IDviInv
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* FFQCapabilities;
     ASSERT(iCallbackGetFreeFormQueryCapabilities != NULL);
     if (0 != iCallbackGetFreeFormQueryCapabilities(iPtrGetFreeFormQueryCapabilities, aVersion, &FFQCapabilities)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respFFQCapabilities(aInvocation, "FFQCapabilities");
+    DviInvocationResponseString respFFQCapabilities(aInvocation, "FFQCapabilities");
     resp.Start();
     Brhz bufFFQCapabilities((const TChar*)FFQCapabilities);
     OhNetFreeExternal(FFQCapabilities);

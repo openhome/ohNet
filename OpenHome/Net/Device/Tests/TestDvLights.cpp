@@ -59,13 +59,13 @@ private:
     void InitMode2();
     void InitMode3();
 private:
-    void GetCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aCount);
-    void GetRoom(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aRoomName);
-    void GetName(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aFriendlyName);
-    void GetPosition(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseUint& aX, IInvocationResponseUint& aY, IInvocationResponseUint& aZ);
-    void SetColor(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, TUint aColor);
-    void GetColor(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseUint& aColor);
-    void GetColorComponents(IInvocationResponse& aResponse, TUint aVersion, TUint aColor, IInvocationResponseUint& aBrightness, IInvocationResponseUint& aRed, IInvocationResponseUint& aGreen, IInvocationResponseUint& aBlue);
+    void GetCount(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aCount);
+    void GetRoom(IDvInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IDvInvocationResponseString& aRoomName);
+    void GetName(IDvInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IDvInvocationResponseString& aFriendlyName);
+    void GetPosition(IDvInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IDvInvocationResponseUint& aX, IDvInvocationResponseUint& aY, IDvInvocationResponseUint& aZ);
+    void SetColor(IDvInvocationResponse& aResponse, TUint aVersion, TUint aIndex, TUint aColor);
+    void GetColor(IDvInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IDvInvocationResponseUint& aColor);
+    void GetColorComponents(IDvInvocationResponse& aResponse, TUint aVersion, TUint aColor, IDvInvocationResponseUint& aBrightness, IDvInvocationResponseUint& aRed, IDvInvocationResponseUint& aGreen, IDvInvocationResponseUint& aBlue);
 private:
     std::vector<Light*> iLights;
 };
@@ -148,14 +148,14 @@ void ProviderLights::InitMode3()
     iLights.push_back(new Light("Bedroom2", "Ceiling", 150, 150, 200, MAKE_COLOR(0, 255, 255, 255)));
 }
 
-void ProviderLights::GetCount(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseUint& aCount)
+void ProviderLights::GetCount(IDvInvocationResponse& aResponse, TUint /*aVersion*/, IDvInvocationResponseUint& aCount)
 {
     aResponse.Start();
     aCount.Write((TUint)iLights.size());
     aResponse.End();
 }
 
-void ProviderLights::GetRoom(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IInvocationResponseString& aRoomName)
+void ProviderLights::GetRoom(IDvInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IDvInvocationResponseString& aRoomName)
 {
     Light* light = iLights[aIndex];
     aResponse.Start();
@@ -164,7 +164,7 @@ void ProviderLights::GetRoom(IInvocationResponse& aResponse, TUint /*aVersion*/,
     aResponse.End();
 }
 
-void ProviderLights::GetName(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IInvocationResponseString& aFriendlyName)
+void ProviderLights::GetName(IDvInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IDvInvocationResponseString& aFriendlyName)
 {
     Light* light = iLights[aIndex];
     aResponse.Start();
@@ -173,7 +173,7 @@ void ProviderLights::GetName(IInvocationResponse& aResponse, TUint /*aVersion*/,
     aResponse.End();
 }
 
-void ProviderLights::GetPosition(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IInvocationResponseUint& aX, IInvocationResponseUint& aY, IInvocationResponseUint& aZ)
+void ProviderLights::GetPosition(IDvInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IDvInvocationResponseUint& aX, IDvInvocationResponseUint& aY, IDvInvocationResponseUint& aZ)
 {
     Light* light = iLights[aIndex];
     aResponse.Start();
@@ -183,7 +183,7 @@ void ProviderLights::GetPosition(IInvocationResponse& aResponse, TUint /*aVersio
     aResponse.End();
 }
 
-void ProviderLights::SetColor(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, TUint aColor)
+void ProviderLights::SetColor(IDvInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, TUint aColor)
 {
     Light* light = iLights[aIndex];
     light->SetColor(aColor);
@@ -191,7 +191,7 @@ void ProviderLights::SetColor(IInvocationResponse& aResponse, TUint /*aVersion*/
     aResponse.End();
 }
 
-void ProviderLights::GetColor(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IInvocationResponseUint& aColor)
+void ProviderLights::GetColor(IDvInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IDvInvocationResponseUint& aColor)
 {
     Light* light = iLights[aIndex];
     aResponse.Start();
@@ -199,7 +199,7 @@ void ProviderLights::GetColor(IInvocationResponse& aResponse, TUint /*aVersion*/
     aResponse.End();
 }
 
-void ProviderLights::GetColorComponents(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aColor, IInvocationResponseUint& aBrightness, IInvocationResponseUint& aRed, IInvocationResponseUint& aGreen, IInvocationResponseUint& aBlue)
+void ProviderLights::GetColorComponents(IDvInvocationResponse& aResponse, TUint /*aVersion*/, TUint aColor, IDvInvocationResponseUint& aBrightness, IDvInvocationResponseUint& aRed, IDvInvocationResponseUint& aGreen, IDvInvocationResponseUint& aBlue)
 {
     aResponse.Start();
     aBrightness.Write(aColor>>24);

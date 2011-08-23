@@ -246,7 +246,7 @@ void DvProviderUpnpOrgContentDirectory2Cpp::DoGetSearchCapabilities(IDviInvocati
     std::string respSearchCaps;
     GetSearchCapabilities(aVersion, respSearchCaps);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterSearchCaps(aInvocation, "SearchCaps");
+    DviInvocationResponseString respWriterSearchCaps(aInvocation, "SearchCaps");
     Brn buf_SearchCaps((const TByte*)respSearchCaps.c_str(), (TUint)respSearchCaps.length());
     respWriterSearchCaps.Write(buf_SearchCaps);
     aInvocation.InvocationWriteStringEnd("SearchCaps");
@@ -260,7 +260,7 @@ void DvProviderUpnpOrgContentDirectory2Cpp::DoGetSortCapabilities(IDviInvocation
     std::string respSortCaps;
     GetSortCapabilities(aVersion, respSortCaps);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterSortCaps(aInvocation, "SortCaps");
+    DviInvocationResponseString respWriterSortCaps(aInvocation, "SortCaps");
     Brn buf_SortCaps((const TByte*)respSortCaps.c_str(), (TUint)respSortCaps.length());
     respWriterSortCaps.Write(buf_SortCaps);
     aInvocation.InvocationWriteStringEnd("SortCaps");
@@ -274,7 +274,7 @@ void DvProviderUpnpOrgContentDirectory2Cpp::DoGetSortExtensionCapabilities(IDviI
     std::string respSortExtensionCaps;
     GetSortExtensionCapabilities(aVersion, respSortExtensionCaps);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterSortExtensionCaps(aInvocation, "SortExtensionCaps");
+    DviInvocationResponseString respWriterSortExtensionCaps(aInvocation, "SortExtensionCaps");
     Brn buf_SortExtensionCaps((const TByte*)respSortExtensionCaps.c_str(), (TUint)respSortExtensionCaps.length());
     respWriterSortExtensionCaps.Write(buf_SortExtensionCaps);
     aInvocation.InvocationWriteStringEnd("SortExtensionCaps");
@@ -288,7 +288,7 @@ void DvProviderUpnpOrgContentDirectory2Cpp::DoGetFeatureList(IDviInvocation& aIn
     std::string respFeatureList;
     GetFeatureList(aVersion, respFeatureList);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterFeatureList(aInvocation, "FeatureList");
+    DviInvocationResponseString respWriterFeatureList(aInvocation, "FeatureList");
     Brn buf_FeatureList((const TByte*)respFeatureList.c_str(), (TUint)respFeatureList.length());
     respWriterFeatureList.Write(buf_FeatureList);
     aInvocation.InvocationWriteStringEnd("FeatureList");
@@ -302,7 +302,7 @@ void DvProviderUpnpOrgContentDirectory2Cpp::DoGetSystemUpdateID(IDviInvocation& 
     uint32_t respId;
     GetSystemUpdateID(aVersion, respId);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterId(aInvocation, "Id");
+    DviInvocationResponseUint respWriterId(aInvocation, "Id");
     respWriterId.Write(respId);
 	aInvocation.InvocationWriteEnd();
 }
@@ -331,15 +331,15 @@ void DvProviderUpnpOrgContentDirectory2Cpp::DoBrowse(IDviInvocation& aInvocation
     uint32_t respUpdateID;
     Browse(aVersion, ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterResult(aInvocation, "Result");
+    DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
-    InvocationResponseUint respWriterNumberReturned(aInvocation, "NumberReturned");
+    DviInvocationResponseUint respWriterNumberReturned(aInvocation, "NumberReturned");
     respWriterNumberReturned.Write(respNumberReturned);
-    InvocationResponseUint respWriterTotalMatches(aInvocation, "TotalMatches");
+    DviInvocationResponseUint respWriterTotalMatches(aInvocation, "TotalMatches");
     respWriterTotalMatches.Write(respTotalMatches);
-    InvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
+    DviInvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
     respWriterUpdateID.Write(respUpdateID);
 	aInvocation.InvocationWriteEnd();
 }
@@ -368,15 +368,15 @@ void DvProviderUpnpOrgContentDirectory2Cpp::DoSearch(IDviInvocation& aInvocation
     uint32_t respUpdateID;
     Search(aVersion, ContainerID, SearchCriteria, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterResult(aInvocation, "Result");
+    DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
-    InvocationResponseUint respWriterNumberReturned(aInvocation, "NumberReturned");
+    DviInvocationResponseUint respWriterNumberReturned(aInvocation, "NumberReturned");
     respWriterNumberReturned.Write(respNumberReturned);
-    InvocationResponseUint respWriterTotalMatches(aInvocation, "TotalMatches");
+    DviInvocationResponseUint respWriterTotalMatches(aInvocation, "TotalMatches");
     respWriterTotalMatches.Write(respTotalMatches);
-    InvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
+    DviInvocationResponseUint respWriterUpdateID(aInvocation, "UpdateID");
     respWriterUpdateID.Write(respUpdateID);
 	aInvocation.InvocationWriteEnd();
 }
@@ -395,11 +395,11 @@ void DvProviderUpnpOrgContentDirectory2Cpp::DoCreateObject(IDviInvocation& aInvo
     std::string respResult;
     CreateObject(aVersion, ContainerID, Elements, respObjectID, respResult);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterObjectID(aInvocation, "ObjectID");
+    DviInvocationResponseString respWriterObjectID(aInvocation, "ObjectID");
     Brn buf_ObjectID((const TByte*)respObjectID.c_str(), (TUint)respObjectID.length());
     respWriterObjectID.Write(buf_ObjectID);
     aInvocation.InvocationWriteStringEnd("ObjectID");
-    InvocationResponseString respWriterResult(aInvocation, "Result");
+    DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
@@ -449,7 +449,7 @@ void DvProviderUpnpOrgContentDirectory2Cpp::DoMoveObject(IDviInvocation& aInvoca
     std::string respNewObjectID;
     MoveObject(aVersion, ObjectID, NewParentID, respNewObjectID);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterNewObjectID(aInvocation, "NewObjectID");
+    DviInvocationResponseString respWriterNewObjectID(aInvocation, "NewObjectID");
     Brn buf_NewObjectID((const TByte*)respNewObjectID.c_str(), (TUint)respNewObjectID.length());
     respWriterNewObjectID.Write(buf_NewObjectID);
     aInvocation.InvocationWriteStringEnd("NewObjectID");
@@ -469,7 +469,7 @@ void DvProviderUpnpOrgContentDirectory2Cpp::DoImportResource(IDviInvocation& aIn
     uint32_t respTransferID;
     ImportResource(aVersion, SourceURI, DestinationURI, respTransferID);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterTransferID(aInvocation, "TransferID");
+    DviInvocationResponseUint respWriterTransferID(aInvocation, "TransferID");
     respWriterTransferID.Write(respTransferID);
 	aInvocation.InvocationWriteEnd();
 }
@@ -487,7 +487,7 @@ void DvProviderUpnpOrgContentDirectory2Cpp::DoExportResource(IDviInvocation& aIn
     uint32_t respTransferID;
     ExportResource(aVersion, SourceURI, DestinationURI, respTransferID);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterTransferID(aInvocation, "TransferID");
+    DviInvocationResponseUint respWriterTransferID(aInvocation, "TransferID");
     respWriterTransferID.Write(respTransferID);
 	aInvocation.InvocationWriteEnd();
 }
@@ -524,15 +524,15 @@ void DvProviderUpnpOrgContentDirectory2Cpp::DoGetTransferProgress(IDviInvocation
     std::string respTransferTotal;
     GetTransferProgress(aVersion, TransferID, respTransferStatus, respTransferLength, respTransferTotal);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterTransferStatus(aInvocation, "TransferStatus");
+    DviInvocationResponseString respWriterTransferStatus(aInvocation, "TransferStatus");
     Brn buf_TransferStatus((const TByte*)respTransferStatus.c_str(), (TUint)respTransferStatus.length());
     respWriterTransferStatus.Write(buf_TransferStatus);
     aInvocation.InvocationWriteStringEnd("TransferStatus");
-    InvocationResponseString respWriterTransferLength(aInvocation, "TransferLength");
+    DviInvocationResponseString respWriterTransferLength(aInvocation, "TransferLength");
     Brn buf_TransferLength((const TByte*)respTransferLength.c_str(), (TUint)respTransferLength.length());
     respWriterTransferLength.Write(buf_TransferLength);
     aInvocation.InvocationWriteStringEnd("TransferLength");
-    InvocationResponseString respWriterTransferTotal(aInvocation, "TransferTotal");
+    DviInvocationResponseString respWriterTransferTotal(aInvocation, "TransferTotal");
     Brn buf_TransferTotal((const TByte*)respTransferTotal.c_str(), (TUint)respTransferTotal.length());
     respWriterTransferTotal.Write(buf_TransferTotal);
     aInvocation.InvocationWriteStringEnd("TransferTotal");
@@ -552,7 +552,7 @@ void DvProviderUpnpOrgContentDirectory2Cpp::DoCreateReference(IDviInvocation& aI
     std::string respNewID;
     CreateReference(aVersion, ContainerID, ObjectID, respNewID);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterNewID(aInvocation, "NewID");
+    DviInvocationResponseString respWriterNewID(aInvocation, "NewID");
     Brn buf_NewID((const TByte*)respNewID.c_str(), (TUint)respNewID.length());
     respWriterNewID.Write(buf_NewID);
     aInvocation.InvocationWriteStringEnd("NewID");

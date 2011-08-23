@@ -181,7 +181,7 @@ void DvProviderUpnpOrgConnectionManager2C::DoGetProtocolInfo(IDviInvocation& aIn
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* Source;
     char* Sink;
     ASSERT(iCallbackGetProtocolInfo != NULL);
@@ -189,8 +189,8 @@ void DvProviderUpnpOrgConnectionManager2C::DoGetProtocolInfo(IDviInvocation& aIn
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respSource(aInvocation, "Source");
-    InvocationResponseString respSink(aInvocation, "Sink");
+    DviInvocationResponseString respSource(aInvocation, "Source");
+    DviInvocationResponseString respSink(aInvocation, "Sink");
     resp.Start();
     Brhz bufSource((const TChar*)Source);
     OhNetFreeExternal(Source);
@@ -214,7 +214,7 @@ void DvProviderUpnpOrgConnectionManager2C::DoPrepareForConnection(IDviInvocation
     Brhz Direction;
     aInvocation.InvocationReadString("Direction", Direction);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     int32_t ConnectionID;
     int32_t AVTransportID;
     int32_t RcsID;
@@ -223,9 +223,9 @@ void DvProviderUpnpOrgConnectionManager2C::DoPrepareForConnection(IDviInvocation
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseInt respConnectionID(aInvocation, "ConnectionID");
-    InvocationResponseInt respAVTransportID(aInvocation, "AVTransportID");
-    InvocationResponseInt respRcsID(aInvocation, "RcsID");
+    DviInvocationResponseInt respConnectionID(aInvocation, "ConnectionID");
+    DviInvocationResponseInt respAVTransportID(aInvocation, "AVTransportID");
+    DviInvocationResponseInt respRcsID(aInvocation, "RcsID");
     resp.Start();
     respConnectionID.Write(ConnectionID);
     respAVTransportID.Write(AVTransportID);
@@ -238,7 +238,7 @@ void DvProviderUpnpOrgConnectionManager2C::DoConnectionComplete(IDviInvocation& 
     aInvocation.InvocationReadStart();
     TInt ConnectionID = aInvocation.InvocationReadInt("ConnectionID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     ASSERT(iCallbackConnectionComplete != NULL);
     if (0 != iCallbackConnectionComplete(iPtrConnectionComplete, aVersion, ConnectionID)) {
         resp.Error(502, Brn("Action failed"));
@@ -252,14 +252,14 @@ void DvProviderUpnpOrgConnectionManager2C::DoGetCurrentConnectionIDs(IDviInvocat
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* ConnectionIDs;
     ASSERT(iCallbackGetCurrentConnectionIDs != NULL);
     if (0 != iCallbackGetCurrentConnectionIDs(iPtrGetCurrentConnectionIDs, aVersion, &ConnectionIDs)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respConnectionIDs(aInvocation, "ConnectionIDs");
+    DviInvocationResponseString respConnectionIDs(aInvocation, "ConnectionIDs");
     resp.Start();
     Brhz bufConnectionIDs((const TChar*)ConnectionIDs);
     OhNetFreeExternal(ConnectionIDs);
@@ -273,7 +273,7 @@ void DvProviderUpnpOrgConnectionManager2C::DoGetCurrentConnectionInfo(IDviInvoca
     aInvocation.InvocationReadStart();
     TInt ConnectionID = aInvocation.InvocationReadInt("ConnectionID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     int32_t RcsID;
     int32_t AVTransportID;
     char* ProtocolInfo;
@@ -286,13 +286,13 @@ void DvProviderUpnpOrgConnectionManager2C::DoGetCurrentConnectionInfo(IDviInvoca
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseInt respRcsID(aInvocation, "RcsID");
-    InvocationResponseInt respAVTransportID(aInvocation, "AVTransportID");
-    InvocationResponseString respProtocolInfo(aInvocation, "ProtocolInfo");
-    InvocationResponseString respPeerConnectionManager(aInvocation, "PeerConnectionManager");
-    InvocationResponseInt respPeerConnectionID(aInvocation, "PeerConnectionID");
-    InvocationResponseString respDirection(aInvocation, "Direction");
-    InvocationResponseString respStatus(aInvocation, "Status");
+    DviInvocationResponseInt respRcsID(aInvocation, "RcsID");
+    DviInvocationResponseInt respAVTransportID(aInvocation, "AVTransportID");
+    DviInvocationResponseString respProtocolInfo(aInvocation, "ProtocolInfo");
+    DviInvocationResponseString respPeerConnectionManager(aInvocation, "PeerConnectionManager");
+    DviInvocationResponseInt respPeerConnectionID(aInvocation, "PeerConnectionID");
+    DviInvocationResponseString respDirection(aInvocation, "Direction");
+    DviInvocationResponseString respStatus(aInvocation, "Status");
     resp.Start();
     respRcsID.Write(RcsID);
     respAVTransportID.Write(AVTransportID);

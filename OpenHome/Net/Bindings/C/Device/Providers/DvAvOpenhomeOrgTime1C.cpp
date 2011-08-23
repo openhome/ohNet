@@ -91,7 +91,7 @@ void DvProviderAvOpenhomeOrgTime1C::DoTime(IDviInvocation& aInvocation, TUint aV
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     uint32_t TrackCount;
     uint32_t Duration;
     uint32_t Seconds;
@@ -100,9 +100,9 @@ void DvProviderAvOpenhomeOrgTime1C::DoTime(IDviInvocation& aInvocation, TUint aV
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respTrackCount(aInvocation, "TrackCount");
-    InvocationResponseUint respDuration(aInvocation, "Duration");
-    InvocationResponseUint respSeconds(aInvocation, "Seconds");
+    DviInvocationResponseUint respTrackCount(aInvocation, "TrackCount");
+    DviInvocationResponseUint respDuration(aInvocation, "Duration");
+    DviInvocationResponseUint respSeconds(aInvocation, "Seconds");
     resp.Start();
     respTrackCount.Write(TrackCount);
     respDuration.Write(Duration);

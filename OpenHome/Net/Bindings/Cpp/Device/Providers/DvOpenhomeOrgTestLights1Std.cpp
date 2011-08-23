@@ -87,7 +87,7 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoGetCount(IDviInvocation& aInvocation
     uint32_t respCount;
     GetCount(aVersion, respCount);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterCount(aInvocation, "Count");
+    DviInvocationResponseUint respWriterCount(aInvocation, "Count");
     respWriterCount.Write(respCount);
 	aInvocation.InvocationWriteEnd();
 }
@@ -100,7 +100,7 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoGetRoom(IDviInvocation& aInvocation,
     std::string respRoomName;
     GetRoom(aVersion, Index, respRoomName);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterRoomName(aInvocation, "RoomName");
+    DviInvocationResponseString respWriterRoomName(aInvocation, "RoomName");
     Brn buf_RoomName((const TByte*)respRoomName.c_str(), (TUint)respRoomName.length());
     respWriterRoomName.Write(buf_RoomName);
     aInvocation.InvocationWriteStringEnd("RoomName");
@@ -115,7 +115,7 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoGetName(IDviInvocation& aInvocation,
     std::string respFriendlyName;
     GetName(aVersion, Index, respFriendlyName);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterFriendlyName(aInvocation, "FriendlyName");
+    DviInvocationResponseString respWriterFriendlyName(aInvocation, "FriendlyName");
     Brn buf_FriendlyName((const TByte*)respFriendlyName.c_str(), (TUint)respFriendlyName.length());
     respWriterFriendlyName.Write(buf_FriendlyName);
     aInvocation.InvocationWriteStringEnd("FriendlyName");
@@ -132,11 +132,11 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoGetPosition(IDviInvocation& aInvocat
     uint32_t respZ;
     GetPosition(aVersion, Index, respX, respY, respZ);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterX(aInvocation, "X");
+    DviInvocationResponseUint respWriterX(aInvocation, "X");
     respWriterX.Write(respX);
-    InvocationResponseUint respWriterY(aInvocation, "Y");
+    DviInvocationResponseUint respWriterY(aInvocation, "Y");
     respWriterY.Write(respY);
-    InvocationResponseUint respWriterZ(aInvocation, "Z");
+    DviInvocationResponseUint respWriterZ(aInvocation, "Z");
     respWriterZ.Write(respZ);
 	aInvocation.InvocationWriteEnd();
 }
@@ -160,7 +160,7 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoGetColor(IDviInvocation& aInvocation
     uint32_t respColor;
     GetColor(aVersion, Index, respColor);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterColor(aInvocation, "Color");
+    DviInvocationResponseUint respWriterColor(aInvocation, "Color");
     respWriterColor.Write(respColor);
 	aInvocation.InvocationWriteEnd();
 }
@@ -176,13 +176,13 @@ void DvProviderOpenhomeOrgTestLights1Cpp::DoGetColorComponents(IDviInvocation& a
     uint32_t respBlue;
     GetColorComponents(aVersion, Color, respBrightness, respRed, respGreen, respBlue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterBrightness(aInvocation, "Brightness");
+    DviInvocationResponseUint respWriterBrightness(aInvocation, "Brightness");
     respWriterBrightness.Write(respBrightness);
-    InvocationResponseUint respWriterRed(aInvocation, "Red");
+    DviInvocationResponseUint respWriterRed(aInvocation, "Red");
     respWriterRed.Write(respRed);
-    InvocationResponseUint respWriterGreen(aInvocation, "Green");
+    DviInvocationResponseUint respWriterGreen(aInvocation, "Green");
     respWriterGreen.Write(respGreen);
-    InvocationResponseUint respWriterBlue(aInvocation, "Blue");
+    DviInvocationResponseUint respWriterBlue(aInvocation, "Blue");
     respWriterBlue.Write(respBlue);
 	aInvocation.InvocationWriteEnd();
 }

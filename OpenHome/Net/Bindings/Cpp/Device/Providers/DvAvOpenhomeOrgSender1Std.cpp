@@ -136,7 +136,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::DoPresentationUrl(IDviInvocation& aInvoc
     std::string respValue;
     PresentationUrl(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
@@ -150,7 +150,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::DoMetadata(IDviInvocation& aInvocation, 
     std::string respValue;
     Metadata(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
@@ -164,7 +164,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::DoAudio(IDviInvocation& aInvocation, uin
     bool respValue;
     Audio(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterValue(aInvocation, "Value");
+    DviInvocationResponseBool respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -176,7 +176,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::DoStatus(IDviInvocation& aInvocation, ui
     std::string respValue;
     Status(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
@@ -190,7 +190,7 @@ void DvProviderAvOpenhomeOrgSender1Cpp::DoAttributes(IDviInvocation& aInvocation
     std::string respValue;
     Attributes(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");

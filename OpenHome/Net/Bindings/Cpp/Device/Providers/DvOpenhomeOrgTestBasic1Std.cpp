@@ -243,7 +243,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoIncrement(IDviInvocation& aInvocation
     uint32_t respResult;
     Increment(aVersion, Value, respResult);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterResult(aInvocation, "Result");
+    DviInvocationResponseUint respWriterResult(aInvocation, "Result");
     respWriterResult.Write(respResult);
 	aInvocation.InvocationWriteEnd();
 }
@@ -256,7 +256,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoDecrement(IDviInvocation& aInvocation
     int32_t respResult;
     Decrement(aVersion, Value, respResult);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseInt respWriterResult(aInvocation, "Result");
+    DviInvocationResponseInt respWriterResult(aInvocation, "Result");
     respWriterResult.Write(respResult);
 	aInvocation.InvocationWriteEnd();
 }
@@ -269,7 +269,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoToggle(IDviInvocation& aInvocation, u
     bool respResult;
     Toggle(aVersion, Value, respResult);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterResult(aInvocation, "Result");
+    DviInvocationResponseBool respWriterResult(aInvocation, "Result");
     respWriterResult.Write(respResult);
 	aInvocation.InvocationWriteEnd();
 }
@@ -284,7 +284,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoString(IDviInvocation& aInvocatio
     std::string respResult;
     EchoString(aVersion, Value, respResult);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterResult(aInvocation, "Result");
+    DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
@@ -301,7 +301,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoBinary(IDviInvocation& aInvocatio
     std::string respResult;
     EchoBinary(aVersion, Value, respResult);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBinary respWriterResult(aInvocation, "Result");
+    DviInvocationResponseBinary respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteBinaryEnd("Result");
@@ -325,7 +325,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetUint(IDviInvocation& aInvocation, 
     uint32_t respValueUint;
     GetUint(aVersion, respValueUint);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterValueUint(aInvocation, "ValueUint");
+    DviInvocationResponseUint respWriterValueUint(aInvocation, "ValueUint");
     respWriterValueUint.Write(respValueUint);
 	aInvocation.InvocationWriteEnd();
 }
@@ -347,7 +347,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetInt(IDviInvocation& aInvocation, u
     int32_t respValueInt;
     GetInt(aVersion, respValueInt);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseInt respWriterValueInt(aInvocation, "ValueInt");
+    DviInvocationResponseInt respWriterValueInt(aInvocation, "ValueInt");
     respWriterValueInt.Write(respValueInt);
 	aInvocation.InvocationWriteEnd();
 }
@@ -369,7 +369,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetBool(IDviInvocation& aInvocation, 
     bool respValueBool;
     GetBool(aVersion, respValueBool);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterValueBool(aInvocation, "ValueBool");
+    DviInvocationResponseBool respWriterValueBool(aInvocation, "ValueBool");
     respWriterValueBool.Write(respValueBool);
 	aInvocation.InvocationWriteEnd();
 }
@@ -405,7 +405,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetString(IDviInvocation& aInvocation
     std::string respValueStr;
     GetString(aVersion, respValueStr);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValueStr(aInvocation, "ValueStr");
+    DviInvocationResponseString respWriterValueStr(aInvocation, "ValueStr");
     Brn buf_ValueStr((const TByte*)respValueStr.c_str(), (TUint)respValueStr.length());
     respWriterValueStr.Write(buf_ValueStr);
     aInvocation.InvocationWriteStringEnd("ValueStr");
@@ -431,7 +431,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetBinary(IDviInvocation& aInvocation
     std::string respValueBin;
     GetBinary(aVersion, respValueBin);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBinary respWriterValueBin(aInvocation, "ValueBin");
+    DviInvocationResponseBinary respWriterValueBin(aInvocation, "ValueBin");
     Brn buf_ValueBin((const TByte*)respValueBin.c_str(), (TUint)respValueBin.length());
     respWriterValueBin.Write(buf_ValueBin);
     aInvocation.InvocationWriteBinaryEnd("ValueBin");

@@ -139,14 +139,14 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetCount(IDviInvocation& aInvocation, 
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     uint32_t Count;
     ASSERT(iCallbackGetCount != NULL);
     if (0 != iCallbackGetCount(iPtrGetCount, aVersion, &Count)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respCount(aInvocation, "Count");
+    DviInvocationResponseUint respCount(aInvocation, "Count");
     resp.Start();
     respCount.Write(Count);
     resp.End();
@@ -157,14 +157,14 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetRoom(IDviInvocation& aInvocation, T
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* RoomName;
     ASSERT(iCallbackGetRoom != NULL);
     if (0 != iCallbackGetRoom(iPtrGetRoom, aVersion, Index, &RoomName)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respRoomName(aInvocation, "RoomName");
+    DviInvocationResponseString respRoomName(aInvocation, "RoomName");
     resp.Start();
     Brhz bufRoomName((const TChar*)RoomName);
     OhNetFreeExternal(RoomName);
@@ -178,14 +178,14 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetName(IDviInvocation& aInvocation, T
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* FriendlyName;
     ASSERT(iCallbackGetName != NULL);
     if (0 != iCallbackGetName(iPtrGetName, aVersion, Index, &FriendlyName)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respFriendlyName(aInvocation, "FriendlyName");
+    DviInvocationResponseString respFriendlyName(aInvocation, "FriendlyName");
     resp.Start();
     Brhz bufFriendlyName((const TChar*)FriendlyName);
     OhNetFreeExternal(FriendlyName);
@@ -199,7 +199,7 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetPosition(IDviInvocation& aInvocatio
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     uint32_t X;
     uint32_t Y;
     uint32_t Z;
@@ -208,9 +208,9 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetPosition(IDviInvocation& aInvocatio
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respX(aInvocation, "X");
-    InvocationResponseUint respY(aInvocation, "Y");
-    InvocationResponseUint respZ(aInvocation, "Z");
+    DviInvocationResponseUint respX(aInvocation, "X");
+    DviInvocationResponseUint respY(aInvocation, "Y");
+    DviInvocationResponseUint respZ(aInvocation, "Z");
     resp.Start();
     respX.Write(X);
     respY.Write(Y);
@@ -224,7 +224,7 @@ void DvProviderOpenhomeOrgTestLights1C::DoSetColor(IDviInvocation& aInvocation, 
     TUint Index = aInvocation.InvocationReadUint("Index");
     TUint Color = aInvocation.InvocationReadUint("Color");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetColor != NULL);
     if (0 != iCallbackSetColor(iPtrSetColor, aVersion, Index, Color)) {
         resp.Error(502, Brn("Action failed"));
@@ -239,14 +239,14 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetColor(IDviInvocation& aInvocation, 
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     uint32_t Color;
     ASSERT(iCallbackGetColor != NULL);
     if (0 != iCallbackGetColor(iPtrGetColor, aVersion, Index, &Color)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respColor(aInvocation, "Color");
+    DviInvocationResponseUint respColor(aInvocation, "Color");
     resp.Start();
     respColor.Write(Color);
     resp.End();
@@ -257,7 +257,7 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetColorComponents(IDviInvocation& aIn
     aInvocation.InvocationReadStart();
     TUint Color = aInvocation.InvocationReadUint("Color");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     uint32_t Brightness;
     uint32_t Red;
     uint32_t Green;
@@ -267,10 +267,10 @@ void DvProviderOpenhomeOrgTestLights1C::DoGetColorComponents(IDviInvocation& aIn
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respBrightness(aInvocation, "Brightness");
-    InvocationResponseUint respRed(aInvocation, "Red");
-    InvocationResponseUint respGreen(aInvocation, "Green");
-    InvocationResponseUint respBlue(aInvocation, "Blue");
+    DviInvocationResponseUint respBrightness(aInvocation, "Brightness");
+    DviInvocationResponseUint respRed(aInvocation, "Red");
+    DviInvocationResponseUint respGreen(aInvocation, "Green");
+    DviInvocationResponseUint respBlue(aInvocation, "Blue");
     resp.Start();
     respBrightness.Write(Brightness);
     respRed.Write(Red);

@@ -284,17 +284,17 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoCharacteristics(IDviInvocation& aInvoc
     uint32_t respFadeMax;
     Characteristics(aVersion, respVolumeMax, respVolumeUnity, respVolumeSteps, respVolumeMilliDbPerStep, respBalanceMax, respFadeMax);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterVolumeMax(aInvocation, "VolumeMax");
+    DviInvocationResponseUint respWriterVolumeMax(aInvocation, "VolumeMax");
     respWriterVolumeMax.Write(respVolumeMax);
-    InvocationResponseUint respWriterVolumeUnity(aInvocation, "VolumeUnity");
+    DviInvocationResponseUint respWriterVolumeUnity(aInvocation, "VolumeUnity");
     respWriterVolumeUnity.Write(respVolumeUnity);
-    InvocationResponseUint respWriterVolumeSteps(aInvocation, "VolumeSteps");
+    DviInvocationResponseUint respWriterVolumeSteps(aInvocation, "VolumeSteps");
     respWriterVolumeSteps.Write(respVolumeSteps);
-    InvocationResponseUint respWriterVolumeMilliDbPerStep(aInvocation, "VolumeMilliDbPerStep");
+    DviInvocationResponseUint respWriterVolumeMilliDbPerStep(aInvocation, "VolumeMilliDbPerStep");
     respWriterVolumeMilliDbPerStep.Write(respVolumeMilliDbPerStep);
-    InvocationResponseUint respWriterBalanceMax(aInvocation, "BalanceMax");
+    DviInvocationResponseUint respWriterBalanceMax(aInvocation, "BalanceMax");
     respWriterBalanceMax.Write(respBalanceMax);
-    InvocationResponseUint respWriterFadeMax(aInvocation, "FadeMax");
+    DviInvocationResponseUint respWriterFadeMax(aInvocation, "FadeMax");
     respWriterFadeMax.Write(respFadeMax);
 	aInvocation.InvocationWriteEnd();
 }
@@ -334,7 +334,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoVolume(IDviInvocation& aInvocation, ui
     uint32_t respValue;
     Volume(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterValue(aInvocation, "Value");
+    DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -374,7 +374,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoBalance(IDviInvocation& aInvocation, u
     int32_t respValue;
     Balance(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseInt respWriterValue(aInvocation, "Value");
+    DviInvocationResponseInt respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -414,7 +414,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoFade(IDviInvocation& aInvocation, uint
     int32_t respValue;
     Fade(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseInt respWriterValue(aInvocation, "Value");
+    DviInvocationResponseInt respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -436,7 +436,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoMute(IDviInvocation& aInvocation, uint
     bool respValue;
     Mute(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterValue(aInvocation, "Value");
+    DviInvocationResponseBool respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -448,7 +448,7 @@ void DvProviderAvOpenhomeOrgVolume1Cpp::DoVolumeLimit(IDviInvocation& aInvocatio
     uint32_t respValue;
     VolumeLimit(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterValue(aInvocation, "Value");
+    DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }

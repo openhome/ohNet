@@ -279,8 +279,8 @@ void DvProviderUpnpOrgContentDirectory3::DoGetSearchCapabilities(IDviInvocation&
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respSearchCaps(aInvocation, "SearchCaps");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respSearchCaps(aInvocation, "SearchCaps");
     GetSearchCapabilities(resp, aVersion, respSearchCaps);
 }
 
@@ -288,8 +288,8 @@ void DvProviderUpnpOrgContentDirectory3::DoGetSortCapabilities(IDviInvocation& a
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respSortCaps(aInvocation, "SortCaps");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respSortCaps(aInvocation, "SortCaps");
     GetSortCapabilities(resp, aVersion, respSortCaps);
 }
 
@@ -297,8 +297,8 @@ void DvProviderUpnpOrgContentDirectory3::DoGetSortExtensionCapabilities(IDviInvo
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respSortExtensionCaps(aInvocation, "SortExtensionCaps");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respSortExtensionCaps(aInvocation, "SortExtensionCaps");
     GetSortExtensionCapabilities(resp, aVersion, respSortExtensionCaps);
 }
 
@@ -306,8 +306,8 @@ void DvProviderUpnpOrgContentDirectory3::DoGetFeatureList(IDviInvocation& aInvoc
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respFeatureList(aInvocation, "FeatureList");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respFeatureList(aInvocation, "FeatureList");
     GetFeatureList(resp, aVersion, respFeatureList);
 }
 
@@ -315,8 +315,8 @@ void DvProviderUpnpOrgContentDirectory3::DoGetSystemUpdateID(IDviInvocation& aIn
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respId(aInvocation, "Id");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseUint respId(aInvocation, "Id");
     GetSystemUpdateID(resp, aVersion, respId);
 }
 
@@ -324,8 +324,8 @@ void DvProviderUpnpOrgContentDirectory3::DoGetServiceResetToken(IDviInvocation& 
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respResetToken(aInvocation, "ResetToken");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respResetToken(aInvocation, "ResetToken");
     GetServiceResetToken(resp, aVersion, respResetToken);
 }
 
@@ -343,11 +343,11 @@ void DvProviderUpnpOrgContentDirectory3::DoBrowse(IDviInvocation& aInvocation, T
     Brhz SortCriteria;
     aInvocation.InvocationReadString("SortCriteria", SortCriteria);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respResult(aInvocation, "Result");
-    InvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
-    InvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    DviInvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
+    DviInvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
     Browse(resp, aVersion, ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
 }
 
@@ -365,11 +365,11 @@ void DvProviderUpnpOrgContentDirectory3::DoSearch(IDviInvocation& aInvocation, T
     Brhz SortCriteria;
     aInvocation.InvocationReadString("SortCriteria", SortCriteria);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respResult(aInvocation, "Result");
-    InvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
-    InvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respResult(aInvocation, "Result");
+    DviInvocationResponseUint respNumberReturned(aInvocation, "NumberReturned");
+    DviInvocationResponseUint respTotalMatches(aInvocation, "TotalMatches");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
     Search(resp, aVersion, ContainerID, SearchCriteria, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
 }
 
@@ -381,9 +381,9 @@ void DvProviderUpnpOrgContentDirectory3::DoCreateObject(IDviInvocation& aInvocat
     Brhz Elements;
     aInvocation.InvocationReadString("Elements", Elements);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respObjectID(aInvocation, "ObjectID");
-    InvocationResponseString respResult(aInvocation, "Result");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respObjectID(aInvocation, "ObjectID");
+    DviInvocationResponseString respResult(aInvocation, "Result");
     CreateObject(resp, aVersion, ContainerID, Elements, respObjectID, respResult);
 }
 
@@ -393,7 +393,7 @@ void DvProviderUpnpOrgContentDirectory3::DoDestroyObject(IDviInvocation& aInvoca
     Brhz ObjectID;
     aInvocation.InvocationReadString("ObjectID", ObjectID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     DestroyObject(resp, aVersion, ObjectID);
 }
 
@@ -407,7 +407,7 @@ void DvProviderUpnpOrgContentDirectory3::DoUpdateObject(IDviInvocation& aInvocat
     Brhz NewTagValue;
     aInvocation.InvocationReadString("NewTagValue", NewTagValue);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     UpdateObject(resp, aVersion, ObjectID, CurrentTagValue, NewTagValue);
 }
 
@@ -419,8 +419,8 @@ void DvProviderUpnpOrgContentDirectory3::DoMoveObject(IDviInvocation& aInvocatio
     Brhz NewParentID;
     aInvocation.InvocationReadString("NewParentID", NewParentID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respNewObjectID(aInvocation, "NewObjectID");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respNewObjectID(aInvocation, "NewObjectID");
     MoveObject(resp, aVersion, ObjectID, NewParentID, respNewObjectID);
 }
 
@@ -432,8 +432,8 @@ void DvProviderUpnpOrgContentDirectory3::DoImportResource(IDviInvocation& aInvoc
     Brhz DestinationURI;
     aInvocation.InvocationReadString("DestinationURI", DestinationURI);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respTransferID(aInvocation, "TransferID");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseUint respTransferID(aInvocation, "TransferID");
     ImportResource(resp, aVersion, SourceURI, DestinationURI, respTransferID);
 }
 
@@ -445,8 +445,8 @@ void DvProviderUpnpOrgContentDirectory3::DoExportResource(IDviInvocation& aInvoc
     Brhz DestinationURI;
     aInvocation.InvocationReadString("DestinationURI", DestinationURI);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseUint respTransferID(aInvocation, "TransferID");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseUint respTransferID(aInvocation, "TransferID");
     ExportResource(resp, aVersion, SourceURI, DestinationURI, respTransferID);
 }
 
@@ -456,7 +456,7 @@ void DvProviderUpnpOrgContentDirectory3::DoDeleteResource(IDviInvocation& aInvoc
     Brhz ResourceURI;
     aInvocation.InvocationReadString("ResourceURI", ResourceURI);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     DeleteResource(resp, aVersion, ResourceURI);
 }
 
@@ -465,7 +465,7 @@ void DvProviderUpnpOrgContentDirectory3::DoStopTransferResource(IDviInvocation& 
     aInvocation.InvocationReadStart();
     TUint TransferID = aInvocation.InvocationReadUint("TransferID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     StopTransferResource(resp, aVersion, TransferID);
 }
 
@@ -474,10 +474,10 @@ void DvProviderUpnpOrgContentDirectory3::DoGetTransferProgress(IDviInvocation& a
     aInvocation.InvocationReadStart();
     TUint TransferID = aInvocation.InvocationReadUint("TransferID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respTransferStatus(aInvocation, "TransferStatus");
-    InvocationResponseString respTransferLength(aInvocation, "TransferLength");
-    InvocationResponseString respTransferTotal(aInvocation, "TransferTotal");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respTransferStatus(aInvocation, "TransferStatus");
+    DviInvocationResponseString respTransferLength(aInvocation, "TransferLength");
+    DviInvocationResponseString respTransferTotal(aInvocation, "TransferTotal");
     GetTransferProgress(resp, aVersion, TransferID, respTransferStatus, respTransferLength, respTransferTotal);
 }
 
@@ -489,8 +489,8 @@ void DvProviderUpnpOrgContentDirectory3::DoCreateReference(IDviInvocation& aInvo
     Brhz ObjectID;
     aInvocation.InvocationReadString("ObjectID", ObjectID);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respNewID(aInvocation, "NewID");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respNewID(aInvocation, "NewID");
     CreateReference(resp, aVersion, ContainerID, ObjectID, respNewID);
 }
 
@@ -503,9 +503,9 @@ void DvProviderUpnpOrgContentDirectory3::DoFreeFormQuery(IDviInvocation& aInvoca
     Brhz QueryRequest;
     aInvocation.InvocationReadString("QueryRequest", QueryRequest);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respQueryResult(aInvocation, "QueryResult");
-    InvocationResponseUint respUpdateID(aInvocation, "UpdateID");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respQueryResult(aInvocation, "QueryResult");
+    DviInvocationResponseUint respUpdateID(aInvocation, "UpdateID");
     FreeFormQuery(resp, aVersion, ContainerID, CDSView, QueryRequest, respQueryResult, respUpdateID);
 }
 
@@ -513,107 +513,107 @@ void DvProviderUpnpOrgContentDirectory3::DoGetFreeFormQueryCapabilities(IDviInvo
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respFFQCapabilities(aInvocation, "FFQCapabilities");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respFFQCapabilities(aInvocation, "FFQCapabilities");
     GetFreeFormQueryCapabilities(resp, aVersion, respFFQCapabilities);
 }
 
-void DvProviderUpnpOrgContentDirectory3::GetSearchCapabilities(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aSearchCaps*/)
+void DvProviderUpnpOrgContentDirectory3::GetSearchCapabilities(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aSearchCaps*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::GetSortCapabilities(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aSortCaps*/)
+void DvProviderUpnpOrgContentDirectory3::GetSortCapabilities(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aSortCaps*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::GetSortExtensionCapabilities(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aSortExtensionCaps*/)
+void DvProviderUpnpOrgContentDirectory3::GetSortExtensionCapabilities(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aSortExtensionCaps*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::GetFeatureList(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aFeatureList*/)
+void DvProviderUpnpOrgContentDirectory3::GetFeatureList(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aFeatureList*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::GetSystemUpdateID(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aId*/)
+void DvProviderUpnpOrgContentDirectory3::GetSystemUpdateID(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aId*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::GetServiceResetToken(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aResetToken*/)
+void DvProviderUpnpOrgContentDirectory3::GetServiceResetToken(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aResetToken*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::Browse(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aObjectID*/, const Brx& /*aBrowseFlag*/, const Brx& /*aFilter*/, TUint /*aStartingIndex*/, TUint /*aRequestedCount*/, const Brx& /*aSortCriteria*/, IInvocationResponseString& /*aResult*/, IInvocationResponseUint& /*aNumberReturned*/, IInvocationResponseUint& /*aTotalMatches*/, IInvocationResponseUint& /*aUpdateID*/)
+void DvProviderUpnpOrgContentDirectory3::Browse(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aObjectID*/, const Brx& /*aBrowseFlag*/, const Brx& /*aFilter*/, TUint /*aStartingIndex*/, TUint /*aRequestedCount*/, const Brx& /*aSortCriteria*/, IDvInvocationResponseString& /*aResult*/, IDvInvocationResponseUint& /*aNumberReturned*/, IDvInvocationResponseUint& /*aTotalMatches*/, IDvInvocationResponseUint& /*aUpdateID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::Search(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aContainerID*/, const Brx& /*aSearchCriteria*/, const Brx& /*aFilter*/, TUint /*aStartingIndex*/, TUint /*aRequestedCount*/, const Brx& /*aSortCriteria*/, IInvocationResponseString& /*aResult*/, IInvocationResponseUint& /*aNumberReturned*/, IInvocationResponseUint& /*aTotalMatches*/, IInvocationResponseUint& /*aUpdateID*/)
+void DvProviderUpnpOrgContentDirectory3::Search(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aContainerID*/, const Brx& /*aSearchCriteria*/, const Brx& /*aFilter*/, TUint /*aStartingIndex*/, TUint /*aRequestedCount*/, const Brx& /*aSortCriteria*/, IDvInvocationResponseString& /*aResult*/, IDvInvocationResponseUint& /*aNumberReturned*/, IDvInvocationResponseUint& /*aTotalMatches*/, IDvInvocationResponseUint& /*aUpdateID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::CreateObject(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aContainerID*/, const Brx& /*aElements*/, IInvocationResponseString& /*aObjectID*/, IInvocationResponseString& /*aResult*/)
+void DvProviderUpnpOrgContentDirectory3::CreateObject(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aContainerID*/, const Brx& /*aElements*/, IDvInvocationResponseString& /*aObjectID*/, IDvInvocationResponseString& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::DestroyObject(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aObjectID*/)
+void DvProviderUpnpOrgContentDirectory3::DestroyObject(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aObjectID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::UpdateObject(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aObjectID*/, const Brx& /*aCurrentTagValue*/, const Brx& /*aNewTagValue*/)
+void DvProviderUpnpOrgContentDirectory3::UpdateObject(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aObjectID*/, const Brx& /*aCurrentTagValue*/, const Brx& /*aNewTagValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::MoveObject(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aObjectID*/, const Brx& /*aNewParentID*/, IInvocationResponseString& /*aNewObjectID*/)
+void DvProviderUpnpOrgContentDirectory3::MoveObject(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aObjectID*/, const Brx& /*aNewParentID*/, IDvInvocationResponseString& /*aNewObjectID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::ImportResource(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aSourceURI*/, const Brx& /*aDestinationURI*/, IInvocationResponseUint& /*aTransferID*/)
+void DvProviderUpnpOrgContentDirectory3::ImportResource(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aSourceURI*/, const Brx& /*aDestinationURI*/, IDvInvocationResponseUint& /*aTransferID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::ExportResource(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aSourceURI*/, const Brx& /*aDestinationURI*/, IInvocationResponseUint& /*aTransferID*/)
+void DvProviderUpnpOrgContentDirectory3::ExportResource(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aSourceURI*/, const Brx& /*aDestinationURI*/, IDvInvocationResponseUint& /*aTransferID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::DeleteResource(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aResourceURI*/)
+void DvProviderUpnpOrgContentDirectory3::DeleteResource(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aResourceURI*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::StopTransferResource(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aTransferID*/)
+void DvProviderUpnpOrgContentDirectory3::StopTransferResource(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aTransferID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::GetTransferProgress(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aTransferID*/, IInvocationResponseString& /*aTransferStatus*/, IInvocationResponseString& /*aTransferLength*/, IInvocationResponseString& /*aTransferTotal*/)
+void DvProviderUpnpOrgContentDirectory3::GetTransferProgress(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aTransferID*/, IDvInvocationResponseString& /*aTransferStatus*/, IDvInvocationResponseString& /*aTransferLength*/, IDvInvocationResponseString& /*aTransferTotal*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::CreateReference(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aContainerID*/, const Brx& /*aObjectID*/, IInvocationResponseString& /*aNewID*/)
+void DvProviderUpnpOrgContentDirectory3::CreateReference(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aContainerID*/, const Brx& /*aObjectID*/, IDvInvocationResponseString& /*aNewID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::FreeFormQuery(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aContainerID*/, TUint /*aCDSView*/, const Brx& /*aQueryRequest*/, IInvocationResponseString& /*aQueryResult*/, IInvocationResponseUint& /*aUpdateID*/)
+void DvProviderUpnpOrgContentDirectory3::FreeFormQuery(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aContainerID*/, TUint /*aCDSView*/, const Brx& /*aQueryRequest*/, IDvInvocationResponseString& /*aQueryResult*/, IDvInvocationResponseUint& /*aUpdateID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgContentDirectory3::GetFreeFormQueryCapabilities(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aFFQCapabilities*/)
+void DvProviderUpnpOrgContentDirectory3::GetFreeFormQueryCapabilities(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aFFQCapabilities*/)
 {
     ASSERTS();
 }

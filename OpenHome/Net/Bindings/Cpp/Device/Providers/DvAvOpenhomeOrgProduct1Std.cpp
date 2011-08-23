@@ -387,19 +387,19 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoManufacturer(IDviInvocation& aInvocat
     std::string respImageUri;
     Manufacturer(aVersion, respName, respInfo, respUrl, respImageUri);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterName(aInvocation, "Name");
+    DviInvocationResponseString respWriterName(aInvocation, "Name");
     Brn buf_Name((const TByte*)respName.c_str(), (TUint)respName.length());
     respWriterName.Write(buf_Name);
     aInvocation.InvocationWriteStringEnd("Name");
-    InvocationResponseString respWriterInfo(aInvocation, "Info");
+    DviInvocationResponseString respWriterInfo(aInvocation, "Info");
     Brn buf_Info((const TByte*)respInfo.c_str(), (TUint)respInfo.length());
     respWriterInfo.Write(buf_Info);
     aInvocation.InvocationWriteStringEnd("Info");
-    InvocationResponseString respWriterUrl(aInvocation, "Url");
+    DviInvocationResponseString respWriterUrl(aInvocation, "Url");
     Brn buf_Url((const TByte*)respUrl.c_str(), (TUint)respUrl.length());
     respWriterUrl.Write(buf_Url);
     aInvocation.InvocationWriteStringEnd("Url");
-    InvocationResponseString respWriterImageUri(aInvocation, "ImageUri");
+    DviInvocationResponseString respWriterImageUri(aInvocation, "ImageUri");
     Brn buf_ImageUri((const TByte*)respImageUri.c_str(), (TUint)respImageUri.length());
     respWriterImageUri.Write(buf_ImageUri);
     aInvocation.InvocationWriteStringEnd("ImageUri");
@@ -416,19 +416,19 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoModel(IDviInvocation& aInvocation, ui
     std::string respImageUri;
     Model(aVersion, respName, respInfo, respUrl, respImageUri);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterName(aInvocation, "Name");
+    DviInvocationResponseString respWriterName(aInvocation, "Name");
     Brn buf_Name((const TByte*)respName.c_str(), (TUint)respName.length());
     respWriterName.Write(buf_Name);
     aInvocation.InvocationWriteStringEnd("Name");
-    InvocationResponseString respWriterInfo(aInvocation, "Info");
+    DviInvocationResponseString respWriterInfo(aInvocation, "Info");
     Brn buf_Info((const TByte*)respInfo.c_str(), (TUint)respInfo.length());
     respWriterInfo.Write(buf_Info);
     aInvocation.InvocationWriteStringEnd("Info");
-    InvocationResponseString respWriterUrl(aInvocation, "Url");
+    DviInvocationResponseString respWriterUrl(aInvocation, "Url");
     Brn buf_Url((const TByte*)respUrl.c_str(), (TUint)respUrl.length());
     respWriterUrl.Write(buf_Url);
     aInvocation.InvocationWriteStringEnd("Url");
-    InvocationResponseString respWriterImageUri(aInvocation, "ImageUri");
+    DviInvocationResponseString respWriterImageUri(aInvocation, "ImageUri");
     Brn buf_ImageUri((const TByte*)respImageUri.c_str(), (TUint)respImageUri.length());
     respWriterImageUri.Write(buf_ImageUri);
     aInvocation.InvocationWriteStringEnd("ImageUri");
@@ -446,23 +446,23 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoProduct(IDviInvocation& aInvocation, 
     std::string respImageUri;
     Product(aVersion, respRoom, respName, respInfo, respUrl, respImageUri);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterRoom(aInvocation, "Room");
+    DviInvocationResponseString respWriterRoom(aInvocation, "Room");
     Brn buf_Room((const TByte*)respRoom.c_str(), (TUint)respRoom.length());
     respWriterRoom.Write(buf_Room);
     aInvocation.InvocationWriteStringEnd("Room");
-    InvocationResponseString respWriterName(aInvocation, "Name");
+    DviInvocationResponseString respWriterName(aInvocation, "Name");
     Brn buf_Name((const TByte*)respName.c_str(), (TUint)respName.length());
     respWriterName.Write(buf_Name);
     aInvocation.InvocationWriteStringEnd("Name");
-    InvocationResponseString respWriterInfo(aInvocation, "Info");
+    DviInvocationResponseString respWriterInfo(aInvocation, "Info");
     Brn buf_Info((const TByte*)respInfo.c_str(), (TUint)respInfo.length());
     respWriterInfo.Write(buf_Info);
     aInvocation.InvocationWriteStringEnd("Info");
-    InvocationResponseString respWriterUrl(aInvocation, "Url");
+    DviInvocationResponseString respWriterUrl(aInvocation, "Url");
     Brn buf_Url((const TByte*)respUrl.c_str(), (TUint)respUrl.length());
     respWriterUrl.Write(buf_Url);
     aInvocation.InvocationWriteStringEnd("Url");
-    InvocationResponseString respWriterImageUri(aInvocation, "ImageUri");
+    DviInvocationResponseString respWriterImageUri(aInvocation, "ImageUri");
     Brn buf_ImageUri((const TByte*)respImageUri.c_str(), (TUint)respImageUri.length());
     respWriterImageUri.Write(buf_ImageUri);
     aInvocation.InvocationWriteStringEnd("ImageUri");
@@ -476,7 +476,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoStandby(IDviInvocation& aInvocation, 
     bool respValue;
     Standby(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterValue(aInvocation, "Value");
+    DviInvocationResponseBool respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -498,7 +498,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceCount(IDviInvocation& aInvocati
     uint32_t respValue;
     SourceCount(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterValue(aInvocation, "Value");
+    DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -510,7 +510,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceXml(IDviInvocation& aInvocation
     std::string respValue;
     SourceXml(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
@@ -524,7 +524,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceIndex(IDviInvocation& aInvocati
     uint32_t respValue;
     SourceIndex(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterValue(aInvocation, "Value");
+    DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -562,19 +562,19 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoSource(IDviInvocation& aInvocation, u
     bool respVisible;
     Source(aVersion, Index, respSystemName, respType, respName, respVisible);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterSystemName(aInvocation, "SystemName");
+    DviInvocationResponseString respWriterSystemName(aInvocation, "SystemName");
     Brn buf_SystemName((const TByte*)respSystemName.c_str(), (TUint)respSystemName.length());
     respWriterSystemName.Write(buf_SystemName);
     aInvocation.InvocationWriteStringEnd("SystemName");
-    InvocationResponseString respWriterType(aInvocation, "Type");
+    DviInvocationResponseString respWriterType(aInvocation, "Type");
     Brn buf_Type((const TByte*)respType.c_str(), (TUint)respType.length());
     respWriterType.Write(buf_Type);
     aInvocation.InvocationWriteStringEnd("Type");
-    InvocationResponseString respWriterName(aInvocation, "Name");
+    DviInvocationResponseString respWriterName(aInvocation, "Name");
     Brn buf_Name((const TByte*)respName.c_str(), (TUint)respName.length());
     respWriterName.Write(buf_Name);
     aInvocation.InvocationWriteStringEnd("Name");
-    InvocationResponseBool respWriterVisible(aInvocation, "Visible");
+    DviInvocationResponseBool respWriterVisible(aInvocation, "Visible");
     respWriterVisible.Write(respVisible);
 	aInvocation.InvocationWriteEnd();
 }
@@ -586,7 +586,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoAttributes(IDviInvocation& aInvocatio
     std::string respValue;
     Attributes(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
@@ -600,7 +600,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceXmlChangeCount(IDviInvocation& 
     uint32_t respValue;
     SourceXmlChangeCount(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterValue(aInvocation, "Value");
+    DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }

@@ -119,7 +119,7 @@ private:
      * PresentationUrl action for the owning device.
      * Must be implemented iff EnableActionPresentationUrl was called.
      */
-    virtual void PresentationUrl(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void PresentationUrl(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
     /**
      * Metadata action.
      *
@@ -127,7 +127,7 @@ private:
      * Metadata action for the owning device.
      * Must be implemented iff EnableActionMetadata was called.
      */
-    virtual void Metadata(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void Metadata(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
     /**
      * Audio action.
      *
@@ -135,7 +135,7 @@ private:
      * Audio action for the owning device.
      * Must be implemented iff EnableActionAudio was called.
      */
-    virtual void Audio(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue);
+    virtual void Audio(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseBool& aValue);
     /**
      * Status action.
      *
@@ -143,7 +143,7 @@ private:
      * Status action for the owning device.
      * Must be implemented iff EnableActionStatus was called.
      */
-    virtual void Status(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void Status(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
     /**
      * Attributes action.
      *
@@ -151,7 +151,7 @@ private:
      * Attributes action for the owning device.
      * Must be implemented iff EnableActionAttributes was called.
      */
-    virtual void Attributes(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    virtual void Attributes(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgSender1();
     void DoPresentationUrl(IDviInvocation& aInvocation, TUint aVersion);

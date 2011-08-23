@@ -106,7 +106,7 @@ private:
      * <#=a.name#> action for the owning device.
      * Must be implemented iff EnableAction<#=a.name#> was called.
      */
-    virtual void <#=a.name#>(IInvocationResponse& aResponse, TUint aVersion<#=ActionArgs(a)#>);
+    virtual void <#=a.name#>(IDvInvocationResponse& aResponse, TUint aVersion<#=ActionArgs(a)#>);
 <#  } #>
 private:
     <#=className#>();
@@ -145,16 +145,16 @@ void Initialise()
     inArgType.Add("bin.base64", "const Brx&");
     inArgType.Add("uri", "const Brx&");
 
-    outArgTypeAction.Add("ui1", "IInvocationResponseUint&");
-    outArgTypeAction.Add("ui2", "IInvocationResponseUint&");
-    outArgTypeAction.Add("ui4", "IInvocationResponseUint&");
-    outArgTypeAction.Add("boolean", "IInvocationResponseBool&");
-    outArgTypeAction.Add("i1", "IInvocationResponseInt&");
-    outArgTypeAction.Add("i2", "IInvocationResponseInt&");
-    outArgTypeAction.Add("i4", "IInvocationResponseInt&");
-    outArgTypeAction.Add("string", "IInvocationResponseString&");
-    outArgTypeAction.Add("bin.base64", "IInvocationResponseBinary&");
-    outArgTypeAction.Add("uri", "IInvocationResponseString&");
+    outArgTypeAction.Add("ui1", "IDvInvocationResponseUint&");
+    outArgTypeAction.Add("ui2", "IDvInvocationResponseUint&");
+    outArgTypeAction.Add("ui4", "IDvInvocationResponseUint&");
+    outArgTypeAction.Add("boolean", "IDvInvocationResponseBool&");
+    outArgTypeAction.Add("i1", "IDvInvocationResponseInt&");
+    outArgTypeAction.Add("i2", "IDvInvocationResponseInt&");
+    outArgTypeAction.Add("i4", "IDvInvocationResponseInt&");
+    outArgTypeAction.Add("string", "IDvInvocationResponseString&");
+    outArgTypeAction.Add("bin.base64", "IDvInvocationResponseBinary&");
+    outArgTypeAction.Add("uri", "IDvInvocationResponseString&");
 
     outArgTypeProperty.Add("ui1", "TUint&");
     outArgTypeProperty.Add("ui2", "TUint&");

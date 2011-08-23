@@ -66,7 +66,7 @@ void DvProviderUpnpOrgSwitchPower1Cpp::DoGetTarget(IDviInvocation& aInvocation, 
     bool respRetTargetValue;
     GetTarget(aVersion, respRetTargetValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterRetTargetValue(aInvocation, "RetTargetValue");
+    DviInvocationResponseBool respWriterRetTargetValue(aInvocation, "RetTargetValue");
     respWriterRetTargetValue.Write(respRetTargetValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -78,7 +78,7 @@ void DvProviderUpnpOrgSwitchPower1Cpp::DoGetStatus(IDviInvocation& aInvocation, 
     bool respResultStatus;
     GetStatus(aVersion, respResultStatus);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterResultStatus(aInvocation, "ResultStatus");
+    DviInvocationResponseBool respWriterResultStatus(aInvocation, "ResultStatus");
     respWriterResultStatus.Write(respResultStatus);
 	aInvocation.InvocationWriteEnd();
 }

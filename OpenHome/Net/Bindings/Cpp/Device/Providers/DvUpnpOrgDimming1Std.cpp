@@ -269,7 +269,7 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetLoadLevelTarget(IDviInvocation& aInvocat
     uint32_t respGetLoadlevelTarget;
     GetLoadLevelTarget(aVersion, respGetLoadlevelTarget);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterGetLoadlevelTarget(aInvocation, "GetLoadlevelTarget");
+    DviInvocationResponseUint respWriterGetLoadlevelTarget(aInvocation, "GetLoadlevelTarget");
     respWriterGetLoadlevelTarget.Write(respGetLoadlevelTarget);
 	aInvocation.InvocationWriteEnd();
 }
@@ -281,7 +281,7 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetLoadLevelStatus(IDviInvocation& aInvocat
     uint32_t respretLoadlevelStatus;
     GetLoadLevelStatus(aVersion, respretLoadlevelStatus);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterretLoadlevelStatus(aInvocation, "retLoadlevelStatus");
+    DviInvocationResponseUint respWriterretLoadlevelStatus(aInvocation, "retLoadlevelStatus");
     respWriterretLoadlevelStatus.Write(respretLoadlevelStatus);
 	aInvocation.InvocationWriteEnd();
 }
@@ -316,11 +316,11 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetOnEffectParameters(IDviInvocation& aInvo
     uint32_t respretOnEffectLevel;
     GetOnEffectParameters(aVersion, respretOnEffect, respretOnEffectLevel);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterretOnEffect(aInvocation, "retOnEffect");
+    DviInvocationResponseString respWriterretOnEffect(aInvocation, "retOnEffect");
     Brn buf_retOnEffect((const TByte*)respretOnEffect.c_str(), (TUint)respretOnEffect.length());
     respWriterretOnEffect.Write(buf_retOnEffect);
     aInvocation.InvocationWriteStringEnd("retOnEffect");
-    InvocationResponseUint respWriterretOnEffectLevel(aInvocation, "retOnEffectLevel");
+    DviInvocationResponseUint respWriterretOnEffectLevel(aInvocation, "retOnEffectLevel");
     respWriterretOnEffectLevel.Write(respretOnEffectLevel);
 	aInvocation.InvocationWriteEnd();
 }
@@ -398,7 +398,7 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetStepDelta(IDviInvocation& aInvocation, u
     uint32_t respretStepDelta;
     GetStepDelta(aVersion, respretStepDelta);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterretStepDelta(aInvocation, "retStepDelta");
+    DviInvocationResponseUint respWriterretStepDelta(aInvocation, "retStepDelta");
     respWriterretStepDelta.Write(respretStepDelta);
 	aInvocation.InvocationWriteEnd();
 }
@@ -420,7 +420,7 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetRampRate(IDviInvocation& aInvocation, ui
     uint32_t respretRampRate;
     GetRampRate(aVersion, respretRampRate);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterretRampRate(aInvocation, "retRampRate");
+    DviInvocationResponseUint respWriterretRampRate(aInvocation, "retRampRate");
     respWriterretRampRate.Write(respretRampRate);
 	aInvocation.InvocationWriteEnd();
 }
@@ -450,7 +450,7 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetIsRamping(IDviInvocation& aInvocation, u
     bool respretIsRamping;
     GetIsRamping(aVersion, respretIsRamping);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterretIsRamping(aInvocation, "retIsRamping");
+    DviInvocationResponseBool respWriterretIsRamping(aInvocation, "retIsRamping");
     respWriterretIsRamping.Write(respretIsRamping);
 	aInvocation.InvocationWriteEnd();
 }
@@ -462,7 +462,7 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetRampPaused(IDviInvocation& aInvocation, 
     bool respretRampPaused;
     GetRampPaused(aVersion, respretRampPaused);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterretRampPaused(aInvocation, "retRampPaused");
+    DviInvocationResponseBool respWriterretRampPaused(aInvocation, "retRampPaused");
     respWriterretRampPaused.Write(respretRampPaused);
 	aInvocation.InvocationWriteEnd();
 }
@@ -474,7 +474,7 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetRampTime(IDviInvocation& aInvocation, ui
     uint32_t respretRampTime;
     GetRampTime(aVersion, respretRampTime);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterretRampTime(aInvocation, "retRampTime");
+    DviInvocationResponseUint respWriterretRampTime(aInvocation, "retRampTime");
     respWriterretRampTime.Write(respretRampTime);
 	aInvocation.InvocationWriteEnd();
 }

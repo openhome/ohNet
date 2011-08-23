@@ -368,7 +368,7 @@ void DvProviderAvOpenhomeOrgPlaylist1Cpp::DoRepeat(IDviInvocation& aInvocation, 
     bool respValue;
     Repeat(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterValue(aInvocation, "Value");
+    DviInvocationResponseBool respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -390,7 +390,7 @@ void DvProviderAvOpenhomeOrgPlaylist1Cpp::DoShuffle(IDviInvocation& aInvocation,
     bool respValue;
     Shuffle(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterValue(aInvocation, "Value");
+    DviInvocationResponseBool respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -442,7 +442,7 @@ void DvProviderAvOpenhomeOrgPlaylist1Cpp::DoTransportState(IDviInvocation& aInvo
     std::string respValue;
     TransportState(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
@@ -456,7 +456,7 @@ void DvProviderAvOpenhomeOrgPlaylist1Cpp::DoId(IDviInvocation& aInvocation, uint
     uint32_t respValue;
     Id(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterValue(aInvocation, "Value");
+    DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -470,11 +470,11 @@ void DvProviderAvOpenhomeOrgPlaylist1Cpp::DoRead(IDviInvocation& aInvocation, ui
     std::string respMetadata;
     Read(aVersion, Id, respUri, respMetadata);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterUri(aInvocation, "Uri");
+    DviInvocationResponseString respWriterUri(aInvocation, "Uri");
     Brn buf_Uri((const TByte*)respUri.c_str(), (TUint)respUri.length());
     respWriterUri.Write(buf_Uri);
     aInvocation.InvocationWriteStringEnd("Uri");
-    InvocationResponseString respWriterMetadata(aInvocation, "Metadata");
+    DviInvocationResponseString respWriterMetadata(aInvocation, "Metadata");
     Brn buf_Metadata((const TByte*)respMetadata.c_str(), (TUint)respMetadata.length());
     respWriterMetadata.Write(buf_Metadata);
     aInvocation.InvocationWriteStringEnd("Metadata");
@@ -491,7 +491,7 @@ void DvProviderAvOpenhomeOrgPlaylist1Cpp::DoReadList(IDviInvocation& aInvocation
     std::string respTrackList;
     ReadList(aVersion, IdList, respTrackList);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterTrackList(aInvocation, "TrackList");
+    DviInvocationResponseString respWriterTrackList(aInvocation, "TrackList");
     Brn buf_TrackList((const TByte*)respTrackList.c_str(), (TUint)respTrackList.length());
     respWriterTrackList.Write(buf_TrackList);
     aInvocation.InvocationWriteStringEnd("TrackList");
@@ -512,7 +512,7 @@ void DvProviderAvOpenhomeOrgPlaylist1Cpp::DoInsert(IDviInvocation& aInvocation, 
     uint32_t respNewId;
     Insert(aVersion, AfterId, Uri, Metadata, respNewId);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterNewId(aInvocation, "NewId");
+    DviInvocationResponseUint respWriterNewId(aInvocation, "NewId");
     respWriterNewId.Write(respNewId);
 	aInvocation.InvocationWriteEnd();
 }
@@ -543,7 +543,7 @@ void DvProviderAvOpenhomeOrgPlaylist1Cpp::DoTracksMax(IDviInvocation& aInvocatio
     uint32_t respValue;
     TracksMax(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterValue(aInvocation, "Value");
+    DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -556,9 +556,9 @@ void DvProviderAvOpenhomeOrgPlaylist1Cpp::DoIdArray(IDviInvocation& aInvocation,
     std::string respArray;
     IdArray(aVersion, respToken, respArray);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterToken(aInvocation, "Token");
+    DviInvocationResponseUint respWriterToken(aInvocation, "Token");
     respWriterToken.Write(respToken);
-    InvocationResponseBinary respWriterArray(aInvocation, "Array");
+    DviInvocationResponseBinary respWriterArray(aInvocation, "Array");
     Brn buf_Array((const TByte*)respArray.c_str(), (TUint)respArray.length());
     respWriterArray.Write(buf_Array);
     aInvocation.InvocationWriteBinaryEnd("Array");
@@ -573,7 +573,7 @@ void DvProviderAvOpenhomeOrgPlaylist1Cpp::DoIdArrayChanged(IDviInvocation& aInvo
     bool respValue;
     IdArrayChanged(aVersion, Token, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterValue(aInvocation, "Value");
+    DviInvocationResponseBool respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -585,7 +585,7 @@ void DvProviderAvOpenhomeOrgPlaylist1Cpp::DoProtocolInfo(IDviInvocation& aInvoca
     std::string respValue;
     ProtocolInfo(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");

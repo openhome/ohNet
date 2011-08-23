@@ -303,11 +303,11 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoChannel(IDviInvocation& aInvocation, ui
     std::string respMetadata;
     Channel(aVersion, respUri, respMetadata);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterUri(aInvocation, "Uri");
+    DviInvocationResponseString respWriterUri(aInvocation, "Uri");
     Brn buf_Uri((const TByte*)respUri.c_str(), (TUint)respUri.length());
     respWriterUri.Write(buf_Uri);
     aInvocation.InvocationWriteStringEnd("Uri");
-    InvocationResponseString respWriterMetadata(aInvocation, "Metadata");
+    DviInvocationResponseString respWriterMetadata(aInvocation, "Metadata");
     Brn buf_Metadata((const TByte*)respMetadata.c_str(), (TUint)respMetadata.length());
     respWriterMetadata.Write(buf_Metadata);
     aInvocation.InvocationWriteStringEnd("Metadata");
@@ -336,7 +336,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoTransportState(IDviInvocation& aInvocat
     std::string respValue;
     TransportState(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
@@ -350,7 +350,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoId(IDviInvocation& aInvocation, uint32_
     uint32_t respValue;
     Id(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterValue(aInvocation, "Value");
+    DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -376,7 +376,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoRead(IDviInvocation& aInvocation, uint3
     std::string respMetadata;
     Read(aVersion, Id, respMetadata);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterMetadata(aInvocation, "Metadata");
+    DviInvocationResponseString respWriterMetadata(aInvocation, "Metadata");
     Brn buf_Metadata((const TByte*)respMetadata.c_str(), (TUint)respMetadata.length());
     respWriterMetadata.Write(buf_Metadata);
     aInvocation.InvocationWriteStringEnd("Metadata");
@@ -393,7 +393,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoReadList(IDviInvocation& aInvocation, u
     std::string respChannelList;
     ReadList(aVersion, IdList, respChannelList);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterChannelList(aInvocation, "ChannelList");
+    DviInvocationResponseString respWriterChannelList(aInvocation, "ChannelList");
     Brn buf_ChannelList((const TByte*)respChannelList.c_str(), (TUint)respChannelList.length());
     respWriterChannelList.Write(buf_ChannelList);
     aInvocation.InvocationWriteStringEnd("ChannelList");
@@ -408,9 +408,9 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoIdArray(IDviInvocation& aInvocation, ui
     std::string respArray;
     IdArray(aVersion, respToken, respArray);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterToken(aInvocation, "Token");
+    DviInvocationResponseUint respWriterToken(aInvocation, "Token");
     respWriterToken.Write(respToken);
-    InvocationResponseBinary respWriterArray(aInvocation, "Array");
+    DviInvocationResponseBinary respWriterArray(aInvocation, "Array");
     Brn buf_Array((const TByte*)respArray.c_str(), (TUint)respArray.length());
     respWriterArray.Write(buf_Array);
     aInvocation.InvocationWriteBinaryEnd("Array");
@@ -425,7 +425,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoIdArrayChanged(IDviInvocation& aInvocat
     bool respValue;
     IdArrayChanged(aVersion, Token, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseBool respWriterValue(aInvocation, "Value");
+    DviInvocationResponseBool respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -437,7 +437,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoChannelsMax(IDviInvocation& aInvocation
     uint32_t respValue;
     ChannelsMax(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseUint respWriterValue(aInvocation, "Value");
+    DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
@@ -449,7 +449,7 @@ void DvProviderAvOpenhomeOrgRadio1Cpp::DoProtocolInfo(IDviInvocation& aInvocatio
     std::string respValue;
     ProtocolInfo(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");

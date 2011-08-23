@@ -219,7 +219,7 @@ private:
      * Metadata action for the owning device.
      * Must be implemented iff EnableActionMetadata was called.
      */
-    virtual void Metadata(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aMetadata);
+    virtual void Metadata(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aMetadata);
     /**
      * ImagesXml action.
      *
@@ -227,7 +227,7 @@ private:
      * ImagesXml action for the owning device.
      * Must be implemented iff EnableActionImagesXml was called.
      */
-    virtual void ImagesXml(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aImagesXml);
+    virtual void ImagesXml(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aImagesXml);
     /**
      * PlaylistReadArray action.
      *
@@ -235,7 +235,7 @@ private:
      * PlaylistReadArray action for the owning device.
      * Must be implemented iff EnableActionPlaylistReadArray was called.
      */
-    virtual void PlaylistReadArray(IInvocationResponse& aResponse, TUint aVersion, TUint aId, IInvocationResponseBinary& aArray);
+    virtual void PlaylistReadArray(IDvInvocationResponse& aResponse, TUint aVersion, TUint aId, IDvInvocationResponseBinary& aArray);
     /**
      * PlaylistReadList action.
      *
@@ -243,7 +243,7 @@ private:
      * PlaylistReadList action for the owning device.
      * Must be implemented iff EnableActionPlaylistReadList was called.
      */
-    virtual void PlaylistReadList(IInvocationResponse& aResponse, TUint aVersion, const Brx& aIdList, IInvocationResponseString& aPlaylistList);
+    virtual void PlaylistReadList(IDvInvocationResponse& aResponse, TUint aVersion, const Brx& aIdList, IDvInvocationResponseString& aPlaylistList);
     /**
      * PlaylistRead action.
      *
@@ -251,7 +251,7 @@ private:
      * PlaylistRead action for the owning device.
      * Must be implemented iff EnableActionPlaylistRead was called.
      */
-    virtual void PlaylistRead(IInvocationResponse& aResponse, TUint aVersion, TUint aId, IInvocationResponseString& aName, IInvocationResponseString& aDescription, IInvocationResponseUint& aImageId);
+    virtual void PlaylistRead(IDvInvocationResponse& aResponse, TUint aVersion, TUint aId, IDvInvocationResponseString& aName, IDvInvocationResponseString& aDescription, IDvInvocationResponseUint& aImageId);
     /**
      * PlaylistSetName action.
      *
@@ -259,7 +259,7 @@ private:
      * PlaylistSetName action for the owning device.
      * Must be implemented iff EnableActionPlaylistSetName was called.
      */
-    virtual void PlaylistSetName(IInvocationResponse& aResponse, TUint aVersion, TUint aId, const Brx& aName);
+    virtual void PlaylistSetName(IDvInvocationResponse& aResponse, TUint aVersion, TUint aId, const Brx& aName);
     /**
      * PlaylistSetDescription action.
      *
@@ -267,7 +267,7 @@ private:
      * PlaylistSetDescription action for the owning device.
      * Must be implemented iff EnableActionPlaylistSetDescription was called.
      */
-    virtual void PlaylistSetDescription(IInvocationResponse& aResponse, TUint aVersion, TUint aId, const Brx& aDescription);
+    virtual void PlaylistSetDescription(IDvInvocationResponse& aResponse, TUint aVersion, TUint aId, const Brx& aDescription);
     /**
      * PlaylistSetImageId action.
      *
@@ -275,7 +275,7 @@ private:
      * PlaylistSetImageId action for the owning device.
      * Must be implemented iff EnableActionPlaylistSetImageId was called.
      */
-    virtual void PlaylistSetImageId(IInvocationResponse& aResponse, TUint aVersion, TUint aId, TUint aImageId);
+    virtual void PlaylistSetImageId(IDvInvocationResponse& aResponse, TUint aVersion, TUint aId, TUint aImageId);
     /**
      * PlaylistInsert action.
      *
@@ -283,7 +283,7 @@ private:
      * PlaylistInsert action for the owning device.
      * Must be implemented iff EnableActionPlaylistInsert was called.
      */
-    virtual void PlaylistInsert(IInvocationResponse& aResponse, TUint aVersion, TUint aAfterId, const Brx& aName, const Brx& aDescription, TUint aImageId, IInvocationResponseUint& aNewId);
+    virtual void PlaylistInsert(IDvInvocationResponse& aResponse, TUint aVersion, TUint aAfterId, const Brx& aName, const Brx& aDescription, TUint aImageId, IDvInvocationResponseUint& aNewId);
     /**
      * PlaylistDeleteId action.
      *
@@ -291,7 +291,7 @@ private:
      * PlaylistDeleteId action for the owning device.
      * Must be implemented iff EnableActionPlaylistDeleteId was called.
      */
-    virtual void PlaylistDeleteId(IInvocationResponse& aResponse, TUint aVersion, TUint aValue);
+    virtual void PlaylistDeleteId(IDvInvocationResponse& aResponse, TUint aVersion, TUint aValue);
     /**
      * PlaylistMove action.
      *
@@ -299,7 +299,7 @@ private:
      * PlaylistMove action for the owning device.
      * Must be implemented iff EnableActionPlaylistMove was called.
      */
-    virtual void PlaylistMove(IInvocationResponse& aResponse, TUint aVersion, TUint aId, TUint aAfterId);
+    virtual void PlaylistMove(IDvInvocationResponse& aResponse, TUint aVersion, TUint aId, TUint aAfterId);
     /**
      * PlaylistsMax action.
      *
@@ -307,7 +307,7 @@ private:
      * PlaylistsMax action for the owning device.
      * Must be implemented iff EnableActionPlaylistsMax was called.
      */
-    virtual void PlaylistsMax(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValue);
+    virtual void PlaylistsMax(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aValue);
     /**
      * TracksMax action.
      *
@@ -315,7 +315,7 @@ private:
      * TracksMax action for the owning device.
      * Must be implemented iff EnableActionTracksMax was called.
      */
-    virtual void TracksMax(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValue);
+    virtual void TracksMax(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aValue);
     /**
      * PlaylistArrays action.
      *
@@ -323,7 +323,7 @@ private:
      * PlaylistArrays action for the owning device.
      * Must be implemented iff EnableActionPlaylistArrays was called.
      */
-    virtual void PlaylistArrays(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aToken, IInvocationResponseBinary& aIdArray, IInvocationResponseBinary& aTokenArray);
+    virtual void PlaylistArrays(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aToken, IDvInvocationResponseBinary& aIdArray, IDvInvocationResponseBinary& aTokenArray);
     /**
      * PlaylistArraysChanged action.
      *
@@ -331,7 +331,7 @@ private:
      * PlaylistArraysChanged action for the owning device.
      * Must be implemented iff EnableActionPlaylistArraysChanged was called.
      */
-    virtual void PlaylistArraysChanged(IInvocationResponse& aResponse, TUint aVersion, TUint aToken, IInvocationResponseBool& aValue);
+    virtual void PlaylistArraysChanged(IDvInvocationResponse& aResponse, TUint aVersion, TUint aToken, IDvInvocationResponseBool& aValue);
     /**
      * Read action.
      *
@@ -339,7 +339,7 @@ private:
      * Read action for the owning device.
      * Must be implemented iff EnableActionRead was called.
      */
-    virtual void Read(IInvocationResponse& aResponse, TUint aVersion, TUint aId, TUint aTrackId, IInvocationResponseString& aMetadata);
+    virtual void Read(IDvInvocationResponse& aResponse, TUint aVersion, TUint aId, TUint aTrackId, IDvInvocationResponseString& aMetadata);
     /**
      * ReadList action.
      *
@@ -347,7 +347,7 @@ private:
      * ReadList action for the owning device.
      * Must be implemented iff EnableActionReadList was called.
      */
-    virtual void ReadList(IInvocationResponse& aResponse, TUint aVersion, TUint aId, const Brx& aTrackIdList, IInvocationResponseString& aTrackList);
+    virtual void ReadList(IDvInvocationResponse& aResponse, TUint aVersion, TUint aId, const Brx& aTrackIdList, IDvInvocationResponseString& aTrackList);
     /**
      * Insert action.
      *
@@ -355,7 +355,7 @@ private:
      * Insert action for the owning device.
      * Must be implemented iff EnableActionInsert was called.
      */
-    virtual void Insert(IInvocationResponse& aResponse, TUint aVersion, TUint aId, TUint aAfterTrackId, const Brx& aUdn, const Brx& aMetadataId, IInvocationResponseUint& aNewTrackId);
+    virtual void Insert(IDvInvocationResponse& aResponse, TUint aVersion, TUint aId, TUint aAfterTrackId, const Brx& aUdn, const Brx& aMetadataId, IDvInvocationResponseUint& aNewTrackId);
     /**
      * DeleteId action.
      *
@@ -363,7 +363,7 @@ private:
      * DeleteId action for the owning device.
      * Must be implemented iff EnableActionDeleteId was called.
      */
-    virtual void DeleteId(IInvocationResponse& aResponse, TUint aVersion, TUint aId, TUint aTrackId);
+    virtual void DeleteId(IDvInvocationResponse& aResponse, TUint aVersion, TUint aId, TUint aTrackId);
     /**
      * DeleteAll action.
      *
@@ -371,7 +371,7 @@ private:
      * DeleteAll action for the owning device.
      * Must be implemented iff EnableActionDeleteAll was called.
      */
-    virtual void DeleteAll(IInvocationResponse& aResponse, TUint aVersion, TUint aId);
+    virtual void DeleteAll(IDvInvocationResponse& aResponse, TUint aVersion, TUint aId);
 private:
     DvProviderAvOpenhomeOrgPlaylistManager1();
     void DoMetadata(IDviInvocation& aInvocation, TUint aVersion);

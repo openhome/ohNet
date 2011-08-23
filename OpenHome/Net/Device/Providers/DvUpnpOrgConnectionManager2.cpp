@@ -129,9 +129,9 @@ void DvProviderUpnpOrgConnectionManager2::DoGetProtocolInfo(IDviInvocation& aInv
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respSource(aInvocation, "Source");
-    InvocationResponseString respSink(aInvocation, "Sink");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respSource(aInvocation, "Source");
+    DviInvocationResponseString respSink(aInvocation, "Sink");
     GetProtocolInfo(resp, aVersion, respSource, respSink);
 }
 
@@ -146,10 +146,10 @@ void DvProviderUpnpOrgConnectionManager2::DoPrepareForConnection(IDviInvocation&
     Brhz Direction;
     aInvocation.InvocationReadString("Direction", Direction);
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseInt respConnectionID(aInvocation, "ConnectionID");
-    InvocationResponseInt respAVTransportID(aInvocation, "AVTransportID");
-    InvocationResponseInt respRcsID(aInvocation, "RcsID");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseInt respConnectionID(aInvocation, "ConnectionID");
+    DviInvocationResponseInt respAVTransportID(aInvocation, "AVTransportID");
+    DviInvocationResponseInt respRcsID(aInvocation, "RcsID");
     PrepareForConnection(resp, aVersion, RemoteProtocolInfo, PeerConnectionManager, PeerConnectionID, Direction, respConnectionID, respAVTransportID, respRcsID);
 }
 
@@ -158,7 +158,7 @@ void DvProviderUpnpOrgConnectionManager2::DoConnectionComplete(IDviInvocation& a
     aInvocation.InvocationReadStart();
     TInt ConnectionID = aInvocation.InvocationReadInt("ConnectionID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     ConnectionComplete(resp, aVersion, ConnectionID);
 }
 
@@ -166,8 +166,8 @@ void DvProviderUpnpOrgConnectionManager2::DoGetCurrentConnectionIDs(IDviInvocati
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseString respConnectionIDs(aInvocation, "ConnectionIDs");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseString respConnectionIDs(aInvocation, "ConnectionIDs");
     GetCurrentConnectionIDs(resp, aVersion, respConnectionIDs);
 }
 
@@ -176,38 +176,38 @@ void DvProviderUpnpOrgConnectionManager2::DoGetCurrentConnectionInfo(IDviInvocat
     aInvocation.InvocationReadStart();
     TInt ConnectionID = aInvocation.InvocationReadInt("ConnectionID");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
-    InvocationResponseInt respRcsID(aInvocation, "RcsID");
-    InvocationResponseInt respAVTransportID(aInvocation, "AVTransportID");
-    InvocationResponseString respProtocolInfo(aInvocation, "ProtocolInfo");
-    InvocationResponseString respPeerConnectionManager(aInvocation, "PeerConnectionManager");
-    InvocationResponseInt respPeerConnectionID(aInvocation, "PeerConnectionID");
-    InvocationResponseString respDirection(aInvocation, "Direction");
-    InvocationResponseString respStatus(aInvocation, "Status");
+    DviInvocationResponse resp(aInvocation);
+    DviInvocationResponseInt respRcsID(aInvocation, "RcsID");
+    DviInvocationResponseInt respAVTransportID(aInvocation, "AVTransportID");
+    DviInvocationResponseString respProtocolInfo(aInvocation, "ProtocolInfo");
+    DviInvocationResponseString respPeerConnectionManager(aInvocation, "PeerConnectionManager");
+    DviInvocationResponseInt respPeerConnectionID(aInvocation, "PeerConnectionID");
+    DviInvocationResponseString respDirection(aInvocation, "Direction");
+    DviInvocationResponseString respStatus(aInvocation, "Status");
     GetCurrentConnectionInfo(resp, aVersion, ConnectionID, respRcsID, respAVTransportID, respProtocolInfo, respPeerConnectionManager, respPeerConnectionID, respDirection, respStatus);
 }
 
-void DvProviderUpnpOrgConnectionManager2::GetProtocolInfo(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aSource*/, IInvocationResponseString& /*aSink*/)
+void DvProviderUpnpOrgConnectionManager2::GetProtocolInfo(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aSource*/, IDvInvocationResponseString& /*aSink*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgConnectionManager2::PrepareForConnection(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRemoteProtocolInfo*/, const Brx& /*aPeerConnectionManager*/, TInt /*aPeerConnectionID*/, const Brx& /*aDirection*/, IInvocationResponseInt& /*aConnectionID*/, IInvocationResponseInt& /*aAVTransportID*/, IInvocationResponseInt& /*aRcsID*/)
+void DvProviderUpnpOrgConnectionManager2::PrepareForConnection(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRemoteProtocolInfo*/, const Brx& /*aPeerConnectionManager*/, TInt /*aPeerConnectionID*/, const Brx& /*aDirection*/, IDvInvocationResponseInt& /*aConnectionID*/, IDvInvocationResponseInt& /*aAVTransportID*/, IDvInvocationResponseInt& /*aRcsID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgConnectionManager2::ConnectionComplete(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TInt /*aConnectionID*/)
+void DvProviderUpnpOrgConnectionManager2::ConnectionComplete(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TInt /*aConnectionID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgConnectionManager2::GetCurrentConnectionIDs(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aConnectionIDs*/)
+void DvProviderUpnpOrgConnectionManager2::GetCurrentConnectionIDs(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aConnectionIDs*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgConnectionManager2::GetCurrentConnectionInfo(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TInt /*aConnectionID*/, IInvocationResponseInt& /*aRcsID*/, IInvocationResponseInt& /*aAVTransportID*/, IInvocationResponseString& /*aProtocolInfo*/, IInvocationResponseString& /*aPeerConnectionManager*/, IInvocationResponseInt& /*aPeerConnectionID*/, IInvocationResponseString& /*aDirection*/, IInvocationResponseString& /*aStatus*/)
+void DvProviderUpnpOrgConnectionManager2::GetCurrentConnectionInfo(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TInt /*aConnectionID*/, IDvInvocationResponseInt& /*aRcsID*/, IDvInvocationResponseInt& /*aAVTransportID*/, IDvInvocationResponseString& /*aProtocolInfo*/, IDvInvocationResponseString& /*aPeerConnectionManager*/, IDvInvocationResponseInt& /*aPeerConnectionID*/, IDvInvocationResponseString& /*aDirection*/, IDvInvocationResponseString& /*aStatus*/)
 {
     ASSERTS();
 }

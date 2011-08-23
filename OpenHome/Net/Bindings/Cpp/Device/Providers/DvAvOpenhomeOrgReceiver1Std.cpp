@@ -167,11 +167,11 @@ void DvProviderAvOpenhomeOrgReceiver1Cpp::DoSender(IDviInvocation& aInvocation, 
     std::string respMetadata;
     Sender(aVersion, respUri, respMetadata);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterUri(aInvocation, "Uri");
+    DviInvocationResponseString respWriterUri(aInvocation, "Uri");
     Brn buf_Uri((const TByte*)respUri.c_str(), (TUint)respUri.length());
     respWriterUri.Write(buf_Uri);
     aInvocation.InvocationWriteStringEnd("Uri");
-    InvocationResponseString respWriterMetadata(aInvocation, "Metadata");
+    DviInvocationResponseString respWriterMetadata(aInvocation, "Metadata");
     Brn buf_Metadata((const TByte*)respMetadata.c_str(), (TUint)respMetadata.length());
     respWriterMetadata.Write(buf_Metadata);
     aInvocation.InvocationWriteStringEnd("Metadata");
@@ -185,7 +185,7 @@ void DvProviderAvOpenhomeOrgReceiver1Cpp::DoProtocolInfo(IDviInvocation& aInvoca
     std::string respValue;
     ProtocolInfo(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");
@@ -199,7 +199,7 @@ void DvProviderAvOpenhomeOrgReceiver1Cpp::DoTransportState(IDviInvocation& aInvo
     std::string respValue;
     TransportState(aVersion, respValue);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterValue(aInvocation, "Value");
+    DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
     respWriterValue.Write(buf_Value);
     aInvocation.InvocationWriteStringEnd("Value");

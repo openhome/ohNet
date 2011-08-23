@@ -274,7 +274,7 @@ void DvProviderAvOpenhomeOrgInfo1C::DoCounters(IDviInvocation& aInvocation, TUin
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     uint32_t TrackCount;
     uint32_t DetailsCount;
     uint32_t MetatextCount;
@@ -283,9 +283,9 @@ void DvProviderAvOpenhomeOrgInfo1C::DoCounters(IDviInvocation& aInvocation, TUin
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respTrackCount(aInvocation, "TrackCount");
-    InvocationResponseUint respDetailsCount(aInvocation, "DetailsCount");
-    InvocationResponseUint respMetatextCount(aInvocation, "MetatextCount");
+    DviInvocationResponseUint respTrackCount(aInvocation, "TrackCount");
+    DviInvocationResponseUint respDetailsCount(aInvocation, "DetailsCount");
+    DviInvocationResponseUint respMetatextCount(aInvocation, "MetatextCount");
     resp.Start();
     respTrackCount.Write(TrackCount);
     respDetailsCount.Write(DetailsCount);
@@ -297,7 +297,7 @@ void DvProviderAvOpenhomeOrgInfo1C::DoTrack(IDviInvocation& aInvocation, TUint a
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* Uri;
     char* Metadata;
     ASSERT(iCallbackTrack != NULL);
@@ -305,8 +305,8 @@ void DvProviderAvOpenhomeOrgInfo1C::DoTrack(IDviInvocation& aInvocation, TUint a
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respUri(aInvocation, "Uri");
-    InvocationResponseString respMetadata(aInvocation, "Metadata");
+    DviInvocationResponseString respUri(aInvocation, "Uri");
+    DviInvocationResponseString respMetadata(aInvocation, "Metadata");
     resp.Start();
     Brhz bufUri((const TChar*)Uri);
     OhNetFreeExternal(Uri);
@@ -323,7 +323,7 @@ void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation, TUint
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     uint32_t Duration;
     uint32_t BitRate;
     uint32_t BitDepth;
@@ -335,12 +335,12 @@ void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation, TUint
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseUint respDuration(aInvocation, "Duration");
-    InvocationResponseUint respBitRate(aInvocation, "BitRate");
-    InvocationResponseUint respBitDepth(aInvocation, "BitDepth");
-    InvocationResponseUint respSampleRate(aInvocation, "SampleRate");
-    InvocationResponseBool respLossless(aInvocation, "Lossless");
-    InvocationResponseString respCodecName(aInvocation, "CodecName");
+    DviInvocationResponseUint respDuration(aInvocation, "Duration");
+    DviInvocationResponseUint respBitRate(aInvocation, "BitRate");
+    DviInvocationResponseUint respBitDepth(aInvocation, "BitDepth");
+    DviInvocationResponseUint respSampleRate(aInvocation, "SampleRate");
+    DviInvocationResponseBool respLossless(aInvocation, "Lossless");
+    DviInvocationResponseString respCodecName(aInvocation, "CodecName");
     resp.Start();
     respDuration.Write(Duration);
     respBitRate.Write(BitRate);
@@ -358,14 +358,14 @@ void DvProviderAvOpenhomeOrgInfo1C::DoMetatext(IDviInvocation& aInvocation, TUin
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     char* Value;
     ASSERT(iCallbackMetatext != NULL);
     if (0 != iCallbackMetatext(iPtrMetatext, aVersion, &Value)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseString respValue(aInvocation, "Value");
+    DviInvocationResponseString respValue(aInvocation, "Value");
     resp.Start();
     Brhz bufValue((const TChar*)Value);
     OhNetFreeExternal(Value);

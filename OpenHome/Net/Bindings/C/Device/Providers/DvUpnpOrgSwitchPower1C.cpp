@@ -88,7 +88,7 @@ void DvProviderUpnpOrgSwitchPower1C::DoSetTarget(IDviInvocation& aInvocation, TU
     aInvocation.InvocationReadStart();
     TBool newTargetValue = aInvocation.InvocationReadBool("newTargetValue");
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     ASSERT(iCallbackSetTarget != NULL);
     if (0 != iCallbackSetTarget(iPtrSetTarget, aVersion, newTargetValue)) {
         resp.Error(502, Brn("Action failed"));
@@ -102,14 +102,14 @@ void DvProviderUpnpOrgSwitchPower1C::DoGetTarget(IDviInvocation& aInvocation, TU
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     uint32_t RetTargetValue;
     ASSERT(iCallbackGetTarget != NULL);
     if (0 != iCallbackGetTarget(iPtrGetTarget, aVersion, &RetTargetValue)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseBool respRetTargetValue(aInvocation, "RetTargetValue");
+    DviInvocationResponseBool respRetTargetValue(aInvocation, "RetTargetValue");
     resp.Start();
     respRetTargetValue.Write((RetTargetValue!=0));
     resp.End();
@@ -119,14 +119,14 @@ void DvProviderUpnpOrgSwitchPower1C::DoGetStatus(IDviInvocation& aInvocation, TU
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    InvocationResponse resp(aInvocation);
+    DviInvocationResponse resp(aInvocation);
     uint32_t ResultStatus;
     ASSERT(iCallbackGetStatus != NULL);
     if (0 != iCallbackGetStatus(iPtrGetStatus, aVersion, &ResultStatus)) {
         resp.Error(502, Brn("Action failed"));
         return;
     }
-    InvocationResponseBool respResultStatus(aInvocation, "ResultStatus");
+    DviInvocationResponseBool respResultStatus(aInvocation, "ResultStatus");
     resp.Start();
     respResultStatus.Write((ResultStatus!=0));
     resp.End();
