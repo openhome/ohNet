@@ -171,6 +171,11 @@ DviInvocation::DviInvocation(IDviInvocation& aInvocation)
 {
 }
 
+TUint DviInvocation::Version() const
+{
+    return iInvocation.Version();
+}
+
 void DviInvocation::Error(TInt aCode, const Brx& aReason)
 {
 	iInvocation.InvocationReportError(aCode, aReason);
@@ -184,6 +189,16 @@ void DviInvocation::StartResponse()
 void DviInvocation::EndResponse()
 {
 	iInvocation.InvocationWriteEnd();
+}
+
+TIpAddress DviInvocation::Adaptor() const
+{
+    return iInvocation.Adaptor();
+}
+
+const char* DviInvocation::ResourceUriPrefix() const
+{
+    return iInvocation.ResourceUriPrefix();
 }
 
 

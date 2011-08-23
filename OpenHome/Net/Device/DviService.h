@@ -23,7 +23,11 @@ class IDviInvocation
 {
 public:
     virtual void Invoke() = 0;
-    
+
+    virtual TUint Version() const = 0;
+    virtual TIpAddress Adaptor() const = 0;
+    virtual const char* ResourceUriPrefix() const = 0;
+
     virtual void InvocationReadStart() = 0;
     virtual TBool InvocationReadBool(const TChar* aName) = 0;
     virtual void InvocationReadString(const TChar* aName, Brhz& aString) = 0;
@@ -100,9 +104,12 @@ class DllExportClass DviInvocation : public IDvInvocation, private INonCopyable
 {
 public:
 	DllExport DviInvocation(IDviInvocation& aInvocation);
+    virtual TUint Version() const;
 	virtual void Error(TInt aCode, const Brx& aReason);
 	virtual void StartResponse();
 	virtual void EndResponse();
+    virtual TIpAddress Adaptor() const;
+    virtual const char* ResourceUriPrefix() const;
 private:
 	IDviInvocation& iInvocation;
 };

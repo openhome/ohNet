@@ -148,6 +148,21 @@ void InvocationDv::Invoke()
     }
 }
 
+TUint InvocationDv::Version() const
+{
+    return iInvocation.ServiceType().Version();
+}
+
+TIpAddress InvocationDv::Adaptor() const
+{
+    return 0;
+}
+
+const char* InvocationDv::ResourceUriPrefix() const
+{
+    return NULL;
+}
+
 void InvocationDv::InvocationReadStart()
 {
     iReadIndex = 0;
