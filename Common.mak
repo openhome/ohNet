@@ -81,6 +81,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)RefCounter.$(objext) \
     		   $(objdir)Service.$(objext) \
     		   $(objdir)ServiceC.$(objext) \
+    		   $(objdir)Sha1.$(objext) \
     		   $(objdir)Ssdp.$(objext) \
     		   $(objdir)SsdpDv.$(objext) \
     		   $(objdir)Stack.$(objext) \
@@ -331,6 +332,8 @@ $(objdir)Service.$(objext) : OpenHome/Net/Service.cpp $(headers)
 	$(compiler)Service.$(objext) -c $(cflags) $(includes) OpenHome/Net/Service.cpp
 $(objdir)ServiceC.$(objext) : OpenHome/Net/Bindings/C/ServiceC.cpp $(headers)
 	$(compiler)ServiceC.$(objext) -c $(cflags) $(includes) OpenHome/Net/Bindings/C/ServiceC.cpp
+$(objdir)sha1.$(objext) : OpenHome/sha1.c $(headers)
+	$(compiler)sha1.$(objext) -c $(cflags) $(includes) OpenHome/sha1.c
 $(objdir)Ssdp.$(objext) : OpenHome/Net/Ssdp.cpp $(headers)
 	$(compiler)Ssdp.$(objext) -c $(cflags) $(includes) OpenHome/Net/Ssdp.cpp
 $(objdir)SsdpDv.$(objext) : OpenHome/Net/SsdpDv.cpp $(headers)
