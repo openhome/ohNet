@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -299,7 +300,7 @@ private:
      * Manufacturer action for the owning device.
      * Must be implemented iff EnableActionManufacturer was called.
      */
-    virtual void Manufacturer(uint32_t aVersion, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
+    virtual void Manufacturer(IDvInvocationStd& aInvocation, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
     /**
      * Model action.
      *
@@ -307,7 +308,7 @@ private:
      * Model action for the owning device.
      * Must be implemented iff EnableActionModel was called.
      */
-    virtual void Model(uint32_t aVersion, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
+    virtual void Model(IDvInvocationStd& aInvocation, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
     /**
      * Product action.
      *
@@ -315,7 +316,7 @@ private:
      * Product action for the owning device.
      * Must be implemented iff EnableActionProduct was called.
      */
-    virtual void Product(uint32_t aVersion, std::string& aRoom, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
+    virtual void Product(IDvInvocationStd& aInvocation, std::string& aRoom, std::string& aName, std::string& aInfo, std::string& aUrl, std::string& aImageUri);
     /**
      * Standby action.
      *
@@ -323,7 +324,7 @@ private:
      * Standby action for the owning device.
      * Must be implemented iff EnableActionStandby was called.
      */
-    virtual void Standby(uint32_t aVersion, bool& aValue);
+    virtual void Standby(IDvInvocationStd& aInvocation, bool& aValue);
     /**
      * SetStandby action.
      *
@@ -331,7 +332,7 @@ private:
      * SetStandby action for the owning device.
      * Must be implemented iff EnableActionSetStandby was called.
      */
-    virtual void SetStandby(uint32_t aVersion, bool aValue);
+    virtual void SetStandby(IDvInvocationStd& aInvocation, bool aValue);
     /**
      * SourceCount action.
      *
@@ -339,7 +340,7 @@ private:
      * SourceCount action for the owning device.
      * Must be implemented iff EnableActionSourceCount was called.
      */
-    virtual void SourceCount(uint32_t aVersion, uint32_t& aValue);
+    virtual void SourceCount(IDvInvocationStd& aInvocation, uint32_t& aValue);
     /**
      * SourceXml action.
      *
@@ -347,7 +348,7 @@ private:
      * SourceXml action for the owning device.
      * Must be implemented iff EnableActionSourceXml was called.
      */
-    virtual void SourceXml(uint32_t aVersion, std::string& aValue);
+    virtual void SourceXml(IDvInvocationStd& aInvocation, std::string& aValue);
     /**
      * SourceIndex action.
      *
@@ -355,7 +356,7 @@ private:
      * SourceIndex action for the owning device.
      * Must be implemented iff EnableActionSourceIndex was called.
      */
-    virtual void SourceIndex(uint32_t aVersion, uint32_t& aValue);
+    virtual void SourceIndex(IDvInvocationStd& aInvocation, uint32_t& aValue);
     /**
      * SetSourceIndex action.
      *
@@ -363,7 +364,7 @@ private:
      * SetSourceIndex action for the owning device.
      * Must be implemented iff EnableActionSetSourceIndex was called.
      */
-    virtual void SetSourceIndex(uint32_t aVersion, uint32_t aValue);
+    virtual void SetSourceIndex(IDvInvocationStd& aInvocation, uint32_t aValue);
     /**
      * SetSourceIndexByName action.
      *
@@ -371,7 +372,7 @@ private:
      * SetSourceIndexByName action for the owning device.
      * Must be implemented iff EnableActionSetSourceIndexByName was called.
      */
-    virtual void SetSourceIndexByName(uint32_t aVersion, const std::string& aValue);
+    virtual void SetSourceIndexByName(IDvInvocationStd& aInvocation, const std::string& aValue);
     /**
      * Source action.
      *
@@ -379,7 +380,7 @@ private:
      * Source action for the owning device.
      * Must be implemented iff EnableActionSource was called.
      */
-    virtual void Source(uint32_t aVersion, uint32_t aIndex, std::string& aSystemName, std::string& aType, std::string& aName, bool& aVisible);
+    virtual void Source(IDvInvocationStd& aInvocation, uint32_t aIndex, std::string& aSystemName, std::string& aType, std::string& aName, bool& aVisible);
     /**
      * Attributes action.
      *
@@ -387,7 +388,7 @@ private:
      * Attributes action for the owning device.
      * Must be implemented iff EnableActionAttributes was called.
      */
-    virtual void Attributes(uint32_t aVersion, std::string& aValue);
+    virtual void Attributes(IDvInvocationStd& aInvocation, std::string& aValue);
     /**
      * SourceXmlChangeCount action.
      *
@@ -395,7 +396,7 @@ private:
      * SourceXmlChangeCount action for the owning device.
      * Must be implemented iff EnableActionSourceXmlChangeCount was called.
      */
-    virtual void SourceXmlChangeCount(uint32_t aVersion, uint32_t& aValue);
+    virtual void SourceXmlChangeCount(IDvInvocationStd& aInvocation, uint32_t& aValue);
 private:
     DvProviderAvOpenhomeOrgProduct1Cpp();
     void DoManufacturer(IDviInvocation& aInvocation, uint32_t aVersion);

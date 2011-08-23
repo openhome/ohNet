@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -377,7 +378,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::EnableActionSourceXmlChangeCount()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::DoManufacturer(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgProduct1Cpp::DoManufacturer(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -385,7 +386,8 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoManufacturer(IDviInvocation& aInvocat
     std::string respInfo;
     std::string respUrl;
     std::string respImageUri;
-    Manufacturer(aVersion, respName, respInfo, respUrl, respImageUri);
+    DvInvocationStd invocation(aInvocation);
+    Manufacturer(invocation, respName, respInfo, respUrl, respImageUri);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterName(aInvocation, "Name");
     Brn buf_Name((const TByte*)respName.c_str(), (TUint)respName.length());
@@ -406,7 +408,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoManufacturer(IDviInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::DoModel(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgProduct1Cpp::DoModel(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -414,7 +416,8 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoModel(IDviInvocation& aInvocation, ui
     std::string respInfo;
     std::string respUrl;
     std::string respImageUri;
-    Model(aVersion, respName, respInfo, respUrl, respImageUri);
+    DvInvocationStd invocation(aInvocation);
+    Model(invocation, respName, respInfo, respUrl, respImageUri);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterName(aInvocation, "Name");
     Brn buf_Name((const TByte*)respName.c_str(), (TUint)respName.length());
@@ -435,7 +438,7 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoModel(IDviInvocation& aInvocation, ui
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::DoProduct(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgProduct1Cpp::DoProduct(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -444,7 +447,8 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoProduct(IDviInvocation& aInvocation, 
     std::string respInfo;
     std::string respUrl;
     std::string respImageUri;
-    Product(aVersion, respRoom, respName, respInfo, respUrl, respImageUri);
+    DvInvocationStd invocation(aInvocation);
+    Product(invocation, respRoom, respName, respInfo, respUrl, respImageUri);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterRoom(aInvocation, "Room");
     Brn buf_Room((const TByte*)respRoom.c_str(), (TUint)respRoom.length());
@@ -469,46 +473,50 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoProduct(IDviInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::DoStandby(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgProduct1Cpp::DoStandby(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     bool respValue;
-    Standby(aVersion, respValue);
+    DvInvocationStd invocation(aInvocation);
+    Standby(invocation, respValue);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::DoSetStandby(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgProduct1Cpp::DoSetStandby(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     bool Value = aInvocation.InvocationReadBool("Value");
     aInvocation.InvocationReadEnd();
-    SetStandby(aVersion, Value);
+    DvInvocationStd invocation(aInvocation);
+    SetStandby(invocation, Value);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceCount(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceCount(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     uint32_t respValue;
-    SourceCount(aVersion, respValue);
+    DvInvocationStd invocation(aInvocation);
+    SourceCount(invocation, respValue);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceXml(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceXml(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respValue;
-    SourceXml(aVersion, respValue);
+    DvInvocationStd invocation(aInvocation);
+    SourceXml(invocation, respValue);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
@@ -517,41 +525,44 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceXml(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceIndex(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceIndex(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     uint32_t respValue;
-    SourceIndex(aVersion, respValue);
+    DvInvocationStd invocation(aInvocation);
+    SourceIndex(invocation, respValue);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::DoSetSourceIndex(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgProduct1Cpp::DoSetSourceIndex(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     uint32_t Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
-    SetSourceIndex(aVersion, Value);
+    DvInvocationStd invocation(aInvocation);
+    SetSourceIndex(invocation, Value);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::DoSetSourceIndexByName(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgProduct1Cpp::DoSetSourceIndexByName(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_Value;
     aInvocation.InvocationReadString("Value", buf_Value);
     std::string Value((const char*)buf_Value.Ptr(), buf_Value.Bytes());
     aInvocation.InvocationReadEnd();
-    SetSourceIndexByName(aVersion, Value);
+    DvInvocationStd invocation(aInvocation);
+    SetSourceIndexByName(invocation, Value);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::DoSource(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgProduct1Cpp::DoSource(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     uint32_t Index = aInvocation.InvocationReadUint("Index");
@@ -560,7 +571,8 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoSource(IDviInvocation& aInvocation, u
     std::string respType;
     std::string respName;
     bool respVisible;
-    Source(aVersion, Index, respSystemName, respType, respName, respVisible);
+    DvInvocationStd invocation(aInvocation);
+    Source(invocation, Index, respSystemName, respType, respName, respVisible);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterSystemName(aInvocation, "SystemName");
     Brn buf_SystemName((const TByte*)respSystemName.c_str(), (TUint)respSystemName.length());
@@ -579,12 +591,13 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoSource(IDviInvocation& aInvocation, u
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::DoAttributes(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgProduct1Cpp::DoAttributes(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respValue;
-    Attributes(aVersion, respValue);
+    DvInvocationStd invocation(aInvocation);
+    Attributes(invocation, respValue);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterValue(aInvocation, "Value");
     Brn buf_Value((const TByte*)respValue.c_str(), (TUint)respValue.length());
@@ -593,79 +606,80 @@ void DvProviderAvOpenhomeOrgProduct1Cpp::DoAttributes(IDviInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceXmlChangeCount(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgProduct1Cpp::DoSourceXmlChangeCount(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     uint32_t respValue;
-    SourceXmlChangeCount(aVersion, respValue);
+    DvInvocationStd invocation(aInvocation);
+    SourceXmlChangeCount(invocation, respValue);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterValue(aInvocation, "Value");
     respWriterValue.Write(respValue);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::Manufacturer(uint32_t /*aVersion*/, std::string& /*aName*/, std::string& /*aInfo*/, std::string& /*aUrl*/, std::string& /*aImageUri*/)
+void DvProviderAvOpenhomeOrgProduct1Cpp::Manufacturer(IDvInvocationStd& /*aInvocation*/, std::string& /*aName*/, std::string& /*aInfo*/, std::string& /*aUrl*/, std::string& /*aImageUri*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::Model(uint32_t /*aVersion*/, std::string& /*aName*/, std::string& /*aInfo*/, std::string& /*aUrl*/, std::string& /*aImageUri*/)
+void DvProviderAvOpenhomeOrgProduct1Cpp::Model(IDvInvocationStd& /*aInvocation*/, std::string& /*aName*/, std::string& /*aInfo*/, std::string& /*aUrl*/, std::string& /*aImageUri*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::Product(uint32_t /*aVersion*/, std::string& /*aRoom*/, std::string& /*aName*/, std::string& /*aInfo*/, std::string& /*aUrl*/, std::string& /*aImageUri*/)
+void DvProviderAvOpenhomeOrgProduct1Cpp::Product(IDvInvocationStd& /*aInvocation*/, std::string& /*aRoom*/, std::string& /*aName*/, std::string& /*aInfo*/, std::string& /*aUrl*/, std::string& /*aImageUri*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::Standby(uint32_t /*aVersion*/, bool& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1Cpp::Standby(IDvInvocationStd& /*aInvocation*/, bool& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::SetStandby(uint32_t /*aVersion*/, bool /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1Cpp::SetStandby(IDvInvocationStd& /*aInvocation*/, bool /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::SourceCount(uint32_t /*aVersion*/, uint32_t& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1Cpp::SourceCount(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::SourceXml(uint32_t /*aVersion*/, std::string& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1Cpp::SourceXml(IDvInvocationStd& /*aInvocation*/, std::string& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::SourceIndex(uint32_t /*aVersion*/, uint32_t& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1Cpp::SourceIndex(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::SetSourceIndex(uint32_t /*aVersion*/, uint32_t /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1Cpp::SetSourceIndex(IDvInvocationStd& /*aInvocation*/, uint32_t /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::SetSourceIndexByName(uint32_t /*aVersion*/, const std::string& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1Cpp::SetSourceIndexByName(IDvInvocationStd& /*aInvocation*/, const std::string& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::Source(uint32_t /*aVersion*/, uint32_t /*aIndex*/, std::string& /*aSystemName*/, std::string& /*aType*/, std::string& /*aName*/, bool& /*aVisible*/)
+void DvProviderAvOpenhomeOrgProduct1Cpp::Source(IDvInvocationStd& /*aInvocation*/, uint32_t /*aIndex*/, std::string& /*aSystemName*/, std::string& /*aType*/, std::string& /*aName*/, bool& /*aVisible*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::Attributes(uint32_t /*aVersion*/, std::string& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1Cpp::Attributes(IDvInvocationStd& /*aInvocation*/, std::string& /*aValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgProduct1Cpp::SourceXmlChangeCount(uint32_t /*aVersion*/, uint32_t& /*aValue*/)
+void DvProviderAvOpenhomeOrgProduct1Cpp::SourceXmlChangeCount(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aValue*/)
 {
     ASSERTS();
 }

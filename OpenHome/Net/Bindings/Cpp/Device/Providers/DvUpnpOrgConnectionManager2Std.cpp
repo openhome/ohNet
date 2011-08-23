@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -131,13 +132,14 @@ void DvProviderUpnpOrgConnectionManager2Cpp::EnableActionGetCurrentConnectionInf
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoGetProtocolInfo(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoGetProtocolInfo(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respSource;
     std::string respSink;
-    GetProtocolInfo(aVersion, respSource, respSink);
+    DvInvocationStd invocation(aInvocation);
+    GetProtocolInfo(invocation, respSource, respSink);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterSource(aInvocation, "Source");
     Brn buf_Source((const TByte*)respSource.c_str(), (TUint)respSource.length());
@@ -150,7 +152,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoGetProtocolInfo(IDviInvocation& a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoPrepareForConnection(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoPrepareForConnection(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RemoteProtocolInfo;
@@ -167,7 +169,8 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoPrepareForConnection(IDviInvocati
     int32_t respConnectionID;
     int32_t respAVTransportID;
     int32_t respRcsID;
-    PrepareForConnection(aVersion, RemoteProtocolInfo, PeerConnectionManager, PeerConnectionID, Direction, respConnectionID, respAVTransportID, respRcsID);
+    DvInvocationStd invocation(aInvocation);
+    PrepareForConnection(invocation, RemoteProtocolInfo, PeerConnectionManager, PeerConnectionID, Direction, respConnectionID, respAVTransportID, respRcsID);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseInt respWriterConnectionID(aInvocation, "ConnectionID");
     respWriterConnectionID.Write(respConnectionID);
@@ -178,22 +181,24 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoPrepareForConnection(IDviInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoConnectionComplete(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoConnectionComplete(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     int32_t ConnectionID = aInvocation.InvocationReadInt("ConnectionID");
     aInvocation.InvocationReadEnd();
-    ConnectionComplete(aVersion, ConnectionID);
+    DvInvocationStd invocation(aInvocation);
+    ConnectionComplete(invocation, ConnectionID);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respConnectionIDs;
-    GetCurrentConnectionIDs(aVersion, respConnectionIDs);
+    DvInvocationStd invocation(aInvocation);
+    GetCurrentConnectionIDs(invocation, respConnectionIDs);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterConnectionIDs(aInvocation, "ConnectionIDs");
     Brn buf_ConnectionIDs((const TByte*)respConnectionIDs.c_str(), (TUint)respConnectionIDs.length());
@@ -202,7 +207,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionIDs(IDviInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     int32_t ConnectionID = aInvocation.InvocationReadInt("ConnectionID");
@@ -214,7 +219,8 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionInfo(IDviInvo
     int32_t respPeerConnectionID;
     std::string respDirection;
     std::string respStatus;
-    GetCurrentConnectionInfo(aVersion, ConnectionID, respRcsID, respAVTransportID, respProtocolInfo, respPeerConnectionManager, respPeerConnectionID, respDirection, respStatus);
+    DvInvocationStd invocation(aInvocation);
+    GetCurrentConnectionInfo(invocation, ConnectionID, respRcsID, respAVTransportID, respProtocolInfo, respPeerConnectionManager, respPeerConnectionID, respDirection, respStatus);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseInt respWriterRcsID(aInvocation, "RcsID");
     respWriterRcsID.Write(respRcsID);
@@ -241,27 +247,27 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionInfo(IDviInvo
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::GetProtocolInfo(uint32_t /*aVersion*/, std::string& /*aSource*/, std::string& /*aSink*/)
+void DvProviderUpnpOrgConnectionManager2Cpp::GetProtocolInfo(IDvInvocationStd& /*aInvocation*/, std::string& /*aSource*/, std::string& /*aSink*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::PrepareForConnection(uint32_t /*aVersion*/, const std::string& /*aRemoteProtocolInfo*/, const std::string& /*aPeerConnectionManager*/, int32_t /*aPeerConnectionID*/, const std::string& /*aDirection*/, int32_t& /*aConnectionID*/, int32_t& /*aAVTransportID*/, int32_t& /*aRcsID*/)
+void DvProviderUpnpOrgConnectionManager2Cpp::PrepareForConnection(IDvInvocationStd& /*aInvocation*/, const std::string& /*aRemoteProtocolInfo*/, const std::string& /*aPeerConnectionManager*/, int32_t /*aPeerConnectionID*/, const std::string& /*aDirection*/, int32_t& /*aConnectionID*/, int32_t& /*aAVTransportID*/, int32_t& /*aRcsID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::ConnectionComplete(uint32_t /*aVersion*/, int32_t /*aConnectionID*/)
+void DvProviderUpnpOrgConnectionManager2Cpp::ConnectionComplete(IDvInvocationStd& /*aInvocation*/, int32_t /*aConnectionID*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::GetCurrentConnectionIDs(uint32_t /*aVersion*/, std::string& /*aConnectionIDs*/)
+void DvProviderUpnpOrgConnectionManager2Cpp::GetCurrentConnectionIDs(IDvInvocationStd& /*aInvocation*/, std::string& /*aConnectionIDs*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::GetCurrentConnectionInfo(uint32_t /*aVersion*/, int32_t /*aConnectionID*/, int32_t& /*aRcsID*/, int32_t& /*aAVTransportID*/, std::string& /*aProtocolInfo*/, std::string& /*aPeerConnectionManager*/, int32_t& /*aPeerConnectionID*/, std::string& /*aDirection*/, std::string& /*aStatus*/)
+void DvProviderUpnpOrgConnectionManager2Cpp::GetCurrentConnectionInfo(IDvInvocationStd& /*aInvocation*/, int32_t /*aConnectionID*/, int32_t& /*aRcsID*/, int32_t& /*aAVTransportID*/, std::string& /*aProtocolInfo*/, std::string& /*aPeerConnectionManager*/, int32_t& /*aPeerConnectionID*/, std::string& /*aDirection*/, std::string& /*aStatus*/)
 {
     ASSERTS();
 }

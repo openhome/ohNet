@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -201,7 +202,7 @@ private:
      * GetSearchCapabilities action for the owning device.
      * Must be implemented iff EnableActionGetSearchCapabilities was called.
      */
-    virtual void GetSearchCapabilities(uint32_t aVersion, std::string& aSearchCaps);
+    virtual void GetSearchCapabilities(IDvInvocationStd& aInvocation, std::string& aSearchCaps);
     /**
      * GetSortCapabilities action.
      *
@@ -209,7 +210,7 @@ private:
      * GetSortCapabilities action for the owning device.
      * Must be implemented iff EnableActionGetSortCapabilities was called.
      */
-    virtual void GetSortCapabilities(uint32_t aVersion, std::string& aSortCaps);
+    virtual void GetSortCapabilities(IDvInvocationStd& aInvocation, std::string& aSortCaps);
     /**
      * GetSortExtensionCapabilities action.
      *
@@ -217,7 +218,7 @@ private:
      * GetSortExtensionCapabilities action for the owning device.
      * Must be implemented iff EnableActionGetSortExtensionCapabilities was called.
      */
-    virtual void GetSortExtensionCapabilities(uint32_t aVersion, std::string& aSortExtensionCaps);
+    virtual void GetSortExtensionCapabilities(IDvInvocationStd& aInvocation, std::string& aSortExtensionCaps);
     /**
      * GetFeatureList action.
      *
@@ -225,7 +226,7 @@ private:
      * GetFeatureList action for the owning device.
      * Must be implemented iff EnableActionGetFeatureList was called.
      */
-    virtual void GetFeatureList(uint32_t aVersion, std::string& aFeatureList);
+    virtual void GetFeatureList(IDvInvocationStd& aInvocation, std::string& aFeatureList);
     /**
      * GetSystemUpdateID action.
      *
@@ -233,7 +234,7 @@ private:
      * GetSystemUpdateID action for the owning device.
      * Must be implemented iff EnableActionGetSystemUpdateID was called.
      */
-    virtual void GetSystemUpdateID(uint32_t aVersion, uint32_t& aId);
+    virtual void GetSystemUpdateID(IDvInvocationStd& aInvocation, uint32_t& aId);
     /**
      * GetServiceResetToken action.
      *
@@ -241,7 +242,7 @@ private:
      * GetServiceResetToken action for the owning device.
      * Must be implemented iff EnableActionGetServiceResetToken was called.
      */
-    virtual void GetServiceResetToken(uint32_t aVersion, std::string& aResetToken);
+    virtual void GetServiceResetToken(IDvInvocationStd& aInvocation, std::string& aResetToken);
     /**
      * Browse action.
      *
@@ -249,7 +250,7 @@ private:
      * Browse action for the owning device.
      * Must be implemented iff EnableActionBrowse was called.
      */
-    virtual void Browse(uint32_t aVersion, const std::string& aObjectID, const std::string& aBrowseFlag, const std::string& aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const std::string& aSortCriteria, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
+    virtual void Browse(IDvInvocationStd& aInvocation, const std::string& aObjectID, const std::string& aBrowseFlag, const std::string& aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const std::string& aSortCriteria, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
     /**
      * Search action.
      *
@@ -257,7 +258,7 @@ private:
      * Search action for the owning device.
      * Must be implemented iff EnableActionSearch was called.
      */
-    virtual void Search(uint32_t aVersion, const std::string& aContainerID, const std::string& aSearchCriteria, const std::string& aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const std::string& aSortCriteria, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
+    virtual void Search(IDvInvocationStd& aInvocation, const std::string& aContainerID, const std::string& aSearchCriteria, const std::string& aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const std::string& aSortCriteria, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
     /**
      * CreateObject action.
      *
@@ -265,7 +266,7 @@ private:
      * CreateObject action for the owning device.
      * Must be implemented iff EnableActionCreateObject was called.
      */
-    virtual void CreateObject(uint32_t aVersion, const std::string& aContainerID, const std::string& aElements, std::string& aObjectID, std::string& aResult);
+    virtual void CreateObject(IDvInvocationStd& aInvocation, const std::string& aContainerID, const std::string& aElements, std::string& aObjectID, std::string& aResult);
     /**
      * DestroyObject action.
      *
@@ -273,7 +274,7 @@ private:
      * DestroyObject action for the owning device.
      * Must be implemented iff EnableActionDestroyObject was called.
      */
-    virtual void DestroyObject(uint32_t aVersion, const std::string& aObjectID);
+    virtual void DestroyObject(IDvInvocationStd& aInvocation, const std::string& aObjectID);
     /**
      * UpdateObject action.
      *
@@ -281,7 +282,7 @@ private:
      * UpdateObject action for the owning device.
      * Must be implemented iff EnableActionUpdateObject was called.
      */
-    virtual void UpdateObject(uint32_t aVersion, const std::string& aObjectID, const std::string& aCurrentTagValue, const std::string& aNewTagValue);
+    virtual void UpdateObject(IDvInvocationStd& aInvocation, const std::string& aObjectID, const std::string& aCurrentTagValue, const std::string& aNewTagValue);
     /**
      * MoveObject action.
      *
@@ -289,7 +290,7 @@ private:
      * MoveObject action for the owning device.
      * Must be implemented iff EnableActionMoveObject was called.
      */
-    virtual void MoveObject(uint32_t aVersion, const std::string& aObjectID, const std::string& aNewParentID, std::string& aNewObjectID);
+    virtual void MoveObject(IDvInvocationStd& aInvocation, const std::string& aObjectID, const std::string& aNewParentID, std::string& aNewObjectID);
     /**
      * ImportResource action.
      *
@@ -297,7 +298,7 @@ private:
      * ImportResource action for the owning device.
      * Must be implemented iff EnableActionImportResource was called.
      */
-    virtual void ImportResource(uint32_t aVersion, const std::string& aSourceURI, const std::string& aDestinationURI, uint32_t& aTransferID);
+    virtual void ImportResource(IDvInvocationStd& aInvocation, const std::string& aSourceURI, const std::string& aDestinationURI, uint32_t& aTransferID);
     /**
      * ExportResource action.
      *
@@ -305,7 +306,7 @@ private:
      * ExportResource action for the owning device.
      * Must be implemented iff EnableActionExportResource was called.
      */
-    virtual void ExportResource(uint32_t aVersion, const std::string& aSourceURI, const std::string& aDestinationURI, uint32_t& aTransferID);
+    virtual void ExportResource(IDvInvocationStd& aInvocation, const std::string& aSourceURI, const std::string& aDestinationURI, uint32_t& aTransferID);
     /**
      * DeleteResource action.
      *
@@ -313,7 +314,7 @@ private:
      * DeleteResource action for the owning device.
      * Must be implemented iff EnableActionDeleteResource was called.
      */
-    virtual void DeleteResource(uint32_t aVersion, const std::string& aResourceURI);
+    virtual void DeleteResource(IDvInvocationStd& aInvocation, const std::string& aResourceURI);
     /**
      * StopTransferResource action.
      *
@@ -321,7 +322,7 @@ private:
      * StopTransferResource action for the owning device.
      * Must be implemented iff EnableActionStopTransferResource was called.
      */
-    virtual void StopTransferResource(uint32_t aVersion, uint32_t aTransferID);
+    virtual void StopTransferResource(IDvInvocationStd& aInvocation, uint32_t aTransferID);
     /**
      * GetTransferProgress action.
      *
@@ -329,7 +330,7 @@ private:
      * GetTransferProgress action for the owning device.
      * Must be implemented iff EnableActionGetTransferProgress was called.
      */
-    virtual void GetTransferProgress(uint32_t aVersion, uint32_t aTransferID, std::string& aTransferStatus, std::string& aTransferLength, std::string& aTransferTotal);
+    virtual void GetTransferProgress(IDvInvocationStd& aInvocation, uint32_t aTransferID, std::string& aTransferStatus, std::string& aTransferLength, std::string& aTransferTotal);
     /**
      * CreateReference action.
      *
@@ -337,7 +338,7 @@ private:
      * CreateReference action for the owning device.
      * Must be implemented iff EnableActionCreateReference was called.
      */
-    virtual void CreateReference(uint32_t aVersion, const std::string& aContainerID, const std::string& aObjectID, std::string& aNewID);
+    virtual void CreateReference(IDvInvocationStd& aInvocation, const std::string& aContainerID, const std::string& aObjectID, std::string& aNewID);
     /**
      * FreeFormQuery action.
      *
@@ -345,7 +346,7 @@ private:
      * FreeFormQuery action for the owning device.
      * Must be implemented iff EnableActionFreeFormQuery was called.
      */
-    virtual void FreeFormQuery(uint32_t aVersion, const std::string& aContainerID, uint32_t aCDSView, const std::string& aQueryRequest, std::string& aQueryResult, uint32_t& aUpdateID);
+    virtual void FreeFormQuery(IDvInvocationStd& aInvocation, const std::string& aContainerID, uint32_t aCDSView, const std::string& aQueryRequest, std::string& aQueryResult, uint32_t& aUpdateID);
     /**
      * GetFreeFormQueryCapabilities action.
      *
@@ -353,7 +354,7 @@ private:
      * GetFreeFormQueryCapabilities action for the owning device.
      * Must be implemented iff EnableActionGetFreeFormQueryCapabilities was called.
      */
-    virtual void GetFreeFormQueryCapabilities(uint32_t aVersion, std::string& aFFQCapabilities);
+    virtual void GetFreeFormQueryCapabilities(IDvInvocationStd& aInvocation, std::string& aFFQCapabilities);
 private:
     DvProviderUpnpOrgContentDirectory3Cpp();
     void DoGetSearchCapabilities(IDviInvocation& aInvocation, uint32_t aVersion);

@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -49,51 +50,54 @@ void DvProviderUpnpOrgSwitchPower1Cpp::EnableActionGetStatus()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgSwitchPower1Cpp::DoSetTarget(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgSwitchPower1Cpp::DoSetTarget(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     bool newTargetValue = aInvocation.InvocationReadBool("newTargetValue");
     aInvocation.InvocationReadEnd();
-    SetTarget(aVersion, newTargetValue);
+    DvInvocationStd invocation(aInvocation);
+    SetTarget(invocation, newTargetValue);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgSwitchPower1Cpp::DoGetTarget(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgSwitchPower1Cpp::DoGetTarget(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     bool respRetTargetValue;
-    GetTarget(aVersion, respRetTargetValue);
+    DvInvocationStd invocation(aInvocation);
+    GetTarget(invocation, respRetTargetValue);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterRetTargetValue(aInvocation, "RetTargetValue");
     respWriterRetTargetValue.Write(respRetTargetValue);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgSwitchPower1Cpp::DoGetStatus(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgSwitchPower1Cpp::DoGetStatus(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     bool respResultStatus;
-    GetStatus(aVersion, respResultStatus);
+    DvInvocationStd invocation(aInvocation);
+    GetStatus(invocation, respResultStatus);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterResultStatus(aInvocation, "ResultStatus");
     respWriterResultStatus.Write(respResultStatus);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgSwitchPower1Cpp::SetTarget(uint32_t /*aVersion*/, bool /*anewTargetValue*/)
+void DvProviderUpnpOrgSwitchPower1Cpp::SetTarget(IDvInvocationStd& /*aInvocation*/, bool /*anewTargetValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgSwitchPower1Cpp::GetTarget(uint32_t /*aVersion*/, bool& /*aRetTargetValue*/)
+void DvProviderUpnpOrgSwitchPower1Cpp::GetTarget(IDvInvocationStd& /*aInvocation*/, bool& /*aRetTargetValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgSwitchPower1Cpp::GetStatus(uint32_t /*aVersion*/, bool& /*aResultStatus*/)
+void DvProviderUpnpOrgSwitchPower1Cpp::GetStatus(IDvInvocationStd& /*aInvocation*/, bool& /*aResultStatus*/)
 {
     ASSERTS();
 }

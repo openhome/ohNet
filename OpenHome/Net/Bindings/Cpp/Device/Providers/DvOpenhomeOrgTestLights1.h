@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -83,7 +84,7 @@ private:
      * GetCount action for the owning device.
      * Must be implemented iff EnableActionGetCount was called.
      */
-    virtual void GetCount(uint32_t aVersion, uint32_t& aCount);
+    virtual void GetCount(IDvInvocationStd& aInvocation, uint32_t& aCount);
     /**
      * GetRoom action.
      *
@@ -91,7 +92,7 @@ private:
      * GetRoom action for the owning device.
      * Must be implemented iff EnableActionGetRoom was called.
      */
-    virtual void GetRoom(uint32_t aVersion, uint32_t aIndex, std::string& aRoomName);
+    virtual void GetRoom(IDvInvocationStd& aInvocation, uint32_t aIndex, std::string& aRoomName);
     /**
      * GetName action.
      *
@@ -99,7 +100,7 @@ private:
      * GetName action for the owning device.
      * Must be implemented iff EnableActionGetName was called.
      */
-    virtual void GetName(uint32_t aVersion, uint32_t aIndex, std::string& aFriendlyName);
+    virtual void GetName(IDvInvocationStd& aInvocation, uint32_t aIndex, std::string& aFriendlyName);
     /**
      * GetPosition action.
      *
@@ -107,7 +108,7 @@ private:
      * GetPosition action for the owning device.
      * Must be implemented iff EnableActionGetPosition was called.
      */
-    virtual void GetPosition(uint32_t aVersion, uint32_t aIndex, uint32_t& aX, uint32_t& aY, uint32_t& aZ);
+    virtual void GetPosition(IDvInvocationStd& aInvocation, uint32_t aIndex, uint32_t& aX, uint32_t& aY, uint32_t& aZ);
     /**
      * SetColor action.
      *
@@ -115,7 +116,7 @@ private:
      * SetColor action for the owning device.
      * Must be implemented iff EnableActionSetColor was called.
      */
-    virtual void SetColor(uint32_t aVersion, uint32_t aIndex, uint32_t aColor);
+    virtual void SetColor(IDvInvocationStd& aInvocation, uint32_t aIndex, uint32_t aColor);
     /**
      * GetColor action.
      *
@@ -123,7 +124,7 @@ private:
      * GetColor action for the owning device.
      * Must be implemented iff EnableActionGetColor was called.
      */
-    virtual void GetColor(uint32_t aVersion, uint32_t aIndex, uint32_t& aColor);
+    virtual void GetColor(IDvInvocationStd& aInvocation, uint32_t aIndex, uint32_t& aColor);
     /**
      * GetColorComponents action.
      *
@@ -131,7 +132,7 @@ private:
      * GetColorComponents action for the owning device.
      * Must be implemented iff EnableActionGetColorComponents was called.
      */
-    virtual void GetColorComponents(uint32_t aVersion, uint32_t aColor, uint32_t& aBrightness, uint32_t& aRed, uint32_t& aGreen, uint32_t& aBlue);
+    virtual void GetColorComponents(IDvInvocationStd& aInvocation, uint32_t aColor, uint32_t& aBrightness, uint32_t& aRed, uint32_t& aGreen, uint32_t& aBlue);
 private:
     DvProviderOpenhomeOrgTestLights1Cpp();
     void DoGetCount(IDviInvocation& aInvocation, uint32_t aVersion);

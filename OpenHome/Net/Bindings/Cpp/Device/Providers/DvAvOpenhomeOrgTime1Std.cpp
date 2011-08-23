@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -59,14 +60,15 @@ void DvProviderAvOpenhomeOrgTime1Cpp::EnableActionTime()
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgTime1Cpp::DoTime(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderAvOpenhomeOrgTime1Cpp::DoTime(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     uint32_t respTrackCount;
     uint32_t respDuration;
     uint32_t respSeconds;
-    Time(aVersion, respTrackCount, respDuration, respSeconds);
+    DvInvocationStd invocation(aInvocation);
+    Time(invocation, respTrackCount, respDuration, respSeconds);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterTrackCount(aInvocation, "TrackCount");
     respWriterTrackCount.Write(respTrackCount);
@@ -77,7 +79,7 @@ void DvProviderAvOpenhomeOrgTime1Cpp::DoTime(IDviInvocation& aInvocation, uint32
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderAvOpenhomeOrgTime1Cpp::Time(uint32_t /*aVersion*/, uint32_t& /*aTrackCount*/, uint32_t& /*aDuration*/, uint32_t& /*aSeconds*/)
+void DvProviderAvOpenhomeOrgTime1Cpp::Time(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aTrackCount*/, uint32_t& /*aDuration*/, uint32_t& /*aSeconds*/)
 {
     ASSERTS();
 }

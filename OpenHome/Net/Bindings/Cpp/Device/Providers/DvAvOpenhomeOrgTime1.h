@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -77,7 +78,7 @@ private:
      * Time action for the owning device.
      * Must be implemented iff EnableActionTime was called.
      */
-    virtual void Time(uint32_t aVersion, uint32_t& aTrackCount, uint32_t& aDuration, uint32_t& aSeconds);
+    virtual void Time(IDvInvocationStd& aInvocation, uint32_t& aTrackCount, uint32_t& aDuration, uint32_t& aSeconds);
 private:
     DvProviderAvOpenhomeOrgTime1Cpp();
     void DoTime(IDviInvocation& aInvocation, uint32_t aVersion);

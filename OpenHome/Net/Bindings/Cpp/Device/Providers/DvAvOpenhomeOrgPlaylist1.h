@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -255,7 +256,7 @@ private:
      * Play action for the owning device.
      * Must be implemented iff EnableActionPlay was called.
      */
-    virtual void Play(uint32_t aVersion);
+    virtual void Play(IDvInvocationStd& aInvocation);
     /**
      * Pause action.
      *
@@ -263,7 +264,7 @@ private:
      * Pause action for the owning device.
      * Must be implemented iff EnableActionPause was called.
      */
-    virtual void Pause(uint32_t aVersion);
+    virtual void Pause(IDvInvocationStd& aInvocation);
     /**
      * Stop action.
      *
@@ -271,7 +272,7 @@ private:
      * Stop action for the owning device.
      * Must be implemented iff EnableActionStop was called.
      */
-    virtual void Stop(uint32_t aVersion);
+    virtual void Stop(IDvInvocationStd& aInvocation);
     /**
      * Next action.
      *
@@ -279,7 +280,7 @@ private:
      * Next action for the owning device.
      * Must be implemented iff EnableActionNext was called.
      */
-    virtual void Next(uint32_t aVersion);
+    virtual void Next(IDvInvocationStd& aInvocation);
     /**
      * Previous action.
      *
@@ -287,7 +288,7 @@ private:
      * Previous action for the owning device.
      * Must be implemented iff EnableActionPrevious was called.
      */
-    virtual void Previous(uint32_t aVersion);
+    virtual void Previous(IDvInvocationStd& aInvocation);
     /**
      * SetRepeat action.
      *
@@ -295,7 +296,7 @@ private:
      * SetRepeat action for the owning device.
      * Must be implemented iff EnableActionSetRepeat was called.
      */
-    virtual void SetRepeat(uint32_t aVersion, bool aValue);
+    virtual void SetRepeat(IDvInvocationStd& aInvocation, bool aValue);
     /**
      * Repeat action.
      *
@@ -303,7 +304,7 @@ private:
      * Repeat action for the owning device.
      * Must be implemented iff EnableActionRepeat was called.
      */
-    virtual void Repeat(uint32_t aVersion, bool& aValue);
+    virtual void Repeat(IDvInvocationStd& aInvocation, bool& aValue);
     /**
      * SetShuffle action.
      *
@@ -311,7 +312,7 @@ private:
      * SetShuffle action for the owning device.
      * Must be implemented iff EnableActionSetShuffle was called.
      */
-    virtual void SetShuffle(uint32_t aVersion, bool aValue);
+    virtual void SetShuffle(IDvInvocationStd& aInvocation, bool aValue);
     /**
      * Shuffle action.
      *
@@ -319,7 +320,7 @@ private:
      * Shuffle action for the owning device.
      * Must be implemented iff EnableActionShuffle was called.
      */
-    virtual void Shuffle(uint32_t aVersion, bool& aValue);
+    virtual void Shuffle(IDvInvocationStd& aInvocation, bool& aValue);
     /**
      * SeekSecondAbsolute action.
      *
@@ -327,7 +328,7 @@ private:
      * SeekSecondAbsolute action for the owning device.
      * Must be implemented iff EnableActionSeekSecondAbsolute was called.
      */
-    virtual void SeekSecondAbsolute(uint32_t aVersion, uint32_t aValue);
+    virtual void SeekSecondAbsolute(IDvInvocationStd& aInvocation, uint32_t aValue);
     /**
      * SeekSecondRelative action.
      *
@@ -335,7 +336,7 @@ private:
      * SeekSecondRelative action for the owning device.
      * Must be implemented iff EnableActionSeekSecondRelative was called.
      */
-    virtual void SeekSecondRelative(uint32_t aVersion, int32_t aValue);
+    virtual void SeekSecondRelative(IDvInvocationStd& aInvocation, int32_t aValue);
     /**
      * SeekId action.
      *
@@ -343,7 +344,7 @@ private:
      * SeekId action for the owning device.
      * Must be implemented iff EnableActionSeekId was called.
      */
-    virtual void SeekId(uint32_t aVersion, uint32_t aValue);
+    virtual void SeekId(IDvInvocationStd& aInvocation, uint32_t aValue);
     /**
      * SeekIndex action.
      *
@@ -351,7 +352,7 @@ private:
      * SeekIndex action for the owning device.
      * Must be implemented iff EnableActionSeekIndex was called.
      */
-    virtual void SeekIndex(uint32_t aVersion, uint32_t aValue);
+    virtual void SeekIndex(IDvInvocationStd& aInvocation, uint32_t aValue);
     /**
      * TransportState action.
      *
@@ -359,7 +360,7 @@ private:
      * TransportState action for the owning device.
      * Must be implemented iff EnableActionTransportState was called.
      */
-    virtual void TransportState(uint32_t aVersion, std::string& aValue);
+    virtual void TransportState(IDvInvocationStd& aInvocation, std::string& aValue);
     /**
      * Id action.
      *
@@ -367,7 +368,7 @@ private:
      * Id action for the owning device.
      * Must be implemented iff EnableActionId was called.
      */
-    virtual void Id(uint32_t aVersion, uint32_t& aValue);
+    virtual void Id(IDvInvocationStd& aInvocation, uint32_t& aValue);
     /**
      * Read action.
      *
@@ -375,7 +376,7 @@ private:
      * Read action for the owning device.
      * Must be implemented iff EnableActionRead was called.
      */
-    virtual void Read(uint32_t aVersion, uint32_t aId, std::string& aUri, std::string& aMetadata);
+    virtual void Read(IDvInvocationStd& aInvocation, uint32_t aId, std::string& aUri, std::string& aMetadata);
     /**
      * ReadList action.
      *
@@ -383,7 +384,7 @@ private:
      * ReadList action for the owning device.
      * Must be implemented iff EnableActionReadList was called.
      */
-    virtual void ReadList(uint32_t aVersion, const std::string& aIdList, std::string& aTrackList);
+    virtual void ReadList(IDvInvocationStd& aInvocation, const std::string& aIdList, std::string& aTrackList);
     /**
      * Insert action.
      *
@@ -391,7 +392,7 @@ private:
      * Insert action for the owning device.
      * Must be implemented iff EnableActionInsert was called.
      */
-    virtual void Insert(uint32_t aVersion, uint32_t aAfterId, const std::string& aUri, const std::string& aMetadata, uint32_t& aNewId);
+    virtual void Insert(IDvInvocationStd& aInvocation, uint32_t aAfterId, const std::string& aUri, const std::string& aMetadata, uint32_t& aNewId);
     /**
      * DeleteId action.
      *
@@ -399,7 +400,7 @@ private:
      * DeleteId action for the owning device.
      * Must be implemented iff EnableActionDeleteId was called.
      */
-    virtual void DeleteId(uint32_t aVersion, uint32_t aValue);
+    virtual void DeleteId(IDvInvocationStd& aInvocation, uint32_t aValue);
     /**
      * DeleteAll action.
      *
@@ -407,7 +408,7 @@ private:
      * DeleteAll action for the owning device.
      * Must be implemented iff EnableActionDeleteAll was called.
      */
-    virtual void DeleteAll(uint32_t aVersion);
+    virtual void DeleteAll(IDvInvocationStd& aInvocation);
     /**
      * TracksMax action.
      *
@@ -415,7 +416,7 @@ private:
      * TracksMax action for the owning device.
      * Must be implemented iff EnableActionTracksMax was called.
      */
-    virtual void TracksMax(uint32_t aVersion, uint32_t& aValue);
+    virtual void TracksMax(IDvInvocationStd& aInvocation, uint32_t& aValue);
     /**
      * IdArray action.
      *
@@ -423,7 +424,7 @@ private:
      * IdArray action for the owning device.
      * Must be implemented iff EnableActionIdArray was called.
      */
-    virtual void IdArray(uint32_t aVersion, uint32_t& aToken, std::string& aArray);
+    virtual void IdArray(IDvInvocationStd& aInvocation, uint32_t& aToken, std::string& aArray);
     /**
      * IdArrayChanged action.
      *
@@ -431,7 +432,7 @@ private:
      * IdArrayChanged action for the owning device.
      * Must be implemented iff EnableActionIdArrayChanged was called.
      */
-    virtual void IdArrayChanged(uint32_t aVersion, uint32_t aToken, bool& aValue);
+    virtual void IdArrayChanged(IDvInvocationStd& aInvocation, uint32_t aToken, bool& aValue);
     /**
      * ProtocolInfo action.
      *
@@ -439,7 +440,7 @@ private:
      * ProtocolInfo action for the owning device.
      * Must be implemented iff EnableActionProtocolInfo was called.
      */
-    virtual void ProtocolInfo(uint32_t aVersion, std::string& aValue);
+    virtual void ProtocolInfo(IDvInvocationStd& aInvocation, std::string& aValue);
 private:
     DvProviderAvOpenhomeOrgPlaylist1Cpp();
     void DoPlay(IDviInvocation& aInvocation, uint32_t aVersion);

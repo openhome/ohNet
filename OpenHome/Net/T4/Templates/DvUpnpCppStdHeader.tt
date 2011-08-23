@@ -48,6 +48,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -108,7 +109,7 @@ private:
      * <#=a.name#> action for the owning device.
      * Must be implemented iff EnableAction<#=a.name#> was called.
      */
-    virtual void <#=a.name#>(uint32_t aVersion<#=ActionArgs(a)#>);
+    virtual void <#=a.name#>(IDvInvocationStd& aInvocation<#=ActionArgs(a)#>);
 <#  } #>
 private:
     <#=className#>();

@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -205,7 +206,7 @@ private:
      * Increment action for the owning device.
      * Must be implemented iff EnableActionIncrement was called.
      */
-    virtual void Increment(uint32_t aVersion, uint32_t aValue, uint32_t& aResult);
+    virtual void Increment(IDvInvocationStd& aInvocation, uint32_t aValue, uint32_t& aResult);
     /**
      * Decrement action.
      *
@@ -213,7 +214,7 @@ private:
      * Decrement action for the owning device.
      * Must be implemented iff EnableActionDecrement was called.
      */
-    virtual void Decrement(uint32_t aVersion, int32_t aValue, int32_t& aResult);
+    virtual void Decrement(IDvInvocationStd& aInvocation, int32_t aValue, int32_t& aResult);
     /**
      * Toggle action.
      *
@@ -221,7 +222,7 @@ private:
      * Toggle action for the owning device.
      * Must be implemented iff EnableActionToggle was called.
      */
-    virtual void Toggle(uint32_t aVersion, bool aValue, bool& aResult);
+    virtual void Toggle(IDvInvocationStd& aInvocation, bool aValue, bool& aResult);
     /**
      * EchoString action.
      *
@@ -229,7 +230,7 @@ private:
      * EchoString action for the owning device.
      * Must be implemented iff EnableActionEchoString was called.
      */
-    virtual void EchoString(uint32_t aVersion, const std::string& aValue, std::string& aResult);
+    virtual void EchoString(IDvInvocationStd& aInvocation, const std::string& aValue, std::string& aResult);
     /**
      * EchoBinary action.
      *
@@ -237,7 +238,7 @@ private:
      * EchoBinary action for the owning device.
      * Must be implemented iff EnableActionEchoBinary was called.
      */
-    virtual void EchoBinary(uint32_t aVersion, const std::string& aValue, std::string& aResult);
+    virtual void EchoBinary(IDvInvocationStd& aInvocation, const std::string& aValue, std::string& aResult);
     /**
      * SetUint action.
      *
@@ -245,7 +246,7 @@ private:
      * SetUint action for the owning device.
      * Must be implemented iff EnableActionSetUint was called.
      */
-    virtual void SetUint(uint32_t aVersion, uint32_t aValueUint);
+    virtual void SetUint(IDvInvocationStd& aInvocation, uint32_t aValueUint);
     /**
      * GetUint action.
      *
@@ -253,7 +254,7 @@ private:
      * GetUint action for the owning device.
      * Must be implemented iff EnableActionGetUint was called.
      */
-    virtual void GetUint(uint32_t aVersion, uint32_t& aValueUint);
+    virtual void GetUint(IDvInvocationStd& aInvocation, uint32_t& aValueUint);
     /**
      * SetInt action.
      *
@@ -261,7 +262,7 @@ private:
      * SetInt action for the owning device.
      * Must be implemented iff EnableActionSetInt was called.
      */
-    virtual void SetInt(uint32_t aVersion, int32_t aValueInt);
+    virtual void SetInt(IDvInvocationStd& aInvocation, int32_t aValueInt);
     /**
      * GetInt action.
      *
@@ -269,7 +270,7 @@ private:
      * GetInt action for the owning device.
      * Must be implemented iff EnableActionGetInt was called.
      */
-    virtual void GetInt(uint32_t aVersion, int32_t& aValueInt);
+    virtual void GetInt(IDvInvocationStd& aInvocation, int32_t& aValueInt);
     /**
      * SetBool action.
      *
@@ -277,7 +278,7 @@ private:
      * SetBool action for the owning device.
      * Must be implemented iff EnableActionSetBool was called.
      */
-    virtual void SetBool(uint32_t aVersion, bool aValueBool);
+    virtual void SetBool(IDvInvocationStd& aInvocation, bool aValueBool);
     /**
      * GetBool action.
      *
@@ -285,7 +286,7 @@ private:
      * GetBool action for the owning device.
      * Must be implemented iff EnableActionGetBool was called.
      */
-    virtual void GetBool(uint32_t aVersion, bool& aValueBool);
+    virtual void GetBool(IDvInvocationStd& aInvocation, bool& aValueBool);
     /**
      * SetMultiple action.
      *
@@ -293,7 +294,7 @@ private:
      * SetMultiple action for the owning device.
      * Must be implemented iff EnableActionSetMultiple was called.
      */
-    virtual void SetMultiple(uint32_t aVersion, uint32_t aValueUint, int32_t aValueInt, bool aValueBool);
+    virtual void SetMultiple(IDvInvocationStd& aInvocation, uint32_t aValueUint, int32_t aValueInt, bool aValueBool);
     /**
      * SetString action.
      *
@@ -301,7 +302,7 @@ private:
      * SetString action for the owning device.
      * Must be implemented iff EnableActionSetString was called.
      */
-    virtual void SetString(uint32_t aVersion, const std::string& aValueStr);
+    virtual void SetString(IDvInvocationStd& aInvocation, const std::string& aValueStr);
     /**
      * GetString action.
      *
@@ -309,7 +310,7 @@ private:
      * GetString action for the owning device.
      * Must be implemented iff EnableActionGetString was called.
      */
-    virtual void GetString(uint32_t aVersion, std::string& aValueStr);
+    virtual void GetString(IDvInvocationStd& aInvocation, std::string& aValueStr);
     /**
      * SetBinary action.
      *
@@ -317,7 +318,7 @@ private:
      * SetBinary action for the owning device.
      * Must be implemented iff EnableActionSetBinary was called.
      */
-    virtual void SetBinary(uint32_t aVersion, const std::string& aValueBin);
+    virtual void SetBinary(IDvInvocationStd& aInvocation, const std::string& aValueBin);
     /**
      * GetBinary action.
      *
@@ -325,7 +326,7 @@ private:
      * GetBinary action for the owning device.
      * Must be implemented iff EnableActionGetBinary was called.
      */
-    virtual void GetBinary(uint32_t aVersion, std::string& aValueBin);
+    virtual void GetBinary(IDvInvocationStd& aInvocation, std::string& aValueBin);
     /**
      * ToggleBool action.
      *
@@ -333,7 +334,7 @@ private:
      * ToggleBool action for the owning device.
      * Must be implemented iff EnableActionToggleBool was called.
      */
-    virtual void ToggleBool(uint32_t aVersion);
+    virtual void ToggleBool(IDvInvocationStd& aInvocation);
     /**
      * WriteFile action.
      *
@@ -341,7 +342,7 @@ private:
      * WriteFile action for the owning device.
      * Must be implemented iff EnableActionWriteFile was called.
      */
-    virtual void WriteFile(uint32_t aVersion, const std::string& aData, const std::string& aFileFullName);
+    virtual void WriteFile(IDvInvocationStd& aInvocation, const std::string& aData, const std::string& aFileFullName);
     /**
      * Shutdown action.
      *
@@ -349,7 +350,7 @@ private:
      * Shutdown action for the owning device.
      * Must be implemented iff EnableActionShutdown was called.
      */
-    virtual void Shutdown(uint32_t aVersion);
+    virtual void Shutdown(IDvInvocationStd& aInvocation);
 private:
     DvProviderOpenhomeOrgTestBasic1Cpp();
     void DoIncrement(IDviInvocation& aInvocation, uint32_t aVersion);

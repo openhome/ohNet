@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -207,7 +208,7 @@ private:
      * Play action for the owning device.
      * Must be implemented iff EnableActionPlay was called.
      */
-    virtual void Play(uint32_t aVersion);
+    virtual void Play(IDvInvocationStd& aInvocation);
     /**
      * Pause action.
      *
@@ -215,7 +216,7 @@ private:
      * Pause action for the owning device.
      * Must be implemented iff EnableActionPause was called.
      */
-    virtual void Pause(uint32_t aVersion);
+    virtual void Pause(IDvInvocationStd& aInvocation);
     /**
      * Stop action.
      *
@@ -223,7 +224,7 @@ private:
      * Stop action for the owning device.
      * Must be implemented iff EnableActionStop was called.
      */
-    virtual void Stop(uint32_t aVersion);
+    virtual void Stop(IDvInvocationStd& aInvocation);
     /**
      * SeekSecondAbsolute action.
      *
@@ -231,7 +232,7 @@ private:
      * SeekSecondAbsolute action for the owning device.
      * Must be implemented iff EnableActionSeekSecondAbsolute was called.
      */
-    virtual void SeekSecondAbsolute(uint32_t aVersion, uint32_t aValue);
+    virtual void SeekSecondAbsolute(IDvInvocationStd& aInvocation, uint32_t aValue);
     /**
      * SeekSecondRelative action.
      *
@@ -239,7 +240,7 @@ private:
      * SeekSecondRelative action for the owning device.
      * Must be implemented iff EnableActionSeekSecondRelative was called.
      */
-    virtual void SeekSecondRelative(uint32_t aVersion, int32_t aValue);
+    virtual void SeekSecondRelative(IDvInvocationStd& aInvocation, int32_t aValue);
     /**
      * Channel action.
      *
@@ -247,7 +248,7 @@ private:
      * Channel action for the owning device.
      * Must be implemented iff EnableActionChannel was called.
      */
-    virtual void Channel(uint32_t aVersion, std::string& aUri, std::string& aMetadata);
+    virtual void Channel(IDvInvocationStd& aInvocation, std::string& aUri, std::string& aMetadata);
     /**
      * SetChannel action.
      *
@@ -255,7 +256,7 @@ private:
      * SetChannel action for the owning device.
      * Must be implemented iff EnableActionSetChannel was called.
      */
-    virtual void SetChannel(uint32_t aVersion, const std::string& aUri, const std::string& aMetadata);
+    virtual void SetChannel(IDvInvocationStd& aInvocation, const std::string& aUri, const std::string& aMetadata);
     /**
      * TransportState action.
      *
@@ -263,7 +264,7 @@ private:
      * TransportState action for the owning device.
      * Must be implemented iff EnableActionTransportState was called.
      */
-    virtual void TransportState(uint32_t aVersion, std::string& aValue);
+    virtual void TransportState(IDvInvocationStd& aInvocation, std::string& aValue);
     /**
      * Id action.
      *
@@ -271,7 +272,7 @@ private:
      * Id action for the owning device.
      * Must be implemented iff EnableActionId was called.
      */
-    virtual void Id(uint32_t aVersion, uint32_t& aValue);
+    virtual void Id(IDvInvocationStd& aInvocation, uint32_t& aValue);
     /**
      * SetId action.
      *
@@ -279,7 +280,7 @@ private:
      * SetId action for the owning device.
      * Must be implemented iff EnableActionSetId was called.
      */
-    virtual void SetId(uint32_t aVersion, uint32_t aValue, const std::string& aUri);
+    virtual void SetId(IDvInvocationStd& aInvocation, uint32_t aValue, const std::string& aUri);
     /**
      * Read action.
      *
@@ -287,7 +288,7 @@ private:
      * Read action for the owning device.
      * Must be implemented iff EnableActionRead was called.
      */
-    virtual void Read(uint32_t aVersion, uint32_t aId, std::string& aMetadata);
+    virtual void Read(IDvInvocationStd& aInvocation, uint32_t aId, std::string& aMetadata);
     /**
      * ReadList action.
      *
@@ -295,7 +296,7 @@ private:
      * ReadList action for the owning device.
      * Must be implemented iff EnableActionReadList was called.
      */
-    virtual void ReadList(uint32_t aVersion, const std::string& aIdList, std::string& aChannelList);
+    virtual void ReadList(IDvInvocationStd& aInvocation, const std::string& aIdList, std::string& aChannelList);
     /**
      * IdArray action.
      *
@@ -303,7 +304,7 @@ private:
      * IdArray action for the owning device.
      * Must be implemented iff EnableActionIdArray was called.
      */
-    virtual void IdArray(uint32_t aVersion, uint32_t& aToken, std::string& aArray);
+    virtual void IdArray(IDvInvocationStd& aInvocation, uint32_t& aToken, std::string& aArray);
     /**
      * IdArrayChanged action.
      *
@@ -311,7 +312,7 @@ private:
      * IdArrayChanged action for the owning device.
      * Must be implemented iff EnableActionIdArrayChanged was called.
      */
-    virtual void IdArrayChanged(uint32_t aVersion, uint32_t aToken, bool& aValue);
+    virtual void IdArrayChanged(IDvInvocationStd& aInvocation, uint32_t aToken, bool& aValue);
     /**
      * ChannelsMax action.
      *
@@ -319,7 +320,7 @@ private:
      * ChannelsMax action for the owning device.
      * Must be implemented iff EnableActionChannelsMax was called.
      */
-    virtual void ChannelsMax(uint32_t aVersion, uint32_t& aValue);
+    virtual void ChannelsMax(IDvInvocationStd& aInvocation, uint32_t& aValue);
     /**
      * ProtocolInfo action.
      *
@@ -327,7 +328,7 @@ private:
      * ProtocolInfo action for the owning device.
      * Must be implemented iff EnableActionProtocolInfo was called.
      */
-    virtual void ProtocolInfo(uint32_t aVersion, std::string& aValue);
+    virtual void ProtocolInfo(IDvInvocationStd& aInvocation, std::string& aValue);
 private:
     DvProviderAvOpenhomeOrgRadio1Cpp();
     void DoPlay(IDviInvocation& aInvocation, uint32_t aVersion);

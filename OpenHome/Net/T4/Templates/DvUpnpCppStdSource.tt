@@ -46,6 +46,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -163,7 +164,7 @@ void <#=className#>::EnableAction<#=a.name#>()
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, uint32_t aVersion)
+void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
 <#      foreach (Argument i in a.inargs) #>
@@ -191,7 +192,8 @@ void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, uint32_t aVersio
 <#      { #>
     <#=argType[o.variable.type]#> resp<#=o.name#>;
 <#      } #>
-    <#=a.name#>(aVersion<#=ActionArgNames(a)#>);
+    DvInvocationStd invocation(aInvocation);
+    <#=a.name#>(invocation<#=ActionArgNames(a)#>);
 	aInvocation.InvocationWriteStart();
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
@@ -220,7 +222,7 @@ void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, uint32_t aVersio
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>::<#=a.name#>(uint32_t /*aVersion*/<#=ActionArgTypesAndNames(a)#>)
+void <#=className#>::<#=a.name#>(IDvInvocationStd& /*aInvocation*/<#=ActionArgTypesAndNames(a)#>)
 {
     ASSERTS();
 }

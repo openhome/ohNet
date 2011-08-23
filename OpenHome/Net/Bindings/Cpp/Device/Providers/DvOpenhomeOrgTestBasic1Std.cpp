@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -235,46 +236,49 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::EnableActionShutdown()
     iService->AddAction(action, functor);
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoIncrement(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoIncrement(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     uint32_t Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
     uint32_t respResult;
-    Increment(aVersion, Value, respResult);
+    DvInvocationStd invocation(aInvocation);
+    Increment(invocation, Value, respResult);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterResult(aInvocation, "Result");
     respWriterResult.Write(respResult);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoDecrement(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoDecrement(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     int32_t Value = aInvocation.InvocationReadInt("Value");
     aInvocation.InvocationReadEnd();
     int32_t respResult;
-    Decrement(aVersion, Value, respResult);
+    DvInvocationStd invocation(aInvocation);
+    Decrement(invocation, Value, respResult);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseInt respWriterResult(aInvocation, "Result");
     respWriterResult.Write(respResult);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoToggle(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoToggle(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     bool Value = aInvocation.InvocationReadBool("Value");
     aInvocation.InvocationReadEnd();
     bool respResult;
-    Toggle(aVersion, Value, respResult);
+    DvInvocationStd invocation(aInvocation);
+    Toggle(invocation, Value, respResult);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterResult(aInvocation, "Result");
     respWriterResult.Write(respResult);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoString(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoString(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_Value;
@@ -282,7 +286,8 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoString(IDviInvocation& aInvocatio
     std::string Value((const char*)buf_Value.Ptr(), buf_Value.Bytes());
     aInvocation.InvocationReadEnd();
     std::string respResult;
-    EchoString(aVersion, Value, respResult);
+    DvInvocationStd invocation(aInvocation);
+    EchoString(invocation, Value, respResult);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
@@ -291,7 +296,7 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoString(IDviInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoBinary(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoBinary(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brh buf_Value;
@@ -299,7 +304,8 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoBinary(IDviInvocation& aInvocatio
     std::string Value((const char*)buf_Value.Ptr(), buf_Value.Bytes());
     aInvocation.InvocationReadEnd();
     std::string respResult;
-    EchoBinary(aVersion, Value, respResult);
+    DvInvocationStd invocation(aInvocation);
+    EchoBinary(invocation, Value, respResult);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseBinary respWriterResult(aInvocation, "Result");
     Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
@@ -308,102 +314,111 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoEchoBinary(IDviInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetUint(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetUint(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     uint32_t ValueUint = aInvocation.InvocationReadUint("ValueUint");
     aInvocation.InvocationReadEnd();
-    SetUint(aVersion, ValueUint);
+    DvInvocationStd invocation(aInvocation);
+    SetUint(invocation, ValueUint);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetUint(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetUint(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     uint32_t respValueUint;
-    GetUint(aVersion, respValueUint);
+    DvInvocationStd invocation(aInvocation);
+    GetUint(invocation, respValueUint);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterValueUint(aInvocation, "ValueUint");
     respWriterValueUint.Write(respValueUint);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetInt(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetInt(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     int32_t ValueInt = aInvocation.InvocationReadInt("ValueInt");
     aInvocation.InvocationReadEnd();
-    SetInt(aVersion, ValueInt);
+    DvInvocationStd invocation(aInvocation);
+    SetInt(invocation, ValueInt);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetInt(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetInt(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     int32_t respValueInt;
-    GetInt(aVersion, respValueInt);
+    DvInvocationStd invocation(aInvocation);
+    GetInt(invocation, respValueInt);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseInt respWriterValueInt(aInvocation, "ValueInt");
     respWriterValueInt.Write(respValueInt);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetBool(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetBool(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     bool ValueBool = aInvocation.InvocationReadBool("ValueBool");
     aInvocation.InvocationReadEnd();
-    SetBool(aVersion, ValueBool);
+    DvInvocationStd invocation(aInvocation);
+    SetBool(invocation, ValueBool);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetBool(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetBool(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     bool respValueBool;
-    GetBool(aVersion, respValueBool);
+    DvInvocationStd invocation(aInvocation);
+    GetBool(invocation, respValueBool);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterValueBool(aInvocation, "ValueBool");
     respWriterValueBool.Write(respValueBool);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetMultiple(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetMultiple(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     uint32_t ValueUint = aInvocation.InvocationReadUint("ValueUint");
     int32_t ValueInt = aInvocation.InvocationReadInt("ValueInt");
     bool ValueBool = aInvocation.InvocationReadBool("ValueBool");
     aInvocation.InvocationReadEnd();
-    SetMultiple(aVersion, ValueUint, ValueInt, ValueBool);
+    DvInvocationStd invocation(aInvocation);
+    SetMultiple(invocation, ValueUint, ValueInt, ValueBool);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetString(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetString(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ValueStr;
     aInvocation.InvocationReadString("ValueStr", buf_ValueStr);
     std::string ValueStr((const char*)buf_ValueStr.Ptr(), buf_ValueStr.Bytes());
     aInvocation.InvocationReadEnd();
-    SetString(aVersion, ValueStr);
+    DvInvocationStd invocation(aInvocation);
+    SetString(invocation, ValueStr);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetString(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetString(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respValueStr;
-    GetString(aVersion, respValueStr);
+    DvInvocationStd invocation(aInvocation);
+    GetString(invocation, respValueStr);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterValueStr(aInvocation, "ValueStr");
     Brn buf_ValueStr((const TByte*)respValueStr.c_str(), (TUint)respValueStr.length());
@@ -412,24 +427,26 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetString(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetBinary(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoSetBinary(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brh buf_ValueBin;
     aInvocation.InvocationReadBinary("ValueBin", buf_ValueBin);
     std::string ValueBin((const char*)buf_ValueBin.Ptr(), buf_ValueBin.Bytes());
     aInvocation.InvocationReadEnd();
-    SetBinary(aVersion, ValueBin);
+    DvInvocationStd invocation(aInvocation);
+    SetBinary(invocation, ValueBin);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetBinary(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetBinary(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respValueBin;
-    GetBinary(aVersion, respValueBin);
+    DvInvocationStd invocation(aInvocation);
+    GetBinary(invocation, respValueBin);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseBinary respWriterValueBin(aInvocation, "ValueBin");
     Brn buf_ValueBin((const TByte*)respValueBin.c_str(), (TUint)respValueBin.length());
@@ -438,16 +455,17 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoGetBinary(IDviInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoToggleBool(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoToggleBool(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    ToggleBool(aVersion);
+    DvInvocationStd invocation(aInvocation);
+    ToggleBool(invocation);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoWriteFile(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoWriteFile(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_Data;
@@ -457,111 +475,113 @@ void DvProviderOpenhomeOrgTestBasic1Cpp::DoWriteFile(IDviInvocation& aInvocation
     aInvocation.InvocationReadString("FileFullName", buf_FileFullName);
     std::string FileFullName((const char*)buf_FileFullName.Ptr(), buf_FileFullName.Bytes());
     aInvocation.InvocationReadEnd();
-    WriteFile(aVersion, Data, FileFullName);
+    DvInvocationStd invocation(aInvocation);
+    WriteFile(invocation, Data, FileFullName);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::DoShutdown(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderOpenhomeOrgTestBasic1Cpp::DoShutdown(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    Shutdown(aVersion);
+    DvInvocationStd invocation(aInvocation);
+    Shutdown(invocation);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::Increment(uint32_t /*aVersion*/, uint32_t /*aValue*/, uint32_t& /*aResult*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::Increment(IDvInvocationStd& /*aInvocation*/, uint32_t /*aValue*/, uint32_t& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::Decrement(uint32_t /*aVersion*/, int32_t /*aValue*/, int32_t& /*aResult*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::Decrement(IDvInvocationStd& /*aInvocation*/, int32_t /*aValue*/, int32_t& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::Toggle(uint32_t /*aVersion*/, bool /*aValue*/, bool& /*aResult*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::Toggle(IDvInvocationStd& /*aInvocation*/, bool /*aValue*/, bool& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::EchoString(uint32_t /*aVersion*/, const std::string& /*aValue*/, std::string& /*aResult*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::EchoString(IDvInvocationStd& /*aInvocation*/, const std::string& /*aValue*/, std::string& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::EchoBinary(uint32_t /*aVersion*/, const std::string& /*aValue*/, std::string& /*aResult*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::EchoBinary(IDvInvocationStd& /*aInvocation*/, const std::string& /*aValue*/, std::string& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::SetUint(uint32_t /*aVersion*/, uint32_t /*aValueUint*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::SetUint(IDvInvocationStd& /*aInvocation*/, uint32_t /*aValueUint*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::GetUint(uint32_t /*aVersion*/, uint32_t& /*aValueUint*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::GetUint(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aValueUint*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::SetInt(uint32_t /*aVersion*/, int32_t /*aValueInt*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::SetInt(IDvInvocationStd& /*aInvocation*/, int32_t /*aValueInt*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::GetInt(uint32_t /*aVersion*/, int32_t& /*aValueInt*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::GetInt(IDvInvocationStd& /*aInvocation*/, int32_t& /*aValueInt*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::SetBool(uint32_t /*aVersion*/, bool /*aValueBool*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::SetBool(IDvInvocationStd& /*aInvocation*/, bool /*aValueBool*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::GetBool(uint32_t /*aVersion*/, bool& /*aValueBool*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::GetBool(IDvInvocationStd& /*aInvocation*/, bool& /*aValueBool*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::SetMultiple(uint32_t /*aVersion*/, uint32_t /*aValueUint*/, int32_t /*aValueInt*/, bool /*aValueBool*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::SetMultiple(IDvInvocationStd& /*aInvocation*/, uint32_t /*aValueUint*/, int32_t /*aValueInt*/, bool /*aValueBool*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::SetString(uint32_t /*aVersion*/, const std::string& /*aValueStr*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::SetString(IDvInvocationStd& /*aInvocation*/, const std::string& /*aValueStr*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::GetString(uint32_t /*aVersion*/, std::string& /*aValueStr*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::GetString(IDvInvocationStd& /*aInvocation*/, std::string& /*aValueStr*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::SetBinary(uint32_t /*aVersion*/, const std::string& /*aValueBin*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::SetBinary(IDvInvocationStd& /*aInvocation*/, const std::string& /*aValueBin*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::GetBinary(uint32_t /*aVersion*/, std::string& /*aValueBin*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::GetBinary(IDvInvocationStd& /*aInvocation*/, std::string& /*aValueBin*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::ToggleBool(uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::ToggleBool(IDvInvocationStd& /*aInvocation*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::WriteFile(uint32_t /*aVersion*/, const std::string& /*aData*/, const std::string& /*aFileFullName*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::WriteFile(IDvInvocationStd& /*aInvocation*/, const std::string& /*aData*/, const std::string& /*aFileFullName*/)
 {
     ASSERTS();
 }
 
-void DvProviderOpenhomeOrgTestBasic1Cpp::Shutdown(uint32_t /*aVersion*/)
+void DvProviderOpenhomeOrgTestBasic1Cpp::Shutdown(IDvInvocationStd& /*aInvocation*/)
 {
     ASSERTS();
 }

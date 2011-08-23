@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -121,7 +122,7 @@ private:
      * PresentationUrl action for the owning device.
      * Must be implemented iff EnableActionPresentationUrl was called.
      */
-    virtual void PresentationUrl(uint32_t aVersion, std::string& aValue);
+    virtual void PresentationUrl(IDvInvocationStd& aInvocation, std::string& aValue);
     /**
      * Metadata action.
      *
@@ -129,7 +130,7 @@ private:
      * Metadata action for the owning device.
      * Must be implemented iff EnableActionMetadata was called.
      */
-    virtual void Metadata(uint32_t aVersion, std::string& aValue);
+    virtual void Metadata(IDvInvocationStd& aInvocation, std::string& aValue);
     /**
      * Audio action.
      *
@@ -137,7 +138,7 @@ private:
      * Audio action for the owning device.
      * Must be implemented iff EnableActionAudio was called.
      */
-    virtual void Audio(uint32_t aVersion, bool& aValue);
+    virtual void Audio(IDvInvocationStd& aInvocation, bool& aValue);
     /**
      * Status action.
      *
@@ -145,7 +146,7 @@ private:
      * Status action for the owning device.
      * Must be implemented iff EnableActionStatus was called.
      */
-    virtual void Status(uint32_t aVersion, std::string& aValue);
+    virtual void Status(IDvInvocationStd& aInvocation, std::string& aValue);
     /**
      * Attributes action.
      *
@@ -153,7 +154,7 @@ private:
      * Attributes action for the owning device.
      * Must be implemented iff EnableActionAttributes was called.
      */
-    virtual void Attributes(uint32_t aVersion, std::string& aValue);
+    virtual void Attributes(IDvInvocationStd& aInvocation, std::string& aValue);
 private:
     DvProviderAvOpenhomeOrgSender1Cpp();
     void DoPresentationUrl(IDviInvocation& aInvocation, uint32_t aVersion);

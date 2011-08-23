@@ -3,6 +3,7 @@
 #include <OpenHome/Net/Private/DviService.h>
 #include <OpenHome/Net/Private/Service.h>
 #include <OpenHome/Net/Private/FunctorDviInvocation.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 using namespace OpenHome;
 using namespace OpenHome::Net;
@@ -252,69 +253,75 @@ void DvProviderUpnpOrgDimming1Cpp::EnableActionGetRampTime()
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoSetLoadLevelTarget(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoSetLoadLevelTarget(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     uint32_t newLoadlevelTarget = aInvocation.InvocationReadUint("newLoadlevelTarget");
     aInvocation.InvocationReadEnd();
-    SetLoadLevelTarget(aVersion, newLoadlevelTarget);
+    DvInvocationStd invocation(aInvocation);
+    SetLoadLevelTarget(invocation, newLoadlevelTarget);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoGetLoadLevelTarget(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoGetLoadLevelTarget(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     uint32_t respGetLoadlevelTarget;
-    GetLoadLevelTarget(aVersion, respGetLoadlevelTarget);
+    DvInvocationStd invocation(aInvocation);
+    GetLoadLevelTarget(invocation, respGetLoadlevelTarget);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterGetLoadlevelTarget(aInvocation, "GetLoadlevelTarget");
     respWriterGetLoadlevelTarget.Write(respGetLoadlevelTarget);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoGetLoadLevelStatus(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoGetLoadLevelStatus(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     uint32_t respretLoadlevelStatus;
-    GetLoadLevelStatus(aVersion, respretLoadlevelStatus);
+    DvInvocationStd invocation(aInvocation);
+    GetLoadLevelStatus(invocation, respretLoadlevelStatus);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterretLoadlevelStatus(aInvocation, "retLoadlevelStatus");
     respWriterretLoadlevelStatus.Write(respretLoadlevelStatus);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoSetOnEffectLevel(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoSetOnEffectLevel(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     uint32_t newOnEffectLevel = aInvocation.InvocationReadUint("newOnEffectLevel");
     aInvocation.InvocationReadEnd();
-    SetOnEffectLevel(aVersion, newOnEffectLevel);
+    DvInvocationStd invocation(aInvocation);
+    SetOnEffectLevel(invocation, newOnEffectLevel);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoSetOnEffect(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoSetOnEffect(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_newOnEffect;
     aInvocation.InvocationReadString("newOnEffect", buf_newOnEffect);
     std::string newOnEffect((const char*)buf_newOnEffect.Ptr(), buf_newOnEffect.Bytes());
     aInvocation.InvocationReadEnd();
-    SetOnEffect(aVersion, newOnEffect);
+    DvInvocationStd invocation(aInvocation);
+    SetOnEffect(invocation, newOnEffect);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoGetOnEffectParameters(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoGetOnEffectParameters(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     std::string respretOnEffect;
     uint32_t respretOnEffectLevel;
-    GetOnEffectParameters(aVersion, respretOnEffect, respretOnEffectLevel);
+    DvInvocationStd invocation(aInvocation);
+    GetOnEffectParameters(invocation, respretOnEffect, respretOnEffectLevel);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseString respWriterretOnEffect(aInvocation, "retOnEffect");
     Brn buf_retOnEffect((const TByte*)respretOnEffect.c_str(), (TUint)respretOnEffect.length());
@@ -325,261 +332,276 @@ void DvProviderUpnpOrgDimming1Cpp::DoGetOnEffectParameters(IDviInvocation& aInvo
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoStepUp(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoStepUp(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    StepUp(aVersion);
+    DvInvocationStd invocation(aInvocation);
+    StepUp(invocation);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoStepDown(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoStepDown(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    StepDown(aVersion);
+    DvInvocationStd invocation(aInvocation);
+    StepDown(invocation);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoStartRampUp(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoStartRampUp(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    StartRampUp(aVersion);
+    DvInvocationStd invocation(aInvocation);
+    StartRampUp(invocation);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoStartRampDown(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoStartRampDown(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    StartRampDown(aVersion);
+    DvInvocationStd invocation(aInvocation);
+    StartRampDown(invocation);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoStopRamp(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoStopRamp(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    StopRamp(aVersion);
+    DvInvocationStd invocation(aInvocation);
+    StopRamp(invocation);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoStartRampToLevel(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoStartRampToLevel(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     uint32_t newLoadLevelTarget = aInvocation.InvocationReadUint("newLoadLevelTarget");
     uint32_t newRampTime = aInvocation.InvocationReadUint("newRampTime");
     aInvocation.InvocationReadEnd();
-    StartRampToLevel(aVersion, newLoadLevelTarget, newRampTime);
+    DvInvocationStd invocation(aInvocation);
+    StartRampToLevel(invocation, newLoadLevelTarget, newRampTime);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoSetStepDelta(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoSetStepDelta(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     uint32_t newStepDelta = aInvocation.InvocationReadUint("newStepDelta");
     aInvocation.InvocationReadEnd();
-    SetStepDelta(aVersion, newStepDelta);
+    DvInvocationStd invocation(aInvocation);
+    SetStepDelta(invocation, newStepDelta);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoGetStepDelta(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoGetStepDelta(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     uint32_t respretStepDelta;
-    GetStepDelta(aVersion, respretStepDelta);
+    DvInvocationStd invocation(aInvocation);
+    GetStepDelta(invocation, respretStepDelta);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterretStepDelta(aInvocation, "retStepDelta");
     respWriterretStepDelta.Write(respretStepDelta);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoSetRampRate(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoSetRampRate(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     uint32_t newRampRate = aInvocation.InvocationReadUint("newRampRate");
     aInvocation.InvocationReadEnd();
-    SetRampRate(aVersion, newRampRate);
+    DvInvocationStd invocation(aInvocation);
+    SetRampRate(invocation, newRampRate);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoGetRampRate(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoGetRampRate(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     uint32_t respretRampRate;
-    GetRampRate(aVersion, respretRampRate);
+    DvInvocationStd invocation(aInvocation);
+    GetRampRate(invocation, respretRampRate);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterretRampRate(aInvocation, "retRampRate");
     respWriterretRampRate.Write(respretRampRate);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoPauseRamp(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoPauseRamp(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    PauseRamp(aVersion);
+    DvInvocationStd invocation(aInvocation);
+    PauseRamp(invocation);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoResumeRamp(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoResumeRamp(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    ResumeRamp(aVersion);
+    DvInvocationStd invocation(aInvocation);
+    ResumeRamp(invocation);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoGetIsRamping(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoGetIsRamping(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     bool respretIsRamping;
-    GetIsRamping(aVersion, respretIsRamping);
+    DvInvocationStd invocation(aInvocation);
+    GetIsRamping(invocation, respretIsRamping);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterretIsRamping(aInvocation, "retIsRamping");
     respWriterretIsRamping.Write(respretIsRamping);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoGetRampPaused(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoGetRampPaused(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     bool respretRampPaused;
-    GetRampPaused(aVersion, respretRampPaused);
+    DvInvocationStd invocation(aInvocation);
+    GetRampPaused(invocation, respretRampPaused);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseBool respWriterretRampPaused(aInvocation, "retRampPaused");
     respWriterretRampPaused.Write(respretRampPaused);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::DoGetRampTime(IDviInvocation& aInvocation, uint32_t aVersion)
+void DvProviderUpnpOrgDimming1Cpp::DoGetRampTime(IDviInvocation& aInvocation, uint32_t /*aVersion*/)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
     uint32_t respretRampTime;
-    GetRampTime(aVersion, respretRampTime);
+    DvInvocationStd invocation(aInvocation);
+    GetRampTime(invocation, respretRampTime);
 	aInvocation.InvocationWriteStart();
     DviInvocationResponseUint respWriterretRampTime(aInvocation, "retRampTime");
     respWriterretRampTime.Write(respretRampTime);
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::SetLoadLevelTarget(uint32_t /*aVersion*/, uint32_t /*anewLoadlevelTarget*/)
+void DvProviderUpnpOrgDimming1Cpp::SetLoadLevelTarget(IDvInvocationStd& /*aInvocation*/, uint32_t /*anewLoadlevelTarget*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::GetLoadLevelTarget(uint32_t /*aVersion*/, uint32_t& /*aGetLoadlevelTarget*/)
+void DvProviderUpnpOrgDimming1Cpp::GetLoadLevelTarget(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aGetLoadlevelTarget*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::GetLoadLevelStatus(uint32_t /*aVersion*/, uint32_t& /*aretLoadlevelStatus*/)
+void DvProviderUpnpOrgDimming1Cpp::GetLoadLevelStatus(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aretLoadlevelStatus*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::SetOnEffectLevel(uint32_t /*aVersion*/, uint32_t /*anewOnEffectLevel*/)
+void DvProviderUpnpOrgDimming1Cpp::SetOnEffectLevel(IDvInvocationStd& /*aInvocation*/, uint32_t /*anewOnEffectLevel*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::SetOnEffect(uint32_t /*aVersion*/, const std::string& /*anewOnEffect*/)
+void DvProviderUpnpOrgDimming1Cpp::SetOnEffect(IDvInvocationStd& /*aInvocation*/, const std::string& /*anewOnEffect*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::GetOnEffectParameters(uint32_t /*aVersion*/, std::string& /*aretOnEffect*/, uint32_t& /*aretOnEffectLevel*/)
+void DvProviderUpnpOrgDimming1Cpp::GetOnEffectParameters(IDvInvocationStd& /*aInvocation*/, std::string& /*aretOnEffect*/, uint32_t& /*aretOnEffectLevel*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::StepUp(uint32_t /*aVersion*/)
+void DvProviderUpnpOrgDimming1Cpp::StepUp(IDvInvocationStd& /*aInvocation*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::StepDown(uint32_t /*aVersion*/)
+void DvProviderUpnpOrgDimming1Cpp::StepDown(IDvInvocationStd& /*aInvocation*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::StartRampUp(uint32_t /*aVersion*/)
+void DvProviderUpnpOrgDimming1Cpp::StartRampUp(IDvInvocationStd& /*aInvocation*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::StartRampDown(uint32_t /*aVersion*/)
+void DvProviderUpnpOrgDimming1Cpp::StartRampDown(IDvInvocationStd& /*aInvocation*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::StopRamp(uint32_t /*aVersion*/)
+void DvProviderUpnpOrgDimming1Cpp::StopRamp(IDvInvocationStd& /*aInvocation*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::StartRampToLevel(uint32_t /*aVersion*/, uint32_t /*anewLoadLevelTarget*/, uint32_t /*anewRampTime*/)
+void DvProviderUpnpOrgDimming1Cpp::StartRampToLevel(IDvInvocationStd& /*aInvocation*/, uint32_t /*anewLoadLevelTarget*/, uint32_t /*anewRampTime*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::SetStepDelta(uint32_t /*aVersion*/, uint32_t /*anewStepDelta*/)
+void DvProviderUpnpOrgDimming1Cpp::SetStepDelta(IDvInvocationStd& /*aInvocation*/, uint32_t /*anewStepDelta*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::GetStepDelta(uint32_t /*aVersion*/, uint32_t& /*aretStepDelta*/)
+void DvProviderUpnpOrgDimming1Cpp::GetStepDelta(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aretStepDelta*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::SetRampRate(uint32_t /*aVersion*/, uint32_t /*anewRampRate*/)
+void DvProviderUpnpOrgDimming1Cpp::SetRampRate(IDvInvocationStd& /*aInvocation*/, uint32_t /*anewRampRate*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::GetRampRate(uint32_t /*aVersion*/, uint32_t& /*aretRampRate*/)
+void DvProviderUpnpOrgDimming1Cpp::GetRampRate(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aretRampRate*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::PauseRamp(uint32_t /*aVersion*/)
+void DvProviderUpnpOrgDimming1Cpp::PauseRamp(IDvInvocationStd& /*aInvocation*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::ResumeRamp(uint32_t /*aVersion*/)
+void DvProviderUpnpOrgDimming1Cpp::ResumeRamp(IDvInvocationStd& /*aInvocation*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::GetIsRamping(uint32_t /*aVersion*/, bool& /*aretIsRamping*/)
+void DvProviderUpnpOrgDimming1Cpp::GetIsRamping(IDvInvocationStd& /*aInvocation*/, bool& /*aretIsRamping*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::GetRampPaused(uint32_t /*aVersion*/, bool& /*aretRampPaused*/)
+void DvProviderUpnpOrgDimming1Cpp::GetRampPaused(IDvInvocationStd& /*aInvocation*/, bool& /*aretRampPaused*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgDimming1Cpp::GetRampTime(uint32_t /*aVersion*/, uint32_t& /*aretRampTime*/)
+void DvProviderUpnpOrgDimming1Cpp::GetRampTime(IDvInvocationStd& /*aInvocation*/, uint32_t& /*aretRampTime*/)
 {
     ASSERTS();
 }

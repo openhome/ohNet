@@ -5,6 +5,7 @@
 #include <OpenHome/Buffer.h>
 #include <OpenHome/Net/Cpp/DvDevice.h>
 #include <OpenHome/Net/Core/DvProvider.h>
+#include <OpenHome/Net/Cpp/DvInvocation.h>
 
 #include <string>
 
@@ -185,7 +186,7 @@ private:
      * Counters action for the owning device.
      * Must be implemented iff EnableActionCounters was called.
      */
-    virtual void Counters(uint32_t aVersion, uint32_t& aTrackCount, uint32_t& aDetailsCount, uint32_t& aMetatextCount);
+    virtual void Counters(IDvInvocationStd& aInvocation, uint32_t& aTrackCount, uint32_t& aDetailsCount, uint32_t& aMetatextCount);
     /**
      * Track action.
      *
@@ -193,7 +194,7 @@ private:
      * Track action for the owning device.
      * Must be implemented iff EnableActionTrack was called.
      */
-    virtual void Track(uint32_t aVersion, std::string& aUri, std::string& aMetadata);
+    virtual void Track(IDvInvocationStd& aInvocation, std::string& aUri, std::string& aMetadata);
     /**
      * Details action.
      *
@@ -201,7 +202,7 @@ private:
      * Details action for the owning device.
      * Must be implemented iff EnableActionDetails was called.
      */
-    virtual void Details(uint32_t aVersion, uint32_t& aDuration, uint32_t& aBitRate, uint32_t& aBitDepth, uint32_t& aSampleRate, bool& aLossless, std::string& aCodecName);
+    virtual void Details(IDvInvocationStd& aInvocation, uint32_t& aDuration, uint32_t& aBitRate, uint32_t& aBitDepth, uint32_t& aSampleRate, bool& aLossless, std::string& aCodecName);
     /**
      * Metatext action.
      *
@@ -209,7 +210,7 @@ private:
      * Metatext action for the owning device.
      * Must be implemented iff EnableActionMetatext was called.
      */
-    virtual void Metatext(uint32_t aVersion, std::string& aValue);
+    virtual void Metatext(IDvInvocationStd& aInvocation, std::string& aValue);
 private:
     DvProviderAvOpenhomeOrgInfo1Cpp();
     void DoCounters(IDviInvocation& aInvocation, uint32_t aVersion);
