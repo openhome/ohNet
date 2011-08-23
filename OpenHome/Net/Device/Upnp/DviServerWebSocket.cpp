@@ -15,12 +15,10 @@
 #include <OpenHome/Private/sha.h>
 #include <OpenHome/Private/Converter.h>
 
+#include <stdlib.h>
+
 using namespace OpenHome;
 using namespace OpenHome::Net;
-
-#undef WS_76_HANDSHAKE
-#define WS_V8_READ
-#define WS_V8_WRITE
 
 static void WriteTag(IWriter& aWriter, const Brx& aTag, const Brx& aValue)
 {
