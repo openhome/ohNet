@@ -12,13 +12,13 @@ namespace Net {
  * @{
  */
 
-class IDvInvocationResponse
+class IDvInvocation
 {
 public:
 	virtual void Error(TInt aCode, const Brx& aReason) = 0;
-	virtual void Start() = 0;
-	virtual void End() = 0;
-    virtual ~IDvInvocationResponse() {}
+	virtual void StartResponse() = 0;
+	virtual void EndResponse() = 0;
+    virtual ~IDvInvocation() {}
 };
 
 class IDvInvocationResponseBool

@@ -88,48 +88,48 @@ void DvProviderUpnpOrgSwitchPower1C::DoSetTarget(IDviInvocation& aInvocation, TU
     aInvocation.InvocationReadStart();
     TBool newTargetValue = aInvocation.InvocationReadBool("newTargetValue");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetTarget != NULL);
     if (0 != iCallbackSetTarget(iPtrSetTarget, aVersion, newTargetValue)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderUpnpOrgSwitchPower1C::DoGetTarget(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t RetTargetValue;
     ASSERT(iCallbackGetTarget != NULL);
     if (0 != iCallbackGetTarget(iPtrGetTarget, aVersion, &RetTargetValue)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseBool respRetTargetValue(aInvocation, "RetTargetValue");
-    resp.Start();
+    invocation.StartResponse();
     respRetTargetValue.Write((RetTargetValue!=0));
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderUpnpOrgSwitchPower1C::DoGetStatus(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t ResultStatus;
     ASSERT(iCallbackGetStatus != NULL);
     if (0 != iCallbackGetStatus(iPtrGetStatus, aVersion, &ResultStatus)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseBool respResultStatus(aInvocation, "ResultStatus");
-    resp.Start();
+    invocation.StartResponse();
     respResultStatus.Write((ResultStatus!=0));
-    resp.End();
+    invocation.EndResponse();
 }
 
 

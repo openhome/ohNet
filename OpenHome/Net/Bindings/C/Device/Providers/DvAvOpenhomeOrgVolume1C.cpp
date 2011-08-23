@@ -418,7 +418,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoCharacteristics(IDviInvocation& aInvocat
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t VolumeMax;
     uint32_t VolumeUnity;
     uint32_t VolumeSteps;
@@ -427,7 +427,7 @@ void DvProviderAvOpenhomeOrgVolume1C::DoCharacteristics(IDviInvocation& aInvocat
     uint32_t FadeMax;
     ASSERT(iCallbackCharacteristics != NULL);
     if (0 != iCallbackCharacteristics(iPtrCharacteristics, aVersion, &VolumeMax, &VolumeUnity, &VolumeSteps, &VolumeMilliDbPerStep, &BalanceMax, &FadeMax)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseUint respVolumeMax(aInvocation, "VolumeMax");
@@ -436,14 +436,14 @@ void DvProviderAvOpenhomeOrgVolume1C::DoCharacteristics(IDviInvocation& aInvocat
     DviInvocationResponseUint respVolumeMilliDbPerStep(aInvocation, "VolumeMilliDbPerStep");
     DviInvocationResponseUint respBalanceMax(aInvocation, "BalanceMax");
     DviInvocationResponseUint respFadeMax(aInvocation, "FadeMax");
-    resp.Start();
+    invocation.StartResponse();
     respVolumeMax.Write(VolumeMax);
     respVolumeUnity.Write(VolumeUnity);
     respVolumeSteps.Write(VolumeSteps);
     respVolumeMilliDbPerStep.Write(VolumeMilliDbPerStep);
     respBalanceMax.Write(BalanceMax);
     respFadeMax.Write(FadeMax);
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoSetVolume(IDviInvocation& aInvocation, TUint aVersion)
@@ -451,59 +451,59 @@ void DvProviderAvOpenhomeOrgVolume1C::DoSetVolume(IDviInvocation& aInvocation, T
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetVolume != NULL);
     if (0 != iCallbackSetVolume(iPtrSetVolume, aVersion, Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoVolumeInc(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackVolumeInc != NULL);
     if (0 != iCallbackVolumeInc(iPtrVolumeInc, aVersion)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoVolumeDec(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackVolumeDec != NULL);
     if (0 != iCallbackVolumeDec(iPtrVolumeDec, aVersion)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoVolume(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackVolume != NULL);
     if (0 != iCallbackVolume(iPtrVolume, aVersion, &Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseUint respValue(aInvocation, "Value");
-    resp.Start();
+    invocation.StartResponse();
     respValue.Write(Value);
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoSetBalance(IDviInvocation& aInvocation, TUint aVersion)
@@ -511,59 +511,59 @@ void DvProviderAvOpenhomeOrgVolume1C::DoSetBalance(IDviInvocation& aInvocation, 
     aInvocation.InvocationReadStart();
     TInt Value = aInvocation.InvocationReadInt("Value");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetBalance != NULL);
     if (0 != iCallbackSetBalance(iPtrSetBalance, aVersion, Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoBalanceInc(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackBalanceInc != NULL);
     if (0 != iCallbackBalanceInc(iPtrBalanceInc, aVersion)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoBalanceDec(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackBalanceDec != NULL);
     if (0 != iCallbackBalanceDec(iPtrBalanceDec, aVersion)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoBalance(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     int32_t Value;
     ASSERT(iCallbackBalance != NULL);
     if (0 != iCallbackBalance(iPtrBalance, aVersion, &Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseInt respValue(aInvocation, "Value");
-    resp.Start();
+    invocation.StartResponse();
     respValue.Write(Value);
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoSetFade(IDviInvocation& aInvocation, TUint aVersion)
@@ -571,59 +571,59 @@ void DvProviderAvOpenhomeOrgVolume1C::DoSetFade(IDviInvocation& aInvocation, TUi
     aInvocation.InvocationReadStart();
     TInt Value = aInvocation.InvocationReadInt("Value");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetFade != NULL);
     if (0 != iCallbackSetFade(iPtrSetFade, aVersion, Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoFadeInc(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackFadeInc != NULL);
     if (0 != iCallbackFadeInc(iPtrFadeInc, aVersion)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoFadeDec(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackFadeDec != NULL);
     if (0 != iCallbackFadeDec(iPtrFadeDec, aVersion)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoFade(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     int32_t Value;
     ASSERT(iCallbackFade != NULL);
     if (0 != iCallbackFade(iPtrFade, aVersion, &Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseInt respValue(aInvocation, "Value");
-    resp.Start();
+    invocation.StartResponse();
     respValue.Write(Value);
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoSetMute(IDviInvocation& aInvocation, TUint aVersion)
@@ -631,48 +631,48 @@ void DvProviderAvOpenhomeOrgVolume1C::DoSetMute(IDviInvocation& aInvocation, TUi
     aInvocation.InvocationReadStart();
     TBool Value = aInvocation.InvocationReadBool("Value");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetMute != NULL);
     if (0 != iCallbackSetMute(iPtrSetMute, aVersion, Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoMute(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackMute != NULL);
     if (0 != iCallbackMute(iPtrMute, aVersion, &Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseBool respValue(aInvocation, "Value");
-    resp.Start();
+    invocation.StartResponse();
     respValue.Write((Value!=0));
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgVolume1C::DoVolumeLimit(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackVolumeLimit != NULL);
     if (0 != iCallbackVolumeLimit(iPtrVolumeLimit, aVersion, &Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseUint respValue(aInvocation, "Value");
-    resp.Start();
+    invocation.StartResponse();
     respValue.Write(Value);
-    resp.End();
+    invocation.EndResponse();
 }
 
 

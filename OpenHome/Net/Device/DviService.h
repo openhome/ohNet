@@ -96,13 +96,13 @@ private:
     std::vector<DviSubscription*> iSubscriptions;
 };
 
-class DllExportClass DviInvocationResponse : public IDvInvocationResponse, private INonCopyable
+class DllExportClass DviInvocation : public IDvInvocation, private INonCopyable
 {
 public:
-	DllExport DviInvocationResponse(IDviInvocation& aInvocation);
+	DllExport DviInvocation(IDviInvocation& aInvocation);
 	virtual void Error(TInt aCode, const Brx& aReason);
-	virtual void Start();
-	virtual void End();
+	virtual void StartResponse();
+	virtual void EndResponse();
 private:
 	IDviInvocation& iInvocation;
 };

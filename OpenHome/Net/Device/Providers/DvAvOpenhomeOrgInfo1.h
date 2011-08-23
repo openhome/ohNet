@@ -183,7 +183,7 @@ private:
      * Counters action for the owning device.
      * Must be implemented iff EnableActionCounters was called.
      */
-    virtual void Counters(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aTrackCount, IDvInvocationResponseUint& aDetailsCount, IDvInvocationResponseUint& aMetatextCount);
+    virtual void Counters(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aTrackCount, IDvInvocationResponseUint& aDetailsCount, IDvInvocationResponseUint& aMetatextCount);
     /**
      * Track action.
      *
@@ -191,7 +191,7 @@ private:
      * Track action for the owning device.
      * Must be implemented iff EnableActionTrack was called.
      */
-    virtual void Track(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata);
+    virtual void Track(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aUri, IDvInvocationResponseString& aMetadata);
     /**
      * Details action.
      *
@@ -199,7 +199,7 @@ private:
      * Details action for the owning device.
      * Must be implemented iff EnableActionDetails was called.
      */
-    virtual void Details(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aDuration, IDvInvocationResponseUint& aBitRate, IDvInvocationResponseUint& aBitDepth, IDvInvocationResponseUint& aSampleRate, IDvInvocationResponseBool& aLossless, IDvInvocationResponseString& aCodecName);
+    virtual void Details(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aDuration, IDvInvocationResponseUint& aBitRate, IDvInvocationResponseUint& aBitDepth, IDvInvocationResponseUint& aSampleRate, IDvInvocationResponseBool& aLossless, IDvInvocationResponseString& aCodecName);
     /**
      * Metatext action.
      *
@@ -207,7 +207,7 @@ private:
      * Metatext action for the owning device.
      * Must be implemented iff EnableActionMetatext was called.
      */
-    virtual void Metatext(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
+    virtual void Metatext(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgInfo1();
     void DoCounters(IDviInvocation& aInvocation, TUint aVersion);

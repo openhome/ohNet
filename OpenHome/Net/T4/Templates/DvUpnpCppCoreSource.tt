@@ -170,18 +170,18 @@ void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
 <#          } #>
 <#      } #>
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
     <#=invRespType[o.variable.type]#> resp<#=o.name#>(aInvocation, "<#=o.name#>");
 <#      } #>
-    <#=a.name#>(resp, aVersion<#=ActionArgNames(a)#>);
+    <#=a.name#>(invocation, aVersion<#=ActionArgNames(a)#>);
 }
 <#  } #>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>::<#=a.name#>(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/<#=ActionArgTypesAndNames(a)#>)
+void <#=className#>::<#=a.name#>(IDvInvocation& /*aResponse*/, TUint /*aVersion*/<#=ActionArgTypesAndNames(a)#>)
 {
     ASSERTS();
 }

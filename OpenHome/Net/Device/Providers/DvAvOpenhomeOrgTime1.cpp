@@ -63,14 +63,14 @@ void DvProviderAvOpenhomeOrgTime1::DoTime(IDviInvocation& aInvocation, TUint aVe
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     DviInvocationResponseUint respTrackCount(aInvocation, "TrackCount");
     DviInvocationResponseUint respDuration(aInvocation, "Duration");
     DviInvocationResponseUint respSeconds(aInvocation, "Seconds");
-    Time(resp, aVersion, respTrackCount, respDuration, respSeconds);
+    Time(invocation, aVersion, respTrackCount, respDuration, respSeconds);
 }
 
-void DvProviderAvOpenhomeOrgTime1::Time(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aTrackCount*/, IDvInvocationResponseUint& /*aDuration*/, IDvInvocationResponseUint& /*aSeconds*/)
+void DvProviderAvOpenhomeOrgTime1::Time(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aTrackCount*/, IDvInvocationResponseUint& /*aDuration*/, IDvInvocationResponseUint& /*aSeconds*/)
 {
     ASSERTS();
 }

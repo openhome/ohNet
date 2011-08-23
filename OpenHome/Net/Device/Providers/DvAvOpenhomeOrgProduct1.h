@@ -297,7 +297,7 @@ private:
      * Manufacturer action for the owning device.
      * Must be implemented iff EnableActionManufacturer was called.
      */
-    virtual void Manufacturer(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aName, IDvInvocationResponseString& aInfo, IDvInvocationResponseString& aUrl, IDvInvocationResponseString& aImageUri);
+    virtual void Manufacturer(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aName, IDvInvocationResponseString& aInfo, IDvInvocationResponseString& aUrl, IDvInvocationResponseString& aImageUri);
     /**
      * Model action.
      *
@@ -305,7 +305,7 @@ private:
      * Model action for the owning device.
      * Must be implemented iff EnableActionModel was called.
      */
-    virtual void Model(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aName, IDvInvocationResponseString& aInfo, IDvInvocationResponseString& aUrl, IDvInvocationResponseString& aImageUri);
+    virtual void Model(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aName, IDvInvocationResponseString& aInfo, IDvInvocationResponseString& aUrl, IDvInvocationResponseString& aImageUri);
     /**
      * Product action.
      *
@@ -313,7 +313,7 @@ private:
      * Product action for the owning device.
      * Must be implemented iff EnableActionProduct was called.
      */
-    virtual void Product(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aRoom, IDvInvocationResponseString& aName, IDvInvocationResponseString& aInfo, IDvInvocationResponseString& aUrl, IDvInvocationResponseString& aImageUri);
+    virtual void Product(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aRoom, IDvInvocationResponseString& aName, IDvInvocationResponseString& aInfo, IDvInvocationResponseString& aUrl, IDvInvocationResponseString& aImageUri);
     /**
      * Standby action.
      *
@@ -321,7 +321,7 @@ private:
      * Standby action for the owning device.
      * Must be implemented iff EnableActionStandby was called.
      */
-    virtual void Standby(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseBool& aValue);
+    virtual void Standby(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseBool& aValue);
     /**
      * SetStandby action.
      *
@@ -329,7 +329,7 @@ private:
      * SetStandby action for the owning device.
      * Must be implemented iff EnableActionSetStandby was called.
      */
-    virtual void SetStandby(IDvInvocationResponse& aResponse, TUint aVersion, TBool aValue);
+    virtual void SetStandby(IDvInvocation& aResponse, TUint aVersion, TBool aValue);
     /**
      * SourceCount action.
      *
@@ -337,7 +337,7 @@ private:
      * SourceCount action for the owning device.
      * Must be implemented iff EnableActionSourceCount was called.
      */
-    virtual void SourceCount(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aValue);
+    virtual void SourceCount(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aValue);
     /**
      * SourceXml action.
      *
@@ -345,7 +345,7 @@ private:
      * SourceXml action for the owning device.
      * Must be implemented iff EnableActionSourceXml was called.
      */
-    virtual void SourceXml(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
+    virtual void SourceXml(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
     /**
      * SourceIndex action.
      *
@@ -353,7 +353,7 @@ private:
      * SourceIndex action for the owning device.
      * Must be implemented iff EnableActionSourceIndex was called.
      */
-    virtual void SourceIndex(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aValue);
+    virtual void SourceIndex(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aValue);
     /**
      * SetSourceIndex action.
      *
@@ -361,7 +361,7 @@ private:
      * SetSourceIndex action for the owning device.
      * Must be implemented iff EnableActionSetSourceIndex was called.
      */
-    virtual void SetSourceIndex(IDvInvocationResponse& aResponse, TUint aVersion, TUint aValue);
+    virtual void SetSourceIndex(IDvInvocation& aResponse, TUint aVersion, TUint aValue);
     /**
      * SetSourceIndexByName action.
      *
@@ -369,7 +369,7 @@ private:
      * SetSourceIndexByName action for the owning device.
      * Must be implemented iff EnableActionSetSourceIndexByName was called.
      */
-    virtual void SetSourceIndexByName(IDvInvocationResponse& aResponse, TUint aVersion, const Brx& aValue);
+    virtual void SetSourceIndexByName(IDvInvocation& aResponse, TUint aVersion, const Brx& aValue);
     /**
      * Source action.
      *
@@ -377,7 +377,7 @@ private:
      * Source action for the owning device.
      * Must be implemented iff EnableActionSource was called.
      */
-    virtual void Source(IDvInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IDvInvocationResponseString& aSystemName, IDvInvocationResponseString& aType, IDvInvocationResponseString& aName, IDvInvocationResponseBool& aVisible);
+    virtual void Source(IDvInvocation& aResponse, TUint aVersion, TUint aIndex, IDvInvocationResponseString& aSystemName, IDvInvocationResponseString& aType, IDvInvocationResponseString& aName, IDvInvocationResponseBool& aVisible);
     /**
      * Attributes action.
      *
@@ -385,7 +385,7 @@ private:
      * Attributes action for the owning device.
      * Must be implemented iff EnableActionAttributes was called.
      */
-    virtual void Attributes(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
+    virtual void Attributes(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aValue);
     /**
      * SourceXmlChangeCount action.
      *
@@ -393,7 +393,7 @@ private:
      * SourceXmlChangeCount action for the owning device.
      * Must be implemented iff EnableActionSourceXmlChangeCount was called.
      */
-    virtual void SourceXmlChangeCount(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aValue);
+    virtual void SourceXmlChangeCount(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aValue);
 private:
     DvProviderAvOpenhomeOrgProduct1();
     void DoManufacturer(IDviInvocation& aInvocation, TUint aVersion);

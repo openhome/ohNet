@@ -378,17 +378,17 @@ void DvProviderOpenhomeOrgTestBasic1C::DoIncrement(IDviInvocation& aInvocation, 
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t Result;
     ASSERT(iCallbackIncrement != NULL);
     if (0 != iCallbackIncrement(iPtrIncrement, aVersion, Value, &Result)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseUint respResult(aInvocation, "Result");
-    resp.Start();
+    invocation.StartResponse();
     respResult.Write(Result);
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoDecrement(IDviInvocation& aInvocation, TUint aVersion)
@@ -396,17 +396,17 @@ void DvProviderOpenhomeOrgTestBasic1C::DoDecrement(IDviInvocation& aInvocation, 
     aInvocation.InvocationReadStart();
     TInt Value = aInvocation.InvocationReadInt("Value");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     int32_t Result;
     ASSERT(iCallbackDecrement != NULL);
     if (0 != iCallbackDecrement(iPtrDecrement, aVersion, Value, &Result)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseInt respResult(aInvocation, "Result");
-    resp.Start();
+    invocation.StartResponse();
     respResult.Write(Result);
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoToggle(IDviInvocation& aInvocation, TUint aVersion)
@@ -414,17 +414,17 @@ void DvProviderOpenhomeOrgTestBasic1C::DoToggle(IDviInvocation& aInvocation, TUi
     aInvocation.InvocationReadStart();
     TBool Value = aInvocation.InvocationReadBool("Value");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t Result;
     ASSERT(iCallbackToggle != NULL);
     if (0 != iCallbackToggle(iPtrToggle, aVersion, Value, &Result)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseBool respResult(aInvocation, "Result");
-    resp.Start();
+    invocation.StartResponse();
     respResult.Write((Result!=0));
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoEchoString(IDviInvocation& aInvocation, TUint aVersion)
@@ -433,20 +433,20 @@ void DvProviderOpenhomeOrgTestBasic1C::DoEchoString(IDviInvocation& aInvocation,
     Brhz Value;
     aInvocation.InvocationReadString("Value", Value);
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Result;
     ASSERT(iCallbackEchoString != NULL);
     if (0 != iCallbackEchoString(iPtrEchoString, aVersion, (const char*)Value.Ptr(), &Result)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseString respResult(aInvocation, "Result");
-    resp.Start();
+    invocation.StartResponse();
     Brhz bufResult((const TChar*)Result);
     OhNetFreeExternal(Result);
     respResult.Write(bufResult);
     respResult.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoEchoBinary(IDviInvocation& aInvocation, TUint aVersion)
@@ -455,22 +455,22 @@ void DvProviderOpenhomeOrgTestBasic1C::DoEchoBinary(IDviInvocation& aInvocation,
     Brh Value;
     aInvocation.InvocationReadBinary("Value", Value);
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Result;
     uint32_t ResultLen;
     ASSERT(iCallbackEchoBinary != NULL);
     if (0 != iCallbackEchoBinary(iPtrEchoBinary, aVersion, (const char*)Value.Ptr(), Value.Bytes(), &Result, &ResultLen)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseBinary respResult(aInvocation, "Result");
-    resp.Start();
+    invocation.StartResponse();
     Brh bufResult;
     bufResult.Set((const TByte*)Result, ResultLen);
     OhNetFreeExternal(Result);
     respResult.Write(bufResult);
     respResult.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoSetUint(IDviInvocation& aInvocation, TUint aVersion)
@@ -478,31 +478,31 @@ void DvProviderOpenhomeOrgTestBasic1C::DoSetUint(IDviInvocation& aInvocation, TU
     aInvocation.InvocationReadStart();
     TUint ValueUint = aInvocation.InvocationReadUint("ValueUint");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetUint != NULL);
     if (0 != iCallbackSetUint(iPtrSetUint, aVersion, ValueUint)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoGetUint(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t ValueUint;
     ASSERT(iCallbackGetUint != NULL);
     if (0 != iCallbackGetUint(iPtrGetUint, aVersion, &ValueUint)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseUint respValueUint(aInvocation, "ValueUint");
-    resp.Start();
+    invocation.StartResponse();
     respValueUint.Write(ValueUint);
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoSetInt(IDviInvocation& aInvocation, TUint aVersion)
@@ -510,31 +510,31 @@ void DvProviderOpenhomeOrgTestBasic1C::DoSetInt(IDviInvocation& aInvocation, TUi
     aInvocation.InvocationReadStart();
     TInt ValueInt = aInvocation.InvocationReadInt("ValueInt");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetInt != NULL);
     if (0 != iCallbackSetInt(iPtrSetInt, aVersion, ValueInt)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoGetInt(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     int32_t ValueInt;
     ASSERT(iCallbackGetInt != NULL);
     if (0 != iCallbackGetInt(iPtrGetInt, aVersion, &ValueInt)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseInt respValueInt(aInvocation, "ValueInt");
-    resp.Start();
+    invocation.StartResponse();
     respValueInt.Write(ValueInt);
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoSetBool(IDviInvocation& aInvocation, TUint aVersion)
@@ -542,31 +542,31 @@ void DvProviderOpenhomeOrgTestBasic1C::DoSetBool(IDviInvocation& aInvocation, TU
     aInvocation.InvocationReadStart();
     TBool ValueBool = aInvocation.InvocationReadBool("ValueBool");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetBool != NULL);
     if (0 != iCallbackSetBool(iPtrSetBool, aVersion, ValueBool)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoGetBool(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t ValueBool;
     ASSERT(iCallbackGetBool != NULL);
     if (0 != iCallbackGetBool(iPtrGetBool, aVersion, &ValueBool)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseBool respValueBool(aInvocation, "ValueBool");
-    resp.Start();
+    invocation.StartResponse();
     respValueBool.Write((ValueBool!=0));
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoSetMultiple(IDviInvocation& aInvocation, TUint aVersion)
@@ -576,14 +576,14 @@ void DvProviderOpenhomeOrgTestBasic1C::DoSetMultiple(IDviInvocation& aInvocation
     TInt ValueInt = aInvocation.InvocationReadInt("ValueInt");
     TBool ValueBool = aInvocation.InvocationReadBool("ValueBool");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetMultiple != NULL);
     if (0 != iCallbackSetMultiple(iPtrSetMultiple, aVersion, ValueUint, ValueInt, ValueBool)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoSetString(IDviInvocation& aInvocation, TUint aVersion)
@@ -592,34 +592,34 @@ void DvProviderOpenhomeOrgTestBasic1C::DoSetString(IDviInvocation& aInvocation, 
     Brhz ValueStr;
     aInvocation.InvocationReadString("ValueStr", ValueStr);
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetString != NULL);
     if (0 != iCallbackSetString(iPtrSetString, aVersion, (const char*)ValueStr.Ptr())) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoGetString(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* ValueStr;
     ASSERT(iCallbackGetString != NULL);
     if (0 != iCallbackGetString(iPtrGetString, aVersion, &ValueStr)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseString respValueStr(aInvocation, "ValueStr");
-    resp.Start();
+    invocation.StartResponse();
     Brhz bufValueStr((const TChar*)ValueStr);
     OhNetFreeExternal(ValueStr);
     respValueStr.Write(bufValueStr);
     respValueStr.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoSetBinary(IDviInvocation& aInvocation, TUint aVersion)
@@ -628,50 +628,50 @@ void DvProviderOpenhomeOrgTestBasic1C::DoSetBinary(IDviInvocation& aInvocation, 
     Brh ValueBin;
     aInvocation.InvocationReadBinary("ValueBin", ValueBin);
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetBinary != NULL);
     if (0 != iCallbackSetBinary(iPtrSetBinary, aVersion, (const char*)ValueBin.Ptr(), ValueBin.Bytes())) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoGetBinary(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* ValueBin;
     uint32_t ValueBinLen;
     ASSERT(iCallbackGetBinary != NULL);
     if (0 != iCallbackGetBinary(iPtrGetBinary, aVersion, &ValueBin, &ValueBinLen)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseBinary respValueBin(aInvocation, "ValueBin");
-    resp.Start();
+    invocation.StartResponse();
     Brh bufValueBin;
     bufValueBin.Set((const TByte*)ValueBin, ValueBinLen);
     OhNetFreeExternal(ValueBin);
     respValueBin.Write(bufValueBin);
     respValueBin.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoToggleBool(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackToggleBool != NULL);
     if (0 != iCallbackToggleBool(iPtrToggleBool, aVersion)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoWriteFile(IDviInvocation& aInvocation, TUint aVersion)
@@ -682,28 +682,28 @@ void DvProviderOpenhomeOrgTestBasic1C::DoWriteFile(IDviInvocation& aInvocation, 
     Brhz FileFullName;
     aInvocation.InvocationReadString("FileFullName", FileFullName);
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackWriteFile != NULL);
     if (0 != iCallbackWriteFile(iPtrWriteFile, aVersion, (const char*)Data.Ptr(), (const char*)FileFullName.Ptr())) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderOpenhomeOrgTestBasic1C::DoShutdown(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackShutdown != NULL);
     if (0 != iCallbackShutdown(iPtrShutdown, aVersion)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 

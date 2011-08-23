@@ -54,39 +54,39 @@ void DvProviderUpnpOrgSwitchPower1::DoSetTarget(IDviInvocation& aInvocation, TUi
     aInvocation.InvocationReadStart();
     TBool newTargetValue = aInvocation.InvocationReadBool("newTargetValue");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
-    SetTarget(resp, aVersion, newTargetValue);
+    DviInvocation invocation(aInvocation);
+    SetTarget(invocation, aVersion, newTargetValue);
 }
 
 void DvProviderUpnpOrgSwitchPower1::DoGetTarget(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     DviInvocationResponseBool respRetTargetValue(aInvocation, "RetTargetValue");
-    GetTarget(resp, aVersion, respRetTargetValue);
+    GetTarget(invocation, aVersion, respRetTargetValue);
 }
 
 void DvProviderUpnpOrgSwitchPower1::DoGetStatus(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     DviInvocationResponseBool respResultStatus(aInvocation, "ResultStatus");
-    GetStatus(resp, aVersion, respResultStatus);
+    GetStatus(invocation, aVersion, respResultStatus);
 }
 
-void DvProviderUpnpOrgSwitchPower1::SetTarget(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TBool /*anewTargetValue*/)
+void DvProviderUpnpOrgSwitchPower1::SetTarget(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, TBool /*anewTargetValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgSwitchPower1::GetTarget(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseBool& /*aRetTargetValue*/)
+void DvProviderUpnpOrgSwitchPower1::GetTarget(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseBool& /*aRetTargetValue*/)
 {
     ASSERTS();
 }
 
-void DvProviderUpnpOrgSwitchPower1::GetStatus(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseBool& /*aResultStatus*/)
+void DvProviderUpnpOrgSwitchPower1::GetStatus(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseBool& /*aResultStatus*/)
 {
     ASSERTS();
 }

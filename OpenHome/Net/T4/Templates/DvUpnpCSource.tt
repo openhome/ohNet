@@ -208,7 +208,7 @@ void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
 <#          } #>
 <#      } #>
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
 <#          if (o.variable.type=="bin.base64") #>
@@ -231,14 +231,14 @@ void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
 <#      } #>
     ASSERT(iCallback<#=a.name#> != NULL);
     if (0 != iCallback<#=a.name#>(iPtr<#=a.name#>, aVersion<#=CallbackArgs(a)#>)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
     <#=invRespType[o.variable.type]#> resp<#=o.name#>(aInvocation, "<#=o.name#>");
 <#      } #>
-    resp.Start();
+    invocation.StartResponse();
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
 <#          if (o.variable.type=="bin.base64") #>
@@ -265,7 +265,7 @@ void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
     resp<#=o.name#>.Write(<#=o.name#>);
 <#          } #>
 <#      } #>
-    resp.End();
+    invocation.EndResponse();
 }
 <#  } #>
 

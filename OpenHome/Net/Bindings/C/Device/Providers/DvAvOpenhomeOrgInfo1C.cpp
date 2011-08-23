@@ -274,40 +274,40 @@ void DvProviderAvOpenhomeOrgInfo1C::DoCounters(IDviInvocation& aInvocation, TUin
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t TrackCount;
     uint32_t DetailsCount;
     uint32_t MetatextCount;
     ASSERT(iCallbackCounters != NULL);
     if (0 != iCallbackCounters(iPtrCounters, aVersion, &TrackCount, &DetailsCount, &MetatextCount)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseUint respTrackCount(aInvocation, "TrackCount");
     DviInvocationResponseUint respDetailsCount(aInvocation, "DetailsCount");
     DviInvocationResponseUint respMetatextCount(aInvocation, "MetatextCount");
-    resp.Start();
+    invocation.StartResponse();
     respTrackCount.Write(TrackCount);
     respDetailsCount.Write(DetailsCount);
     respMetatextCount.Write(MetatextCount);
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgInfo1C::DoTrack(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Uri;
     char* Metadata;
     ASSERT(iCallbackTrack != NULL);
     if (0 != iCallbackTrack(iPtrTrack, aVersion, &Uri, &Metadata)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseString respUri(aInvocation, "Uri");
     DviInvocationResponseString respMetadata(aInvocation, "Metadata");
-    resp.Start();
+    invocation.StartResponse();
     Brhz bufUri((const TChar*)Uri);
     OhNetFreeExternal(Uri);
     respUri.Write(bufUri);
@@ -316,14 +316,14 @@ void DvProviderAvOpenhomeOrgInfo1C::DoTrack(IDviInvocation& aInvocation, TUint a
     OhNetFreeExternal(Metadata);
     respMetadata.Write(bufMetadata);
     respMetadata.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t Duration;
     uint32_t BitRate;
     uint32_t BitDepth;
@@ -332,7 +332,7 @@ void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation, TUint
     char* CodecName;
     ASSERT(iCallbackDetails != NULL);
     if (0 != iCallbackDetails(iPtrDetails, aVersion, &Duration, &BitRate, &BitDepth, &SampleRate, &Lossless, &CodecName)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseUint respDuration(aInvocation, "Duration");
@@ -341,7 +341,7 @@ void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation, TUint
     DviInvocationResponseUint respSampleRate(aInvocation, "SampleRate");
     DviInvocationResponseBool respLossless(aInvocation, "Lossless");
     DviInvocationResponseString respCodecName(aInvocation, "CodecName");
-    resp.Start();
+    invocation.StartResponse();
     respDuration.Write(Duration);
     respBitRate.Write(BitRate);
     respBitDepth.Write(BitDepth);
@@ -351,27 +351,27 @@ void DvProviderAvOpenhomeOrgInfo1C::DoDetails(IDviInvocation& aInvocation, TUint
     OhNetFreeExternal(CodecName);
     respCodecName.Write(bufCodecName);
     respCodecName.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgInfo1C::DoMetatext(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Value;
     ASSERT(iCallbackMetatext != NULL);
     if (0 != iCallbackMetatext(iPtrMetatext, aVersion, &Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseString respValue(aInvocation, "Value");
-    resp.Start();
+    invocation.StartResponse();
     Brhz bufValue((const TChar*)Value);
     OhNetFreeExternal(Value);
     respValue.Write(bufValue);
     respValue.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 

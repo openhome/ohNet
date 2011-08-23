@@ -496,21 +496,21 @@ void DvProviderAvOpenhomeOrgProduct1C::DoManufacturer(IDviInvocation& aInvocatio
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Name;
     char* Info;
     char* Url;
     char* ImageUri;
     ASSERT(iCallbackManufacturer != NULL);
     if (0 != iCallbackManufacturer(iPtrManufacturer, aVersion, &Name, &Info, &Url, &ImageUri)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseString respName(aInvocation, "Name");
     DviInvocationResponseString respInfo(aInvocation, "Info");
     DviInvocationResponseString respUrl(aInvocation, "Url");
     DviInvocationResponseString respImageUri(aInvocation, "ImageUri");
-    resp.Start();
+    invocation.StartResponse();
     Brhz bufName((const TChar*)Name);
     OhNetFreeExternal(Name);
     respName.Write(bufName);
@@ -527,28 +527,28 @@ void DvProviderAvOpenhomeOrgProduct1C::DoManufacturer(IDviInvocation& aInvocatio
     OhNetFreeExternal(ImageUri);
     respImageUri.Write(bufImageUri);
     respImageUri.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgProduct1C::DoModel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Name;
     char* Info;
     char* Url;
     char* ImageUri;
     ASSERT(iCallbackModel != NULL);
     if (0 != iCallbackModel(iPtrModel, aVersion, &Name, &Info, &Url, &ImageUri)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseString respName(aInvocation, "Name");
     DviInvocationResponseString respInfo(aInvocation, "Info");
     DviInvocationResponseString respUrl(aInvocation, "Url");
     DviInvocationResponseString respImageUri(aInvocation, "ImageUri");
-    resp.Start();
+    invocation.StartResponse();
     Brhz bufName((const TChar*)Name);
     OhNetFreeExternal(Name);
     respName.Write(bufName);
@@ -565,14 +565,14 @@ void DvProviderAvOpenhomeOrgProduct1C::DoModel(IDviInvocation& aInvocation, TUin
     OhNetFreeExternal(ImageUri);
     respImageUri.Write(bufImageUri);
     respImageUri.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgProduct1C::DoProduct(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Room;
     char* Name;
     char* Info;
@@ -580,7 +580,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoProduct(IDviInvocation& aInvocation, TU
     char* ImageUri;
     ASSERT(iCallbackProduct != NULL);
     if (0 != iCallbackProduct(iPtrProduct, aVersion, &Room, &Name, &Info, &Url, &ImageUri)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseString respRoom(aInvocation, "Room");
@@ -588,7 +588,7 @@ void DvProviderAvOpenhomeOrgProduct1C::DoProduct(IDviInvocation& aInvocation, TU
     DviInvocationResponseString respInfo(aInvocation, "Info");
     DviInvocationResponseString respUrl(aInvocation, "Url");
     DviInvocationResponseString respImageUri(aInvocation, "ImageUri");
-    resp.Start();
+    invocation.StartResponse();
     Brhz bufRoom((const TChar*)Room);
     OhNetFreeExternal(Room);
     respRoom.Write(bufRoom);
@@ -609,24 +609,24 @@ void DvProviderAvOpenhomeOrgProduct1C::DoProduct(IDviInvocation& aInvocation, TU
     OhNetFreeExternal(ImageUri);
     respImageUri.Write(bufImageUri);
     respImageUri.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgProduct1C::DoStandby(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackStandby != NULL);
     if (0 != iCallbackStandby(iPtrStandby, aVersion, &Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseBool respValue(aInvocation, "Value");
-    resp.Start();
+    invocation.StartResponse();
     respValue.Write((Value!=0));
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgProduct1C::DoSetStandby(IDviInvocation& aInvocation, TUint aVersion)
@@ -634,68 +634,68 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSetStandby(IDviInvocation& aInvocation,
     aInvocation.InvocationReadStart();
     TBool Value = aInvocation.InvocationReadBool("Value");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetStandby != NULL);
     if (0 != iCallbackSetStandby(iPtrSetStandby, aVersion, Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgProduct1C::DoSourceCount(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackSourceCount != NULL);
     if (0 != iCallbackSourceCount(iPtrSourceCount, aVersion, &Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseUint respValue(aInvocation, "Value");
-    resp.Start();
+    invocation.StartResponse();
     respValue.Write(Value);
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgProduct1C::DoSourceXml(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Value;
     ASSERT(iCallbackSourceXml != NULL);
     if (0 != iCallbackSourceXml(iPtrSourceXml, aVersion, &Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseString respValue(aInvocation, "Value");
-    resp.Start();
+    invocation.StartResponse();
     Brhz bufValue((const TChar*)Value);
     OhNetFreeExternal(Value);
     respValue.Write(bufValue);
     respValue.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgProduct1C::DoSourceIndex(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackSourceIndex != NULL);
     if (0 != iCallbackSourceIndex(iPtrSourceIndex, aVersion, &Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseUint respValue(aInvocation, "Value");
-    resp.Start();
+    invocation.StartResponse();
     respValue.Write(Value);
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgProduct1C::DoSetSourceIndex(IDviInvocation& aInvocation, TUint aVersion)
@@ -703,14 +703,14 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSetSourceIndex(IDviInvocation& aInvocat
     aInvocation.InvocationReadStart();
     TUint Value = aInvocation.InvocationReadUint("Value");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetSourceIndex != NULL);
     if (0 != iCallbackSetSourceIndex(iPtrSetSourceIndex, aVersion, Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgProduct1C::DoSetSourceIndexByName(IDviInvocation& aInvocation, TUint aVersion)
@@ -719,14 +719,14 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSetSourceIndexByName(IDviInvocation& aI
     Brhz Value;
     aInvocation.InvocationReadString("Value", Value);
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackSetSourceIndexByName != NULL);
     if (0 != iCallbackSetSourceIndexByName(iPtrSetSourceIndexByName, aVersion, (const char*)Value.Ptr())) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgProduct1C::DoSource(IDviInvocation& aInvocation, TUint aVersion)
@@ -734,21 +734,21 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSource(IDviInvocation& aInvocation, TUi
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* SystemName;
     char* Type;
     char* Name;
     uint32_t Visible;
     ASSERT(iCallbackSource != NULL);
     if (0 != iCallbackSource(iPtrSource, aVersion, Index, &SystemName, &Type, &Name, &Visible)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseString respSystemName(aInvocation, "SystemName");
     DviInvocationResponseString respType(aInvocation, "Type");
     DviInvocationResponseString respName(aInvocation, "Name");
     DviInvocationResponseBool respVisible(aInvocation, "Visible");
-    resp.Start();
+    invocation.StartResponse();
     Brhz bufSystemName((const TChar*)SystemName);
     OhNetFreeExternal(SystemName);
     respSystemName.Write(bufSystemName);
@@ -762,44 +762,44 @@ void DvProviderAvOpenhomeOrgProduct1C::DoSource(IDviInvocation& aInvocation, TUi
     respName.Write(bufName);
     respName.WriteFlush();
     respVisible.Write((Visible!=0));
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgProduct1C::DoAttributes(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Value;
     ASSERT(iCallbackAttributes != NULL);
     if (0 != iCallbackAttributes(iPtrAttributes, aVersion, &Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseString respValue(aInvocation, "Value");
-    resp.Start();
+    invocation.StartResponse();
     Brhz bufValue((const TChar*)Value);
     OhNetFreeExternal(Value);
     respValue.Write(bufValue);
     respValue.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderAvOpenhomeOrgProduct1C::DoSourceXmlChangeCount(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     uint32_t Value;
     ASSERT(iCallbackSourceXmlChangeCount != NULL);
     if (0 != iCallbackSourceXmlChangeCount(iPtrSourceXmlChangeCount, aVersion, &Value)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseUint respValue(aInvocation, "Value");
-    resp.Start();
+    invocation.StartResponse();
     respValue.Write(Value);
-    resp.End();
+    invocation.EndResponse();
 }
 
 

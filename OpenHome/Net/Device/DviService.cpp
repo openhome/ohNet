@@ -164,24 +164,24 @@ void DviService::RemoveSubscription(const Brx& aSid)
 }
 
 
-// DviInvocationResponse
+// DviInvocation
 
-DviInvocationResponse::DviInvocationResponse(IDviInvocation& aInvocation)
+DviInvocation::DviInvocation(IDviInvocation& aInvocation)
     : iInvocation(aInvocation)
 {
 }
 
-void DviInvocationResponse::Error(TInt aCode, const Brx& aReason)
+void DviInvocation::Error(TInt aCode, const Brx& aReason)
 {
 	iInvocation.InvocationReportError(aCode, aReason);
 }
 
-void DviInvocationResponse::Start()
+void DviInvocation::StartResponse()
 {
 	iInvocation.InvocationWriteStart();
 }
 
-void DviInvocationResponse::End()
+void DviInvocation::EndResponse()
 {
 	iInvocation.InvocationWriteEnd();
 }

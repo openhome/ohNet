@@ -181,17 +181,17 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetProtocolInfo(IDviInvocation& aIn
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* Source;
     char* Sink;
     ASSERT(iCallbackGetProtocolInfo != NULL);
     if (0 != iCallbackGetProtocolInfo(iPtrGetProtocolInfo, aVersion, &Source, &Sink)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseString respSource(aInvocation, "Source");
     DviInvocationResponseString respSink(aInvocation, "Sink");
-    resp.Start();
+    invocation.StartResponse();
     Brhz bufSource((const TChar*)Source);
     OhNetFreeExternal(Source);
     respSource.Write(bufSource);
@@ -200,7 +200,7 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetProtocolInfo(IDviInvocation& aIn
     OhNetFreeExternal(Sink);
     respSink.Write(bufSink);
     respSink.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderUpnpOrgConnectionManager1C::DoPrepareForConnection(IDviInvocation& aInvocation, TUint aVersion)
@@ -214,23 +214,23 @@ void DvProviderUpnpOrgConnectionManager1C::DoPrepareForConnection(IDviInvocation
     Brhz Direction;
     aInvocation.InvocationReadString("Direction", Direction);
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     int32_t ConnectionID;
     int32_t AVTransportID;
     int32_t RcsID;
     ASSERT(iCallbackPrepareForConnection != NULL);
     if (0 != iCallbackPrepareForConnection(iPtrPrepareForConnection, aVersion, (const char*)RemoteProtocolInfo.Ptr(), (const char*)PeerConnectionManager.Ptr(), PeerConnectionID, (const char*)Direction.Ptr(), &ConnectionID, &AVTransportID, &RcsID)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseInt respConnectionID(aInvocation, "ConnectionID");
     DviInvocationResponseInt respAVTransportID(aInvocation, "AVTransportID");
     DviInvocationResponseInt respRcsID(aInvocation, "RcsID");
-    resp.Start();
+    invocation.StartResponse();
     respConnectionID.Write(ConnectionID);
     respAVTransportID.Write(AVTransportID);
     respRcsID.Write(RcsID);
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderUpnpOrgConnectionManager1C::DoConnectionComplete(IDviInvocation& aInvocation, TUint aVersion)
@@ -238,34 +238,34 @@ void DvProviderUpnpOrgConnectionManager1C::DoConnectionComplete(IDviInvocation& 
     aInvocation.InvocationReadStart();
     TInt ConnectionID = aInvocation.InvocationReadInt("ConnectionID");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     ASSERT(iCallbackConnectionComplete != NULL);
     if (0 != iCallbackConnectionComplete(iPtrConnectionComplete, aVersion, ConnectionID)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
-    resp.Start();
-    resp.End();
+    invocation.StartResponse();
+    invocation.EndResponse();
 }
 
 void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     char* ConnectionIDs;
     ASSERT(iCallbackGetCurrentConnectionIDs != NULL);
     if (0 != iCallbackGetCurrentConnectionIDs(iPtrGetCurrentConnectionIDs, aVersion, &ConnectionIDs)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseString respConnectionIDs(aInvocation, "ConnectionIDs");
-    resp.Start();
+    invocation.StartResponse();
     Brhz bufConnectionIDs((const TChar*)ConnectionIDs);
     OhNetFreeExternal(ConnectionIDs);
     respConnectionIDs.Write(bufConnectionIDs);
     respConnectionIDs.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, TUint aVersion)
@@ -273,7 +273,7 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionInfo(IDviInvoca
     aInvocation.InvocationReadStart();
     TInt ConnectionID = aInvocation.InvocationReadInt("ConnectionID");
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     int32_t RcsID;
     int32_t AVTransportID;
     char* ProtocolInfo;
@@ -283,7 +283,7 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionInfo(IDviInvoca
     char* Status;
     ASSERT(iCallbackGetCurrentConnectionInfo != NULL);
     if (0 != iCallbackGetCurrentConnectionInfo(iPtrGetCurrentConnectionInfo, aVersion, ConnectionID, &RcsID, &AVTransportID, &ProtocolInfo, &PeerConnectionManager, &PeerConnectionID, &Direction, &Status)) {
-        resp.Error(502, Brn("Action failed"));
+        invocation.Error(502, Brn("Action failed"));
         return;
     }
     DviInvocationResponseInt respRcsID(aInvocation, "RcsID");
@@ -293,7 +293,7 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionInfo(IDviInvoca
     DviInvocationResponseInt respPeerConnectionID(aInvocation, "PeerConnectionID");
     DviInvocationResponseString respDirection(aInvocation, "Direction");
     DviInvocationResponseString respStatus(aInvocation, "Status");
-    resp.Start();
+    invocation.StartResponse();
     respRcsID.Write(RcsID);
     respAVTransportID.Write(AVTransportID);
     Brhz bufProtocolInfo((const TChar*)ProtocolInfo);
@@ -313,7 +313,7 @@ void DvProviderUpnpOrgConnectionManager1C::DoGetCurrentConnectionInfo(IDviInvoca
     OhNetFreeExternal(Status);
     respStatus.Write(bufStatus);
     respStatus.WriteFlush();
-    resp.End();
+    invocation.EndResponse();
 }
 
 

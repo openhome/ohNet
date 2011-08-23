@@ -215,7 +215,7 @@ private:
      * SetLoadLevelTarget action for the owning device.
      * Must be implemented iff EnableActionSetLoadLevelTarget was called.
      */
-    virtual void SetLoadLevelTarget(IDvInvocationResponse& aResponse, TUint aVersion, TUint anewLoadlevelTarget);
+    virtual void SetLoadLevelTarget(IDvInvocation& aResponse, TUint aVersion, TUint anewLoadlevelTarget);
     /**
      * GetLoadLevelTarget action.
      *
@@ -223,7 +223,7 @@ private:
      * GetLoadLevelTarget action for the owning device.
      * Must be implemented iff EnableActionGetLoadLevelTarget was called.
      */
-    virtual void GetLoadLevelTarget(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aGetLoadlevelTarget);
+    virtual void GetLoadLevelTarget(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aGetLoadlevelTarget);
     /**
      * GetLoadLevelStatus action.
      *
@@ -231,7 +231,7 @@ private:
      * GetLoadLevelStatus action for the owning device.
      * Must be implemented iff EnableActionGetLoadLevelStatus was called.
      */
-    virtual void GetLoadLevelStatus(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aretLoadlevelStatus);
+    virtual void GetLoadLevelStatus(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aretLoadlevelStatus);
     /**
      * SetOnEffectLevel action.
      *
@@ -239,7 +239,7 @@ private:
      * SetOnEffectLevel action for the owning device.
      * Must be implemented iff EnableActionSetOnEffectLevel was called.
      */
-    virtual void SetOnEffectLevel(IDvInvocationResponse& aResponse, TUint aVersion, TUint anewOnEffectLevel);
+    virtual void SetOnEffectLevel(IDvInvocation& aResponse, TUint aVersion, TUint anewOnEffectLevel);
     /**
      * SetOnEffect action.
      *
@@ -247,7 +247,7 @@ private:
      * SetOnEffect action for the owning device.
      * Must be implemented iff EnableActionSetOnEffect was called.
      */
-    virtual void SetOnEffect(IDvInvocationResponse& aResponse, TUint aVersion, const Brx& anewOnEffect);
+    virtual void SetOnEffect(IDvInvocation& aResponse, TUint aVersion, const Brx& anewOnEffect);
     /**
      * GetOnEffectParameters action.
      *
@@ -255,7 +255,7 @@ private:
      * GetOnEffectParameters action for the owning device.
      * Must be implemented iff EnableActionGetOnEffectParameters was called.
      */
-    virtual void GetOnEffectParameters(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseString& aretOnEffect, IDvInvocationResponseUint& aretOnEffectLevel);
+    virtual void GetOnEffectParameters(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseString& aretOnEffect, IDvInvocationResponseUint& aretOnEffectLevel);
     /**
      * StepUp action.
      *
@@ -263,7 +263,7 @@ private:
      * StepUp action for the owning device.
      * Must be implemented iff EnableActionStepUp was called.
      */
-    virtual void StepUp(IDvInvocationResponse& aResponse, TUint aVersion);
+    virtual void StepUp(IDvInvocation& aResponse, TUint aVersion);
     /**
      * StepDown action.
      *
@@ -271,7 +271,7 @@ private:
      * StepDown action for the owning device.
      * Must be implemented iff EnableActionStepDown was called.
      */
-    virtual void StepDown(IDvInvocationResponse& aResponse, TUint aVersion);
+    virtual void StepDown(IDvInvocation& aResponse, TUint aVersion);
     /**
      * StartRampUp action.
      *
@@ -279,7 +279,7 @@ private:
      * StartRampUp action for the owning device.
      * Must be implemented iff EnableActionStartRampUp was called.
      */
-    virtual void StartRampUp(IDvInvocationResponse& aResponse, TUint aVersion);
+    virtual void StartRampUp(IDvInvocation& aResponse, TUint aVersion);
     /**
      * StartRampDown action.
      *
@@ -287,7 +287,7 @@ private:
      * StartRampDown action for the owning device.
      * Must be implemented iff EnableActionStartRampDown was called.
      */
-    virtual void StartRampDown(IDvInvocationResponse& aResponse, TUint aVersion);
+    virtual void StartRampDown(IDvInvocation& aResponse, TUint aVersion);
     /**
      * StopRamp action.
      *
@@ -295,7 +295,7 @@ private:
      * StopRamp action for the owning device.
      * Must be implemented iff EnableActionStopRamp was called.
      */
-    virtual void StopRamp(IDvInvocationResponse& aResponse, TUint aVersion);
+    virtual void StopRamp(IDvInvocation& aResponse, TUint aVersion);
     /**
      * StartRampToLevel action.
      *
@@ -303,7 +303,7 @@ private:
      * StartRampToLevel action for the owning device.
      * Must be implemented iff EnableActionStartRampToLevel was called.
      */
-    virtual void StartRampToLevel(IDvInvocationResponse& aResponse, TUint aVersion, TUint anewLoadLevelTarget, TUint anewRampTime);
+    virtual void StartRampToLevel(IDvInvocation& aResponse, TUint aVersion, TUint anewLoadLevelTarget, TUint anewRampTime);
     /**
      * SetStepDelta action.
      *
@@ -311,7 +311,7 @@ private:
      * SetStepDelta action for the owning device.
      * Must be implemented iff EnableActionSetStepDelta was called.
      */
-    virtual void SetStepDelta(IDvInvocationResponse& aResponse, TUint aVersion, TUint anewStepDelta);
+    virtual void SetStepDelta(IDvInvocation& aResponse, TUint aVersion, TUint anewStepDelta);
     /**
      * GetStepDelta action.
      *
@@ -319,7 +319,7 @@ private:
      * GetStepDelta action for the owning device.
      * Must be implemented iff EnableActionGetStepDelta was called.
      */
-    virtual void GetStepDelta(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aretStepDelta);
+    virtual void GetStepDelta(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aretStepDelta);
     /**
      * SetRampRate action.
      *
@@ -327,7 +327,7 @@ private:
      * SetRampRate action for the owning device.
      * Must be implemented iff EnableActionSetRampRate was called.
      */
-    virtual void SetRampRate(IDvInvocationResponse& aResponse, TUint aVersion, TUint anewRampRate);
+    virtual void SetRampRate(IDvInvocation& aResponse, TUint aVersion, TUint anewRampRate);
     /**
      * GetRampRate action.
      *
@@ -335,7 +335,7 @@ private:
      * GetRampRate action for the owning device.
      * Must be implemented iff EnableActionGetRampRate was called.
      */
-    virtual void GetRampRate(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aretRampRate);
+    virtual void GetRampRate(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aretRampRate);
     /**
      * PauseRamp action.
      *
@@ -343,7 +343,7 @@ private:
      * PauseRamp action for the owning device.
      * Must be implemented iff EnableActionPauseRamp was called.
      */
-    virtual void PauseRamp(IDvInvocationResponse& aResponse, TUint aVersion);
+    virtual void PauseRamp(IDvInvocation& aResponse, TUint aVersion);
     /**
      * ResumeRamp action.
      *
@@ -351,7 +351,7 @@ private:
      * ResumeRamp action for the owning device.
      * Must be implemented iff EnableActionResumeRamp was called.
      */
-    virtual void ResumeRamp(IDvInvocationResponse& aResponse, TUint aVersion);
+    virtual void ResumeRamp(IDvInvocation& aResponse, TUint aVersion);
     /**
      * GetIsRamping action.
      *
@@ -359,7 +359,7 @@ private:
      * GetIsRamping action for the owning device.
      * Must be implemented iff EnableActionGetIsRamping was called.
      */
-    virtual void GetIsRamping(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseBool& aretIsRamping);
+    virtual void GetIsRamping(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseBool& aretIsRamping);
     /**
      * GetRampPaused action.
      *
@@ -367,7 +367,7 @@ private:
      * GetRampPaused action for the owning device.
      * Must be implemented iff EnableActionGetRampPaused was called.
      */
-    virtual void GetRampPaused(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseBool& aretRampPaused);
+    virtual void GetRampPaused(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseBool& aretRampPaused);
     /**
      * GetRampTime action.
      *
@@ -375,7 +375,7 @@ private:
      * GetRampTime action for the owning device.
      * Must be implemented iff EnableActionGetRampTime was called.
      */
-    virtual void GetRampTime(IDvInvocationResponse& aResponse, TUint aVersion, IDvInvocationResponseUint& aretRampTime);
+    virtual void GetRampTime(IDvInvocation& aResponse, TUint aVersion, IDvInvocationResponseUint& aretRampTime);
 private:
     DvProviderUpnpOrgDimming1();
     void DoSetLoadLevelTarget(IDviInvocation& aInvocation, TUint aVersion);

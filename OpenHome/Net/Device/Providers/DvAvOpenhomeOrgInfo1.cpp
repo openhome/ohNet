@@ -201,62 +201,62 @@ void DvProviderAvOpenhomeOrgInfo1::DoCounters(IDviInvocation& aInvocation, TUint
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     DviInvocationResponseUint respTrackCount(aInvocation, "TrackCount");
     DviInvocationResponseUint respDetailsCount(aInvocation, "DetailsCount");
     DviInvocationResponseUint respMetatextCount(aInvocation, "MetatextCount");
-    Counters(resp, aVersion, respTrackCount, respDetailsCount, respMetatextCount);
+    Counters(invocation, aVersion, respTrackCount, respDetailsCount, respMetatextCount);
 }
 
 void DvProviderAvOpenhomeOrgInfo1::DoTrack(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     DviInvocationResponseString respUri(aInvocation, "Uri");
     DviInvocationResponseString respMetadata(aInvocation, "Metadata");
-    Track(resp, aVersion, respUri, respMetadata);
+    Track(invocation, aVersion, respUri, respMetadata);
 }
 
 void DvProviderAvOpenhomeOrgInfo1::DoDetails(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     DviInvocationResponseUint respDuration(aInvocation, "Duration");
     DviInvocationResponseUint respBitRate(aInvocation, "BitRate");
     DviInvocationResponseUint respBitDepth(aInvocation, "BitDepth");
     DviInvocationResponseUint respSampleRate(aInvocation, "SampleRate");
     DviInvocationResponseBool respLossless(aInvocation, "Lossless");
     DviInvocationResponseString respCodecName(aInvocation, "CodecName");
-    Details(resp, aVersion, respDuration, respBitRate, respBitDepth, respSampleRate, respLossless, respCodecName);
+    Details(invocation, aVersion, respDuration, respBitRate, respBitDepth, respSampleRate, respLossless, respCodecName);
 }
 
 void DvProviderAvOpenhomeOrgInfo1::DoMetatext(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
-    DviInvocationResponse resp(aInvocation);
+    DviInvocation invocation(aInvocation);
     DviInvocationResponseString respValue(aInvocation, "Value");
-    Metatext(resp, aVersion, respValue);
+    Metatext(invocation, aVersion, respValue);
 }
 
-void DvProviderAvOpenhomeOrgInfo1::Counters(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aTrackCount*/, IDvInvocationResponseUint& /*aDetailsCount*/, IDvInvocationResponseUint& /*aMetatextCount*/)
+void DvProviderAvOpenhomeOrgInfo1::Counters(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aTrackCount*/, IDvInvocationResponseUint& /*aDetailsCount*/, IDvInvocationResponseUint& /*aMetatextCount*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgInfo1::Track(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aUri*/, IDvInvocationResponseString& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgInfo1::Track(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aUri*/, IDvInvocationResponseString& /*aMetadata*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgInfo1::Details(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aDuration*/, IDvInvocationResponseUint& /*aBitRate*/, IDvInvocationResponseUint& /*aBitDepth*/, IDvInvocationResponseUint& /*aSampleRate*/, IDvInvocationResponseBool& /*aLossless*/, IDvInvocationResponseString& /*aCodecName*/)
+void DvProviderAvOpenhomeOrgInfo1::Details(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseUint& /*aDuration*/, IDvInvocationResponseUint& /*aBitRate*/, IDvInvocationResponseUint& /*aBitDepth*/, IDvInvocationResponseUint& /*aSampleRate*/, IDvInvocationResponseBool& /*aLossless*/, IDvInvocationResponseString& /*aCodecName*/)
 {
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgInfo1::Metatext(IDvInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aValue*/)
+void DvProviderAvOpenhomeOrgInfo1::Metatext(IDvInvocation& /*aResponse*/, TUint /*aVersion*/, IDvInvocationResponseString& /*aValue*/)
 {
     ASSERTS();
 }
