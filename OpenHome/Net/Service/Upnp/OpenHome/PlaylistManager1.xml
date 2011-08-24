@@ -255,11 +255,6 @@
                     <relatedStateVariable>Id</relatedStateVariable>
                 </argument>
                 <argument>
-                    <name>Udn</name>
-                    <direction>out</direction>
-                    <relatedStateVariable>Udn</relatedStateVariable>
-                </argument>
-                <argument>
                     <name>Metadata</name>
                     <direction>out</direction>
                     <relatedStateVariable>Metadata</relatedStateVariable>

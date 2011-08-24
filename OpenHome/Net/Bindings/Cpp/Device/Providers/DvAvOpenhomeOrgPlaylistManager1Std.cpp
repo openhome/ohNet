@@ -234,7 +234,6 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::EnableActionRead()
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Read");
     action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("TrackId"));
-    action->AddOutputParameter(new ParameterString("Udn"));
     action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoRead);
     iService->AddAction(action, functor);
@@ -505,14 +504,9 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::DoRead(IDviInvocation& aInvocat
     uint32_t Id = aInvocation.InvocationReadUint("Id");
     uint32_t TrackId = aInvocation.InvocationReadUint("TrackId");
     aInvocation.InvocationReadEnd();
-    std::string respUdn;
     std::string respMetadata;
-    Read(aVersion, Id, TrackId, respUdn, respMetadata);
+    Read(aVersion, Id, TrackId, respMetadata);
 	aInvocation.InvocationWriteStart();
-    InvocationResponseString respWriterUdn(aInvocation, "Udn");
-    Brn buf_Udn((const TByte*)respUdn.c_str(), (TUint)respUdn.length());
-    respWriterUdn.Write(buf_Udn);
-    aInvocation.InvocationWriteStringEnd("Udn");
     InvocationResponseString respWriterMetadata(aInvocation, "Metadata");
     Brn buf_Metadata((const TByte*)respMetadata.c_str(), (TUint)respMetadata.length());
     respWriterMetadata.Write(buf_Metadata);
@@ -654,7 +648,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::PlaylistArraysChanged(uint32_t 
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::Read(uint32_t /*aVersion*/, uint32_t /*aId*/, uint32_t /*aTrackId*/, std::string& /*aUdn*/, std::string& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1Cpp::Read(uint32_t /*aVersion*/, uint32_t /*aId*/, uint32_t /*aTrackId*/, std::string& /*aMetadata*/)
 {
     ASSERTS();
 }

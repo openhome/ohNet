@@ -19,30 +19,21 @@ interface ICpProxyAvOpenhomeOrgPlaylistManager1 extends ICpProxy
     public byte[] syncPlaylistReadArray(long aId);
     public void beginPlaylistReadArray(long aId, ICpProxyListener aCallback);
     public byte[] endPlaylistReadArray(long aAsyncHandle);
-    public String syncPlaylistReadList(String aIdList);
-    public void beginPlaylistReadList(String aIdList, ICpProxyListener aCallback);
-    public String endPlaylistReadList(long aAsyncHandle);
+    public String syncPlaylistReadMetadata(String aIdList);
+    public void beginPlaylistReadMetadata(String aIdList, ICpProxyListener aCallback);
+    public String endPlaylistReadMetadata(long aAsyncHandle);
     public PlaylistRead syncPlaylistRead(long aId);
     public void beginPlaylistRead(long aId, ICpProxyListener aCallback);
     public PlaylistRead endPlaylistRead(long aAsyncHandle);
-    public void syncPlaylistSetName(long aId, String aName);
-    public void beginPlaylistSetName(long aId, String aName, ICpProxyListener aCallback);
-    public void endPlaylistSetName(long aAsyncHandle);
-    public void syncPlaylistSetDescription(long aId, String aDescription);
-    public void beginPlaylistSetDescription(long aId, String aDescription, ICpProxyListener aCallback);
-    public void endPlaylistSetDescription(long aAsyncHandle);
-    public void syncPlaylistSetImageId(long aId, long aImageId);
-    public void beginPlaylistSetImageId(long aId, long aImageId, ICpProxyListener aCallback);
-    public void endPlaylistSetImageId(long aAsyncHandle);
+    public void syncPlaylistUpdate(long aId, String aName, String aDescription, long aImageId);
+    public void beginPlaylistUpdate(long aId, String aName, String aDescription, long aImageId, ICpProxyListener aCallback);
+    public void endPlaylistUpdate(long aAsyncHandle);
     public long syncPlaylistInsert(long aAfterId, String aName, String aDescription, long aImageId);
     public void beginPlaylistInsert(long aAfterId, String aName, String aDescription, long aImageId, ICpProxyListener aCallback);
     public long endPlaylistInsert(long aAsyncHandle);
     public void syncPlaylistDeleteId(long aValue);
     public void beginPlaylistDeleteId(long aValue, ICpProxyListener aCallback);
     public void endPlaylistDeleteId(long aAsyncHandle);
-    public void syncPlaylistMove(long aId, long aAfterId);
-    public void beginPlaylistMove(long aId, long aAfterId, ICpProxyListener aCallback);
-    public void endPlaylistMove(long aAsyncHandle);
     public long syncPlaylistsMax();
     public void beginPlaylistsMax(ICpProxyListener aCallback);
     public long endPlaylistsMax(long aAsyncHandle);
@@ -55,20 +46,20 @@ interface ICpProxyAvOpenhomeOrgPlaylistManager1 extends ICpProxy
     public boolean syncPlaylistArraysChanged(long aToken);
     public void beginPlaylistArraysChanged(long aToken, ICpProxyListener aCallback);
     public boolean endPlaylistArraysChanged(long aAsyncHandle);
-    public Read syncRead(long aId, long aTrackId);
+    public String syncRead(long aId, long aTrackId);
     public void beginRead(long aId, long aTrackId, ICpProxyListener aCallback);
-    public Read endRead(long aAsyncHandle);
+    public String endRead(long aAsyncHandle);
     public String syncReadList(long aId, String aTrackIdList);
     public void beginReadList(long aId, String aTrackIdList, ICpProxyListener aCallback);
     public String endReadList(long aAsyncHandle);
     public long syncInsert(long aId, long aAfterTrackId, String aUdn, String aMetadataId);
     public void beginInsert(long aId, long aAfterTrackId, String aUdn, String aMetadataId, ICpProxyListener aCallback);
     public long endInsert(long aAsyncHandle);
-    public void syncDeleteId(long aId, long aTrackId);
-    public void beginDeleteId(long aId, long aTrackId, ICpProxyListener aCallback);
+    public void syncDeleteId(long aTrackId, long aValue);
+    public void beginDeleteId(long aTrackId, long aValue, ICpProxyListener aCallback);
     public void endDeleteId(long aAsyncHandle);
-    public void syncDeleteAll(long aId);
-    public void beginDeleteAll(long aId, ICpProxyListener aCallback);
+    public void syncDeleteAll(long aTrackId);
+    public void beginDeleteAll(long aTrackId, ICpProxyListener aCallback);
     public void endDeleteAll(long aAsyncHandle);
     public void setPropertyMetadataChanged(IPropertyChangeListener aMetadataChanged);
     public String getPropertyMetadata();
@@ -147,24 +138,24 @@ class SyncPlaylistReadArrayAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
     }
 }
 
-class SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
+class SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
 {
     private CpProxyAvOpenhomeOrgPlaylistManager1 iService;
-    private String iPlaylistList;
+    private String iMetadata;
 
-    public SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
+    public SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
     {
         iService = aProxy;
     }
-    public String getPlaylistList()
+    public String getMetadata()
     {
-        return iPlaylistList;
+        return iMetadata;
     }
     protected void completeRequest(long aAsyncHandle)
     {
-        String result = iService.endPlaylistReadList(aAsyncHandle);
+        String result = iService.endPlaylistReadMetadata(aAsyncHandle);
 		
-        iPlaylistList = result;
+        iMetadata = result;
     }
 }
 
@@ -201,47 +192,17 @@ class SyncPlaylistReadAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
     }
 }
 
-class SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
+class SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
 {
     private CpProxyAvOpenhomeOrgPlaylistManager1 iService;
 
-    public SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
+    public SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
     {
         iService = aProxy;
     }
     protected void completeRequest(long aAsyncHandle)
     {
-        iService.endPlaylistSetName(aAsyncHandle);
-		
-    }
-}
-
-class SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
-{
-    private CpProxyAvOpenhomeOrgPlaylistManager1 iService;
-
-    public SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
-    {
-        iService = aProxy;
-    }
-    protected void completeRequest(long aAsyncHandle)
-    {
-        iService.endPlaylistSetDescription(aAsyncHandle);
-		
-    }
-}
-
-class SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
-{
-    private CpProxyAvOpenhomeOrgPlaylistManager1 iService;
-
-    public SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
-    {
-        iService = aProxy;
-    }
-    protected void completeRequest(long aAsyncHandle)
-    {
-        iService.endPlaylistSetImageId(aAsyncHandle);
+        iService.endPlaylistUpdate(aAsyncHandle);
 		
     }
 }
@@ -278,21 +239,6 @@ class SyncPlaylistDeleteIdAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
     protected void completeRequest(long aAsyncHandle)
     {
         iService.endPlaylistDeleteId(aAsyncHandle);
-		
-    }
-}
-
-class SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
-{
-    private CpProxyAvOpenhomeOrgPlaylistManager1 iService;
-
-    public SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
-    {
-        iService = aProxy;
-    }
-    protected void completeRequest(long aAsyncHandle)
-    {
-        iService.endPlaylistMove(aAsyncHandle);
 		
     }
 }
@@ -396,16 +342,11 @@ class SyncPlaylistArraysChangedAvOpenhomeOrgPlaylistManager1 extends SyncProxyAc
 class SyncReadAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
 {
     private CpProxyAvOpenhomeOrgPlaylistManager1 iService;
-    private String iUdn;
     private String iMetadata;
 
     public SyncReadAvOpenhomeOrgPlaylistManager1(CpProxyAvOpenhomeOrgPlaylistManager1 aProxy)
     {
         iService = aProxy;
-    }
-    public String getUdn()
-    {
-        return iUdn;
     }
     public String getMetadata()
     {
@@ -413,10 +354,9 @@ class SyncReadAvOpenhomeOrgPlaylistManager1 extends SyncProxyAction
     }
     protected void completeRequest(long aAsyncHandle)
     {
-        Read result = iService.endRead(aAsyncHandle);
+        String result = iService.endRead(aAsyncHandle);
 		
-        iUdn = result.getUdn();
-        iMetadata = result.getMetadata();
+        iMetadata = result;
     }
 }
 
@@ -558,40 +498,14 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
         }
     }
 
-    public class Read
-    {
-        private String iUdn;
-        private String iMetadata;
-
-        public Read(
-            String aUdn,
-            String aMetadata
-        )
-        {
-            iUdn = aUdn;
-            iMetadata = aMetadata;
-        }
-        public String getUdn()
-        {
-            return iUdn;
-        }
-        public String getMetadata()
-        {
-            return iMetadata;
-        }
-    }
-
     private Action iActionMetadata;
     private Action iActionImagesXml;
     private Action iActionPlaylistReadArray;
-    private Action iActionPlaylistReadList;
+    private Action iActionPlaylistReadMetadata;
     private Action iActionPlaylistRead;
-    private Action iActionPlaylistSetName;
-    private Action iActionPlaylistSetDescription;
-    private Action iActionPlaylistSetImageId;
+    private Action iActionPlaylistUpdate;
     private Action iActionPlaylistInsert;
     private Action iActionPlaylistDeleteId;
-    private Action iActionPlaylistMove;
     private Action iActionPlaylistsMax;
     private Action iActionTracksMax;
     private Action iActionPlaylistArrays;
@@ -642,11 +556,11 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
         param = new ParameterBinary("Array");
 		iActionPlaylistReadArray.addOutputParameter(param);
 
-        iActionPlaylistReadList = new Action("PlaylistReadList");
+        iActionPlaylistReadMetadata = new Action("PlaylistReadMetadata");
         param = new ParameterString("IdList", allowedValues);
-		iActionPlaylistReadList.addInputParameter(param);
-        param = new ParameterString("PlaylistList", allowedValues);
-		iActionPlaylistReadList.addOutputParameter(param);
+		iActionPlaylistReadMetadata.addInputParameter(param);
+        param = new ParameterString("Metadata", allowedValues);
+		iActionPlaylistReadMetadata.addOutputParameter(param);
 
         iActionPlaylistRead = new Action("PlaylistRead");
         param = new ParameterUint("Id");
@@ -658,23 +572,15 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
         param = new ParameterUint("ImageId");
 		iActionPlaylistRead.addOutputParameter(param);
 
-        iActionPlaylistSetName = new Action("PlaylistSetName");
+        iActionPlaylistUpdate = new Action("PlaylistUpdate");
         param = new ParameterUint("Id");
-		iActionPlaylistSetName.addInputParameter(param);
+		iActionPlaylistUpdate.addInputParameter(param);
         param = new ParameterString("Name", allowedValues);
-		iActionPlaylistSetName.addInputParameter(param);
-
-        iActionPlaylistSetDescription = new Action("PlaylistSetDescription");
-        param = new ParameterUint("Id");
-		iActionPlaylistSetDescription.addInputParameter(param);
+		iActionPlaylistUpdate.addInputParameter(param);
         param = new ParameterString("Description", allowedValues);
-		iActionPlaylistSetDescription.addInputParameter(param);
-
-        iActionPlaylistSetImageId = new Action("PlaylistSetImageId");
-        param = new ParameterUint("Id");
-		iActionPlaylistSetImageId.addInputParameter(param);
+		iActionPlaylistUpdate.addInputParameter(param);
         param = new ParameterUint("ImageId");
-		iActionPlaylistSetImageId.addInputParameter(param);
+		iActionPlaylistUpdate.addInputParameter(param);
 
         iActionPlaylistInsert = new Action("PlaylistInsert");
         param = new ParameterUint("AfterId");
@@ -691,12 +597,6 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
         iActionPlaylistDeleteId = new Action("PlaylistDeleteId");
         param = new ParameterUint("Value");
 		iActionPlaylistDeleteId.addInputParameter(param);
-
-        iActionPlaylistMove = new Action("PlaylistMove");
-        param = new ParameterUint("Id");
-		iActionPlaylistMove.addInputParameter(param);
-        param = new ParameterUint("AfterId");
-		iActionPlaylistMove.addInputParameter(param);
 
         iActionPlaylistsMax = new Action("PlaylistsMax");
         param = new ParameterUint("Value");
@@ -725,8 +625,6 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 		iActionRead.addInputParameter(param);
         param = new ParameterUint("TrackId");
 		iActionRead.addInputParameter(param);
-        param = new ParameterString("Udn", allowedValues);
-		iActionRead.addOutputParameter(param);
         param = new ParameterString("Metadata", allowedValues);
 		iActionRead.addOutputParameter(param);
 
@@ -751,13 +649,13 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 		iActionInsert.addOutputParameter(param);
 
         iActionDeleteId = new Action("DeleteId");
-        param = new ParameterUint("Id");
-		iActionDeleteId.addInputParameter(param);
         param = new ParameterUint("TrackId");
+		iActionDeleteId.addInputParameter(param);
+        param = new ParameterUint("Value");
 		iActionDeleteId.addInputParameter(param);
 
         iActionDeleteAll = new Action("DeleteAll");
-        param = new ParameterUint("Id");
+        param = new ParameterUint("TrackId");
 		iActionDeleteAll.addInputParameter(param);
 
         iMetadataChanged = new PropertyChangeListener();
@@ -967,10 +865,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      *
      * @return the result of the invoked action.
      */
-	public String syncPlaylistReadList(String aIdList)
+	public String syncPlaylistReadMetadata(String aIdList)
 	{
-	    SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistReadListAvOpenhomeOrgPlaylistManager1(this);
-	    beginPlaylistReadList(aIdList, sync.getListener());
+	    SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistReadMetadataAvOpenhomeOrgPlaylistManager1(this);
+	    beginPlaylistReadMetadata(aIdList, sync.getListener());
 	    sync.waitToComplete();
 
         try
@@ -979,47 +877,47 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
         }
         catch (ProxyError pe) { }
 
-        return sync.getPlaylistList();
+        return sync.getMetadata();
 	}
 	
 	/**
 	 * Invoke the action asynchronously.
 	 * Returns immediately and will run the client-specified callback when the
 	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPlaylistReadList}.
+	 * calling {@link #endPlaylistReadMetadata}.
 	 * 
 	 * @param aIdList
 	 * @param aCallback	listener to call back when action completes.
 	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
-	public void beginPlaylistReadList(String aIdList, ICpProxyListener aCallback)
+	public void beginPlaylistReadMetadata(String aIdList, ICpProxyListener aCallback)
 	{
-        Invocation invocation = iService.getInvocation(iActionPlaylistReadList, aCallback);
+        Invocation invocation = iService.getInvocation(iActionPlaylistReadMetadata, aCallback);
         int inIndex = 0;
-        invocation.addInput(new ArgumentString((ParameterString)iActionPlaylistReadList.getInputParameter(inIndex++), aIdList));
+        invocation.addInput(new ArgumentString((ParameterString)iActionPlaylistReadMetadata.getInputParameter(inIndex++), aIdList));
         int outIndex = 0;
-        invocation.addOutput(new ArgumentString((ParameterString)iActionPlaylistReadList.getOutputParameter(outIndex++)));
+        invocation.addOutput(new ArgumentString((ParameterString)iActionPlaylistReadMetadata.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
 	/**
 	 * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
-     * {@link #beginPlaylistReadList} method.
+     * {@link #beginPlaylistReadMetadata} method.
      *
      * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPlaylistReadList} method.
+	 *			{@link #beginPlaylistReadMetadata} method.
      * @return the result of the previously invoked action.
      */
-	public String endPlaylistReadList(long aAsyncHandle)
+	public String endPlaylistReadMetadata(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
         int index = 0;
-        String playlistList = Invocation.getOutputString(aAsyncHandle, index++);
-        return playlistList;
+        String metadata = Invocation.getOutputString(aAsyncHandle, index++);
+        return metadata;
     }
 		
     /**
@@ -1101,10 +999,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncPlaylistSetName(long aId, String aName)
+	public void syncPlaylistUpdate(long aId, String aName, String aDescription, long aImageId)
 	{
-	    SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistSetNameAvOpenhomeOrgPlaylistManager1(this);
-	    beginPlaylistSetName(aId, aName, sync.getListener());
+	    SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistUpdateAvOpenhomeOrgPlaylistManager1(this);
+	    beginPlaylistUpdate(aId, aName, aDescription, aImageId, sync.getListener());
 	    sync.waitToComplete();
 
         try
@@ -1118,139 +1016,35 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * Invoke the action asynchronously.
 	 * Returns immediately and will run the client-specified callback when the
 	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPlaylistSetName}.
+	 * calling {@link #endPlaylistUpdate}.
 	 * 
 	 * @param aId
 	 * @param aName
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginPlaylistSetName(long aId, String aName, ICpProxyListener aCallback)
-	{
-        Invocation invocation = iService.getInvocation(iActionPlaylistSetName, aCallback);
-        int inIndex = 0;
-        invocation.addInput(new ArgumentUint((ParameterUint)iActionPlaylistSetName.getInputParameter(inIndex++), aId));
-        invocation.addInput(new ArgumentString((ParameterString)iActionPlaylistSetName.getInputParameter(inIndex++), aName));
-        iService.invokeAction(invocation);
-    }
-
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
-     * This may only be called from the callback set in the
-     * {@link #beginPlaylistSetName} method.
-     *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPlaylistSetName} method.
-     */
-	public void endPlaylistSetName(long aAsyncHandle)
-    {
-        if (Invocation.error(aAsyncHandle))
-        {
-            throw new ProxyError();
-        }
-    }
-		
-    /**
-     * Invoke the action synchronously.
-     * Blocks until the action has been processed on the device and sets any
-     * output arguments.
-     */
-	public void syncPlaylistSetDescription(long aId, String aDescription)
-	{
-	    SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistSetDescriptionAvOpenhomeOrgPlaylistManager1(this);
-	    beginPlaylistSetDescription(aId, aDescription, sync.getListener());
-	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPlaylistSetDescription}.
-	 * 
-	 * @param aId
 	 * @param aDescription
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginPlaylistSetDescription(long aId, String aDescription, ICpProxyListener aCallback)
-	{
-        Invocation invocation = iService.getInvocation(iActionPlaylistSetDescription, aCallback);
-        int inIndex = 0;
-        invocation.addInput(new ArgumentUint((ParameterUint)iActionPlaylistSetDescription.getInputParameter(inIndex++), aId));
-        invocation.addInput(new ArgumentString((ParameterString)iActionPlaylistSetDescription.getInputParameter(inIndex++), aDescription));
-        iService.invokeAction(invocation);
-    }
-
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
-     * This may only be called from the callback set in the
-     * {@link #beginPlaylistSetDescription} method.
-     *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPlaylistSetDescription} method.
-     */
-	public void endPlaylistSetDescription(long aAsyncHandle)
-    {
-        if (Invocation.error(aAsyncHandle))
-        {
-            throw new ProxyError();
-        }
-    }
-		
-    /**
-     * Invoke the action synchronously.
-     * Blocks until the action has been processed on the device and sets any
-     * output arguments.
-     */
-	public void syncPlaylistSetImageId(long aId, long aImageId)
-	{
-	    SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistSetImageIdAvOpenhomeOrgPlaylistManager1(this);
-	    beginPlaylistSetImageId(aId, aImageId, sync.getListener());
-	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPlaylistSetImageId}.
-	 * 
-	 * @param aId
 	 * @param aImageId
 	 * @param aCallback	listener to call back when action completes.
 	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
-	public void beginPlaylistSetImageId(long aId, long aImageId, ICpProxyListener aCallback)
+	public void beginPlaylistUpdate(long aId, String aName, String aDescription, long aImageId, ICpProxyListener aCallback)
 	{
-        Invocation invocation = iService.getInvocation(iActionPlaylistSetImageId, aCallback);
+        Invocation invocation = iService.getInvocation(iActionPlaylistUpdate, aCallback);
         int inIndex = 0;
-        invocation.addInput(new ArgumentUint((ParameterUint)iActionPlaylistSetImageId.getInputParameter(inIndex++), aId));
-        invocation.addInput(new ArgumentUint((ParameterUint)iActionPlaylistSetImageId.getInputParameter(inIndex++), aImageId));
+        invocation.addInput(new ArgumentUint((ParameterUint)iActionPlaylistUpdate.getInputParameter(inIndex++), aId));
+        invocation.addInput(new ArgumentString((ParameterString)iActionPlaylistUpdate.getInputParameter(inIndex++), aName));
+        invocation.addInput(new ArgumentString((ParameterString)iActionPlaylistUpdate.getInputParameter(inIndex++), aDescription));
+        invocation.addInput(new ArgumentUint((ParameterUint)iActionPlaylistUpdate.getInputParameter(inIndex++), aImageId));
         iService.invokeAction(invocation);
     }
 
 	/**
 	 * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the
-     * {@link #beginPlaylistSetImageId} method.
+     * {@link #beginPlaylistUpdate} method.
      *
      * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPlaylistSetImageId} method.
+	 *			{@link #beginPlaylistUpdate} method.
      */
-	public void endPlaylistSetImageId(long aAsyncHandle)
+	public void endPlaylistUpdate(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1371,60 +1165,6 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 *			{@link #beginPlaylistDeleteId} method.
      */
 	public void endPlaylistDeleteId(long aAsyncHandle)
-    {
-        if (Invocation.error(aAsyncHandle))
-        {
-            throw new ProxyError();
-        }
-    }
-		
-    /**
-     * Invoke the action synchronously.
-     * Blocks until the action has been processed on the device and sets any
-     * output arguments.
-     */
-	public void syncPlaylistMove(long aId, long aAfterId)
-	{
-	    SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1 sync = new SyncPlaylistMoveAvOpenhomeOrgPlaylistManager1(this);
-	    beginPlaylistMove(aId, aAfterId, sync.getListener());
-	    sync.waitToComplete();
-
-        try
-        {
-            sync.reportError();
-        }
-        catch (ProxyError pe) { }
-	}
-	
-	/**
-	 * Invoke the action asynchronously.
-	 * Returns immediately and will run the client-specified callback when the
-	 * action later completes.  Any output arguments can then be retrieved by
-	 * calling {@link #endPlaylistMove}.
-	 * 
-	 * @param aId
-	 * @param aAfterId
-	 * @param aCallback	listener to call back when action completes.
-	 *                 	This is guaranteed to be run but may indicate an error.
-	 */
-	public void beginPlaylistMove(long aId, long aAfterId, ICpProxyListener aCallback)
-	{
-        Invocation invocation = iService.getInvocation(iActionPlaylistMove, aCallback);
-        int inIndex = 0;
-        invocation.addInput(new ArgumentUint((ParameterUint)iActionPlaylistMove.getInputParameter(inIndex++), aId));
-        invocation.addInput(new ArgumentUint((ParameterUint)iActionPlaylistMove.getInputParameter(inIndex++), aAfterId));
-        iService.invokeAction(invocation);
-    }
-
-	/**
-	 * Retrieve the output arguments from an asynchronously invoked action.
-     * This may only be called from the callback set in the
-     * {@link #beginPlaylistMove} method.
-     *
-     * @param aAsyncHandle	argument passed to the delegate set in the
-	 *			{@link #beginPlaylistMove} method.
-     */
-	public void endPlaylistMove(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
@@ -1690,7 +1430,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      *
      * @return the result of the invoked action.
      */
-	public Read syncRead(long aId, long aTrackId)
+	public String syncRead(long aId, long aTrackId)
 	{
 	    SyncReadAvOpenhomeOrgPlaylistManager1 sync = new SyncReadAvOpenhomeOrgPlaylistManager1(this);
 	    beginRead(aId, aTrackId, sync.getListener());
@@ -1702,10 +1442,7 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
         }
         catch (ProxyError pe) { }
 
-        return new Read(
-            sync.getUdn(),
-            sync.getMetadata()
-		);
+        return sync.getMetadata();
 	}
 	
 	/**
@@ -1727,7 +1464,6 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
         invocation.addInput(new ArgumentUint((ParameterUint)iActionRead.getInputParameter(inIndex++), aTrackId));
         int outIndex = 0;
         invocation.addOutput(new ArgumentString((ParameterString)iActionRead.getOutputParameter(outIndex++)));
-        invocation.addOutput(new ArgumentString((ParameterString)iActionRead.getOutputParameter(outIndex++)));
         iService.invokeAction(invocation);
     }
 
@@ -1740,19 +1476,15 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 *			{@link #beginRead} method.
      * @return the result of the previously invoked action.
      */
-	public Read endRead(long aAsyncHandle)
+	public String endRead(long aAsyncHandle)
     {
         if (Invocation.error(aAsyncHandle))
         {
             throw new ProxyError();
         }
         int index = 0;
-        String udn = Invocation.getOutputString(aAsyncHandle, index++);
         String metadata = Invocation.getOutputString(aAsyncHandle, index++);
-        return new Read(
-            udn,
-            metadata
-		);
+        return metadata;
     }
 		
     /**
@@ -1892,10 +1624,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncDeleteId(long aId, long aTrackId)
+	public void syncDeleteId(long aTrackId, long aValue)
 	{
 	    SyncDeleteIdAvOpenhomeOrgPlaylistManager1 sync = new SyncDeleteIdAvOpenhomeOrgPlaylistManager1(this);
-	    beginDeleteId(aId, aTrackId, sync.getListener());
+	    beginDeleteId(aTrackId, aValue, sync.getListener());
 	    sync.waitToComplete();
 
         try
@@ -1911,17 +1643,17 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endDeleteId}.
 	 * 
-	 * @param aId
 	 * @param aTrackId
+	 * @param aValue
 	 * @param aCallback	listener to call back when action completes.
 	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
-	public void beginDeleteId(long aId, long aTrackId, ICpProxyListener aCallback)
+	public void beginDeleteId(long aTrackId, long aValue, ICpProxyListener aCallback)
 	{
         Invocation invocation = iService.getInvocation(iActionDeleteId, aCallback);
         int inIndex = 0;
-        invocation.addInput(new ArgumentUint((ParameterUint)iActionDeleteId.getInputParameter(inIndex++), aId));
         invocation.addInput(new ArgumentUint((ParameterUint)iActionDeleteId.getInputParameter(inIndex++), aTrackId));
+        invocation.addInput(new ArgumentUint((ParameterUint)iActionDeleteId.getInputParameter(inIndex++), aValue));
         iService.invokeAction(invocation);
     }
 
@@ -1946,10 +1678,10 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
      * Blocks until the action has been processed on the device and sets any
      * output arguments.
      */
-	public void syncDeleteAll(long aId)
+	public void syncDeleteAll(long aTrackId)
 	{
 	    SyncDeleteAllAvOpenhomeOrgPlaylistManager1 sync = new SyncDeleteAllAvOpenhomeOrgPlaylistManager1(this);
-	    beginDeleteAll(aId, sync.getListener());
+	    beginDeleteAll(aTrackId, sync.getListener());
 	    sync.waitToComplete();
 
         try
@@ -1965,15 +1697,15 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
 	 * action later completes.  Any output arguments can then be retrieved by
 	 * calling {@link #endDeleteAll}.
 	 * 
-	 * @param aId
+	 * @param aTrackId
 	 * @param aCallback	listener to call back when action completes.
 	 *                 	This is guaranteed to be run but may indicate an error.
 	 */
-	public void beginDeleteAll(long aId, ICpProxyListener aCallback)
+	public void beginDeleteAll(long aTrackId, ICpProxyListener aCallback)
 	{
         Invocation invocation = iService.getInvocation(iActionDeleteAll, aCallback);
         int inIndex = 0;
-        invocation.addInput(new ArgumentUint((ParameterUint)iActionDeleteAll.getInputParameter(inIndex++), aId));
+        invocation.addInput(new ArgumentUint((ParameterUint)iActionDeleteAll.getInputParameter(inIndex++), aTrackId));
         iService.invokeAction(invocation);
     }
 
@@ -2246,14 +1978,11 @@ public class CpProxyAvOpenhomeOrgPlaylistManager1 extends CpProxy implements ICp
             iActionMetadata.destroy();
             iActionImagesXml.destroy();
             iActionPlaylistReadArray.destroy();
-            iActionPlaylistReadList.destroy();
+            iActionPlaylistReadMetadata.destroy();
             iActionPlaylistRead.destroy();
-            iActionPlaylistSetName.destroy();
-            iActionPlaylistSetDescription.destroy();
-            iActionPlaylistSetImageId.destroy();
+            iActionPlaylistUpdate.destroy();
             iActionPlaylistInsert.destroy();
             iActionPlaylistDeleteId.destroy();
-            iActionPlaylistMove.destroy();
             iActionPlaylistsMax.destroy();
             iActionTracksMax.destroy();
             iActionPlaylistArrays.destroy();

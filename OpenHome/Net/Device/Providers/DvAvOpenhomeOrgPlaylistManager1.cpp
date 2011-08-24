@@ -226,7 +226,6 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::EnableActionRead()
     OpenHome::Net::Action* action = new OpenHome::Net::Action("Read");
     action->AddInputParameter(new ParameterUint("Id"));
     action->AddInputParameter(new ParameterUint("TrackId"));
-    action->AddOutputParameter(new ParameterString("Udn"));
     action->AddOutputParameter(new ParameterRelated("Metadata", *iPropertyMetadata));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgPlaylistManager1::DoRead);
     iService->AddAction(action, functor);
@@ -434,9 +433,8 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::DoRead(IDviInvocation& aInvocation
     TUint TrackId = aInvocation.InvocationReadUint("TrackId");
     aInvocation.InvocationReadEnd();
     InvocationResponse resp(aInvocation);
-    InvocationResponseString respUdn(aInvocation, "Udn");
     InvocationResponseString respMetadata(aInvocation, "Metadata");
-    Read(resp, aVersion, Id, TrackId, respUdn, respMetadata);
+    Read(resp, aVersion, Id, TrackId, respMetadata);
 }
 
 void DvProviderAvOpenhomeOrgPlaylistManager1::DoReadList(IDviInvocation& aInvocation, TUint aVersion)
@@ -560,7 +558,7 @@ void DvProviderAvOpenhomeOrgPlaylistManager1::PlaylistArraysChanged(IInvocationR
     ASSERTS();
 }
 
-void DvProviderAvOpenhomeOrgPlaylistManager1::Read(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, TUint /*aTrackId*/, IInvocationResponseString& /*aUdn*/, IInvocationResponseString& /*aMetadata*/)
+void DvProviderAvOpenhomeOrgPlaylistManager1::Read(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aId*/, TUint /*aTrackId*/, IInvocationResponseString& /*aMetadata*/)
 {
     ASSERTS();
 }
